@@ -1,0 +1,10 @@
+.recovery-notice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--accent-soft, #e5f5f2);
+  color: var(--accent, #0f766e);
+  border-bottom: 1px solid var(--border, #d5e1ec);
+}

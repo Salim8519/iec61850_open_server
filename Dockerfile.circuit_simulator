@@ -15,6 +15,7 @@ COPY ./third_party/ngspice_config/compile_linux.sh /tmp/ngspice_config/compile_l
 
 RUN      cp -f /tmp/ngspice_config/compile_linux.sh /tmp/ngspice-30/ \
          && cd /tmp/ngspice-30 \
+         && sed -i 's/\r$//' compile_linux.sh \
          && chmod 700 compile_linux.sh \
          && ./compile_linux.sh 64 \
          && ldconfig

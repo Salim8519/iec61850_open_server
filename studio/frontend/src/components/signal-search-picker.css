@@ -1,0 +1,21 @@
+.signal-search-list { display: grid; gap: 6px; max-height: 260px; overflow: auto; }
+.signal-search-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border: 1px solid var(--border); border-radius: 8px; background: white; }
+.signal-search-row:hover { border-color: #b5c3d5; }
+.signal-search-text { flex: 1; min-width: 0; display: grid; }
+.signal-search-text strong { font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signal-search-text small { font-size: 10px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signal-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.signal-dot.writable { background: var(--primary); }
+.signal-dot.readonly { background: #b5c3d5; }
+.signal-search-row button { min-height: 36px; }
+.signal-pick { display: flex; align-items: center; gap: 10px; padding: 8px 10px; min-width: 0;
+  border: 1px solid #bfd0fb; border-radius: 8px; background: var(--primary-soft); }
+.signal-pick .signal-search-text { flex: 1; min-width: 0; }
+.signal-pick .signal-search-text strong { color: var(--text); white-space: normal; overflow-wrap: anywhere; line-height: 1.35; }
+.signal-pick .signal-search-text small { white-space: normal; overflow-wrap: anywhere; }
+.signal-pick { align-items: flex-start; }
+.signal-pick button { min-height: 26px; padding: 2px 8px; flex-shrink: 0; font-size: 12px; color: var(--primary); }
+.signal-pick-mark { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center;
+  flex-shrink: 0; background: white; color: var(--primary); }
+.mapping-subhead { margin: 4px 0 0; font-size: 12px; color: var(--muted); }

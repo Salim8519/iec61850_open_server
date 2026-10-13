@@ -1,0 +1,12 @@
+.local/
+studio/.venv/
+studio/data/
+studio/native/build/
+studio/frontend/node_modules/
+studio/frontend/dist/
+studio/dist/
+studio/build/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/

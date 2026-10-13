@@ -1,0 +1,14 @@
+.import-dialog { width: min(680px, calc(100vw - 48px)); max-height: calc(100vh - 48px); padding: 24px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); background: var(--surface); }
+.import-dialog::backdrop { background: rgb(23 43 77 / 35%); }
+.import-dialog h1 { margin: 0; }
+.import-dialog > input { width: 100%; margin: 8px 0 12px; }
+.import-list { max-height: 48vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+.import-choice { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+.import-choice:last-child { border-bottom: 0; }
+.import-choice input { width: 18px; height: 18px; min-height: 18px; margin: 2px 0; }
+.import-choice span { min-width: 0; overflow-wrap: anywhere; }
+.import-choice strong { font-weight: 600; }
+.import-choice small { display: block; color: var(--muted); margin-top: 4px; }
+.import-choice .import-unavailable, .import-unavailable { color: var(--error); }
+.import-actions { display: flex; align-items: center; gap: 8px; margin-top: 20px; }
+.import-actions > span { flex: 1; }

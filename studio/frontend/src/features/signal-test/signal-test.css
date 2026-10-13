@@ -1,0 +1,13 @@
+.test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); gap: 16px; }
+.test-card, .test-picker { padding: 20px; min-width: 0; }
+.test-card .row { flex-wrap: wrap; }
+.test-card h2 { margin: 0; overflow-wrap: anywhere; }
+.test-card .reference-block { overflow-wrap: anywhere; white-space: normal; }
+.test-card details { margin: 12px 0; }
+.test-card details .stack { margin-top: 12px; }
+.test-value { padding-top: 16px; }
+.test-picker { max-width: 640px; margin-bottom: 20px; }
+.ied-selection { min-width: 0; }
+.ied-selection > label { margin-bottom: 8px; }
+.ied-selection input[type=checkbox] { width: 18px; min-height: 18px; }
+.ied-selection .ied-card { width: 100%; }

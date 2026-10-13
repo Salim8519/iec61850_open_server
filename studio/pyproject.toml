@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "substation-studio"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = ["Flask==3.1.2", "waitress==3.0.2", "pydantic==2.10.6", "defusedxml==0.7.1", "lxml==6.0.2"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.5", "pyinstaller==6.18.0"]
+
+[project.scripts]
+substation-studio = "studio_app.launcher.entrypoint:main"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["backend"]

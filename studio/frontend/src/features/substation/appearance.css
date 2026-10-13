@@ -1,0 +1,11 @@
+/* Appearance card: live preview swatch, native colour picker, exact hex. */
+.appearance { display: grid; gap: 8px; }
+.appearance-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.appearance-preview { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px;
+  border-radius: 8px; border: 1px solid var(--border-strong); background: white; color: var(--text); }
+.appearance-preview svg { flex-shrink: 0; }
+.appearance-preview strong { font-size: 12px; font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.appearance-row input[type="color"] { width: 40px; min-height: 34px; padding: 3px; flex-shrink: 0; cursor: pointer; }
+.appearance-row code { width: 64px; flex-shrink: 0; color: var(--muted); font-size: 11px; }
+.appearance-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.appearance-actions button { min-height: 32px; font-size: 12px; }

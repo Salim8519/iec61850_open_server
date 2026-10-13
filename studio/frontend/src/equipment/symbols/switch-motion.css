@@ -1,0 +1,5 @@
+.switch-contact { transition: transform 300ms ease-in-out; }
+.switch-blade { transform-origin: 30px 41px; }
+@media (prefers-reduced-motion: reduce) {
+  .switch-contact { transition: none; }
+}

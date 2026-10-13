@@ -1,0 +1,47 @@
+/* Relay properties: compact signal cards, quiet tools, one clear add action. */
+.relay-editor { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+.relay-editor-ied { margin: 0; display: grid; gap: 4px; }
+.relay-editor-ied strong { color: var(--text); }
+.relay-cards { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); }
+.relay-card { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 8px; background: white; }
+.relay-card:hover { border-color: #c7d4e3; }
+.relay-card.live { gap: 8px; padding: 10px; }
+.relay-card-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.relay-card-index { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+  flex-shrink: 0; background: var(--violet-soft); color: var(--violet); font-size: 10px; font-weight: 700; }
+.relay-card-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+input.relay-card-name { min-height: 30px; padding: 4px 8px; border-color: transparent; background: #f7f9fc; }
+input.relay-card-name:hover { border-color: var(--border); background: white; }
+input.relay-card-name:focus { background: white; }
+.relay-card-tools { display: inline-flex; flex-shrink: 0; }
+.relay-card-tools button.icon { min-height: 28px; padding: 6px; color: var(--muted); }
+.relay-card-tools button.icon:hover:not(:disabled) { background: #f1f5f9; color: var(--text); }
+.relay-card-tools .relay-remove:hover:not(:disabled) { background: #fef2f2; color: var(--error); }
+.relay-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;
+  padding-left: 28px; font-size: 11px; color: var(--muted); }
+.relay-card-meta code { font-size: 11px; color: #3b4f66; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.relay-kind { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 999px;
+  font-size: 10px; font-weight: 600; }
+.relay-kind.trigger { background: var(--primary-soft); color: var(--primary); }
+.relay-kind.display { background: #eef2f6; color: #52677e; }
+.relay-card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-left: 28px; }
+.relay-card-actions button { min-height: 32px; }
+.relay-add { justify-self: start; color: var(--primary); border-style: dashed; border-color: #bfd0fb;
+  background: var(--primary-soft); }
+.relay-add:hover { background: #dfe8ff; border-color: var(--primary); }
+.relay-adder { display: grid; gap: 10px; padding: 10px; border: 1px solid #cfdbfb; border-radius: 8px;
+  background: var(--panel-tint); grid-template-columns: minmax(0, 1fr); }
+.relay-adder .search-field { width: auto; min-width: 0; }
+.relay-adder .signal-search-row { min-width: 0; }
+.relay-adder-head { display: flex; align-items: center; gap: 8px; }
+.relay-adder-head strong { flex: 1; font-size: 12px; }
+.relay-adder-head button { min-height: 28px; padding: 4px 10px; }
+.relay-error { margin: 0; color: var(--error); font-size: 12px; }
+.segmented { display: inline-flex; border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; background: white; }
+.segmented button { border: 0; border-radius: 0; min-height: 32px; }
+.segmented button + button { border-left: 1px solid var(--border); }
+.segmented button.active { background: var(--primary); border-color: var(--primary); color: white; }

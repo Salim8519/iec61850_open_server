@@ -1,0 +1,28 @@
+/* Canvas pointer ergonomics: generous invisible terminal hit zones, clear hover and
+   connection feedback, easy-to-pick wires and a visible selection box. */
+.react-flow__handle { width: 9px; height: 9px; background: #6681a2; border: 1.5px solid white;
+  box-shadow: 0 0 0 1px #6681a255; transition: scale .08s ease, background-color .08s ease; }
+/* 25 px target around the 9 px dot; the pseudo-element is part of the handle for hit testing. */
+.react-flow__handle::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; }
+.react-flow__node:hover .react-flow__handle { background: #3d5a80; }
+.react-flow__handle:hover { scale: 1.5; background: var(--primary); }
+.react-flow__handle.connectingfrom { scale: 1.5; background: var(--primary); }
+/* While wiring, the terminal that will connect grows. */
+.react-flow__handle.connectingto.valid { scale: 1.8; background: var(--primary);
+  box-shadow: 0 0 0 4px #1d4ed84d; }
+
+/* Junctions: small terminal hit zones keep the 40 px body's centre free as a drag grip. */
+.equipment-node.draw .react-flow__handle { width: 8px; height: 8px; background: #526781; }
+.equipment-node.draw .react-flow__handle::after { inset: -3px; }
+
+/* Wires: wide invisible pick area (interactionWidth), clear hover and selection. */
+.react-flow__edge:hover .react-flow__edge-path { stroke: #3d5a80; }
+.react-flow__edge.selected .react-flow__edge-path { stroke: var(--primary) !important; stroke-width: 3 !important; }
+.react-flow__connection-path { stroke-linecap: round; }
+
+/* Box selection and grouped selection bounds. */
+.react-flow__selection { background: #1d4ed814; border: 1px dashed var(--primary); }
+/* The group rectangle must not cover terminals; dragging any selected node moves the group. */
+.react-flow__nodesselection-rect { background: #1d4ed80a; border: 1px dashed #1d4ed899; pointer-events: none; }
+.react-flow__node.dragging .equipment-node { box-shadow: 0 6px 18px #16324f2e; }
+@media (prefers-reduced-motion: reduce) { .react-flow__handle { transition: none; } }

@@ -1,0 +1,35 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: #16324f;
+  background: #f0f5fa;
+  font-synthesis: none;
+  --background: #f0f5fa;
+  --surface: #fff;
+  --text: #16324f;
+  --muted: #52677e;
+  --border: #d5e1ec;
+  --border-strong: #c3d2e2;
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-soft: #eaf0ff;
+  --accent: #0f766e;
+  --accent-soft: #e5f5f2;
+  --navy: #112b46;
+  --panel-tint: #f6f9fd;
+  --violet: #6d28d9;
+  --violet-soft: #f1eaff;
+  --amber: #b45309;
+  --amber-soft: #fff6e5;
+  --slate-soft: #eef2f6;
+  --success: #15803d;
+  --warning: #b45309;
+  --error: #b91c1c;
+  --radius: 6px;
+}
+/* Category colours match the equipment library; they never encode state. */
+.cat-switchgear { --cat: var(--accent); --cat-soft: var(--accent-soft); }
+.cat-instrument, .cat-protection { --cat: var(--violet); --cat-soft: var(--violet-soft); }
+.cat-source, .cat-control { --cat: var(--primary); --cat-soft: var(--primary-soft); }
+.cat-drawing { --cat: #526781; --cat-soft: var(--slate-soft); }
+.cat-legacy { --cat: var(--amber); --cat-soft: var(--amber-soft); }
