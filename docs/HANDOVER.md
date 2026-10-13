@@ -4,6 +4,28 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-14 (later): clean UI restructure
+
+- Owner found the UI messy; rebuilt as four places (Diagram, Devices, Test, Settings),
+  design system v2, merged duplicates, format 12 (ADR-0032/0033, changes 0053/0054,
+  spec `docs/specs/ui-structure.md`).
+- 134 owner CIDs (Downloads zips, copied to the session scratchpad only) all import
+  and start; PhyComAddr and unnamed report blocks fixed.
+
+## 2026-10-14 update: lab network, GOOSE and real IEDs
+
+- Owner asked for StationScout-comparable items 1-3, beginner friendly with hints,
+  and spec files that protect features from LLM drift. Read `docs/specs/` first.
+- Implemented: changes 0049-0052, ADR-0028..0031, project format 11. The owner's
+  autosave was not opened or migrated during this work (an isolated data folder
+  was used); it upgrades to format 11 with a recovery archive on next open.
+- Normal native build rebuilt with GOOSE and `studio_live.exe` (hashes in 0050).
+  Building requires the Npcap SDK (`python studio/tools/fetch_npcap_sdk.py`).
+- Evidence on this PC: VMware VMnet1 GUID `{15A6105F-A715-444F-9D7C-AA259A2EED8A}`
+  carries GOOSE between processes; set `STUDIO_GOOSE_ADAPTER` to it for wire tests.
+- Not done: applying the lab plan on a real adapter (UAC), real relays, and the
+  packaged EXE (not built; build it only when the owner asks).
+
 ## User intent and safe boundary
 
 - Trip Relay behavior is accepted: Operate sends `0`, Reset sends `1`, Operated

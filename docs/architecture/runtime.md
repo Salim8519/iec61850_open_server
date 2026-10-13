@@ -69,5 +69,10 @@ skipped-tick counts. Recovery evaluates current active time, not historical samp
 Unexpected cycle errors visibly pause automation without killing its scheduling
 thread or stopping MMS. See [cadence decision](../decisions/ADR-0005-automation-cadence.md).
 
+Run starts simulated workers and, through `acquisition/manager.py`, one read-only
+`studio_live` session per real IED plus one GOOSE listener in lab mode (ADR-0030,
+ADR-0031). Workers advertise `goose_aware`. Both executables write frames to a
+private copy of stdout; vendor console output goes to stderr as diagnostics.
+
 Stop tears down workers. Pause Automation freezes scheduled sources, not MMS.
 Closing a browser does not stop a running experiment; exiting the launcher does.

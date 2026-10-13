@@ -12,7 +12,10 @@ export function ImportSelection({ preview, busy, error, confirm, cancel }: {
   confirm: (names: string[]) => void; cancel: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>(() => {
+    const usable = preview.ieds.filter(ied => !ied.unavailable_reason);
+    return usable.length === 1 ? [usable[0].name] : [];
+  });
   const [query, setQuery] = useState('');
   useEffect(() => {
     const element = dialog.current;

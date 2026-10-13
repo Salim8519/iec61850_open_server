@@ -50,3 +50,9 @@
 | [0046](2026/0046-canvas-editing-ergonomics.md) | Canvas multi-select, copy/paste/duplicate, easier terminals, one-commit drag | Tests, build, Playwright on isolated copy; owner acceptance pending |
 | [0047](2026/0047-wires-vanish-and-junction-offset.md) | Wires no longer vanish until refresh; junction dot centred on terminals | Tests incl. library-level bounds test, build, Playwright on owner copy; race not reproducible on demand |
 | [0048](2026/0048-junction-drag-grip.md) | Junction 40 px drag grip, stubs to wired terminals | Tests, build, Playwright grab-grid on owner copy; owner acceptance pending |
+| [0049](2026/0049-lab-network-binding.md) | Guided lab network binding and project format 11 | Unit/integration tests, browser preview; real Apply on owner PC pending |
+| [0050](2026/0050-goose-publish-and-listen.md) | GOOSE publishing, listening and supervision | Wire test on VMware adapter passes; physical/third-party evidence pending |
+| [0051](2026/0051-real-ied-acquisition.md) | Read-only live acquisition and SCD comparison | Protocol tests against stand-in, browser check; real relay pending |
+| [0052](2026/0052-beginner-guidance-and-specs.md) | Beginner guidance kit and protected feature specs | Frontend tests, build, spec check; owner visual acceptance pending |
+| [0053](2026/0053-real-cid-import-fixes.md) | 134/134 real vendor CIDs import and run (PhyComAddr, unnamed reports) | Audit + native start of all 134; regression tests |
+| [0054](2026/0054-clean-ui-restructure.md) | Clean four-place UI restructure with merged features and format 12 | Browser walkthrough with real CIDs, probe evidence; owner acceptance pending |

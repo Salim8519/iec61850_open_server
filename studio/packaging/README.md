@@ -5,14 +5,19 @@ Double-click SubstationStudio.exe. It opens the browser and keeps a small consol
 window running. Do not copy the executable without its _internal folder.
 No Docker, Node or separately installed Python is needed at runtime.
 
-Use IEDs & Signals to import a CID/ICD/SCD or create a laboratory bay controller.
+Use Devices to import a CID/ICD/SCD or add a sample IED.
 Import first asks which IEDs to add; GOOSE peers are not started automatically.
 Delete IED previews affected bindings/sources/steps and saves a recovery project
 under data/recovery. Physical drawing equipment and original CID files remain.
-Add equipment in Substation, select it and bind its status/control in the inspector.
-Run starts MMS workers at the addresses shown under Connections.
-Loopback listeners are accessible only on the same PC. LAN setup is not included.
-Scenarios can set/check signal values at scheduled times and pause with automation.
+Add equipment in Diagram › Add, select it and connect it in the sheet on the right.
+Run starts MMS workers at the addresses shown in each device's Overview. By default they listen
+on private loopback addresses reachable only from this PC. Settings › Network › Set up lab
+network previews and, after a Windows administrator prompt, adds non-persistent
+addresses and one narrow firewall rule to a chosen adapter; Clean up removes only
+what Studio added. GOOSE needs the free Npcap driver installed by you (npcap.com);
+Studio never bundles it. Real IEDs connects read-only to real devices: it uses only
+free report blocks, gives them back on Stop, polls otherwise, and never operates them.
+Test › Sequences set/check signal values at scheduled times and pause with automation.
 CSV sources support explicit time/value columns, hold/linear interpolation and repeat.
 The complete trace stays inside the project archive. SCL schema diagnostics appear
 under the selected IED; unsupported revisions are not silently treated as valid.
@@ -29,7 +34,7 @@ new saves; retain your pre-upgrade recovery backups.
 
 Signal mapping follows IED, report, description and exact path; All signals is an
 explicit alternative. Report selection filters mapping choices, not subscriptions.
-Signal Test saves independent value controls and Boolean pulses without SLD symbols.
+Test › Test points saves value controls and Boolean pulses without SLD symbols.
 Pulse timing continues in the backend while automation is paused; Stop cancels it.
 Newer writes win over delayed pulse returns. Resume automatic source explicitly
 after a manual override. CB/DS/ES motion visualizes confirmed feedback only.

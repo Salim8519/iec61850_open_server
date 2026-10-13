@@ -3,7 +3,7 @@ import hashlib
 from studio_app.contracts.errors import StudioError
 
 IED_FIELDS = ("id", "name", "filename", "ip", "port", "role", "live", "lab_ip", "goose_publish")
-CURRENT_FORMAT = 11
+CURRENT_FORMAT = 12
 COMPACT_FORMATS = set(range(2, CURRENT_FORMAT + 1))
 
 

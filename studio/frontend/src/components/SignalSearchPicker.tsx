@@ -66,7 +66,7 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
           <span className={`signal-dot ${triggerable ? 'writable' : 'readonly'}`} aria-hidden="true" />
           <span className="signal-search-text" title={signal.ref}>
             <strong>{signal.description || shortRef(signal.ref, ied?.name)}</strong>
-            <small>{signal.kind} · {signal.fc}</small></span>
+            <small>{signal.description ? `${shortRef(signal.ref, ied?.name)} · ` : ''}{signal.kind} · {signal.fc}</small></span>
           {taken ? <span className="badge live">Added ✓</span> :
             <button className={triggerable ? 'primary' : ''} disabled={disabled || loading}
               title={triggerable ? 'Choose this signal' : 'Choose as display-only'}

@@ -87,7 +87,15 @@ class RealSession:
                    for dataset in self.ied.get("datasets", []) if dataset.get("ref") == report.get("dataset_ref")
                    for ref in dataset.get("signal_refs", [])}
         self.status["polling"] = [item for item in self.watched if item["ref"] not in covered]
-        self._set("live", "Receiving live values" + (" by report" if used else " by polling"))
+        if used and self.status["polling"]:
+            how = "Receiving live values by report, and polling the rest"
+        elif used:
+            how = "Receiving live values by report"
+        elif self.status["polling"]:
+            how = "Receiving live values by polling"
+        else:
+            how = "Connected. Use 'Read these now' below to read values from the device"
+        self._set("live", how)
         while not self.stopping.is_set() and not self.lost.is_set():
             if self.status["polling"]:
                 self.read(self.status["polling"], "live_poll")

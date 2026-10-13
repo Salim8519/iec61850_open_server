@@ -10,13 +10,18 @@ HINTS = {
 }
 
 
+# Control-block service attributes (GoCB, RCB, logs, SV) are not engineering data points.
+CONTROL_BLOCK_FCS = {"GO", "GS", "MS", "US", "RP", "BR", "LG", "SV"}
+
+
 def _device_index(discovery):
     leaves, datasets, reports = {}, {}, set()
     for device in discovery.get("devices", []):
         for node in device.get("nodes", []):
             owner = f"{device['name']}/{node['name']}"
             for leaf in node.get("leaves", []):
-                leaves[(leaf["ref"], leaf["fc"])] = leaf.get("mms_type")
+                if leaf["fc"] not in CONTROL_BLOCK_FCS:
+                    leaves[(leaf["ref"], leaf["fc"])] = leaf.get("mms_type")
             for name, entry in node.get("dataset_members", {}).items():
                 datasets[f"{owner}${name}"] = [m.split("[")[0] for m in entry.get("members", [])]
             for kind, names in (("BR", node.get("buffered_reports", [])), ("RP", node.get("unbuffered_reports", []))):

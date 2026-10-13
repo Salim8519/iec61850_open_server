@@ -1,0 +1,13 @@
+/* Diagram page: floating add menu with large labelled tiles. */
+.add-menu { width: 460px; max-height: 70vh; overflow: auto; padding: 12px; display: grid; gap: 10px; }
+.add-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.add-tile { display: grid; justify-items: center; gap: 6px; min-height: 96px; padding: 12px 8px; white-space: normal;
+  text-align: center; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+  font-size: 13px; font-weight: 550; color: var(--text); cursor: grab; }
+.add-tile:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.add-tile svg { color: var(--text-2); }
+.add-tile:hover svg { color: var(--accent); }
+.signal-pick { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; min-width: 0;
+  border: 1px solid var(--accent-line); border-radius: var(--radius-small); background: var(--accent-soft); }
+.react-flow__controls { border: 1px solid var(--border); box-shadow: var(--shadow); border-radius: 10px; overflow: hidden; margin: 20px; }
+.react-flow__controls-button { width: 36px; height: 36px; min-height: 36px; border-radius: 0; padding: 0; }

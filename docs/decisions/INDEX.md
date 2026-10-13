@@ -29,3 +29,9 @@
 | [0025](ADR-0025-properties-cards-and-canvas-clarity.md) | Properties cards, setup checklist, canvas clarity, no-op save guard |
 | [0026](ADR-0026-configurable-state-colours.md) | Configurable state colours for two-state equipment |
 | [0027](ADR-0027-canvas-editing-ergonomics.md) | Canvas multi-select, clipboard shortcuts and terminal hit targets |
+| [0028](ADR-0028-beginner-guidance-and-network-tabs.md) | Beginner guidance kit, Network/Real IEDs tabs, protected feature specs |
+| [0029](ADR-0029-lab-network-and-format-11.md) | Guided lab network, elevated helper, append-only journal, format 11 |
+| [0030](ADR-0030-goose-with-user-installed-npcap.md) | Layer-2 GOOSE with pinned SDK, delay-loaded user-installed Npcap |
+| [0031](ADR-0031-read-only-live-acquisition.md) | Read-only live acquisition from real IEDs and SCD comparison |
+| [0032](ADR-0032-clean-four-place-ui.md) | Clean four-place UI (Diagram, Devices, Test, Settings) and design system v2 |
+| [0033](ADR-0033-feature-consolidation-format-12.md) | Feature consolidation, retired legacy kinds, project format 12 |

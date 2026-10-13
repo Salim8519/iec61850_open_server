@@ -120,8 +120,6 @@ def validate_diagram(value, ieds):
             raise StudioError("Only a relay accepts named status entries")
         if data["kind"] == "RELAY":
             _validate_relay(data, ieds)
-        if data["kind"] != "BUSBAR" and data.get("width") is not None:
-            raise StudioError("Only a busbar accepts a drawn width")
         _validate_state(data, ieds)
         _validate_control(data, ieds)
         binding = data.get("control_binding")

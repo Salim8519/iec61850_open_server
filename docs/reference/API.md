@@ -51,6 +51,28 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 Equipment actions are Open/Close for CB/DS/ES, Operate/Reset for Trip Relay and
 Press for a Push Button. The server rejects mixed `action` and `value`.
 
+## Network, GOOSE and real IEDs
+
+| Method/path | Input | Result / invariant |
+| --- | --- | --- |
+| `GET /network` | - | Network mode and Npcap status |
+| `PUT /network` | `{mode,adapter_guid?,adapter_label?}` | Stopped-only; endpoint conflicts refused |
+| `GET /network/adapters` | `refresh=1` | Windows adapters with IPv4 addresses (cached 10 s) |
+| `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints, change items, fingerprint |
+| `POST /network/plan/apply` | `{fingerprint,confirm:true}` | Re-plan; 409 if changed; elevated helper; enters lab mode |
+| `GET /network/cleanup/preview` | - | Outstanding owned items and fingerprint |
+| `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |
+| `PUT /ieds/{id}/settings` | `{role?,live?,lab_ip?,goose_publish?,port?}` | Stopped-only; SCL never rewritten |
+| `GET /goose` | - | Configured/observed GOOSE blocks, problems, unknown GOOSE |
+| `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
+| `GET /live/{id}/comparison` | - | SCD vs device categories, dataset and report diffs |
+| `GET /live/{id}/comparison.csv` | - | Same comparison as CSV |
+| `POST /live/{id}/read` | `{refs}` (max 500) | On-demand read; device errors reported, not values |
+
+New SSE kinds: `goose_publishing`, `goose_control`, `goose_status`, `goose_unknown`,
+`goose_listener_failed`, `live_status`, `live_stale`, `live_read_error`. Signal events
+from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
+
 ## Scenarios, tests and events
 
 | Method/path | Input | Result / invariant |

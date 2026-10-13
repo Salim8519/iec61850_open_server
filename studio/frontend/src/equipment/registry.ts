@@ -1,8 +1,5 @@
 import type { EquipmentKind } from '../api/types';
 
-/** Kinds kept for rendering saved diagrams but hidden from the library. */
-export const LEGACY_KINDS: EquipmentKind[] = ['TRANSFORMER', 'LOAD', 'BUSBAR'];
-
 export const equipment: { kind: EquipmentKind; label: string; subtitle: string }[] = [
   { kind: 'CB', label: 'Circuit breaker', subtitle: 'XCBR' },
   { kind: 'DS', label: 'Disconnector', subtitle: 'XSWI' },

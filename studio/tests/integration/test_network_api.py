@@ -73,5 +73,7 @@ def test_endpoint_override_keeps_scl(client):
     assert response.status_code == 200, response.json
     assert ied["live"]["ip"] == "10.20.30.40" and ied["role"] == "real"
     assert ied["source"] == source and "10.20.30.40" not in ied["source"]
-    bad = test_client.put(f"/api/v1/ieds/{ied['id']}/settings", json={"live": {"ip": "127.0.0.1"}})
+    bad = test_client.put(f"/api/v1/ieds/{ied['id']}/settings", json={"live": {"ip": "224.0.0.1"}})
     assert bad.status_code == 400 and "normal device address" in bad.json["error"]
+    lab = test_client.put(f"/api/v1/ieds/{ied['id']}/settings", json={"lab_ip": "127.0.0.9"})
+    assert lab.status_code == 400 and "normal device address" in lab.json["error"]

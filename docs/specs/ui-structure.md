@@ -1,0 +1,31 @@
+# Spec: UI structure and design system
+
+Decision: [ADR-0032](../decisions/ADR-0032-clean-four-place-ui.md) and
+[ADR-0033](../decisions/ADR-0033-feature-consolidation-format-12.md).
+Owner request (2026-10-14): the app must feel clean and organised like an iPhone,
+be easy for beginners and older users, and still be pro level.
+
+## Behaviour contract
+
+- Four places in a left sidebar: **Diagram, Devices, Test, Settings**. The top bar
+  shows the page title, one short subtitle, the File menu and one Run/Stop button.
+- Text and controls are large: 15 px base text, 40 px controls, 44 px primary
+  actions, AA contrast. Sizes are in rem so browser zoom scales everything.
+- Each form shows the common choice first. Rare options live in one "Advanced"
+  disclosure (`ui/Disclosure.tsx`).
+- One implementation per job: `features/test/signalActions.ts` is the only code
+  that sets, pulses or resumes simulated values or saves a generator;
+  `ValueControl` and `SourceEditor` are the only widgets for that.
+- Hidden legacy kinds TRANSFORMER, LOAD and BUSBAR are retired (format 12).
+
+## Rules
+
+| ID | Rule | Enforced by |
+| --- | --- | --- |
+| UI-01 | The sidebar has exactly the four places, in order, each with a plain subtitle. | `studio/tests/frontend/uiStructure.test.ts::sidebar has exactly four places` |
+| UI-02 | Base text is at least 15 px, small text 13 px, controls 40 px and primary actions 44 px. | `studio/tests/frontend/uiStructure.test.ts::tokens keep text and controls large` |
+| UI-03 | Text, accent and status colours meet WCAG AA contrast on the surfaces they use. | `studio/tests/frontend/uiStructure.test.ts::token colours meet AA contrast` |
+| UI-04 | Polarity, push-button modes and colours are only shown inside Advanced. | `studio/tests/frontend/uiStructure.test.ts::rare equipment options live under Advanced` |
+| UI-05 | Retired kinds are rejected by the backend and absent from the frontend; old projects drop them with a notice. | `studio/tests/unit/test_diagram_drawing.py::test_retired_kinds_are_rejected`, `studio/tests/unit/test_diagram_drawing.py::test_format_12_migration_retires_legacy_kinds_and_their_wires`, `studio/tests/frontend/uiStructure.test.ts::retired equipment kinds are gone from the frontend` |
+| UI-06 | Value writes and generator saves have exactly one implementation each. | `studio/tests/frontend/uiStructure.test.ts::one value control and one generator editor` |
+| UI-07 | Real vendor files import even when they use PhyComAddr attributes or unnamed report blocks. | `studio/tests/unit/test_real_world_scl.py::test_phycomaddr_attributes_import`, `studio/tests/unit/test_real_world_scl.py::test_unnamed_report_block_is_skipped_with_warning` |

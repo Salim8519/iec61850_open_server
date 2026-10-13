@@ -12,6 +12,7 @@
 - [Fixed layout](design/layout.md)
 - [Interactions](design/interactions.md)
 - [Append-only engineering history](history/INDEX.md)
+- [Feature specifications](specs/README.md)
 - [Decisions](decisions/INDEX.md)
 - [Changes](changes/INDEX.md)
 - [Acceptance and evidence](testing/acceptance.md)

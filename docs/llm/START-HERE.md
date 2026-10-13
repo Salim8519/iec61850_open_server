@@ -11,9 +11,11 @@ a gap between them.
    unresolved decisions.
 3. [File ownership](../reference/FILE-MAP.md), then the relevant architecture and
    design documents linked from [the documentation index](../INDEX.md).
-4. [API reference](../reference/API.md) and [algorithms](../reference/ALGORITHMS.md)
+4. [Feature specifications](../specs/README.md) for any feature you touch. Rules
+   there are contracts with enforcing tests; change a rule before its code.
+5. [API reference](../reference/API.md) and [algorithms](../reference/ALGORITHMS.md)
    before changing a boundary or duplicating behavior.
-5. Query [engineering history](../history/INDEX.md) by file, tag or text. Read the
+6. Query [engineering history](../history/INDEX.md) by file, tag or text. Read the
    linked decision and change records for the affected behavior.
 
 ## Work loop

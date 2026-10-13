@@ -13,6 +13,11 @@ def _adapter_networks(adapter):
     return networks
 
 
+def on_link(address, adapter):
+    """True when the address lies in a network the adapter is already on (so ARP can check it)."""
+    return any(ipaddress.IPv4Address(address) in network.network for network in _adapter_networks(adapter))
+
+
 def _scd_interface(ied):
     address = ied.get("scl_address") or {}
     if not address.get("ip"):

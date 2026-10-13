@@ -13,7 +13,7 @@ TYPES = {
     "VisString65": 18, "VisString129": 19, "VisString255": 20,
     "Unicode255": 21, "Timestamp": 22, "Quality": 23, "Check": 24,
     "Dbpos": 25, "Tcmd": 25, "Struct": 27, "EntryTime": 28,
-    "Currency": 30, "OptFlds": 31, "TrgOps": 32, "ObjRef": 19, "EntryID": 15,
+    "Currency": 30, "OptFlds": 31, "TrgOps": 32, "ObjRef": 19, "EntryID": 15, "PhyComAddr": 29,
 }
 FCS = {name: index for index, name in enumerate(
     "ST MX SP SV CF DC SG SE SR OR BL EX CO US MS RP BR LG GO".split())}
@@ -59,7 +59,7 @@ def initial_value(kind, text, enum_values):
 
 def config_initial(kind, value):
     if kind in {"Struct", "Timestamp", "Quality", "Check", "Dbpos", "Tcmd",
-                "EntryTime", "EntryID", "Octet64", "Octet6", "Octet8"}:
+                "EntryTime", "EntryID", "Octet64", "Octet6", "Octet8", "PhyComAddr"}:
         return ""
     if isinstance(value, str):
         if any(char in value for char in ('"', '\n', '\r')):

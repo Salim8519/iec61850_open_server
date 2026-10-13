@@ -1,13 +1,10 @@
 # Interaction contract
 
-- Drag equipment to canvas; connect terminals; select to edit in inspector.
+- Add equipment from Diagram › Add (click or drag a tile); connect terminals; select to edit in the sheet.
 - Junctions are drawing-only connection points with four terminals and no
   mappings, start position or rotation; wiring is free-form and may dangle.
 - Every terminal may connect to every terminal; wires may leave equipment from
   any side. Existing saved wiring keeps its behavior.
-- A selected busbar can be drag-resized while stopped; its drawn length saves
-  with the diagram and follows the same undo, revision and runtime lock rules
-  as moving equipment.
 - A relay is a named status panel, not a wire-path object: no terminals, one
   row per status entry with its live value. Entries are added, named and
   re-assigned while stopped against any imported signal; while running a
@@ -17,7 +14,9 @@
   remove, and a Triggerable/Display-only tag visible while stopped. A single
   Pulse button names its target, the opposite of the current Boolean value.
   "Add signals" opens an inline picker that stays open for several adds.
-- Canvas highlight and inspector are projections of the same selected object ID.
+- Canvas highlight and sheet are projections of the same selected object ID.
+- Choosing a breaker/switch command fills its position from that control's status
+  point when no position is mapped; the user can change it.
   A persisted diagram update must not clear one without clearing the other.
 - Live values use keyed equipment subscriptions. Unrelated reports and Event Log
   updates must not recreate, hide or remeasure unaffected canvas equipment.
@@ -94,3 +93,10 @@
   signal and control pickers preselect it; nothing saves until a point is chosen.
 - Diagram edits that change no persisted field (for example React Flow size
   measurement on load or selection) are not saved and create no revision.
+
+Guided network and real-IED work (ADR-0028, ADR-0029, ADR-0031):
+- Windows changes are listed in plain sentences before Apply; nothing changes until
+  Apply, and the administrator prompt is announced first.
+- Every conflict, GOOSE problem and live state shows a fix hint next to it.
+- Real IEDs never receive commands; the refusal is shown, not hidden.
+- Old live values after a lost connection are marked "Old value", never shown as fresh.

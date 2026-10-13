@@ -26,7 +26,7 @@ def test_format_10_opens_in_loopback_mode(tmp_path):
     legacy = _as_format(source, 10)
     projects = ProjectService(tmp_path / "b")
     projects.restore(legacy)
-    assert CURRENT_FORMAT == 11
+    assert CURRENT_FORMAT >= 11
     assert projects.project["network"] == {"mode": "loopback", "adapter_guid": "", "adapter_label": ""}
     ied = projects.project["ieds"][0]
     assert ied["role"] == "simulated" and ied["lab_ip"] == "" and ied["goose_publish"] is True

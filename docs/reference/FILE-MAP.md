@@ -24,10 +24,21 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Runtime evidence | `observability/log_writer.py`, `tools/query_runtime_logs.py` |
 | Frontend API/contracts | `frontend/src/api/client.ts`, `api/types.ts` |
 | Shared tab/state flow | `frontend/src/state/useStudio.ts` |
-| Equipment properties | `frontend/src/features/substation/Inspector.tsx` and focused editors |
-| Canvas selection/clipboard/shortcuts | `features/substation/Canvas.tsx`, `useCanvasShortcuts.ts`, `frontend/src/equipment/clipboard.ts` |
+| Equipment sheet | `frontend/src/features/diagram/EquipmentSheet.tsx`, `SheetSettings.tsx`, `equipmentFields.ts` |
+| Canvas selection/clipboard/shortcuts | `features/diagram/Canvas.tsx`, `DiagramPage.tsx`, `useCanvasShortcuts.ts`, `equipment/clipboard.ts` |
+| App shell and places | `frontend/src/app/App.tsx`, `Sidebar.tsx`, `TopBar.tsx`, `places.ts` |
+| Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
+| Devices | `features/devices/` (list, detail, connection, data points, compare, files) |
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |
 | Engineering history | `tools/history_log.py`, `docs/history/ledger-*.jsonl` |
+| Lab network workflow | `networking/service.py`, `address_plan.py`, `change_plan.py`, `journal.py`, `helper/` |
+| Network/IED settings, format 11 | `domain/network_settings.py`, `projects/ied_settings.py` |
+| SCL communication and GOOSE | `scl/communication.py`, `goose_controls.py`, `goose_links.py` |
+| GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |
+| GOOSE observation and LGOS | `native/live/goose_traffic.cpp`, `acquisition/goose_monitor.py`, `domain/goose_supervision.py` |
+| Real IED client | `native/live/`, `acquisition/real_session.py`, `live_values.py`, `domain/model_compare.py`, `access_policy.py` |
+| Guided UI and wording | `frontend/src/ui/`, `frontend/src/copy/`, `features/network/`, `features/settings/` |
+| Feature contracts | `docs/specs/`, `studio/tools/check_specs.py` |
 | Repository verification | `studio/tools/verify.py` and `check_*.py` |
 
 Tests mirror these boundaries under `studio/tests/unit`, `integration`, `protocol`,

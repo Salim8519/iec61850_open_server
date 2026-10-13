@@ -1,6 +1,6 @@
 import type { Node, Edge } from '@xyflow/react';
 
-export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'TRANSFORMER' | 'SOURCE' | 'LOAD' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'BUSBAR' | 'JUNCTION';
+export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'SOURCE' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'JUNCTION';
 export type SignalBinding = { ied_id: string; report_ref: string | null; ref: string };
 export type StateMapping =
   | { mode: 'direct'; source: SignalBinding }
@@ -10,7 +10,7 @@ export type ControlCompatibility = 'standard' | 'concen_inverted_sbow';
 export type ControlBinding = { ied_id: string; ref: string; compatibility?: ControlCompatibility };
 export type RelayStatus = { id: string; label: string; source: SignalBinding };
 export type EquipmentData = {
-  label: string; kind: EquipmentKind; rotation: number; width?: number | null;
+  label: string; kind: EquipmentKind; rotation: number;
   state_mapping?: StateMapping | null; control_binding?: ControlBinding | null;
   relay_statuses?: RelayStatus[];
   trip_command_polarity?: 'operate_false' | 'operate_true';
@@ -37,10 +37,20 @@ export type Ied = {
     errors: { line: number; message: string }[] };
   reports: { name: string; ref: string; dataset: string; dataset_ref: string | null; buffered: boolean;
     signal_count: number; unresolved: { ref: string; fc: string }[] }[];
+  role: IedRole; live: LiveSettings; lab_ip: string; goose_publish: boolean;
+  scl_address: { ip: string; subnet: string; gateway: string; access_point: string } | null;
+  goose: { publishes: GooseControl[]; subscribes: (GooseControl & { publisher: string;
+    inputs: { int_addr: string; desc: string; source: string }[] })[]; diagnostics: string[] };
+  goose_state?: { active?: boolean; requested?: boolean; reason?: string };
 };
+export type IedRole = 'simulated' | 'real' | 'off';
+export type LiveSettings = { ip: string; port: number; access: 'auto_reports' | 'polling'; poll_ms: number };
+export type GooseControl = { name: string; gocb_ref: string; go_id: string; dataset_ref: string; app_id: number;
+  mac: string; vlan_id: number; vlan_priority: number; conf_rev: number };
+export type NetworkSettings = { mode: 'loopback' | 'lab'; adapter_guid: string; adapter_label: string };
 export type Project = {
   id: string; name: string; session_id: string; revision: number;
-  ieds: Ied[]; diagram: Diagram; runtime: string;
+  ieds: Ied[]; diagram: Diagram; runtime: string; network: NetworkSettings;
   scenarios: Scenario[];
   test_panel: TestControl[];
   sources: { ied_id: string; ref: string; spec: SourceSpec }[];

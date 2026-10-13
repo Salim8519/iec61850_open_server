@@ -33,6 +33,7 @@ def test_frozen_server_serves_ui_and_protects_api(tmp_path):
         assert error.value.code == 401
         assert (FOLDER / "_internal/native/studio_ied.exe").is_file()
         assert (FOLDER / "_internal/native/studio_probe.exe").is_file()
+        assert (FOLDER / "_internal/native/studio_live.exe").is_file()
         duplicate = subprocess.run([str(FOLDER / "SubstationStudio.exe"), "--no-browser",
                                     "--port", "0", "--data-dir", str(tmp_path)],
                                    capture_output=True, text=True, timeout=15)

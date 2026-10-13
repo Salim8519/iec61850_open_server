@@ -1,6 +1,6 @@
 import { memo, useCallback, useContext, useEffect, useRef,
   useSyncExternalStore } from 'react';
-import { Handle, NodeResizer, Position, type NodeProps } from '@xyflow/react';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { EquipmentNode as NodeType } from '../api/types';
 import { EquipmentSymbol } from './symbols/EquipmentSymbol';
 import { switchPosition, tripRelayState } from './position';
@@ -32,7 +32,6 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const junction = data.kind === 'JUNCTION';
   const relay = data.kind === 'RELAY';
   const terminalLess = data.kind === 'PUSH_BUTTON';
-  const resizable = data.kind === 'BUSBAR';
   const category = kindInfo(data.kind).category;
   const tone = data.kind === 'PUSH_BUTTON' && !pushStatus ? (data.control_binding ? 'live' : 'unmapped') :
     stateTone(linked, value);
@@ -42,16 +41,12 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const fill = stateFill(data, position, value, linked);
   const fillColor = scheme && (fill === 'active' ? scheme.active : fill === 'inactive' ? scheme.inactive : null);
   const paint = fillColor ? paintFor(fillColor) : undefined;
-  const style = resizable && data.width ? { width: data.width } : undefined;
-  return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}`}
-    style={style}>
-    {resizable && <NodeResizer isVisible={selected} minWidth={80} maxWidth={2400} />}
+  return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}`}>
     {!terminalLess && <Handle id="north" type="target" position={Position.Top} />}
     {!terminalLess && <Handle id="west" type="target" position={Position.Left} />}
     {junction ? <div className="equipment-symbol" title="Drag to move · drag a terminal to wire"><JunctionBody nodeId={id} /></div> :
     <div className="equipment-symbol" style={{ transform: `rotate(${data.rotation || 0}deg)` }}>
       <EquipmentSymbol kind={data.kind} position={position} animate={animate} paint={paint}
-        width={resizable ? data.width || undefined : undefined}
         operated={data.kind === 'TRIP_RELAY' ?
           value === undefined || value === null ? undefined : value === operatedValue :
           pushStatus && typeof value === 'boolean' ? value : undefined} />

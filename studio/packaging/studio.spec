@@ -6,7 +6,7 @@ studio = Path(SPECPATH).parent
 workspace = studio.parent
 native = Path(os.environ.get("STUDIO_BUILD_NATIVE", studio / "native/build/Release"))
 frontend = Path(os.environ.get("STUDIO_BUILD_FRONTEND", studio / "frontend/dist"))
-required = [native / "studio_ied.exe", native / "studio_probe.exe",
+required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe",
             frontend / "index.html"]
 for path in required:
     if not path.exists():
@@ -16,6 +16,7 @@ analysis = Analysis(
     [str(studio / "packaging/entrypoint.py")],
     pathex=[str(studio / "backend")],
     binaries=[(str(native / "studio_ied.exe"), "native"),
+              (str(native / "studio_live.exe"), "native"),
               (str(native / "studio_probe.exe"), "native")],
     datas=[(str(frontend), "frontend"),
            (str(studio / "schemas"), "schemas"),

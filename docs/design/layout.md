@@ -1,57 +1,46 @@
-# Fixed visual design
+# Fixed visual design (v2, ADR-0032)
 
 | Token | Value |
 | --- | --- |
-| Background | #F0F5FA |
-| Surface | #FFFFFF |
-| Text | #16324F |
-| Muted text | #52677E |
-| Border | #D5E1EC |
-| Primary | #1D4ED8 |
-| Header | #112B46 with white text |
-| Accent | #0F766E on #E5F5F2 |
-| Instrument category | #6D28D9 on #F1EAFF |
-| Success | #15803D |
-| Warning | #B45309 |
-| Error | #B91C1C |
-| Font | System UI, 14px body; monospace references |
-| Spacing | 4, 8, 12, 16, 24, 32px |
-| Controls | Minimum 36px height, 6px radius |
+| Background | #F5F6F8 |
+| Surface | #FFFFFF (sidebar, top bar, cards, sheets) |
+| Text / secondary / tertiary | #111827 / #4B5563 / #6B7280 |
+| Border | #E5E7EB, strong #D1D5DB |
+| Accent | #2563EB on #EFF6FF (one accent only) |
+| Success / Warning / Error | #15803D / #B45309 / #B91C1C with soft tints |
+| Font | System UI, 15 px base, scale 13/15/17/20/26, line-height 1.5, rem units |
+| Controls | 40 px high, primary actions 44 px, 8–10 px radius, 20 px icons |
+| Contrast | WCAG AA for text, accent and status colours (enforced by a test) |
 
-56px header. 240px left palette/tree. 320px right inspector. The canvas takes the
-remaining area. Bottom event drawer starts collapsed. Panels collapse at narrow
-widths. Target 1366x768 and 1920x1080.
+Shell: 232 px white sidebar with four places (Diagram, Devices, Test, Settings at the
+bottom with Activity) that collapses to 72 px icons below 1100 px; a 64 px top bar
+with page title, one-line subtitle, File menu, run state words and one Run/Stop pill.
+Pages scroll inside a centred 1440 px column with 20 px gaps between cards.
+Targets: 1366×768 and 1920×1080.
 
-Tabs: Substation, IEDs & Signals, Signal Test, Scenarios, Connections.
-Persistent actions: Save, Run, Pause Automation, Stop and validation status.
-No gradients, decorative dashboards, external fonts or remote runtime assets.
-Use SVG equipment, line terminals, a light grid and restrained selection colour.
+Calm rules: one title and one subtitle per page; one primary action per area; rare
+options inside a single "Advanced" disclosure; hints only in empty states, wizards
+and unclear settings; jargon through a "?" InfoTip. No gradients, decorative
+dashboards, external fonts or remote runtime assets.
 
-The user requested a richer color treatment on 2026-09-09. Use a navy header,
-blue active navigation/cards and restrained teal/violet library category accents.
-Library accents describe equipment categories, never energized or protection state.
-Status text and geometry remain authoritative; error/danger uses red consistently.
+Diagram: full-height canvas on #FBFCFD with a floating toolbar (Add, Undo, Redo) and
+zoom controls bottom-left. Add opens large labelled tiles grouped Switching,
+Measuring, Protection & control, Drawing. The 380 px right sheet appears only when
+something is selected: status pill, Operate (while running), name and start position,
+"comes from" / "goes to" connections, then Advanced and object actions.
 
-Signal Test uses the same surface cards and tokens, with an adaptive card grid.
-Report selection and full selectable paths precede signal selection in mapping pickers.
-CB contacts translate and DS/ES blades rotate over 300 ms after confirmed feedback.
-Unknown/invalid states do not resemble confirmed Open; reduced motion disables
-interpolation. IED deletion checkboxes are independent of the selected data-model card.
-Trip relay uses the shared instrument palette but a distinct coil/contact symbol.
-Its text states are Reset, Operated, Awaiting and Invalid; colour is supplementary.
-Push Button uses one symbol with momentary-SPC, latching-status and self-resetting
-behaviors and no wire terminals; it is pressed by clicking it on the canvas.
-Analog Source configuration stays in Equipment Properties and uses shared controls.
-Relay panels use a violet-tinted header (name, signal count) and one row per
-signal with a value chip: filled marker `1`, hollow `0`, dashed `—` for no value,
-plain text otherwise. Rows never overflow the panel; long text ellipsizes.
-Properties (ADR-0025): a header card (category tile, friendly type, Ready/Setup
-needed checklist, icon actions) then bordered section cards with a tinted title
-band and a worded tag (Reads from IED, Sends command, Live, Simulation). While
-running, the Live/Operate card comes first. Canvas cards carry a category accent
-bar; state pills use dashed (not mapped), dotted (awaiting) or solid (live) borders.
-State fills (ADR-0026): two-state objects fill their canvas card with a per-object
-colour for the confirmed state (defaults: CB/DS/ES Closed green, Open white; Trip
-relay Operated red, Reset white; Push button Pressed/Latched green, Released white).
-Intermediate is dashed amber and Invalid dashed red. Text contrast is automatic;
-state text and symbol geometry stay authoritative. Category accents stay separate.
+Devices: 280 px list (name, data points, role/status pill) beside one detail card
+with a Simulate / Real device / Off segmented control and tabs Overview, Data points,
+Compare with SCD (real devices) and Files. Test and Settings switch sections with a
+segmented control.
+
+Status display: words + icon + border pattern (solid good/info, dotted waiting,
+dashed warning/off, double problem); colour only repeats the words. Library category
+accents describe equipment families, never energized or protection state.
+
+Equipment (unchanged rules): CB contacts translate and DS/ES blades rotate over
+300 ms after confirmed feedback; Unknown/Invalid never resemble Open; reduced motion
+disables interpolation. Trip relay states Reset/Operated/Awaiting/Invalid; push button
+has no terminals and is pressed by clicking it. Relay panels show one row per signal
+with a value chip (filled 1, hollow 0, dashed —). State fills (ADR-0026) colour only
+the moving part; Intermediate is dashed amber and Invalid dashed red.

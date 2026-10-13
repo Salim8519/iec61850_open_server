@@ -9,7 +9,12 @@ def bits(element, pairs):
     return sum(bit for key, bit in pairs if element.get(key) == "true")
 
 
-def compile_reports(ln, ld_inst, lines):
+def usable_reports(ln):
+    """ReportControl elements with a name; unnamed ones cannot be served or addressed."""
+    return [report for report in ln.findall("ReportControl") if (report.get("name") or "").strip()]
+
+
+def compile_reports(ln, ld_inst, lines, warnings=None):
     datasets = []
     reports = []
     for dataset in ln.findall("DataSet"):
@@ -39,7 +44,11 @@ def compile_reports(ln, ld_inst, lines):
             members.append(member + index + component)
         lines.append("}")
         datasets.append({"name": name, "members": members})
-    for report in ln.findall("ReportControl"):
+    skipped = len(ln.findall("ReportControl")) - len(usable_reports(ln))
+    if skipped and warnings is not None:
+        warnings.append(f"{skipped} report block(s) in {ld_inst}/{ln.get('lnClass', 'LLN0')} have no name in the "
+                        "file and were skipped. Ask the IED engineer to fix the CID.")
+    for report in usable_reports(ln):
         name = identifier(report.get("name"), "report control")
         ds = identifier(report.get("datSet"), "report dataset") if report.get("datSet") else "-"
         if ds != "-" and ds not in {item["name"] for item in datasets}:

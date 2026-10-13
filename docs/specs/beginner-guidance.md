@@ -6,14 +6,16 @@ hints everywhere.
 
 ## Purpose
 
-People who do not know IEC 61850 must be able to use the Network and Real IEDs
-features without a manual. Jargon is explained where it appears, every field has a
-hint, and every status says in words what happened and what to do next.
+People who do not know IEC 61850 must be able to use every screen without a manual.
+Jargon is explained where it appears (a small "?"), screens carry one short subtitle,
+and every status says in words what happened and what to do next. After the owner
+review of 2026-10-14 hints are not placed under every field: they appear in empty
+states, wizards and next to settings whose meaning is not obvious (ADR-0032).
 
 ## Behaviour contract
 
 - Shared components only: `Hint`, `InfoTip`, `EmptyState`, `StepWizard`,
-  `StatusPill` in `studio/frontend/src/components/guide/`. No feature builds its own.
+  `StatusPill`, `Disclosure`, `SegmentedControl`, `Menu` in `studio/frontend/src/ui/`.
 - All wording lives in `studio/frontend/src/copy/`. Components never hard-code hint
   text, so the wording can be reviewed and tested in one place.
 - A status is always text plus an icon plus a line pattern; colour is only extra.

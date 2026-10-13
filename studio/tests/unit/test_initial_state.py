@@ -38,7 +38,7 @@ def test_initial_states_apply_saved_positions_per_mapping_mode():
                 "closed": {"ied_id": "ied", "ref": "closed", "report_ref": None}}
     nodes = [equipment("CB", position="closed"), equipment("DS"),
              equipment("ES", mode="single_to_dbpos", position="closed"),
-             equipment("ES", mapping=contacts), equipment("LOAD", position="closed")]
+             equipment("ES", mapping=contacts), equipment("CT", position="closed")]
     coordinator = FakeCoordinator(nodes)
     apply_initial_states(coordinator)
     (ied, items, source), = coordinator.sample_writer.calls

@@ -8,7 +8,7 @@ from uuid import uuid4
 from studio_app.contracts.errors import StudioError
 from studio_app.projects.ied_settings import update_network
 from . import adapters as adapter_list
-from .address_plan import plan_addresses, validate_manual
+from .address_plan import on_link, plan_addresses, validate_manual
 from .arp_probe import addresses_in_use
 from .change_plan import build_plan, describe, describe_removal
 from .elevation import ElevationCancelled, helper_command, run_elevated
@@ -58,11 +58,17 @@ class NetworkService:
                 except ValueError as error:
                     row.update(status="invalid_manual", hint=str(error))
         own = {item["ip"] for item in adapter["addresses"]}
-        in_use = self._probe([row["proposed"] for row in rows if row["status"] == "ok" and row["proposed"] not in own])
+        candidates = [row["proposed"] for row in rows if row["status"] == "ok" and row["proposed"] not in own]
+        reachable = [address for address in candidates if on_link(address, adapter)]
+        in_use = self._probe(reachable)
         for row in rows:
             if row["proposed"] in in_use:
                 row.update(status="in_use_on_network", hint=f"Another device already answers on {row['proposed']}. "
                            "Pick a different address so the two do not clash.")
+            elif row["status"] == "ok" and not row["hint"]:
+                row["hint"] = ("No other device answered on this address." if row["proposed"] in reachable else
+                               "Not used on this PC. Devices in this new network can only be checked after the "
+                               "address is added; Windows reports a clash then.")
         ports = {ied.get("port", 102) for ied in ieds}
         plan = build_plan(adapter, rows, ports, self.program, self._list_rules())
         blocked = [row for row in rows if row["status"] not in {"ok", "already_on_adapter"}]

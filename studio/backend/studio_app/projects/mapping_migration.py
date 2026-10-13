@@ -2,6 +2,7 @@
 import copy
 
 SWITCHES = {"CB", "DS", "ES"}
+RETIRED_KINDS = {"TRANSFORMER", "LOAD", "BUSBAR"}
 LEGACY_FIELDS = {"ied_id", "status_ref", "control_ref", "report_ref", "status_kind", "position_values"}
 
 
@@ -48,11 +49,29 @@ def _button_edges(result, notices):
                        "buttons no longer accept connections")
 
 
+def _retire_legacy(result, notices):
+    """Format 12 removes the hidden legacy drawing kinds and the busbar width field."""
+    nodes = result.get("nodes", [])
+    retired = [node for node in nodes if node.get("data", {}).get("kind") in RETIRED_KINDS]
+    gone = {node.get("id") for node in retired}
+    result["nodes"] = [node for node in nodes if node.get("id") not in gone]
+    for node in result["nodes"]:
+        node.get("data", {}).pop("width", None)
+    edges = result.get("edges", [])
+    result["edges"] = [edge for edge in edges if edge.get("source") not in gone and edge.get("target") not in gone]
+    for node in retired:
+        data = node.get("data", {})
+        notices.append(f"{data.get('label', node.get('id'))}: old {data.get('kind', '').lower()} symbol removed "
+                       "(no longer supported); its wires were removed too")
+
+
 def migrate_diagram(value, ieds, version):
     result = copy.deepcopy(value)
-    if version >= 10:
-        return result, []
     notices = []
+    if version < 12:
+        _retire_legacy(result, notices)
+    if version >= 10:
+        return result, notices
     _button_edges(result, notices)
     if version >= 9:
         return result, notices

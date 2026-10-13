@@ -12,7 +12,7 @@ format 1 has a bounded 256 MiB recovery allowance. Older builds cannot read form
 See [compact archive decision](../decisions/ADR-0008-compact-projects.md).
 
 Format 3 added `test_panel` definitions and flat equipment mapping fields. Current
-writes use format 8 with independent typed mappings, equipment actions, Trip
+writes use format 12 with independent typed mappings, equipment actions, Trip
 command/state polarity and explicit external-control compatibility profiles.
 Formats 1/2 restore with no saved test controls; formats 1-3 migrate supported
 equipment mappings. Opening any format 1-7 archive first creates an exact verified
@@ -20,7 +20,11 @@ recovery copy. Formats 1-5 receive Trip command Operate=0 / Reset=1; format 6
 preserves its explicit command polarity. Every migrated Trip receives state
 Operated=1 / Reset=0. Format 7 preserves both explicit fields and migrates all
 controls to standard IEC behavior. Format 8 can explicitly store the warned
-`concen_inverted_sbow` DPC profile. Older builds reject newer formats.
+`concen_inverted_sbow` DPC profile. Format 11 (ADR-0029) adds `network`
+(mode, adapter) and per-IED `role`, `live`, `lab_ip` and `goose_publish`; formats
+2-10 open in loopback mode with every IED simulated. Format 12 (ADR-0033) retires the
+TRANSFORMER/LOAD/BUSBAR kinds and busbar width with a migration notice. Older builds
+reject newer formats.
 Native signal/control models are rebuilt; pulse timers and live overrides are not
 restored as actions. See the [mapping decision](../decisions/ADR-0009-report-mapping-and-signal-tests.md)
 and [typed control decision](../decisions/ADR-0011-typed-equipment-controls.md).

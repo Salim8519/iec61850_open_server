@@ -1,7 +1,7 @@
 import type { EquipmentData, EquipmentKind } from '../api/types';
 
 /** Library category; describes the equipment family, never energized or protection state. */
-export type Category = 'switchgear' | 'instrument' | 'source' | 'protection' | 'control' | 'drawing' | 'legacy';
+export type Category = 'switchgear' | 'instrument' | 'source' | 'protection' | 'control' | 'drawing';
 
 type KindInfo = { name: string; code: string; category: Category; state: string };
 
@@ -16,9 +16,6 @@ const INFO: Record<EquipmentKind, KindInfo> = {
   TRIP_RELAY: { name: 'Trip relay', code: 'SPC', category: 'protection', state: 'Trip state' },
   PUSH_BUTTON: { name: 'Push button', code: 'Boolean / SPC', category: 'control', state: 'Button state' },
   JUNCTION: { name: 'Junction', code: 'Drawing point', category: 'drawing', state: '' },
-  TRANSFORMER: { name: 'Power transformer', code: 'Legacy', category: 'legacy', state: 'State' },
-  LOAD: { name: 'Load', code: 'Legacy', category: 'legacy', state: 'State' },
-  BUSBAR: { name: 'Busbar', code: 'Legacy', category: 'legacy', state: 'State' },
 };
 
 export function kindInfo(kind: EquipmentKind): KindInfo {

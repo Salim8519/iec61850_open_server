@@ -202,8 +202,13 @@ class ProjectService:
                             "ieds": imported, "diagram": diagram,
                             "sources": sources, "scenarios": scenarios, "test_panel": panel,
                             "network": network}
-            details = notices or ["Existing controls remain in standard IEC 61850 mode."]
-            if version >= 10:
+            details = notices or (["No equipment was changed."] if version >= 11 else
+                                  ["Existing controls remain in standard IEC 61850 mode."])
+            if version >= 11:
+                message = (f"Project upgraded to format {CURRENT_FORMAT}. "
+                           + ("Old unsupported drawing symbols were removed." if notices else
+                              "Nothing in your diagram changed."))
+            elif version >= 10:
                 message = (f"Project upgraded to format {CURRENT_FORMAT}: network settings were added. "
                            "Every IED is still simulated on this PC only, exactly as before.")
             elif version >= 9:

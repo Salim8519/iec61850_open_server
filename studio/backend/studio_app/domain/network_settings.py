@@ -10,14 +10,14 @@ DEFAULT_NETWORK = {"mode": "loopback", "adapter_guid": "", "adapter_label": ""}
 DEFAULT_LIVE = {"ip": "", "port": 102, "access": "auto_reports", "poll_ms": 1000}
 
 
-def _ipv4(value, label, allow_empty=True):
+def _ipv4(value, label, allow_empty=True, allow_loopback=False):
     if value in ("", None) and allow_empty:
         return ""
     try:
         address = ipaddress.IPv4Address(str(value))
     except ValueError as error:
         raise ValueError(f"{label} must be an IPv4 address such as 192.168.1.20") from error
-    if address.is_loopback or address.is_multicast or address.is_unspecified:
+    if (address.is_loopback and not allow_loopback) or address.is_multicast or address.is_unspecified:
         raise ValueError(f"{label} must be a normal device address, not {address}")
     return str(address)
 
@@ -48,7 +48,9 @@ def validate_live(value):
     poll = value["poll_ms"]
     if isinstance(poll, bool) or not isinstance(poll, int) or not 250 <= poll <= 60000:
         raise ValueError("Polling interval must be between 250 ms and 60 s")
-    return {"ip": _ipv4(value["ip"], "Real IED address"), "port": _port(value["port"], "Real IED port"),
+    # A real device may also be another simulator on this PC, so loopback is allowed here.
+    return {"ip": _ipv4(value["ip"], "Real IED address", allow_loopback=True),
+            "port": _port(value["port"], "Real IED port"),
             "access": value["access"], "poll_ms": poll}
 
 

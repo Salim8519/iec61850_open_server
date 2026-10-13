@@ -9,7 +9,7 @@ const base = (kind: EquipmentData['kind'], extra: Partial<EquipmentData> = {}): 
 
 test('every kind has a friendly name and a category', () => {
   for (const kind of ['CB', 'DS', 'ES', 'CT', 'VT', 'SOURCE', 'RELAY', 'TRIP_RELAY', 'PUSH_BUTTON',
-    'JUNCTION', 'TRANSFORMER', 'LOAD', 'BUSBAR'] as const) {
+    'JUNCTION'] as const) {
     assert.ok(kindInfo(kind).name.length > 0);
     assert.ok(kindInfo(kind).category.length > 0);
   }

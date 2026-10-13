@@ -68,7 +68,7 @@ def test_tabs_share_session_revision_and_stale_tab_cannot_overwrite(app):
     client.post("/api/v1/session", json={"token": "test-session-token"})
     initial = client.get("/api/v1/project").json
     diagram = {"nodes": [{"id": "bus", "position": {"x": 0, "y": 0},
-                          "data": {"label": "Bus", "kind": "BUSBAR", "rotation": 0}}],
+                          "data": {"label": "Bus", "kind": "JUNCTION", "rotation": 0}}],
                "edges": []}
     saved = client.put("/api/v1/project/diagram", json={
         "diagram": diagram, "revision": initial["revision"], "tab_id": "tab-a"})

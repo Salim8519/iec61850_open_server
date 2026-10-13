@@ -29,3 +29,5 @@ function(studio_delay_load_npcap target)
     target_link_libraries(${target} PRIVATE delayimp)
     target_link_options(${target} PRIVATE "/DELAYLOAD:wpcap.dll" "/DELAYLOAD:Packet.dll")
 endfunction()
+message(STATUS "Substation Studio: pinned Npcap SDK injected; layer-2 GOOSE is compiled in "
+               "(the upstream 'winpcap not found' line above refers only to its in-tree slot)")

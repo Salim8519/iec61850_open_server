@@ -73,7 +73,7 @@ def import_scl(source, filename="import.scd", selected_names=None):
                 for obj in definition.findall("DO"):
                     instance = next((x for x in ln.findall("DOI") if x.get("name") == obj.get("name")), None)
                     builder.data_object(obj, domain + "/" + ln_name, instance)
-                ds, rs = compile_reports(ln, inst, builder.lines)
+                ds, rs = compile_reports(ln, inst, builder.lines, warnings)
                 datasets.extend(ds)
                 reports.extend(rs)
                 if ln.tag == "LN0":

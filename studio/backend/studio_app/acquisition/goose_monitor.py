@@ -14,6 +14,8 @@ class GooseMonitor:
 
     def start(self, ieds, network, npcap_installed):
         self.watches = watch_list(ieds)
+        for watch in self.watches.values():
+            watch.update(state="stopped", problem="", frames=0)
         if network["mode"] != "lab" or not network.get("adapter_guid"):
             self.status = {"state": "off", "unknown": [],
                            "message": "GOOSE needs a network adapter. Set up the lab network to use it."}

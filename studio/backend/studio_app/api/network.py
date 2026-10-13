@@ -25,11 +25,6 @@ def adapters():
     return jsonify(adapters=network().adapters(refresh=request.args.get("refresh") == "1"))
 
 
-@blueprint.get("/network/leftovers")
-def leftovers():
-    return jsonify(items=network().leftovers())
-
-
 @blueprint.put("/network")
 def mode():
     with runtime().cycle_lock:

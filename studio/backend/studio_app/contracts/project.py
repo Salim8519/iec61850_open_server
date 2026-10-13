@@ -60,12 +60,9 @@ HEX_COLOR = r"^#[0-9a-fA-F]{6}$"
 class EquipmentData(BaseModel):
     model_config = ConfigDict(extra="forbid")
     label: str = Field(min_length=1, max_length=100)
-    # TRANSFORMER/LOAD/BUSBAR are legacy: accepted for saved diagrams,
-    # hidden from the library for new equipment.
-    kind: Literal["CB", "DS", "ES", "CT", "VT", "TRANSFORMER", "SOURCE", "LOAD",
-                  "RELAY", "TRIP_RELAY", "PUSH_BUTTON", "BUSBAR", "JUNCTION"]
+    # TRANSFORMER/LOAD/BUSBAR were retired in format 12 (ADR-0033).
+    kind: Literal["CB", "DS", "ES", "CT", "VT", "SOURCE", "RELAY", "TRIP_RELAY", "PUSH_BUTTON", "JUNCTION"]
     rotation: int = 0
-    width: int | None = Field(default=None, ge=60, le=2400)
     state_mapping: StateMapping | None = None
     control_binding: ControlBinding | None = None
     relay_statuses: list[RelayStatus] = Field(default_factory=list, max_length=50)

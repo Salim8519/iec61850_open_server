@@ -94,11 +94,11 @@ export function useStudio() {
             if (timer.current) clearTimeout(timer.current);
             timer.current = null;
             historyIdentity.current = '';
-            setSaveState('Synchronized with another tab');
+            setSaveState('All changes saved');
             refresh().catch(reason => setError(String(reason.message)));
           }
         }
-        if (event.kind === 'runtime' || event.kind === 'resync' || event.kind === 'worker_failed') {
+        if (event.kind === 'runtime' || event.kind === 'resync' || event.kind === 'worker_failed' || event.kind === 'live_status') {
           if (event.kind === 'runtime' && event.state === 'stopped') {
             setValues({}); equipmentValues.clear();
           }

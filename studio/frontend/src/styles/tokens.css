@@ -1,35 +1,65 @@
+/* Design system v2 (ADR-0032): calm, readable, one accent. Sizes are in rem so
+   browser zoom scales everything; 1rem = 15px. */
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 14px;
-  color: #16324f;
-  background: #f0f5fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #111827;
+  background: #f5f6f8;
   font-synthesis: none;
-  --background: #f0f5fa;
-  --surface: #fff;
-  --text: #16324f;
-  --muted: #52677e;
-  --border: #d5e1ec;
-  --border-strong: #c3d2e2;
-  --primary: #1d4ed8;
-  --primary-hover: #1e40af;
-  --primary-soft: #eaf0ff;
-  --accent: #0f766e;
-  --accent-soft: #e5f5f2;
-  --navy: #112b46;
-  --panel-tint: #f6f9fd;
-  --violet: #6d28d9;
-  --violet-soft: #f1eaff;
-  --amber: #b45309;
-  --amber-soft: #fff6e5;
-  --slate-soft: #eef2f6;
+  -webkit-font-smoothing: antialiased;
+
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f9fafb;
+  --text: #111827;
+  --text-2: #4b5563;
+  --text-3: #6b7280;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: #eff6ff;
+  --accent-line: #bfdbfe;
   --success: #15803d;
+  --success-soft: #f0fdf4;
   --warning: #b45309;
+  --warning-soft: #fffbeb;
   --error: #b91c1c;
-  --radius: 6px;
+  --error-soft: #fef2f2;
+  --teal: #0f766e;
+  --teal-soft: #f0fdfa;
+  --violet: #6d28d9;
+  --violet-soft: #f5f3ff;
+
+  --font-size-base: 15px;
+  --font-size-small: 13px;
+  --font-size-title: 26px;
+  --control-height: 40px;
+  --control-height-large: 44px;
+  --radius: 10px;
+  --radius-small: 8px;
+  --shadow-small: 0 1px 2px rgb(16 24 40 / 6%);
+  --shadow: 0 4px 16px rgb(16 24 40 / 8%);
+  --shadow-large: 0 12px 32px rgb(16 24 40 / 14%);
+  --sidebar-width: 232px;
+  --topbar-height: 64px;
+
+  /* Older names kept so every existing component adopts the new palette. */
+  --background: var(--bg);
+  --muted: var(--text-2);
+  --primary: var(--accent);
+  --primary-hover: var(--accent-hover);
+  --primary-soft: var(--accent-soft);
+  --navy: var(--text);
+  --panel-tint: var(--surface-2);
+  --amber: var(--warning);
+  --amber-soft: var(--warning-soft);
+  --slate-soft: #f3f4f6;
 }
-/* Category colours match the equipment library; they never encode state. */
-.cat-switchgear { --cat: var(--accent); --cat-soft: var(--accent-soft); }
+
+/* Category colours describe the equipment family only; they never encode state. */
+.cat-switchgear { --cat: var(--teal); --cat-soft: var(--teal-soft); }
 .cat-instrument, .cat-protection { --cat: var(--violet); --cat-soft: var(--violet-soft); }
-.cat-source, .cat-control { --cat: var(--primary); --cat-soft: var(--primary-soft); }
-.cat-drawing { --cat: #526781; --cat-soft: var(--slate-soft); }
-.cat-legacy { --cat: var(--amber); --cat-soft: var(--amber-soft); }
+.cat-source, .cat-control { --cat: var(--accent); --cat-soft: var(--accent-soft); }
+.cat-drawing { --cat: #6b7280; --cat-soft: #f3f4f6; }

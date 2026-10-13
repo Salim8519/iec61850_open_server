@@ -1,0 +1,28 @@
+// Response shapes of the network, live and GOOSE endpoints.
+export type AdapterAddress = { ip: string; prefix: number; skip_as_source: boolean; origin: string };
+export type Adapter = { guid: string; name: string; description: string; status: string; index: number;
+  speed: string; kind: string; default_route: boolean; addresses: AdapterAddress[] };
+export type PlanRow = { ied_id: string; name: string; scd_ip: string; proposed: string; prefix: number | null;
+  status: string; hint: string };
+export type PlanItem = { kind: 'alias' | 'firewall'; action: 'add' | 'keep' | 'remove'; owned: boolean;
+  description: string; ip?: string; name?: string };
+export type PlanPreview = { adapter: Adapter; rows: PlanRow[]; items: PlanItem[]; fingerprint: string;
+  ready: boolean; needs_admin: boolean };
+export type ApplyResult = { applied?: boolean; message: string;
+  results: { ok: boolean; message: string; description: string }[] };
+export type NpcapStatus = { installed: boolean; download: string; message: string };
+export type GooseWatch = { key: string; gocb_ref: string; app_id: number; mac: string; go_id: string;
+  dataset_ref: string; conf_rev: number; state: string; problem: string; frames: number;
+  st_num?: number | null; sq_num?: number | null; age_ms?: number;
+  publisher?: { ied_id: string | null; name: string; role: string };
+  subscribers: { ied_id: string; name: string; lgos: string | null; inputs: number }[] };
+export type GooseOverview = { running: boolean; state: string; message: string; npcap: NpcapStatus;
+  watches: GooseWatch[]; unknown: { gocb_ref: string; app_id: number; mac: string; dataset: string }[] };
+export type AccessPlan = { reports: string[]; polling_datasets: string[]; notes: string[] };
+export type LiveSession = { ied_id: string; name: string; state: string; host: string; port: number;
+  endpoint_source: 'scd' | 'override' | 'missing'; message: string; access: AccessPlan | null };
+export type CompareRow = { ref: string; fc: string; category: string; scd_type: string | null;
+  device_type: string | null; hint: string };
+export type Comparison = { summary: Record<string, number>; signals: CompareRow[];
+  datasets: { ref: string; status: string; missing: string[]; extra: string[] }[];
+  reports: { ref: string; status: string }[] };

@@ -29,3 +29,4 @@ changed, dropped or invented by accident.
 | [GOOSE](goose.md) | Publishing, receiving and supervising layer-2 GOOSE |
 | [Real IEDs](real-ieds.md) | Read-only live acquisition and SCD comparison |
 | [Beginner guidance](beginner-guidance.md) | Hints, plain wording and status display |
+| [UI structure](ui-structure.md) | Four places, design tokens, one implementation per job |

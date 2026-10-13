@@ -2,6 +2,7 @@
 from studio_app.contracts.errors import StudioError
 from bisect import bisect_left
 from collections import defaultdict
+from .reports import usable_reports
 
 
 def enrich_reports(server, ied_name, datasets, reports, signals):
@@ -46,7 +47,7 @@ def enrich_reports(server, ied_name, datasets, reports, signals):
                 dataset.update(ref=owner + "$" + dataset["name"], signal_refs=sorted(resolved),
                                unresolved=unresolved, fcda_refs=fcda_refs)
                 local[dataset["name"]] = dataset
-            for declaration in ln.findall("ReportControl"):
+            for declaration in usable_reports(ln):
                 enabled = declaration.find("RptEnabled")
                 count = int(enabled.get("max", "1")) if enabled is not None else 1
                 if declaration.get("indexed") == "false":

@@ -45,15 +45,20 @@ Outstanding release gates:
 - Mapping suggestions, quality editor and broader quality/time coverage.
   Explicit report/dataset filtering and saved independent signal testing are now
   implemented; automatic mapping suggestions remain separate work.
-- Guided LAN alias/firewall preview, ownership journal and cleanup.
+- Guided LAN setup (change 0049) is implemented and tested with fakes; applying it
+  on a real adapter with the UAC prompt still needs one recorded owner run.
 - Portable clean-machine packaging, tray lifecycle and packaged recovery workflow
   acceptance. Source startup recovery and cross-process locking have tests.
 - Concurrent 20-IED/50,000-attribute load and report recovery benchmarks.
 - Broader malformed-input and concurrent lifecycle coverage.
 
-Only loopback listeners are enabled. Original SCL download is not an edited-model
+Loopback listeners are the default; lab mode adds adapter addresses (0049). Original SCL download is not an edited-model
 export. A separate staged scalar export now validates and re-imports its output;
 it retains all IED declarations in the original document and leaves the project
 unchanged. Its browser workflow is not visually verified yet.
 Timed set/check sequences persist and run; unknown scenario actions are rejected.
-GOOSE/SV, live acquisition from external IEDs and electrical solving are deferred.
+GOOSE publish/listen (0050) and read-only live acquisition (0051) have evidence on
+this PC only: a VMware virtual adapter and a Studio stand-in device. Physical
+network, third-party relays/subscribers, Sampled Values, R-GOOSE, commands to real
+IEDs and electrical solving remain open. Npcap must be installed by the user.
+UI v2 (change 0054) awaits owner visual acceptance; checked at 1366×768 and 1920×1080.

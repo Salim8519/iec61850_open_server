@@ -15,8 +15,7 @@ export type MeasuredSizes = ReadonlyMap<string, { width: number; height: number 
 
 function initialSize(source: EquipmentNode): [number, number] {
   const draw = DRAW_SIZES[source.data.kind];
-  const width = source.data.kind === 'BUSBAR' && source.data.width ? source.data.width :
-    source.initialWidth || draw || INITIAL_NODE_WIDTH;
+  const width = source.initialWidth || draw || INITIAL_NODE_WIDTH;
   return [width, source.initialHeight || draw || INITIAL_NODE_HEIGHT];
 }
 
