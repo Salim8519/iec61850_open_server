@@ -8,6 +8,7 @@ import { AddMenu } from './AddMenu';
 import { Canvas } from './Canvas';
 import { EquipmentSheet } from './EquipmentSheet';
 import { SldImport } from './SldImport';
+import { TidyButton } from './TidyButton';
 import { useCanvasShortcuts } from './useCanvasShortcuts';
 import { useModes } from '../devices/useModes';
 import './diagram.css';
@@ -52,6 +53,7 @@ export function DiagramPage({ studio, project, locked, openDevices }: {
   const toolbar = <div className="canvas-toolbar" role="toolbar" aria-label="Diagram tools">
     <AddMenu disabled={locked} add={add} />
     <SldImport disabled={locked} revision={project.revision} apply={(next: Diagram) => edit(next)} prepare={studio.prepare} />
+    <TidyButton diagram={diagram} selection={selection} locked={locked} apply={(next: Diagram) => edit(next)} />
     <span className="divider" />
     <button className="icon ghost" title="Undo" aria-label="Undo" disabled={locked || !studio.canUndo} onClick={studio.undo}><Undo2 size={18} /></button>
     <button className="icon ghost" title="Redo" aria-label="Redo" disabled={locked || !studio.canRedo} onClick={studio.redo}><Redo2 size={18} /></button>

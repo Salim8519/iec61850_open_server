@@ -4,6 +4,12 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-14 (latest): SLD Tidy up (change 0063)
+
+- Diagram toolbar **Tidy up** / **Tidy selection** lays the drawing out like a real SLD
+  (spec `docs/specs/sld-tidy.md`, ADR-0040). It is a pure frontend function: positions,
+  wire sides and symbol turns only; one undo step. Owner visual acceptance pending.
+
 ## 2026-10-14 (later): clean UI restructure
 
 - Owner found the UI messy; rebuilt as four places (Diagram, Devices, Test, Settings),

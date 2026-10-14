@@ -64,3 +64,4 @@
 | [0060](2026/0060-station-health.md) | Station health: live network and real IEDs compared with the SCD | Unit/protocol (incl. goID wire test on VMware adapter)/frontend; browser with stand-in; third-party relay pending |
 | [0061](2026/0061-sampled-values.md) | Sampled Values listening: supervision, RMS/phasor, 50/60 Hz | 4 SV wire tests on VMware adapter, 15% of one core for 4 streams; real merging unit pending |
 | [0062](2026/0062-test-mode.md) | Test mode: Mod/Beh/Sim badges, simulated IED modes, simulation notice; native integer write fix | Probe reads Beh 4/3 on a simulated IED; protocol 38 pass; real relay pending |
+| [0063](2026/0063-sld-tidy-up.md) | Tidy up: one-press single-line diagram layout (busbars on top, straight bays) | 10 frontend tests, fuzz of 400 diagrams, isolated browser check on scrambled model SCD; owner acceptance pending |

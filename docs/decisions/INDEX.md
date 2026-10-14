@@ -41,3 +41,4 @@
 | [0037](ADR-0037-station-health.md) | Station health check against the SCD (read-only, goID check) |
 | [0038](ADR-0038-sampled-values-listening.md) | Listen to Sampled Values (no publishing), nominal frequency setting |
 | [0039](ADR-0039-test-mode.md) | Test mode, behaviour and simulation; sized integer writes |
+| [0040](ADR-0040-sld-tidy-up.md) | Tidy up the single-line diagram in the browser (layered SLD layout) |

@@ -26,6 +26,9 @@
   Esc and arrows act on the selection. Paste/duplicate create new IDs, keep
   only wires between copied objects and give unique labels. Terminals have a
   generous hit zone and snap radius; a drag commits once on drop.
+- Tidy up (ADR-0040, spec `sld-tidy`) moves items, re-sides wires and turns symbols
+  only; busbars on top, bays straight down, unwired panels parked right; one undo
+  step; with two or more selected it tidies only the selection.
 - Physical equipment and IEDs are separate entities connected through bindings.
 - Choose compatible imported signals and control objects from filtered lists.
 - Open/Closed/Intermediate/Invalid use explicit text and distinct symbol geometry.

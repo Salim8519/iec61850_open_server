@@ -25,6 +25,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Frontend API/contracts | `frontend/src/api/client.ts`, `api/types.ts` |
 | Shared tab/state flow | `frontend/src/state/useStudio.ts` |
 | Equipment sheet | `frontend/src/features/diagram/EquipmentSheet.tsx`, `SheetSettings.tsx`, `equipmentFields.ts` |
+| SLD tidy up (layout) | `equipment/tidy/` (graph, rows, position, wires, tidy), `features/diagram/TidyButton.tsx`, `tidyCopy.ts` |
 | Canvas selection/clipboard/shortcuts | `features/diagram/Canvas.tsx`, `DiagramPage.tsx`, `useCanvasShortcuts.ts`, `equipment/clipboard.ts` |
 | App shell and places | `frontend/src/app/App.tsx`, `Sidebar.tsx`, `TopBar.tsx`, `places.ts` |
 | Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
