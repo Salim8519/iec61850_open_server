@@ -7,9 +7,11 @@ import { Disclosure } from '../../ui/Disclosure';
 import { InfoTip } from '../../ui/InfoTip';
 import { endpointOf } from '../network/endpoints';
 import { DeviceConnection } from './DeviceConnection';
+import { TestModeCard } from './TestModeCard';
+import type { ModeSummary } from './useModes';
 
-export function DeviceOverview({ ied, project, locked, session, perform }: {
-  ied: Ied; project: Project; locked: boolean; session?: LiveSession;
+export function DeviceOverview({ ied, project, locked, session, perform, mode }: {
+  ied: Ied; project: Project; locked: boolean; session?: LiveSession; mode?: ModeSummary;
   perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
@@ -32,6 +34,7 @@ export function DeviceOverview({ ied, project, locked, session, perform }: {
     </div>}
     {ied.role === 'real' && <DeviceConnection ied={ied} session={session} locked={locked} perform={perform} />}
     {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>This device is switched off. It is ignored when you press Run.</p>}
+    <TestModeCard ied={ied} summary={mode} perform={perform} />
     <div className="facts">{facts.map(([label, value]) => <div className="fact" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
     {ied.role === 'simulated' && publishes > 0 && <label className="row" style={{ fontWeight: 500, color: 'var(--text)' }}>
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}

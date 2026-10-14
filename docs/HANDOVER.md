@@ -12,6 +12,36 @@ the [engineering ledger](history/INDEX.md).
 - 134 owner CIDs (Downloads zips, copied to the session scratchpad only) all import
   and start; PhyComAddr and unnamed report blocks fixed.
 
+## 2026-10-14 update: station-level roadmap A-D (changes 0057-0062)
+
+**Specs**
+- The roadmap was specified first in `docs/specs/proposed/` and every spec was then
+  promoted: `sld-import`, `signal-flow`, `station-health`, `sampled-values`, `test-mode`.
+- Owner decisions:
+  - busbars are drawn as JUNCTION and the project format stays at 12;
+  - Sampled Values are listened to only.
+
+**Features**
+- **A, SLD import:** Diagram → Build from SCD.
+- **C, Signal flow:** Devices → Whole station, plus an IED tab.
+- **B, Station health:** Devices → Health check.
+- **D1, Sampled Values:** Settings → Network.
+- **D2, Test mode:** device card and badges.
+
+**Native**
+- New `studio_live` operations `sv_start`/`sv_stop`.
+- The goID check and SV listener are in `studio_live`.
+- An integer-write fix is in `studio_ied`: INT8/16/32 and Enum writes were silently
+  ignored before.
+- `studio_sv_test_publisher` is test-only and never packaged.
+- All of this was built and tested in `studio/native/build/station`.
+
+**Evidence and dev parity**
+- Evidence uses Studio stand-ins and the VMware adapter only. Interoperability is not
+  claimed.
+- The dev backend needs the same native build: rebuild `studio/native/build/Release`
+  (README) whenever no run is active.
+
 ## 2026-10-14 update: lab network, GOOSE and real IEDs
 
 - Owner asked for StationScout-comparable items 1-3, beginner friendly with hints,

@@ -38,3 +38,18 @@ def test_dataset_and_report_differences():
     assert next(item for item in result["datasets"] if item["ref"] == "D/LLN0$Gone")["status"] == "missing_on_device"
     assert {item["ref"]: item["status"] for item in result["reports"]} == {
         "D/LLN0.RP.Events01": "match", "D/LLN0.BR.Missing01": "missing_on_device"}
+
+
+def test_report_block_settings_are_compared():
+    from studio_app.domain.health_model_checks import report_setting_rows
+    ied = {"reports": [{"ref": "P1LD0/LLN0.BR.rcb1", "dataset_ref": "P1LD0/LLN0$DS1", "conf_rev": 2},
+                       {"ref": "P1LD0/LLN0.RP.rcb2", "dataset_ref": "P1LD0/LLN0$DS2", "conf_rev": 1}]}
+    blocks = {"P1LD0/LLN0.BR.rcb1": {"readable": True, "dataset": "P1LD0/LLN0$DS9", "conf_rev": 5},
+              "P1LD0/LLN0.RP.rcb2": {"readable": True, "dataset": "P1LD0/LLN0.DS2", "conf_rev": 1}}
+    rows = report_setting_rows(ied, {"blocks": blocks, "checked_at": "t", "source": "mms_read"})
+    bad, good = rows
+    assert bad["result"] == "problem" and good["result"] == "ok"
+    for text in ("P1LD0/LLN0$DS9", "P1LD0/LLN0$DS1", "confRev is 5", "2 in the SCD"):
+        assert text in bad["message"], text
+    skipped = report_setting_rows(ied, None)
+    assert skipped[0]["result"] == "not_checked" and "Polling" in skipped[0]["message"]

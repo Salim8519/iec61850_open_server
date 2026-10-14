@@ -12,6 +12,7 @@ from .sample_writer import SampleWriter
 from .automation import Automation
 from .bindings import publish_bindings
 from .initial_state import apply_initial_states
+from .test_mode_apply import apply_test_modes
 from .equipment_states import EquipmentStates
 from .equipment_control import EquipmentControl
 from .native_control_feedback import NativeControlFeedback
@@ -116,6 +117,7 @@ class Coordinator:
             self.emit("runtime", state=self.state)
             publish_bindings(self)
             apply_initial_states(self)
+            apply_test_modes(self)
             self.live.start(project)
             self.last_automation_time = time.monotonic()
             self.cadence.reset(self.last_automation_time)

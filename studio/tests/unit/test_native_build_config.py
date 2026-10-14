@@ -21,3 +21,20 @@ def test_npcap_is_delay_loaded():
     assert "studio_ied studio_live studio_probe" in loop and "studio_delay_load_npcap" in loop
     loader = (NATIVE / "common/npcap.cpp").read_text(encoding="utf-8")
     assert "GetFileAttributesW" in loader and "SetDllDirectoryW" in loader
+
+
+def test_sv_is_subscribe_only():
+    top = (NATIVE / "CMakeLists.txt").read_text(encoding="utf-8")
+    support = (NATIVE / "cmake/sv_support.cmake").read_text(encoding="utf-8")
+    code = "\n".join(line for line in support.splitlines() if not line.startswith("#"))
+    assert "sv_subscriber.c" in code and "sv_publisher.c" not in code
+    # The publisher source is compiled only into the test-only target, never into a product executable.
+    assert top.count("sv_publisher.c") == 1
+    test_target = top[top.index("add_executable(studio_sv_test_publisher"):]
+    assert "sv_publisher.c" in test_target.split(")\n", 1)[0]
+    for source in (NATIVE / "live").glob("*.[ch]pp"):
+        assert "SVPublisher" not in source.read_text(encoding="utf-8"), source.name
+    spec = (NATIVE.parent / "packaging/studio.spec").read_text(encoding="utf-8")
+    assert "sv_test_publisher" not in spec
+    options = (NATIVE / "cmake/goose_options.cmake").read_text(encoding="utf-8")
+    assert "set(CONFIG_IEC61850_L2_SMV ON" in options and "set(CONFIG_IEC61850_R_SMV OFF" in options

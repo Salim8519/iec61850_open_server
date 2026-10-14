@@ -91,6 +91,7 @@ def goose_subscriptions(root, ied, catalogue=None):
                     **{key: value for key, value in control.items() if key != "fcdas"},
                     "lgos": lgos.get(control["gocb_ref"]), "inputs": []})
                 entry["inputs"].append({"int_addr": values.get("intAddr", ""), "desc": values.get("desc", ""),
+                                "match": "named" if values.get("srcCBName") else "data",
                                         "source": f"{source}/{values.get('prefix', '')}"
                                                   f"{values.get('lnClass', '')}{values.get('lnInst', '')}."
                                                   f"{values.get('doName', '')}"

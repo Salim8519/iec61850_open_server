@@ -56,3 +56,11 @@
 | [0052](2026/0052-beginner-guidance-and-specs.md) | Beginner guidance kit and protected feature specs | Frontend tests, build, spec check; owner visual acceptance pending |
 | [0053](2026/0053-real-cid-import-fixes.md) | 134/134 real vendor CIDs import and run (PhyComAddr, unnamed reports) | Audit + native start of all 134; regression tests |
 | [0054](2026/0054-clean-ui-restructure.md) | Clean four-place UI restructure with merged features and format 12 | Browser walkthrough with real CIDs, probe evidence; owner acceptance pending |
+| [0055](2026/0055-higher-contrast-design.md) | Higher-contrast surfaces, borders and single-line diagram | Browser check of four places; frontend tests and build; owner acceptance pending |
+| [0056](2026/0056-fast-adapter-detection.md) | Fast, live adapter detection through the Windows IP Helper API | 12 ms vs 6 s; matches Get-NetAdapter on this PC; cable plug-in not yet observed |
+| [0057](2026/0057-station-feature-specs.md) | Proposed specs for SLD import, signal flow, station health, SV, test mode | Documentation only; no code; specs not promoted |
+| [0058](2026/0058-sld-import.md) | Build the single-line diagram from the SCD Substation section | 19 backend + frontend tests; browser on two SCDs; owner acceptance pending |
+| [0059](2026/0059-signal-flow.md) | Signal flow: declared GOOSE and report links between IEDs | Unit/API/frontend tests; browser on model SCD found a real subscription error; owner acceptance pending |
+| [0060](2026/0060-station-health.md) | Station health: live network and real IEDs compared with the SCD | Unit/protocol (incl. goID wire test on VMware adapter)/frontend; browser with stand-in; third-party relay pending |
+| [0061](2026/0061-sampled-values.md) | Sampled Values listening: supervision, RMS/phasor, 50/60 Hz | 4 SV wire tests on VMware adapter, 15% of one core for 4 streams; real merging unit pending |
+| [0062](2026/0062-test-mode.md) | Test mode: Mod/Beh/Sim badges, simulated IED modes, simulation notice; native integer write fix | Probe reads Beh 4/3 on a simulated IED; protocol 38 pass; real relay pending |

@@ -1,9 +1,9 @@
 /* Canvas relay panel: violet category accent, calm rows, text-first values. */
 .equipment-node.relay { width: 216px; padding: 0; text-align: left; overflow: hidden;
-  border-color: #ddd0f7; border-radius: 8px; background: white; }
+  border-color: #9d86d6; border-radius: 8px; background: white; }
 .equipment-node.relay.selected { border-color: var(--primary); background: white; }
 .relay-panel-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px;
-  background: var(--violet-soft); border-bottom: 1px solid #e6dcf8; }
+  background: var(--violet-soft); border-bottom: 1px solid #c9b8ef; }
 .relay-panel-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px;
   background: white; color: var(--violet); flex-shrink: 0; }
 .relay-panel-title { display: grid; min-width: 0; }
@@ -13,20 +13,20 @@
 .relay-panel-rows { list-style: none; margin: 0; padding: 4px 0; display: grid; grid-template-columns: minmax(0, 1fr); }
 .relay-panel-row { display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 4px 10px; min-height: 24px; }
-.relay-panel-row + .relay-panel-row { border-top: 1px solid #eef2f7; }
+.relay-panel-row + .relay-panel-row { border-top: 1px solid #dfe4ec; }
 .relay-panel-name { flex: 1; font-size: 11px; color: var(--text); min-width: 0;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .relay-panel-empty { margin: 0; padding: 10px; font-size: 11px; color: var(--muted); }
 
 /* Value chip: shared by canvas and properties. Marker shape carries the state too. */
 .relay-chip { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; max-width: 96px;
-  padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border); background: #f7f9fc;
+  padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border-strong); background: #f4f6f9;
   font-family: 'Cascadia Code', Consolas, monospace; font-size: 11px; font-weight: 600;
   color: var(--text); white-space: nowrap; }
 .relay-chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .relay-chip-mark { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
   border: 1.5px solid currentColor; }
-.relay-chip.on { background: var(--primary-soft); border-color: #bfd0fb; color: var(--primary); }
+.relay-chip.on { background: var(--primary-soft); border-color: #7fa3ee; color: var(--primary); }
 .relay-chip.on .relay-chip-mark { background: currentColor; }
 .relay-chip.off { color: #475a70; }
 .relay-chip.none { border-style: dashed; color: var(--muted); background: transparent; font-weight: 500; }

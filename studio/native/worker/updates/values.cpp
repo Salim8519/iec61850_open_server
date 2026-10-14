@@ -1,5 +1,7 @@
 #include "values.hpp"
+#include <cstdint>
 #include <stdexcept>
+#include <string>
 
 static Json value_json(Server& server, DataAttribute* attribute) {
     auto value = IedServer_getAttributeValue(server.handle, attribute);
@@ -38,6 +40,30 @@ Json read_versioned(Server& server, const std::string& reference) {
     return result;
 }
 
+// libiec61850 integer setters silently ignore values wider than the attribute (for example
+// MmsValue_setInt64 on an INT32 or Enum), so pick the setter of the declared type.
+static void set_integer(MmsValue* target, DataAttributeType type, int64_t value) {
+    auto check = [value](int64_t low, int64_t high) {
+        if (value < low || value > high) throw std::runtime_error("Value " + std::to_string(value) + " is out of range");
+    };
+    switch (type) {
+    case IEC61850_INT8: check(INT8_MIN, INT8_MAX); MmsValue_setInt8(target, int8_t(value)); break;
+    case IEC61850_INT16: check(INT16_MIN, INT16_MAX); MmsValue_setInt16(target, int16_t(value)); break;
+    case IEC61850_INT64: MmsValue_setInt64(target, value); break;
+    default: check(INT32_MIN, INT32_MAX); MmsValue_setInt32(target, int32_t(value)); break;
+    }
+    if (MmsValue_toInt64(target) != value) throw std::runtime_error("The device model could not store this integer");
+}
+
+static void set_unsigned(MmsValue* target, DataAttributeType type, uint32_t value) {
+    switch (type) {
+    case IEC61850_INT8U: if (value > UINT8_MAX) throw std::runtime_error("Value is out of range"); MmsValue_setUint8(target, uint8_t(value)); break;
+    case IEC61850_INT16U: if (value > UINT16_MAX) throw std::runtime_error("Value is out of range"); MmsValue_setUint16(target, uint16_t(value)); break;
+    default: MmsValue_setUint32(target, value); break;
+    }
+    if (MmsValue_toUint32(target) != value) throw std::runtime_error("The device model could not store this integer");
+}
+
 static MmsValue* prepare_value(Server& server, const std::string& reference, const Json& value) {
     auto attribute = server.attribute(reference);
     IedServer_lockDataModel(server.handle);
@@ -49,8 +75,8 @@ static MmsValue* prepare_value(Server& server, const std::string& reference, con
     try {
         switch (MmsValue_getType(candidate)) {
         case MMS_BOOLEAN: MmsValue_setBoolean(candidate, value.get<bool>()); break;
-        case MMS_INTEGER: MmsValue_setInt64(candidate, value.get<int64_t>()); break;
-        case MMS_UNSIGNED: MmsValue_setUint32(candidate, value.get<uint32_t>()); break;
+        case MMS_INTEGER: set_integer(candidate, attribute->type, value.get<int64_t>()); break;
+        case MMS_UNSIGNED: set_unsigned(candidate, attribute->type, value.get<uint32_t>()); break;
         case MMS_FLOAT:
             if (attribute->type == IEC61850_FLOAT32) MmsValue_setFloat(candidate, value.get<float>());
             else MmsValue_setDouble(candidate, value.get<double>());

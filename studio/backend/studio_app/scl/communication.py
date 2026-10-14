@@ -1,4 +1,4 @@
-"""Read the SCL Communication section: IED addresses and GOOSE (GSE) addresses."""
+"""Read the SCL Communication section: IED addresses, GOOSE (GSE) and SV (SMV) addresses."""
 import ipaddress
 import re
 
@@ -29,9 +29,9 @@ def _milliseconds(element):
     return int(round(value)) if value >= 0 else None
 
 
-def _gse(element, warnings, ied_name):
+def _gse(element, warnings, ied_name, kind="GOOSE"):
     values = _parameters(element.find("Address"))
-    where = f"GOOSE address {ied_name}/{element.get('ldInst')}/{element.get('cbName')}"
+    where = f"{kind} address {ied_name}/{element.get('ldInst')}/{element.get('cbName')}"
     mac = values.get("MAC-Address", "")
     try:
         app_id = int(values.get("APPID", ""), 16)
@@ -55,7 +55,7 @@ def _gse(element, warnings, ied_name):
 def read_communication(root, ied_name):
     """Return the IED's SCD network address and GSE addresses, plus warnings."""
     warnings = []
-    result = {"address": None, "gse": []}
+    result = {"address": None, "gse": [], "smv": []}
     for subnetwork in root.findall("Communication/SubNetwork"):
         for access in subnetwork.findall("ConnectedAP"):
             if access.get("iedName") != ied_name:
@@ -73,4 +73,8 @@ def read_communication(root, ied_name):
                 parsed = _gse(element, warnings, ied_name)
                 if parsed:
                     result["gse"].append(parsed)
+            for element in access.findall("SMV"):
+                parsed = _gse(element, warnings, ied_name, "Sampled Values")
+                if parsed:
+                    result["smv"].append(parsed)
     return result, warnings

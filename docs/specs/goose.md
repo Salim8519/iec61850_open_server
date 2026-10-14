@@ -24,12 +24,14 @@ GOOSE is really being received, with a plain explanation of any problem.
   simulated IEDs through `ExtRef`, (b) GOOSE published by simulated IEDs (wire
   evidence) and (c) GOOSE published by IEDs set to *real*.
 - Supervision states are `waiting`, `receiving`, `problem` and `timeout`. Problems are
-  `invalid_frame`, `conf_rev_mismatch`, `dataset_mismatch`, `needs_commission` and
+  `invalid_frame`, `conf_rev_mismatch`, `dataset_mismatch`, `go_id_mismatch`
+  ([ADR-0037](../decisions/ADR-0037-station-health.md)), `needs_commission` and
   `timeout`. GOOSE seen on the wire but not in the project is listed as *unknown*.
 
 ## Out of scope
 
-Sampled Values, R-GOOSE, GOOSE simulation/test-mode injection, and writing received
+R-GOOSE, GOOSE simulation/test-mode injection (Sampled Values listening is its own
+[specification](sampled-values.md)), and writing received
 GOOSE values into a simulated subscriber's own data model (only LGOS supervision).
 
 ## Rules

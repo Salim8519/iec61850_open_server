@@ -41,7 +41,10 @@ private:
     void supervise();
     GooseReceiver receiver = nullptr;
     std::map<std::string, std::unique_ptr<GooseWatch>> watches;
+    // Publishers seen on the wire but not in the project; listed once each, up to a limit.
+    static constexpr size_t UNKNOWN_LIMIT = 500;
     std::set<std::string> unknown;
+    bool unknown_capped = false;
     std::mutex lock;
     std::thread supervisor;
     std::atomic<bool> running{false};

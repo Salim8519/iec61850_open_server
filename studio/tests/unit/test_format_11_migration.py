@@ -27,7 +27,8 @@ def test_format_10_opens_in_loopback_mode(tmp_path):
     projects = ProjectService(tmp_path / "b")
     projects.restore(legacy)
     assert CURRENT_FORMAT >= 11
-    assert projects.project["network"] == {"mode": "loopback", "adapter_guid": "", "adapter_label": ""}
+    # Older projects open in loopback mode; Sampled Values use the visible 50 Hz default (ADR-0038).
+    assert projects.project["network"] == {"mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 50}
     ied = projects.project["ieds"][0]
     assert ied["role"] == "simulated" and ied["lab_ip"] == "" and ied["goose_publish"] is True
     assert ied["ip"].startswith("127.50.0.")

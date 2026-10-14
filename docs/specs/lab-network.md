@@ -45,6 +45,7 @@ simulated IEDs by adding app-owned alias addresses to one chosen adapter.
 | NET-09 | The elevated helper refuses a plan whose hash does not match and any item outside its allow-list. | `studio/tests/unit/test_network_helper.py::test_rejects_tampered_plan`, `studio/tests/unit/test_network_helper.py::test_rejects_items_outside_allow_list` |
 | NET-10 | Runtime endpoint overrides never change the stored SCL source. | `studio/tests/integration/test_network_api.py::test_endpoint_override_keeps_scl` |
 | NET-11 | Leftover owned changes found at startup are reported, never silently removed. | `studio/tests/unit/test_network_journal.py::test_leftovers_are_reported_not_removed` |
+| NET-12 | Adapters are read through the Windows IP Helper API (PowerShell only as a logged fallback), match what `Get-NetAdapter` shows, list Ethernet ports first, and are fast enough for the adapter step to refresh by itself every 3 s. | `studio/tests/protocol/test_adapter_listing.py::test_native_list_matches_get_netadapter`, `studio/tests/unit/test_ip_helper.py::test_native_records_are_normalised_with_ethernet_first`, `studio/tests/unit/test_ip_helper.py::test_powershell_is_only_a_fallback` |
 
 ## Evidence still required
 

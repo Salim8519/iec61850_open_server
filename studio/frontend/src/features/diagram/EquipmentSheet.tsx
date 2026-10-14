@@ -1,4 +1,4 @@
-import { Copy, RotateCw, Trash2, X } from 'lucide-react';
+import { Copy, RotateCw, Share2, Trash2, X } from 'lucide-react';
 import type { EquipmentNode, Project } from '../../api/types';
 import { kindInfo, setupItems } from '../../equipment/kindInfo';
 import { EquipmentSymbol } from '../../equipment/symbols/EquipmentSymbol';
@@ -16,10 +16,11 @@ type Props = {
   operate: (nodeId: string, action: string) => void; close: () => void;
   applyColors: (active: string | null, inactive: string | null) => void;
   perform: (task: () => Promise<unknown>) => Promise<void>;
+  showFlow?: (iedId: string) => void;
 };
 
 export function EquipmentSheet({ node, project, locked, busy, values, operation, update, remove, duplicate,
-  operate, close, applyColors, perform }: Props) {
+  operate, close, applyColors, perform, showFlow }: Props) {
   const data = node.data;
   const info = kindInfo(data.kind);
   const switching = ['CB', 'DS', 'ES'].includes(data.kind);
@@ -30,6 +31,8 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
   const showControl = switching || trip || (push && !statusButton);
   const canAct = statusButton ? !!data.state_mapping : !!data.control_binding;
   const missing = setupItems(data).filter(item => !item.done);
+  const linkedIed = data.control_binding?.ied_id ?? (data.state_mapping?.mode === 'contacts_to_dbpos'
+    ? data.state_mapping.open.ied_id : data.state_mapping?.source.ied_id);
   const source = data.kind === 'SOURCE' && data.state_mapping?.mode === 'direct' ? data.state_mapping.source : null;
   return <aside className={`sheet cat-${info.category}`} aria-label={`${data.label} properties`}>
     <div className="sheet-head">
@@ -67,6 +70,8 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
           {!['JUNCTION', 'RELAY'].includes(data.kind) && <button className="ghost" onClick={() =>
             update({ ...data, rotation: (data.rotation + 90) % 360 })}><RotateCw size={16} />Rotate</button>}
           <button className="ghost" onClick={duplicate}><Copy size={16} />Duplicate</button>
+          {linkedIed && showFlow && <button className="ghost" onClick={() => showFlow(linkedIed)}>
+            <Share2 size={16} />Show signal flow</button>}
           <button className="ghost" style={{ color: 'var(--error)' }} onClick={remove}><Trash2 size={16} />Delete</button>
         </div>}</section>
     </div>

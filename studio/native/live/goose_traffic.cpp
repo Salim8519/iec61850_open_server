@@ -29,6 +29,12 @@ void parse_mac(const std::string& text, uint8_t* mac) {
     for (int i = 0; i < 6; ++i) mac[i] = static_cast<uint8_t>(parts[i]);
 }
 
+std::string mac_text(const uint8_t* mac) {
+    char text[18];
+    std::snprintf(text, sizeof(text), "%02X-%02X-%02X-%02X-%02X-%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    return text;
+}
+
 void matched(GooseSubscriber subscriber, void* parameter) {
     auto pair = static_cast<std::pair<GooseTraffic*, GooseWatch*>*>(parameter);
     pair->first->on_frame(subscriber, pair->second);
@@ -88,10 +94,12 @@ void GooseTraffic::on_frame(GooseSubscriber subscriber, GooseWatch* watch) {
     uint32_t st = GooseSubscriber_getStNum(subscriber);
     uint32_t conf = GooseSubscriber_getConfRev(subscriber);
     std::string dataset = GooseSubscriber_getDataSet(subscriber) ? GooseSubscriber_getDataSet(subscriber) : "";
+    std::string go_id = GooseSubscriber_getGoId(subscriber) ? GooseSubscriber_getGoId(subscriber) : "";
     std::string problem;
     if (!valid) problem = "invalid_frame";
     else if (watch->expected_conf_rev && conf != watch->expected_conf_rev) problem = "conf_rev_mismatch";
     else if (!watch->expected_dataset.empty() && dataset != watch->expected_dataset) problem = "dataset_mismatch";
+    else if (!watch->expected_go_id.empty() && go_id != watch->expected_go_id) problem = "go_id_mismatch";
     else if (GooseSubscriber_needsCommission(subscriber)) problem = "needs_commission";
     bool changed = !watch->frames || st != watch->st_num || problem != watch->problem;
     watch->frames++;
@@ -105,7 +113,7 @@ void GooseTraffic::on_frame(GooseSubscriber subscriber, GooseWatch* watch) {
     watch->state = state;
     Json event = {{"event", "goose_rx"}, {"key", watch->key}, {"gocb_ref", watch->gocb_ref},
         {"st_num", st}, {"sq_num", watch->sq_num}, {"conf_rev", conf}, {"dataset", dataset},
-        {"go_id", GooseSubscriber_getGoId(subscriber) ? GooseSubscriber_getGoId(subscriber) : ""},
+        {"go_id", go_id},
         {"test", GooseSubscriber_isTest(subscriber)}, {"tal_ms", watch->tal_ms},
         {"source_timestamp", GooseSubscriber_getTimestamp(subscriber)}, {"state", state},
         {"problem", problem}, {"frames", watch->frames}};
@@ -117,13 +125,24 @@ void GooseTraffic::on_observed(GooseSubscriber subscriber) {
     std::string ref = GooseSubscriber_getGoCbRef(subscriber) ? GooseSubscriber_getGoCbRef(subscriber) : "";
     std::lock_guard<std::mutex> guard(lock);
     for (const auto& entry : watches) if (entry.second->gocb_ref == ref) return;
-    if (!unknown.insert(ref).second || unknown.size() > 500) return;
+    if (unknown.count(ref)) return;
+    if (unknown.size() >= UNKNOWN_LIMIT) {
+        if (!unknown_capped) emit_frame({{"event", "goose_unknown_cap"}, {"limit", UNKNOWN_LIMIT}});
+        unknown_capped = true;
+        return;
+    }
+    unknown.insert(ref);
     uint8_t mac[6];
     GooseSubscriber_getDstMac(subscriber, mac);
-    char text[18];
-    std::snprintf(text, sizeof(text), "%02X-%02X-%02X-%02X-%02X-%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    uint8_t source[6];
+    GooseSubscriber_getSrcMac(subscriber, source);
+    auto go_id = GooseSubscriber_getGoId(subscriber);
+    auto dataset = GooseSubscriber_getDataSet(subscriber);
     emit_frame({{"event", "goose_unknown"}, {"gocb_ref", ref}, {"app_id", GooseSubscriber_getAppId(subscriber)},
-                {"mac", text}, {"dataset", GooseSubscriber_getDataSet(subscriber) ? GooseSubscriber_getDataSet(subscriber) : ""}});
+                {"mac", mac_text(mac)}, {"src_mac", mac_text(source)}, {"dataset", dataset ? dataset : ""},
+                {"go_id", go_id ? go_id : ""}, {"conf_rev", GooseSubscriber_getConfRev(subscriber)},
+                {"st_num", GooseSubscriber_getStNum(subscriber)}, {"test", GooseSubscriber_isTest(subscriber)},
+                {"vlan_id", GooseSubscriber_isVlanSet(subscriber) ? Json(GooseSubscriber_getVlanId(subscriber)) : Json(nullptr)}});
 }
 
 void GooseTraffic::supervise() {
@@ -160,4 +179,5 @@ void GooseTraffic::stop() {
     contexts.clear();
     watches.clear();
     unknown.clear();
+    unknown_capped = false;
 }

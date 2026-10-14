@@ -61,4 +61,8 @@ GOOSE publish/listen (0050) and read-only live acquisition (0051) have evidence 
 this PC only: a VMware virtual adapter and a Studio stand-in device. Physical
 network, third-party relays/subscribers, Sampled Values, R-GOOSE, commands to real
 IEDs and electrical solving remain open. Npcap must be installed by the user.
+Station-level SLD import, signal flow, station health, Sampled Values listening and
+test mode are built (changes 0058-0062) with stand-in and VMware-adapter evidence only;
+real vendor SCDs with CSWI LNodes, third-party relays and merging units are pending.
+Studio cannot set the GOOSE simulation bit on simulated IEDs (TMODE-06, retired).
 UI v2 (change 0054) awaits owner visual acceptance; checked at 1366×768 and 1920×1080.

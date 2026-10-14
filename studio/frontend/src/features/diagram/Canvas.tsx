@@ -4,14 +4,14 @@ import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
   type NodeChange, type EdgeChange, type Connection, type NodeTypes } from '@xyflow/react';
 import type { Diagram, EquipmentKind, EquipmentNode as NodeType } from '../../api/types';
 import { EquipmentNode } from '../../equipment/EquipmentNode';
-import { IedNames, LiveValues } from '../../equipment/liveContext';
+import { IedNames, LiveValues, ModeBadges } from '../../equipment/liveContext';
 import { stableFlowNodes, type FlowNodeCache } from '../../equipment/flowNodes';
 import { rememberMeasured, type MeasuredStore } from '../../equipment/measured';
 import type { EquipmentValueStore } from '../../equipment/liveValues';
 
 const nodeTypes: NodeTypes = { equipment: EquipmentNode };
 const snapGrid: [number, number] = [20, 20];
-const defaultEdgeOptions = { type: 'smoothstep', interactionWidth: 24, style: { stroke: '#4b5563', strokeWidth: 2 } };
+const defaultEdgeOptions = { type: 'smoothstep', interactionWidth: 24, style: { stroke: '#1f2937', strokeWidth: 2.5 } };
 const connectionLineStyle = { stroke: '#2563eb', strokeWidth: 2, strokeDasharray: '6 4' };
 const panButtons = [1, 2];
 const fitOptions = { maxZoom: 1, padding: 0.3 };
@@ -20,11 +20,12 @@ const deleteKeys = ['Delete', 'Backspace'];
 const noMenu = (event: React.MouseEvent | MouseEvent) => event.preventDefault();
 type Props = {
   diagram: Diagram; locked: boolean; valueStore: EquipmentValueStore; iedNames: Record<string, string>;
+  modeBadges?: Record<string, string>;
   selection: string[]; setSelection: (ids: string[]) => void; operate: (nodeId: string, action: string) => void;
   change: (diagram: Diagram, group?: string) => void; toolbar?: ReactNode;
 };
 
-function FlowCanvas({ diagram, locked, valueStore, iedNames, selection, setSelection, operate, change, toolbar }: Props) {
+function FlowCanvas({ diagram, locked, valueStore, iedNames, modeBadges = {}, selection, setSelection, operate, change, toolbar }: Props) {
   const flow = useReactFlow<NodeType>();
   const selectionRef = useRef(selection);
   selectionRef.current = selection;
@@ -89,7 +90,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, selection, setSelec
     if (locked && node.data.kind === 'PUSH_BUTTON') operate(node.id, 'press');
   }, [locked, operate]);
   const paneClick = useCallback(() => setSelection([]), [setSelection]);
-  return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}>
+  return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}><ModeBadges.Provider value={modeBadges}>
     <div className="canvas" onDragOver={dragOver} onDrop={drop}>
       {toolbar}
       {locked && <div className="canvas-lock" role="status">Running · drawing is locked</div>}
@@ -103,13 +104,13 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, selection, setSelec
         nodesDraggable={!locked} nodesConnectable={!locked} deleteKeyCode={locked ? null : deleteKeys}
         snapToGrid snapGrid={snapGrid} minZoom={0.2} maxZoom={2} fitView fitViewOptions={fitOptions}
         defaultEdgeOptions={defaultEdgeOptions}>
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="#d7dce3" />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1.6} color="#b4bcc8" />
         <Controls showInteractive={false} position="bottom-left" />
       </ReactFlow>
       {!diagram.nodes.length && <div className="canvas-empty"><h2>Start your single-line diagram</h2>
         <p>Press <strong>Add</strong> and pick a circuit breaker. Then connect it to an IED signal on the right.</p></div>}
     </div>
-  </IedNames.Provider></LiveValues.Provider>;
+  </ModeBadges.Provider></IedNames.Provider></LiveValues.Provider>;
 }
 
 export const Canvas = memo(function Canvas(props: Props) {

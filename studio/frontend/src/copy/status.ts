@@ -24,6 +24,7 @@ export const PROBLEMS: Record<string, Status> = {
   invalid_frame: { label: 'Unreadable message', tone: 'problem', hint: 'The message could not be decoded. Check the publisher configuration.' },
   conf_rev_mismatch: { label: 'Configuration revision differs', tone: 'problem', hint: 'The publisher runs a different configuration than the SCD. Update the IED or the SCD so both match.' },
   dataset_mismatch: { label: 'Different dataset', tone: 'problem', hint: 'The publisher sends a different dataset than the SCD says. Check the GOOSE block dataset.' },
+  go_id_mismatch: { label: 'Different GOOSE ID', tone: 'problem', hint: 'The publisher sends another GOOSE ID than the SCD. Subscribers that check the GOOSE ID will ignore it; load the matching configuration.' },
   needs_commission: { label: 'Publisher needs commissioning', tone: 'warning', hint: 'The publisher says its configuration is not finished. Finish commissioning the publishing IED.' },
   timeout: { label: 'Messages stopped', tone: 'problem', hint: 'No message within the allowed time. Check cables, the publisher and that it is running.' },
   missing_scd_address: { label: 'No address in SCD', tone: 'warning', hint: 'This IED has no IP address in the SCD. Choose free adapter addresses or type one.' },
@@ -55,7 +56,7 @@ export const addressStatus = (status: string): Status => PROBLEMS[status] ?? PRO
 export const UI_STATUS: Record<string, Status> = {
   equipment_ready: { label: 'Ready', tone: 'good', hint: 'Connected to its IED signals.' },
   adapter_up: { label: 'Connected', tone: 'good', hint: 'The cable or virtual link is up.' },
-  adapter_down: { label: 'Not connected', tone: 'warning', hint: 'Plug in the cable before pressing Run.' },
+  adapter_down: { label: 'No cable', tone: 'warning', hint: 'Plug the device or switch into this port. This list updates by itself.' },
   adapter_internet: { label: 'Internet connection', tone: 'info', hint: 'This adapter carries your internet connection.' },
   item_keep: { label: 'Already there', tone: 'info', hint: 'Studio uses it as it is and will never remove it.' },
   item_add: { label: 'Will be added', tone: 'waiting', hint: 'Added when you press Apply; removed by Clean up.' },

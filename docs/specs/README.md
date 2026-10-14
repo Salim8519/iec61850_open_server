@@ -30,3 +30,15 @@ changed, dropped or invented by accident.
 | [Real IEDs](real-ieds.md) | Read-only live acquisition and SCD comparison |
 | [Beginner guidance](beginner-guidance.md) | Hints, plain wording and status display |
 | [UI structure](ui-structure.md) | Four places, design tokens, one implementation per job |
+| [SLD import](sld-import.md) | Single-line diagram built from the SCD `Substation` section |
+| [Signal flow](signal-flow.md) | Declared GOOSE and report links between IEDs |
+| [Station health](station-health.md) | Live network and real IEDs compared with the SCD |
+| [Sampled Values](sampled-values.md) | Listening to IEC 61850-9-2 streams and checking them against the SCD |
+| [Test mode](test-mode.md) | Mod/Beh/Sim of real and simulated IEDs, simulation traffic |
+
+## Proposed specifications
+
+Large features are specified **before** they are built, in [proposed/](proposed/README.md).
+A proposed spec is planned behaviour, not a capability. Its rule IDs are reserved, and
+it moves into this folder (and this table) only when its enforcing tests exist.
+`check_specs.py` does not scan `proposed/`.

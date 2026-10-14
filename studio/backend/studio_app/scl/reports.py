@@ -71,7 +71,8 @@ def compile_reports(ln, ld_inst, lines, warnings=None):
             lines.append(f"RC({final_name} {rptid} {int(buffered)} {ds} "
                          f"{int(report.get('confRev', '1'))} {triggers} {options} "
                          f"{int(report.get('bufTime', '0'))} {int(report.get('intgPd', '1000'))});")
-            reports.append({"name": final_name, "dataset": ds, "buffered": buffered})
+            reports.append({"name": final_name, "dataset": ds, "buffered": buffered,
+                            "conf_rev": int(report.get("confRev", "1"))})
             if report.get("indexed") == "false":
                 break
     return datasets, reports

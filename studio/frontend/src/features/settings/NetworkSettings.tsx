@@ -7,6 +7,7 @@ import { InfoTip } from '../../ui/InfoTip';
 import { CleanupCard } from '../network/CleanupCard';
 import { GooseTraffic } from '../network/GooseTraffic';
 import { LabWizard } from '../network/LabWizard';
+import { SvTraffic } from '../network/SvTraffic';
 
 export function NetworkSettings({ project, locked, perform }: {
   project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
@@ -30,6 +31,7 @@ export function NetworkSettings({ project, locked, perform }: {
     </div>
     {locked && <p className="small muted" style={{ margin: 0 }}>{hint('network.locked')}</p>}
     <GooseTraffic running={project.runtime !== 'stopped'} revision={project.revision} lab={lab} />
+    <SvTraffic running={project.runtime !== 'stopped'} revision={project.revision} lab={lab} locked={locked} perform={perform} />
     <CleanupCard locked={locked} revision={project.revision} perform={perform} />
   </>;
 }

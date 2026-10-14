@@ -13,7 +13,7 @@ export function EquipmentSymbol({ kind, closed = false, size = 54, position, ani
   const gap = state === 'Closed' ? 0 : state === 'Intermediate' ? 3 : 6;
   const angle = state === 'Closed' ? 0 : state === 'Intermediate' ? 17 : 35;
   return <svg width={size} height={size} viewBox="0 0 60 60" fill="none" stroke="currentColor"
-    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     {kind === 'CB' && <><path d="M30 0V19M30 41V60" />
       <rect x="19" y="19" width="22" height="22" rx={paint ? 3 : 0} fill={paint?.fill || 'none'}
         stroke={paint?.outline || 'currentColor'} strokeWidth={paint ? 2 : undefined} />

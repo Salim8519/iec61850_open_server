@@ -9,14 +9,18 @@ import { DeviceFiles } from './DeviceFiles';
 import { DeviceOverview } from './DeviceOverview';
 import { DeviceSignals } from './DeviceSignals';
 import { LiveValueTable } from './LiveValueTable';
+import { SignalFlowView } from './SignalFlowView';
+import type { ModeSummary } from './useModes';
 
-type Tab = 'overview' | 'signals' | 'compare' | 'files';
+type Tab = 'overview' | 'signals' | 'compare' | 'flow' | 'files';
 
-export function DeviceDetail({ ied, project, locked, values, perform, prepare }: {
+export function DeviceDetail({ ied, project, locked, values, perform, prepare, initialTab, mode }: {
   ied: Ied; project: Project; locked: boolean; values: Record<string, unknown>;
-  perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>;
+  perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>; initialTab?: Tab;
+  mode?: ModeSummary;
 }) {
-  const [tab, setTab] = useState<Tab>('overview');
+  const [tab, setTab] = useState<Tab>(initialTab ?? 'overview');
+  useEffect(() => { if (initialTab) setTab(initialTab); }, [initialTab, ied.id]);
   const [session, setSession] = useState<LiveSession | undefined>();
   const running = project.runtime !== 'stopped';
   useEffect(() => { if (tab === 'compare' && ied.role !== 'real') setTab('overview'); }, [ied.role, tab]);
@@ -32,7 +36,8 @@ export function DeviceDetail({ ied, project, locked, values, perform, prepare }:
     return () => { cancelled = true; clearInterval(timer); };
   }, [running, ied.id, ied.role]);
   const tabs: { id: Tab; label: string }[] = [{ id: 'overview', label: 'Overview' }, { id: 'signals', label: 'Data points' },
-    ...(ied.role === 'real' ? [{ id: 'compare' as const, label: 'Compare with SCD' }] : []), { id: 'files', label: 'Files' }];
+    ...(ied.role === 'real' ? [{ id: 'compare' as const, label: 'Compare with SCD' }] : []),
+    { id: 'flow', label: 'Signal flow' }, { id: 'files', label: 'Files' }];
   return <div className="card">
     <div className="detail-head">
       <div><h2>{ied.name}</h2><p className="muted" style={{ margin: 0 }}>{hint(`live.role.${ied.role}`)}</p></div>
@@ -43,11 +48,12 @@ export function DeviceDetail({ ied, project, locked, values, perform, prepare }:
     <nav className="tabbar" aria-label="Device sections">{tabs.map(item => <button key={item.id}
       className={tab === item.id ? 'active' : ''} aria-current={tab === item.id ? 'page' : undefined}
       onClick={() => setTab(item.id)}>{item.label}</button>)}</nav>
-    {tab === 'overview' && <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} />}
+    {tab === 'overview' && <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode} />}
     {tab === 'signals' && (ied.role === 'real'
       ? <LiveValueTable iedId={ied.id} live={session?.state === 'live'} values={values} />
       : <DeviceSignals ied={ied} project={project} values={values} perform={perform} prepare={prepare} />)}
     {tab === 'compare' && <ComparisonView iedId={ied.id} ready={session?.state === 'live'} />}
+    {tab === 'flow' && <SignalFlowView iedName={ied.name} running={running} />}
     {tab === 'files' && <DeviceFiles ied={ied} locked={locked} perform={perform} prepare={prepare} />}
   </div>;
 }

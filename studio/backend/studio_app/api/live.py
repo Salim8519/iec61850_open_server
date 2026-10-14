@@ -4,6 +4,7 @@ import io
 from flask import Blueprint, Response, jsonify, request
 from .context import projects, runtime
 from studio_app.domain.goose_supervision import watch_list
+from studio_app.domain.sv_supervision import watch_list as sv_watch_list
 from studio_app.networking.npcap import npcap_status
 
 blueprint = Blueprint("live", __name__)
@@ -62,3 +63,14 @@ def goose():
         watch.update(state="stopped", problem="", frames=0)
     return jsonify(running=False, npcap=npcap_status(), state="stopped", unknown=[], watches=watches,
                    message="Press Run to start listening for GOOSE")
+
+
+@blueprint.get("/sv")
+def sampled_values():
+    if runtime().state != "stopped":
+        return jsonify(running=True, npcap=npcap_status(), **runtime().live.sv.snapshot())
+    network = projects().project["network"]
+    supervised, extra = sv_watch_list(projects().project["ieds"], network.get("nominal_hz", 50))
+    return jsonify(running=False, npcap=npcap_status(), state="stopped", unknown=[], watches=supervised,
+                   not_supervised=[{"key": item["key"], "publisher": item["publisher"]} for item in extra],
+                   nominal_hz=network.get("nominal_hz", 50), message="Press Run to start listening for Sampled Values")

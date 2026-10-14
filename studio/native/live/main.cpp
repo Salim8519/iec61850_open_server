@@ -5,6 +5,7 @@
 #include "mms_session.hpp"
 #include "npcap.hpp"
 #include "reports.hpp"
+#include "sv_traffic.hpp"
 #include <functional>
 #include <iostream>
 #include <map>
@@ -14,15 +15,18 @@ int main() {
     MmsSession session;
     ReportAccess reports(session);
     GooseTraffic goose;
+    SvTraffic sv;
     const std::map<std::string, std::function<Json(const Json&)>> operations = {
         {"hello", [](const Json&) {
             return Json{{"capabilities", {"live_discover", "live_reports", "live_poll",
-                                          "goose_listen", "read_only_client"}}};
+                                          "goose_listen", "sv_listen", "read_only_client"}}};
         }},
         {"npcap_status", [](const Json&) { return npcap_status(); }},
         {"adapters", [](const Json&) { return Json{{"adapters", npcap_adapters()}}; }},
         {"goose_start", [&](const Json& request) { return goose.start(request); }},
         {"goose_stop", [&](const Json&) { goose.stop(); return Json(true); }},
+        {"sv_start", [&](const Json& request) { return sv.start(request); }},
+        {"sv_stop", [&](const Json&) { sv.stop(); return Json(true); }},
         {"connect", [&](const Json& request) { return session.connect(request); }},
         {"discover", [&](const Json&) { return session.discover(); }},
         {"read", [&](const Json& request) { return session.read(request); }},
@@ -40,6 +44,7 @@ int main() {
                 auto op = message.at("op").get<std::string>();
                 if (op == "stop") {
                     goose.stop();
+                    sv.stop();
                     reports.release_all();
                     session.close();
                     emit_frame({{"id", id}, {"ok", true}});

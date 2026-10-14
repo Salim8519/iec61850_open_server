@@ -32,6 +32,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |
 | Engineering history | `tools/history_log.py`, `docs/history/ledger-*.jsonl` |
 | Lab network workflow | `networking/service.py`, `address_plan.py`, `change_plan.py`, `journal.py`, `helper/` |
+| Adapter listing | `networking/ip_helper.py` (Windows IP Helper API), `networking/adapters.py` (normalise, PowerShell fallback) |
 | Network/IED settings, format 11 | `domain/network_settings.py`, `projects/ied_settings.py` |
 | SCL communication and GOOSE | `scl/communication.py`, `goose_controls.py`, `goose_links.py` |
 | GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |

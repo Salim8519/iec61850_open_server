@@ -101,3 +101,24 @@ def test_blocks_released_on_disconnect(device, live):
         assert after["free"], after
     finally:
         checker.close()
+
+
+def test_health_uses_existing_session_only(device, live):
+    from studio_app.acquisition.health_checks import read_health
+    model, _ = device
+    process, _ = live
+    calls = []
+
+    class Recorder:
+        def request(self, op, **values):
+            calls.append(op)
+            return process.request(op, **values)
+
+    blocks = {item["rcb"]: item for item in process.request("rcb_status", rcbs=[RCB])["blocks"]}
+    health = read_health(Recorder(), model, blocks, "auto_reports")
+    assert set(calls) == {"read"}
+    mode = health["mode"]
+    assert mode["values"] and not mode["errors"]
+    assert all(isinstance(value, int) for ref, value in mode["values"].items() if ref.endswith((".Mod.stVal", ".Beh.stVal")))
+    assert health["rcbs"]["blocks"][RCB]["readable"] and health["rcbs"]["blocks"][RCB]["free"]
+    assert read_health(Recorder(), model, {}, "polling")["rcbs"] is None

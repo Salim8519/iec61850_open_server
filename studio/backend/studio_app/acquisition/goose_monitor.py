@@ -1,7 +1,10 @@
 """Observe GOOSE on the lab adapter and route it to supervision and live values."""
 import threading
+from datetime import datetime, timezone
 from studio_app.domain.goose_supervision import dataset_values, lgos_updates, watch_list
 from studio_app.runtime.worker_process import WorkerProcess
+
+UNKNOWN_FIELDS = ("gocb_ref", "app_id", "mac", "src_mac", "vlan_id", "dataset", "go_id", "conf_rev", "st_num", "test")
 
 
 class GooseMonitor:
@@ -48,6 +51,10 @@ class GooseMonitor:
             with self.lock:
                 watch.update({key: event[key] for key in ("state", "problem", "st_num", "sq_num", "frames")
                               if key in event})
+                # Received header fields are kept apart from the expected SCD values of the watch.
+                watch.update({f"received_{key}": event[key] for key in ("conf_rev", "go_id", "dataset", "test")
+                              if key in event})
+                watch["observed_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
             payload = {key: value for key, value in event.items() if key not in {"event", "values"}}
             coordinator.emit("goose_status", **payload)
             self._route(watch, event)
@@ -58,8 +65,11 @@ class GooseMonitor:
                         self.watches[item["key"]].update(frames=item["frames"], age_ms=item["age_ms"])
         elif kind == "goose_unknown":
             with self.lock:
-                self.status["unknown"].append({key: event.get(key) for key in ("gocb_ref", "app_id", "mac", "dataset")})
+                self.status["unknown"].append({key: event.get(key) for key in UNKNOWN_FIELDS})
             coordinator.emit("goose_unknown", gocb_ref=event.get("gocb_ref"), app_id=event.get("app_id"))
+        elif kind == "goose_unknown_cap":
+            with self.lock:
+                self.status["unknown_limit"] = event.get("limit")
         elif kind == "worker_failed":
             self.status.update(state="failed", message="The GOOSE listener stopped unexpectedly")
             coordinator.emit("goose_listener_failed", message=event.get("error") or "")

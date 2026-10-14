@@ -35,3 +35,9 @@
 | [0031](ADR-0031-read-only-live-acquisition.md) | Read-only live acquisition from real IEDs and SCD comparison |
 | [0032](ADR-0032-clean-four-place-ui.md) | Clean four-place UI (Diagram, Devices, Test, Settings) and design system v2 |
 | [0033](ADR-0033-feature-consolidation-format-12.md) | Feature consolidation, retired legacy kinds, project format 12 |
+| [0034](ADR-0034-higher-contrast-surfaces.md) | Higher-contrast surfaces, borders and single-line diagram |
+| [0035](ADR-0035-sld-import-from-scd.md) | Single-line diagram import from the SCD Substation section |
+| [0036](ADR-0036-signal-flow-from-scl.md) | Station signal-flow graph from SCL |
+| [0037](ADR-0037-station-health.md) | Station health check against the SCD (read-only, goID check) |
+| [0038](ADR-0038-sampled-values-listening.md) | Listen to Sampled Values (no publishing), nominal frequency setting |
+| [0039](ADR-0039-test-mode.md) | Test mode, behaviour and simulation; sized integer writes |

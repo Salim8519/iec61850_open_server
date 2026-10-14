@@ -10,6 +10,7 @@ from studio_app.domain.sample import companions
 from .schema_validation import validate_schema
 from .communication import read_communication
 from .goose_controls import goose_controls, goose_cfg_lines
+from .sv_controls import sv_controls
 from .goose_links import goose_subscriptions, publisher_catalogue
 
 def import_scl(source, filename="import.scd", selected_names=None):
@@ -53,7 +54,7 @@ def import_scl(source, filename="import.scd", selected_names=None):
             raise StudioError(f"IED {name} has multiple servers; select an access point first")
         builder = ModelBuilder(types)
         builder.lines.append(f"MODEL({name}){{")
-        datasets, reports, publishes = [], [], []
+        datasets, reports, publishes, streams = [], [], [], []
         communication, warnings = read_communication(root, name)
         for ld in servers[0].findall("LDevice"):
             inst = identifier(ld.get("inst"), "logical device")
@@ -81,6 +82,7 @@ def import_scl(source, filename="import.scd", selected_names=None):
                     for control in controls:
                         builder.lines.extend(goose_cfg_lines(control))
                     publishes.extend(controls)
+                    streams.extend(sv_controls(ln, domain, inst, communication["smv"], name, warnings))
                 builder.lines.append("}")
             builder.lines.append("}")
         builder.lines.append("}")
@@ -94,8 +96,6 @@ def import_scl(source, filename="import.scd", selected_names=None):
         warnings.extend(builder.control_warnings)
         catalogue = publisher_catalogue(root) if catalogue is None else catalogue
         subscribes, diagnostics = goose_subscriptions(root, ied, catalogue)
-        if ied.findall(".//SampledValueControl"):
-            warnings.append("Sampled Values configuration retained; publishing is not active")
         if validation["status"] != "valid":
             warnings.append(f"Source document XSD validation: {validation['status']}. "
                             + validation["errors"][0]["message"])
@@ -105,6 +105,7 @@ def import_scl(source, filename="import.scd", selected_names=None):
                        "datasets": datasets, "reports": reports, "warnings": warnings,
                        "validation": validation, "scl_address": communication["address"],
                        "goose": {"publishes": publishes, "subscribes": subscribes, "diagnostics": diagnostics},
+                       "sv": {"publishes": streams},
                        "edition": 1 if root.get("version") is None else 2,
                        "ip": "", "port": 102, "state": "stopped"})
     if not result:

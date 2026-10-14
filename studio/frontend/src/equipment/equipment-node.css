@@ -1,18 +1,20 @@
 /* Canvas equipment cards: clear outline, category accent bar, text-first state pill. */
-.equipment-node { width: 108px; text-align: center; border: 1px solid var(--border-strong); border-radius: 8px;
-  padding: 8px 6px 7px; background: white; color: var(--text); box-shadow: 0 1px 3px #16324f14; }
+.equipment-node { width: 108px; text-align: center; border: var(--line) solid #7d8796; border-radius: 8px;
+  padding: 8px 6px 7px; background: white; color: var(--text); box-shadow: 0 1px 3px #16324f26; }
 .equipment-node:not(.draw):not(.relay) { border-top: 3px solid var(--cat, var(--border-strong)); }
-.equipment-node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px #1d4ed833; }
+/* A junction is a 40 px drawing point (ADR-0021), matching its initial size in flowNodes.ts. */
+.equipment-node.draw { width: 40px; height: 40px; padding: 1px; display: grid; place-items: center; border-radius: 6px; }
+.equipment-node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px #1d4ed859; }
 .equipment-node:not(.draw):not(.relay).selected { border-top-color: var(--primary); }
-.equipment-label { font-size: 11.5px; font-weight: 650; margin-top: 4px;
+.equipment-label { font-size: 12px; font-weight: 700; color: var(--text); margin-top: 4px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .equipment-state { display: inline-block; max-width: 100%; margin-top: 4px; padding: 1px 7px;
-  border-radius: 999px; font-size: 10px; font-weight: 600; line-height: 16px;
+  border-radius: 999px; font-size: 10.5px; font-weight: 650; line-height: 16px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid transparent; }
 /* Border style differs per tone so the state never relies on colour alone. */
-.equipment-state.tone-unmapped { color: #6b7c90; border: 1px dashed #b7c4d3; background: white; }
-.equipment-state.tone-awaiting { color: var(--primary); border: 1px dotted #9fb6ef; background: white; }
-.equipment-state.tone-live { color: var(--navy); border: 1px solid #b9c9dc; background: var(--slate-soft); }
+.equipment-state.tone-unmapped { color: #4b5768; border: 1px dashed #8d99a8; background: white; }
+.equipment-state.tone-awaiting { color: var(--primary); border: 1px dotted #5f86e0; background: white; }
+.equipment-state.tone-live { color: var(--navy); border: 1px solid #8597ad; background: var(--slate-soft); }
 
 /* State colour lives in the symbol's moving part (display only); the card stays neutral.
    The state pill text and symbol geometry remain authoritative. */
@@ -23,3 +25,6 @@
 .equipment-node.fill-invalid .equipment-state { color: var(--error); border-color: #fca5a5; }
 .equipment-symbol rect, .equipment-symbol circle { transition: fill .3s ease, stroke .3s ease; }
 @media (prefers-reduced-motion: reduce) { .equipment-symbol rect, .equipment-symbol circle { transition: none; } }
+/* Mode badge (test, blocked, off, simulation): text with a dashed outline, never colour alone. */
+.equipment-mode { display: inline-block; margin-top: 4px; padding: 0 6px; border: 1px dashed #b45309;
+  border-radius: 999px; font-size: 10.5px; font-weight: 700; color: #92400e; background: #fffbeb; }

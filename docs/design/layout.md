@@ -2,10 +2,10 @@
 
 | Token | Value |
 | --- | --- |
-| Background | #F5F6F8 |
+| Background | #ECEEF2 (sidebar #F7F8FA, canvas #E9EDF2) |
 | Surface | #FFFFFF (sidebar, top bar, cards, sheets) |
-| Text / secondary / tertiary | #111827 / #4B5563 / #6B7280 |
-| Border | #E5E7EB, strong #D1D5DB |
+| Text / secondary / tertiary | #0F172A / #3F4856 / #5B6472 |
+| Border | #D3D8E0 cards/rows, strong #A9B1BD controls; 1.5 px (`--line`), ADR-0034 |
 | Accent | #2563EB on #EFF6FF (one accent only) |
 | Success / Warning / Error | #15803D / #B45309 / #B91C1C with soft tints |
 | Font | System UI, 15 px base, scale 13/15/17/20/26, line-height 1.5, rem units |
@@ -23,7 +23,8 @@ options inside a single "Advanced" disclosure; hints only in empty states, wizar
 and unclear settings; jargon through a "?" InfoTip. No gradients, decorative
 dashboards, external fonts or remote runtime assets.
 
-Diagram: full-height canvas on #FBFCFD with a floating toolbar (Add, Undo, Redo) and
+Diagram: full-height canvas on #E9EDF2 with #B4BCC8 dots, #1F2937 2.5 px wires and
+white symbol cards outlined #7D8796, with a floating toolbar (Add, Undo, Redo) and
 zoom controls bottom-left. Add opens large labelled tiles grouped Switching,
 Measuring, Protection & control, Drawing. The 380 px right sheet appears only when
 something is selected: status pill, Operate (while running), name and start position,

@@ -1,12 +1,14 @@
 """Validate project network mode and per-IED role, endpoint and GOOSE settings."""
 import ipaddress
 import re
+from .test_mode import validate_test_mode
 
 MODES = {"loopback", "lab"}
 ROLES = {"simulated", "real", "off"}
 ACCESS = {"auto_reports", "polling"}
 GUID = re.compile(r"^\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$")
-DEFAULT_NETWORK = {"mode": "loopback", "adapter_guid": "", "adapter_label": ""}
+DEFAULT_NETWORK = {"mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 50}
+NOMINAL_HZ = {50, 60}
 DEFAULT_LIVE = {"ip": "", "port": 102, "access": "auto_reports", "poll_ms": 1000}
 
 
@@ -37,8 +39,10 @@ def validate_network(value):
         raise ValueError("Choose a network adapter before switching to lab network mode")
     if guid and not GUID.match(guid):
         raise ValueError("Adapter identifier is not a Windows adapter GUID")
+    if value["nominal_hz"] not in NOMINAL_HZ or isinstance(value["nominal_hz"], bool):
+        raise ValueError("Nominal frequency must be 50 Hz or 60 Hz")
     return {"mode": value["mode"], "adapter_guid": guid,
-            "adapter_label": str(value.get("adapter_label") or "")[:100]}
+            "adapter_label": str(value.get("adapter_label") or "")[:100], "nominal_hz": value["nominal_hz"]}
 
 
 def validate_live(value):
@@ -64,7 +68,7 @@ def validate_ied_settings(value):
         raise ValueError("GOOSE publishing must be on or off")
     return {"role": role, "live": validate_live(value.get("live")),
             "lab_ip": _ipv4(value.get("lab_ip", ""), "Lab network address"),
-            "goose_publish": publish}
+            "goose_publish": publish, "test_mode": validate_test_mode(value.get("test_mode"))}
 
 
 def effective_endpoint(ied, network):

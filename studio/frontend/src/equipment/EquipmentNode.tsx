@@ -9,13 +9,15 @@ import { JunctionBody } from './JunctionBody';
 import { kindInfo, stateTone } from './kindInfo';
 import { colorScheme, paintFor, stateFill } from './stateColors';
 import './equipment-node.css';
-import { IedNames, LiveValues } from './liveContext';
+import { IedNames, LiveValues, ModeBadges } from './liveContext';
+import { modeStatus } from '../copy/testMode';
 
 
 
 function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const store = useContext(LiveValues);
   const iedNames = useContext(IedNames);
+  const badge = useContext(ModeBadges)[id];
   const subscribe = useCallback((listener: () => void) => store.subscribe(id, listener), [id, store]);
   const snapshot = useCallback(() => store.get(id), [id, store]);
   const value = useSyncExternalStore(subscribe, snapshot, snapshot);
@@ -52,6 +54,7 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
           pushStatus && typeof value === 'boolean' ? value : undefined} />
     </div>}
     {!junction && <div className="equipment-label">{data.label}</div>}
+    {!junction && badge && <div className="equipment-mode" title={modeStatus(badge).hint}>{modeStatus(badge).label}</div>}
     {!junction && <div className={`equipment-state tone-${tone}`}>
       {paint && <span className="state-dot" aria-hidden="true"
         style={{ background: paint.fill, borderColor: paint.outline }} />}

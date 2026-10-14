@@ -1,6 +1,6 @@
 /* Canvas pointer ergonomics: generous invisible terminal hit zones, clear hover and
    connection feedback, easy-to-pick wires and a visible selection box. */
-.react-flow__handle { width: 9px; height: 9px; background: #6681a2; border: 1.5px solid white;
+.react-flow__handle { width: 9px; height: 9px; background: #42576f; border: 1.5px solid white;
   box-shadow: 0 0 0 1px #6681a255; transition: scale .08s ease, background-color .08s ease; }
 /* 25 px target around the 9 px dot; the pseudo-element is part of the handle for hit testing. */
 .react-flow__handle::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; }
@@ -16,6 +16,7 @@
 .equipment-node.draw .react-flow__handle::after { inset: -3px; }
 
 /* Wires: wide invisible pick area (interactionWidth), clear hover and selection. */
+.react-flow__edge-path { stroke: var(--wire); stroke-width: 2.5; }
 .react-flow__edge:hover .react-flow__edge-path { stroke: #3d5a80; }
 .react-flow__edge.selected .react-flow__edge-path { stroke: var(--primary) !important; stroke-width: 3 !important; }
 .react-flow__connection-path { stroke-linecap: round; }

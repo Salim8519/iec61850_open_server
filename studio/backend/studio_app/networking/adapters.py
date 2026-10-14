@@ -1,7 +1,11 @@
 """List Windows network adapters and their IPv4 addresses without elevation."""
 import json
+import logging
 import os
 import subprocess
+from . import ip_helper
+
+LOG = logging.getLogger(__name__)
 
 SCRIPT = r"""
 $ErrorActionPreference = 'Stop'
@@ -47,8 +51,8 @@ def _kind(item):
 
 
 def normalize(raw):
-    """Turn the PowerShell JSON into stable adapter dictionaries."""
-    items = json.loads(raw or "[]")
+    """Turn adapter records (IP Helper list or PowerShell JSON) into stable dictionaries."""
+    items = json.loads(raw or "[]") if isinstance(raw, (str, type(None))) else raw
     if isinstance(items, dict):
         items = [items]
     adapters = []
@@ -66,11 +70,20 @@ def normalize(raw):
                          "addresses": [{"ip": a.get("ip"), "prefix": a.get("prefix"),
                                         "skip_as_source": bool(a.get("skip_as_source")),
                                         "origin": a.get("origin", "")} for a in addresses]})
-    return sorted(adapters, key=lambda a: (a["status"] != "Up", a["default_route"], a["name"].lower()))
+    return sorted(adapters, key=lambda a: (KIND_ORDER.get(a["kind"], 9), a["status"] != "Up", a["default_route"],
+                                           a["name"].lower()))
 
 
-def list_adapters(run=_powershell):
-    return normalize(run(SCRIPT))
+KIND_ORDER = {"ethernet": 0, "wifi": 1, "virtual_lab": 2, "virtual": 3, "vpn": 4, "bluetooth": 5}
+
+
+def list_adapters(run=_powershell, native=ip_helper.adapters):
+    """Adapters from the Windows IP Helper API (milliseconds); PowerShell only if that fails."""
+    try:
+        return normalize(native())
+    except OSError as error:
+        LOG.warning("IP Helper adapter listing failed (%s); using PowerShell", error)
+        return normalize(run(SCRIPT))
 
 
 RULES_SCRIPT = ("Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | "

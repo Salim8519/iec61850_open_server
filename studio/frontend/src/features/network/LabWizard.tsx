@@ -22,13 +22,19 @@ export function LabWizard({ close, finished }: { close: () => void; finished: ()
   const [result, setResult] = useState<ApplyResult | null>(null);
   const [error, setError] = useState('');
   const [applying, setApplying] = useState(false);
-  const load = useCallback((refresh: boolean) => {
-    setLoading(true); setError('');
+  const load = useCallback((refresh: boolean, quiet = false) => {
+    if (!quiet) { setLoading(true); setError(''); }
     api<{ adapters: Adapter[] }>(`/network/adapters${refresh ? '?refresh=1' : ''}`)
-      .then(answer => setAdapters(answer.adapters)).catch(reason => setError(reason.message))
-      .finally(() => setLoading(false));
+      .then(answer => setAdapters(answer.adapters)).catch(reason => { if (!quiet) setError(reason.message); })
+      .finally(() => { if (!quiet) setLoading(false); });
   }, []);
   useEffect(() => load(false), [load]);
+  // Live list: a plugged or unplugged cable shows up by itself while the adapter step is open.
+  useEffect(() => {
+    if (step !== 0) return;
+    const timer = window.setInterval(() => load(true, true), 3000);
+    return () => window.clearInterval(timer);
+  }, [step, load]);
   const check = useCallback(() => {
     if (!guid) return;
     setChecking(true); setError('');

@@ -27,10 +27,17 @@ def endpoint_conflicts(ieds, network):
     return problems
 
 
+def _merged_network(current, value):
+    """A frequency-only change keeps the mode; a mode change keeps the frequency."""
+    if set(value) <= {"nominal_hz"}:
+        return {**current, **value}
+    return {**value, "nominal_hz": value.get("nominal_hz", current.get("nominal_hz", 50))}
+
+
 def update_network(service, value):
     with service.lock:
         try:
-            candidate = validate_network(value)
+            candidate = validate_network(_merged_network(service.project["network"], value or {}))
         except ValueError as error:
             raise StudioError(str(error)) from error
         problems = endpoint_conflicts(service.project["ieds"], candidate)
@@ -47,7 +54,7 @@ def update_ied(service, ied_id, changes):
         raise StudioError("Only role, live, lab_ip, goose_publish and port can be changed here")
     with service.lock:
         ied = service.find_ied(ied_id)
-        merged = {key: ied.get(key) for key in ("role", "live", "lab_ip", "goose_publish")}
+        merged = {key: ied.get(key) for key in ("role", "live", "lab_ip", "goose_publish", "test_mode")}
         if "live" in changes:
             changes = {**changes, "live": {**(ied.get("live") or {}), **(changes["live"] or {})}}
         merged.update({key: value for key, value in changes.items() if key != "port"})

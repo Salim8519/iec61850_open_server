@@ -10,7 +10,7 @@ from studio_app.projects.startup_recovery import recover_startup
 from studio_app.runtime.event_bus import EventBus
 from studio_app.simulation.coordinator import Coordinator
 from studio_app.api import projects, scl, signals, runtime, events, security, scenarios, ieds, traces, equipment
-from studio_app.api import test_panel, network, live
+from studio_app.api import test_panel, network, live, sld, signal_flow, health, test_mode
 from studio_app.networking.service import NetworkService
 
 
@@ -31,7 +31,7 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None):
                           studio_settings=settings, startup_recovery=recovery)
     app.before_request(security.protect_request)
     for module in (projects, scl, signals, runtime, events, security, scenarios, ieds, traces,
-                   test_panel, equipment, network, live):
+                   test_panel, equipment, network, live, sld, signal_flow, health, test_mode):
         app.register_blueprint(module.blueprint, url_prefix="/api/v1")
 
     @app.errorhandler(StudioError)

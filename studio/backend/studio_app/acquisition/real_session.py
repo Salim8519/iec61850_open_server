@@ -1,9 +1,13 @@
 """One read-only connection to a real IED: connect, compare, report or poll, recover."""
 import threading
+import time
 from studio_app.domain.access_policy import choose_access
 from studio_app.domain.model_compare import compare
 from studio_app.domain.network_settings import real_endpoint
 from studio_app.runtime.worker_process import WorkerProcess
+from .health_checks import read_health, read_mode
+
+MODE_REFRESH_S = 10
 
 REQUIRED = {"live_discover", "live_reports", "live_poll", "read_only_client"}
 
@@ -20,7 +24,7 @@ class RealSession:
         host, port, origin = real_endpoint(ied)
         self.status = {"ied_id": ied["id"], "name": ied["name"], "state": "starting", "host": host,
                        "port": port, "endpoint_source": origin, "message": "", "access": None,
-                       "comparison": None, "polling": []}
+                       "comparison": None, "polling": [], "health": None}
 
     def start(self):
         self.thread.start()
@@ -83,6 +87,7 @@ class RealSession:
                 access["notes"].append(f"Report block {rcb.rsplit('.', 1)[-1]} became busy; polling instead.")
         access["reports"] = used
         self.status["access"] = access
+        self.status["health"] = read_health(self.process, self.ied, blocks, self.ied["live"]["access"])
         covered = {ref for report in self.ied.get("reports", []) if report["ref"] in used
                    for dataset in self.ied.get("datasets", []) if dataset.get("ref") == report.get("dataset_ref")
                    for ref in dataset.get("signal_refs", [])}
@@ -96,9 +101,13 @@ class RealSession:
         else:
             how = "Connected. Use 'Read these now' below to read values from the device"
         self._set("live", how)
+        mode_due = time.monotonic() + MODE_REFRESH_S
         while not self.stopping.is_set() and not self.lost.is_set():
             if self.status["polling"]:
                 self.read(self.status["polling"], "live_poll")
+            if time.monotonic() >= mode_due:
+                self.status["health"]["mode"] = read_mode(self.process, self.ied)
+                mode_due = time.monotonic() + MODE_REFRESH_S
             self.stopping.wait(self.ied["live"]["poll_ms"] / 1000)
         if self.lost.is_set():
             self.manager.values.mark_stale(self.ied["id"], "Connection to the device was lost")
@@ -119,6 +128,18 @@ class RealSession:
                 self.manager.coordinator.emit("live_read_error", ied_id=self.ied["id"], ref=entry["ref"],
                                               message=f"The device could not read this point (error {entry.get('error')})")
         return self.manager.values.apply(self.ied["id"], values, source)
+
+    def refresh_health(self):
+        """Read report-block, GOOSE-block and mode settings again on this same association."""
+        process = self.process
+        if process is None or self.status["state"] != "live":
+            raise ValueError(f"{self.ied['name']} is not connected yet")
+        blocks = {}
+        refs = [report["ref"] for report in self.ied.get("reports", [])]
+        if refs and self.ied["live"]["access"] == "auto_reports":
+            blocks = {item["rcb"]: item for item in process.request("rcb_status", timeout=30, rcbs=refs)["blocks"]}
+        self.status["health"] = read_health(process, self.ied, blocks, self.ied["live"]["access"])
+        return self.status["health"]
 
     def _close_process(self):
         process, self.process = self.process, None

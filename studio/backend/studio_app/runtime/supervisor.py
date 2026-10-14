@@ -4,7 +4,7 @@ from .worker_process import WorkerProcess
 from .worker_settings import check_capabilities, start_request
 from studio_app.domain.network_settings import DEFAULT_NETWORK
 from studio_app.networking.endpoints import preflight
-from studio_app.networking.local_addresses import addresses_on
+from studio_app.networking.ip_helper import addresses_on
 from studio_app.networking.loopback import assign_endpoints
 
 

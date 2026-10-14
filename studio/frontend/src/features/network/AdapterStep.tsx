@@ -17,13 +17,13 @@ export function AdapterStep({ adapters, loading, selected, choose, reload }: {
   return <div className="stack">
     <div className="row" style={{ justifyContent: 'space-between' }}>
       <h2 style={{ margin: 0 }}>Which <InfoTip term="adapter" label="network adapter" /> are the lab devices on?</h2>
-      <button onClick={reload} disabled={loading}><RefreshCw size={14} />Refresh list</button>
+      <button onClick={reload} disabled={loading}><RefreshCw size={14} />Refresh now</button>
     </div>
     <Hint id="network.adapter.pick" />
     <Hint id="network.adapter.virtual" compact />
-    {loading && <p className="muted small">Asking Windows for the adapter list… this takes a few seconds.</p>}
+    {loading && !adapters && <p className="muted small">Asking Windows for the adapter list…</p>}
     {!loading && adapters && !usable.length && <p className="muted">No suitable adapter found. Plug in a USB Ethernet
-      adapter or enable a virtual adapter, then press Refresh list.</p>}
+      adapter or enable a virtual adapter; this list updates by itself.</p>}
     <div className="choice-grid">{usable.map(adapter => {
       const Icon = KIND_ICON[adapter.kind] ?? Cable;
       const up = adapter.status === 'Up';
