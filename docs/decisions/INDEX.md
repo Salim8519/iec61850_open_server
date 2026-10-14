@@ -42,3 +42,8 @@
 | [0038](ADR-0038-sampled-values-listening.md) | Listen to Sampled Values (no publishing), nominal frequency setting |
 | [0039](ADR-0039-test-mode.md) | Test mode, behaviour and simulation; sized integer writes |
 | [0040](ADR-0040-sld-tidy-up.md) | Tidy up the single-line diagram in the browser (layered SLD layout) |
+| [0041](ADR-0041-infeed-symbol.md) | Infeed symbol, isolated from every engine (format stays 12) |
+| [0042](ADR-0042-live-colouring.md) | Live colouring computed by the backend, shown by line style |
+| [0043](ADR-0043-interlock-hints.md) | Interlocking is friendly hints only; never blocking |
+| [0044](ADR-0044-bay-templates.md) | Bay templates in the Add menu |
+| [0045](ADR-0045-readable-switching-symbols.md) | Switching symbols readable from a distance (geometry, zoom bands, change pulse) |

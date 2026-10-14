@@ -13,6 +13,7 @@ from .automation import Automation
 from .bindings import publish_bindings
 from .initial_state import apply_initial_states
 from .test_mode_apply import apply_test_modes
+from .energization_states import EnergizationStates
 from .equipment_states import EquipmentStates
 from .equipment_control import EquipmentControl
 from .native_control_feedback import NativeControlFeedback
@@ -44,6 +45,8 @@ class Coordinator:
         self.automation = Automation(self)
         self.pulses = Pulses(self)
         self.equipment_states = EquipmentStates(self)
+        self.energization = EnergizationStates(self)
+        self.equipment_states.after_publish = self.energization.publish
         self.equipment_control = EquipmentControl(self)
         self.native_control_feedback = NativeControlFeedback(self)
         self.live = LiveManager(self, Path(executable).with_name("studio_live.exe"))
@@ -105,6 +108,7 @@ class Coordinator:
             self.elapsed = 0
             self.sample_writer.reset(simulated)
             self.equipment_states.reset(self.projects.project["diagram"])
+            self.energization.reset(self.projects.project["diagram"])
             self.native_control_feedback.reset(self.projects.project["diagram"])
         try:
             self.log = RunLog(self.directory / "logs")

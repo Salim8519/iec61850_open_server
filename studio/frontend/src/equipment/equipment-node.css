@@ -28,3 +28,18 @@
 /* Mode badge (test, blocked, off, simulation): text with a dashed outline, never colour alone. */
 .equipment-mode { display: inline-block; margin-top: 4px; padding: 0 6px; border: 1px dashed #b45309;
   border-radius: 999px; font-size: 10.5px; font-weight: 700; color: #92400e; background: #fffbeb; }
+/* Distance readability (ADR-0045). Zoom bands thicken symbol strokes; layout never changes. */
+.canvas.zoom-mid .equipment-symbol { --sym-stroke: 4px; }
+.canvas.zoom-far .equipment-symbol { --sym-stroke: 5.5px; }
+/* A confirmed CB/DS/ES position change pulses a ring twice. The attribute alternates a/b
+   so each new change restarts the animation. The state itself stays in geometry and text. */
+.equipment-node[data-pulse="a"] { animation: change-pulse-a 1s ease-out 2; }
+.equipment-node[data-pulse="b"] { animation: change-pulse-b 1s ease-out 2; }
+@keyframes change-pulse-a { from { box-shadow: 0 0 0 0 #2563ebb3; } to { box-shadow: 0 0 0 18px #2563eb00; } }
+@keyframes change-pulse-b { from { box-shadow: 0 0 0 0 #2563ebb3; } to { box-shadow: 0 0 0 18px #2563eb00; } }
+@media (prefers-reduced-motion: reduce) {
+  .equipment-node[data-pulse="a"] { animation: change-ring-a 2s step-end 1; }
+  .equipment-node[data-pulse="b"] { animation: change-ring-b 2s step-end 1; }
+}
+@keyframes change-ring-a { from { box-shadow: 0 0 0 4px #2563eb; } to { box-shadow: none; } }
+@keyframes change-ring-b { from { box-shadow: 0 0 0 4px #2563eb; } to { box-shadow: none; } }

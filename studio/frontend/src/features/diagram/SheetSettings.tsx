@@ -1,7 +1,8 @@
 import type { EquipmentData } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
 import { AppearanceEditor } from './AppearanceEditor';
-import { advancedFields, basicFields, polaritySentence, PUSH_MODES } from './equipmentFields';
+import { Hint } from '../../ui/Hint';
+import { advancedFields, basicFields, INFEED_TYPES, polaritySentence, PUSH_MODES } from './equipmentFields';
 
 type Props = {
   data: EquipmentData; locked: boolean; update: (data: EquipmentData) => void;
@@ -18,6 +19,15 @@ export function BasicSettings({ data, locked, update }: Omit<Props, 'applyColors
       value={data.initial_position || 'open'}
       onChange={event => update({ ...data, initial_position: event.target.value as 'open' | 'closed' })}>
       <option value="open">Open</option><option value="closed">Closed</option></select></label>}
+    {fields.includes('infeed_type') && <label>What feeds the station here<select disabled={locked}
+      value={data.infeed_type || 'line'}
+      onChange={event => update({ ...data, infeed_type: event.target.value as NonNullable<EquipmentData['infeed_type']> })}>
+      {INFEED_TYPES.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
+    {fields.includes('infeed_state') && <label>Power from here<select disabled={locked}
+      value={data.infeed_state || 'live'}
+      onChange={event => update({ ...data, infeed_state: event.target.value as 'live' | 'dead' })}>
+      <option value="live">Live: it feeds power</option><option value="dead">Dead: no power</option></select></label>}
+    {data.kind === 'INFEED' && <Hint id="infeed.intro" compact />}
     {data.kind === 'TRIP_RELAY' && <p className="small muted" style={{ margin: 0 }}>{polaritySentence(data)}</p>}
   </>;
 }

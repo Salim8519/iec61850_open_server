@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
+import { memo, useCallback, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
   useReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, ConnectionMode, SelectionMode,
   type NodeChange, type EdgeChange, type Connection, type NodeTypes } from '@xyflow/react';
@@ -8,6 +8,11 @@ import { IedNames, LiveValues, ModeBadges } from '../../equipment/liveContext';
 import { stableFlowNodes, type FlowNodeCache } from '../../equipment/flowNodes';
 import { rememberMeasured, type MeasuredStore } from '../../equipment/measured';
 import type { EquipmentValueStore } from '../../equipment/liveValues';
+import { energizedEdges, type EdgeCache, type EnergizationStore } from '../../equipment/energization';
+import { EnergizationLegend } from './EnergizationLegend';
+import { useZoomTier } from './useZoomTier';
+import { addBay, BAYS, type BayKind } from '../../equipment/bayTemplates';
+import './energization.css';
 
 const nodeTypes: NodeTypes = { equipment: EquipmentNode };
 const snapGrid: [number, number] = [20, 20];
@@ -20,13 +25,15 @@ const deleteKeys = ['Delete', 'Backspace'];
 const noMenu = (event: React.MouseEvent | MouseEvent) => event.preventDefault();
 type Props = {
   diagram: Diagram; locked: boolean; valueStore: EquipmentValueStore; iedNames: Record<string, string>;
+  energization: EnergizationStore;
   modeBadges?: Record<string, string>;
   selection: string[]; setSelection: (ids: string[]) => void; operate: (nodeId: string, action: string) => void;
   change: (diagram: Diagram, group?: string) => void; toolbar?: ReactNode;
 };
 
-function FlowCanvas({ diagram, locked, valueStore, iedNames, modeBadges = {}, selection, setSelection, operate, change, toolbar }: Props) {
+function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar }: Props) {
   const flow = useReactFlow<NodeType>();
+  const zoomTier = useZoomTier();
   const selectionRef = useRef(selection);
   selectionRef.current = selection;
   // Drag frames move a local draft; the diagram (history, save, inspector) updates once on drop.
@@ -34,6 +41,13 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, modeBadges = {}, se
   const [draft, setDraft] = useState<NodeType[] | null>(null);
   const nodeCache = useRef<FlowNodeCache>(new Map());
   const measured = useRef<MeasuredStore>(new Map());
+  const edgeCache = useRef<EdgeCache>(new Map());
+  const energy = useSyncExternalStore(energization.subscribe, energization.get, energization.get);
+  const edges = useMemo(() => {
+    const result = energizedEdges(diagram.edges, energy.edges, edgeCache.current);
+    edgeCache.current = result.cache;
+    return result.edges;
+  }, [diagram.edges, energy]);
   const nodesChanged = useCallback((changes: NodeChange<NodeType>[]) => {
     rememberMeasured(measured.current, changes);
     const selects = changes.filter(change => change.type === 'select');
@@ -74,11 +88,17 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, modeBadges = {}, se
   const drop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     const kind = event.dataTransfer.getData('application/studio-equipment') as EquipmentKind;
-    if (!kind || locked) return;
+    const bay = event.dataTransfer.getData('application/studio-bay') as BayKind;
+    if ((!kind && !bay) || locked) return;
     const position = flow.screenToFlowPosition({ x: event.clientX, y: event.clientY });
+    if (bay in BAYS) {
+      const result = addBay(diagram, bay, { at: position });
+      change(result.diagram); setSelection(result.ids); return;
+    }
     const node: NodeType = { id: crypto.randomUUID(), type: 'equipment', position,
       data: { kind, label: `${kind}-${diagram.nodes.filter(n => n.data.kind === kind).length + 1}`, rotation: 0,
-        ...(kind === 'PUSH_BUTTON' ? { push_mode: 'latching_status' as const } : {}) } };
+        ...(kind === 'PUSH_BUTTON' ? { push_mode: 'latching_status' as const } : {}),
+        ...(kind === 'INFEED' ? { infeed_type: 'line' as const, infeed_state: 'live' as const } : {}) } };
     change({ ...diagram, nodes: [...diagram.nodes, node] }); setSelection([node.id]);
   }, [change, diagram, flow, locked, setSelection]);
   const dragStop = useCallback(() => {
@@ -91,10 +111,11 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, modeBadges = {}, se
   }, [locked, operate]);
   const paneClick = useCallback(() => setSelection([]), [setSelection]);
   return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}><ModeBadges.Provider value={modeBadges}>
-    <div className="canvas" onDragOver={dragOver} onDrop={drop}>
+    <div className={`canvas zoom-${zoomTier}`} onDragOver={dragOver} onDrop={drop}>
       {toolbar}
       {locked && <div className="canvas-lock" role="status">Running · drawing is locked</div>}
-      <ReactFlow nodes={projection} edges={diagram.edges} nodeTypes={nodeTypes}
+      {locked && <EnergizationLegend energy={energy} />}
+      <ReactFlow nodes={projection} edges={edges} nodeTypes={nodeTypes}
         onNodesChange={nodesChanged} onEdgesChange={edgesChanged} onConnect={connect}
         onNodeDragStop={dragStop} onSelectionDragStop={dragStop}
         onNodeClick={nodeClick} onPaneClick={paneClick} onPaneContextMenu={noMenu}

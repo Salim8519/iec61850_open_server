@@ -35,13 +35,19 @@ with a Simulate / Real device / Off segmented control and tabs Overview, Data po
 Compare with SCD (real devices) and Files. Test and Settings switch sections with a
 segmented control.
 
+Live colouring (running only): live red solid 4 px, maybe live amber dotted, dead grey
+dashed, earthed green dash-dot, earth fault purple long dash 5 px; a bottom-right legend
+names each style. Switching hints use an amber dashed box with an icon and words.
+
 Status display: words + icon + border pattern (solid good/info, dotted waiting,
 dashed warning/off, double problem); colour only repeats the words. Library category
 accents describe equipment families, never energized or protection state.
 
-Equipment (unchanged rules): CB contacts translate and DS/ES blades rotate over
-300 ms after confirmed feedback; Unknown/Invalid never resemble Open; reduced motion
-disables interpolation. Trip relay states Reset/Operated/Awaiting/Invalid; push button
+Equipment (ADR-0045): CB body fills with a whole conductor when closed and is hollow
+with a broken conductor when open; DS/ES blades (IEC contact bar) swing 40° open; all
+move over 300 ms after confirmed feedback. Symbol strokes thicken in zoom bands (3/4/5.5)
+and a confirmed position change pulses a blue ring twice; Unknown/Invalid never
+resemble Open; reduced motion disables interpolation and holds a static ring. Trip relay states Reset/Operated/Awaiting/Invalid; push button
 has no terminals and is pressed by clicking it. Relay panels show one row per signal
 with a value chip (filled 1, hollow 0, dashed —). State fills (ADR-0026) colour only
 the moving part; Intermediate is dashed amber and Invalid dashed red.

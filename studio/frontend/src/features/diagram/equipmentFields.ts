@@ -2,11 +2,12 @@ import type { EquipmentData, EquipmentKind } from '../../api/types';
 
 // Which settings a beginner sees first and which wait under "Advanced" (UI-04).
 export type SheetField = 'name' | 'start_position' | 'push_mode' | 'push_value' | 'push_rest_value'
-  | 'push_reset_ms' | 'trip_command_polarity' | 'trip_state_polarity' | 'colors';
+  | 'push_reset_ms' | 'trip_command_polarity' | 'trip_state_polarity' | 'colors' | 'infeed_type' | 'infeed_state';
 
 const SWITCHES: EquipmentKind[] = ['CB', 'DS', 'ES'];
 
 export function basicFields(kind: EquipmentKind): SheetField[] {
+  if (kind === 'INFEED') return ['name', 'infeed_type', 'infeed_state'];
   return SWITCHES.includes(kind) ? ['name', 'start_position'] : ['name'];
 }
 
@@ -32,4 +33,10 @@ export const PUSH_MODES = [
   { value: 'latching_status', label: 'Toggle on and off (default)' },
   { value: 'self_resetting', label: 'Press, then release by itself' },
   { value: 'spc_momentary', label: 'Send a control command (SPC)' },
+] as const;
+
+export const INFEED_TYPES = [
+  { value: 'line', label: 'Incoming line' },
+  { value: 'transformer', label: 'Power transformer' },
+  { value: 'grid', label: 'External grid' },
 ] as const;

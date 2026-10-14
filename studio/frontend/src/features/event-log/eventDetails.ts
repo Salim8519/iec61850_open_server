@@ -58,6 +58,12 @@ export function eventDetails(event: StudioEvent) {
       `ctlVal=${rendered(event.ctl_value)}`;
     return `${rendered(event.ref)} / ${raw} / ${rendered(event.action)}`;
   }
+  if (event.kind === 'energization') {
+    const counts = new Map<string, number>();
+    Object.values((event.edges || {}) as Record<string, string>).forEach(state => counts.set(state, (counts.get(state) || 0) + 1));
+    const parts = [...counts].map(([state, count]) => `${count} ${state.replace('_', ' ')}`);
+    return parts.length ? `wires now: ${parts.join(', ')}` : 'no power wires on the diagram';
+  }
   const subject = event.message || event.ref || event.status_ref || event.state || '';
   return `${subject}${event.value !== undefined ? ` -> ${rendered(event.value)}` : ''}`;
 }

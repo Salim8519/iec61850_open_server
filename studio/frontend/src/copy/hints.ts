@@ -59,6 +59,8 @@ export const HINTS: Record<string, string> = {
   'flow.empty': 'No message blocks match. Choose All, clear the search or pick another IED.',
   'flow.problems': 'These links are written in the SCD but point to something that is not there. Ask the system integrator to fix the SCD.',
   'flow.error': 'The signal flow could not be read from this file. Import the substation SCD file first.',
+  'infeed.intro': 'Marks where power enters your drawing. It is only used to colour live and dead wires while running; it is never sent to an IED or written to an SCL file.',
+  'switch.hints': 'These hints come from your drawing, not from the IED. Studio never blocks a command; the interlocking (CILO) of a real station may.',
   'sld.intro': 'Studio reads the substation layout written in the SCD file and draws breakers, switches, CTs, VTs and busbars for you. Nothing changes until you press Apply.',
   'sld.beside': 'The drawing from the file is placed to the right of what you already drew. Items already on the diagram are kept.',
   'sld.replace': 'Your current drawing is replaced by the one from the file. One Undo brings your drawing back.',

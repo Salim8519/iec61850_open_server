@@ -6,6 +6,9 @@ from studio_app.domain.signal import validate_value
 from .test_panel import validate_mapping
 
 SWITCHES = {"CB", "DS", "ES"}
+DRAWING_ONLY = {"JUNCTION": "A junction", "INFEED": "An infeed"}
+INFEED_FIELDS = ("infeed_type", "infeed_state")
+INFEED_DEFAULTS = {"infeed_type": "line", "infeed_state": "live"}
 CONTROLLABLE = SWITCHES | {"TRIP_RELAY", "PUSH_BUTTON"}
 NUMERIC = {"INT8", "INT16", "INT32", "INT64", "INT128", "INT8U", "INT16U",
            "INT24U", "INT32U", "FLOAT32", "FLOAT64"}
@@ -37,8 +40,8 @@ def _validate_state(data, ieds):
     if not mapping:
         return
     kind, mode = data["kind"], mapping["mode"]
-    if kind == "JUNCTION":
-        raise StudioError("A junction is a drawing point and does not accept a state mapping")
+    if kind in DRAWING_ONLY:
+        raise StudioError(f"{DRAWING_ONLY[kind]} is a drawing point and does not accept a state mapping")
     if kind == "RELAY":
         raise StudioError("A relay uses named status entries instead of a single state mapping")
     if kind in SWITCHES:
@@ -86,8 +89,8 @@ def _validate_control(data, ieds):
     binding = data.get("control_binding")
     if not binding:
         return
-    if data["kind"] == "JUNCTION":
-        raise StudioError("A junction is a drawing point and does not accept a control binding")
+    if data["kind"] in DRAWING_ONLY:
+        raise StudioError(f"{DRAWING_ONLY[data['kind']]} is a drawing point and does not accept a control binding")
     if data["kind"] not in CONTROLLABLE:
         raise StudioError("This equipment type does not accept a control binding")
     if data["kind"] == "PUSH_BUTTON" and data.get("push_mode") != "spc_momentary":
@@ -102,6 +105,18 @@ def _validate_control(data, ieds):
     profile = binding.get("compatibility", "standard")
     if profile != "standard" and (data["kind"] not in SWITCHES or control.get("model") != 4):
         raise StudioError("CONCEN compatibility requires an enhanced-SBO DPC switch control")
+
+
+def _settle_infeed(data):
+    """Infeeds get their defaults; other kinds never carry (or store) infeed fields."""
+    if data["kind"] == "INFEED":
+        for key, default in INFEED_DEFAULTS.items():
+            data[key] = data.get(key) or default
+        return
+    if any(data.get(key) is not None for key in INFEED_FIELDS):
+        raise StudioError("Only an infeed accepts infeed settings")
+    for key in INFEED_FIELDS:
+        data.pop(key, None)
 
 
 def validate_diagram(value, ieds):
@@ -120,6 +135,7 @@ def validate_diagram(value, ieds):
             raise StudioError("Only a relay accepts named status entries")
         if data["kind"] == "RELAY":
             _validate_relay(data, ieds)
+        _settle_infeed(data)
         _validate_state(data, ieds)
         _validate_control(data, ieds)
         binding = data.get("control_binding")

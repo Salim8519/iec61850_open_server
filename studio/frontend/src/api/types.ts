@@ -1,6 +1,7 @@
 import type { Node, Edge } from '@xyflow/react';
 
-export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'SOURCE' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'JUNCTION';
+export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'SOURCE' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'JUNCTION' | 'INFEED';
+export type InfeedType = 'line' | 'transformer' | 'grid';
 export type SignalBinding = { ied_id: string; report_ref: string | null; ref: string };
 export type StateMapping =
   | { mode: 'direct'; source: SignalBinding }
@@ -19,6 +20,8 @@ export type EquipmentData = {
   push_rest_value?: boolean; push_reset_ms?: number;
   initial_position?: 'open' | 'closed';
   active_color?: string | null; inactive_color?: string | null;
+  /** Infeed only (drawing; never sent to an IED or SCL). */
+  infeed_type?: InfeedType; infeed_state?: 'live' | 'dead';
 };
 export type EquipmentNode = Node<EquipmentData, 'equipment'>;
 export type Diagram = { nodes: EquipmentNode[]; edges: Edge[] };

@@ -17,7 +17,8 @@ Outstanding release gates:
   Top-level SCL DO `count` is not valid under the bundled XSD; schema-valid SCL
   array checks use nested SDO arrays. Array-of-array behavior and per-index
   SCL overrides remain separate open work.
-- Control/interlock scenarios and physical switching-delay/failure behavior.
+- Interlocking is advisory only (switching hints, ADR-0043); Studio does not simulate
+  CILO/EnaOpn/EnaCls or block commands. Physical switching-delay/failure behavior is open.
 - Typed DPC/SPC loopback behavior is independently probed. Third-party relay/client
   interoperability, vendor-specific control checks and trip-reset workflow visual
   acceptance remain open. Enhanced-SBO selection, repeated-selection rejection,

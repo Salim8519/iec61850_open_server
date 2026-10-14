@@ -1,5 +1,5 @@
-.switch-contact { transition: transform 300ms ease-in-out; }
-.switch-blade { transform-origin: 30px 41px; }
+/* Moving parts of CB/DS/ES (pivots are set inline per symbol). */
+.switch-contact { transition: transform 300ms ease-in-out, opacity 300ms ease-in-out; }
 @media (prefers-reduced-motion: reduce) {
   .switch-contact { transition: none; }
 }

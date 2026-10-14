@@ -1,4 +1,4 @@
-import { memo, useCallback, useContext, useEffect, useRef,
+import { memo, useCallback, useContext, useEffect, useRef, useState,
   useSyncExternalStore } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { EquipmentNode as NodeType } from '../api/types';
@@ -11,8 +11,7 @@ import { colorScheme, paintFor, stateFill } from './stateColors';
 import './equipment-node.css';
 import { IedNames, LiveValues, ModeBadges } from './liveContext';
 import { modeStatus } from '../copy/testMode';
-
-
+import { confirmedChange } from './readability';
 
 function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const store = useContext(LiveValues);
@@ -30,12 +29,19 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const pushLatching = data.kind === 'PUSH_BUTTON' && data.push_mode === 'latching_status';
   const previous = useRef(position);
   const animate = ['Open', 'Closed', 'Intermediate'].includes(previous.current);
-  useEffect(() => { previous.current = position; }, [position]);
+  // Count confirmed position changes; alternating the attribute restarts the CSS pulse.
+  const [changes, setChanges] = useState(0);
+  useEffect(() => {
+    if (switching && confirmedChange(previous.current, position)) setChanges(count => count + 1);
+    previous.current = position;
+  }, [position, switching]);
   const junction = data.kind === 'JUNCTION';
   const relay = data.kind === 'RELAY';
   const terminalLess = data.kind === 'PUSH_BUTTON';
   const category = kindInfo(data.kind).category;
-  const tone = data.kind === 'PUSH_BUTTON' && !pushStatus ? (data.control_binding ? 'live' : 'unmapped') :
+  const infeed = data.kind === 'INFEED';
+  const tone = infeed ? (data.infeed_state === 'dead' ? 'unmapped' : 'live') :
+    data.kind === 'PUSH_BUTTON' && !pushStatus ? (data.control_binding ? 'live' : 'unmapped') :
     stateTone(linked, value);
   if (relay) return <div className={`equipment-node relay ${selected ? 'selected' : ''}`}>
     <RelayPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
@@ -43,12 +49,13 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const fill = stateFill(data, position, value, linked);
   const fillColor = scheme && (fill === 'active' ? scheme.active : fill === 'inactive' ? scheme.inactive : null);
   const paint = fillColor ? paintFor(fillColor) : undefined;
-  return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}`}>
+  return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}`}
+    data-pulse={changes ? changes % 2 ? 'a' : 'b' : undefined}>
     {!terminalLess && <Handle id="north" type="target" position={Position.Top} />}
     {!terminalLess && <Handle id="west" type="target" position={Position.Left} />}
     {junction ? <div className="equipment-symbol" title="Drag to move · drag a terminal to wire"><JunctionBody nodeId={id} /></div> :
     <div className="equipment-symbol" style={{ transform: `rotate(${data.rotation || 0}deg)` }}>
-      <EquipmentSymbol kind={data.kind} position={position} animate={animate} paint={paint}
+      <EquipmentSymbol kind={data.kind} position={position} animate={animate} paint={paint} infeed={data.infeed_type}
         operated={data.kind === 'TRIP_RELAY' ?
           value === undefined || value === null ? undefined : value === operatedValue :
           pushStatus && typeof value === 'boolean' ? value : undefined} />
@@ -58,7 +65,7 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
     {!junction && <div className={`equipment-state tone-${tone}`}>
       {paint && <span className="state-dot" aria-hidden="true"
         style={{ background: paint.fill, borderColor: paint.outline }} />}
-      {data.kind === 'TRIP_RELAY' ? relayState : data.kind === 'PUSH_BUTTON' ?
+      {infeed ? data.infeed_state === 'dead' ? 'Set dead' : 'Set live' : data.kind === 'TRIP_RELAY' ? relayState : data.kind === 'PUSH_BUTTON' ?
         pushStatus ? !linked ? 'Not mapped' : typeof value === 'boolean' ?
           value ? pushLatching ? 'Latched' : 'Pressed' : 'Released' : 'Awaiting state' : data.control_binding ? 'Ready' : 'Not mapped' :
         linked ? (switching ? position : (value === undefined ? 'Awaiting value' : String(value))) : 'Not mapped'}

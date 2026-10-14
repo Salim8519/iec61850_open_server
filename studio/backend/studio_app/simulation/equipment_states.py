@@ -9,6 +9,8 @@ class EquipmentStates:
         self.nodes = {}
         self.by_source = defaultdict(set)
         self.last = {}
+        # Called after states are published (live colouring); set by the coordinator.
+        self.after_publish = lambda force=False: None
 
     def reset(self, diagram):
         self.nodes = {node["id"]: node["data"]["state_mapping"]
@@ -38,10 +40,16 @@ class EquipmentStates:
     def publish_all(self):
         for node_id in self.nodes:
             self._publish(node_id, True)
+        self.after_publish(force=True)
 
     def publish_node(self, node_id):
         if node_id in self.nodes:
             self._publish(node_id, True)
+            self.after_publish()
+
+    def positions(self):
+        """Current value of every mapped item (Dbpos for switches), for energisation."""
+        return {node_id: evaluate_state(mapping, self._read) for node_id, mapping in self.nodes.items()}
 
     def snapshot(self):
         if self.coordinator.state not in {"running", "paused"}:
@@ -55,3 +63,5 @@ class EquipmentStates:
             affected.update(self.by_source.get(key, ()))
         for node_id in affected:
             self._publish(node_id)
+        if affected:
+            self.after_publish()

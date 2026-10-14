@@ -61,7 +61,8 @@ class EquipmentData(BaseModel):
     model_config = ConfigDict(extra="forbid")
     label: str = Field(min_length=1, max_length=100)
     # TRANSFORMER/LOAD/BUSBAR were retired in format 12 (ADR-0033).
-    kind: Literal["CB", "DS", "ES", "CT", "VT", "SOURCE", "RELAY", "TRIP_RELAY", "PUSH_BUTTON", "JUNCTION"]
+    # INFEED is drawing-only (ADR-0041): never mapped, exported to SCL or sent to an IED.
+    kind: Literal["CB", "DS", "ES", "CT", "VT", "SOURCE", "RELAY", "TRIP_RELAY", "PUSH_BUTTON", "JUNCTION", "INFEED"]
     rotation: int = 0
     state_mapping: StateMapping | None = None
     control_binding: ControlBinding | None = None
@@ -76,6 +77,9 @@ class EquipmentData(BaseModel):
     # Display-only state colours; None means the kind default. Never read by simulation.
     active_color: str | None = Field(default=None, pattern=HEX_COLOR)
     inactive_color: str | None = Field(default=None, pattern=HEX_COLOR)
+    # Infeed only; stored only on INFEED nodes so other nodes keep their exact stored form.
+    infeed_type: Literal["line", "transformer", "grid"] | None = None
+    infeed_state: Literal["live", "dead"] | None = None
 
 
 class EquipmentNode(BaseModel):

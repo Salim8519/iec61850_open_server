@@ -4,6 +4,13 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-15: Infeed, live colouring, hints, bay templates (changes 0064-0067)
+
+- Owner chose: a new Infeed symbol that touches no engine, friendly hints only (Studio
+  never blocks), and Line feeder, Transformer bay and Bus coupler templates.
+- Specs: `energization.md` (INFEED/POWER), `interlock-hints.md`, `bay-templates.md`.
+  ADR-0041..0044. Project format stays 12. Owner visual acceptance pending.
+
 ## 2026-10-14 (latest): SLD Tidy up (change 0063)
 
 - Diagram toolbar **Tidy up** / **Tidy selection** lays the drawing out like a real SLD

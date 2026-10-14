@@ -65,3 +65,8 @@
 | [0061](2026/0061-sampled-values.md) | Sampled Values listening: supervision, RMS/phasor, 50/60 Hz | 4 SV wire tests on VMware adapter, 15% of one core for 4 streams; real merging unit pending |
 | [0062](2026/0062-test-mode.md) | Test mode: Mod/Beh/Sim badges, simulated IED modes, simulation notice; native integer write fix | Probe reads Beh 4/3 on a simulated IED; protocol 38 pass; real relay pending |
 | [0063](2026/0063-sld-tidy-up.md) | Tidy up: one-press single-line diagram layout (busbars on top, straight bays) | 10 frontend tests, fuzz of 400 diagrams, isolated browser check on scrambled model SCD; owner acceptance pending |
+| [0064](2026/0064-infeed-symbol.md) | Infeed symbol, isolated from SCL/SLD/runtime engines | 4 guard tests incl. byte-identical SCL export; owner acceptance pending |
+| [0065](2026/0065-live-colouring.md) | Live colouring of wires from real switch positions | Unit, native protocol, frontend tests; isolated browser check; owner acceptance pending |
+| [0066](2026/0066-interlock-hints.md) | Friendly interlock hints, never blocking; external switching noted | Unit, native protocol (probe), frontend tests; browser check; real SCADA pending |
+| [0067](2026/0067-bay-templates.md) | Bay templates: line feeder, transformer bay, bus coupler | 4 frontend tests; browser check; owner acceptance pending |
+| [0068](2026/0068-readable-symbols.md) | CB/DS/ES symbols readable from a distance: bold geometry, zoom bands, change pulse | 3 frontend tests; browser render at 3 zooms; live-run pulse and owner acceptance pending |

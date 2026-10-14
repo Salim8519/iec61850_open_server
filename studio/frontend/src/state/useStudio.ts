@@ -4,6 +4,7 @@ import type { Diagram, Project, StudioEvent } from '../api/types';
 import type { ImportPreview } from '../features/ieds/ImportSelection';
 import { createHistory, recordDiagram, sameEngineering, undoDiagram, redoDiagram, type DiagramHistory } from './diagramHistory';
 import { EquipmentValueStore } from '../equipment/liveValues';
+import { EnergizationStore, type Energization } from '../equipment/energization';
 
 export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
@@ -15,6 +16,7 @@ export function useStudio() {
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const [history, setHistory] = useState<DiagramHistory | null>(null);
   const equipmentValues = useMemo(() => new EquipmentValueStore(), []);
+  const energization = useMemo(() => new EnergizationStore(), []);
   const historyRef = useRef<DiagramHistory | null>(null);
   const historyIdentity = useRef('');
   const tabId = useRef(crypto.randomUUID());
@@ -32,9 +34,9 @@ export function useStudio() {
   }, []);
   const refresh = useCallback(async () => { apply(await api<Project>('/project')); }, [apply]);
   const hydrateEquipment = useCallback(async () => {
-    const result = await api<{ states: { node_id: string; value: unknown }[] }>('/equipment/states');
-    equipmentValues.replace(result.states);
-  }, [equipmentValues]);
+    const result = await api<{ states: { node_id: string; value: unknown }[]; energization: Energization }>('/equipment/states');
+    equipmentValues.replace(result.states); energization.set(result.energization);
+  }, [equipmentValues, energization]);
   const saveDiagram = useCallback(async () => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
@@ -85,6 +87,10 @@ export function useStudio() {
         if (event.kind === 'equipment_state' && event.node_id) {
           equipmentValues.set(event.node_id, event.value);
         }
+        if (event.kind === 'energization') {
+          energization.set({ nodes: event.nodes as Energization['nodes'], edges: event.edges as Energization['edges'],
+            hints: event.hints as Energization['hints'] });
+        }
         if (event.kind === 'project_changed') {
           if (event.source === tabId.current && current.current) {
             const updated = { ...current.current, revision: Number(event.revision) };
@@ -100,7 +106,7 @@ export function useStudio() {
         }
         if (event.kind === 'runtime' || event.kind === 'resync' || event.kind === 'worker_failed' || event.kind === 'live_status') {
           if (event.kind === 'runtime' && event.state === 'stopped') {
-            setValues({}); equipmentValues.clear();
+            setValues({}); equipmentValues.clear(); energization.clear();
           }
           refresh().catch(reason => setError(String(reason.message)));
           if (event.kind === 'resync') {
@@ -110,7 +116,7 @@ export function useStudio() {
       };
     }).catch(reason => setError(reason.message));
     return () => { disposed = true; stream?.close(); if (timer.current) clearTimeout(timer.current); };
-  }, [equipmentValues, hydrateEquipment, refresh]);
+  }, [equipmentValues, energization, hydrateEquipment, refresh]);
 
   const perform = useCallback(async (task: () => Promise<unknown>) => {
     setBusy(true); setError('');
@@ -153,7 +159,7 @@ export function useStudio() {
   const importFile = (file: File) => perform(async () => {
     await saveDiagram();
     if (file.name.toLowerCase().endsWith('.subsim')) {
-      await upload('/project/open', file); setValues({}); equipmentValues.clear();
+      await upload('/project/open', file); setValues({}); equipmentValues.clear(); energization.clear();
       historyIdentity.current = '';
     } else {
       const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
@@ -168,7 +174,7 @@ export function useStudio() {
     await api('/scl/import', 'POST', form);
     setImportPreview(null); setValues({});
   });
-  return { project, error, setError, busy, events, values, equipmentValues, saveState, updateDiagram,
+  return { project, error, setError, busy, events, values, equipmentValues, energization, saveState, updateDiagram,
     canUndo: !!history?.past.length, canRedo: !!history?.future.length,
     undo, redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },

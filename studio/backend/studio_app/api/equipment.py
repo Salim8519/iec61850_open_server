@@ -7,7 +7,7 @@ blueprint = Blueprint("equipment", __name__)
 
 @blueprint.get("/equipment/states")
 def states():
-    return jsonify(states=runtime().equipment_states.snapshot())
+    return jsonify(states=runtime().equipment_states.snapshot(), energization=runtime().energization.snapshot())
 
 
 @blueprint.post("/equipment/<node_id>/operate")

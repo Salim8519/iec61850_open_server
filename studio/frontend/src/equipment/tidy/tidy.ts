@@ -12,7 +12,7 @@ const GROUP_GAP = 120;
 const PARK_GAP_Y = 40;
 const MIN_PARK_HEIGHT = 480;
 /** Unwired items are parked beside the drawing in this order: panels first. */
-const PARK_ORDER: EquipmentKind[] = ['RELAY', 'TRIP_RELAY', 'PUSH_BUTTON', 'SOURCE', 'CT', 'VT', 'CB', 'DS', 'ES', 'JUNCTION'];
+const PARK_ORDER: EquipmentKind[] = ['RELAY', 'TRIP_RELAY', 'PUSH_BUTTON', 'SOURCE', 'INFEED', 'CT', 'VT', 'CB', 'DS', 'ES', 'JUNCTION'];
 
 /** Size used when the canvas has not measured an item yet (matches the stylesheet). */
 export function defaultSize(node: EquipmentNode): Size {

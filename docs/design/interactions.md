@@ -29,9 +29,18 @@
 - Tidy up (ADR-0040, spec `sld-tidy`) moves items, re-sides wires and turns symbols
   only; busbars on top, bays straight down, unwired panels parked right; one undo
   step; with two or more selected it tidies only the selection.
+- Infeed (ADR-0041) marks where power enters; drawing only, never mapped or exported.
+  While running, wires show Live/Maybe live/Dead/Earthed/Earth fault by line style
+  with a worded legend (ADR-0042); the sheet names the part's power state.
+- Switching hints (ADR-0043) appear under Open/Close and never disable them; external
+  switching against a hint is noted in Activity. Studio never claims CILO interlocking.
+- Add › Whole bays (ADR-0044) adds a line feeder, transformer bay or bus coupler as one
+  edit, wired to the selected busbar junction(s).
 - Physical equipment and IEDs are separate entities connected through bindings.
 - Choose compatible imported signals and control objects from filtered lists.
-- Open/Closed/Intermediate/Invalid use explicit text and distinct symbol geometry.
+- Open/Closed/Intermediate/Invalid use explicit text and distinct symbol geometry,
+  readable when zoomed out (ADR-0045). A confirmed CB/DS/ES change pulses the card
+  twice (a static ring with reduced motion); the first value after load never pulses.
 - Errors identify an object and link to its editor. Do not rely on toast-only errors.
 - Disable structural edits while running and explain why; allow runtime values.
 - Manual override visibly suspends an automatic source until released.

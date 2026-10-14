@@ -9,17 +9,19 @@ import { ControlMapping } from './ControlMapping';
 import { RelayStatusEditor } from './RelayStatusEditor';
 import { AdvancedSettings, BasicSettings } from './SheetSettings';
 import { StateMappingEditor } from './StateMappingEditor';
+import { SwitchHints } from './SwitchHints';
+import type { SwitchHints as Hints } from '../../equipment/energization';
 
 type Props = {
   node: EquipmentNode; project: Project; locked: boolean; busy: boolean; values: Record<string, unknown>;
-  operation?: string; update: (data: EquipmentNode['data']) => void; remove: () => void; duplicate: () => void;
+  operation?: string; section?: string; hints?: Hints; update: (data: EquipmentNode['data']) => void; remove: () => void; duplicate: () => void;
   operate: (nodeId: string, action: string) => void; close: () => void;
   applyColors: (active: string | null, inactive: string | null) => void;
   perform: (task: () => Promise<unknown>) => Promise<void>;
   showFlow?: (iedId: string) => void;
 };
 
-export function EquipmentSheet({ node, project, locked, busy, values, operation, update, remove, duplicate,
+export function EquipmentSheet({ node, project, locked, busy, values, operation, section, hints, update, remove, duplicate,
   operate, close, applyColors, perform, showFlow }: Props) {
   const data = node.data;
   const info = kindInfo(data.kind);
@@ -27,7 +29,7 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
   const trip = data.kind === 'TRIP_RELAY';
   const push = data.kind === 'PUSH_BUTTON';
   const statusButton = push && data.push_mode !== 'spc_momentary';
-  const showState = !['JUNCTION', 'RELAY'].includes(data.kind) && (!push || statusButton);
+  const showState = !['JUNCTION', 'RELAY', 'INFEED'].includes(data.kind) && (!push || statusButton);
   const showControl = switching || trip || (push && !statusButton);
   const canAct = statusButton ? !!data.state_mapping : !!data.control_binding;
   const missing = setupItems(data).filter(item => !item.done);
@@ -36,13 +38,15 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
   const source = data.kind === 'SOURCE' && data.state_mapping?.mode === 'direct' ? data.state_mapping.source : null;
   return <aside className={`sheet cat-${info.category}`} aria-label={`${data.label} properties`}>
     <div className="sheet-head">
-      <span className="sheet-head-symbol"><EquipmentSymbol kind={data.kind} size={34} /></span>
+      <span className="sheet-head-symbol"><EquipmentSymbol kind={data.kind} size={34} infeed={data.infeed_type} /></span>
       <div className="sheet-title"><h2 title={data.label}>{data.label}</h2><p>{info.name}</p></div>
       <button className="icon ghost" aria-label="Close properties" onClick={close}><X size={18} /></button>
     </div>
     <div className="sheet-body">
       {data.kind !== 'JUNCTION' && <div className="sheet-section" style={{ paddingBottom: 12 }}>
         <StatusPill status={missing.length ? needsStatus(missing.map(item => item.label)) : UI_STATUS.equipment_ready} /></div>}
+      {locked && section && <section className="sheet-section"><h3>Power</h3>
+        <p className="energy-sentence">{section}</p></section>}
       {locked && canAct && <section className="sheet-section"><h3>Operate</h3>
         <div className="sheet-actions">{switching ? <>
           <button disabled={busy} onClick={() => operate(node.id, 'open')}>Open</button>
@@ -52,6 +56,7 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
           <button className="danger" disabled={busy} onClick={() => operate(node.id, 'operate')}>Operate</button>
         </> : <button className="primary" disabled={busy} onClick={() => operate(node.id, 'press')}>
           {data.push_mode === 'latching_status' ? 'Toggle' : 'Press'}</button>}</div>
+        {switching && <SwitchHints hints={hints} />}
         {operation && <p className="small" role="status" style={{ margin: 0 }}>{operation}</p>}</section>}
       <section className="sheet-section"><BasicSettings data={data} locked={locked} update={update} /></section>
       {showState && <section className="sheet-section"><h3>{info.state} comes from</h3>

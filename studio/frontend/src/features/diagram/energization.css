@@ -1,0 +1,11 @@
+/* Live colouring legend (spec energization): every style is named in words. */
+.energy-legend { position: absolute; z-index: 6; right: 20px; bottom: 28px; display: grid; gap: 4px; padding: 10px 12px;
+  background: var(--surface); border: var(--line) solid var(--border-strong); border-radius: 10px; box-shadow: var(--shadow-small);
+  font-size: 13px; color: var(--text); }
+.energy-row { display: flex; align-items: center; gap: 8px; }
+.sheet-section .energy-sentence { margin: 0; font-weight: 600; }
+/* Switching hints: amber dashed box with an icon and words; buttons stay enabled. */
+.switch-hints { display: grid; gap: 6px; margin-top: 8px; padding: 10px 12px; border: 1.5px dashed var(--warning);
+  border-radius: 8px; background: var(--warning-soft); color: var(--text); font-size: 13.5px; }
+.switch-hints strong { display: flex; align-items: center; gap: 6px; color: #92400e; }
+.switch-hints ul { margin: 4px 0 0; padding-left: 20px; }

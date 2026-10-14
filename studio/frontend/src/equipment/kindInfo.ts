@@ -16,6 +16,7 @@ const INFO: Record<EquipmentKind, KindInfo> = {
   TRIP_RELAY: { name: 'Trip relay', code: 'SPC', category: 'protection', state: 'Trip state' },
   PUSH_BUTTON: { name: 'Push button', code: 'Boolean / SPC', category: 'control', state: 'Button state' },
   JUNCTION: { name: 'Junction', code: 'Drawing point', category: 'drawing', state: '' },
+  INFEED: { name: 'Infeed', code: 'Where power enters', category: 'source', state: '' },
 };
 
 export function kindInfo(kind: EquipmentKind): KindInfo {

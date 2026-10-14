@@ -36,6 +36,9 @@ changed, dropped or invented by accident.
 | [Sampled Values](sampled-values.md) | Listening to IEC 61850-9-2 streams and checking them against the SCD |
 | [Test mode](test-mode.md) | Mod/Beh/Sim of real and simulated IEDs, simulation traffic |
 | [SLD tidy](sld-tidy.md) | One-press layout of the diagram like a real single-line diagram |
+| [Live colouring](energization.md) | Infeed symbol and live/dead/earthed wires from switch positions |
+| [Interlock hints](interlock-hints.md) | Friendly switching hints; never blocking |
+| [Bay templates](bay-templates.md) | One-click line feeder, transformer bay and bus coupler |
 
 ## Proposed specifications
 

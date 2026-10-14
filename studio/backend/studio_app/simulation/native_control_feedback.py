@@ -71,6 +71,7 @@ class NativeControlFeedback:
         data = node["data"]
         try:
             action, wire_value = semantic_command(data, value=event["ctl_value"])
+            coordinator.energization.observe(node, action, event.get("client_origin") or "An external client")
             targets = feedback_targets(data, data.get("state_mapping"), action)
             native_status = (ied_id, event.get("status_ref"))
             grouped = defaultdict(list)
