@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Geist; src: url("../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: GeistMono; src: url("../node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body { background: radial-gradient(900px 420px at 30% -10%, #13325e 0%, transparent 70%), #070d1a; color: #eaf0f8;
+    font-family: Geist, "Segoe UI", sans-serif; display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 40px;
+    padding: 0 72px; box-sizing: border-box; }
+  .brand { display: flex; align-items: center; gap: 16px; font-size: 34px; font-weight: 650; letter-spacing: -0.02em; margin-bottom: 36px; }
+  .brand img { width: 64px; height: 64px; }
+  .brand b { color: #2be4b0; font-weight: 650; }
+  h1 { margin: 0 0 22px; font-size: 64px; line-height: 1.02; letter-spacing: -0.045em; font-weight: 680; }
+  h1 span { color: #2be4b0; }
+  p { margin: 0; font: 500 21px/1.4 GeistMono, monospace; color: #93a2ba; letter-spacing: 0.02em; }
+  svg { width: 100%; }
+  .bus { stroke: #2be4b0; stroke-width: 6; stroke-linecap: round; }
+  .wire { stroke: #2be4b0; stroke-width: 4; stroke-dasharray: 12 9; }
+  .dead { stroke: #3d4f6d; stroke-width: 4; }
+  .cb { fill: #2be4b0; } .open { fill: none; stroke: #6b7c99; stroke-width: 4; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="brand"><img src="../public/favicon.svg" alt=""><span>Scada<b>Bench</b></span></div>
+    <h1>Your substation,<br><span>live on your desk.</span></h1>
+    <p>IEC 61850 · MMS · GOOSE · SV · SCL</p>
+  </div>
+  <svg viewBox="0 0 440 420" aria-hidden="true">
+    <line class="bus" x1="20" y1="40" x2="420" y2="40"/>
+    <line class="wire" x1="80" y1="40" x2="80" y2="360"/><rect class="cb" x="62" y="170" width="36" height="36" rx="5"/>
+    <line class="wire" x1="190" y1="40" x2="190" y2="360"/><rect class="cb" x="172" y="170" width="36" height="36" rx="5"/>
+    <line class="dead" x1="300" y1="40" x2="300" y2="360"/><rect class="open" x="282" y="170" width="36" height="36" rx="5"/>
+    <line class="wire" x1="400" y1="40" x2="400" y2="250"/><circle cx="400" cy="280" r="28" fill="none" stroke="#eaf0f8" stroke-width="4"/>
+    <circle cx="400" cy="320" r="28" fill="none" stroke="#eaf0f8" stroke-opacity=".5" stroke-width="4"/>
+  </svg>
+</body>
+</html>

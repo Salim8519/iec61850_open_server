@@ -2,6 +2,14 @@ import { Download, FileUp, FolderOpen, MoreHorizontal, Pause, Play, Save, Square
 import type { Project } from '../api/types';
 import { Menu } from '../ui/Menu';
 
+// A download link, not a page navigation, so the app window's exit prompt does not appear.
+function downloadProject() {
+  const link = document.createElement('a');
+  link.href = '/api/v1/project/download';
+  link.download = '';
+  link.click();
+}
+
 export function TopBar({ title, subtitle, project, busy, saveState, run, openFile, save }: {
   title: string; subtitle: string; project: Project | null; busy: boolean; saveState: string;
   run: (action: 'start' | 'stop' | 'pause') => void; openFile: () => void; save: () => void;
@@ -18,7 +26,7 @@ export function TopBar({ title, subtitle, project, busy, saveState, run, openFil
       { label: 'Open file…', icon: <FolderOpen size={16} />, onSelect: openFile, disabled: running || busy },
       { label: 'Save project', icon: <Save size={16} />, onSelect: save, disabled: running || busy || !project },
       { label: 'Download project', icon: <Download size={16} />,
-        onSelect: () => { window.location.href = '/api/v1/project/download'; }, disabled: !project },
+        onSelect: downloadProject, disabled: !project },
     ]} />
     <span className="run-state" role="status"><span className={`dot${running ? ' on' : ''}`} />{state}</span>
     {running && <Menu label="Run options" trigger={<MoreHorizontal size={17} />} items={[
@@ -26,8 +34,8 @@ export function TopBar({ title, subtitle, project, busy, saveState, run, openFil
         onSelect: () => run('pause'), disabled: busy },
     ]} />}
     {running
-      ? <button className="run-pill running" disabled={busy} onClick={() => run('stop')}><Square size={15} />Stop</button>
-      : <button className="run-pill primary" disabled={busy || !active} title={active ? 'Start all IEDs' : 'Add an IED first'}
+      ? <button className="run-pill running" data-tour="run" disabled={busy} onClick={() => run('stop')}><Square size={15} />Stop</button>
+      : <button className="run-pill primary" data-tour="run" disabled={busy || !active} title={active ? 'Start all IEDs' : 'Add an IED first'}
         onClick={() => run('start')}><Play size={16} />Run</button>}
   </header>;
 }

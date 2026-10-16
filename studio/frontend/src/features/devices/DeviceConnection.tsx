@@ -8,7 +8,7 @@ import { liveStatus } from '../../copy/status';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { StatusPill } from '../../ui/StatusPill';
 
-/** How Studio reaches a real IED. Read-only: commands are never sent to real devices. */
+/** How ScadaBench reaches a real IED. Read-only: commands are never sent to real devices. */
 export function DeviceConnection({ ied, session, locked, perform }: {
   ied: Ied; session?: LiveSession; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
@@ -32,8 +32,8 @@ export function DeviceConnection({ ied, session, locked, perform }: {
         disabled={locked} onChange={event => setDraft({ ...draft, port: Number(event.target.value) })} /></label>
     </div>
     <div className="stack" style={{ gap: 8 }}>
-      <span className="section-label">How Studio reads values</span>
-      <SegmentedControl label="How Studio reads values" value={draft.access} disabled={locked}
+      <span className="section-label">How ScadaBench reads values</span>
+      <SegmentedControl label="How ScadaBench reads values" value={draft.access} disabled={locked}
         onChange={access => setDraft({ ...draft, access })} options={[
           { value: 'auto_reports', label: 'Reports (recommended)' }, { value: 'polling', label: 'Ask every second' }]} />
       <span className="small muted">{hint(`live.access.${draft.access}`)}</span>

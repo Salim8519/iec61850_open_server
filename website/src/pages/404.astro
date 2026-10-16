@@ -1,0 +1,9 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+<Base title="Page not found" description="This page does not exist." path="/404/">
+  <PageHeader eyebrow="404 · open circuit" title="This line is not energised." lede="The page you asked for does not exist or has moved.">
+    <a class="btn btn-primary" href="/">Back to the home page</a>
+  </PageHeader>
+</Base>

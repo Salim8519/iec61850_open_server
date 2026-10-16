@@ -19,7 +19,7 @@ export function CleanupCard({ locked, revision, perform }: {
   }, [revision]);
   if (!preview?.items.length && !message) return null;
   return <div className="card">
-    <div className="card-heading"><h2>Studio network changes</h2></div>
+    <div className="card-heading"><h2>ScadaBench network changes</h2></div>
     <div className="guide-section">
       {message ? <p style={{ margin: 0 }}>{message}</p> : <>
         <Hint id={confirming ? 'network.cleanup' : 'network.leftovers'} />

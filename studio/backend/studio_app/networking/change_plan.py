@@ -48,8 +48,8 @@ def describe(item):
 
 def describe_removal(item):
     if item["kind"] == "alias":
-        return f"Remove address {item['ip']} that Studio added to '{item['adapter_name']}'"
-    return "Remove the Windows Firewall rule that Studio added for the simulated IEDs"
+        return f"Remove address {item['ip']} that ScadaBench added to '{item['adapter_name']}'"
+    return "Remove the Windows Firewall rule that ScadaBench added for the simulated IEDs"
 
 
 def apply_command(item):

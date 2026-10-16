@@ -5,7 +5,7 @@ export async function download(path: string, body: unknown, filename: string): P
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    if (response.status === 404) throw new Error('The running backend does not provide this export. Save your project and restart Studio to load the updated backend.');
+    if (response.status === 404) throw new Error('The running backend does not provide this export. Save your project and restart ScadaBench to load the updated backend.');
     const result = await response.json();
     throw new Error(result.error || `Download failed (${response.status})`);
   }

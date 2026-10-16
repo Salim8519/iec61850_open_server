@@ -1,4 +1,4 @@
-"""Mode, behaviour and simulation settings of Studio's simulated IEDs."""
+"""Mode, behaviour and simulation settings of ScadaBench's simulated IEDs."""
 from flask import Blueprint, jsonify, request
 from studio_app.simulation.test_mode_apply import set_test_mode
 from .context import runtime

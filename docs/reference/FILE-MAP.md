@@ -30,7 +30,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Bay templates | `equipment/bayTemplates.ts`, `features/diagram/AddMenu.tsx` |
 | SLD tidy up (layout) | `equipment/tidy/` (graph, rows, position, wires, tidy), `features/diagram/TidyButton.tsx`, `tidyCopy.ts` |
 | Canvas selection/clipboard/shortcuts | `features/diagram/Canvas.tsx`, `DiagramPage.tsx`, `useCanvasShortcuts.ts`, `equipment/clipboard.ts` |
-| App shell and places | `frontend/src/app/App.tsx`, `Sidebar.tsx`, `TopBar.tsx`, `places.ts` |
+| App shell and places | `frontend/src/app/App.tsx`, `Sidebar.tsx`, `TopBar.tsx`, `places.ts`, `useExitConfirm.ts` |
 | Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
 | Devices | `features/devices/` (list, detail, connection, data points, compare, files) |
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |
@@ -45,6 +45,13 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Guided UI and wording | `frontend/src/ui/`, `frontend/src/copy/`, `features/network/`, `features/settings/` |
 | Feature contracts | `docs/specs/`, `studio/tools/check_specs.py` |
 | Repository verification | `studio/tools/verify.py` and `check_*.py` |
+| Licensing (app) | `domain/license_policy.py`, `licensing/`, `api/license.py`, `api/security.py` gate, `frontend/src/features/license/` |
+| Licensing (native) | `native/common/license_guard.*`, `native/release/release_key.hpp`, `native/third_party/monocypher/` |
+| License server | `license-server/` (Go): `internal/api`, `store`, `security`, `certs`, `paypal`, `mail`, `sales`, `deploy/` (owner commands: `deploy-server.cmd`, `set-payments.cmd`, `set-price.cmd`, `payments.cmd`) |
+| Brand and website | `studio/branding/`, `tools/build_icons.py`, `website/` (Astro, Cloudflare Pages) |
+| Guided tour | `frontend/src/features/tour/`, `copy/tour.ts`, `projects/preferences.py`, `api/preferences.py` |
+| Desktop window (ADR-0048) | `studio/backend/studio_app/launcher/entrypoint.py`, `app_window.py`, `single_instance.py`, `window_focus.py`, `windowed.py` |
+| Protected release | `tools/configure_release.py`, `compile_protected.py`, `pack_frontend.py`, `packaging/studio_protected.spec`, `installer.iss` |
 
 Tests mirror these boundaries under `studio/tests/unit`, `integration`, `protocol`,
 `frontend`, `packaging` and `performance`. Keep each maintained file below 300

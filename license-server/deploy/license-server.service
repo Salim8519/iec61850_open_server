@@ -1,0 +1,36 @@
+[Unit]
+Description=ScadaBench license server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=substation-license
+Group=substation-license
+Environment=LICENSE_DATA_DIR=/var/lib/substation-license
+# Small-VPS budget, shared with other software: Go keeps its heap under GOMEMLIMIT,
+# systemd hard-caps RAM, CPU, threads and files, and Nice lets other services go first.
+Environment=GOMEMLIMIT=40MiB
+ExecStart=/opt/substation-license/license-server serve
+Restart=always
+RestartSec=3
+MemoryHigh=48M
+MemoryMax=64M
+MemorySwapMax=0
+CPUQuota=50%
+TasksMax=64
+LimitNOFILE=1024
+Nice=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/substation-license
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,4 @@
-"""Turn a parsed SCL substation topology into a Studio single-line diagram.
+"""Turn a parsed SCL substation topology into a ScadaBench single-line diagram.
 
 Pure and deterministic: the same topology and source id always give the same node
 ids, positions and wires. Bindings are applied by the caller.
@@ -14,7 +14,7 @@ GAP_X, GAP_Y = 40, 80
 GRID = 20
 MIN_SCALE, MAX_SCALE = 90, 300
 MAX_NODES, MAX_WIRES = 2000, 5000
-NOT_DRAWN = "Studio has no symbol for this equipment type yet"
+NOT_DRAWN = "ScadaBench has no symbol for this equipment type yet"
 
 
 def kind_of(item):

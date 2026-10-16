@@ -27,8 +27,14 @@ const contrast = (a: string, b: string) => {
 };
 
 test('sidebar has exactly four places', () => {
-  assert.deepEqual(PLACES.map(item => item.id), ['diagram', 'devices', 'test', 'settings']);
+  assert.deepEqual(PLACES.map(item => item.id), ['devices', 'diagram', 'test', 'settings']);
   assert.ok(PLACES.every(item => item.subtitle.length > 20));
+});
+
+test('the drawing place is called SLD and spelled out in its heading', () => {
+  const sld = PLACES.find(item => item.id === 'diagram')!;
+  assert.equal(sld.title, 'SLD');
+  assert.match(sld.heading, /single-line diagram/i);
 });
 
 test('tokens keep text and controls large', () => {

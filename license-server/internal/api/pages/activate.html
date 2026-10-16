@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{template "head" .}}
+<title>Offline activation · ScadaBench</title>
+<meta name="description" content="Activate ScadaBench on a computer without internet.">
+</head>
+<body>
+{{template "header" .}}
+<main class="wrap single">
+  <section class="summary">
+    <p class="eyebrow">Offline activation</p>
+    <h1>Activate a PC<br><span>without internet</span></h1>
+    <p class="lede">Use this page on any computer with internet. You get a small license file to copy,
+      for example on a USB stick, to the substation PC.</p>
+  </section>
+  <section class="pay" aria-label="Get a license file">
+    <form id="form">
+      <div>
+        <label for="key">License key</label>
+        <input id="key" placeholder="SUBS-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" required>
+      </div>
+      <div>
+        <label for="hwid">Machine ID</label>
+        <input id="hwid" placeholder="64 characters" autocomplete="off" spellcheck="false" required>
+        <p class="hint">In ScadaBench on the offline PC: <em>Settings › License</em>, then
+          <em>Offline activation</em>, then <em>Copy Machine ID</em>.</p>
+      </div>
+      <button id="submit" class="btn btn-dark" type="submit">Get license file</button>
+    </form>
+    <div id="status" class="message" hidden role="status"></div>
+    <button id="move" type="button" class="btn btn-ghost" hidden>Move the key to this Machine ID</button>
+    <p class="hint">Back in ScadaBench: <em>Offline activation</em>, then <em>Load license file</em>
+      (or paste the file's text) and press <em>Activate</em>.</p>
+    <p class="hint">No license yet? <a href="/buy">Buy one</a>.</p>
+  </section>
+</main>
+{{template "footer" .}}
+<script src="/static/common.js?v={{.Asset}}"></script>
+<script>
+  const form = document.getElementById("form");
+  const submit = document.getElementById("submit");
+  const move = document.getElementById("move");
+  function request() {
+    return { license_key: document.getElementById("key").value.trim(),
+      hwid: document.getElementById("hwid").value.trim().toLowerCase() };
+  }
+  async function run(path) {
+    submit.disabled = move.disabled = true; move.hidden = true;
+    show("status", "Checking (this takes a few seconds)…", "");
+    try {
+      const body = Object.assign(request(), await solveChallenge());
+      const data = await postJSON(path, body);
+      downloadText("license.cert", JSON.stringify(data.certificate, null, 2));
+      show("status", "Done. license.cert was downloaded. Copy it to the offline PC.", "ok");
+    } catch (error) {
+      show("status", error.message, "bad");
+      move.hidden = error.code !== "bound_elsewhere";
+    } finally { submit.disabled = move.disabled = false; }
+  }
+  form.onsubmit = (event) => { event.preventDefault(); run("/api/v1/activate"); };
+  move.onclick = () => run("/api/v1/transfer");
+</script>
+</body>
+</html>

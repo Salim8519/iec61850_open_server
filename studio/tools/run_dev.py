@@ -104,7 +104,7 @@ def main(arguments):
         if not current:
             raise
         target = f"{current}/#session={token}"
-        print(f"Substation Studio development mode is already running: {current}", flush=True)
+        print(f"ScadaBench development mode is already running: {current}", flush=True)
         print(f"Open in your browser: {target}", flush=True)
         return 0
     frontend_port = available_port(5173, 5199)
@@ -112,7 +112,7 @@ def main(arguments):
     backend = str(STUDIO / "backend")
     environment["PYTHONPATH"] = backend + (os.pathsep + environment["PYTHONPATH"]
                                               if environment.get("PYTHONPATH") else "")
-    print("Starting Substation Studio development mode (frontend and backend hot reload).",
+    print("Starting ScadaBench development mode (frontend and backend hot reload).",
           flush=True)
     # Vite's own banner prints an address without the session token; show only ours.
     ui = start([str(node), str(vite), "--host", "127.0.0.1", "--port", str(frontend_port),
@@ -134,7 +134,7 @@ def main(arguments):
                 return ui_code or 1
             time.sleep(0.25)
     except KeyboardInterrupt:
-        print("Stopping Substation Studio...", flush=True)
+        print("Stopping ScadaBench...", flush=True)
         return 0
     finally:
         stop_tree(api)

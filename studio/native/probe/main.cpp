@@ -8,6 +8,7 @@
 #include "reports.hpp"
 #include "browse.hpp"
 #include "sbo_controls.hpp"
+#include "license_guard.hpp"
 extern "C" {
 #include "iec61850_client.h"
 }
@@ -23,6 +24,12 @@ int main(int argc, char** argv) {
     if (argc < 4 || (std::string(argv[3]) != "browse" && argc < 5)) {
         std::cerr << "usage: studio_probe IP PORT browse|read|control|reports|sbo-* [REFERENCE] [FC|VALUE]";
         return 2;
+    }
+    try {
+        license::require_valid_license();
+    } catch (const std::exception& failure) {
+        std::cerr << failure.what() << std::endl;
+        return 4;
     }
     auto connection = IedConnection_create();
     IedClientError error;

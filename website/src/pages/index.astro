@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Story from '../components/Story.astro';
+import Facts from '../components/Facts.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import Closing from '../components/Closing.astro';
+import { SITE } from '../data/site';
+
+const schema = {
+  '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: SITE.name,
+  applicationCategory: 'EngineeringApplication', operatingSystem: 'Windows 10, Windows 11',
+  description: 'IEC 61850 IED simulator and SCADA test bench: run CID, ICD and SCD files as live MMS servers, publish and supervise GOOSE, listen to Sampled Values and compare real IEDs with the SCD.',
+  url: SITE.url, softwareVersion: SITE.version,
+  offers: { '@type': 'Offer', price: SITE.price, priceCurrency: SITE.currency, url: `${SITE.url}/pricing/` },
+};
+const audiences = ['Protection & control engineers', 'SCADA and gateway integrators', 'FAT and SAT teams', 'Trainers and students'];
+---
+<Base title={SITE.name} schema={schema}
+  description="ScadaBench is an IEC 61850 IED simulator and SCADA test bench for Windows. Turn CID, ICD and SCD files into live MMS servers, test GOOSE and Sampled Values, and check real IEDs against the SCD.">
+  <Hero />
+  <section class="audience" aria-label="Who uses ScadaBench">
+    <div class="wrap row">
+      <span class="eyebrow">Made for</span>
+      <ul>{audiences.map((item) => <li>{item}</li>)}</ul>
+    </div>
+  </section>
+  <Story />
+  <Facts />
+  <FeatureGrid />
+  <section class="safe section" aria-labelledby="safe-title">
+    <div class="wrap split">
+      <div class="reveal">
+        <span class="eyebrow">Safe by design</span>
+        <h2 id="safe-title">Looks at real relays. Never touches them.</h2>
+      </div>
+      <ul class="rules reveal">
+        <li><b>Read-only client.</b> Connecting to a real IED uses free report blocks or polling. No controls, no settings writes.</li>
+        <li><b>Your network, previewed.</b> Lab network changes are listed before Windows applies them, and cleaned up exactly.</li>
+        <li><b>Works offline.</b> No cloud account. Projects stay on your PC in one .subsim file you can archive with the job.</li>
+      </ul>
+    </div>
+  </section>
+  <Closing />
+</Base>
+
+<style>
+  .audience { border-block: 1px solid var(--line); background: var(--navy); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; padding-block: 22px; }
+  .audience ul { display: flex; flex-wrap: wrap; gap: 10px 28px; list-style: none; margin: 0; padding: 0; color: var(--muted); }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+  .split h2 { font-size: var(--step-3); margin-top: 16px; }
+  .rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+  .rules li { padding-left: 22px; border-left: 2px solid var(--accent); color: var(--muted); }
+  .rules b { color: var(--ink); font-weight: 600; display: block; margin-bottom: 4px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+</style>

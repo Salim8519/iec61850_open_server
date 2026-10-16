@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import Closing from '../components/Closing.astro';
+
+const topics = [
+  { id: 'ied-simulator', title: 'IEC 61850 IED simulator',
+    text: 'Import a CID, ICD, IID or SCD and pick the IEDs to simulate. ScadaBench starts one MMS server per IED with the data model, datasets, report control blocks and controls written in the file. SCADA, gateways and clients connect on port 102 exactly as they will to the real device. Values can be set by hand, by generators, by timed sequences or by CSV playback.' },
+  { id: 'goose-simulator', title: 'GOOSE simulator and monitor',
+    text: 'Simulated IEDs publish the GOOSE messages declared in their SCD on a lab network adapter. At the same time every GOOSE stream on the wire is supervised against the SCD: confRev, dataset, goID, needs-commissioning and time-allowed-to-live, with a plain-language fix for every problem. GOOSE uses the free Npcap driver, which you install yourself.' },
+  { id: 'sampled-values', title: 'Sampled Values listener',
+    text: 'Listen to IEC 61850-9-2 streams from merging units, see RMS and phasors for 50 and 60 Hz, and get warned about missing or late samples and streams that disagree with the SCD. ScadaBench listens to Sampled Values; it does not publish them.' },
+  { id: 'scl-viewer', title: 'SCD and SCL checker',
+    text: 'Schema validation for SCL 2003, 2007B and 2007B4, signal flow of every declared GOOSE and report link, and checks for subscriptions that point nowhere. Original SCL and vendor extensions are preserved on export; nothing is silently dropped.' },
+  { id: 'real-ieds', title: 'Read-only real IED client',
+    text: 'Connect to a real relay to read its model, compare it with the SCD and include it in station health. ScadaBench reserves only free report blocks, falls back to polling, gives the blocks back when you stop, and never operates a control or writes a setting.' },
+];
+---
+<Base title="Features" description="IEC 61850 IED simulator, GOOSE simulator and monitor, Sampled Values listener, SCD checker and read-only real IED client in one Windows app.">
+  <PageHeader eyebrow="Features" title="One bench for the whole substation."
+    lede="Simulate IEDs, draw and drive the single-line diagram, supervise GOOSE and Sampled Values, and check real relays against the SCD." />
+  <FeatureGrid />
+  <section class="section deep">
+    <div class="wrap topics">
+      {topics.map((topic) => (
+        <article id={topic.id} class="topic reveal">
+          <h2>{topic.title}</h2>
+          <p>{topic.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+  <Closing />
+</Base>
+
+<style>
+  .topics { display: grid; gap: 0; }
+  .topic { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 32px; padding-block: 40px;
+    border-top: 1px solid var(--line); }
+  .topic h2 { font-size: var(--step-2); }
+  .topic p { color: var(--muted); font-size: 1.06rem; }
+  @media (max-width: 800px) { .topic { grid-template-columns: 1fr; gap: 12px; } }
+</style>

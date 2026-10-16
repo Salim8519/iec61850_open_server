@@ -17,7 +17,7 @@ BIG_ENDIAN_CODED = {"Dbpos", "Tcmd"}
 
 
 def convert(kind, raw):
-    """Return the Studio value for one device value, or raise ValueError with a reason."""
+    """Return the ScadaBench value for one device value, or raise ValueError with a reason."""
     if raw is None:
         raise ValueError("the device returned no value")
     if isinstance(raw, dict):
@@ -27,7 +27,7 @@ def convert(kind, raw):
             return raw["be"] if kind in BIG_ENDIAN_CODED else raw["le"]
         if "octets" in raw:
             return raw["octets"]
-        raise ValueError("the device sent a value type Studio cannot show yet")
+        raise ValueError("the device sent a value type ScadaBench cannot show yet")
     if kind == "BOOLEAN":
         if not isinstance(raw, bool):
             raise ValueError("expected true/false from the device")

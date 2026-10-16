@@ -154,4 +154,4 @@ class RealSession:
         self.stopping.set()
         self._close_process()
         self.thread.join(timeout=20)
-        self._set("stopped", "Disconnected; every report block Studio used was given back")
+        self._set("stopped", "Disconnected; every report block ScadaBench used was given back")

@@ -16,7 +16,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   lgos: { term: 'LGOS', plain: 'A supervision node inside an IED that shows whether a subscribed GOOSE message is arriving.' },
   rcb: { term: 'Report block', plain: 'A slot in a real IED that pushes value changes to one client. Each IED has only a few.' },
   gi: { term: 'General interrogation', plain: 'A request that makes the IED send all current values once, so the screen starts complete.' },
-  polling: { term: 'Polling', plain: 'Studio asks the IED for each value again and again. It never changes anything in the IED.' },
+  polling: { term: 'Polling', plain: 'ScadaBench asks the IED for each value again and again. It never changes anything in the IED.' },
   npcap: { term: 'Npcap', plain: 'A free Windows driver that lets programs send and receive GOOSE. You install it once from npcap.com.' },
   adapter: { term: 'Network adapter', plain: 'A network port of this PC, such as a USB Ethernet dongle, the built-in Ethernet port or Wi-Fi.' },
   alias: { term: 'Extra address', plain: 'An additional IP address Windows gives to an adapter so a simulated IED can be reached on it.' },

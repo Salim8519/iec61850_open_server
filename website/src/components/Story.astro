@@ -1,0 +1,106 @@
+---
+// Scroll story: steps on the left, a sticky product window on the right that swaps
+// screenshots as each step reaches the middle of the screen. Phones show each
+// screenshot inline under its step. Without JS the first screenshot stays.
+import { Picture } from 'astro:assets';
+import devices from '../assets/screens/devices.jpg';
+import overview from '../assets/screens/diagram-overview.jpg';
+import bay from '../assets/screens/diagram-bay.jpg';
+import flow from '../assets/screens/signal-flow.jpg';
+
+const steps = [
+  { tag: 'Import', title: 'Drop in your CID, ICD or SCD.', image: devices,
+    alt: 'Devices page listing six running IEDs from an SCD, each with its MMS address',
+    text: 'Choose the IEDs you need. Each one becomes a live MMS server with its own address on port 102, built from the exact data model in your file. Original SCL and vendor extensions are kept.' },
+  { tag: 'Draw', title: 'Your single-line diagram, drawn for you.', image: overview,
+    alt: 'Single-line diagram built from the SCD Substation section with busbars and bays',
+    text: 'ScadaBench reads the Substation section of the SCD and draws busbars, breakers, disconnectors and instrument transformers. One press of Tidy up makes it look like a real SLD.' },
+  { tag: 'Run', title: 'Press Run. Your SCADA sees real IEDs.', image: bay,
+    alt: 'Close-up of a feeder bay: disconnectors, breaker and current transformer symbols',
+    text: 'Switch positions follow confirmed feedback from the IED, Dbpos and all. Operate breakers with select-before-operate, drive measurements, and watch your SCADA react exactly as it will on site.' },
+  { tag: 'Verify', title: 'See who talks to whom.', image: flow,
+    alt: 'Signal flow table listing GOOSE senders, datasets and declared receivers',
+    text: 'Signal flow lists every GOOSE and report link declared in the SCD and points out mistakes in the file before they reach commissioning.' },
+];
+---
+<section class="story section" aria-labelledby="story-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">From file to running substation</span>
+      <h2 id="story-title">Four steps. No relays on the bench.</h2>
+    </div>
+    <div class="layout">
+      <ol class="steps">
+        {steps.map((step, index) => (
+          <li class="step" data-step={index}>
+            <span class="tag mono">{String(index + 1).padStart(2, '0')} · {step.tag}</span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+            <div class="inline-shot">
+              <Picture src={step.image} alt={step.alt} formats={['avif', 'webp']} widths={[480, 800]}
+                sizes="100vw" loading="lazy" />
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="frame-wrap" aria-hidden="true">
+        <div class="frame">
+          <div class="chrome"><span></span><span></span><span></span><em>ScadaBench</em></div>
+          <div class="shots">
+            {steps.map((step, index) => (
+              <Picture pictureAttributes={{ class: index === 0 ? 'active' : '' }} src={step.image} alt=""
+                formats={['avif', 'webp']} widths={[800, 1400]} sizes="(min-width: 960px) 700px, 100vw"
+                loading={index === 0 ? 'eager' : 'lazy'} data-shot={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const shots = Array.from(document.querySelectorAll<HTMLElement>('[data-shot]'));
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-step]'));
+  if (shots.length && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const index = (entry.target as HTMLElement).dataset.step;
+        steps.forEach((step) => step.classList.toggle('current', step === entry.target));
+        shots.forEach((shot) => shot.closest('picture')!.classList.toggle('active', shot.dataset.shot === index));
+      }
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    steps.forEach((step) => observer.observe(step));
+  }
+</script>
+
+<style>
+  .layout { display: grid; grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.45fr); gap: clamp(32px, 5vw, 72px); }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .step { min-height: 64vh; display: grid; align-content: center; gap: 14px; padding-block: 24px;
+    opacity: .38; transition: opacity .5s ease; }
+  .step.current, .step:first-child { opacity: 1; }
+  .step h3 { font-size: var(--step-2); }
+  .step p { color: var(--muted); font-size: 1.06rem; max-width: 46ch; }
+  .tag { font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .inline-shot { display: none; }
+  .frame-wrap { position: relative; }
+  .frame { position: sticky; top: calc(50vh - 220px); border-radius: 16px; overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 9%); background: #0d1628; box-shadow: var(--shadow); }
+  .chrome { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #101a2e;
+    border-bottom: 1px solid rgb(255 255 255 / 6%); }
+  .chrome span { width: 11px; height: 11px; border-radius: 50%; background: #2a3a57; }
+  .chrome em { margin-left: 10px; font: 500 .78rem var(--mono); font-style: normal; color: var(--muted); }
+  .shots { position: relative; aspect-ratio: 1568 / 681; }
+  .shots :global(picture) { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; }
+  .shots :global(picture.active) { opacity: 1; }
+  .shots :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  @media (max-width: 959px) {
+    .layout { grid-template-columns: 1fr; }
+    .frame-wrap { display: none; }
+    .step { min-height: 0; opacity: 1; padding-block: 28px; }
+    .inline-shot { display: block; margin-top: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+  }
+  @media (prefers-reduced-motion: reduce) { .step, .shots :global(picture) { transition: none; } }
+</style>

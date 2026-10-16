@@ -1,4 +1,4 @@
-"""Refuse any helper request that is not exactly an allowed Studio network change."""
+"""Refuse any helper request that is not exactly an allowed ScadaBench network change."""
 import hashlib
 import ipaddress
 import json
@@ -54,7 +54,7 @@ def _firewall(item, program):
 def validate_request(payload, expected_hash, program):
     """Return the parsed request if it is untampered and fully allowed."""
     if hashlib.sha256(payload).hexdigest() != expected_hash:
-        raise HelperRefused("Request file changed after Studio prepared it")
+        raise HelperRefused("Request file changed after ScadaBench prepared it")
     try:
         request = json.loads(payload)
     except ValueError as error:
@@ -65,7 +65,7 @@ def validate_request(payload, expected_hash, program):
         raise HelperRefused("Request must contain between 1 and 64 changes")
     for item in request["items"]:
         if not isinstance(item, dict) or not item.get("owned"):
-            raise HelperRefused("Only changes owned by Studio can be applied or removed")
+            raise HelperRefused("Only changes owned by ScadaBench can be applied or removed")
         if item.get("kind") == "alias":
             _alias(item)
         elif item.get("kind") == "firewall":

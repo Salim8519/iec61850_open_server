@@ -1,6 +1,7 @@
 #include "server/server.hpp"
 #include "updates/values.hpp"
 #include "controls/controls.hpp"
+#include "license_guard.hpp"
 #include <cstdio>
 #include <iostream>
 #ifdef _WIN32
@@ -23,7 +24,10 @@ int main() {
                 if (message.value("version", 0) != 1) throw std::runtime_error("Protocol version must be 1");
                 auto op = message.at("op").get<std::string>();
                 Json result;
-                if (op == "start") result = server.start(message);
+                if (op == "start") {
+                    license::require_valid_license();
+                    result = server.start(message);
+                }
                 else if (op == "read") result = read_value(server, message.at("ref"));
                 else if (op == "read_versioned") result = read_versioned(server, message.at("ref"));
                 else if (op == "update_guarded") result = update_batch(server, message.at("updates"), message.at("guard"));

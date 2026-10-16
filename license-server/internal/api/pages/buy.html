@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{template "head" .}}
+<title>Buy ScadaBench · Lifetime license</title>
+<meta name="description" content="Buy a ScadaBench lifetime license. One payment, one Windows PC, offline activation included.">
+</head>
+<body>
+{{template "header" .}}
+<main class="wrap checkout">
+  <section class="summary" aria-labelledby="title">
+    <p class="eyebrow">Checkout</p>
+    <h1 id="title">ScadaBench<br><span>lifetime license</span></h1>
+    <p class="lede">One payment. Yours for good on one Windows PC. No subscription, no feature tiers.</p>
+    <ul class="checks">
+      <li>Every feature: IED simulation, live diagram, GOOSE, Sampled Values, real IEDs, test mode</li>
+      <li>Unlimited projects and IEDs on that PC</li>
+      <li>Offline activation for substation PCs without internet</li>
+      <li>Move the license to a new PC yourself, {{.Transfers}} times a year</li>
+    </ul>
+    <ol class="steps">
+      <li><b>Pay</b><span>with your PayPal account or a card.</span></li>
+      <li><b>Get your key</b><span>on this page at once, and by email.</span></li>
+      <li><b>Activate</b><span>paste it in ScadaBench and press Activate.</span></li>
+    </ol>
+  </section>
+
+  <section class="pay" aria-label="Payment">
+    <div id="order">
+      <div class="item">
+        {{template "logo"}}
+        <div><b>{{.Product}}</b><span>1 Windows PC · offline activation included</span></div>
+      </div>
+      <dl class="total">
+        <div><dt>Subtotal</dt><dd>{{.Amount}}</dd></div>
+        <div class="grand"><dt>Total today</dt><dd>{{.Amount}} <small>{{.Currency}}</small></dd></div>
+      </dl>
+      <p class="once">One-time payment. You will not be billed again.</p>
+      {{if .CheckoutReady}}
+        <p class="paywith"><span>Pay securely with</span>
+          <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-color.svg" alt="PayPal" width="84" height="22"></p>
+        <div id="paypal-buttons" class="paypal"><p class="loading">Loading secure PayPal checkout…</p></div>
+        <img class="marks" src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"
+          alt="Accepted: PayPal, Mastercard, Visa, Discover, American Express" width="319" height="110" loading="lazy">
+      {{else}}
+        <div class="message bad">Online purchase is not set up yet.{{if .Support}} Email {{.Support}} to buy.{{end}}</div>
+      {{end}}
+      <ul class="assure">
+        <li>{{template "lock"}}<span><b>Checkout runs entirely on PayPal.</b> Card details go to PayPal,
+          never to ScadaBench, and we never store them.</span></li>
+        <li>{{template "mailicon"}}<span><b>Two emails:</b> a receipt from PayPal and your key from
+          licenses@mg.scadabench.com.</span></li>
+        <li>{{template "shield"}}<span><b>Encrypted connection</b> to license.scadabench.com.
+          {{if .Support}}Questions: {{.Support}}.{{end}}</span></li>
+      </ul>
+      {{if .Seller}}<p class="seller">Sold by ScadaBench, a product of {{.Seller}}. PayPal may show
+        {{.Seller}} on your receipt and statement.</p>{{end}}
+      {{if .TrialDays}}<p class="trial">Not sure yet? <a href="https://scadabench.com/download/">Try every
+        feature free for {{.TrialDays}} days</a>, no card needed.</p>{{end}}
+    </div>
+    <div id="status" class="message" hidden role="status"></div>
+    <div id="result" hidden>
+      <p class="done">{{template "lock"}} Payment confirmed</p>
+      <h2>Your license key</h2>
+      <div class="key" id="license-key"></div>
+      <button id="copy" class="btn btn-dark" type="button">Copy key</button>
+      <ol class="next">
+        <li>Open ScadaBench and go to <em>Settings › License</em>.</li>
+        <li>Paste the key into <em>License key</em>.</li>
+        <li>Press <em>Activate this computer</em>.</li>
+      </ol>
+      <p class="hint">No internet on that PC? Use <a href="/activate">offline activation</a>.
+        Keep this key safe; you need it if you reinstall.</p>
+    </div>
+  </section>
+</main>
+{{template "footer" .}}
+<script src="/static/common.js?v={{.Asset}}"></script>
+{{if .CheckoutReady}}
+<script src="https://www.paypal.com/sdk/js?client-id={{.ClientID}}&currency={{.Currency}}&intent=capture&disable-funding=paylater"></script>
+<script>
+  const hwid = new URLSearchParams(location.search).get("hwid") || "";
+  function showKey(data) {
+    document.getElementById("order").hidden = true;
+    document.getElementById("result").hidden = false;
+    document.getElementById("license-key").textContent = data.license_key;
+    show("status", data.emailed ? "A copy was emailed to " + data.email + "." :
+      "Write the key down now; the email may take a few minutes.", "ok");
+  }
+  const copy = document.getElementById("copy");
+  copy.onclick = () => navigator.clipboard.writeText(document.getElementById("license-key").textContent)
+    .then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy key"; }, 1800); });
+  paypal.Buttons({
+    style: { layout: "vertical", shape: "pill", color: "gold", label: "pay", height: 48 },
+    createOrder: async () => (await postJSON("/api/v1/checkout/create-order", { hwid })).id,
+    onApprove: async (data) => {
+      show("status", "Confirming your payment with PayPal…", "");
+      try { showKey(await postJSON("/api/v1/checkout/capture-order", { order_id: data.orderID })); }
+      catch (error) { show("status", error.message + " If you were charged, your key will be emailed.", "bad"); }
+    },
+    onError: () => show("status", "PayPal could not finish the payment. Nothing was charged; try again.", "bad"),
+  }).render("#paypal-buttons").then(() => {
+    const loading = document.querySelector("#paypal-buttons .loading");
+    if (loading) loading.remove();
+  });
+</script>
+{{end}}
+</body>
+</html>

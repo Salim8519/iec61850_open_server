@@ -2,6 +2,7 @@
 // read-only client by construction: the operation table below has no control,
 // setting or data write. Report-block reservation is the single exception.
 #include "goose_traffic.hpp"
+#include "license_guard.hpp"
 #include "mms_session.hpp"
 #include "npcap.hpp"
 #include "reports.hpp"
@@ -23,11 +24,11 @@ int main() {
         }},
         {"npcap_status", [](const Json&) { return npcap_status(); }},
         {"adapters", [](const Json&) { return Json{{"adapters", npcap_adapters()}}; }},
-        {"goose_start", [&](const Json& request) { return goose.start(request); }},
+        {"goose_start", [&](const Json& request) { license::require_valid_license(); return goose.start(request); }},
         {"goose_stop", [&](const Json&) { goose.stop(); return Json(true); }},
-        {"sv_start", [&](const Json& request) { return sv.start(request); }},
+        {"sv_start", [&](const Json& request) { license::require_valid_license(); return sv.start(request); }},
         {"sv_stop", [&](const Json&) { sv.stop(); return Json(true); }},
-        {"connect", [&](const Json& request) { return session.connect(request); }},
+        {"connect", [&](const Json& request) { license::require_valid_license(); return session.connect(request); }},
         {"discover", [&](const Json&) { return session.discover(); }},
         {"read", [&](const Json& request) { return session.read(request); }},
         {"rcb_status", [&](const Json& request) { return reports.status(request); }},

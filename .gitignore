@@ -10,3 +10,22 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.egg-info/
+
+# Node dependencies and website build output (reinstall with npm ci, rebuild with npm run build)
+node_modules/
+website/dist/
+website/.astro/
+website/.wrangler/
+
+# Packaged ScadaBench builds: never commit EXEs; rebuild them with studio/tools
+studio/dist-*/
+
+# Generated tutorial video output (rebuild with marketing/videos/make.py)
+marketing/videos/out/
+
+# Local secrets, logs and OS clutter
+.env
+.env.*
+*.log
+Thumbs.db
+.DS_Store

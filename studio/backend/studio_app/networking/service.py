@@ -158,10 +158,10 @@ class NetworkService:
             raise StudioError("Confirm the clean-up list first")
         preview = self.cleanup_preview()
         if preview["fingerprint"] != fingerprint:
-            raise StudioError("The list of Studio changes is different now. Review it again.", code="conflict")
+            raise StudioError("The list of ScadaBench changes is different now. Review it again.", code="conflict")
         results = self._run_helper("remove", preview["items"], fingerprint) if preview["items"] else []
         if self.projects.project["network"]["mode"] == "lab":
             update_network(self.projects, {"mode": "loopback"})
         self.cache = (0.0, None)
-        return {"results": results, "message": "Studio's network changes were removed. IEDs are back on "
+        return {"results": results, "message": "ScadaBench's network changes were removed. IEDs are back on "
                 "'This PC only' mode."}

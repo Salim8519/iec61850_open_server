@@ -1,4 +1,4 @@
-"""Read SampledValueControl blocks of one IED: the streams Studio expects to hear."""
+"""Read SampledValueControl blocks of one IED: the streams ScadaBench expects to hear."""
 
 SMP_MOD = {"SmpPerPeriod": 0, "SmpPerSec": 1, "SecPerSmp": 2}
 SCALE = {"TCTR": 0.001, "TVTR": 0.01}  # 9-2LE: current in mA, voltage in 10 mV

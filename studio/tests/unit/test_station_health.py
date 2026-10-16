@@ -34,7 +34,7 @@ def test_not_checked_is_never_ok():
     assert all(row["message"] for row in entry["checks"] if row["result"] == "not_checked")
     simulated = run([{"id": "s1", "name": "S1", "role": "simulated", "signals": [], "goose": {}}], {})
     assert simulated["ieds"][0]["verdict"] == "not_checked"
-    assert "Simulated by Studio" in simulated["ieds"][0]["checks"][0]["message"]
+    assert "Simulated by ScadaBench" in simulated["ieds"][0]["checks"][0]["message"]
     healthy = run([real()], {"r1": session()})
     assert healthy["ieds"][0]["verdict"] == "ok"
 

@@ -27,13 +27,13 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
   const { modes } = useModes(project.runtime !== 'stopped', project.revision);
   if (!project.ieds.length) return <div className="content"><div className="card"><EmptyState icon={<Cpu size={26} />}
     title="Import your first IED" hintId="devices.empty" action={<div className="row" style={{ justifyContent: 'center' }}>
-      <button className="primary large" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD file</button>
+      <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD file</button>
       <button className="large" disabled={locked} onClick={() => addTemplate('Feeder01')}><LayoutTemplate size={18} />Use a sample IED</button>
     </div>} /></div></div>;
   return <div className="content">
     <div className="master-detail">
       <div className="stack" style={{ gap: 12 }}>
-        <button className="primary large" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD</button>
+        <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD</button>
         <div className="list" role="list">{project.ieds.map(item => <button key={item.id} role="listitem"
           className={`list-row${item.id === selected ? ' active' : ''}`} onClick={() => setSelected(item.id)}>
           <Cpu size={22} style={{ color: 'var(--text-2)', flexShrink: 0 }} />

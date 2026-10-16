@@ -19,7 +19,7 @@ def test_auth_and_cross_origin_requests(app):
     client = app.test_client()
     missing = client.get("/api/v1/project")
     assert missing.status_code == 401
-    assert "SubstationStudio.exe" in missing.json["error"] and "#session=" in missing.json["error"]
+    assert "ScadaBench.exe" in missing.json["error"] and "#session=" in missing.json["error"]
     assert client.post("/api/v1/session", json={"token": "test-session-token"}).status_code == 200
     assert client.get("/api/v1/project").status_code == 200
     response = client.post("/api/v1/ieds/template", json={"name": "Bad"}, headers={"Origin": "https://evil.example"})

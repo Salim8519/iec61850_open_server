@@ -91,5 +91,5 @@ RULES_SCRIPT = ("Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction
 
 
 def list_studio_rules(run=_powershell):
-    """Names of Windows Firewall rules created by Studio that still exist."""
+    """Names of Windows Firewall rules created by ScadaBench that still exist."""
     return [line.strip() for line in run(RULES_SCRIPT).splitlines() if line.strip()]

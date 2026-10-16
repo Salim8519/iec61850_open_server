@@ -1,0 +1,18 @@
+/* Guided tour: shared tokens and buttons; the ring uses a huge shadow to dim the rest. */
+.tour { position: fixed; inset: 0; z-index: 1000; }
+.tour-dim { position: absolute; inset: 0; background: rgb(15 23 42 / 55%); }
+.tour-ring { position: absolute; border-radius: 12px; box-shadow: 0 0 0 9999px rgb(15 23 42 / 55%);
+  outline: 3px solid var(--accent); outline-offset: 0; transition: top .25s ease, left .25s ease, width .25s ease, height .25s ease;
+  pointer-events: none; }
+.tour-card { position: absolute; max-width: calc(100vw - 32px); background: var(--surface); border: var(--line) solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-large); padding: 18px 20px; display: grid; gap: 10px;
+  transition: top .25s ease, left .25s ease; }
+.tour-card h2 { margin: 0; font-size: 18px; }
+.tour-card p { margin: 0; color: var(--text-2); }
+.tour-head { display: flex; justify-content: space-between; align-items: center; }
+.tour-head button { min-height: 30px; width: 30px; }
+.tour-dots { display: flex; gap: 6px; }
+.tour-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+.tour-dots span.on { width: 20px; border-radius: 4px; background: var(--accent); }
+.tour-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) { .tour-ring, .tour-card { transition: none; } }

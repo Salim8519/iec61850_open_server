@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { useStudio } from '../state/useStudio';
 import { ImportSelection } from '../features/ieds/ImportSelection';
@@ -11,13 +11,31 @@ import { TestPage } from '../features/test/TestPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
+import { TourOverlay } from '../features/tour/TourOverlay';
+import { getPreferences, markTourSeen } from '../api/preferences';
 import { place, type PlaceId } from './places';
+import { useExitConfirm } from './useExitConfirm';
 
 export function App() {
   const studio = useStudio();
-  const [current, setCurrent] = useState<PlaceId>('diagram');
+  useExitConfirm();
+  const [current, setCurrent] = useState<PlaceId>('devices');
   const [activity, setActivity] = useState(false);
   const [flowIed, setFlowIed] = useState<string | undefined>();
+  const [tour, setTour] = useState<number | null>(null);
+  const [tourVersion, setTourVersion] = useState(1);
+  useEffect(() => {
+    getPreferences().then(prefs => {
+      setTourVersion(prefs.tour_version);
+      if (prefs.tour_seen_version < prefs.tour_version) setTour(prefs.tour_version);
+    })
+      .catch(() => {});
+  }, []);
+  const closeTour = useCallback(() => {
+    if (tour !== null) markTourSeen(tour).catch(() => {});
+    setTour(null);
+  }, [tour]);
+  const tourGo = useCallback((next: PlaceId) => { setFlowIed(undefined); setCurrent(next); }, []);
   const fileInput = useRef<HTMLInputElement>(null);
   const project = studio.project;
   const locked = project?.runtime !== 'stopped';
@@ -27,9 +45,9 @@ export function App() {
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} />}
     <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project} eventCount={studio.events.length}
-      openActivity={() => setActivity(true)} />
+      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} />
     <div className="main">
-      <TopBar title={info.title} subtitle={info.subtitle} project={project} busy={studio.busy}
+      <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy}
         saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save} />
       <RecoveryNotice recovery={project?.startup_recovery} />
       <MigrationNotice notice={project?.migration_notice} />
@@ -50,6 +68,7 @@ export function App() {
         {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform} />}
       </main>
     </div>
+    {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}
     {activity && <EventLog events={studio.events} close={() => setActivity(false)}
       session={project ? `${project.session_id.slice(0, 8)} · revision ${project.revision}` : undefined} />}
   </div>;

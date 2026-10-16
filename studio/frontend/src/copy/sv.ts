@@ -3,7 +3,7 @@ import type { Status } from './status';
 
 export const SV_STATES: Record<string, Status> = {
   stopped: { label: 'Not running', tone: 'off', hint: 'Press Run to start listening for Sampled Values.' },
-  waiting: { label: 'Not received yet', tone: 'waiting', hint: 'Studio is listening. If this stays, check that the merging unit runs and is on the same network.' },
+  waiting: { label: 'Not received yet', tone: 'waiting', hint: 'ScadaBench is listening. If this stays, check that the merging unit runs and is on the same network.' },
   receiving: { label: 'Receiving', tone: 'good', hint: 'Samples from this stream are arriving as the SCD describes.' },
   problem: { label: 'Received with a problem', tone: 'problem', hint: 'Samples arrive but something differs from the SCD. See the reason.' },
   timeout: { label: 'Stopped arriving', tone: 'problem', hint: 'No sample for a second. The merging unit may be off, unplugged or restarting.' },

@@ -9,7 +9,7 @@ def recover_startup(projects):
     if not source.exists():
         return None
     if source.is_symlink() or not source.is_file():
-        raise RuntimeError("Autosave is not a regular local file; inspect it before starting Studio")
+        raise RuntimeError("Autosave is not a regular local file; inspect it before starting ScadaBench")
     try:
         if source.stat().st_size > MAX_UNPACKED:
             raise ValueError("Saved archive exceeds the 100 MB project limit")

@@ -14,7 +14,7 @@ export const TONES: Record<Tone, ToneStyle> = {
 
 export const GOOSE_STATES: Record<string, Status> = {
   stopped: { label: 'Not running', tone: 'off', hint: 'Press Run to start sending and listening for GOOSE.' },
-  waiting: { label: 'Not received yet', tone: 'waiting', hint: 'Studio is listening. If this stays, check that the publisher runs and is plugged into the same network.' },
+  waiting: { label: 'Not received yet', tone: 'waiting', hint: 'ScadaBench is listening. If this stays, check that the publisher runs and is plugged into the same network.' },
   receiving: { label: 'Receiving', tone: 'good', hint: 'GOOSE from this block is arriving on the network.' },
   problem: { label: 'Received with a problem', tone: 'problem', hint: 'Messages arrive but do not match the SCD. See the reason.' },
   timeout: { label: 'Stopped arriving', tone: 'problem', hint: 'Messages arrived before but stopped. The publisher may be off, unplugged or restarted.' },
@@ -30,7 +30,7 @@ export const PROBLEMS: Record<string, Status> = {
   missing_scd_address: { label: 'No address in SCD', tone: 'warning', hint: 'This IED has no IP address in the SCD. Choose free adapter addresses or type one.' },
   adapter_has_no_network: { label: 'Adapter has no network', tone: 'warning', hint: 'The adapter has no usable IPv4 network. Use the SCD addresses instead.' },
   network_full: { label: 'No free address', tone: 'problem', hint: 'There is no free address left in this network. Type an address in another network.' },
-  already_on_adapter: { label: 'Already on adapter', tone: 'info', hint: 'Studio will use this existing address and will not remove it later.' },
+  already_on_adapter: { label: 'Already on adapter', tone: 'info', hint: 'ScadaBench will use this existing address and will not remove it later.' },
   used_by_other_adapter: { label: 'Used by another adapter', tone: 'problem', hint: 'Another adapter of this PC already has this address. Pick another address.' },
   duplicate: { label: 'Used twice', tone: 'problem', hint: 'Two IEDs would get the same address. Give each IED its own address.' },
   in_use_on_network: { label: 'Taken on the network', tone: 'problem', hint: 'Another device already answers on this address. Pick a different one.' },
@@ -58,9 +58,9 @@ export const UI_STATUS: Record<string, Status> = {
   adapter_up: { label: 'Connected', tone: 'good', hint: 'The cable or virtual link is up.' },
   adapter_down: { label: 'No cable', tone: 'warning', hint: 'Plug the device or switch into this port. This list updates by itself.' },
   adapter_internet: { label: 'Internet connection', tone: 'info', hint: 'This adapter carries your internet connection.' },
-  item_keep: { label: 'Already there', tone: 'info', hint: 'Studio uses it as it is and will never remove it.' },
+  item_keep: { label: 'Already there', tone: 'info', hint: 'ScadaBench uses it as it is and will never remove it.' },
   item_add: { label: 'Will be added', tone: 'waiting', hint: 'Added when you press Apply; removed by Clean up.' },
-  item_remove: { label: 'Will be removed', tone: 'waiting', hint: 'Studio added this earlier and removes only this.' },
+  item_remove: { label: 'Will be removed', tone: 'waiting', hint: 'ScadaBench added this earlier and removes only this.' },
   result_done: { label: 'Done', tone: 'good', hint: '' },
   result_failed: { label: 'Failed', tone: 'problem', hint: 'Windows refused this change.' },
   mode_loopback: { label: 'This PC only', tone: 'good', hint: 'Private addresses; nothing in Windows is changed.' },
@@ -71,7 +71,7 @@ export const UI_STATUS: Record<string, Status> = {
   goose_off: { label: 'GOOSE off', tone: 'off', hint: 'This IED does not send GOOSE.' },
   goose_needs_lab: { label: 'Lab network only', tone: 'off', hint: 'GOOSE is sent only after you set up the lab network.' },
   goose_none: { label: 'No GOOSE in SCD', tone: 'off', hint: 'The SCD defines no publishable GOOSE block for this IED.' },
-  role_real: { label: 'Real device', tone: 'info', hint: 'Studio reads this IED over the network.' },
+  role_real: { label: 'Real device', tone: 'info', hint: 'ScadaBench reads this IED over the network.' },
   role_off: { label: 'Off', tone: 'off', hint: 'Ignored when you press Run.' },
   stale: { label: 'Old value', tone: 'warning', hint: 'The connection was lost; this value may have changed since.' },
 };
@@ -81,7 +81,7 @@ export function roleStatus(role: string, state: string): Status {
   if (role === 'off') return UI_STATUS.role_off;
   if (role === 'real') {
     if (state === 'real_live') return { label: 'Live', tone: 'good', hint: 'Reading live values from the real device.' };
-    if (state.startsWith('real_')) return { label: 'Connecting', tone: 'waiting', hint: 'Studio is reaching the device.' };
+    if (state.startsWith('real_')) return { label: 'Connecting', tone: 'waiting', hint: 'ScadaBench is reaching the device.' };
     return UI_STATUS.role_real;
   }
   if (state === 'running') return { label: 'Running', tone: 'good', hint: 'The simulated IED is answering on its address.' };

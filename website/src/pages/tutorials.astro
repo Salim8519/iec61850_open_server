@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Closing from '../components/Closing.astro';
+import { TUTORIALS, posterOf, videoOf } from '../data/tutorials';
+---
+<Base title="Tutorials" description="Short ScadaBench tutorials: getting started, importing an SCD, running IEDs, GOOSE on the lab network, real IEDs and activation.">
+  <PageHeader eyebrow="Tutorials" title="Learn ScadaBench in ten minutes."
+    lede="Six short captioned videos of the real app. The app also opens a guided tour on first start; reopen it any time from Help." />
+  <section class="section">
+    <div class="wrap list">
+      {TUTORIALS.map((tutorial, index) => (
+        <article id={tutorial.slug} class="lesson reveal">
+          <div class="video">
+            <video src={videoOf(tutorial)} poster={posterOf(tutorial)} controls preload="none" playsinline
+              width="1920" height="1080" aria-label={`Video: ${tutorial.title}`}></video>
+          </div>
+          <div class="text">
+            <span class="eyebrow">{String(index + 1).padStart(2, '0')} · {tutorial.minutes} min</span>
+            <h2>{tutorial.title}</h2>
+            <ol>{tutorial.steps.map((step) => <li>{step}</li>)}</ol>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+  <Closing title="Try it with your own SCD." />
+</Base>
+
+<style>
+  .list { display: grid; gap: 28px; }
+  .lesson { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center;
+    padding: 24px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); }
+  .video { aspect-ratio: 16 / 9; max-width: 100%; border-radius: var(--radius-small); overflow: hidden; background: var(--navy);
+    border: 1px solid var(--line); }
+  .video video { width: 100%; height: 100%; object-fit: cover; }
+  .text { display: grid; gap: 12px; }
+  .text h2 { font-size: var(--step-2); }
+  ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--muted); }
+  @media (max-width: 860px) { .lesson { grid-template-columns: 1fr; } }
+</style>

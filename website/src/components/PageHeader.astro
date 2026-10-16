@@ -1,0 +1,19 @@
+---
+interface Props { eyebrow: string; title: string; lede?: string; }
+const { eyebrow, title, lede } = Astro.props;
+---
+<header class="page-header">
+  <div class="wrap">
+    <span class="eyebrow">{eyebrow}</span>
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-header { padding-block: clamp(64px, 10vw, 128px) clamp(40px, 6vw, 72px);
+    background: radial-gradient(900px 380px at 20% -20%, #12305a 0%, transparent 70%), var(--night); }
+  .wrap { display: grid; gap: 18px; justify-items: start; }
+  h1 { font-size: var(--step-4); max-width: 16ch; }
+</style>

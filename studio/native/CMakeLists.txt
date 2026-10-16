@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(SubstationStudioNative LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
+option(STUDIO_ENFORCE_LICENSE "Release builds only: workers refuse to run without a valid license" OFF)
+set(STUDIO_RELEASE_KEY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/release" CACHE PATH "Folder with release_key.hpp")
 set(IEC_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/../../.local/native/libiec61850" CACHE PATH "Pinned IEC source")
 set(JSON_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/../../.local/native/json" CACHE PATH "Pinned JSON source")
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -17,6 +19,20 @@ set(STUDIO_HEADERS
     "${IEC_SOURCE}/src/sampled_values"
     "${CMAKE_CURRENT_BINARY_DIR}/libiec61850/config"
     "${JSON_SOURCE}/single_include" "${NPCAP_SDK}/Include" common)
+# License guard: compiled into every build; enforcement exists only when the option is ON.
+add_library(studio_license STATIC common/license_guard.cpp
+    third_party/monocypher/monocypher.c third_party/monocypher/monocypher-ed25519.c)
+target_include_directories(studio_license PUBLIC common third_party/monocypher "${JSON_SOURCE}/single_include")
+target_include_directories(studio_license PRIVATE "${STUDIO_RELEASE_KEY_DIR}")
+target_compile_definitions(studio_license PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
+if(STUDIO_ENFORCE_LICENSE)
+    target_compile_definitions(studio_license PRIVATE STUDIO_ENFORCE_LICENSE=1)
+endif()
+if(WIN32)
+    target_link_libraries(studio_license PUBLIC bcrypt advapi32)
+endif()
+add_executable(studio_license_check testtools/license_check.cpp)
+target_link_libraries(studio_license_check PRIVATE studio_license)
 add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/server/server.cpp worker/updates/values.cpp worker/controls/controls.cpp
     worker/goose/publishing.cpp common/npcap.cpp)
@@ -37,7 +53,7 @@ target_include_directories(studio_sv_test_publisher PRIVATE "${IEC_SOURCE}/src/s
     "${IEC_SOURCE}/src/mms/inc_private")
 foreach(studio_target studio_ied studio_live studio_probe studio_sv_test_publisher)
     target_compile_definitions(${studio_target} PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
-    target_link_libraries(${studio_target} PRIVATE iec61850)
+    target_link_libraries(${studio_target} PRIVATE iec61850 studio_license)
     if(WIN32)
         target_link_libraries(${studio_target} PRIVATE ws2_32 iphlpapi bcrypt)
         studio_delay_load_npcap(${studio_target})

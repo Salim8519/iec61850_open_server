@@ -1,0 +1,33 @@
+/* ScadaBench brand tokens. Dark-first: night hero and product, light "paper" sections.
+   The license-server pages copy these values; keep both in step (ADR-0047). */
+:root {
+  color-scheme: dark;
+  --night: #070d1a;
+  --navy: #0a1222;
+  --panel: #111b2e;
+  --panel-2: #16233b;
+  --line: #1f2c46;
+  --ink: #eaf0f8;
+  --muted: #93a2ba;
+  --accent: #2be4b0;
+  --accent-ink: #04261c;
+  --signal: #38bdf8;
+  --paper: #f4f6fa;
+  --paper-2: #e9edf4;
+  --paper-ink: #0b1324;
+  --paper-muted: #4a5870;
+  --paper-line: #d5dce7;
+  --radius: 18px;
+  --radius-small: 12px;
+  --shadow: 0 30px 80px rgb(0 0 0 / 45%);
+  --sans: "Geist Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "Geist Mono Variable", "Cascadia Code", Consolas, monospace;
+  --max: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.75rem;
+  --step-3: clamp(2rem, 4vw, 3rem);
+  --step-4: clamp(2.6rem, 6.4vw, 5.25rem);
+}

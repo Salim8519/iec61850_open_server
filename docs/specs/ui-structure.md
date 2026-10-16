@@ -7,8 +7,9 @@ be easy for beginners and older users, and still be pro level.
 
 ## Behaviour contract
 
-- Four places in a left sidebar: **Diagram, Devices, Test, Settings**. The top bar
-  shows the page title, one short subtitle, the File menu and one Run/Stop button.
+- Four places in a left sidebar: **Devices, SLD, Test, Settings** (order and name:
+  [ADR-0048](../decisions/ADR-0048-desktop-app-window.md)); Devices opens first. The top bar
+  shows the page title (the SLD page spells out "Single-line diagram (SLD)"), one short subtitle, the File menu and one Run/Stop button.
 - Text and controls are large: 15 px base text, 40 px controls, 44 px primary
   actions, AA contrast. Sizes are in rem so browser zoom scales everything.
 - Each form shows the common choice first. Rare options live in one "Advanced"
@@ -29,3 +30,4 @@ be easy for beginners and older users, and still be pro level.
 | UI-05 | Retired kinds are rejected by the backend and absent from the frontend; old projects drop them with a notice. | `studio/tests/unit/test_diagram_drawing.py::test_retired_kinds_are_rejected`, `studio/tests/unit/test_diagram_drawing.py::test_format_12_migration_retires_legacy_kinds_and_their_wires`, `studio/tests/frontend/uiStructure.test.ts::retired equipment kinds are gone from the frontend` |
 | UI-06 | Value writes and generator saves have exactly one implementation each. | `studio/tests/frontend/uiStructure.test.ts::one value control and one generator editor` |
 | UI-07 | Real vendor files import even when they use PhyComAddr attributes or unnamed report blocks. | `studio/tests/unit/test_real_world_scl.py::test_phycomaddr_attributes_import`, `studio/tests/unit/test_real_world_scl.py::test_unnamed_report_block_is_skipped_with_warning` |
+| UI-08 | The drawing place is labelled SLD and its heading spells out single-line diagram. | `studio/tests/frontend/uiStructure.test.ts::the drawing place is called SLD and spelled out in its heading` |

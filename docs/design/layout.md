@@ -12,7 +12,7 @@
 | Controls | 40 px high, primary actions 44 px, 8–10 px radius, 20 px icons |
 | Contrast | WCAG AA for text, accent and status colours (enforced by a test) |
 
-Shell: 232 px white sidebar with four places (Diagram, Devices, Test, Settings at the
+Shell: 232 px white sidebar with four places (Devices, SLD, Test, Settings at the
 bottom with Activity) that collapses to 72 px icons below 1100 px; a 64 px top bar
 with page title, one-line subtitle, File menu, run state words and one Run/Stop pill.
 Pages scroll inside a centred 1440 px column with 20 px gaps between cards.

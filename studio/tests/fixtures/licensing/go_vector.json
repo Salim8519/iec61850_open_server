@@ -1,0 +1,13 @@
+{
+  "hwid": "abababababababababababababababababababababababababababababababab",
+  "kid": "3097e2de",
+  "lifetime": {
+    "payload": "{\"email\":\"buyer@example.com\",\"expires_at\":0,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760000000,\"kid\":\"3097e2de\",\"license_id\":\"SUBS-TEST-TEST-TEST-TEST\",\"max_machines\":1,\"type\":\"lifetime\",\"version\":1}",
+    "signature": "stbtnnL7u8tOL-CG0PBwMWAZSzqGHSw-gAS9nj9QRkNCEqB8rcBLudQRMy03t_1qXpXZgsehfZvOpQ0Xbw7TBw"
+  },
+  "public_key": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12",
+  "trial": {
+    "payload": "{\"email\":\"\",\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760000000,\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"max_machines\":1,\"type\":\"trial\",\"version\":1}",
+    "signature": "97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA"
+  }
+}

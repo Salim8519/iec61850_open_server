@@ -34,14 +34,25 @@ def protect_request():
     wrong_dev_frontend = dev_origin and frontend and frontend.rstrip("/") != dev_origin
     wrong_packaged_origin = not dev_origin and origin and urlsplit(origin).netloc != request.host
     if wrong_dev_frontend or wrong_packaged_origin:
-        message = ("This is not the active Studio browser tab. Reopen Studio from start-studio.cmd."
+        message = ("This is not the active ScadaBench browser tab. Reopen ScadaBench from start-studio.cmd."
                    if dev_origin else "Cross-origin administration is not permitted")
         return jsonify(error=message, active_frontend=dev_origin), 403
     if not request.path.startswith("/api/") or request.path == "/api/v1/session":
         return None
     token = request.headers.get("Authorization", "").removeprefix("Bearer ")
     if not session.get("authenticated") and not hmac.compare_digest(token, current_app.config["LAUNCH_TOKEN"]):
-        launcher = "start-studio.cmd" if dev_origin else "SubstationStudio.exe"
-        return jsonify(error=f"This browser tab has no Studio session. Open the full address printed by "
+        launcher = "start-studio.cmd" if dev_origin else "ScadaBench.exe"
+        return jsonify(error=f"This browser tab has no ScadaBench session. Open the full address printed by "
                              f"{launcher} (it ends with #session=...)."), 401
-    return None
+    return _require_license()
+
+
+def _require_license():
+    """Packaged builds answer 402 until this computer is licensed; development never checks."""
+    service = current_app.extensions.get("license")
+    if service is None or not service.enforce or request.path.startswith("/api/v1/license"):
+        return None
+    if service.is_licensed():
+        return None
+    return jsonify(error="A license is required. Start the free trial or activate your key.",
+                   code="license_required"), 402

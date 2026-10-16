@@ -38,7 +38,10 @@ changed, dropped or invented by accident.
 | [SLD tidy](sld-tidy.md) | One-press layout of the diagram like a real single-line diagram |
 | [Live colouring](energization.md) | Infeed symbol and live/dead/earthed wires from switch positions |
 | [Interlock hints](interlock-hints.md) | Friendly switching hints; never blocking |
+| [App window](app-window.md) | Windowed EXE, one instance, show again, confirm and stop on close |
 | [Bay templates](bay-templates.md) | One-click line feeder, transformer bay and bus coupler |
+| [Guided tour](tour.md) | First-start walkthrough of the four places, reopened from Help |
+| [Licensing](licensing.md) | Trial and 1-PC lifetime license, offline activation, protected release |
 
 ## Proposed specifications
 

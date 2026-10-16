@@ -10,6 +10,7 @@ dependencies = ["Flask==3.1.2", "waitress==3.0.2", "pydantic==2.10.6", "defusedx
 
 [project.optional-dependencies]
 dev = ["pytest==8.3.5", "pyinstaller==6.18.0"]
+release = ["nuitka==4.3", "ordered-set", "zstandard"]
 
 [project.scripts]
 substation-studio = "studio_app.launcher.entrypoint:main"

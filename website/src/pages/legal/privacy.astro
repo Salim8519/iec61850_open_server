@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Prose from '../../components/Prose.astro';
+import { SITE } from '../../data/site';
+---
+<Base title="Privacy" description="What data ScadaBench and its license service collect, and why.">
+  <PageHeader eyebrow="Legal" title="Privacy." lede="Short version: your engineering files never leave your PC." />
+  <Prose>
+    <h2>The app</h2>
+    <ul>
+      <li>Projects, SCL files, logs and captures stay on your computer. The app has no analytics and no telemetry.</li>
+      <li>The app contacts the license server only to start a trial, activate or move a key, and at most once a week to
+        check whether a lifetime key is still valid.</li>
+      <li>Those requests send a Machine ID (a one-way SHA-256 fingerprint of Windows identifiers, not your name) and,
+        for licenses, the license key.</li>
+    </ul>
+    <h2>The license server</h2>
+    <ul>
+      <li>Stores: license keys, the Machine ID they are bound to, trial start dates, and for purchases your email address and the PayPal order number.</li>
+      <li>Logs requests with their IP address for abuse protection; logs are size-capped and rotate automatically.</li>
+      <li>Payments are handled by PayPal. We never see or store card details.</li>
+      <li>License emails are sent through Mailgun.</li>
+    </ul>
+    <h2>This website</h2>
+    <p>The website uses no cookies and no tracking scripts. It is served by Cloudflare, which processes connection data to deliver and protect the site.</p>
+    <h2>Your choices</h2>
+    <p>Ask us to export or delete the data linked to your email or license key at <code>{SITE.supportEmail}</code>.</p>
+    <p class="note">Last updated October 2026.</p>
+  </Prose>
+</Base>

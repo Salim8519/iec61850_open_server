@@ -4,8 +4,9 @@ import './ui.css';
 export type MenuItem = { label: string; icon?: ReactNode; onSelect: () => void; disabled?: boolean };
 
 /** A button that opens a small list of actions; closes on choice, Escape or outside click. */
-export function Menu({ trigger, items, label, align = 'right' }: {
-  trigger: ReactNode; items: MenuItem[]; label: string; align?: 'left' | 'right';
+export function Menu({ trigger, items, label, align = 'right', up = false, triggerClass, triggerTour }: {
+  trigger: ReactNode; items: MenuItem[]; label: string; align?: 'left' | 'right'; up?: boolean;
+  triggerClass?: string; triggerTour?: string;
 }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
@@ -19,8 +20,9 @@ export function Menu({ trigger, items, label, align = 'right' }: {
     return () => { window.removeEventListener('mousedown', close); window.removeEventListener('keydown', close); };
   }, [open]);
   return <div ref={root} style={{ position: 'relative' }}>
-    <button type="button" aria-haspopup="menu" aria-expanded={open} aria-label={label} onClick={() => setOpen(!open)}>{trigger}</button>
-    {open && <div className="popover" role="menu" style={{ [align]: 0, top: 'calc(100% + 6px)', minWidth: 220 }}>
+    <button type="button" className={triggerClass} data-tour={triggerTour} aria-haspopup="menu" aria-expanded={open}
+      aria-label={label} onClick={() => setOpen(!open)}>{trigger}</button>
+    {open && <div className="popover" role="menu" style={{ [align]: 0, [up ? 'bottom' : 'top']: 'calc(100% + 6px)', minWidth: 220 }}>
       {items.map(item => <button key={item.label} role="menuitem" className="menu-item" disabled={item.disabled}
         onClick={() => { setOpen(false); item.onSelect(); }}>{item.icon}{item.label}</button>)}
     </div>}

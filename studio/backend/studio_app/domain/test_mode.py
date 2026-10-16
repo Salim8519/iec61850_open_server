@@ -1,4 +1,4 @@
-"""IEC 61850-7-4 mode and behaviour for Studio's simulated IEDs, and mode summaries.
+"""IEC 61850-7-4 mode and behaviour for ScadaBench's simulated IEDs, and mode summaries.
 
 Pure. Mod/Beh values: 1 on, 2 on-blocked, 3 test, 4 test/blocked, 5 off.
 """

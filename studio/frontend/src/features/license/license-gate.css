@@ -1,0 +1,32 @@
+/* License screen and Settings › License. Uses shared tokens, buttons and cards only. */
+.license-gate { min-height: 100vh; display: grid; place-items: center; padding: 32px 16px; background: var(--bg); }
+.license-card { width: min(860px, 100%); padding: 28px; display: grid; gap: 20px; }
+.license-head { display: flex; gap: 16px; align-items: flex-start; }
+.license-head h1 { margin-bottom: 4px; }
+.license-head p { margin: 0; }
+.license-icon { color: var(--accent); flex: none; margin-top: 4px; }
+.license-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.license-choice { display: grid; align-content: start; gap: 10px; padding: 20px; border: var(--line) solid var(--border);
+  border-radius: var(--radius); background: var(--surface-2); }
+.license-choice h2 { margin: 0; }
+.license-choice .button, .license-choice button { justify-self: start; }
+.license-hint { margin: -4px 0 0; }
+.license-key { display: grid; gap: 10px; }
+.license-message { padding: 12px 14px; border-radius: var(--radius-small); border: var(--line) solid var(--border);
+  font-size: 14px; display: grid; gap: 6px; }
+.license-message p { margin: 0; }
+.license-message button { justify-self: start; }
+.license-message.problem { border-color: #f19a9a; background: var(--error-soft); color: var(--error);
+  border-style: solid; }
+.license-message.warning { border-color: #f3c27a; background: var(--warning-soft); color: var(--warning);
+  border-style: dashed; }
+.license-options { display: grid; gap: 12px; }
+.license-options h3 { margin: 8px 0 0; }
+.license-options .row input { flex: 1; min-width: 0; }
+.license-steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; color: var(--text-2); }
+.license-file { position: relative; overflow: hidden; }
+.license-file input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+@media (max-width: 520px) {
+  .license-card { padding: 20px 16px; }
+  .license-options .row { flex-wrap: wrap; }
+}

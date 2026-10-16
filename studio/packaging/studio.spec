@@ -27,6 +27,7 @@ analysis = Analysis(
 )
 python_archive = PYZ(analysis.pure)
 executable = EXE(python_archive, analysis.scripts, [], exclude_binaries=True,
-                 name="SubstationStudio", debug=False, strip=False, upx=False, console=True)
+                 name="ScadaBench", debug=False, strip=False, upx=False, console=False,
+                 icon=str(studio / "branding/icon.ico"))
 collection = COLLECT(executable, analysis.binaries, analysis.datas, strip=False,
-                     upx=False, name="SubstationStudio")
+                     upx=False, name="ScadaBench")

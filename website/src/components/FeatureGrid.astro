@@ -1,0 +1,60 @@
+---
+// What ScadaBench does today. Every item here has recorded evidence in the product
+// change log; planned protocols appear only in the roadmap line.
+const features = [
+  { title: 'IEDs from your SCL', detail: 'CID · ICD · SCD · IID',
+    text: 'One MMS server per IED, each on its own address and port 102, built from the exact data model. Original SCL and vendor extensions are preserved.' },
+  { title: 'Single-line diagram', detail: 'CB · DS · ES · CT · VT',
+    text: 'Built from the SCD Substation section, tidied in one press, with live, dead and earthed wires coloured from real switch positions.' },
+  { title: 'GOOSE', detail: 'publish · listen · supervise',
+    text: 'Simulated IEDs publish the GOOSE their SCD declares. Every stream on the wire is checked against the SCD: confRev, dataset, goID and timing.' },
+  { title: 'Sampled Values', detail: 'IEC 61850-9-2 · 50/60 Hz',
+    text: 'Listen to merging-unit streams, see RMS and phasors, and catch missing samples or a stream that disagrees with the SCD.' },
+  { title: 'Real IEDs, read-only', detail: 'free report blocks only',
+    text: 'Connect to the real relay, read its model and compare it with the SCD. ScadaBench uses free report blocks or polling and never sends a command.' },
+  { title: 'Station health', detail: 'one verdict per IED',
+    text: 'Connection, data model, reports, GOOSE and test mode in one list, exported as CSV or an HTML report for the commissioning file.' },
+  { title: 'Test mode', detail: 'Mod · Beh · LPHD.Sim',
+    text: 'See which logical devices are in test or blocked and get warned about leftover simulation traffic, a classic commissioning risk.' },
+  { title: 'Test points & sequences', detail: 'set · check · replay',
+    text: 'Save the alarms and measurements you change most, run timed set-and-check sequences, and replay CSV traces with interpolation.' },
+  { title: 'Lab network', detail: 'preview · apply · clean up',
+    text: 'Put IEDs on a real adapter for SCADA and gateways. Every Windows change is shown first, and Clean up removes only what ScadaBench added.' },
+];
+---
+<section class="features paper section" aria-labelledby="features-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">What's inside</span>
+      <h2 id="features-title">Everything you need to test substation automation at your desk.</h2>
+      <p class="lede">Built by engineers who have sat through too many FATs waiting for hardware.</p>
+    </div>
+    <ul class="grid">
+      {features.map((feature) => (
+        <li class="card reveal">
+          <span class="detail mono">{feature.detail}</span>
+          <h3>{feature.title}</h3>
+          <p>{feature.text}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="roadmap reveal"><span class="mono">On the roadmap</span> IEC 60870-5-104 and more protocols. Tell us what
+      your projects need on the <a href="/contact/">contact page</a>.</p>
+  </div>
+</section>
+
+<style>
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .card { background: #fff; border: 1px solid var(--paper-line); border-radius: var(--radius); padding: 28px;
+    display: grid; gap: 10px; align-content: start; transition: transform .3s ease, box-shadow .3s ease; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgb(11 19 36 / 8%); }
+  .detail { font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; color: #0b8f6c; }
+  h3 { font-size: 1.3rem; letter-spacing: -0.02em; }
+  .card p { color: var(--paper-muted); }
+  .roadmap { margin-top: 32px; color: var(--paper-muted); }
+  .roadmap .mono { font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; margin-right: 10px;
+    padding: 5px 10px; border-radius: 999px; background: var(--paper-2); color: var(--paper-ink); }
+  .roadmap a { color: var(--paper-ink); }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+</style>

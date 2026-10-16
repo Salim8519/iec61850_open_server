@@ -1,1 +1,1 @@
-"""Substation Studio: portable IEC 61850 laboratory simulator."""
+"""ScadaBench: IEC 61850 IED simulator and SCADA test bench."""

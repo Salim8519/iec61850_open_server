@@ -47,3 +47,6 @@
 | [0043](ADR-0043-interlock-hints.md) | Interlocking is friendly hints only; never blocking |
 | [0044](ADR-0044-bay-templates.md) | Bay templates in the Add menu |
 | [0045](ADR-0045-readable-switching-symbols.md) | Switching symbols readable from a distance (geometry, zoom bands, change pulse) |
+| [0046](ADR-0046-licensing-and-protected-release.md) | Machine licensing (trial, 1-PC lifetime), Go license server, protected release; development unchanged |
+| [0047](ADR-0047-scadabench-brand-website-tour.md) | ScadaBench brand, icon pipeline, Astro website on Cloudflare Pages, guided tour, lazy server ops |
+| [0048](ADR-0048-desktop-app-window.md) | Windowed EXE, one instance (second launch shows the window), confirm and stop on close, SLD tab after Devices |

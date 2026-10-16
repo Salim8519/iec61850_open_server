@@ -1,0 +1,30 @@
+---
+import { SITE, buyUrl } from '../data/site';
+interface Props { title?: string; text?: string; }
+const {
+  title = 'Start testing tonight.',
+  text = `Download ScadaBench, start the free ${SITE.trialDays}-day trial and run your own SCD in minutes. No card, no hardware.`,
+} = Astro.props;
+---
+<section class="closing section">
+  <div class="wrap panel reveal">
+    <img src="/favicon.svg" alt="" width="64" height="64" />
+    <h2>{title}</h2>
+    <p class="lede">{text}</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/download/">Download free trial</a>
+      <a class="btn btn-ghost" href={buyUrl}>Buy lifetime · $<span data-price>{SITE.price}</span></a>
+    </div>
+    <p class="small mono">{SITE.requirements}</p>
+  </div>
+</section>
+
+<style>
+  .panel { display: grid; justify-items: center; text-align: center; gap: 20px; padding-block: clamp(48px, 7vw, 88px);
+    border-radius: 28px; border: 1px solid var(--line);
+    background: radial-gradient(600px 300px at 50% 0%, rgb(43 228 176 / 14%), transparent 70%), var(--panel); }
+  h2 { font-size: var(--step-3); }
+  .lede { margin-inline: auto; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+  .small { font-size: .78rem; color: var(--muted); }
+</style>

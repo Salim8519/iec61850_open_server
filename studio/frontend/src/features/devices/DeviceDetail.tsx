@@ -41,7 +41,7 @@ export function DeviceDetail({ ied, project, locked, values, perform, prepare, i
   return <div className="card">
     <div className="detail-head">
       <div><h2>{ied.name}</h2><p className="muted" style={{ margin: 0 }}>{hint(`live.role.${ied.role}`)}</p></div>
-      <SegmentedControl<IedRole> label="What Studio does with this device" value={ied.role} disabled={locked}
+      <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
           { value: 'simulated', label: 'Simulate' }, { value: 'real', label: 'Real device' }, { value: 'off', label: 'Off' }]} />
     </div>

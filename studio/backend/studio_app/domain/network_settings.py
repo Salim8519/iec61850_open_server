@@ -79,18 +79,18 @@ def effective_endpoint(ied, network):
 
 
 def real_endpoint(ied):
-    """The address Studio connects to for a real IED: user override, else SCD."""
+    """The address ScadaBench connects to for a real IED: user override, else SCD."""
     live = ied.get("live") or DEFAULT_LIVE
     scd = (ied.get("scl_address") or {}).get("ip", "")
     return (live["ip"] or scd), live["port"], ("override" if live["ip"] else "scd" if scd else "missing")
 
 
 def command_refusal(ied):
-    """Plain reason why Studio will not command this IED, or None when it may."""
+    """Plain reason why ScadaBench will not command this IED, or None when it may."""
     role = ied.get("role", "simulated")
     if role == "real":
         return (f"{ied['name']} is a real device. Commands to real IEDs are not enabled in this version, "
-                "so Studio did not send anything.")
+                "so ScadaBench did not send anything.")
     if role == "off":
         return f"{ied['name']} is switched off in this project. Set it to 'Simulate' to operate it."
     return None

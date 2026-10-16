@@ -45,6 +45,11 @@ def check(settings):
         local = Settings(directory, settings.native_executable, settings.frontend)
         app = create_app(local, "isolated-self-test")
         runtime = app.extensions["runtime"]
+        license_status = app.extensions["license"].current(refresh=True)
+        if not license_status.licensed:
+            runtime.close()
+            raise RuntimeError("The self-test runs the licensed engine, so activate ScadaBench on this computer "
+                               f"first. {license_status.reason or ''}".strip())
         try:
             client = app.test_client()
             assert client.get("/api/v1/project").status_code == 401

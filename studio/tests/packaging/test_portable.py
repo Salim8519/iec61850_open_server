@@ -10,13 +10,13 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
-FOLDER = Path(os.environ.get("STUDIO_PORTABLE_DIR", ROOT / "studio/dist/SubstationStudio"))
-pytestmark = pytest.mark.skipif(not (FOLDER / "SubstationStudio.exe").exists(),
+FOLDER = Path(os.environ.get("STUDIO_PORTABLE_DIR", ROOT / "studio/dist/ScadaBench"))
+pytestmark = pytest.mark.skipif(not (FOLDER / "ScadaBench.exe").exists(),
                                 reason="Build portable folder first")
 
 
 def test_frozen_server_serves_ui_and_protects_api(tmp_path):
-    process = subprocess.Popen([str(FOLDER / "SubstationStudio.exe"), "--no-browser",
+    process = subprocess.Popen([str(FOLDER / "ScadaBench.exe"), "--no-browser",
                                 "--port", "0", "--data-dir", str(tmp_path)],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
@@ -34,11 +34,11 @@ def test_frozen_server_serves_ui_and_protects_api(tmp_path):
         assert (FOLDER / "_internal/native/studio_ied.exe").is_file()
         assert (FOLDER / "_internal/native/studio_probe.exe").is_file()
         assert (FOLDER / "_internal/native/studio_live.exe").is_file()
-        duplicate = subprocess.run([str(FOLDER / "SubstationStudio.exe"), "--no-browser",
+        duplicate = subprocess.run([str(FOLDER / "ScadaBench.exe"), "--no-browser",
                                     "--port", "0", "--data-dir", str(tmp_path)],
                                    capture_output=True, text=True, timeout=15)
-        assert duplicate.returncode != 0
-        assert "already open" in duplicate.stderr
+        assert duplicate.returncode == 0, duplicate.stderr
+        assert "already running" in duplicate.stderr
     finally:
         # This test never starts workers. Terminate only its own preview process.
         process.terminate()
@@ -46,7 +46,7 @@ def test_frozen_server_serves_ui_and_protects_api(tmp_path):
 
 
 def test_frozen_schema_and_mms_self_test(tmp_path):
-    result = subprocess.run([str(FOLDER / "SubstationStudio.exe"), "--self-test",
+    result = subprocess.run([str(FOLDER / "ScadaBench.exe"), "--self-test",
                              "--data-dir", str(tmp_path)], capture_output=True, text=True, timeout=40)
     assert result.returncode == 0, result.stdout + result.stderr
     output = json.loads(result.stdout)

@@ -18,7 +18,7 @@ def status():
 def _comparison(key):
     comparison = runtime().live.session(key).status.get("comparison")
     if comparison is None:
-        raise ValueError("The comparison is ready after Studio has connected to the device and read its model")
+        raise ValueError("The comparison is ready after ScadaBench has connected to the device and read its model")
     return comparison
 
 

@@ -1,0 +1,43 @@
+---
+import { NAV, SITE } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div class="about">
+      <a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28" /><span>Scada<b>Bench</b></span></a>
+      <p>{SITE.tagline}. Built for protection, control and SCADA engineers.</p>
+    </div>
+    <nav aria-label="Product">
+      <h2>Product</h2>
+      {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href="/download/">Download</a>
+      <a href="/changelog/">Changelog</a>
+    </nav>
+    <nav aria-label="Company">
+      <h2>Company</h2>
+      <a href="/contact/">Contact</a>
+      <a href="/legal/eula/">License agreement</a>
+      <a href="/legal/privacy/">Privacy</a>
+    </nav>
+  </div>
+  <div class="wrap legal">
+    <p>© {year} {SITE.name}. IEC 61850 is a standard of the International Electrotechnical Commission.</p>
+    <p>A laboratory tool. Never connect it to an operational substation network.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--line); background: var(--night); padding-block: 56px 32px; }
+  .grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  .about { display: grid; gap: 14px; align-content: start; max-width: 38ch; color: var(--muted); }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; color: var(--ink); }
+  .brand b { color: var(--accent); font-weight: 650; }
+  nav { display: grid; gap: 10px; align-content: start; }
+  h2 { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  nav a { color: var(--ink); text-decoration: none; opacity: .82; }
+  nav a:hover { opacity: 1; color: var(--accent); }
+  .legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 48px;
+    padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } .about { grid-column: 1 / -1; } }
+</style>

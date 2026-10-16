@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SITE, buyUrl, offlineUrl } from '../data/site';
+
+const schema = {
+  '@context': 'https://schema.org', '@type': 'Product', name: `${SITE.name} lifetime license`,
+  description: 'Lifetime license for one Windows PC, including offline activation.',
+  offers: { '@type': 'Offer', price: SITE.price, priceCurrency: SITE.currency, availability: 'https://schema.org/InStock', url: buyUrl },
+};
+const included = [
+  'Every feature: IED simulation, diagram, GOOSE, Sampled Values, real IEDs, health, test mode',
+  'Unlimited projects and IEDs on that PC',
+  'Offline activation for PCs without internet',
+  `Move the license to a new PC yourself, ${SITE.movesPerYear} times a year`,
+];
+---
+<Base title="Pricing" schema={schema}
+  description={`ScadaBench costs ${SITE.price} ${SITE.currency} once for a lifetime license on one PC. Try every feature free for ${SITE.trialDays} days.`}>
+  <PageHeader eyebrow="Pricing" title="Pay once. Use it for good."
+    lede="No subscription and no feature tiers. Try everything first, then buy one license per PC." />
+  <section class="paper section">
+    <div class="wrap plans">
+      <article class="plan">
+        <h2>Free trial</h2>
+        <p class="price"><span>$0</span> for {SITE.trialDays} days</p>
+        <p class="muted">Every feature, no card. One trial per computer; needs internet once to start.</p>
+        <a class="btn btn-ghost" href="/download/">Download free trial</a>
+      </article>
+      <article class="plan featured">
+        <span class="badge mono">Most engineers choose this</span>
+        <h2>Lifetime license</h2>
+        <p class="price"><span>$<b data-price>{SITE.price}</b></span> once · {SITE.currency}</p>
+        <ul>{included.map((item) => <li>{item}</li>)}</ul>
+        <a class="btn btn-primary" href={buyUrl}>Buy with PayPal</a>
+        <p class="small muted">Your key appears right after payment and is emailed to you.</p>
+      </article>
+    </div>
+    <div class="wrap notes">
+      <p><b>Substation PC without internet?</b> Copy its Machine ID, activate on any other computer at
+        <a href={offlineUrl}>{offlineUrl.replace('https://', '')}</a>, and load the license file on the offline PC.</p>
+      <p><b>Team or company purchase?</b> Write to <span class="mono">{SITE.supportEmail}</span> for invoices and several licenses.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; max-width: 920px; }
+  .plan { position: relative; display: grid; gap: 16px; align-content: start; padding: 36px; border-radius: var(--radius);
+    background: #fff; border: 1px solid var(--paper-line); }
+  .plan.featured { background: var(--paper-ink); color: var(--ink); border-color: var(--paper-ink); }
+  .plan.featured .muted, .plan.featured li { color: var(--muted); }
+  .plan h2 { font-size: var(--step-1); letter-spacing: -0.02em; }
+  .price { font-size: 1rem; color: var(--paper-muted); }
+  .featured .price { color: var(--muted); }
+  .price span { font-size: 3rem; font-weight: 650; letter-spacing: -0.04em; color: inherit; margin-right: 6px; }
+  .plan.featured .price span { color: var(--ink); }
+  .plan:not(.featured) .price span { color: var(--paper-ink); }
+  .price b { font-weight: inherit; }
+  ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+  .badge { position: absolute; top: -12px; right: 24px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--accent); color: var(--accent-ink); padding: 6px 10px; border-radius: 999px; }
+  .btn { justify-self: start; }
+  .small { font-size: .85rem; }
+  .notes { display: grid; gap: 12px; margin-top: 40px; max-width: 920px; color: var(--paper-muted); }
+  .notes b { color: var(--paper-ink); }
+  .notes a { color: var(--paper-ink); }
+  @media (max-width: 760px) { .plans { grid-template-columns: 1fr; } }
+</style>

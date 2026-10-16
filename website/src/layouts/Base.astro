@@ -1,0 +1,59 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../data/site';
+
+interface Props { title: string; description: string; path?: string; schema?: object; }
+const { title, description, path = Astro.url.pathname, schema } = Astro.props;
+const canonical = new URL(path, SITE.url).href;
+const fullTitle = title === SITE.name ? `${SITE.name} | ${SITE.tagline}` : `${title} | ${SITE.name}`;
+const image = new URL('/og-image.png', SITE.url).href;
+const organization = {
+  '@context': 'https://schema.org', '@type': 'Organization', name: SITE.name, url: SITE.url,
+  logo: new URL('/icon-512.png', SITE.url).href,
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#070d1a" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
+    <script>
+      import { startReveal } from '../scripts/reveal';
+      import { showLivePrice } from '../scripts/livePrice';
+      startReveal();
+      showLivePrice();
+    </script>
+    <style>
+      .skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: var(--accent-ink);
+        padding: 8px 14px; border-radius: 8px; z-index: 100; }
+      .skip:focus { left: 8px; }
+    </style>
+  </body>
+</html>

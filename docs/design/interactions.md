@@ -1,6 +1,6 @@
 # Interaction contract
 
-- Add equipment from Diagram › Add (click or drag a tile); connect terminals; select to edit in the sheet.
+- Add equipment from SLD › Add (click or drag a tile); connect terminals; select to edit in the sheet.
 - Junctions are drawing-only connection points with four terminals and no
   mappings, start position or rotation; wiring is free-form and may dangle.
 - Every terminal may connect to every terminal; wires may leave equipment from

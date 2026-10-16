@@ -4,7 +4,7 @@ from studio_app.domain.energization import Sections, describe
 from studio_app.domain.interlock_hints import switching_hints
 
 EMPTY = {"nodes": {}, "edges": {}, "hints": {}}
-# Studio's own command reaches the worker as an ordinary MMS control; it is not reported as external.
+# ScadaBench's own command reaches the worker as an ordinary MMS control; it is not reported as external.
 OWN_COMMAND_S = 20
 
 

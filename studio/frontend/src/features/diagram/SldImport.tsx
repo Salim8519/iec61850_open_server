@@ -40,7 +40,7 @@ export function SldImport({ disabled, revision, apply, prepare }: {
   const close = () => { setSources(null); setPreview(null); };
   const stale = preview && !previewIsCurrent(preview, revision);
   return <>
-    <button className="ghost" disabled={disabled || busy} onClick={open}
+    <button className="ghost" data-tour="diagram-build" disabled={disabled || busy} onClick={open}
       title="Draw the single-line diagram from the substation SCD file"><Network size={17} />Build from SCD</button>
     {!sources && error && <span role="alert" className="import-unavailable">{error}</span>}
     <dialog ref={dialog} className="import-dialog" aria-labelledby="sld-import-title"

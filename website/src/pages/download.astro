@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SITE } from '../data/site';
+
+const steps = [
+  { title: 'Download and install', text: 'Run the installer. It installs for your Windows user only, so no administrator prompt is needed.' },
+  { title: 'Start the free trial', text: `Open ScadaBench and press "Start ${SITE.trialDays}-day free trial". It needs internet once.` },
+  { title: 'Import your SCD', text: 'Devices › Import CID / SCD, pick the IEDs, then press Run. Your SCADA can connect right away.' },
+];
+---
+<Base title="Download" description={`Download ScadaBench ${SITE.version} for Windows 10 and 11 and start a free ${SITE.trialDays}-day trial.`}>
+  <PageHeader eyebrow={`Version ${SITE.version} · Windows 64-bit`} title="Download ScadaBench."
+    lede="One installer, everything included. Your projects and license stay in your user folder across updates.">
+    <div class="actions">
+      <a class="btn btn-primary" href={SITE.download}>Download for Windows</a>
+      <a class="btn btn-ghost" href="/tutorials/">Watch the 1-minute start</a>
+    </div>
+    <p class="req mono">{SITE.requirements}</p>
+  </PageHeader>
+  <section class="paper section">
+    <div class="wrap">
+      <ol class="steps">
+        {steps.map((step, index) => (
+          <li class="reveal"><span class="num mono">{index + 1}</span><h2>{step.title}</h2><p>{step.text}</p></li>
+        ))}
+      </ol>
+      <div class="notes">
+        <p><b>Windows says "Windows protected your PC"?</b> Choose More info, then Run anyway. Windows shows this for new
+          apps that are not yet code-signed.</p>
+        <p><b>GOOSE and Sampled Values</b> need the free Npcap driver from npcap.com, installed with its default options.
+          Everything else works without it.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+  .req { color: var(--muted); font-size: .8rem; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .steps li { display: grid; gap: 10px; align-content: start; padding: 28px; border-radius: var(--radius); background: #fff;
+    border: 1px solid var(--paper-line); }
+  .num { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--paper-ink);
+    color: var(--accent); font-size: .9rem; }
+  .steps h2 { font-size: var(--step-1); letter-spacing: -0.02em; }
+  .steps p, .notes p { color: var(--paper-muted); }
+  .notes { display: grid; gap: 12px; margin-top: 36px; max-width: 72ch; }
+  .notes b { color: var(--paper-ink); }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+</style>

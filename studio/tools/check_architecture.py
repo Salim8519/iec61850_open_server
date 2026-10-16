@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN = {"flask", "subprocess", "socket", "pathlib", "os", "api", "runtime",
-             "projects", "networking", "observability"}
+             "projects", "networking", "observability", "licensing"}
 
 
 def check():

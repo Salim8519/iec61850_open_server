@@ -21,7 +21,7 @@ def main():
     destination = args.dist_dir.resolve()
     if not destination.is_relative_to(STUDIO.parent.resolve()) or destination in {STUDIO.resolve(), STUDIO.parent.resolve()}:
         raise SystemExit("Build output must be a dedicated directory inside this workspace")
-    if (destination / "SubstationStudio/data").exists():
+    if (destination / "ScadaBench/data").exists():
         raise SystemExit("Preview contains user data. Back it up and choose a clean build output first.")
     work = STUDIO / "build" / ("portable-" + uuid4().hex if args.fresh_work else "portable")
     command = [sys.executable, "-m", "PyInstaller", "--noconfirm",
@@ -30,7 +30,7 @@ def main():
     environment = {**os.environ, "STUDIO_BUILD_NATIVE": str(args.native_bin.resolve()),
                    "STUDIO_BUILD_FRONTEND": str(args.frontend_dir.resolve())}
     subprocess.run(command, cwd=STUDIO.parent, check=True, env=environment)
-    print(f"Preview folder: {destination / 'SubstationStudio'}")
+    print(f"Preview folder: {destination / 'ScadaBench'}")
 
 
 if __name__ == "__main__":

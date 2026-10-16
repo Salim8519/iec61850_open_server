@@ -67,3 +67,10 @@ test mode are built (changes 0058-0062) with stand-in and VMware-adapter evidenc
 real vendor SCDs with CSWI LNodes, third-party relays and merging units are pending.
 Studio cannot set the GOOSE simulation bit on simulated IEDs (TMODE-06, retired).
 UI v2 (change 0054) awaits owner visual acceptance; checked at 1366×768 and 1920×1080.
+Licensing (0069): no protected EXE/installer built yet (dry run and unit tests only); PayPal
+and Mailgun tested against fakes, not live sandbox; release key/URL not configured; offline
+PCs never learn about refunds or moves; unsigned builds trigger SmartScreen. The stale
+2026-09-16 portable folder fails `test_portable.py` (no studio_live.exe) until rebuilt.
+Desktop window (0073): windowed EXE, second-launch focus and the close prompt are not yet
+verified in a built EXE. Without Edge/Chrome the default-browser tab has no exit control.
+The close prompt uses the browser's own "Leave site?" wording.

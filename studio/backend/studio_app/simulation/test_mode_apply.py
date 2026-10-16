@@ -1,4 +1,4 @@
-"""Apply saved test modes to Studio's simulated IEDs (never to real devices)."""
+"""Apply saved test modes to ScadaBench's simulated IEDs (never to real devices)."""
 from studio_app.contracts.errors import StudioError
 from studio_app.domain.test_mode import mode_writes, validate_test_mode
 
@@ -28,8 +28,8 @@ def set_test_mode(coordinator, ied_id, value):
     with projects.lock:
         ied = projects.find_ied(ied_id)
         if ied.get("role") != "simulated":
-            raise StudioError("Mode and simulation can only be set on IEDs that Studio simulates. "
-                              "Studio never changes a real device.")
+            raise StudioError("Mode and simulation can only be set on IEDs that ScadaBench simulates. "
+                              "ScadaBench never changes a real device.")
         try:
             settings = validate_test_mode(value)
         except ValueError as error:

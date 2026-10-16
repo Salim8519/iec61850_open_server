@@ -1,0 +1,4 @@
+node_modules/
+public/footage/
+out/
+src/lessons.json

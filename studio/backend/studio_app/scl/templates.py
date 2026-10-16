@@ -21,7 +21,7 @@ def make_template(name="BayController"):
     identifier(name, "IED name")
     root = Element("SCL", {"xmlns": NS, "version": "2007", "revision": "B", "release": "4"})
     child(root, "Header", id=name, version="1", revision="0")
-    ied = child(root, "IED", name=name, manufacturer="Substation Studio", type="Lab bay controller",
+    ied = child(root, "IED", name=name, manufacturer="ScadaBench", type="Lab bay controller",
                 configVersion="1", desc="Simulation template; not a manufacturer relay model")
     server = child(child(ied, "AccessPoint", name="AP1"), "Server")
     child(server, "Authentication", none="true")
@@ -70,7 +70,7 @@ def make_template(name="BayController"):
     da(boolean, "t", "Timestamp", "ST")
     plate = child(types, "DOType", id="StudioName", cdc="LPL")
     for field in ("vendor", "swRev", "d"):
-        da(plate, field, "VisString255", "DC", "Substation Studio")
+        da(plate, field, "VisString255", "DC", "ScadaBench")
     pos = child(types, "DOType", id="StudioDPC", cdc="DPC")
     da(pos, "stVal", "Dbpos", "ST", dchg="true")
     da(pos, "q", "Quality", "ST", qchg="true")

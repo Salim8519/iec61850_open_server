@@ -1,3 +1,5 @@
+import { rememberAppWindow } from '../app/useExitConfirm';
+
 export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
   const form = body instanceof FormData;
   const response = await fetch(`/api/v1${path}`, {
@@ -11,10 +13,14 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
     const active = new URL(data.active_frontend);
     if (active.hostname === '127.0.0.1' || active.hostname === 'localhost') {
       window.location.replace(`${active.origin}${window.location.pathname}${window.location.hash}`);
-      throw new Error('Switching this tab to the active Studio session.');
+      throw new Error('Switching this tab to the active ScadaBench session.');
     }
   }
-  if (response.status === 404) throw new Error('The running backend does not provide this action. Save your project and restart Studio to load the updated backend.');
+  if (response.status === 402) {
+    window.dispatchEvent(new Event('studio-license-required'));
+    throw new Error(data.error || 'A license is required.');
+  }
+  if (response.status === 404) throw new Error('The running backend does not provide this action. Save your project and restart ScadaBench to load the updated backend.');
   if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
   return data as T;
 }
@@ -22,6 +28,7 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
 export async function connectSession(): Promise<void> {
   const fragment = new URLSearchParams(window.location.hash.slice(1));
   const token = fragment.get('session');
+  rememberAppWindow(fragment);
   if (token) {
     await api('/session', 'POST', { token });
     window.history.replaceState(null, '', window.location.pathname);

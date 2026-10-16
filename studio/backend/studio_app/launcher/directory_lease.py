@@ -11,7 +11,7 @@ class DirectoryLease:
         self.directory.mkdir(parents=True, exist_ok=True)
         path = self.directory / "studio.lock"
         if path.is_symlink():
-            raise RuntimeError("Studio lock file is a link; inspect the data folder before starting")
+            raise RuntimeError("ScadaBench lock file is a link; inspect the data folder before starting")
         handle = path.open("a+b")
         try:
             handle.seek(0, 2)
@@ -22,7 +22,7 @@ class DirectoryLease:
             msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
         except OSError as error:
             handle.close()
-            raise RuntimeError("This Studio data folder is already open or cannot be locked. "
+            raise RuntimeError("This ScadaBench data folder is already open or cannot be locked. "
                                "Close its other launcher before opening it again.") from error
         self.handle = handle
         return self

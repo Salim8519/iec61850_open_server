@@ -42,7 +42,7 @@ def _real_rows(ied, session, goose):
     if state in {"retrying", "no_address"}:
         return [result("connection", "Connection", "problem", status.get("message") or "The device does not answer.")]
     if state != "live" or not status.get("health"):
-        return [result("connection", "Connection", "not_checked", "Not connected yet. Studio is reaching the device.")]
+        return [result("connection", "Connection", "not_checked", "Not connected yet. ScadaBench is reaching the device.")]
     health = status["health"]
     when = health["mode"]["checked_at"]
     rows = [result("connection", "Connection", "ok", f"Connected to {status.get('host')}:{status.get('port')}.",
@@ -62,7 +62,7 @@ def ied_rows(ied, running, session, goose):
     if not running:
         return [result("connection", "Run", "not_checked", "Press Run to check the station.")]
     if role == "simulated":
-        return [result("model", "Data model", "not_checked", "Simulated by Studio; model checks apply to real devices.")] \
+        return [result("model", "Data model", "not_checked", "Simulated by ScadaBench; model checks apply to real devices.")] \
             + _wire_rows(ied, goose)
     return _real_rows(ied, session, goose) + _wire_rows(ied, goose)
 

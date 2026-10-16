@@ -75,8 +75,8 @@ def _check(row, own, elsewhere, chosen):
     if not address or row["status"] != "ok":
         return
     if address in own:
-        row.update(status="already_on_adapter", hint="This address is already on the adapter. Studio will "
-                   "use it but will not remove it later, because Studio did not add it.")
+        row.update(status="already_on_adapter", hint="This address is already on the adapter. ScadaBench will "
+                   "use it but will not remove it later, because ScadaBench did not add it.")
     elif address in elsewhere:
         row.update(status="used_by_other_adapter",
                    hint=f"{address} already belongs to '{elsewhere[address]}'. Pick another address "

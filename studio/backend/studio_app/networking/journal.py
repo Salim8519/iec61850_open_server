@@ -1,4 +1,4 @@
-"""Append-only record of Windows network changes that Studio itself made."""
+"""Append-only record of Windows network changes that ScadaBench itself made."""
 import json
 import threading
 from datetime import datetime, timezone
@@ -34,7 +34,7 @@ class NetworkJournal:
         return [json.loads(line) for line in lines if line.strip()]
 
     def outstanding(self):
-        """Owned items Studio applied and has not removed yet, newest state wins."""
+        """Owned items ScadaBench applied and has not removed yet, newest state wins."""
         state = {}
         for record in self.records():
             item = record["item"]

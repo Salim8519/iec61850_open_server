@@ -84,6 +84,16 @@ from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
 | `PUT /project/test-panel` | test array | Stopped-only validated panel save |
 | `POST /traces/preview` | CSV multipart `file` | Five-row preview, columns and row count |
 | `GET /events` | `after` or `Last-Event-ID` | SSE replay, heartbeat and `resync` marker |
+| `GET /license/status` | - | `licensed, mode, plan, days_remaining, expires_at, reason, hwid, server_url, masked_key` |
+| `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
+| `POST /license/activate` | `license_key`, `move` | Activate (or move) a lifetime key online |
+| `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
+| `GET /preferences` | - | `tour_seen_version`, `tour_version` |
+| `PUT /preferences` | `{tour_seen_version}` | Store UI preferences in the data folder |
+| `PUT /license/config` | `server_url` (https) | Change the license server address |
+
+Packaged builds answer 402 `license_required` on every other `/api/v1` call until licensed
+(ADR-0046); development never does. License endpoints return `{error, code}` on failure.
 
 Private native IPC is not HTTP: version-1 length-prefixed JSON on worker stdin/stdout.
 `studio/backend/studio_app/runtime/worker_protocol.py` owns framing; native worker

@@ -41,22 +41,22 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
     }, 150);
     return () => { cancelled = true; clearTimeout(timer); };
   }, [iedId, query, reportRef, offset, allowedKinds?.join(','), allowedFc, writableOnly]);
-  return <div className="stack" style={{ gap: 10 }}>
+  return <div className="signal-search-picker">
     {!fixedIedId && <label>IED<select value={iedId} disabled={disabled}
       onChange={e => setIed(e.target.value)}>
       <option value="">Choose an IED</option>
       {ieds.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
     </select></label>}
-    {ied && <div className="row">
-      <div className="search-field" style={{ flex: 1 }}><Search size={14} />
+    {ied && <>
+      <div className="search-field signal-search-query"><Search size={14} />
         <input aria-label="Search signals" placeholder="Search signals…" value={query}
           disabled={disabled} onChange={e => setQuery(e.target.value)} /></div>
-      <select aria-label="Report" style={{ width: 140 }} value={reportRef} disabled={disabled}
+      <select aria-label="Report" value={reportRef} disabled={disabled}
         onChange={e => setReport(e.target.value)}>
         <option value="__all__">All reports</option>
         {ied.reports.map(report => <option key={report.ref} value={report.ref}>{report.ref}</option>)}
       </select>
-    </div>}
+    </>}
     {error && <p role="alert">{error}</p>}
     {ied && <><div className="signal-search-list">
       {items.map(signal => {
@@ -77,7 +77,7 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
       })}
       {!loading && !items.length && <p className="small muted">No signals match.</p>}
     </div>
-    <div className="row small muted"><span>{total ? offset + 1 : 0}–{Math.min(offset + 50, total)} of {total}</span>
+    <div className="row small muted signal-search-pages"><span>{total ? offset + 1 : 0}–{Math.min(offset + 50, total)} of {total}</span>
       <span style={{ flex: 1 }} />
       <button type="button" className="ghost" disabled={loading || offset === 0}
         onClick={() => setOffset(offset - 50)}>Previous</button>

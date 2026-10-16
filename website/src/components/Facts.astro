@@ -1,0 +1,30 @@
+---
+// Real numbers from the product evidence (change records 0053, 0069, 0021).
+const facts = [
+  { value: '134/134', label: 'real vendor CID files imported and running in our test library' },
+  { value: '0', label: 'relays, merging units or test sets needed on your bench' },
+  { value: '1', label: 'Windows installer. No Docker, Python or Node to set up' },
+  { value: '0.6 s', label: 'from double-click to a working app window' },
+];
+---
+<section class="facts section" aria-label="ScadaBench in numbers">
+  <div class="wrap grid">
+    {facts.map((fact) => (
+      <div class="fact reveal">
+        <span class="value">{fact.value}</span>
+        <p>{fact.label}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .facts { padding-block: clamp(56px, 8vw, 96px); border-block: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--navy), var(--night)); }
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+  .fact { display: grid; gap: 10px; align-content: start; }
+  .value { font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 650; letter-spacing: -0.04em; line-height: 1;
+    font-variant-numeric: tabular-nums; color: var(--ink); }
+  .fact p { color: var(--muted); max-width: 26ch; }
+  @media (max-width: 860px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

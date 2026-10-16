@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Prose from '../../components/Prose.astro';
+import { SITE } from '../../data/site';
+---
+<Base title="License agreement" description="The terms for using ScadaBench.">
+  <PageHeader eyebrow="Legal" title="License agreement." lede="The plain-language terms for using ScadaBench." />
+  <Prose>
+    <p class="note">Draft terms published for transparency. The binding version is the one shown by the installer.</p>
+    <h2>1. What you get</h2>
+    <p>A trial lets one computer use ScadaBench for {SITE.trialDays} days. A lifetime license lets one computer use it
+      without time limit. A license is personal to the buyer and may not be shared, resold or used on more computers at once.</p>
+    <h2>2. Moving to a new computer</h2>
+    <p>You may move a license to another computer yourself up to {SITE.movesPerYear} times a year. The previous computer stops working when it next checks online.</p>
+    <h2>3. What you may not do</h2>
+    <ul>
+      <li>Bypass, disable or tamper with licensing, or reverse engineer the software except where law allows it.</li>
+      <li>Use ScadaBench on an operational substation or any live control network.</li>
+    </ul>
+    <h2>4. Engineering responsibility</h2>
+    <p>ScadaBench is a laboratory and engineering aid. Results must be verified on the real equipment before use in
+      protection, control or safety decisions. The software is provided as is, without warranty of fitness for a particular purpose.</p>
+    <h2>5. Third-party components</h2>
+    <p>ScadaBench includes third-party components under their own licenses, listed in the licenses folder of the installation.</p>
+    <h2>6. Ending the license</h2>
+    <p>A license ends if these terms are broken or the purchase is refunded or reversed.</p>
+  </Prose>
+</Base>
