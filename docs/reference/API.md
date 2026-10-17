@@ -96,6 +96,8 @@ from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
 | `POST /tools/explorer/read`, `PUT /tools/explorer/watch`, `POST /tools/explorer/polling` | `items`, `interval_ms`, `on` | Read, set the remembered watch list, start/stop polling; `GET /tools/explorer/watch.csv` |
 | `POST /tools/explorer/operate` | `ref`, `value`, `confirm: true`, `options` | Operate a control via studio_control (ADR-0057); refused without `confirm` |
 | `GET /tools/memory`, `PUT /tools/memory/find` | `choice` | Remembered tool settings |
+| `GET /activity` | - | What runs outside the IED Run: gateway, Explorer, scan, sequences (running dots) |
+| `POST /tools/gateway/command` | `point_id`, `value` (bool), `confirm: true` | Page command, run and logged like a SCADA command (ADR-0059) |
 | `POST /tools/scan/preview`, `/start`, `/stop`; `GET /tools/scan` | `range`, `port` | Find IEDs (<= 256 addresses) |
 | `GET/PUT /tools/gateway/config` | `protocol`, `listen`, `settings`, `real_commands` | Gateway settings (stopped only) |
 | `GET/PUT /tools/gateway/points?protocol=`, `POST /tools/gateway/propose` | `points` | Point list with live values; smart proposal |

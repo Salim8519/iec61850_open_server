@@ -2,6 +2,8 @@ import { Download, Lock, Save, Search, Sparkles, Trash2, Undo2, Upload, X } from
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { gatewayApi, problemsOf, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
 import { ADDRESS_LABEL, GATEWAY_COPY, KIND_LABELS, KIND_WHERE } from '../../../copy/gateway';
+import { CommandButtons, CommandWarning, type PendingCommand } from './CommandSend';
+import { blockedReason } from './gatewayCommands';
 import { pointKey, mergeValues } from './pointRows';
 
 const PAGE = 100;
@@ -14,6 +16,9 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const [notes, setNotes] = useState<string[]>([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(0);
+  const [pending, setPending] = useState<PendingCommand | null>(null);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState<{ ok: boolean; text: string } | null>(null);
   const file = useRef<HTMLInputElement>(null);
   const dirtyRef = useRef(false);
   dirtyRef.current = dirty;
@@ -32,6 +37,12 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const importFile = (picked: File) => picked.text().then(text => gatewayApi.importCsv(protocol, text))
     .then(value => { edit(value.points); setProblems(value.problems); setNotes([`${value.points.length} points read from ${picked.name}.`]); })
     .catch(error => fail(error.message));
+  const send = (command: PendingCommand) => {
+    setSending(true); setSent(null);
+    gatewayApi.send(command.row.id!, command.value)
+      .then(answer => setSent({ ok: answer.ok, text: GATEWAY_COPY.sentResult(command.label, command.row.ref, answer.ok, answer.reason) }))
+      .catch(error => fail(error.message)).finally(() => { setSending(false); setPending(null); });
+  };
   const needle = filter.trim().toLowerCase();
   const shown = useMemo(() => (rows ?? []).map((row, index) => ({ row, index })).filter(({ row }) => !needle ||
     `${row.ref} ${row.ied_name ?? ''} ${row.address} ${KIND_LABELS[row.kind]} ${row.description}`.toLowerCase().includes(needle)),
@@ -40,7 +51,10 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const visible = shown.slice(Math.min(page, pages - 1) * PAGE, Math.min(page, pages - 1) * PAGE + PAGE);
   return <>
     <div className="guide-section">
-      <p className="small muted" style={{ margin: 0 }}>{GATEWAY_COPY.pointsHint}</p>
+      {!locked && <p className="small muted" style={{ margin: 0 }}>{GATEWAY_COPY.pointsHint}</p>}
+      {pending && <CommandWarning pending={pending} real={pending.row.ied_role === 'real'} busy={sending}
+        cancel={() => setPending(null)} send={() => send(pending)} />}
+      {sent && <p className={`small gateway-sent${sent.ok ? ' ok' : ''}`} role="status">{sent.text}</p>}
       <div className="row gateway-toolbar">
         <button onClick={propose} disabled={locked}><Sparkles size={16} />{GATEWAY_COPY.propose}</button>
         <button onClick={() => file.current?.click()} disabled={locked}><Upload size={16} />{GATEWAY_COPY.importCsv}</button>
@@ -74,7 +88,8 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
               <div className="small gateway-warning">Real IED: commands are refused</div>}</td>
           <td><input className="gateway-number" value={row.scale} disabled={locked} aria-label="Scale"
             onChange={event => update(index, { scale: Number(event.target.value) || 0 })} /></td>
-          <td className="small">{row.kind.startsWith('command') ? <span className="muted">command</span>
+          <td className="small">{row.kind.startsWith('command')
+            ? <CommandButtons row={row} blocked={blockedReason(row, dirty)} ask={command => { setSent(null); setPending(command); }} />
             : <span className={row.online ? '' : 'muted'}>{row.value_text ?? '—'}</span>}</td>
           <td><input value={row.description} disabled={locked} aria-label="Description" placeholder="optional"
             onChange={event => update(index, { description: event.target.value })} /></td>

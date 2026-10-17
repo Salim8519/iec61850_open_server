@@ -117,6 +117,17 @@ def stop():
     return jsonify(gateway().stop())
 
 
+@blueprint.post("/tools/gateway/command")
+def send_command():
+    """A command from the page; the page sends it only after its warning was confirmed."""
+    data = body()
+    if data.get("confirm") is not True:
+        raise ValueError("Confirm the command first")
+    if not isinstance(data.get("point_id"), str) or not isinstance(data.get("value"), bool):
+        raise ValueError("Send point_id and value (true = ON / close, false = OFF / open)")
+    return jsonify(gateway().send(data["point_id"], data["value"]))
+
+
 @blueprint.get("/tools/gateway/traffic")
 def traffic():
     return jsonify(gateway().traffic.after(int(request.args.get("after", 0))))

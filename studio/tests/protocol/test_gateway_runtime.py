@@ -33,9 +33,12 @@ def test_iec104_master_operates_a_simulated_breaker(tmp_path):
         config = client.put("/api/v1/tools/gateway/config", json={"protocol": "iec104", "listen": "this_pc",
                                                                    "settings": {"port": 12406}})
         assert config.status_code == 200, config.json
-        # Autonomous start: no point list and no Run yet; the gateway proposes points and starts Run itself.
+        # No point list yet: Start proposes the points. Run is separate and stays off until pressed.
         started = client.post("/api/v1/tools/gateway/start").json
-        assert started["state"] == "running" and started["run_state"] == "running" and started["auto_start"] is True
+        assert started["state"] == "running" and started["run_state"] == "stopped" and started["auto_start"] is True
+        activity = client.get("/api/v1/activity").json
+        assert activity["gateway"]["state"] == "running" and activity["gateway"]["port"] == 12406
+        runtime.start()
         proposal = client.get("/api/v1/tools/gateway/points?protocol=iec104").json["points"]
         status_ioa = next(p["address"] for p in proposal if p["ref"] == "GwBayCTRL/XCBR1.Pos.stVal")
         command_ioa = next(p["address"] for p in proposal if p["ref"] == "GwBayCTRL/XCBR1.Pos")
@@ -50,6 +53,14 @@ def test_iec104_master_operates_a_simulated_breaker(tmp_path):
         assert spont and spont[-1]["value"] == target
         log = client.get("/api/v1/tools/gateway/commands").json["entries"]
         assert log[-1]["applied"].startswith("operated") and "is now" in log[-1]["observed"]
+        point_id = next(p["id"] for p in proposal if p["ref"] == "GwBayCTRL/XCBR1.Pos")
+        unconfirmed = client.post("/api/v1/tools/gateway/command", json={"point_id": point_id, "value": target != 2})
+        assert unconfirmed.status_code == 400 and "Confirm" in unconfirmed.json["error"]
+        manual = client.post("/api/v1/tools/gateway/command",
+                             json={"point_id": point_id, "value": target != 2, "confirm": True}).json
+        assert manual == {"ok": True, "reason": ""}
+        entry = client.get("/api/v1/tools/gateway/commands").json["entries"][-1]
+        assert entry["protocol"] == "manual" and entry["applied"].startswith("operated")
         traffic = client.get("/api/v1/tools/gateway/traffic").json["entries"]
         assert any("select confirmed" in entry["text"] for entry in traffic)
         table = client.get("/api/v1/tools/gateway/points?protocol=iec104").json["points"]

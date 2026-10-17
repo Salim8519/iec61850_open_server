@@ -17,6 +17,8 @@ import { TourOverlay } from '../features/tour/TourOverlay';
 import { getPreferences, markTourSeen } from '../api/preferences';
 import { place, type PlaceId } from './places';
 import { useExitConfirm } from './useExitConfirm';
+import { placeActivity, toolActivity } from './running';
+import { useActivity } from './useActivity';
 
 export function App() {
   const studio = useStudio();
@@ -44,11 +46,12 @@ export function App() {
   const locked = project?.runtime !== 'stopped';
   const openFile = () => fileInput.current?.click();
   const info = place(current);
+  const running = useActivity(!!project);
   return <div className="app">
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} />}
     <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project} eventCount={studio.events.length}
-      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} />
+      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)} />
     <div className="main">
       <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy}
         saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save} />
@@ -71,7 +74,7 @@ export function App() {
         {project && current === 'test' && <TestPage project={project} locked={locked} values={studio.values}
           events={studio.events} perform={studio.perform} prepare={studio.prepare} />}
         {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}
-          tool={tool} openTool={setTool} />}
+          tool={tool} openTool={setTool} running={toolActivity(running)} runIeds={() => studio.runtime('start')} />}
         {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform}
           openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} />}
       </main>

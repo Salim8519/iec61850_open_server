@@ -4,6 +4,15 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-17: Separate Run, running dots, page commands (0086, ADR-0059)
+
+- Gateway Start never starts the IEDs, and Run never starts the gateway. The gateway page
+  offers "Run the IEDs" when they are off.
+- Each sidebar place shows its own running dot (`app/running.ts`, `GET /activity`).
+- While running, the gateway panel fills the window. Command rows send Close/Open or On/Off
+  only after a warning.
+- Next release: update the website gateway text ("starts the IEDs" is no longer true).
+
 ## 2026-10-17: Explorer, Find IEDs, gateway, commands, autonomous tools (0081, 0082)
 
 - Delivered: IED Explorer, Find IEDs, and the gateway simulator (104/Modbus/DNP3).

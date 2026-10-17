@@ -2,6 +2,7 @@
 import csv
 import io
 from flask import Blueprint, Response, current_app, jsonify, request
+from studio_app.tools.activity import activity
 
 blueprint = Blueprint("tools", __name__)
 
@@ -96,6 +97,13 @@ def explorer_operate():
     if not isinstance(data.get("ref"), str):
         raise ValueError("Send the control reference, for example LD0/XCBR1.Pos")
     return jsonify(explorer().operate(data["ref"], data.get("value"), data.get("options"), data.get("confirm") is True))
+
+
+@blueprint.get("/activity")
+def running_activity():
+    """Tools and sequences that are running now, for the running dots in the sidebar."""
+    extensions = current_app.extensions
+    return jsonify(activity(extensions["runtime"], extensions["gateway"], extensions["explorer"], extensions["scanner"]))
 
 
 @blueprint.get("/tools/memory")

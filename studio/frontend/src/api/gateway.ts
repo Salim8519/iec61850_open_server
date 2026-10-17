@@ -4,7 +4,7 @@ export type Protocol = 'iec104' | 'modbus' | 'dnp3';
 export type Listen = 'this_pc' | 'network';
 export type PointKind = 'single' | 'double' | 'float' | 'integer' | 'command_single' | 'command_double';
 export type GatewayPoint = { id?: string; kind: PointKind; address: number; ied: string; ref: string; scale: number;
-  description: string; ied_name?: string; monitor_only?: boolean; value_text?: string; online?: boolean };
+  description: string; ied_name?: string; ied_role?: string; monitor_only?: boolean; value_text?: string; online?: boolean };
 export type GatewayConfig = { protocol: Protocol; listen: Listen; settings: Record<Protocol, Record<string, number | boolean>>;
   real_commands: boolean; auto_start: boolean };
 export type GatewayStatus = { state: 'stopped' | 'running' | 'failed'; message: string; protocol: Protocol; listen: Listen;
@@ -32,6 +32,8 @@ export const gatewayApi = {
     api<{ points: GatewayPoint[]; problems: string[] }>('/tools/gateway/points.csv', 'POST', { protocol, text }),
   csvUrl: (protocol: Protocol) => `/api/v1/tools/gateway/points.csv?protocol=${protocol}`,
   start: () => api<GatewayStatus>('/tools/gateway/start', 'POST', {}),
+  send: (point_id: string, value: boolean) =>
+    api<{ ok: boolean; reason: string }>('/tools/gateway/command', 'POST', { point_id, value, confirm: true }),
   stop: () => api<GatewayStatus>('/tools/gateway/stop', 'POST', {}),
   traffic: (after: number) => api<Page<TrafficEntry>>(`/tools/gateway/traffic?after=${after}`),
   commands: () => api<Page<CommandEntry>>('/tools/gateway/commands'),

@@ -1,5 +1,5 @@
-"""Autonomous tools (owner decision 2026-10-17): settings are remembered, Explorer watches
-key points by itself, and the gateway proposes its points, starts Run and resumes."""
+"""Autonomous tools (owner decisions 2026-10-17): settings are remembered, Explorer watches
+key points by itself, and the gateway proposes its points and resumes. Run stays separate."""
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -51,12 +51,12 @@ def manager_for(ieds, gateway=None):
     return GatewayManager(coordinator, FakeProjects(ieds, gateway), Path("missing/studio_ied.exe"))
 
 
-def test_gateway_prepares_points_and_run_by_itself():
+def test_gateway_prepares_points_but_leaves_run_alone():
     ied = import_scl(make_template("BayA"))[0]
     ied.update(id="a", role="simulated")
     manager = manager_for([ied])
     config = manager._prepare()
-    assert config["points"]["iec104"] and manager.coordinator.state == "running"
+    assert config["points"]["iec104"] and manager.coordinator.state == "stopped"  # Run is the user's choice
     assert not config.get("auto_start")  # remembered only after a successful start
 
 
@@ -66,6 +66,18 @@ def test_monitor_only_follows_role_and_real_command_setting():
     assert manager._monitor_only({"ied": "b"}, {"real_commands": True}) is False
     assert manager._monitor_only({"ied": "b"}, {"real_commands": False}) is True
     assert manager._monitor_only({"ied": "c"}, {}) is True
+
+
+def test_saved_points_are_found_while_stopped_and_manual_commands_explain_refusals():
+    ied = import_scl(make_template("BayA"))[0]
+    ied.update(id="a", name="BayA", role="simulated", state="stopped")
+    manager = manager_for([ied])
+    point = next(p for p in manager._prepare()["points"]["iec104"] if p["kind"] == "command_double")
+    assert manager.point(point["id"]) == point and manager.point("nope") is None
+    answer = manager.send(point["id"], True)
+    assert answer == {"ok": False, "reason": "BayA is not running; press Run first"}
+    entry = manager.commands.after()["entries"][-1]
+    assert entry["protocol"] == "manual" and entry["applied"].startswith("refused")
 
 
 def test_autostart_only_when_remembered_and_never_raises():

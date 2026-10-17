@@ -27,14 +27,18 @@ class CommandExecutor:
     def _run(self):
         while True:
             process, event = self.jobs.get()
-            try:
-                ok, reason = self._execute(event)
-            except Exception as error:
-                ok, reason = False, str(error)
+            ok, reason = self.run(event)
             try:
                 process.request("command_result", token=event["token"], ok=ok, reason=reason)
             except Exception:
                 pass
+
+    def run(self, event):
+        """Execute one command and never raise: (ok, plain reason)."""
+        try:
+            return self._execute(event)
+        except Exception as error:
+            return False, str(error)
 
     def _execute(self, event):
         manager = self.manager
@@ -51,7 +55,8 @@ class CommandExecutor:
             return False, reason
         host, port = endpoint(ied)
         control = next(item for item in ied["controls"] if item["ref"] == point["ref"])
-        result = manager.control.operate(host, port, point["ref"], value, {"originator": "remote"})
+        originator = "station" if event.get("protocol") == "manual" else "remote"
+        result = manager.control.operate(host, port, point["ref"], value, {"originator": originator})
         text = summary(result)
         manager.emit("gateway_command", point=label, ied=ied["name"], role=ied.get("role"), ok=result.get("ok"),
                      result=text)
@@ -70,10 +75,17 @@ class CommandExecutor:
             signal = self.manager.coordinator.index.get((ied["id"], status_ref))
             current = signal.get("value") if signal is not None else None
             if type(current) is type(expected) and current == expected:
-                self.manager.commands.update(seq, observed=f"{status_ref} is now {signal['value']}")
+                self.manager.commands.update(seq, observed=f"{status_ref} is now {position_text(current)}")
                 return
             time.sleep(0.1)
         self.manager.commands.update(seq, observed=f"{status_ref} did not change within {OBSERVE_SECONDS:g} s")
+
+
+def position_text(value):
+    """Plain words for an observed status: ON/OFF for a single point, closed/open for a position."""
+    if isinstance(value, bool):
+        return "ON" if value else "OFF"
+    return {0: "intermediate", 1: "open (OFF)", 2: "closed (ON)", 3: "bad state"}.get(value, str(value))
 
 
 def endpoint(ied):
@@ -95,7 +107,7 @@ def refusal(point, ied, real_commands=True):
     if role == "off":
         return f"{ied['name']} is switched off in Devices"
     if role == "real" and not real_commands:
-        return "commands to real IEDs are switched off for this gateway"
+        return "commands to real IEDs are switched off in the gateway settings"
     if role == "real" and not endpoint(ied)[0]:
         return f"{ied['name']} has no address; type it in Devices"
     if role == "simulated" and ied.get("state") != "running":

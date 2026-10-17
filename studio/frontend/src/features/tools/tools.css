@@ -4,3 +4,6 @@
 .tool-icon { margin: 0; width: 40px; height: 40px; flex-shrink: 0; }
 .tool-header { align-items: center; gap: 12px; }
 .tool-header h2 { margin: 0; }
+.tool-live { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 3px 12px; border-radius: 999px;
+  background: var(--success-soft); color: var(--success); font-size: var(--font-size-small); font-weight: 650; }
+.tool-live .live-dot { margin-left: 0; }

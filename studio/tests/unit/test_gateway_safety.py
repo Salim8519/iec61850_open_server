@@ -28,7 +28,7 @@ def test_backend_refuses_unsafe_or_unknown_targets():
     assert refusal(POINT, ied()) == ""
     real = ied(role="real", state="real_live", live={"ip": "10.0.0.5", "port": 102})
     assert refusal(POINT, real) == ""
-    assert "switched off for this gateway" in refusal(POINT, real, real_commands=False)
+    assert "switched off in the gateway settings" in refusal(POINT, real, real_commands=False)
     assert "switched off in Devices" in refusal(POINT, ied(role="off"))
     assert "press Run first" in refusal(POINT, ied(state="stopped"))
     assert "no controllable object" in refusal(dict(POINT, ref="BayACTRL/XSWI9.Pos"), ied())

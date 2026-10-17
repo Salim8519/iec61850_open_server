@@ -54,3 +54,6 @@
   .topbar { padding: 0 18px; }
   .content { padding: 20px; }
 }
+.live-dot { width: 9px; height: 9px; flex-shrink: 0; margin-left: auto; border-radius: 50%; background: var(--success);
+  box-shadow: 0 0 0 3px #bbf7d0; }
+.live-dot.paused { background: var(--warning); box-shadow: 0 0 0 3px #fde68a; }

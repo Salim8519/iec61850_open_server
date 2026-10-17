@@ -69,3 +69,6 @@ Accepted: 2026-10-17. Owner decisions in this session:
 - No interoperability is claimed beyond the recorded evidence: independent lib60870 and
   opendnp3 masters, and a raw-socket Modbus client. Third-party SCADA masters and real
   relays remain open release gates.
+
+**Amended (2026-10-17):** [ADR-0059](ADR-0059-separate-run-running-dots.md) replaces "Gateway
+Start starts Run when it is stopped": Run and the gateway are now separate.

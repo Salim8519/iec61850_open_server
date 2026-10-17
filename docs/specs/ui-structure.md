@@ -19,6 +19,10 @@ be easy for beginners and older users, and still be pro level.
   that sets, pulses or resumes simulated values or saves a generator;
   `ValueControl` and `SourceEditor` are the only widgets for that.
 - Hidden legacy kinds TRANSFORMER, LOAD and BUSBAR are retired (format 12).
+- Running dots ([ADR-0059](../decisions/ADR-0059-separate-run-running-dots.md)): each place shows
+  its own dot while something runs there: IEDs (Devices, SLD), sequences (Test), tools (Tools).
+  The words are in the tooltip and screen-reader text; a paused Run is amber. Tool cards name
+  what runs.
 
 ## Rules
 
@@ -32,3 +36,4 @@ be easy for beginners and older users, and still be pro level.
 | UI-06 | Value writes and generator saves have exactly one implementation each. | `studio/tests/frontend/uiStructure.test.ts::one value control and one generator editor` |
 | UI-07 | Real vendor files import even when they use PhyComAddr attributes or unnamed report blocks. | `studio/tests/unit/test_real_world_scl.py::test_phycomaddr_attributes_import`, `studio/tests/unit/test_real_world_scl.py::test_unnamed_report_block_is_skipped_with_warning` |
 | UI-08 | The drawing place is labelled SLD and its heading spells out single-line diagram. | `studio/tests/frontend/uiStructure.test.ts::the drawing place is called SLD and spelled out in its heading` |
+| UI-09 | Each place shows its own running dot with words; a running gateway does not mark the IEDs as running. | `studio/tests/frontend/running.test.ts::each place gets its own running dot with its own words` |

@@ -13,7 +13,7 @@ export const TOOLS: ToolCard[] = [
     hint: 'Checks every address of a network for port 102, then asks each device for its vendor, model and firmware. Open any result straight in IED Explorer.' },
   { id: 'gateway', name: 'Gateway simulator',
     line: 'Let your SCADA talk to the station over IEC 104, Modbus TCP or DNP3.',
-    hint: 'ScadaBench acts as the substation gateway: it maps IED positions, statuses and measurements to SCADA points and turns SCADA commands into real IEC 61850 controls. It prepares the points and starts by itself.' },
+    hint: 'ScadaBench acts as the substation gateway: it maps IED positions, statuses and measurements to SCADA points and turns SCADA commands into real IEC 61850 controls. It prepares the point list for you.' },
   { id: 'traffic', name: 'GOOSE & Sampled Values traffic',
     line: 'See which GOOSE and Sampled Values messages are really on the network.',
     hint: 'Checks every GOOSE block and Sampled Values stream of your project against what arrives on the lab network adapter. Needs the free Npcap driver and a lab network.' },

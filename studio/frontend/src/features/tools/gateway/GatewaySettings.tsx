@@ -1,4 +1,4 @@
-import { Play, Square } from 'lucide-react';
+import { ChevronUp, Play, Square } from 'lucide-react';
 import type { GatewayConfig, GatewayStatus, Listen, Protocol } from '../../../api/gateway';
 import { ADVANCED_SETTINGS, GATEWAY_COPY, MAIN_SETTINGS, PROTOCOL_HINTS, PROTOCOL_NAMES, SETTING_LABELS } from '../../../copy/gateway';
 import { Disclosure } from '../../../ui/Disclosure';
@@ -6,10 +6,10 @@ import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { StatusPill } from '../../../ui/StatusPill';
 
 /** Protocol, who may connect, the few settings SCADA must match, and Start/Stop. */
-export function GatewaySettings({ config, status, busy, save, start, stop }: {
+export function GatewaySettings({ config, status, busy, save, start, stop, hide }: {
   config: GatewayConfig; status: GatewayStatus; busy: boolean;
   save: (protocol: Protocol, listen: Listen, settings: Record<string, number | boolean>, realCommands: boolean) => void;
-  start: () => void; stop: () => void;
+  start: () => void; stop: () => void; hide?: () => void;
 }) {
   const running = status.state === 'running';
   const protocol = config.protocol;
@@ -38,6 +38,7 @@ export function GatewaySettings({ config, status, busy, save, start, stop }: {
           onChange={next => save(protocol, next as Listen, values, real)} />
         <span className="gateway-spacer" />
         <StatusPill status={pill} />
+        {hide && <button className="ghost" onClick={hide}><ChevronUp size={16} />{GATEWAY_COPY.hideSettings}</button>}
         {running
           ? <button onClick={stop} disabled={busy}><Square size={16} />{GATEWAY_COPY.stop}</button>
           : <button className="primary" onClick={start} disabled={busy || !status.available}><Play size={16} />{GATEWAY_COPY.start}</button>}
@@ -52,9 +53,6 @@ export function GatewaySettings({ config, status, busy, save, start, stop }: {
         {ADVANCED_SETTINGS[protocol].map(field)}</div></Disclosure>}
       {running && <p className="gateway-live" aria-live="polite"><strong>{status.message}</strong> ·{' '}
         {status.clients.length ? `${GATEWAY_COPY.connected(status.clients.length)}: ${status.clients.join(', ')}` : GATEWAY_COPY.none}</p>}
-      {status.run_state === 'stopped' && <p className="small gateway-warning">{GATEWAY_COPY.notRunning}</p>}
-      {status.problems.length > 0 && <ul className="small gateway-warning">{status.problems.slice(0, 5).map(problem =>
-        <li key={problem}>Skipped: {problem}</li>)}</ul>}
     </div>
   </div>;
 }

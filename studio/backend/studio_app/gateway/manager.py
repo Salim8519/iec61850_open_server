@@ -40,21 +40,26 @@ class GatewayManager:
         return next((ied for ied in self.projects.project["ieds"] if ied["id"] == ied_id), None)
 
     def point(self, point_id):
-        return self.points.get(point_id)
+        """A point of the running gateway, else of the saved list (manual commands work while stopped)."""
+        if point_id in self.points:
+            return self.points[point_id]
+        config = self.config()
+        return next((point for point in config["points"].get(config["protocol"], []) if point.get("id") == point_id), None)
+
+    def send(self, point_id, value):
+        """A command typed on the page, run like a SCADA command and logged the same way."""
+        ok, reason = self.executor.run({"point_id": point_id, "value": bool(value), "protocol": "manual",
+                                        "peer": "this page"})
+        return {"ok": ok, "reason": reason}
 
     def _prepare(self):
-        """Autonomous start: propose points when the list is empty and start Run if needed."""
+        """Propose points when the list is empty. Run stays the user's choice (owner, 2026-10-17)."""
         config = self.config()
         protocol = config["protocol"]
         if not config["points"].get(protocol):
             proposal, _ = propose(self.projects.project["ieds"], protocol)
             clean, _ = validate_points(protocol, proposal, self.projects.project["ieds"])
             self.projects.gateway({**config, "points": dict(config["points"], **{protocol: clean})})
-        if self.coordinator.state == "stopped" and self.projects.project["ieds"]:
-            try:
-                self.coordinator.start()
-            except Exception as error:
-                self.traffic.add(dir="info", peer="", text=f"Run could not start: {error}")
         return self.config()
 
     def autostart(self):
@@ -179,7 +184,8 @@ class GatewayManager:
         rows = []
         for point in config["points"].get(protocol, []):
             ied = self.ied(point["ied"])
-            row = {**point, "ied_name": names.get(point["ied"], "?"), "monitor_only": self._monitor_only(point, config)}
+            row = {**point, "ied_name": names.get(point["ied"], "?"), "ied_role": (ied or {}).get("role", "off"),
+                   "monitor_only": self._monitor_only(point, config)}
             if not point["kind"].startswith("command_"):
                 current = sample(point, index, ied, run_state)
                 row.update(value_text=display(point, current), online=current["source_ok"])
