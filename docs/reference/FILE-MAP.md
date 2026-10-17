@@ -31,6 +31,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | SLD tidy up (layout) | `equipment/tidy/` (graph, rows, position, wires, tidy), `features/diagram/TidyButton.tsx`, `tidyCopy.ts` |
 | Canvas selection/clipboard/shortcuts | `features/diagram/Canvas.tsx`, `DiagramPage.tsx`, `useCanvasShortcuts.ts`, `equipment/clipboard.ts` |
 | App shell and places | `frontend/src/app/App.tsx`, `Sidebar.tsx`, `TopBar.tsx`, `places.ts`, `useExitConfirm.ts` |
+| Tools place | `frontend/src/features/tools/ToolsPage.tsx`, `TrafficTool.tsx`, `copy/tools.ts` |
 | Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
 | Devices | `features/devices/` (list, detail, connection, data points, compare, files) |
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |

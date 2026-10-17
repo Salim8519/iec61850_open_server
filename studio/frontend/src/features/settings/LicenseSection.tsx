@@ -15,6 +15,7 @@ export function LicenseSection() {
   const state = licenseState(status);
   const purchase = buyUrl(status);
   const rows: [string, string][] = [['Status', state.label]];
+  if (status.app_version) rows.push(['Version', status.app_version]);
   if (status.masked_key) rows.push(['License key', status.masked_key]);
   if (status.email) rows.push(['Licensed to', status.email]);
   if (status.expires_at) rows.push(['Trial ends', new Date(status.expires_at * 1000).toLocaleString()]);

@@ -1,0 +1,34 @@
+---
+// "See it working": the first narrated tutorial on the home page. Nothing downloads
+// until the visitor presses play (preload="none"); the poster is a small JPEG.
+import { TUTORIALS, posterOf, totalSeconds, videoOf } from '../data/tutorials';
+const demo = TUTORIALS[0];
+const totalMinutes = Math.ceil(totalSeconds / 60);
+---
+<section class="demo section" aria-labelledby="demo-title">
+  <div class="wrap layout">
+    <div class="text reveal">
+      <span class="eyebrow">See it working</span>
+      <h2 id="demo-title">The real app, in {demo.seconds} seconds.</h2>
+      <p class="lede">A narrated walk through ScadaBench: what IEC 61850 is, what an IED's data model looks like,
+        and a simulated IED answering on its own address.</p>
+      <a class="btn btn-ghost" href="/tutorials/">All {TUTORIALS.length} tutorials · {totalMinutes} minutes</a>
+    </div>
+    <div class="player reveal">
+      <video src={videoOf(demo)} poster={posterOf(demo)} controls preload="none" playsinline
+        width="1280" height="720" aria-label={`Video: ${demo.title}`}></video>
+    </div>
+  </div>
+</section>
+
+<style>
+  .demo { background: linear-gradient(180deg, var(--night), var(--navy)); }
+  .layout { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 64px);
+    align-items: center; }
+  .text { display: grid; gap: 18px; justify-items: start; }
+  h2 { font-size: var(--step-3); }
+  .player { aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line);
+    background: var(--panel); box-shadow: var(--shadow); }
+  video { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .player { order: -1; } }
+</style>

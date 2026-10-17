@@ -1,7 +1,9 @@
 // studio_live: observe external IEDs and GOOSE traffic for Studio. It is a
 // read-only client by construction: the operation table below has no control,
 // setting or data write. Report-block reservation is the single exception.
+#include "explore.hpp"
 #include "goose_traffic.hpp"
+#include "identify.hpp"
 #include "license_guard.hpp"
 #include "mms_session.hpp"
 #include "npcap.hpp"
@@ -20,7 +22,8 @@ int main() {
     const std::map<std::string, std::function<Json(const Json&)>> operations = {
         {"hello", [](const Json&) {
             return Json{{"capabilities", {"live_discover", "live_reports", "live_poll",
-                                          "goose_listen", "sv_listen", "read_only_client"}}};
+                                          "goose_listen", "sv_listen", "read_only_client",
+                                          "explore", "identify"}}};
         }},
         {"npcap_status", [](const Json&) { return npcap_status(); }},
         {"adapters", [](const Json&) { return Json{{"adapters", npcap_adapters()}}; }},
@@ -30,6 +33,8 @@ int main() {
         {"sv_stop", [&](const Json&) { sv.stop(); return Json(true); }},
         {"connect", [&](const Json& request) { license::require_valid_license(); return session.connect(request); }},
         {"discover", [&](const Json&) { return session.discover(); }},
+        {"explore", [&](const Json& request) { return explore_level(session, request); }},
+        {"identify", [&](const Json& request) { license::require_valid_license(); return identify_server(request); }},
         {"read", [&](const Json& request) { return session.read(request); }},
         {"rcb_status", [&](const Json& request) { return reports.status(request); }},
         {"rcb_reserve", [&](const Json& request) { return reports.reserve(request); }},

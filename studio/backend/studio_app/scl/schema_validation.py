@@ -29,10 +29,12 @@ def load_schema(version):
     return etree.XMLSchema(etree.parse(str(SCHEMAS / version / "SCL.xsd"), parser))
 
 
-def validate_schema(source):
+def validate_schema(source, root=None):
+    """`root` is this source's safely parsed document, when the caller already has it."""
     if isinstance(source, str):
         source = source.encode("utf-8")
-    root = parse_document(source)
+    if root is None:
+        root = parse_document(source)
     version = schema_version(root)
     if not version:
         return {"status": "unsupported", "schema": None, "errors": [

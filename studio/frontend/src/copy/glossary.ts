@@ -25,6 +25,10 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   loopback: { term: 'This PC only', plain: 'Private 127.x addresses that only programs on this PC can reach. Safe and needs no setup.' },
   subnet: { term: 'Subnet', plain: 'The range of addresses that devices on the same network share, such as 192.168.1.x.' },
   quality: { term: 'Quality', plain: 'Flags an IED sends with each value to say whether the value can be trusted.' },
+  logical_device: { term: 'Logical device', plain: 'A group of functions inside an IED, such as CTRL for control or PROT for protection. Its name is the first part of every reference.' },
+  logical_node: { term: 'Logical node', plain: 'One function inside a logical device, such as XCBR1 for a circuit breaker or MMXU1 for measurements.' },
+  fc: { term: 'Functional constraint (FC)', plain: 'A two-letter label that says what a value is for: ST status, MX measurement, CO control, CF configuration, SP setting, DC description.' },
+  dataset: { term: 'Dataset', plain: 'A named list of values that an IED sends together by report or GOOSE.' },
 };
 
 export const glossaryTerm = (key: string): GlossaryEntry => GLOSSARY[key];

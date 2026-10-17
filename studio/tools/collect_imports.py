@@ -13,7 +13,7 @@ STUDIO = Path(__file__).resolve().parents[1]
 PACKAGE = STUDIO / "backend/studio_app"
 THIRD_PARTY = {"flask", "werkzeug", "waitress", "pydantic", "pydantic_core", "lxml", "defusedxml",
                "jinja2", "itsdangerous", "click", "blinker", "markupsafe", "annotated_types",
-               "typing_extensions"}
+               "typing_extensions", "truststore"}
 
 
 def imported_modules(package=PACKAGE):

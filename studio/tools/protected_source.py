@@ -44,13 +44,21 @@ def integrity_source(native_bin):
     return template.replace("EXPECTED = {}\n", "EXPECTED = {\n" + rows + "}\n", 1)
 
 
-def prepare(destination, native_bin, release=None):
+def version_source(version):
+    """Return version.py text with the placeholder replaced by the real release version."""
+    template = (PACKAGE / "version.py").read_text(encoding="utf-8")
+    return template.replace('__version__ = "0.0.0+dev"', f'__version__ = "{version}"', 1)
+
+
+def prepare(destination, native_bin, release=None, version=None):
     """Copy studio_app to destination/studio_app; seal it; optionally set the release key."""
     target = Path(destination) / "studio_app"
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(PACKAGE, target, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     (target / "licensing/integrity.py").write_text(integrity_source(native_bin), encoding="utf-8", newline="\n")
+    if version:
+        (target / "version.py").write_text(version_source(version), encoding="utf-8", newline="\n")
     if release is not None:
         url, keys = release
         source = _configure_release().python_source(url, keys)

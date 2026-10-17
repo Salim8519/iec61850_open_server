@@ -6,7 +6,7 @@ import re
 import subprocess
 
 from director import start_app
-from lessons_basics import STATION, button, import_station, open_import
+from lessons_basics import STATION, button, import_station, open_import, tab
 
 
 def goose(d, page, data) -> None:
@@ -16,7 +16,7 @@ def goose(d, page, data) -> None:
     d.say("It is multicast on the Ethernet: one publisher, many subscribers.")
     d.click(button(page, "Settings"), after=0.6)
     d.say("Settings lists every GOOSE block in the SCD.")
-    d.point(page.get_by_text("GoCB01").first, pause=0.6)
+    d.point(page.get_by_text("Feed1SwiPosCtl").first, pause=0.6)
     d.say("Each has an APPID and a multicast MAC address, so subscribers know what to listen to.")
     d.point(page.get_by_text("APPID").first, pause=0.8)
     d.say("GOOSE needs the free Npcap driver; ScadaBench checks it for you.")
@@ -28,17 +28,18 @@ def goose(d, page, data) -> None:
     d.click(button(page, "Next"), after=0.6)
     d.say("Keep the addresses from the SCD, so every device finds its IED.")
     next_button = button(page, "Next")
-    for _ in range(40):
+    for _ in range(80):
         if next_button.is_enabled():
             break
         d.wait(0.5)
     d.settle()
     d.click(next_button, after=0.8)
     d.say("Review every Windows change. Nothing happens until you press Apply.")
+    d.point(page.get_by_text(re.compile(r"^Add address .* for FEED1$")).first, pause=0.6)
     d.say("Later, one click removes only what ScadaBench added.")
+    d.point(page.get_by_text(re.compile(r"^Allow other devices")).first, pause=0.6)
     d.settle()
-    d.click(page.get_by_role("button", name=re.compile(r"^(Close|Cancel)$")).first, after=0.5)
-    d.click(button(page, "Devices"))
+    d.click(button(page, "Devices"))  # leave the wizard without applying anything
     d.say("Signal flow shows who sends GOOSE and reports to whom.")
     d.click(page.get_by_role("button", name=re.compile(r"^Signal flow")).first, after=2.0)
     d.say("Press Run, and your IEDs publish their GOOSE, just like the SCD says.")
@@ -72,15 +73,20 @@ def real_devices(d, page, data) -> None:
         d.say("Import the SCD and pick the relay to check.")
         open_import(d, page)
         d.click(page.locator("input[type=checkbox]").nth(1), after=0.2)
-        d.click(page.get_by_role("button", name=re.compile(r"^Add \d")), after=1.0)
+        d.click(page.get_by_role("button", name=re.compile(r"^Add \d")), after=0.3)
+        page.get_by_text("Choose IEDs to add").wait_for(state="hidden", timeout=90000)
+        d.wait(0.6)
         d.say("Choose Real device. ScadaBench connects as a client, and only reads.")
         d.click(page.get_by_text("Real device", exact=True).first, after=0.6)
         d.say("Enter its address. Here, a second ScadaBench plays the real relay.")
-        field = page.get_by_text("Device address", exact=True).locator("xpath=following::input[1]")
+        field = page.get_by_placeholder(re.compile(r"^(e\.g\. |\d+\.\d+)"))
         d.type(field, address)
         d.click(button(page, "Save connection"), after=0.6)
         d.say("Press Run. It uses free report blocks only, and gives them back on Stop.")
-        d.click(button(page, "Run"), after=4.0)
+        d.click(button(page, "Run"), after=0.5)
+        page.get_by_text("Values are arriving from the device").first.wait_for(timeout=120000)
+        d.point(page.get_by_text(re.compile(r"will use report block")).first, pause=1.2)
+        d.settle()
         d.say("Compare with SCD reads the device model and lists every difference.")
         d.click(button(page, "Compare with SCD"), after=3.0)
         d.say("Health check gives one verdict per IED.")
@@ -124,8 +130,13 @@ def activation(d, page, data) -> None:
     d.click(button(page, "Activate this computer"), after=1.2)
     page.get_by_text("Engine connected").wait_for(timeout=15000)
     d.say("Done. Your projects open exactly as before.")
+    try:  # a new install also opens the first-start tour; close it for this lesson
+        button(page, "Skip tour").first.wait_for(timeout=4000)
+        d.click(button(page, "Skip tour"), after=0.3)
+    except Exception:
+        pass
     d.click(button(page, "Settings"))
-    d.click(button(page, "License"), after=1.0)
+    d.click(tab(page, "License"), after=1.0)
     d.say("New computer? Enter the key there and choose Move the key here.")
     d.say("No internet on site? Copy the Machine ID, and use the offline page on any other PC.")
     d.settle()

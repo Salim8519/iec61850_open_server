@@ -52,6 +52,15 @@ def test_worker_passes_license_gate_with_valid_certificate(certificate):
     assert "license" not in error.lower() and "License" not in error
 
 
+def test_worker_accepts_pre_v2_license_only_before_cutoff(certificate):
+    certificate.write_text(bundle(hwid=hwid.legacy_machine_id()), encoding="utf-8")
+    assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()
+    late = bundle(hwid=hwid.legacy_machine_id(), issued_at=hwid.LEGACY_ISSUED_BEFORE)
+    certificate.write_text(late, encoding="utf-8")
+    error = start_error(ENFORCED / "studio_ied.exe")
+    assert "another computer" in error or "rollback" in error
+
+
 def test_live_client_and_probe_refuse_without_license(certificate):
     worker = WorkerProcess(ENFORCED / "studio_live.exe")
     try:

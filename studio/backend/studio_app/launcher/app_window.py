@@ -9,6 +9,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import threading
+import time
 import webbrowser
 from studio_app.launcher.window_focus import focus_process_window
 
@@ -19,6 +20,10 @@ _CANDIDATES = (
     ("ProgramFiles(x86)", "Google/Chrome/Application/chrome.exe"),
     ("LOCALAPPDATA", "Google/Chrome/Application/chrome.exe"),
 )
+# Edge/Chrome may relaunch itself or pass the window to a broker process right after start.
+QUICK_EXIT_SECONDS = 15
+HANDOFF_GRACE_SECONDS = 5
+POLL_SECONDS = 0.5
 
 
 def find_browser(environ=None):
@@ -74,17 +79,33 @@ def open_app_window(url, profile):
         return None
 
 
+def wait_for_handoff(profile, started):
+    """A launcher that exits within seconds usually handed the window on; wait for its lock."""
+    if time.monotonic() - started > QUICK_EXIT_SECONDS:
+        return profile_in_use(profile)
+    deadline = time.monotonic() + HANDOFF_GRACE_SECONDS
+    while time.monotonic() < deadline:
+        if profile_in_use(profile):
+            return True
+        time.sleep(POLL_SECONDS)
+    return profile_in_use(profile)
+
+
 def watch_window(process, on_closed, profile):
     """Stop ScadaBench when its own app window closes.
 
-    If the browser exits while another browser still holds the profile, it handed the
-    window to that browser; ScadaBench keeps running and a later launch reopens it.
+    The profile belongs to this window alone. If the started browser exits while another
+    browser process holds the profile, the window lives on there; ScadaBench stops only
+    once that process releases the profile too.
     """
+    started = time.monotonic()
+
     def run():
         process.wait()
-        if profile_in_use(profile):
+        if wait_for_handoff(profile, started):
             logging.getLogger(__name__).warning("App window was handed to another browser process")
-            return
+            while profile_in_use(profile):
+                time.sleep(POLL_SECONDS)
         on_closed()
     thread = threading.Thread(target=run, name="app-window", daemon=True)
     thread.start()

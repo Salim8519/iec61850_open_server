@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Prose from '../../components/Prose.astro';
 import { SITE } from '../../data/site';
+import { REFUND_POLICY } from '../../data/faqs';
 ---
 <Base title="License agreement" description="The terms for using ScadaBench.">
   <PageHeader eyebrow="Legal" title="License agreement." lede="The plain-language terms for using ScadaBench." />
@@ -23,7 +24,9 @@ import { SITE } from '../../data/site';
       protection, control or safety decisions. The software is provided as is, without warranty of fitness for a particular purpose.</p>
     <h2>5. Third-party components</h2>
     <p>ScadaBench includes third-party components under their own licenses, listed in the licenses folder of the installation.</p>
-    <h2>6. Ending the license</h2>
+    <h2 id="refunds">6. Refunds</h2>
+    <p>{REFUND_POLICY}</p>
+    <h2>7. Ending the license</h2>
     <p>A license ends if these terms are broken or the purchase is refunded or reversed.</p>
   </Prose>
 </Base>

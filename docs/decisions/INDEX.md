@@ -50,3 +50,11 @@
 | [0046](ADR-0046-licensing-and-protected-release.md) | Machine licensing (trial, 1-PC lifetime), Go license server, protected release; development unchanged |
 | [0047](ADR-0047-scadabench-brand-website-tour.md) | ScadaBench brand, icon pipeline, Astro website on Cloudflare Pages, guided tour, lazy server ops |
 | [0048](ADR-0048-desktop-app-window.md) | Windowed EXE, one instance (second launch shows the window), confirm and stop on close, SLD tab after Devices |
+| [0049](ADR-0049-tutorial-videos.md) | Narrated tutorial videos: real-app recordings (Playwright/Edge), Gemini TTS via fal.ai, Remotion edit, served from scadabench.com |
+| [0050](ADR-0050-release-hardening.md) | Release hardening: installed app refuses dev mode, version stamp, stronger anti-debug, HWID v2 (SMBIOS UUID, re-activation); signing deferred |
+| [0051](ADR-0051-legacy-hwid-acceptance.md) | Pre-v2 licenses stay valid on the same PC after update (v1 ID accepted for certificates issued before 2027-07-01); no move spent |
+
+| [0052](ADR-0052-owner-license-helper.md) | Owner license helper: one portable, offline, password-locked EXE with its own owner signing key (server key never leaves the server) |
+| [0053](ADR-0053-website-mobile-conversion.md) | Website phone-first: full navigation and phone menu, phone buy bar, hover prefetch, light videos, value/trust sections, visible conditional 7-day refund policy |
+| [0054](ADR-0054-tools-place.md) | Fifth place Tools after Test: cards for delivered tools only; GOOSE/SV traffic moved there; Explorer, Find IEDs, inspector, 104/Modbus/DNP3 gateway proposed |
+| [0056](ADR-0056-windows-tls-verification.md) | License client verifies HTTPS with the Windows certificate check (truststore); fixes "cannot reach the license server" after the 2026 Let's Encrypt chain change |

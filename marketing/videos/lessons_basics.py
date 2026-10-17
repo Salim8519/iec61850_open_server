@@ -10,12 +10,18 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-STATION = ROOT / "test_cids" / "Studio_Test_400kV.scd"
+# Public demo station (OpenSCD example, generic names); built by demo_station.py. Never use customer files.
+STATION = Path(__file__).resolve().parent / "demo" / "scadabench_demo.scd"
 IMPORT = re.compile(r"^Import CID . SCD")
 
 
 def button(page, name: str):
     return page.get_by_role("button", name=name, exact=True)
+
+
+def tab(page, name: str):
+    """Segmented tabs (Test, Settings) are radio-style controls, found by their text."""
+    return page.locator("button, [role=tab], [role=radio]").filter(has_text=re.compile(f"^{re.escape(name)}$"))
 
 
 def open_import(d, page) -> None:
@@ -25,8 +31,8 @@ def open_import(d, page) -> None:
     page.get_by_text("Choose IEDs to add").wait_for()
 
 
-def import_station(d, page, count: int = 8, narrate: bool = True) -> None:
-    """Devices > Import CID / SCD with the 400 kV test station."""
+def import_station(d, page, count: int = 6, narrate: bool = True) -> None:
+    """Devices > Import CID / SCD with the public demo station."""
     d.click(button(page, "Devices"))
     if narrate:
         d.say("In Devices, press Import and choose your SCD file.")
@@ -37,7 +43,9 @@ def import_station(d, page, count: int = 8, narrate: bool = True) -> None:
         d.say("Tick the IEDs you want to simulate.")
     for box in page.locator("input[type=checkbox]").all()[:count]:
         d.click(box, after=0.08 if narrate else 0.02)
-    d.click(page.get_by_role("button", name=re.compile(r"^Add \d")), after=1.2)
+    d.click(page.get_by_role("button", name=re.compile(r"^Add \d")), after=0.3)
+    page.get_by_text("Choose IEDs to add").wait_for(state="hidden", timeout=90000)
+    d.wait(0.8)
 
 
 def getting_started(d, page, data) -> None:
@@ -54,6 +62,7 @@ def getting_started(d, page, data) -> None:
     d.settle()
     d.click(button(page, "Start using ScadaBench"))
     d.quiet()
+    d.click(button(page, "Devices"))
     d.say("Let's try one. Use a sample IED.")
     d.click(button(page, "Use a sample IED"), after=0.8)
     d.click(button(page, "Data points"), after=0.6)
@@ -135,6 +144,6 @@ def simulation(d, page, data) -> None:
     d.type(value, "132.5")
     d.click(button(page, "Set"), after=0.8)
     d.say("Generators move values for you. Sequences play timed steps or a CSV trace.")
-    d.click(button(page, "Generators"), after=1.0)
-    d.click(button(page, "Sequences"), after=1.2)
+    d.click(tab(page, "Generators"), after=1.0)
+    d.click(tab(page, "Sequences"), after=1.2)
     d.say("And every change is listed in Activity, with its time.")

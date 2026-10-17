@@ -3,6 +3,7 @@ from flask import Blueprint, current_app, jsonify, request
 from studio_app.licensing.certificate import CertificateError
 from studio_app.licensing.client import LicenseServerError
 from studio_app.licensing.service import LicenseActionError
+from studio_app.version import __version__
 
 blueprint = Blueprint("license", __name__)
 CONFLICTS = {"bound_elsewhere", "transfer_limit", "trial_used"}
@@ -30,7 +31,7 @@ def _body():
 
 @blueprint.get("/license/status")
 def status():
-    return jsonify(_service().status())
+    return jsonify({**_service().status(), "app_version": __version__})
 
 
 @blueprint.post("/license/trial")

@@ -1,11 +1,33 @@
 """HTTPS client for the license server: proof of work, trial, activation, verify."""
 import hashlib
 import json
+import ssl
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 TIMEOUT_SECONDS = 20
 MAX_DIFFICULTY = 26
+_context = None
+
+
+def https_context():
+    """Verify the server with Windows' own certificate check, as browsers and curl do.
+
+    Plain OpenSSL only sees roots already copied into the local store; Windows fetches
+    newer roots on demand. Since 2026-10-16 the server chain ends at ISRG Root X2,
+    which many PCs only hold as an expired cross-sign, so OpenSSL wrongly reported
+    "certificate has expired" (ADR-0056). Expired, wrong-host or untrusted certificates
+    are still refused.
+    """
+    global _context
+    if _context is None:
+        import truststore
+        _context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    return _context
+
+
+def open_https(request, timeout):
+    return urlopen(request, timeout=timeout, context=https_context())
 
 
 class LicenseServerError(RuntimeError):
@@ -32,7 +54,7 @@ def solve(nonce, difficulty):
 
 
 class LicenseClient:
-    def __init__(self, server_url, opener=urlopen):
+    def __init__(self, server_url, opener=open_https):
         self.server_url = (server_url or "").rstrip("/")
         self.opener = opener
 

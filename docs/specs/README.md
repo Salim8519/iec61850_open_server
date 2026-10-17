@@ -29,7 +29,7 @@ changed, dropped or invented by accident.
 | [GOOSE](goose.md) | Publishing, receiving and supervising layer-2 GOOSE |
 | [Real IEDs](real-ieds.md) | Read-only live acquisition and SCD comparison |
 | [Beginner guidance](beginner-guidance.md) | Hints, plain wording and status display |
-| [UI structure](ui-structure.md) | Four places, design tokens, one implementation per job |
+| [UI structure](ui-structure.md) | Five places, design tokens, one implementation per job |
 | [SLD import](sld-import.md) | Single-line diagram built from the SCD `Substation` section |
 | [Signal flow](signal-flow.md) | Declared GOOSE and report links between IEDs |
 | [Station health](station-health.md) | Live network and real IEDs compared with the SCD |
@@ -40,8 +40,10 @@ changed, dropped or invented by accident.
 | [Interlock hints](interlock-hints.md) | Friendly switching hints; never blocking |
 | [App window](app-window.md) | Windowed EXE, one instance, show again, confirm and stop on close |
 | [Bay templates](bay-templates.md) | One-click line feeder, transformer bay and bus coupler |
-| [Guided tour](tour.md) | First-start walkthrough of the four places, reopened from Help |
+| [Guided tour](tour.md) | First-start walkthrough of the five places, reopened from Help |
+| [Tools](tools-page.md) | Tools place: cards for built tools only, GOOSE & SV traffic |
 | [Licensing](licensing.md) | Trial and 1-PC lifetime license, offline activation, protected release |
+| [License helper](license-helper.md) | Owner's portable, offline, password-locked license EXE |
 
 ## Proposed specifications
 

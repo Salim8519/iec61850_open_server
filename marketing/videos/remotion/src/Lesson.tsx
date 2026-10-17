@@ -1,5 +1,6 @@
 // One tutorial: title card, the recording with camera and captions, end card.
 import { AbsoluteFill, Sequence, interpolate, useCurrentFrame } from 'remotion';
+import { Narration } from './Narration';
 import { END_SECONDS, FONTS_CSS, FPS, TITLE_SECONDS, type Lesson as LessonData } from './brand';
 import { Captions } from './Captions';
 import { EndCard, TitleCard } from './Cards';
@@ -27,6 +28,7 @@ export function Lesson(lesson: LessonData) {
       <Sequence durationInFrames={title}><Fade length={title}><TitleCard number={lesson.number} title={lesson.title} /></Fade></Sequence>
       <Sequence from={title} durationInFrames={body}>
         <Fade length={body}><Footage slug={lesson.slug} clicks={lesson.clicks} /><Captions captions={lesson.captions} /></Fade>
+        <Narration captions={lesson.captions} />
       </Sequence>
       <Sequence from={title + body} durationInFrames={end}><Fade length={end}><EndCard /></Fade></Sequence>
     </AbsoluteFill>

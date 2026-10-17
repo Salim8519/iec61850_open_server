@@ -19,6 +19,6 @@ export const FONTS_CSS = `
 export const SANS = "Geist, 'Segoe UI', sans-serif";
 export const MONO = "'Geist Mono', Consolas, monospace";
 
-export type Caption = { start: number; end: number; text: string };
+export type Caption = { start: number; end: number; text: string; voice?: string };
 export type Click = { t: number; x: number; y: number };
 export type Lesson = { slug: string; number: number; title: string; seconds: number; captions: Caption[]; clicks: Click[] };

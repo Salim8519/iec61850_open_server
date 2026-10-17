@@ -4,6 +4,15 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-17: Tools place (change 0079)
+
+- Sidebar now has five places; Tools (after Test) lists cards for delivered tools only.
+  First tool: GOOSE & SV traffic (moved from Settings). ADR-0054, spec `tools-page.md`.
+- Owner roadmap in `docs/specs/proposed/`: IED Explorer → Find IEDs → inspector →
+  gateway simulator (104 → Modbus TCP → DNP3; simulated + read-only real IEDs; commands to
+  simulated IEDs only). Gateway needs a dependency ADR (lib60870, opendnp3, own Modbus).
+- Plan: `C:/Users/Salim/.claude/plans/lets-plan-together-to-snoopy-zephyr.md`.
+
 ## 2026-10-15: Infeed, live colouring, hints, bay templates (changes 0064-0067)
 
 - Owner chose: a new Infeed symbol that touches no engine, friendly hints only (Studio

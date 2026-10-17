@@ -65,6 +65,9 @@ export const HINTS: Record<string, string> = {
   'sld.beside': 'The drawing from the file is placed to the right of what you already drew. Items already on the diagram are kept.',
   'sld.replace': 'Your current drawing is replaced by the one from the file. One Undo brings your drawing back.',
   'sld.unbound': 'These items are drawn, but their position signal or their command is not linked yet. Select one on the diagram and choose it in Properties.',
+  'tools.explorer.objects': 'Open a data object to read its values once. Press + to add a value to the watch list, which keeps it up to date.',
+  'tools.explorer.watch': 'Watched values refresh at the chosen interval while watching is on. Export saves them as a CSV file for your test record.',
+  'tools.explorer.tree': 'Open a logical device, then pick a logical node. Each level loads only when you open it, so large IEDs open quickly.',
 };
 
 export const hint = (key: string): string => HINTS[key] ?? '';

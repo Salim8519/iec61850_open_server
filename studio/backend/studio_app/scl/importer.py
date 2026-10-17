@@ -17,7 +17,7 @@ def import_scl(source, filename="import.scd", selected_names=None):
     if isinstance(source, str):
         source = source.encode("utf-8")
     root = parse_document(source)
-    validation = validate_schema(source)
+    validation = validate_schema(source, root)
     if selected_names is not None:
         if (not isinstance(selected_names, list) or not selected_names
                 or any(not isinstance(name, str) for name in selected_names)

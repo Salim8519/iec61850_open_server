@@ -4,7 +4,9 @@ from pathlib import Path
 
 NATIVE = Path(__file__).resolve().parents[2] / "native"
 ALLOWED = {"hello", "npcap_status", "adapters", "goose_start", "goose_stop", "connect", "discover", "read",
-           "rcb_status", "rcb_reserve", "rcb_release", "disconnect", "sv_start", "sv_stop"}
+           "rcb_status", "rcb_reserve", "rcb_release", "disconnect", "sv_start", "sv_stop",
+           # IED Explorer / Find IEDs: directory, type-description and MMS Identify services only.
+           "explore", "identify"}
 FORBIDDEN_CALLS = ("ControlObjectClient", "IedConnection_writeObject", "IedConnection_writeBooleanValue",
                    "IedConnection_writeFloatValue", "IedConnection_writeVisibleStringValue",
                    "IedConnection_selectActiveSG", "IedConnection_setFile", "IedConnection_deleteFile",
@@ -53,3 +55,15 @@ def test_mode_status_is_read_only():
     apply = (backend / "simulation/test_mode_apply.py").read_text(encoding="utf-8")
     assert 'ied.get("role") != "simulated"' in apply and "sample_writer.apply" in apply
     assert "live" not in apply.split("import")[1].split("\n")[0]
+
+
+def test_explorer_operations_use_only_read_services():
+    allowed = {"IedConnection_create", "IedConnection_destroy", "IedConnection_setConnectTimeout",
+               "IedConnection_setRequestTimeout", "IedConnection_connect", "IedConnection_close",
+               "IedConnection_getMmsConnection", "MmsConnection_identify"}
+    for name in ("explore.cpp", "identify.cpp"):
+        text = (NATIVE / "live" / name).read_text(encoding="utf-8")
+        assert set(re.findall(r"\b(?:IedConnection|MmsConnection)_[A-Za-z]+", text)) <= allowed, name
+    browse = (NATIVE / "common/browse.cpp").read_text(encoding="utf-8")
+    calls = set(re.findall(r"\bIedConnection_[A-Za-z]+", browse))
+    assert all(call.startswith("IedConnection_get") for call in calls), calls

@@ -1,49 +1,39 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import FaqList from '../components/FaqList.astro';
 import Closing from '../components/Closing.astro';
-import { SITE } from '../data/site';
+import { FAQ_GROUPS, faqSchema } from '../data/faqs';
 
-const faqs = [
-  { q: 'Do I need any hardware?', a: 'No. ScadaBench runs the IEDs on your Windows PC. Real relays are only needed if you want to compare them with the SCD.' },
-  { q: 'Which files can I import?', a: 'CID, ICD, IID and SCD files in SCL 2003, 2007B and 2007B4. Original SCL and vendor extensions are kept.' },
-  { q: 'Can my SCADA or gateway connect to the simulated IEDs?', a: 'Yes. Every IED is a real MMS server on port 102. On "This PC only" mode they listen on private loopback addresses; the lab network setup puts them on a real adapter for other machines.' },
-  { q: 'Can ScadaBench operate a real relay?', a: 'No. Connections to real IEDs are read-only by design: free report blocks or polling, never controls or settings.' },
-  { q: 'Does it publish GOOSE and Sampled Values?', a: 'Simulated IEDs publish GOOSE. Sampled Values are listened to and supervised, not published. Both need the free Npcap driver.' },
-  { q: 'Does it work without internet?', a: 'Yes. Internet is only used to start the trial or activate a key. Offline PCs can be activated with a license file.' },
-  { q: 'What does the license cover?', a: `One lifetime license works on one PC. You can move it to a new PC yourself ${SITE.movesPerYear} times a year.` },
-  { q: 'Which Windows versions are supported?', a: SITE.requirements },
-  { q: 'Is IEC 60870-5-104 supported?', a: 'Not yet. It is on the roadmap. Today ScadaBench speaks IEC 61850: MMS, GOOSE and Sampled Values.' },
-  { q: 'Can I use it on an operational substation network?', a: 'No. ScadaBench is a laboratory and engineering tool. Never connect it to a live operational network.' },
-];
-const schema = {
-  '@context': 'https://schema.org', '@type': 'FAQPage',
-  mainEntity: faqs.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
-};
+const schema = faqSchema(FAQ_GROUPS.flatMap((group) => group.items));
 ---
-<Base title="FAQ" schema={schema} description="Answers about ScadaBench: hardware, supported SCL files, SCADA connections, GOOSE, Sampled Values, offline use and licensing.">
-  <PageHeader eyebrow="FAQ" title="Questions engineers ask first." />
+<Base title="FAQ" schema={schema} description="Answers about ScadaBench: hardware, supported SCL files, SCADA connections, GOOSE, Sampled Values, offline use, licensing and refunds.">
+  <PageHeader eyebrow="FAQ" title="Questions engineers ask first.">
+    <nav class="jump" aria-label="FAQ topics">
+      {FAQ_GROUPS.map((group) => <a href={`#${group.id}`}>{group.title}</a>)}
+    </nav>
+  </PageHeader>
   <section class="paper section">
-    <div class="wrap faq">
-      {faqs.map((item) => (
-        <details class="item">
-          <summary>{item.q}</summary>
-          <p>{item.a}</p>
-        </details>
+    <div class="wrap groups">
+      {FAQ_GROUPS.map((group) => (
+        <section id={group.id} class="group" aria-labelledby={`${group.id}-title`}>
+          <h2 id={`${group.id}-title`} class="eyebrow">{group.title}</h2>
+          <FaqList items={group.items} />
+        </section>
       ))}
+      <p class="more">Still unsure? Write to us from the <a href="/contact/">contact page</a>; an engineer answers.</p>
     </div>
   </section>
   <Closing />
 </Base>
 
 <style>
-  .faq { max-width: 860px; display: grid; }
-  .item { border-bottom: 1px solid var(--paper-line); }
-  summary { cursor: pointer; list-style: none; padding: 22px 40px 22px 0; font-size: var(--step-1); font-weight: 600;
-    letter-spacing: -0.015em; position: relative; }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: '+'; position: absolute; right: 4px; top: 18px; font: 400 1.6rem var(--mono); color: #0b8f6c;
-    transition: transform .25s ease; }
-  details[open] summary::after { transform: rotate(45deg); }
-  .item p { padding: 0 0 22px; color: var(--paper-muted); max-width: 66ch; }
+  .jump { display: flex; flex-wrap: wrap; gap: 10px; }
+  .jump a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: .92rem; }
+  .jump a:hover { border-color: var(--accent); }
+  .groups { display: grid; gap: clamp(40px, 6vw, 64px); }
+  .group { display: grid; gap: 8px; scroll-margin-top: 88px; }
+  .more { color: var(--paper-muted); }
+  .more a { color: var(--paper-ink); font-weight: 600; }
 </style>

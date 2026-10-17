@@ -1,16 +1,15 @@
-import { Laptop, Network, Undo2 } from 'lucide-react';
+import { Laptop, Network, Radio, Undo2 } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../../api/client';
 import type { Project } from '../../api/types';
 import { hint } from '../../copy/hints';
+import { TOOLS_COPY } from '../../copy/tools';
 import { InfoTip } from '../../ui/InfoTip';
 import { CleanupCard } from '../network/CleanupCard';
-import { GooseTraffic } from '../network/GooseTraffic';
 import { LabWizard } from '../network/LabWizard';
-import { SvTraffic } from '../network/SvTraffic';
 
-export function NetworkSettings({ project, locked, perform }: {
-  project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
+export function NetworkSettings({ project, locked, perform, openTraffic }: {
+  project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>; openTraffic: () => void;
 }) {
   const [wizard, setWizard] = useState(false);
   const lab = project.network.mode === 'lab';
@@ -30,8 +29,9 @@ export function NetworkSettings({ project, locked, perform }: {
       </div>
     </div>
     {locked && <p className="small muted" style={{ margin: 0 }}>{hint('network.locked')}</p>}
-    <GooseTraffic running={project.runtime !== 'stopped'} revision={project.revision} lab={lab} />
-    <SvTraffic running={project.runtime !== 'stopped'} revision={project.revision} lab={lab} locked={locked} perform={perform} />
+    <div className="card"><div className="guide-section row" style={{ justifyContent: 'space-between' }}>
+      <span className="muted">{TOOLS_COPY.settingsLink}</span>
+      <button onClick={openTraffic}><Radio size={16} />{TOOLS_COPY.openTraffic}</button></div></div>
     <CleanupCard locked={locked} revision={project.revision} perform={perform} />
   </>;
 }

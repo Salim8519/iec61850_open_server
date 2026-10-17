@@ -17,8 +17,10 @@ export const TOUR_STEPS: TourStep[] = [
     text: 'Press Run. Every IED answers on its own address, port 102, so your SCADA or client can connect. Stop ends the run.' },
   { id: 'test', title: 'Test: change values on purpose', target: 'place-test', place: 'test',
     text: 'Save the alarms and measurements you change most, run generators and timed sequences, and replay CSV traces.' },
+  { id: 'tools', title: 'Tools: helpers for testing', target: 'place-tools', place: 'tools',
+    text: 'Watch the GOOSE and Sampled Values messages that are really on the network, and find more testing helpers as they arrive.' },
   { id: 'settings', title: 'Settings: network and license', target: 'place-settings', place: 'settings',
-    text: 'Put IEDs on a real network adapter for other devices, set up GOOSE, and see your license.' },
+    text: 'Put IEDs on a real network adapter for other devices, and see your license.' },
   { id: 'help', title: 'Help is always here', target: 'help',
     text: 'Reopen this tour or watch the short video tutorials from Help at any time. Happy testing!' },
 ];

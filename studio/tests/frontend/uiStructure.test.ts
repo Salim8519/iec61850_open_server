@@ -26,8 +26,8 @@ const contrast = (a: string, b: string) => {
   return (high + 0.05) / (low + 0.05);
 };
 
-test('sidebar has exactly four places', () => {
-  assert.deepEqual(PLACES.map(item => item.id), ['devices', 'diagram', 'test', 'settings']);
+test('sidebar has exactly five places', () => {
+  assert.deepEqual(PLACES.map(item => item.id), ['devices', 'diagram', 'test', 'tools', 'settings']);
   assert.ok(PLACES.every(item => item.subtitle.length > 20));
 });
 

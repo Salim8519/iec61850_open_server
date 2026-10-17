@@ -56,6 +56,23 @@ Spec: [app window](../../specs/app-window.md).
     A double-clicked launch has that right, and it is why the second launch focuses the
     window itself.
 
+## Built EXE evidence (owner asked for a build)
+
+- `compile_protected.py --version 0.1.1`: the app, Nuitka and the leak check passed. The
+  installer step hit "file in use" (antivirus); re-running ISCC alone produced
+  `ScadaBench-Setup-0.1.1.exe` (23 085 670 bytes, sha256 `e1519d028edd1fe4…`). The published 0.1.0
+  installer is kept in `studio/release-archive/0.1.0/` (hash `1cc490db8a97458d…` unchanged).
+- PE subsystem of `ScadaBench.exe` is WINDOWS (no console).
+- `test_portable.py` against the built folder: 2 passed. A duplicate launch exits 0 with
+  "already running", and the self-test runs from a terminal.
+- Real run of the built EXE on a temporary data folder:
+  - the app window "ScadaBench" opened;
+  - after minimising it, a second launch exited 0 in 0.41 s, restored the window and
+    opened no second window;
+  - closing the window stopped ScadaBench (exit 0), with no process left for that folder.
+- Not automated: the "Leave site?" prompt (needs a real click in the page) and the
+  foreground focus on a real double-click. The owner tests both.
+
 ## Limitations
 
 - No EXE built, as owner policy requires. Windowed output, the dialog texts, focus on

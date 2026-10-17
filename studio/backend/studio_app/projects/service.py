@@ -12,6 +12,7 @@ from .migration_backup import preserve as preserve_migration
 from .removal import impact
 from . import bulk_removal
 from .test_panel import validate_panel
+from .stored_import import import_stored
 from studio_app.contracts.errors import StudioError
 from studio_app.domain.scenario import validate_scenarios
 from studio_app.domain.source import source_summary
@@ -163,15 +164,9 @@ class ProjectService:
         if not isinstance(raw.get("ieds"), list) or len(raw["ieds"]) > 20:
             raise StudioError("Project must contain a list of at most 20 IEDs")
         imported = []
-        for item in raw.get("ieds", []):
-            if not isinstance(item, dict):
-                raise StudioError("Invalid stored IED")
-            if not re.fullmatch(r"[0-9a-f]{32}", item.get("id", "")):
-                raise StudioError("Invalid stored IED identifier")
-            models = import_scl(item["source"], item.get("filename", "stored.scd"), [item["name"]])
-            model = next((m for m in models if m["name"] == item["name"]), None)
-            if model is None:
-                raise StudioError("Stored IED is missing from its source XML")
+        built = import_stored(raw["ieds"])
+        for item in raw["ieds"]:
+            model = built[item["id"]]
             model.update(id=item["id"], ip=item.get("ip", ""), port=int(item.get("port", 102)))
             try:
                 model.update(validate_ied_settings(item))

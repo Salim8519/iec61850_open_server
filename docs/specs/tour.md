@@ -5,7 +5,7 @@ Change: [0070](../changes/2026/0070-scadabench-brand-website-tour.md).
 
 ## Purpose
 
-A first-time user learns the four places (Devices, SLD, Test, Settings) and where Run is in about
+A first-time user learns the five places (Devices, SLD, Test, Tools, Settings) and where Run is in about
 one minute, without reading a manual, and can reopen the tour at any time.
 
 ## Behaviour contract

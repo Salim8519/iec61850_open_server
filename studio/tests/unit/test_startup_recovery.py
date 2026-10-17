@@ -22,6 +22,7 @@ def test_startup_recovers_engineering_without_writing_or_running(tmp_path):
     payload = (tmp_path / "autosave.subsim").read_bytes()
     app = create_app(Settings(tmp_path, tmp_path / "does-not-exist.exe", tmp_path), "recovery-test")
     try:
+        assert app.extensions["startup"].wait(60)  # Recovery runs in the background.
         restored = app.extensions["projects"].snapshot()
         assert restored["id"] == saved.project["id"]
         assert restored["ieds"][0]["id"] == ied["id"]

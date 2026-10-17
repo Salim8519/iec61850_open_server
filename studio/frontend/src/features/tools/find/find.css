@@ -1,0 +1,7 @@
+.find-form { align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.find-form label { display: grid; gap: 6px; font-weight: 600; }
+.find-form select { min-width: 280px; max-width: 100%; }
+.find-form input { width: 200px; }
+.find-preview { display: flex; gap: 8px; align-items: center; margin: 0; font-weight: 600; }
+.find-progress { height: 6px; background: var(--hover); margin: 0 20px; border-radius: 999px; overflow: hidden; }
+.find-progress span { display: block; height: 100%; background: var(--accent); transition: width 0.2s; }

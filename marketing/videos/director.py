@@ -133,10 +133,15 @@ class Director:
         self.page.keyboard.type(text, delay=32)
         self.wait(after)
 
-    def finish(self, name: str) -> Path:
+    def finish(self, name: str, shift: float = 0.0) -> Path:
+        """Write captions and clicks; shift moves recorder time onto the capture's clock."""
         self.settle()
         if self._open:
             self._open["end"] = self.now()
+        for caption in self.captions:
+            caption["start"], caption["end"] = round(caption["start"] + shift, 3), round(caption["end"] + shift, 3)
+        for click in self.clicks:
+            click["t"] = round(click["t"] + shift, 3)
         OUT.mkdir(parents=True, exist_ok=True)
         path = OUT / f"{name}.captions.json"
         path.write_text(json.dumps(self.captions, indent=1), encoding="utf-8")
@@ -160,25 +165,31 @@ def record(name: str, scenario, prepare=None) -> Path:
 def _record(name, scenario, url, data, raw, prepare) -> Path:
     from playwright.sync_api import sync_playwright
 
+    from capture import Screencast
+
     with sync_playwright() as play:
         browser = play.chromium.launch(channel="msedge", headless=True)
-        context = browser.new_context(viewport=VIEW, record_video_dir=str(raw), record_video_size=VIEW,
-                                      device_scale_factor=1, color_scheme="light")
+        context = browser.new_context(viewport=VIEW, device_scale_factor=2, color_scheme="light")
         context.add_init_script(CURSOR_JS)
         page = context.new_page()
-        director = Director(page)
         if prepare:
             prepare(page)
         page.goto(url)
         page.get_by_text(re.compile("Engine connected|Activate ScadaBench")).first.wait_for(timeout=30000)
         page.mouse.move(VIEW["width"] / 2, VIEW["height"] / 2)
-        scenario(director, page, data)
+        cast = Screencast(page, raw, VIEW["width"] * 2, VIEW["height"] * 2)
+        cast.start()
+        director = Director(page)
+        wall_start = time.time()
+        try:
+            scenario(director, page, data)
+        except Exception:
+            page.screenshot(path=str(OUT / f"{name}.fail.png"))
+            raise
         director.settle()
         director.wait(0.8)
-        director.finish(name)
-        video = page.video
+        cast.stop()
+        director.finish(name, shift=wall_start - cast.first_timestamp)
         context.close()
         browser.close()
-        target = OUT / f"{name}.webm"
-        shutil.move(video.path(), target)
-    return target
+    return cast.assemble(OUT / f"{name}.capture.mp4")

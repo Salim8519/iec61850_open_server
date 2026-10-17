@@ -12,7 +12,7 @@ export function Footage({ slug, clicks }: { slug: string; clicks: Click[] }) {
     <AbsoluteFill style={{ backgroundColor: '#f5f7fa', overflow: 'hidden' }}>
       <AbsoluteFill style={{ transform: `scale(${view.scale})`,
         transformOrigin: `${view.originX * ratio}px ${view.originY * ratio}px` }}>
-        <OffthreadVideo src={staticFile(`footage/${slug}.webm`)} style={{ width: '100%', height: '100%' }} muted />
+        <OffthreadVideo src={staticFile(`footage/${slug}.mp4`)} style={{ width: '100%', height: '100%' }} muted />
       </AbsoluteFill>
     </AbsoluteFill>
   );

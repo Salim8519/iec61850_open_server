@@ -29,3 +29,9 @@ marketing/videos/out/
 *.log
 Thumbs.db
 .DS_Store
+
+# Local copies of published installers
+studio/release-archive/
+
+# Module-integrity signing secret (never commit)
+studio/native/release/module_signing.seed

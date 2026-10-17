@@ -26,7 +26,34 @@ def verify(tmp_path, text, machine=HWID, now=NOW, anchor=0, key=None):
 
 def test_native_machine_id_matches_python():
     assert run("hwid").stdout.strip() == hwid.machine_id()
-    assert run("compose", " 1A2B-CCCC ", "a1b2c3d4").stdout.strip() == hwid.compose(" 1A2B-CCCC ", 0xA1B2C3D4)
+    assert run("compose", " 1A2B-CCCC ", "a1b2c3d4", "aabbcc").stdout.strip() == \
+        hwid.compose(" 1A2B-CCCC ", 0xA1B2C3D4, "aabbcc")
+
+
+def test_native_legacy_machine_id_and_cutoff_match_python(tmp_path):
+    assert run("legacy-hwid").stdout.strip() == hwid.legacy_machine_id()
+    assert run("compose-legacy", " 1A2B-CCCC ", "a1b2c3d4").stdout.strip() == \
+        hwid.compose_legacy(" 1A2B-CCCC ", 0xA1B2C3D4)
+    path = tmp_path / "license.cert"
+    path.write_text(bundle(), encoding="utf-8")
+    cutoff = hwid.LEGACY_ISSUED_BEFORE
+    assert run("verify", path, public_key().hex(), HWID, NOW, 0, cutoff).stdout.strip() == "ok"
+    path.write_text(bundle(issued_at=cutoff), encoding="utf-8")
+    assert "another computer" in run("verify", path, public_key().hex(), HWID, cutoff + 1, 0, cutoff).stdout
+
+
+def test_native_verifies_signed_module_and_rejects_tampering(tmp_path):
+    import hashlib
+    from studio_app.licensing import ed25519_sign as es
+    seed = bytes.fromhex("11" * 32)
+    module = tmp_path / "studio_app.pyd"
+    module.write_bytes(b"pretend compiled module bytes")
+    signature = tmp_path / "studio_app.pyd.sig"
+    signature.write_bytes(es.sign(hashlib.sha256(module.read_bytes()).hexdigest().encode(), seed))
+    key = es.public_key(seed).hex()
+    assert run("verify-module", module, signature, key).stdout.strip() == "ok"
+    module.write_bytes(b"tampered compiled module!!!!!")
+    assert run("verify-module", module, signature, key).returncode != 0
 
 
 def test_native_accepts_go_and_python_signed_certificates(tmp_path):

@@ -4,6 +4,7 @@ Needs Microsoft Edge, ffmpeg on PATH, Playwright for Python and the built app
 (studio/frontend/dist and the native workers). Output goes to marketing/videos/out/.
 """
 import sys
+import traceback
 
 from compose import compose
 from director import record
@@ -25,7 +26,11 @@ if __name__ == "__main__":
     for number, (slug, title, scenario, prepare) in enumerate(LESSONS, 1):
         if wanted and slug not in wanted:
             continue
-        print(f"Recording {slug}...", flush=True)
-        record(slug, scenario, prepare)
-        print(f"Composing {slug}...", flush=True)
-        print("  ->", compose(slug, number, title), flush=True)
+        try:
+            print(f"Recording {slug}...", flush=True)
+            record(slug, scenario, prepare)
+            print(f"Composing {slug}...", flush=True)
+            print("  ->", compose(slug, number, title), flush=True)
+        except Exception:  # keep going so one broken lesson does not stop the others
+            print(f"FAILED {slug}", flush=True)
+            traceback.print_exc()

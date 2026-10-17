@@ -9,7 +9,7 @@ blueprint = Blueprint("projects", __name__)
 @blueprint.get("/project")
 def get_project():
     return jsonify({**projects().snapshot(), "runtime": runtime().state,
-                    "startup_recovery": current_app.extensions.get("startup_recovery")})
+                    "startup_recovery": current_app.extensions["startup"].result})
 
 
 @blueprint.put("/project/diagram")

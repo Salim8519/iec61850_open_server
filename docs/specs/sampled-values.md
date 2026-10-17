@@ -56,7 +56,7 @@ stream on the lab adapter and check it against the SCD:
 - Streams seen on the wire but not in the project are listed as *unknown*, with svID,
   APPID, MAC, source MAC, VLAN and the simulate bit.
 
-**Interface** (Settings → Network, beside GOOSE traffic; UI-01 unchanged)
+**Interface** (Tools → GOOSE & Sampled Values traffic, beside GOOSE traffic; moved from Settings by ADR-0054)
 - A stream table with state, rate, synchronisation, loss and quality. Every state has
   text, an icon and a fix hint.
 - In the stream detail, a per-channel table shows RMS and phasor, with units and the

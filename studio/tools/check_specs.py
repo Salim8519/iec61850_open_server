@@ -15,6 +15,8 @@ def _test_exists(path, name):
     text = target.read_text(encoding="utf-8")
     if target.suffix == ".py":
         return re.search(rf"^\s*def {re.escape(name)}\(", text, re.MULTILINE) is not None
+    if target.suffix == ".go":
+        return re.search(rf"^func {re.escape(name)}\(", text, re.MULTILINE) is not None
     return any(f"test({quote}{name}{quote}" in text for quote in "\"'`")
 
 

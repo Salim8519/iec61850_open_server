@@ -8,14 +8,15 @@ import { SITE, buyUrl } from '../data/site';
     <h1>Your substation,<br /><span>live on your desk.</span></h1>
     <p class="lede">ScadaBench turns CID, ICD and SCD files into running IEC 61850 IEDs. Test your SCADA,
       gateways and protection logic weeks before site acceptance, without a single relay on the bench.</p>
-    <div class="actions">
+    <div class="actions" data-cta-zone>
       <a class="btn btn-primary" href="/download/">Download free {SITE.trialDays}-day trial</a>
-      <a class="btn btn-ghost" href={buyUrl}>Buy lifetime · $<span data-price>{SITE.price}</span></a>
+      <a class="btn btn-ghost" href={buyUrl}><span>Buy lifetime · $<span data-price>{SITE.price}</span></span></a>
     </div>
   </div>
   <div class="wrap">
     <div class="stage" data-hero-stage>
-      <div class="poster-layer"><HeroPoster /></div>
+      <div class="poster-layer wide"><HeroPoster /></div>
+      <div class="poster-layer narrow"><HeroPoster compact /></div>
       <canvas class="scene" data-hero-canvas aria-hidden="true"></canvas>
     </div>
     <ul class="chips" aria-label="Protocol facts">
@@ -61,14 +62,18 @@ import { SITE, buyUrl } from '../data/site';
     box-shadow: var(--shadow), inset 0 1px 0 rgb(255 255 255 / 6%); }
   .poster-layer, .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
   .poster-layer { padding: 3% 4%; transition: opacity 1.2s ease; }
+  .poster-layer.narrow { display: none; }
   .scene { opacity: 0; transition: opacity 1.4s ease; }
   .stage.is-3d .scene { opacity: 1; }
   .stage.is-3d .poster-layer { opacity: 0; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0; padding: 22px 0 0; list-style: none; }
   .chips li { font: 500 0.78rem/1 var(--mono); color: var(--muted); padding: 8px 12px; border-radius: 999px;
-    border: 1px solid rgb(255 255 255 / 9%); background: rgb(10 18 34 / 70%); backdrop-filter: blur(8px); }
+    border: 1px solid rgb(255 255 255 / 9%); background: rgb(10 18 34 / 90%); }
   .chips b { color: var(--ink); font-weight: 600; margin-right: 4px; }
   @media (max-width: 720px) {
     .stage { aspect-ratio: 6 / 5; border-radius: 20px; }
+    .poster-layer.wide { display: none; }
+    .poster-layer.narrow { display: block; padding: 4% 3%; }
+    .actions { display: grid; width: 100%; max-width: 420px; }
   }
 </style>

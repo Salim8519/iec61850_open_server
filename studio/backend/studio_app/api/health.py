@@ -2,6 +2,7 @@
 from flask import Blueprint, Response, jsonify
 from studio_app.acquisition import health_snapshot
 from studio_app.domain.health_export import csv_text, html_report
+from studio_app.version import __version__
 from .context import projects, runtime
 
 blueprint = Blueprint("health", __name__)
@@ -13,7 +14,7 @@ def _health():
 
 @blueprint.get("/health")
 def health():
-    return jsonify(_health())
+    return jsonify({**_health(), "app_version": __version__})
 
 
 @blueprint.post("/health/refresh")

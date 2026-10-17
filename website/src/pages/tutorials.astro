@@ -2,11 +2,12 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Closing from '../components/Closing.astro';
-import { TUTORIALS, posterOf, videoOf } from '../data/tutorials';
+import { TUTORIALS, lengthOf, posterOf, totalSeconds, videoOf } from '../data/tutorials';
+const totalMinutes = Math.ceil(totalSeconds / 60);
 ---
-<Base title="Tutorials" description="Short ScadaBench tutorials: getting started, importing an SCD, running IEDs, GOOSE on the lab network, real IEDs and activation.">
-  <PageHeader eyebrow="Tutorials" title="Learn ScadaBench in ten minutes."
-    lede="Six short captioned videos of the real app. The app also opens a guided tour on first start; reopen it any time from Help." />
+<Base title="Tutorials" description="Learn IEC 61850 with ScadaBench: CID and SCD files, the single-line diagram, IED simulation, GOOSE and real devices, in seven short narrated videos.">
+  <PageHeader eyebrow="Tutorials" title={`Learn IEC 61850 in ${totalMinutes} minutes.`}
+    lede="Seven short narrated lessons on the real app: IEC 61850, CID and SCD files, the SLD, simulation, GOOSE and real devices." />
   <section class="section">
     <div class="wrap list">
       {TUTORIALS.map((tutorial, index) => (
@@ -16,7 +17,7 @@ import { TUTORIALS, posterOf, videoOf } from '../data/tutorials';
               width="1920" height="1080" aria-label={`Video: ${tutorial.title}`}></video>
           </div>
           <div class="text">
-            <span class="eyebrow">{String(index + 1).padStart(2, '0')} · {tutorial.minutes} min</span>
+            <span class="eyebrow">{String(index + 1).padStart(2, '0')} · {lengthOf(tutorial.seconds)}</span>
             <h2>{tutorial.title}</h2>
             <ol>{tutorial.steps.map((step) => <li>{step}</li>)}</ol>
           </div>

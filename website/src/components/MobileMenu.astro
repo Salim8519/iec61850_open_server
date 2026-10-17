@@ -1,0 +1,65 @@
+---
+// Phone and tablet menu (below 1080px). A <details> element, so it opens even without
+// JavaScript; the script adds Esc, outside tap, close on link and a scroll lock.
+import { NAV, SITE, buyUrl, isCurrent } from '../data/site';
+const current = Astro.url.pathname;
+---
+<details class="menu" data-menu>
+  <summary aria-label="Menu">
+    <span class="icon" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="word">Menu</span>
+  </summary>
+  <div class="sheet">
+    <nav aria-label="Main">
+      {NAV.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item.href, current) ? 'page' : undefined}>
+          {item.label}<span aria-hidden="true">›</span>
+        </a>
+      ))}
+    </nav>
+    <div class="buy">
+      <a class="btn btn-primary" href="/download/">Download free {SITE.trialDays}-day trial</a>
+      <a class="btn btn-ghost" href={buyUrl}><span>Buy lifetime license · $<span data-price>{SITE.price}</span></span></a>
+      <p class="small">Pay once, no subscription. Questions? <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a></p>
+    </div>
+  </div>
+</details>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+  if (menu) {
+    const summary = menu.querySelector('summary')!;
+    const close = () => { if (menu.open) { menu.open = false; summary.focus(); } };
+    menu.addEventListener('toggle', () => document.documentElement.classList.toggle('menu-open', menu.open));
+    menu.addEventListener('click', (event) => { if ((event.target as HTMLElement).closest('.sheet a')) menu.open = false; });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
+    document.addEventListener('click', (event) => { if (menu.open && !menu.contains(event.target as Node)) menu.open = false; });
+    matchMedia('(min-width: 1080px)').addEventListener('change', (query) => { if (query.matches) menu.open = false; });
+  }
+</script>
+
+<style>
+  .menu { display: none; }
+  summary { list-style: none; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px;
+    border-radius: 999px; border: 1px solid var(--line); cursor: pointer; color: var(--ink); font-size: .92rem; font-weight: 600; }
+  summary::-webkit-details-marker { display: none; }
+  .icon { display: grid; gap: 4px; width: 18px; }
+  .icon i { display: block; height: 2px; border-radius: 2px; background: currentColor; transition: transform .2s ease, opacity .2s ease; }
+  .menu[open] .icon i:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .menu[open] .icon i:nth-child(2) { opacity: 0; }
+  .menu[open] .icon i:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .sheet { position: fixed; inset: calc(65px + env(safe-area-inset-top, 0px)) 0 0 0; z-index: 60; overflow-y: auto;
+    overscroll-behavior: contain; background: var(--night); padding: 8px var(--gutter) calc(24px + env(safe-area-inset-bottom, 0px));
+    display: grid; align-content: start; gap: 24px; }
+  nav { display: grid; }
+  nav a { display: flex; justify-content: space-between; align-items: center; min-height: 56px; text-decoration: none;
+    font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; border-bottom: 1px solid var(--line); }
+  nav a span { color: var(--muted); font-size: 1.4rem; }
+  nav a[aria-current='page'] { color: var(--accent); }
+  .buy { display: grid; gap: 12px; }
+  .buy .btn { width: 100%; min-height: 52px; white-space: normal; text-align: center; }
+  .small { color: var(--muted); font-size: .9rem; text-align: center; }
+  @media (max-width: 1079px) { .menu { display: block; } }
+  @media (max-width: 400px) { .word { display: none; } }
+  :global(html.menu-open) { overflow: hidden; }
+</style>

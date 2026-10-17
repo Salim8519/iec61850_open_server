@@ -1,14 +1,15 @@
 # Spec: UI structure and design system
 
-Decision: [ADR-0032](../decisions/ADR-0032-clean-four-place-ui.md) and
+Decision: [ADR-0032](../decisions/ADR-0032-clean-four-place-ui.md),
+[ADR-0054](../decisions/ADR-0054-tools-place.md) (fifth place, Tools) and
 [ADR-0033](../decisions/ADR-0033-feature-consolidation-format-12.md).
 Owner request (2026-10-14): the app must feel clean and organised like an iPhone,
 be easy for beginners and older users, and still be pro level.
 
 ## Behaviour contract
 
-- Four places in a left sidebar: **Devices, SLD, Test, Settings** (order and name:
-  [ADR-0048](../decisions/ADR-0048-desktop-app-window.md)); Devices opens first. The top bar
+- Five places in a left sidebar: **Devices, SLD, Test, Tools, Settings** (order and name:
+  [ADR-0048](../decisions/ADR-0048-desktop-app-window.md), Tools: [ADR-0054](../decisions/ADR-0054-tools-place.md)); Devices opens first. The top bar
   shows the page title (the SLD page spells out "Single-line diagram (SLD)"), one short subtitle, the File menu and one Run/Stop button.
 - Text and controls are large: 15 px base text, 40 px controls, 44 px primary
   actions, AA contrast. Sizes are in rem so browser zoom scales everything.
@@ -23,7 +24,7 @@ be easy for beginners and older users, and still be pro level.
 
 | ID | Rule | Enforced by |
 | --- | --- | --- |
-| UI-01 | The sidebar has exactly the four places, in order, each with a plain subtitle. | `studio/tests/frontend/uiStructure.test.ts::sidebar has exactly four places` |
+| UI-01 | The sidebar has exactly the five places, in order, each with a plain subtitle. | `studio/tests/frontend/uiStructure.test.ts::sidebar has exactly five places` |
 | UI-02 | Base text is at least 15 px, small text 13 px, controls 40 px and primary actions 44 px. | `studio/tests/frontend/uiStructure.test.ts::tokens keep text and controls large` |
 | UI-03 | Text, accent and status colours meet WCAG AA contrast on the surfaces they use. | `studio/tests/frontend/uiStructure.test.ts::token colours meet AA contrast` |
 | UI-04 | Polarity, push-button modes and colours are only shown inside Advanced. | `studio/tests/frontend/uiStructure.test.ts::rare equipment options live under Advanced` |

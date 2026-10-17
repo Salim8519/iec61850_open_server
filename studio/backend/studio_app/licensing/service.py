@@ -37,7 +37,8 @@ def mask_key(license_id):
 
 class LicenseService:
     def __init__(self, home, data_dir, enforce, hwid_provider=None, clock=time.time, keys=None,
-                 client_factory=LicenseClient, native_folder=None, expected_files=None):
+                 client_factory=LicenseClient, native_folder=None, expected_files=None,
+                 legacy_hwid_provider=None):
         self.home = Path(home)
         self.native_folder = native_folder
         self.expected_files = expected_files
@@ -51,6 +52,9 @@ class LicenseService:
         self.anchor = TimeAnchor(self.home / ".time_anchor", Path(data_dir) / "logs/runs.jsonl")
         self._hwid_provider = hwid_provider
         self._hwid = None
+        self._legacy_hwid_provider = legacy_hwid_provider
+        self._legacy_hwid = False
+        self._bound_hwid = None
         self._lock = threading.RLock()
         self._cached = None
         self._cached_at = 0.0
@@ -76,6 +80,28 @@ class LicenseService:
             self._hwid = (self._hwid_provider or machine.machine_id)()
         return self._hwid
 
+    def legacy_hwid(self):
+        """This PC's pre-v2 machine ID, or None when it cannot be read or is not wanted."""
+        if self._legacy_hwid is False:
+            from . import hwid as machine
+            provider = self._legacy_hwid_provider
+            if provider is None and self._hwid_provider is None:
+                provider = machine.legacy_machine_id
+            try:
+                self._legacy_hwid = provider() if provider else None
+            except OSError:
+                self._legacy_hwid = None
+        return self._legacy_hwid
+
+    def _machine_for(self, payload):
+        """The machine ID this certificate must match (v1 only for pre-cutoff certificates)."""
+        from . import hwid as machine
+        try:
+            return machine.bound_hwid(payload.get("hwid"), payload.get("issued_at", 0),
+                                      self.hwid(), self.legacy_hwid())
+        except (TypeError, ValueError, AttributeError):
+            return self.hwid()
+
     def server_url(self):
         configured = self._read_json(self.config_file, {}).get("server_url")
         return (configured or release_key.DEFAULT_SERVER_URL or "").rstrip("/")
@@ -97,7 +123,8 @@ class LicenseService:
         except CertificateError as error:
             return license_policy.unlicensed(str(error))
         now = int(self.clock())
-        status = license_policy.evaluate_certificate(payload, self.hwid(), now, self.anchor.max_seen(), False)
+        self._bound_hwid = self._machine_for(payload)
+        status = license_policy.evaluate_certificate(payload, self._bound_hwid, now, self.anchor.max_seen(), False)
         if status.licensed:
             self.anchor.advance(now)
         return status
@@ -129,7 +156,8 @@ class LicenseService:
     def _install(self, bundle):
         payload = certificate.verify_bundle(certificate.parse_bundle(bundle), self.keys)
         now = int(self.clock())
-        status = license_policy.evaluate_certificate(payload, self.hwid(), now, self.anchor.max_seen(), False)
+        status = license_policy.evaluate_certificate(payload, self._machine_for(payload), now,
+                                                     self.anchor.max_seen(), False)
         if not status.licensed:
             raise LicenseActionError(status.reason or "This license cannot be used here.", "not_valid_here")
         with self._lock:
@@ -191,7 +219,10 @@ class LicenseService:
                 self.clock() - state.get("last_verify", 0) < VERIFY_EVERY_SECONDS:
             return None
         try:
-            answer = self._client().verify(status.license_id, self.hwid())
+            # Ask about the machine ID the key is bound to; a legacy v1 binding would
+            # otherwise look "moved" to the server and cancel a valid license.
+            bound = self._bound_hwid or self.hwid()
+            answer = self._client().verify(status.license_id, bound)
         except LicenseServerError:
             return None
         verdict = answer.get("status")
@@ -204,7 +235,9 @@ class LicenseService:
                 stamp = int(self.clock())
                 os.replace(self.cert_file, self.cert_file.with_name(f"license.cert.{verdict}-{stamp}"))
                 self._cached = None
-        elif verdict == "valid" and answer.get("certificate"):
+        elif verdict == "valid" and answer.get("certificate") and bound == self.hwid():
+            # A legacy-bound certificate is kept as is: a reissued one would carry a new
+            # issued_at and no longer qualify for the legacy machine ID.
             try:
                 fresh = certificate.parse_bundle(answer["certificate"])
                 if certificate.verify_bundle(fresh, self.keys).get("hwid") == self.hwid():

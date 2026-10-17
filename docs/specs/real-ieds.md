@@ -34,7 +34,7 @@ real IED's datasets or report blocks.
 
 | ID | Rule | Enforced by |
 | --- | --- | --- |
-| LIVE-01 | `studio_live` exposes no control, setting or data write operation. | `studio/tests/unit/test_live_contract.py::test_operation_table_is_read_only`, `studio/tests/protocol/test_live_client.py::test_write_operations_do_not_exist` |
+| LIVE-01 | `studio_live` exposes no control, setting or data write operation. | `studio/tests/unit/test_live_contract.py::test_operation_table_is_read_only`, `studio/tests/protocol/test_live_client.py::test_write_operations_do_not_exist`, `studio/tests/unit/test_live_contract.py::test_explorer_operations_use_only_read_services` |
 | LIVE-02 | Only report blocks shown as free are used; a busy block is never taken. | `studio/tests/unit/test_access_policy.py::test_busy_blocks_fall_back_to_polling`, `studio/tests/protocol/test_live_client.py::test_enabled_block_is_not_taken` |
 | LIVE-03 | Every block Studio reserved is released on disconnect. | `studio/tests/protocol/test_live_client.py::test_blocks_released_on_disconnect` |
 | LIVE-04 | Operating equipment bound to a real IED is refused with a plain reason. | `studio/tests/unit/test_live_roles.py::test_operating_real_ied_is_refused` |

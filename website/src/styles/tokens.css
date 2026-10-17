@@ -11,6 +11,8 @@
   --muted: #93a2ba;
   --accent: #2be4b0;
   --accent-ink: #04261c;
+  /* Accent for small text on light paper: 4.5:1 or better on every paper surface. */
+  --accent-on-paper: #087a5c;
   --signal: #38bdf8;
   --paper: #f4f6fa;
   --paper-2: #e9edf4;

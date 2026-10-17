@@ -123,11 +123,11 @@ def c_compiler_flag():
     return "--mingw64"
 
 
-def build_backend(mode, release):
+def build_backend(mode, release, version):
     mode.step("Sealed studio_app copy -> Nuitka native .pyd")
     source = mode.build / "src"
     if not mode.dry_run:
-        protected_source.prepare(source, mode.native_bin, release)
+        protected_source.prepare(source, mode.native_bin, release, version)
     print(f"  sealed copy: {source / 'studio_app'} (native hashes{', sandbox key' if release else ''})")
     environment = {**os.environ, "NUITKA_CACHE_DIR": str(STUDIO / "build/nuitka-cache")}
     mode.run([sys.executable, "-m", "nuitka", "--mode=module", source / "studio_app", "--include-package=studio_app",
@@ -137,6 +137,24 @@ def build_backend(mode, release):
     import collect_imports
     if not mode.dry_run:
         collect_imports.main(mode.build / "hidden_imports.json")
+        sign_module(mode)
+
+
+def sign_module(mode):
+    """Sign the compiled module so the native workers can verify it at runtime."""
+    seed_file = STUDIO / "native/release/module_signing.seed"
+    modules = sorted((mode.build / "nuitka").glob("studio_app*.pyd"))
+    if not modules:
+        raise SystemExit("No compiled studio_app .pyd found to sign.")
+    if not seed_file.exists():
+        print("  module signature SKIPPED (no module_signing.seed; run studio/tools/module_signing_key.py)")
+        return
+    import hashlib
+    from studio_app.licensing.ed25519_sign import sign
+    seed = bytes.fromhex(seed_file.read_text(encoding="utf-8").strip())
+    digest = hashlib.sha256(modules[0].read_bytes()).hexdigest().encode("utf-8")
+    (modules[0].parent / (modules[0].name + ".sig")).write_bytes(sign(digest, seed))
+    print(f"  signed module: {modules[0].name}.sig")
 
 
 def build_bundle(mode):
@@ -211,7 +229,7 @@ def main(argv=None):
         mode.build.mkdir(parents=True, exist_ok=True)
     build_frontend(mode)
     build_native(mode, release)
-    build_backend(mode, release)
+    build_backend(mode, release, args.version)
     build_bundle(mode)
     leak_check(mode)
     sign(mode)

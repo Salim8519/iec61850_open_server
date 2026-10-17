@@ -1,0 +1,29 @@
+---
+// Who builds ScadaBench, in the owner's words. No names or numbers we cannot back up.
+interface Props { tone?: 'dark' | 'paper'; }
+const { tone = 'dark' } = Astro.props;
+---
+<section class:list={['built section', tone === 'paper' && 'paper']} aria-labelledby="built-title">
+  <div class="wrap card reveal">
+    <img src="/favicon.svg" alt="" width="56" height="56" loading="lazy" />
+    <div class="text">
+      <span class="eyebrow">Who builds it</span>
+      <h2 id="built-title">Built by experienced SCADA and protection engineers.</h2>
+      <p>We built ScadaBench after too many factory tests spent waiting for relays, gateways and test sets
+        to arrive. It is the bench we wanted: open the SCD, press Run, and test the SCADA the same day.</p>
+      <p>Every feature on this site works in the app today. Anything that doesn't yet is marked as roadmap.
+        Questions or a protocol you need? <a href="/contact/">Talk to us</a>; an engineer answers.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .built { padding-block: clamp(48px, 7vw, 96px); }
+  .card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(20px, 4vw, 40px); align-items: start; }
+  .text { display: grid; gap: 14px; max-width: 70ch; }
+  h2 { font-size: var(--step-2); }
+  p { color: var(--muted); font-size: 1.06rem; }
+  .paper p { color: var(--paper-muted); }
+  a { color: inherit; font-weight: 600; text-underline-offset: 3px; }
+  @media (max-width: 600px) { .card { grid-template-columns: 1fr; } img { width: 44px; height: 44px; } }
+</style>

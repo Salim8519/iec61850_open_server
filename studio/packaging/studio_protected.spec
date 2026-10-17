@@ -19,6 +19,8 @@ if len(modules) != 1:
 for path in required:
     if not path.exists():
         raise RuntimeError(f"Build prerequisite missing: {path}")
+# Detached signature of the compiled module; shipped beside it so workers can verify it.
+signature = modules[0].with_name(modules[0].name + ".sig")
 
 hidden = list(imports["modules"])
 for package in imports["packages"]:
@@ -31,7 +33,8 @@ analysis = Analysis(
               (str(native / "studio_ied.exe"), "native"),
               (str(native / "studio_live.exe"), "native"),
               (str(native / "studio_probe.exe"), "native")],
-    datas=[(str(protected / "frontend.pak"), "."),
+    datas=[*([(str(signature), ".")] if signature.exists() else []),
+           (str(protected / "frontend.pak"), "."),
            (str(studio / "schemas"), "schemas"),
            (str(studio / "packaging/README.md"), "."),
            (str(workspace / ".local/native/libiec61850/COPYING"), "licenses/libiec61850"),

@@ -1,7 +1,10 @@
 ---
 // Instant hero visual (no JS): a live single-line diagram drawn in SVG. The 3D scene
-// fades in over it on capable devices; phones and reduced-motion keep this.
-const bays = [
+// fades in over it on capable devices; phones and reduced-motion keep this. The compact
+// version draws three bays on a narrow canvas so its labels stay readable on a phone.
+interface Props { compact?: boolean; }
+const { compact = false } = Astro.props;
+const allBays = [
   { x: 200, name: 'Q01 Line A', closed: true },
   { x: 360, name: 'Q02 Line B', closed: true },
   { x: 520, name: 'Q03 Coupler', closed: false },
@@ -9,18 +12,26 @@ const bays = [
   { x: 840, name: 'Q05 Cable', closed: false },
   { x: 1000, name: 'T1 Transformer', closed: true, transformer: true },
 ];
+const bays = compact
+  ? [{ ...allBays[0], x: 110 }, { ...allBays[2], x: 300 }, { ...allBays[5], x: 490 }]
+  : allBays;
+const width = compact ? 600 : 1200;
+const busEnd = width - 50;
+const firstX = compact ? 40 : 120;
+const fade = compact ? 'fade-compact' : 'fade-wide';
+const ring = `url(#${fade})`;
 ---
-<svg class="poster" viewBox="0 0 1200 500" role="img"
-     aria-label="Single-line diagram with two busbars and six bays; energised feeders glow green">
+<svg class:list={['poster', { compact }]} viewBox={`0 0 ${width} 500`} role="img"
+     aria-label={`Single-line diagram with two busbars and ${bays.length} bays; energised feeders glow green`}>
   <defs>
-    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id={fade} x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#eaf0f8" stop-opacity=".9" />
       <stop offset="1" stop-color="#eaf0f8" stop-opacity=".25" />
     </linearGradient>
   </defs>
   <g class="grid">
-    {Array.from({ length: 13 }, (_, i) => <line x1={i * 100} y1="0" x2={i * 100} y2="500" />)}
-    {Array.from({ length: 6 }, (_, i) => <line x1="0" y1={i * 100} x2="1200" y2={i * 100} />)}
+    {Array.from({ length: width / 100 + 1 }, (_, i) => <line x1={i * 100} y1="0" x2={i * 100} y2="500" />)}
+    {Array.from({ length: 6 }, (_, i) => <line x1="0" y1={i * 100} x2={width} y2={i * 100} />)}
   </g>
   <line class="bus live" x1="120" y1="100" x2="1080" y2="100" />
   <line class="bus" x1="120" y1="140" x2="1080" y2="140" />
@@ -34,9 +45,9 @@ const bays = [
       <rect class:list={['breaker', { closed: bay.closed }]} x={bay.x - 15} y="250" width="30" height="30" rx="4" />
       <line class="wire" x1={bay.x} y1="280" x2={bay.x} y2={bay.transformer ? 330 : 360} />
       {bay.transformer ? (
-        <g class="tx"><circle cx={bay.x} cy="350" r="20" /><circle cx={bay.x} cy="378" r="20" /></g>
+        <g class="tx"><circle cx={bay.x} cy="350" r="20" stroke={ring} /><circle cx={bay.x} cy="378" r="20" stroke={ring} /></g>
       ) : (
-        <g><circle class="ct" cx={bay.x} cy="330" r="10" /><path class="arrow" d={`M${bay.x - 10} 400 L${bay.x + 10} 400 L${bay.x} 416 Z`} /></g>
+        <g><circle class="ct" cx={bay.x} cy="330" r="10" stroke={ring} /><path class="arrow" d={`M${bay.x - 10} 400 L${bay.x + 10} 400 L${bay.x} 416 Z`} /></g>
       )}
       <line class="wire" x1={bay.x} y1={bay.transformer ? 398 : 340} x2={bay.x} y2={bay.transformer ? 430 : 400} />
       <text class="label" x={bay.x} y="460" text-anchor="middle">{bay.name}</text>
@@ -53,11 +64,14 @@ const bays = [
   .live .wire, .live .blade { stroke: var(--accent); stroke-dasharray: 10 8; animation: flow 1.6s linear infinite; }
   .breaker { fill: none; stroke: #6b7c99; stroke-width: 3; }
   .breaker.closed { fill: var(--accent); stroke: var(--accent); }
-  .ct, .tx circle { fill: none; stroke: url(#fade); stroke-width: 3; }
+  .ct, .tx circle { fill: none; stroke-width: 3; }
   .arrow { fill: #6b7c99; }
   .live .arrow { fill: var(--accent); }
   .label { font: 500 13px var(--mono); fill: #93a2ba; letter-spacing: .04em; }
   .label.dim { fill: #5d6c86; }
+  .compact .label { font-size: 24px; }
+  .compact .bus { stroke-width: 7; }
+  .compact .wire, .compact .blade { stroke-width: 4; }
   @keyframes flow { to { stroke-dashoffset: -36; } }
   @media (prefers-reduced-motion: reduce) { .live .wire, .live .blade { animation: none; stroke-dasharray: none; } }
 </style>

@@ -1,8 +1,9 @@
 ---
 // Scroll story: steps on the left, a sticky product window on the right that swaps
 // screenshots as each step reaches the middle of the screen. Phones show each
-// screenshot inline under its step. Without JS the first screenshot stays.
-import { Picture } from 'astro:assets';
+// screenshot inline under its step. Without JS the first screenshot stays. Every
+// screenshot opens large on tap (scripts/lightbox.ts).
+import { Picture, getImage } from 'astro:assets';
 import devices from '../assets/screens/devices.jpg';
 import overview from '../assets/screens/diagram-overview.jpg';
 import bay from '../assets/screens/diagram-bay.jpg';
@@ -22,6 +23,7 @@ const steps = [
     alt: 'Signal flow table listing GOOSE senders, datasets and declared receivers',
     text: 'Signal flow lists every GOOSE and report link declared in the SCD and points out mistakes in the file before they reach commissioning.' },
 ];
+const large = await Promise.all(steps.map((step) => getImage({ src: step.image, width: 1568, format: 'webp' })));
 ---
 <section class="story section" aria-labelledby="story-title">
   <div class="wrap">
@@ -36,19 +38,21 @@ const steps = [
             <span class="tag mono">{String(index + 1).padStart(2, '0')} · {step.tag}</span>
             <h3>{step.title}</h3>
             <p>{step.text}</p>
-            <div class="inline-shot">
+            <div class="inline-shot" data-zoom={large[index].src} data-zoom-alt={step.alt} aria-label={`Tap to enlarge: ${step.alt}`}>
               <Picture src={step.image} alt={step.alt} formats={['avif', 'webp']} widths={[480, 800]}
                 sizes="100vw" loading="lazy" />
+              <span class="zoom-hint mono">Tap to enlarge</span>
             </div>
           </li>
         ))}
       </ol>
-      <div class="frame-wrap" aria-hidden="true">
+      <div class="frame-wrap">
         <div class="frame">
           <div class="chrome"><span></span><span></span><span></span><em>ScadaBench</em></div>
           <div class="shots">
             {steps.map((step, index) => (
-              <Picture pictureAttributes={{ class: index === 0 ? 'active' : '' }} src={step.image} alt=""
+              <Picture pictureAttributes={{ class: index === 0 ? 'active' : '', 'data-zoom': large[index].src,
+                'data-zoom-alt': step.alt, 'aria-label': `Enlarge: ${step.alt}` }} src={step.image} alt={step.alt}
                 formats={['avif', 'webp']} widths={[800, 1400]} sizes="(min-width: 960px) 700px, 100vw"
                 loading={index === 0 ? 'eager' : 'lazy'} data-shot={index} />
             ))}
@@ -78,7 +82,7 @@ const steps = [
 <style>
   .layout { display: grid; grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.45fr); gap: clamp(32px, 5vw, 72px); }
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
-  .step { min-height: 64vh; display: grid; align-content: center; gap: 14px; padding-block: 24px;
+  .step { min-height: 48vh; display: grid; align-content: center; gap: 14px; padding-block: 24px;
     opacity: .38; transition: opacity .5s ease; }
   .step.current, .step:first-child { opacity: 1; }
   .step h3 { font-size: var(--step-2); }
@@ -86,21 +90,25 @@ const steps = [
   .tag { font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
   .inline-shot { display: none; }
   .frame-wrap { position: relative; }
-  .frame { position: sticky; top: calc(50vh - 220px); border-radius: 16px; overflow: hidden;
+  .frame { position: sticky; top: max(88px, calc(50vh - 200px)); border-radius: 16px; overflow: hidden;
     border: 1px solid rgb(255 255 255 / 9%); background: #0d1628; box-shadow: var(--shadow); }
   .chrome { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #101a2e;
     border-bottom: 1px solid rgb(255 255 255 / 6%); }
   .chrome span { width: 11px; height: 11px; border-radius: 50%; background: #2a3a57; }
   .chrome em { margin-left: 10px; font: 500 .78rem var(--mono); font-style: normal; color: var(--muted); }
   .shots { position: relative; aspect-ratio: 1568 / 681; }
-  .shots :global(picture) { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; }
-  .shots :global(picture.active) { opacity: 1; }
+  .shots :global(picture) { position: absolute; inset: 0; opacity: 0; visibility: hidden;
+    transition: opacity .4s ease, visibility .4s; }
+  .shots :global(picture.active) { opacity: 1; visibility: visible; }
   .shots :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
   @media (max-width: 959px) {
     .layout { grid-template-columns: 1fr; }
     .frame-wrap { display: none; }
     .step { min-height: 0; opacity: 1; padding-block: 28px; }
-    .inline-shot { display: block; margin-top: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+    .inline-shot { display: block; position: relative; margin-top: 10px; border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--line); }
+    .zoom-hint { position: absolute; right: 8px; bottom: 8px; padding: 6px 10px; border-radius: 999px; font-size: .75rem;
+      background: rgb(7 13 26 / 88%); color: var(--ink); border: 1px solid var(--line); }
   }
   @media (prefers-reduced-motion: reduce) { .step, .shots :global(picture) { transition: none; } }
 </style>

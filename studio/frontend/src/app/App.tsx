@@ -9,6 +9,8 @@ import { DiagramPage } from '../features/diagram/DiagramPage';
 import { DevicesPage } from '../features/devices/DevicesPage';
 import { TestPage } from '../features/test/TestPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
+import { ToolsPage } from '../features/tools/ToolsPage';
+import type { ToolId } from '../copy/tools';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { TourOverlay } from '../features/tour/TourOverlay';
@@ -22,6 +24,7 @@ export function App() {
   const [current, setCurrent] = useState<PlaceId>('devices');
   const [activity, setActivity] = useState(false);
   const [flowIed, setFlowIed] = useState<string | undefined>();
+  const [tool, setTool] = useState<ToolId | null>(null);
   const [tour, setTour] = useState<number | null>(null);
   const [tourVersion, setTourVersion] = useState(1);
   useEffect(() => {
@@ -58,6 +61,8 @@ export function App() {
           const file = event.target.files?.[0]; if (file) studio.importFile(file); event.target.value = '';
         }} />
       <main className="page">
+        {!project && !studio.error && <div className="empty" role="status">
+          Opening your last project… Large stations can take a few seconds.</div>}
         {project && current === 'diagram' && <DiagramPage studio={studio} project={project} locked={locked}
           openDevices={iedId => { setFlowIed(iedId); setCurrent('devices'); }} />}
         {project && current === 'devices' && <DevicesPage project={project} locked={locked} values={studio.values}
@@ -65,7 +70,10 @@ export function App() {
           flowIed={flowIed} />}
         {project && current === 'test' && <TestPage project={project} locked={locked} values={studio.values}
           events={studio.events} perform={studio.perform} prepare={studio.prepare} />}
-        {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform} />}
+        {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}
+          tool={tool} openTool={setTool} />}
+        {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform}
+          openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} />}
       </main>
     </div>
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}

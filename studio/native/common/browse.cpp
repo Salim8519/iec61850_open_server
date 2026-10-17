@@ -41,28 +41,37 @@ Json dataset_members(IedConnection connection, const std::string& reference, con
 }
 }
 
+nlohmann::json browse_node(IedConnection connection, const std::string& reference) {
+    IedClientError error = IED_ERROR_OK;
+    auto list = IedConnection_getLogicalNodeVariables(connection, &error, reference.c_str());
+    auto variables = strings(list, error, reference);
+    auto datasets = directory(connection, reference, ACSI_CLASS_DATA_SET);
+    auto slash = reference.find('/');
+    return {{"name", slash == std::string::npos ? reference : reference.substr(slash + 1)}, {"variables", variables},
+        {"leaves", discover_leaves(connection, reference, variables)},
+        {"objects", directory(connection, reference, ACSI_CLASS_DATA_OBJECT)},
+        {"datasets", datasets}, {"dataset_members", dataset_members(connection, reference, datasets)},
+        {"buffered_reports", directory(connection, reference, ACSI_CLASS_BRCB)},
+        {"unbuffered_reports", directory(connection, reference, ACSI_CLASS_URCB)}};
+}
+
+std::vector<std::string> browse_names(IedConnection connection, const std::string& device) {
+    IedClientError error = IED_ERROR_OK;
+    if (device.empty()) {
+        auto list = IedConnection_getServerDirectory(connection, &error, false);
+        return strings(list, error, "GetServerDirectory");
+    }
+    auto list = IedConnection_getLogicalDeviceDirectory(connection, &error, device.c_str());
+    return strings(list, error, device);
+}
+
 nlohmann::json browse_server(IedConnection connection) {
     try {
-        IedClientError error = IED_ERROR_OK;
-        auto list = IedConnection_getServerDirectory(connection, &error, false);
-        auto devices = strings(list, error, "GetServerDirectory");
         Json output = {{"ok", true}, {"devices", Json::array()}};
-        for (const auto& device : devices) {
-            list = IedConnection_getLogicalDeviceDirectory(connection, &error, device.c_str());
-            auto names = strings(list, error, device);
+        for (const auto& device : browse_names(connection, "")) {
             Json entry = {{"name", device}, {"nodes", Json::array()}};
-            for (const auto& name : names) {
-                auto reference = device + "/" + name;
-                list = IedConnection_getLogicalNodeVariables(connection, &error, reference.c_str());
-                auto variables = strings(list, error, reference);
-                auto datasets = directory(connection, reference, ACSI_CLASS_DATA_SET);
-                entry["nodes"].push_back({{"name", name}, {"variables", variables},
-                    {"leaves", discover_leaves(connection, reference, variables)},
-                    {"objects", directory(connection, reference, ACSI_CLASS_DATA_OBJECT)},
-                    {"datasets", datasets}, {"dataset_members", dataset_members(connection, reference, datasets)},
-                    {"buffered_reports", directory(connection, reference, ACSI_CLASS_BRCB)},
-                    {"unbuffered_reports", directory(connection, reference, ACSI_CLASS_URCB)}});
-            }
+            for (const auto& name : browse_names(connection, device))
+                entry["nodes"].push_back(browse_node(connection, device + "/" + name));
             output["devices"].push_back(entry);
         }
         return output;

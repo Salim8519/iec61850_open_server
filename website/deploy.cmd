@@ -14,17 +14,28 @@ for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Setup
 )
 echo No release installer found in studio\dist-protected; the download link will not work yet.
 :installer_done
-rem Tutorial videos rendered by marketing\videos\make.py (MP4 and poster per lesson).
-if not exist "..\marketing\videos\out\*.mp4" goto :no_videos
+rem Tutorial videos: the light 720p copies from marketing\videos\web_encode.py when present,
+rem otherwise the 1080p masters rendered by marketing\videos\make.py (never the raw captures).
+set "VIDEO_DIR=..\marketing\videos\out\web"
+if not exist "%VIDEO_DIR%\*.mp4" set "VIDEO_DIR=..\marketing\videos\out"
+if not exist "%VIDEO_DIR%\*.mp4" goto :no_videos
 if not exist dist\videos mkdir dist\videos
-copy /y "..\marketing\videos\out\*.mp4" dist\videos\ >nul
-copy /y "..\marketing\videos\out\*.jpg" dist\videos\ >nul
-echo Tutorial videos included.
+copy /y "%VIDEO_DIR%\*.mp4" dist\videos\ >nul
+del /q dist\videos\*.capture.mp4 2>nul
+copy /y "%VIDEO_DIR%\*.jpg" dist\videos\ >nul
+echo Tutorial videos included from %VIDEO_DIR%.
 goto :videos_done
 :no_videos
-echo No tutorial videos found; run marketing\videos\make.py first.
+echo No tutorial videos found; run marketing\videos\make.py, then web_encode.py.
 :videos_done
-call npx --yes wrangler@4 whoami >nul 2>&1 || call npx --yes wrangler@4 login || goto :failed
+rem With a saved API token (set-cloudflare-token.cmd) uploads use only api.cloudflare.com.
+set "TOKEN_FILE=%LOCALAPPDATA%\ScadaBench-deploy\cloudflare.token"
+if exist "%TOKEN_FILE%" (
+  set /p CLOUDFLARE_API_TOKEN=<"%TOKEN_FILE%"
+  set "CLOUDFLARE_ACCOUNT_ID=526f27c5e0f7387a16bc955c18425c7f"
+) else (
+  call npx --yes wrangler@4 whoami >nul 2>&1 || call npx --yes wrangler@4 login || goto :failed
+)
 call npx --yes wrangler@4 pages deploy dist --project-name scadabench --branch main --commit-dirty=true || goto :failed
 echo.
 echo Published. Live at https://scadabench.com (preview: https://scadabench.pages.dev)

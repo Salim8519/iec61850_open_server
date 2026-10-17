@@ -89,8 +89,9 @@ def check(settings):
             runtime.close()
         recovered = create_app(local, "isolated-recovery-test")
         try:
+            assert recovered.extensions["startup"].wait(120)
             assert recovered.extensions["projects"].project["id"] == identity
-            assert recovered.extensions["startup_recovery"]["status"] == "restored"
+            assert recovered.extensions["startup"].result["status"] == "restored"
             assert recovered.extensions["runtime"].state == "stopped"
             assert not recovered.extensions["runtime"].supervisor.workers
             client = recovered.test_client()

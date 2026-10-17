@@ -1,0 +1,6 @@
+.tool-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.tool-card { gap: 10px; padding: 20px; }
+.tool-card .row { align-items: center; gap: 12px; flex-wrap: nowrap; }
+.tool-icon { margin: 0; width: 40px; height: 40px; flex-shrink: 0; }
+.tool-header { align-items: center; gap: 12px; }
+.tool-header h2 { margin: 0; }

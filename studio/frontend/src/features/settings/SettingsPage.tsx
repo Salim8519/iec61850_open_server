@@ -9,8 +9,8 @@ import { NetworkSettings } from './NetworkSettings';
 import { LicenseSection } from './LicenseSection';
 import './settings.css';
 
-export function SettingsPage({ project, locked, perform }: {
-  project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
+export function SettingsPage({ project, locked, perform, openTraffic }: {
+  project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>; openTraffic: () => void;
 }) {
   const [view, setView] = useState<'network' | 'license' | 'about'>('network');
   const [npcap, setNpcap] = useState<NpcapStatus | null>(null);
@@ -24,7 +24,8 @@ export function SettingsPage({ project, locked, perform }: {
     <SegmentedControl label="Settings sections" value={view} onChange={setView}
       options={[{ value: 'network', label: 'Network & GOOSE' }, { value: 'license', label: 'License' },
         { value: 'about', label: 'About' }]} />
-    {view === 'network' && <NetworkSettings project={project} locked={locked} perform={perform} />}
+    {view === 'network' && <NetworkSettings project={project} locked={locked} perform={perform}
+      openTraffic={openTraffic} />}
     {view === 'license' && <LicenseSection />}
     {view === 'about' && <div className="card"><div className="card-heading"><h2>About this app</h2>
       {npcap && <StatusPill status={npcap.installed ? UI_STATUS.npcap_ready : UI_STATUS.npcap_missing} />}</div>

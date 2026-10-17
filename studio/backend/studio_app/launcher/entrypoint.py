@@ -35,9 +35,15 @@ def main():
                         help="Vite dev server address printed by --dev")
     parser.add_argument("--native-exe", type=Path, help="Use an explicit native IED worker executable")
     args = parser.parse_args()
+    if args.dev and getattr(sys, "frozen", False):
+        # Developer mode uses a fixed session secret/token and a source reloader; the
+        # installed app must never run it. Dev is available only from source (run_dev.py).
+        raise SystemExit("Developer mode (--dev) is not available in the installed ScadaBench. "
+                         "Run it from source with studio/tools/run_dev.py instead.")
     if getattr(sys, "frozen", False):
         from studio_app.launcher.legacy_folder import migrate
         migrate(os.environ.get("LOCALAPPDATA"))
+        _announce_signed_module()
     settings = Settings.defaults()
     if args.data_dir:
         settings.directory = args.data_dir
@@ -63,6 +69,17 @@ def main():
             tell_user(f"ScadaBench could not start: {error}\n\nDetails are in the logs folder of "
                       f"{settings.directory}.", error=True)
             raise SystemExit(1) from error
+
+
+def _announce_signed_module():
+    """Point the native workers at this exact compiled module, but only when a signature
+    was shipped beside it. The workers then verify it (integrity.cpp verify_module). An
+    unsigned build sets nothing here, so it can never lock itself out by accident."""
+    import studio_app
+    module = getattr(studio_app, "__file__", "") or ""
+    if module.endswith(".pyd") and os.path.exists(module + ".sig"):
+        os.environ["STUDIO_MODULE_PATH"] = module
+        os.environ["STUDIO_MODULE_SIG"] = module + ".sig"
 
 
 def frontend_ready(url, timeout=15):
@@ -158,8 +175,11 @@ def _serve(settings, args, dev):
     else:
         target = url + "#session=" + token
         print(f"Open in your browser: {target}", flush=True)
-        listener = start_window(target, url, settings, args)
     try:
+        # Closing the app window interrupts the main thread, possibly while it is still
+        # starting, so the window opens inside the same cleanup scope as the server.
+        if not dev:
+            listener = start_window(target, url, settings, args)
         server.run()
     except KeyboardInterrupt:
         pass

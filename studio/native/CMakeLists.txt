@@ -20,10 +20,13 @@ set(STUDIO_HEADERS
     "${CMAKE_CURRENT_BINARY_DIR}/libiec61850/config"
     "${JSON_SOURCE}/single_include" "${NPCAP_SDK}/Include" common)
 # License guard: compiled into every build; enforcement exists only when the option is ON.
-add_library(studio_license STATIC common/license_guard.cpp
+add_library(studio_license STATIC common/license_guard.cpp common/integrity.cpp
     third_party/monocypher/monocypher.c third_party/monocypher/monocypher-ed25519.c)
 target_include_directories(studio_license PUBLIC common third_party/monocypher "${JSON_SOURCE}/single_include")
 target_include_directories(studio_license PRIVATE "${STUDIO_RELEASE_KEY_DIR}")
+# module_key.hpp (module-integrity public key) always lives here; added after the
+# configurable release-key dir so release_key.hpp still resolves to the chosen key.
+target_include_directories(studio_license PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/release")
 target_compile_definitions(studio_license PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
 if(STUDIO_ENFORCE_LICENSE)
     target_compile_definitions(studio_license PRIVATE STUDIO_ENFORCE_LICENSE=1)
@@ -38,7 +41,8 @@ add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/goose/publishing.cpp common/npcap.cpp)
 target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker)
 add_executable(studio_live live/main.cpp live/goose_traffic.cpp live/mms_session.cpp
-    live/reports.cpp live/sv_traffic.cpp live/sv_header.cpp worker/ipc/framing.cpp
+    live/reports.cpp live/sv_traffic.cpp live/sv_header.cpp live/explore.cpp live/identify.cpp
+    worker/ipc/framing.cpp
     common/npcap.cpp common/mms_json.cpp
     common/browse.cpp common/type_tree.cpp)
 target_include_directories(studio_live PRIVATE ${STUDIO_HEADERS} worker live)

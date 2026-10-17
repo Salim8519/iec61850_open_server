@@ -19,17 +19,36 @@ class FakeProcess:
         return None if self.alive else 0
 
 
-def test_closing_the_window_stops_the_app(tmp_path):
+def test_closing_the_window_stops_the_app(tmp_path, monkeypatch):
+    monkeypatch.setattr(app_window, "HANDOFF_GRACE_SECONDS", 0.05)
+    monkeypatch.setattr(app_window, "POLL_SECONDS", 0.01)
     closed = []
     app_window.watch_window(FakeProcess(), lambda: closed.append(True), tmp_path).join(2)
     assert closed == [True]
 
 
-def test_handoff_to_another_browser_keeps_the_app_running(tmp_path, monkeypatch):
-    monkeypatch.setattr(app_window, "profile_in_use", lambda profile: True)
+def test_handoff_to_another_browser_keeps_the_app_running_until_it_closes(tmp_path, monkeypatch):
+    held = threading.Event()
+    held.set()
+    monkeypatch.setattr(app_window, "POLL_SECONDS", 0.01)
+    monkeypatch.setattr(app_window, "profile_in_use", lambda profile: held.is_set())
     closed = []
-    app_window.watch_window(FakeProcess(), lambda: closed.append(True), tmp_path).join(2)
+    thread = app_window.watch_window(FakeProcess(), lambda: closed.append(True), tmp_path)
+    thread.join(0.2)
     assert closed == []
+    held.clear()
+    thread.join(2)
+    assert closed == [True]
+
+
+def test_browser_relaunch_right_after_start_is_not_a_close(tmp_path, monkeypatch):
+    checks = iter([False, False, True, True, False])
+    monkeypatch.setattr(app_window, "POLL_SECONDS", 0.01)
+    monkeypatch.setattr(app_window, "profile_in_use", lambda profile: next(checks, False))
+    closed = []
+    thread = app_window.watch_window(FakeProcess(), lambda: closed.append(True), tmp_path)
+    thread.join(2)
+    assert closed == [True] and next(checks, "done") == "done"
 
 
 def test_profile_lock_held_by_a_browser_is_detected(tmp_path):

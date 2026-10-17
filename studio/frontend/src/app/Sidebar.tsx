@@ -1,9 +1,10 @@
-import { Activity, CircleHelp, Compass, Cpu, FlaskConical, PlayCircle, Settings, Workflow } from 'lucide-react';
+import { Activity, CircleHelp, Compass, Cpu, FlaskConical, PlayCircle, Settings, Workflow, Wrench } from 'lucide-react';
 import { Menu } from '../ui/Menu';
 import { TOUR_COPY, TUTORIALS_URL } from '../copy/tour';
 import { PLACES, type PlaceId } from './places';
 
-const ICONS: Record<PlaceId, typeof Workflow> = { diagram: Workflow, devices: Cpu, test: FlaskConical, settings: Settings };
+const ICONS: Record<PlaceId, typeof Workflow> = { diagram: Workflow, devices: Cpu, test: FlaskConical, tools: Wrench,
+  settings: Settings };
 
 export function Sidebar({ current, go, connected, eventCount, openActivity, openTour }: {
   current: PlaceId; go: (id: PlaceId) => void; connected: boolean; eventCount: number; openActivity: () => void;

@@ -1,4 +1,5 @@
 ---
+import TrustRow from './TrustRow.astro';
 import { SITE, buyUrl } from '../data/site';
 interface Props { title?: string; text?: string; }
 const {
@@ -6,15 +7,16 @@ const {
   text = `Download ScadaBench, start the free ${SITE.trialDays}-day trial and run your own SCD in minutes. No card, no hardware.`,
 } = Astro.props;
 ---
-<section class="closing section">
+<section class="closing section" data-cta-zone>
   <div class="wrap panel reveal">
     <img src="/favicon.svg" alt="" width="64" height="64" />
     <h2>{title}</h2>
     <p class="lede">{text}</p>
     <div class="actions">
       <a class="btn btn-primary" href="/download/">Download free trial</a>
-      <a class="btn btn-ghost" href={buyUrl}>Buy lifetime · $<span data-price>{SITE.price}</span></a>
+      <a class="btn btn-ghost" href={buyUrl}><span>Buy lifetime · $<span data-price>{SITE.price}</span></span></a>
     </div>
+    <TrustRow />
     <p class="small mono">{SITE.requirements}</p>
   </div>
 </section>
@@ -26,5 +28,7 @@ const {
   h2 { font-size: var(--step-3); }
   .lede { margin-inline: auto; }
   .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+  .panel :global(.trust) { justify-content: center; padding-inline: 16px; }
+  @media (max-width: 600px) { .actions { display: grid; width: 100%; padding-inline: 16px; } }
   .small { font-size: .78rem; color: var(--muted); }
 </style>

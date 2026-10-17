@@ -5,6 +5,9 @@ import Story from '../components/Story.astro';
 import Facts from '../components/Facts.astro';
 import FeatureGrid from '../components/FeatureGrid.astro';
 import Closing from '../components/Closing.astro';
+import DemoVideo from '../components/DemoVideo.astro';
+import Compare from '../components/Compare.astro';
+import BuiltBy from '../components/BuiltBy.astro';
 import { SITE } from '../data/site';
 
 const schema = {
@@ -25,10 +28,11 @@ const audiences = ['Protection & control engineers', 'SCADA and gateway integrat
       <ul>{audiences.map((item) => <li>{item}</li>)}</ul>
     </div>
   </section>
+  <DemoVideo />
   <Story />
   <Facts />
   <FeatureGrid />
-  <section class="safe section" aria-labelledby="safe-title">
+  <section class="safe section lazy-render" aria-labelledby="safe-title">
     <div class="wrap split">
       <div class="reveal">
         <span class="eyebrow">Safe by design</span>
@@ -41,6 +45,8 @@ const audiences = ['Protection & control engineers', 'SCADA and gateway integrat
       </ul>
     </div>
   </section>
+  <Compare />
+  <BuiltBy />
   <Closing />
 </Base>
 

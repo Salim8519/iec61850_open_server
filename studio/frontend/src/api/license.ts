@@ -14,6 +14,7 @@ export type LicenseStatus = {
   masked_key: string | null;
   hwid: string | null;
   transfer_available: boolean;
+  app_version: string;
 };
 
 export class LicenseError extends Error {

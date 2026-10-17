@@ -102,11 +102,11 @@ def test_go_signed_certificate_verifies_in_python():
 
 
 def test_hwid_composition_is_stable_and_matches_native_format():
-    value = hwid.compose(" 1A2B3C4D-AAAA-BBBB-CCCC-0123456789EF ", 0xA1B2C3D4)
-    assert value == hwid.compose("1a2b3c4d-aaaa-bbbb-cccc-0123456789ef", 0xA1B2C3D4)
-    text = "substation-studio-hwid-v1|1a2b3c4d-aaaa-bbbb-cccc-0123456789ef|A1B2C3D4"
+    value = hwid.compose(" 1A2B3C4D-AAAA-BBBB-CCCC-0123456789EF ", 0xA1B2C3D4, "aabb")
+    assert value == hwid.compose("1a2b3c4d-aaaa-bbbb-cccc-0123456789ef", 0xA1B2C3D4, "aabb")
+    text = "substation-studio-hwid-v2|1a2b3c4d-aaaa-bbbb-cccc-0123456789ef|A1B2C3D4|aabb"
     assert value == hashlib.sha256(text.encode()).hexdigest()
-    assert hwid.compose("g", 0x1F) == hashlib.sha256(b"substation-studio-hwid-v1|g|0000001F").hexdigest()
+    assert hwid.compose("g", 0x1F, "") == hashlib.sha256(b"substation-studio-hwid-v2|g|0000001F|").hexdigest()
 
 
 def test_proof_of_work_solver_meets_difficulty():
@@ -154,6 +154,17 @@ def test_online_check_removes_refunded_license_but_keeps_file(tmp_path):
     assert list((tmp_path / "home").glob("license.cert.revoked-*"))
 
 
+def test_online_check_keeps_owner_helper_license_the_server_does_not_know(tmp_path):
+    """Owner helper licenses (ADR-0052) are signed offline; the server answers "unknown"."""
+    class UnknownToServer(FakeClient):
+        def verify(self, key, machine):
+            return {"status": "unknown"}
+    install(tmp_path, bundle(license_id="OWNER-0123456789ABCDEF", email="owner@scadabench.com"))
+    studio = service(tmp_path, now=NOW + 30 * DAY, client_factory=UnknownToServer)
+    assert studio.verify_online_if_due() == "unknown"
+    assert studio.is_licensed() and (tmp_path / "home/license.cert").exists()
+
+
 def test_swapped_native_worker_or_debugger_blocks_packaged_mode(tmp_path, monkeypatch):
     from studio_app.licensing import integrity
     install(tmp_path, bundle())
@@ -174,3 +185,30 @@ def test_server_url_must_be_https(tmp_path):
     with pytest.raises(LicenseActionError):
         studio.set_server_url("http://evil.example.com")
     assert studio.set_server_url("https://license.example.com/")["server_url"] == "https://license.example.com"
+
+
+def test_license_client_verifies_https_with_the_windows_certificate_check(monkeypatch):
+    """ADR-0056: OpenSSL alone rejected the 2026 Let's Encrypt chain on PCs without ISRG Root X2."""
+    import ssl
+    import truststore
+    context = client.https_context()
+    assert isinstance(context, truststore.SSLContext)
+    assert context.verify_mode == ssl.CERT_REQUIRED and context.check_hostname
+    seen = {}
+
+    class Answer:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *error):
+            return False
+
+        def read(self, size):
+            return b'{"ok": true}'
+
+    def fake_urlopen(request, timeout, context):
+        seen.update(url=request.full_url, context=context)
+        return Answer()
+    monkeypatch.setattr(client, "urlopen", fake_urlopen)
+    assert client.LicenseClient("https://license.example.com")._call("GET", "/api/v1/health") == {"ok": True}
+    assert seen == {"url": "https://license.example.com/api/v1/health", "context": context}

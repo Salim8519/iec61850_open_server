@@ -41,6 +41,14 @@ for: Checkout order approved, Payment capture completed, refunded, reversed.
 | Update after new code | `sudo bash deploy/setup.sh` (or `push.ps1` again) |
 | Live output | `journalctl -u license-server -f` |
 
+## Owner license helper (Windows, offline)
+
+`helper/` builds `ScadaBench-License-Helper-Setup.exe`. Run it once on your PC: it makes
+a separate owner signing key, locks it with your password and writes the portable
+`ScadaBench-License-Helper.exe` to the Desktop. That one file opens a window with a
+password box and two buttons (make / remove the license on this PC), with no internet. This server's
+`signing.key` is never copied. See [the spec](../docs/specs/license-helper.md).
+
 **Back up `signing.key`** (included in `backup`). Without it you cannot issue keys that
 existing ScadaBench installs accept. If it ever leaks: `keygen --force`, then run
 `configure_release.py --add-key <new key>` so new releases accept both keys.

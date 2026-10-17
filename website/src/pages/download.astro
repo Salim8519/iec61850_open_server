@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import TrustRow from '../components/TrustRow.astro';
 import { SITE } from '../data/site';
 
 const steps = [
@@ -12,11 +13,12 @@ const steps = [
 <Base title="Download" description={`Download ScadaBench ${SITE.version} for Windows 10 and 11 and start a free ${SITE.trialDays}-day trial.`}>
   <PageHeader eyebrow={`Version ${SITE.version} · Windows 64-bit`} title="Download ScadaBench."
     lede="One installer, everything included. Your projects and license stay in your user folder across updates.">
-    <div class="actions">
-      <a class="btn btn-primary" href={SITE.download}>Download for Windows</a>
+    <div class="actions" data-cta-zone>
+      <a class="btn btn-primary" href={SITE.download} data-astro-prefetch="false" download>Download for Windows</a>
       <a class="btn btn-ghost" href="/tutorials/">Watch the 1-minute start</a>
     </div>
     <p class="req mono">{SITE.requirements}</p>
+    <TrustRow />
   </PageHeader>
   <section class="paper section">
     <div class="wrap">
@@ -37,6 +39,7 @@ const steps = [
 
 <style>
   .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+  @media (max-width: 600px) { .actions { display: grid; width: 100%; } }
   .req { color: var(--muted); font-size: .8rem; }
   .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
   .steps li { display: grid; gap: 10px; align-content: start; padding: 28px; border-radius: var(--radius); background: #fff;
