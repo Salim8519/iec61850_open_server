@@ -5,13 +5,14 @@ export const SITE = {
   url: 'https://scadabench.com',
   licenseServer: 'https://license.scadabench.com',
   download: '/download/ScadaBench-Setup.exe',
+  portable: '/download/ScadaBench-Portable.exe',
   supportEmail: 'support@scadabench.com',
   price: '149',
   currency: 'USD',
   trialDays: 7,
   refundDays: 7,
   movesPerYear: 2,
-  version: '0.1.5',
+  version: '0.1.6',
   requirements: 'Windows 10 or 11, 64-bit. 4 GB RAM. No Docker, Python or Node needed.',
 };
 

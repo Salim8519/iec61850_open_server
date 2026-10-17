@@ -1,0 +1,8 @@
+ScadaBench portable
+
+1. Put this ScadaBench folder anywhere you can write (Desktop, Documents, a USB stick).
+2. Start ScadaBench.exe. Nothing is installed in Windows.
+3. Your projects and settings stay in the data folder next to ScadaBench.exe.
+   Keep it when you copy or update the folder.
+
+Windows may show "Windows protected your PC" the first time: choose More info, then Run anyway.

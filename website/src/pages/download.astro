@@ -12,9 +12,10 @@ const steps = [
 ---
 <Base title="Download" description={`Download ScadaBench ${SITE.version} for Windows 10 and 11 and start a free ${SITE.trialDays}-day trial.`}>
   <PageHeader eyebrow={`Version ${SITE.version} · Windows 64-bit`} title="Download ScadaBench."
-    lede="One installer, everything included. Your projects and license stay in your user folder across updates.">
+    lede="An installer or a portable version, everything included. Your projects and license stay with you across updates.">
     <div class="actions" data-cta-zone>
       <a class="btn btn-primary" href={SITE.download} data-astro-prefetch="false" download>Download for Windows</a>
+      <a class="btn btn-ghost" href={SITE.portable} data-astro-prefetch="false" download>Portable version</a>
       <a class="btn btn-ghost" href="/tutorials/">Watch the 1-minute start</a>
     </div>
     <p class="req mono">{SITE.requirements}</p>
@@ -30,6 +31,9 @@ const steps = [
       <div class="notes">
         <p><b>Windows says "Windows protected your PC"?</b> Choose More info, then Run anyway. Windows shows this for new
           apps that are not yet code-signed.</p>
+        <p><b>Portable version.</b> Run it and choose a folder you can write to, such as the Desktop or a USB stick. It
+          unpacks ScadaBench there and installs nothing in Windows, so your projects stay in the data folder next to
+          ScadaBench.exe. It is the same app and license as the installer. To update, choose the same folder again.</p>
         <p><b>GOOSE and Sampled Values</b> need the free Npcap driver from npcap.com, installed with its default options.
           Everything else works without it.</p>
       </div>

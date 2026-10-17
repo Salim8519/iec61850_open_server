@@ -7,8 +7,9 @@
 .gateway-warning { color: var(--warning); margin: 0; }
 .gateway-problems { margin: 0; padding: 10px 14px 10px 30px; border-radius: var(--radius-small); background: var(--warning-soft);
   color: #92400e; font-size: 14px; display: grid; gap: 4px; }
-.gateway-points td { vertical-align: top; }
-.gateway-points select { min-width: 170px; }
+.gateway-points td { vertical-align: middle; padding-top: 6px; padding-bottom: 6px; }
+.gateway-points select { min-width: 160px; }
+.type-cell { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
 .gateway-number { width: 84px; }
 .gateway-points td:nth-child(6) input { width: 150px; }
 .gateway-toolbar .search-field { width: 240px; }
@@ -28,8 +29,9 @@
 .gateway-run-note { gap: 12px; padding: 8px 14px; border-radius: var(--radius-small); background: var(--warning-soft);
   border: 1px dashed #f0b35a; justify-content: space-between; flex-wrap: wrap; }
 .gateway-flow, .gateway-fill { display: flex; flex-direction: column; gap: 20px; }
+.gateway-fill { gap: 12px; }
 /* The open tool fills the page height (banners included); while running the panel takes what is left. */
-.content.tool-fill { min-height: 100%; height: 100%; }
+.content.tool-fill { min-height: 100%; height: 100%; padding-top: 16px; padding-bottom: 16px; gap: 12px; }
 .content.tool-fill > .gateway-fill { flex: 1 1 0; min-height: 520px; }
 .gateway-fill > * { flex-shrink: 0; }
 .gateway-panel { display: flex; flex-direction: column; min-height: 420px; }

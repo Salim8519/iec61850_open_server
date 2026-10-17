@@ -61,3 +61,4 @@
 | [0057](ADR-0057-gateway-explorer-commands.md) | Gateway (lib60870, opendnp3, own Modbus), studio_control for confirmed commands to real IEDs from Tools, format 13 gateway section, autonomous tools with remembered settings |
 | [0058](ADR-0058-window-first-startup.md) | Window first: the autosave restores on a background thread; engineering requests wait behind the security/license checks; a protective recovery stop refuses all work |
 | [0059](ADR-0059-separate-run-running-dots.md) | Run and the gateway are separate; a running dot per place with words; gateway panel fills the window; page commands only after a warning, logged like SCADA commands |
+| [0060](ADR-0060-portable-version.md) | Portable version = the same sealed build with a data folder beside the exe; zip plus an Inno self-extractor (fits the 25 MiB Pages limit), no registry or uninstaller |

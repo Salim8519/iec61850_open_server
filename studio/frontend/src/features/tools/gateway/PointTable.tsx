@@ -77,10 +77,10 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
       <div className="table-scroll"><table className="gateway-points"><thead><tr><th>Type</th><th>{ADDRESS_LABEL[protocol]}</th>
         <th>IED · reference</th><th>Scale</th><th>Value now</th><th>Description</th><th aria-label="Remove" /></tr></thead>
         <tbody>{visible.map(({ row, index }) => <tr key={pointKey(row, index)}>
-          <td><select value={row.kind} disabled={locked} aria-label="Point type"
+          <td><span className="type-cell"><select value={row.kind} disabled={locked} aria-label="Point type"
             onChange={event => update(index, { kind: event.target.value as PointKind })}>
             {(Object.keys(KIND_LABELS) as PointKind[]).map(kind => <option key={kind} value={kind}>{KIND_LABELS[kind]}</option>)}
-          </select><div className="small muted">{KIND_WHERE[protocol][row.kind]}</div></td>
+          </select><span className="small muted">{KIND_WHERE[protocol][row.kind]}</span></span></td>
           <td><input className="gateway-number" inputMode="numeric" value={row.address} disabled={locked} aria-label="Address"
             onChange={event => update(index, { address: Number(event.target.value.replace(/\D/g, '')) })} /></td>
           <td className="reference-cell" title={row.ref}><strong>{row.ied_name ?? row.ied}</strong>

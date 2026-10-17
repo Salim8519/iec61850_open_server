@@ -14,6 +14,14 @@ for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Setup
 )
 echo No release installer found in studio\dist-protected; the download link will not work yet.
 :installer_done
+rem The portable self-extractor of the same sealed build (studio\tools\make_portable.py), when present.
+for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Portable-*.exe" 2^>nul') do (
+  copy /y "..\studio\dist-protected\%%F" dist\download\ScadaBench-Portable.exe >nul
+  echo Portable version included: %%F
+  goto :portable_done
+)
+echo No portable version found in studio\dist-protected; the portable link will not work yet.
+:portable_done
 rem Tutorial videos: the light 720p copies from marketing\videos\web_encode.py when present,
 rem otherwise the 1080p masters rendered by marketing\videos\make.py (never the raw captures).
 set "VIDEO_DIR=..\marketing\videos\out\web"

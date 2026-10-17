@@ -53,6 +53,14 @@ Owner requests after 0.1.5:
     recovery banner shown), whether the IEDs were off or running;
   - the tool card shows "Gateway: IEC 104 on port 12404 · 0 SCADA masters".
 
+## Follow-up: taller point list (owner screenshot, same day)
+
+- Only about 3 rows were visible. The type code (M_SP …) now sits beside the type box, rows
+  are vertically centred with 6 px cell padding, and the gateway page uses smaller padding
+  and gaps.
+- At 1536×864 with the "IEDs not running" notice: the table area is 392 px, a row 54 px,
+  about 7 rows visible; the page still does not scroll (745 = 745).
+
 ## Limitations
 
 - The real-device warning style was checked in code and tests only; no real relay was
