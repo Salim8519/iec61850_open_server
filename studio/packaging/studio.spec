@@ -6,7 +6,7 @@ studio = Path(SPECPATH).parent
 workspace = studio.parent
 native = Path(os.environ.get("STUDIO_BUILD_NATIVE", studio / "native/build/Release"))
 frontend = Path(os.environ.get("STUDIO_BUILD_FRONTEND", studio / "frontend/dist"))
-required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe",
+required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
             frontend / "index.html"]
 for path in required:
     if not path.exists():
@@ -17,12 +17,17 @@ analysis = Analysis(
     pathex=[str(studio / "backend")],
     binaries=[(str(native / "studio_ied.exe"), "native"),
               (str(native / "studio_live.exe"), "native"),
-              (str(native / "studio_probe.exe"), "native")],
+              (str(native / "studio_probe.exe"), "native"),
+              (str(native / "studio_gateway.exe"), "native"),
+              (str(native / "studio_control.exe"), "native")],
     datas=[(str(frontend), "frontend"),
            (str(studio / "schemas"), "schemas"),
            (str(studio / "packaging/README.md"), "."),
            (str(workspace / ".local/native/libiec61850/COPYING"), "licenses/libiec61850"),
-           (str(workspace / ".local/native/json/LICENSE.MIT"), "licenses/nlohmann-json")],
+           (str(workspace / ".local/native/json/LICENSE.MIT"), "licenses/nlohmann-json"),
+           (str(workspace / ".local/native/lib60870/COPYING"), "licenses/lib60870"),
+           (str(workspace / ".local/native/opendnp3/LICENSE"), "licenses/opendnp3"),
+           (str(workspace / ".local/native/opendnp3/NOTICE"), "licenses/opendnp3")],
     hiddenimports=[], hookspath=[], runtime_hooks=[], excludes=[], noarchive=False,
 )
 python_archive = PYZ(analysis.pure)

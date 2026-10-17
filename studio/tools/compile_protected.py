@@ -100,9 +100,10 @@ def build_native(mode, release):
     if release is not None and not mode.dry_run:
         keys = protected_source.write_native_header(mode.build / "release-keys", release[1])
     mode.run(["cmake", "-S", STUDIO / "native", "-B", mode.native_build, "-G", "Visual Studio 16 2019", "-A", "x64",
-              "-DSTUDIO_ENFORCE_LICENSE=ON", f"-DSTUDIO_RELEASE_KEY_DIR={keys.as_posix()}"])
+              "-DSTUDIO_ENFORCE_LICENSE=ON", "-DSTUDIO_GATEWAY=ON",  # explicit: an older cache may hold OFF
+              f"-DSTUDIO_RELEASE_KEY_DIR={keys.as_posix()}"])
     mode.run(["cmake", "--build", mode.native_build, "--config", "Release", "--parallel", "8", "--target",
-              "studio_ied", "studio_live", "studio_probe", "studio_license_check"])
+              "studio_ied", "studio_live", "studio_probe", "studio_gateway", "studio_control", "studio_license_check"])
     if not mode.dry_run:
         flag = subprocess.run([str(mode.native_bin / "studio_license_check.exe"), "enforced"],
                               capture_output=True, text=True).stdout.strip()

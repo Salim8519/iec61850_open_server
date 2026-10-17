@@ -42,3 +42,10 @@ a.button.disabled { pointer-events: none; opacity: 0.5; }
 @keyframes tool-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
 @media (max-width: 1000px) { .explorer-layout { grid-template-columns: 1fr; } .explorer-tree { position: static; max-height: 360px; } }
+.command-panel { margin: 0 12px 8px; display: grid; gap: 8px; }
+.command-row { gap: 8px; align-items: center; flex-wrap: wrap; }
+.command-step { width: 90px; }
+.command-confirm { border: 1px solid #f19a9a; background: var(--error-soft); border-radius: 10px; padding: 10px 14px; }
+.command-confirm p { margin: 0 0 6px; }
+.command-confirm .row { gap: 8px; }
+.command-result { display: grid; gap: 4px; padding: 6px 0; }

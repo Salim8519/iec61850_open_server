@@ -17,9 +17,9 @@ export const FAQ_GROUPS: FaqGroup[] = [
   { id: 'technical', title: 'Technical', items: [
     { q: 'Which files can I import?', a: 'CID, ICD, IID and SCD files in SCL 2003, 2007B and 2007B4. Original SCL and vendor extensions are kept.' },
     { q: 'Can my SCADA or gateway connect to the simulated IEDs?', a: 'Yes. Every IED is a real MMS server on port 102. On "This PC only" mode they listen on private loopback addresses; the lab network setup puts them on a real adapter for other machines.' },
-    { q: 'Can ScadaBench operate a real relay?', a: 'No. Connections to real IEDs are read-only by design: free report blocks or polling, never controls or settings.' },
+    { q: 'Can ScadaBench operate a real relay?', a: 'Only when you ask it to. IED Explorer sends a command after a short confirmation, and the gateway simulator forwards SCADA commands while "Allow SCADA commands to real IEDs" is on. Reading uses free report blocks or polling, and settings are never written.' },
     { q: 'Does it publish GOOSE and Sampled Values?', a: 'Simulated IEDs publish GOOSE. Sampled Values are listened to and supervised, not published. Both need the free Npcap driver.' },
-    { q: 'Is IEC 60870-5-104 supported?', a: 'Not yet. It is on the roadmap. Today ScadaBench speaks IEC 61850: MMS, GOOSE and Sampled Values.' },
+    { q: 'Is IEC 60870-5-104 supported?', a: 'Yes, in the gateway simulator, together with Modbus TCP and DNP3: your SCADA connects to ScadaBench as the station gateway. It is tested against independent IEC 104 and DNP3 master implementations; tell us which SCADA you use.' },
     { q: 'Can I use it on an operational substation network?', a: 'No. ScadaBench is a laboratory and engineering tool. Never connect it to a live operational network.' },
   ] },
   { id: 'buying', title: 'Licensing and buying', items: [

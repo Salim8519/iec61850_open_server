@@ -2,7 +2,7 @@ import { Loader2, Radar, Search, Square, Telescope } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../api/client';
 import type { Adapter } from '../../../api/network';
-import { scanApi, type ScanPreview, type ScanStatus } from '../../../api/tools';
+import { memoryApi, scanApi, type ScanPreview, type ScanStatus } from '../../../api/tools';
 import { FIND_COPY } from '../../../copy/tools';
 import { InfoTip } from '../../../ui/InfoTip';
 import { StatusPill } from '../../../ui/StatusPill';
@@ -20,10 +20,13 @@ export function FindTool({ openExplorer }: { openExplorer: (host: string, port: 
   const [scan, setScan] = useState<ScanStatus | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
-    api<{ adapters: Adapter[] }>('/network/adapters').then(value => {
+    Promise.all([api<{ adapters: Adapter[] }>('/network/adapters'), memoryApi.get().catch(() => null)]).then(([value, memory]) => {
       const list = rangeChoices(value.adapters, FIND_COPY.thisPc);
       setChoices(list);
-      setChoice(list[0].key); setRange(list[0].range);
+      const remembered = list.find(item => item.key === memory?.find.choice);  // the user's last choice
+      setChoice((remembered ?? list[0]).key);
+      setRange(remembered && memory?.find.range ? memory.find.range : (remembered ?? list[0]).range);
+      if (remembered && memory?.find.port) setPort(String(memory.find.port));
     }).catch(reason => setError(reason.message));
     scanApi.status().then(setScan).catch(() => {});
   }, []);
@@ -43,6 +46,7 @@ export function FindTool({ openExplorer }: { openExplorer: (host: string, port: 
   const start = () => scanApi.start(range, Number(port)).then(setScan).catch(reason => setError(reason.message));
   const pick = (key: string) => {
     setChoice(key);
+    memoryApi.rememberFind(key).catch(() => {});
     const found = choices.find(item => item.key === key);
     if (found) setRange(found.range);
   };

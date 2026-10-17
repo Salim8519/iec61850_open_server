@@ -42,6 +42,9 @@ changed, dropped or invented by accident.
 | [Bay templates](bay-templates.md) | One-click line feeder, transformer bay and bus coupler |
 | [Guided tour](tour.md) | First-start walkthrough of the five places, reopened from Help |
 | [Tools](tools-page.md) | Tools place: cards for built tools only, GOOSE & SV traffic |
+| [IED Explorer](ied-explorer.md) | Browse any IED, autonomous watch list, commands after confirmation |
+| [Find IEDs](find-ieds.md) | Scan a previewed range for IEC 61850 devices and identify them |
+| [Gateway simulator](gateway.md) | IEC 104, Modbus TCP and DNP3 gateway with smart point list and autonomous start |
 | [Licensing](licensing.md) | Trial and 1-PC lifetime license, offline activation, protected release |
 | [License helper](license-helper.md) | Owner's portable, offline, password-locked license EXE |
 

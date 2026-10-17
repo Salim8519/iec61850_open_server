@@ -12,7 +12,7 @@ native = Path(os.environ["STUDIO_PROTECTED_NATIVE"])
 compiled = protected / "nuitka"
 imports = json.loads((protected / "hidden_imports.json").read_text(encoding="utf-8"))
 modules = sorted(compiled.glob("studio_app*.pyd"))
-required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe",
+required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
             protected / "frontend.pak"]
 if len(modules) != 1:
     raise RuntimeError(f"Expected one compiled studio_app .pyd in {compiled}, found {modules}")
@@ -32,13 +32,18 @@ analysis = Analysis(
     binaries=[(str(modules[0]), "."),
               (str(native / "studio_ied.exe"), "native"),
               (str(native / "studio_live.exe"), "native"),
-              (str(native / "studio_probe.exe"), "native")],
+              (str(native / "studio_probe.exe"), "native"),
+              (str(native / "studio_gateway.exe"), "native"),
+              (str(native / "studio_control.exe"), "native")],
     datas=[*([(str(signature), ".")] if signature.exists() else []),
            (str(protected / "frontend.pak"), "."),
            (str(studio / "schemas"), "schemas"),
            (str(studio / "packaging/README.md"), "."),
            (str(workspace / ".local/native/libiec61850/COPYING"), "licenses/libiec61850"),
            (str(workspace / ".local/native/json/LICENSE.MIT"), "licenses/nlohmann-json"),
+           (str(workspace / ".local/native/lib60870/COPYING"), "licenses/lib60870"),
+           (str(workspace / ".local/native/opendnp3/LICENSE"), "licenses/opendnp3"),
+           (str(workspace / ".local/native/opendnp3/NOTICE"), "licenses/opendnp3"),
            (str(studio / "native/third_party/monocypher/LICENCE.md"), "licenses/monocypher")],
     hiddenimports=hidden, hookspath=[], runtime_hooks=[],
     excludes=["tkinter"], noarchive=False,

@@ -9,13 +9,20 @@ sources belong under `.local/native/` at the repository root:
   `52c7b9fb…ed4f`); run `python studio/tools/fetch_npcap_sdk.py`. Configuration
   stops if it is missing so every build has GOOSE. It is a build input only; users
   install the Npcap driver themselves and every executable delay-loads it.
+- Gateway simulator libraries (ADR-0057): lib60870-C v2.3.6 (`63028a92…`), opendnp3
+  3.1.2 (`26b4c01e…`) and its pinned asio/exe4cpp/ser4cpp archives under
+  `.local/native/opendnp3-deps`; run `python studio/tools/fetch_gateway_deps.py`.
+  Configuration stops if they are missing. `studio_gateway` never links libiec61850.
 
 From the repository root, after all workers using the normal output have stopped:
 
 ```powershell
 cmake -S studio/native -B studio/native/build -G "Visual Studio 16 2019" -A x64
-cmake --build studio/native/build --config Release --target studio_ied studio_live studio_probe --parallel 4
+cmake --build studio/native/build --config Release --target studio_ied studio_live studio_probe studio_gateway --parallel 4
 ```
+
+Independent test masters for the gateway (never packaged): `studio_test_iec104_master`
+(lib60870 client) and `studio_test_dnp3_master` (opendnp3 master).
 
 Never rebuild/replace a worker executable used by an active run. For isolated
 candidate checks, use a distinct build folder (wait for configuration to finish):

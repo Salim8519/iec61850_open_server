@@ -1,0 +1,105 @@
+"""Execute SCADA commands from the gateway on the IEDs of the project over IEC 61850.
+
+Simulated and real IEDs are operated the same way, through studio_control and with the
+device's own control model. Commands to real IEDs are allowed by the owner (2026-10-17)
+and can be switched off per gateway. Each command is logged in three separate steps:
+the request from SCADA, the result applied by the IED, and the position observed after.
+"""
+import queue
+import threading
+import time
+from studio_app.domain.network_settings import real_endpoint
+from studio_app.tools.control_client import summary
+
+OBSERVE_SECONDS = 3.0
+
+
+class CommandExecutor:
+    def __init__(self, manager):
+        self.manager = manager
+        self.jobs = queue.Queue()
+        self.thread = threading.Thread(target=self._run, daemon=True, name="gateway-commands")
+        self.thread.start()
+
+    def submit(self, process, event):
+        self.jobs.put((process, event))
+
+    def _run(self):
+        while True:
+            process, event = self.jobs.get()
+            try:
+                ok, reason = self._execute(event)
+            except Exception as error:
+                ok, reason = False, str(error)
+            try:
+                process.request("command_result", token=event["token"], ok=ok, reason=reason)
+            except Exception:
+                pass
+
+    def _execute(self, event):
+        manager = self.manager
+        point = manager.point(event.get("point_id"))
+        value = bool(event.get("value"))
+        label = f"{point['ref'] if point else event.get('point_id')} {'ON / close' if value else 'OFF / open'}"
+        entry = manager.commands.add(point_id=event.get("point_id"), label=label, protocol=event.get("protocol"),
+                                     peer=event.get("peer"), request="received", applied="", observed="")
+        ied = manager.ied(point["ied"]) if point else None
+        reason = refusal(point, ied, manager.config().get("real_commands", True))
+        if reason:
+            manager.commands.update(entry["seq"], applied=f"refused: {reason}")
+            manager.emit("gateway_command", point=label, result="refused", reason=reason)
+            return False, reason
+        host, port = endpoint(ied)
+        control = next(item for item in ied["controls"] if item["ref"] == point["ref"])
+        result = manager.control.operate(host, port, point["ref"], value, {"originator": "remote"})
+        text = summary(result)
+        manager.emit("gateway_command", point=label, ied=ied["name"], role=ied.get("role"), ok=result.get("ok"),
+                     result=text)
+        if not result.get("ok"):
+            manager.commands.update(entry["seq"], applied=f"refused by the device: {text}")
+            return False, text
+        manager.commands.update(entry["seq"], applied=f"operated: {text}")
+        expected = (2 if value else 1) if control.get("cdc") == "DPC" else value
+        threading.Thread(target=self._observe, args=(entry["seq"], ied, control["status"], expected),
+                         daemon=True).start()
+        return True, ""
+
+    def _observe(self, seq, ied, status_ref, expected):
+        deadline = time.monotonic() + OBSERVE_SECONDS
+        while time.monotonic() < deadline:
+            signal = self.manager.coordinator.index.get((ied["id"], status_ref))
+            current = signal.get("value") if signal is not None else None
+            if type(current) is type(expected) and current == expected:
+                self.manager.commands.update(seq, observed=f"{status_ref} is now {signal['value']}")
+                return
+            time.sleep(0.1)
+        self.manager.commands.update(seq, observed=f"{status_ref} did not change within {OBSERVE_SECONDS:g} s")
+
+
+def endpoint(ied):
+    if ied.get("role") == "real":
+        host, port, _ = real_endpoint(ied)
+        return host, port
+    return ied["ip"], ied["port"]
+
+
+def refusal(point, ied, real_commands=True):
+    """Plain reason why this SCADA command is not sent, or "" when it may be."""
+    if point is None:
+        return "this point is not in the gateway point list"
+    if point["kind"] not in ("command_single", "command_double"):
+        return "this point is not a command"
+    if ied is None:
+        return "its IED is not in the project"
+    role = ied.get("role", "simulated")
+    if role == "off":
+        return f"{ied['name']} is switched off in Devices"
+    if role == "real" and not real_commands:
+        return "commands to real IEDs are switched off for this gateway"
+    if role == "real" and not endpoint(ied)[0]:
+        return f"{ied['name']} has no address; type it in Devices"
+    if role == "simulated" and ied.get("state") != "running":
+        return f"{ied['name']} is not running; press Run first"
+    if point["ref"] not in {item["ref"] for item in ied.get("controls", [])}:
+        return f"{ied['name']} has no controllable object {point['ref']}"
+    return ""

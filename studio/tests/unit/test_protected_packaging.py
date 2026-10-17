@@ -73,7 +73,7 @@ def test_protected_build_refuses_without_release_key_and_dry_run_lists_steps(mon
     monkeypatch.setattr(release_key, "configured", lambda: True)
     assert build.main(["--dry-run"]) == 0
     output = capsys.readouterr().out
-    for marker in ("-DSTUDIO_ENFORCE_LICENSE=ON", "nuitka", "--mode=module", "pack_frontend.py",
+    for marker in ("-DSTUDIO_ENFORCE_LICENSE=ON", "-DSTUDIO_GATEWAY=ON", "studio_control", "nuitka", "--mode=module", "pack_frontend.py",
                    "studio_protected.spec", "Leak check"):
         assert marker in output, marker
 
@@ -116,6 +116,9 @@ def test_protected_copy_is_sealed_and_repository_source_untouched(tmp_path):
     exec((copy / "licensing/integrity.py").read_text(), sealed)
     assert set(sealed["EXPECTED"]) == set(tool.SEALED) and sealed["problem"](native) is None
     (native / "studio_ied.exe").write_bytes(b"patched")
+    assert sealed["problem"](native) == sealed["TAMPERED"]
+    (native / "studio_ied.exe").write_bytes(b"studio_ied.exe")
+    (native / "studio_gateway.exe").write_bytes(b"swapped gateway")
     assert sealed["problem"](native) == sealed["TAMPERED"]
     assert 'DEFAULT_SERVER_URL = "http://127.0.0.1:8090"' in (copy / "licensing/release_key.py").read_text()
     assert not list(copy.rglob("__pycache__"))

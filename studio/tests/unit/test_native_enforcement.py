@@ -72,3 +72,26 @@ def test_live_client_and_probe_refuse_without_license(certificate):
     probe = subprocess.run([str(ENFORCED / "studio_probe.exe"), "127.0.0.1", "102", "browse"],
                            capture_output=True, text=True, timeout=10)
     assert probe.returncode == 4 and "No license" in probe.stderr
+
+
+def test_gateway_refuses_to_listen_without_license(certificate):
+    import socket
+    worker = WorkerProcess(ENFORCED / "studio_gateway.exe")
+    try:
+        with pytest.raises(RuntimeError, match="No license"):
+            worker.request("start", timeout=10, protocol="modbus", settings={"bind": "127.0.0.1", "port": 15099},
+                           points=[{"id": "p", "kind": "single", "address": 0}])
+        with pytest.raises(OSError):
+            socket.create_connection(("127.0.0.1", 15099), timeout=1).close()
+    finally:
+        worker.close()
+
+
+def test_control_client_refuses_to_operate_without_license(certificate):
+    worker = WorkerProcess(ENFORCED / "studio_control.exe")
+    try:
+        with pytest.raises(RuntimeError, match="No license"):
+            worker.request("operate", timeout=10, ip="127.0.0.1", port=1, ref="LD0/XCBR1.Pos", value=True,
+                           or_cat=3, or_ident="test", interlock_check=True, synchro_check=False, test=False)
+    finally:
+        worker.close()

@@ -11,6 +11,16 @@ export type WatchItem = { ref: string; fc: string; type: string; text: string; s
 export type ExplorerStatus = { state: 'disconnected' | 'connecting' | 'connected' | 'failed' | 'lost'; message: string;
   host: string; port: number; watch: WatchItem[]; interval_ms: number; polling: boolean; reads: number };
 
+export type OperateAnswer = { summary: string; observed: ReadValue | null;
+  result: { ok: boolean; model?: string; add_cause_text?: string; error?: string } };
+export type ToolMemory = { explorer: { host: string; port: number; interval_ms: number };
+  find: { range: string; port: number; choice: string } };
+
+export const memoryApi = {
+  get: () => api<ToolMemory>('/tools/memory'),
+  rememberFind: (choice: string) => api('/tools/memory/find', 'PUT', { choice }),
+};
+
 export const explorerApi = {
   status: () => api<ExplorerStatus>('/tools/explorer'),
   connect: (host: string, port: number) => api<ExplorerStatus>('/tools/explorer/connect', 'POST', { host, port }),
@@ -22,6 +32,8 @@ export const explorerApi = {
     api<{ values: Record<string, ReadValue> }>('/tools/explorer/read', 'POST', { items }),
   watch: (items: { ref: string; fc: string; type?: string }[], interval_ms?: number) =>
     api<ExplorerStatus>('/tools/explorer/watch', 'PUT', { items, interval_ms }),
+  operate: (ref: string, value: boolean | number) =>
+    api<OperateAnswer>('/tools/explorer/operate', 'POST', { ref, value, confirm: true }),
   polling: (on: boolean) => api<ExplorerStatus>('/tools/explorer/polling', 'POST', { on }),
   csvUrl: '/api/v1/tools/explorer/watch.csv',
 };

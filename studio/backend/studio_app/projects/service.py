@@ -20,6 +20,7 @@ from studio_app.scl.importer import import_scl
 from studio_app.scl.templates import make_template
 from studio_app.networking.loopback import assign_endpoints
 from studio_app.domain.network_settings import DEFAULT_NETWORK, validate_ied_settings, validate_network
+from studio_app.domain.gateway_rules import empty_gateway, normalize_gateway
 
 
 class ProjectService:
@@ -32,7 +33,7 @@ class ProjectService:
         self.on_change = on_change or (lambda revision, source: None)
         self.project = {"id": uuid4().hex, "name": "Untitled substation", "ieds": [],
                         "diagram": {"nodes": [], "edges": []}, "sources": [], "scenarios": [], "test_panel": [],
-                        "network": dict(DEFAULT_NETWORK)}
+                        "network": dict(DEFAULT_NETWORK), "gateway": empty_gateway()}
         self.migration_notice = None
 
     def changed(self, source=None):
@@ -114,7 +115,8 @@ class ProjectService:
 
     def snapshot(self):
         with self.lock:
-            result = {key: copy.deepcopy(value) for key, value in self.project.items() if key not in {"ieds", "sources"}}
+            hidden = {"ieds", "sources", "gateway"}  # the gateway point list has its own API
+            result = {key: copy.deepcopy(value) for key, value in self.project.items() if key not in hidden}
             result["sources"] = [{**item, "spec": source_summary(item["spec"])} for item in self.project["sources"]]
             result["ieds"] = [{key: copy.deepcopy(value) for key, value in ied.items()
                                if key not in {"source", "cfg", "signals"}}
@@ -148,6 +150,17 @@ class ProjectService:
                 self.changed()
             except Exception:
                 self.project["test_panel"] = previous
+                raise
+
+    def gateway(self, config):
+        with self.lock:
+            previous = self.project.get("gateway")
+            self.project["gateway"] = config
+            try:
+                self.save()
+                self.changed("gateway")
+            except Exception:
+                self.project["gateway"] = previous
                 raise
 
     def save(self):
@@ -187,6 +200,10 @@ class ProjectService:
             network = validate_network(raw.get("network"))
         except ValueError as error:
             raise StudioError(f"Stored network settings: {error}") from error
+        try:
+            gateway = normalize_gateway(raw.get("gateway"))
+        except ValueError as error:
+            raise StudioError(f"Stored gateway settings: {error}") from error
         project_id = raw.get("id", uuid4().hex)
         if not isinstance(project_id, str) or not re.fullmatch(r"[0-9a-f]{32}", project_id):
             raise StudioError("Invalid stored project identifier")
@@ -196,7 +213,7 @@ class ProjectService:
             self.project = {"id": project_id, "name": str(raw.get("name", "Imported substation"))[:100],
                             "ieds": imported, "diagram": diagram,
                             "sources": sources, "scenarios": scenarios, "test_panel": panel,
-                            "network": network}
+                            "network": network, "gateway": gateway}
             details = notices or (["No equipment was changed."] if version >= 11 else
                                   ["Existing controls remain in standard IEC 61850 mode."])
             if version >= 11:

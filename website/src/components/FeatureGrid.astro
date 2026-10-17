@@ -10,8 +10,10 @@ const features = [
     text: 'Simulated IEDs publish the GOOSE their SCD declares. Every stream on the wire is checked against the SCD: confRev, dataset, goID and timing.' },
   { title: 'Sampled Values', detail: 'IEC 61850-9-2 · 50/60 Hz',
     text: 'Listen to merging-unit streams, see RMS and phasors, and catch missing samples or a stream that disagrees with the SCD.' },
-  { title: 'Real IEDs, read-only', detail: 'free report blocks only',
-    text: 'Connect to the real relay, read its model and compare it with the SCD. ScadaBench uses free report blocks or polling and never sends a command.' },
+  { title: 'Real IEDs', detail: 'free report blocks · confirmed commands',
+    text: 'Connect to the real relay, read its model and compare it with the SCD. Reads use free report blocks or polling; a command is sent only from Tools, after you confirm it.' },
+  { title: 'Gateway simulator', detail: 'IEC 104 · Modbus TCP · DNP3',
+    text: 'Let your SCADA talk to the whole station. ScadaBench proposes the useful points from the SCD, sends live values and turns SCADA commands into IEC 61850 controls.' },
   { title: 'Station health', detail: 'one verdict per IED',
     text: 'Connection, data model, reports, GOOSE and test mode in one list, exported as CSV or an HTML report for the commissioning file.' },
   { title: 'Test mode', detail: 'Mod · Beh · LPHD.Sim',
@@ -38,7 +40,7 @@ const features = [
         </li>
       ))}
     </ul>
-    <p class="roadmap reveal"><span class="mono">On the roadmap</span> IEC 60870-5-104 and more protocols. Tell us what
+    <p class="roadmap reveal"><span class="mono">On the roadmap</span> More SCADA protocols and tools. Tell us what
       your projects need on the <a href="/contact/">contact page</a>.</p>
   </div>
 </section>

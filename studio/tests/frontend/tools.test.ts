@@ -50,9 +50,25 @@ test('find IEDs proposes each adapter network, at most a /24, plus this PC', asy
   assert.deepEqual(choices.map(item => item.range), ['10.1.2.0/24', '127.50.0.0/24']);
 });
 
-test('explorer never offers a write or control action', () => {
+test('explorer sends a command only through the confirmation step and never writes', () => {
   const sources = files('features/tools/explorer').map(read).join('\n') + read('api/tools.ts');
-  for (const word of ['operate', '/control', 'ctlVal', '.Oper', 'writeObject', '/write']) {
+  for (const word of ['writeObject', '/write', 'setValue(']) {
     assert.ok(!sources.includes(word), `explorer must not mention ${word}`);
   }
+  const callers = files('features/tools').filter(path => read(path).includes('explorerApi.operate('));
+  assert.deepEqual(callers, ['features/tools/explorer/CommandPanel.tsx']);
+  const panel = read('features/tools/explorer/CommandPanel.tsx');
+  assert.ok(/onClick=\{\(\) => send\(pending\)\}/.test(panel), 'operate runs only from the confirm button');
+  assert.ok(read('api/tools.ts').includes("confirm: true"), 'the API call carries the confirmation');
+});
+
+test('command choices follow the MMS types Explorer shows', async () => {
+  const { commandChoices } = await import('../../frontend/src/features/tools/explorer/commandChoices.ts');
+  const leaf = (path: string, type: string, fc = 'ST') => ({ ref: `X/Y.Pos.${path}`, fc, path, type });
+  const breaker = commandChoices([leaf('stVal', 'bit string'), leaf('Oper.ctlVal', 'boolean', 'CO')]);
+  assert.deepEqual(Array.isArray(breaker) && breaker.map(choice => choice.label), ['Close', 'Open']);
+  const single = commandChoices([leaf('stVal', 'boolean'), leaf('Oper.ctlVal', 'boolean', 'CO')]);
+  assert.deepEqual(Array.isArray(single) && single.map(choice => choice.label), ['On', 'Off']);
+  assert.equal(commandChoices([leaf('Oper.ctlVal', 'integer', 'CO')]), 'number');
+  assert.equal(commandChoices([leaf('stVal', 'boolean')]), null);
 });

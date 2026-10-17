@@ -32,6 +32,8 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Canvas selection/clipboard/shortcuts | `features/diagram/Canvas.tsx`, `DiagramPage.tsx`, `useCanvasShortcuts.ts`, `equipment/clipboard.ts` |
 | App shell and places | `frontend/src/app/App.tsx`, `Sidebar.tsx`, `TopBar.tsx`, `places.ts`, `useExitConfirm.ts` |
 | Tools place | `frontend/src/features/tools/ToolsPage.tsx`, `TrafficTool.tsx`, `copy/tools.ts` |
+| IED Explorer / Find IEDs | `backend/studio_app/tools/` (explorer, explorer_auto, ied_scan, control_client, tool_memory), `domain/explorer_*.py`, `scan_range.py`, `native/live/explore.cpp`, `identify.cpp`, `native/control/`, `features/tools/explorer/`, `find/` |
+| Gateway simulator | `backend/studio_app/gateway/`, `domain/gateway_*.py`, `api/gateway.py`, `native/gateway/`, `cmake/gateway_support.cmake`, `tools/fetch_gateway_deps.py`, `features/tools/gateway/`, `copy/gateway.ts` |
 | Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
 | Devices | `features/devices/` (list, detail, connection, data points, compare, files) |
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |

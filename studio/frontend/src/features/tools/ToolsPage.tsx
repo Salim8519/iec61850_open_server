@@ -1,13 +1,14 @@
-import { ArrowLeft, Radar, Radio, Telescope } from 'lucide-react';
+import { ArrowLeft, Radar, Radio, Router, Telescope } from 'lucide-react';
 import { useState } from 'react';
 import type { Project } from '../../api/types';
 import { TOOLS, TOOLS_COPY, type ToolId } from '../../copy/tools';
 import { ExplorerTool } from './explorer/ExplorerTool';
 import { FindTool } from './find/FindTool';
+import { GatewayTool } from './gateway/GatewayTool';
 import { TrafficTool } from './TrafficTool';
 import './tools.css';
 
-const ICONS: Record<ToolId, typeof Radio> = { explorer: Telescope, find: Radar, traffic: Radio };
+const ICONS: Record<ToolId, typeof Radio> = { explorer: Telescope, find: Radar, gateway: Router, traffic: Radio };
 
 /** The Tools place: a list of tool cards, or the one open tool with a way back. */
 export function ToolsPage({ project, locked, perform, tool, openTool }: {
@@ -25,6 +26,7 @@ export function ToolsPage({ project, locked, perform, tool, openTool }: {
       </div>
       {tool === 'explorer' && <ExplorerTool target={target} />}
       {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }} />}
+      {tool === 'gateway' && <GatewayTool />}
       {tool === 'traffic' && <TrafficTool project={project} locked={locked} perform={perform} />}
     </div>;
   }

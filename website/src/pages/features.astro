@@ -13,11 +13,13 @@ const topics = [
     text: 'Listen to IEC 61850-9-2 streams from merging units, see RMS and phasors for 50 and 60 Hz, and get warned about missing or late samples and streams that disagree with the SCD. ScadaBench listens to Sampled Values; it does not publish them.' },
   { id: 'scl-viewer', title: 'SCD and SCL checker',
     text: 'Schema validation for SCL 2003, 2007B and 2007B4, signal flow of every declared GOOSE and report link, and checks for subscriptions that point nowhere. Original SCL and vendor extensions are preserved on export; nothing is silently dropped.' },
-  { id: 'real-ieds', title: 'Read-only real IED client',
-    text: 'Connect to a real relay to read its model, compare it with the SCD and include it in station health. ScadaBench reserves only free report blocks, falls back to polling, gives the blocks back when you stop, and never operates a control or writes a setting.' },
+  { id: 'real-ieds', title: 'Real IED client',
+    text: 'Connect to a real relay to read its model, compare it with the SCD and include it in station health. ScadaBench reserves only free report blocks, falls back to polling and gives the blocks back when you stop. It never writes a setting, and it operates a control only from Tools, after you confirm the command.' },
+  { id: 'gateway', title: 'SCADA gateway simulator',
+    text: 'ScadaBench acts as the station gateway over IEC 60870-5-104, Modbus TCP or DNP3. It proposes the point list from your IEDs (positions, alarms and trips, measurements, health and commands), starts the IEDs and sends live values with quality. SCADA commands operate the IEDs over IEC 61850 MMS with their own control model. Point lists import and export as CSV, and a decoded traffic log and command log show every exchange. Tested against independent IEC 104 and DNP3 master implementations and a Modbus TCP client.' },
 ];
 ---
-<Base title="Features" description="IEC 61850 IED simulator, GOOSE simulator and monitor, Sampled Values listener, SCD checker and read-only real IED client in one Windows app.">
+<Base title="Features" description="IEC 61850 IED simulator, GOOSE simulator and monitor, Sampled Values listener, SCD checker, real IED client and IEC 104 / Modbus / DNP3 gateway simulator in one Windows app.">
   <PageHeader eyebrow="Features" title="One bench for the whole substation."
     lede="Simulate IEDs, draw and drive the single-line diagram, supervise GOOSE and Sampled Values, and check real relays against the SCD." />
   <FeatureGrid />

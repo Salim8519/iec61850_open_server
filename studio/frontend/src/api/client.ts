@@ -21,7 +21,7 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
     throw new Error(data.error || 'A license is required.');
   }
   if (response.status === 404) throw new Error('The running backend does not provide this action. Save your project and restart ScadaBench to load the updated backend.');
-  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  if (!response.ok) throw Object.assign(new Error(data.error || `Request failed (${response.status})`), { data });
   return data as T;
 }
 

@@ -13,7 +13,7 @@ import './explorer.css';
 const PILL: Record<ExplorerStatus['state'], Status> = {
   disconnected: { label: 'Not connected', tone: 'off', hint: 'Type an address and press Connect.' },
   connecting: { label: 'Connecting', tone: 'waiting', hint: 'Opening an IEC 61850 association.' },
-  connected: { label: EXPLORER_COPY.readOnly, tone: 'good', hint: 'Explorer only reads from this device.' },
+  connected: { label: EXPLORER_COPY.readOnly, tone: 'good', hint: 'Explorer reads this device and sends commands only after you confirm them.' },
   failed: { label: 'Could not connect', tone: 'problem', hint: 'See the message below.' },
   lost: { label: 'Connection lost', tone: 'problem', hint: 'The device closed the connection. Press Connect to try again.' },
 };
@@ -78,7 +78,7 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
     {connected && status && <>
       <div className="explorer-layout">
         <ModelTree key={`${status.host}:${status.port}`} selected={node} select={setNode} fail={setError} />
-        {node ? <NodeDetail reference={node} watched={watched} addWatch={addWatch} fail={setError} />
+        {node ? <NodeDetail reference={node} host={status.host} watched={watched} addWatch={addWatch} fail={setError} />
           : <div className="card explorer-detail"><div className="guide-empty"><p>{EXPLORER_COPY.pickNode}</p></div></div>}
       </div>
       <WatchList status={status} run={run} />

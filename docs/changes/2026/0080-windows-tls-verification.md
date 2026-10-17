@@ -49,3 +49,21 @@ Date: 2026-10-17. Decision: [ADR-0056](../../decisions/ADR-0056-windows-tls-veri
 - Installed silently over 0.1.2 on the owner's PC (`DisplayVersion 0.1.3`); installed
   `--self-test` ok with the owner's real license. Website download not yet republished
   (deploy.cmd also publishes an unapproved website redesign; owner decision pending).
+
+## Release 0.1.4 and website publish (2026-10-17, owner: "just deploy all")
+
+- 0.1.3 was never published; 0.1.4 adds the launcher speed-up (change 0085, ADR-0058).
+  Before the build: 341 Python unit+integration, 107 frontend tests, tsc, verify.py PASS.
+- `ScadaBench-Setup-0.1.4.exe` 23.3 MB, SHA-256 `f6b83b71…0701af08`, leak check clean,
+  unsigned. Built app (isolated, own port): version 0.1.4, enforced, unlicensed engineering
+  API → 402, live activation probe → `unknown_key` in 1.6 s.
+- Probe pitfall recorded: a dev backend on 127.0.0.1:8765 (the packaged default port) took
+  the probe's requests (dev-wording 401); rerun with `--port 0` was clean.
+- Installed silently over 0.1.3 (DisplayVersion 0.1.4); installed `--self-test` ok with the
+  owner's license.
+- Website: `site.ts` version 0.1.4, changelog entry for 0.1.4 (first release pinned to 0.1.0);
+  `deploy.cmd` published the approved redesign + installer + 720p videos. A stale
+  `astro preview` (since 00:35) locked `node_modules` and broke `npm ci`; it was stopped and
+  the deploy rerun. Live checks: `/`, `/pricing/`, `/tutorials/`, `/legal/eula/` (`#refunds`
+  present), `/changelog/`, `/download/` (Version 0.1.4), `/videos/getting-started.mp4`
+  (3.5 MB) all 200; `/download/ScadaBench-Setup.exe` SHA-256 equals the 0.1.4 build.

@@ -1,4 +1,4 @@
-"""Tools API: IED Explorer and Find IEDs through HTTP, against a studio_ied stand-in."""
+"""Tools API: IED Explorer (with confirmed commands) and Find IEDs over HTTP, against a studio_ied stand-in."""
 import os
 import time
 from pathlib import Path
@@ -19,11 +19,13 @@ IP, PORT = "127.50.0.236", 18136
 def client(tmp_path):
     settings = Settings(tmp_path, BIN / "studio_ied.exe", tmp_path)
     app = create_app(settings, "tools-token")
+    assert app.extensions["startup"].wait(30)
     client = app.test_client()
     client.post("/api/v1/session", json={"token": "tools-token"})
     yield client
     app.extensions["explorer"].disconnect()
     app.extensions["explorer"].close()
+    app.extensions["explorer"].control.close()
     app.extensions["scanner"].stop()
     app.extensions["runtime"].close()
 
@@ -36,6 +38,8 @@ def test_bad_input_gets_actionable_errors(client):
     preview = client.post("/api/v1/tools/scan/preview", json={"range": "10.0.0.0/24"}).json
     assert preview["count"] == 254 and preview["port"] == 102
     assert client.get("/api/v1/tools/scan").json["state"] == "idle"
+    refused = client.post("/api/v1/tools/explorer/operate", json={"ref": "LD0/XCBR1.Pos", "value": True})
+    assert refused.status_code == 400 and "Confirm the command first" in refused.json["error"]
 
 
 @pytest.mark.skipif(not (BIN / "studio_live.exe").exists(), reason="Native build required")
@@ -59,6 +63,11 @@ def test_explorer_and_find_ieds_over_http(client, tmp_path):
         time.sleep(1.2)
         csv_text = client.get("/api/v1/tools/explorer/watch.csv").get_data(as_text=True)
         assert csv_text.startswith("reference,fc,value") and "ApiToolsCTRL/XCBR1.Pos" in csv_text
+        answer = client.post("/api/v1/tools/explorer/operate",
+                             json={"ref": "ApiToolsCTRL/XCBR1.Pos", "value": True, "confirm": True}).json
+        assert answer["result"]["ok"] is True and answer["observed"]["text"] == "on (closed)"
+        remembered = client.get("/api/v1/tools/memory").json["explorer"]
+        assert remembered["host"] == IP and remembered["watch_by_host"][f"{IP}:{PORT}"]
         assert client.post("/api/v1/tools/explorer/disconnect").json["state"] == "disconnected"
         client.post("/api/v1/tools/scan/start", json={"range": f"{IP}-237", "port": PORT})
         deadline = time.time() + 20

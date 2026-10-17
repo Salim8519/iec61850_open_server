@@ -58,3 +58,5 @@
 | [0053](ADR-0053-website-mobile-conversion.md) | Website phone-first: full navigation and phone menu, phone buy bar, hover prefetch, light videos, value/trust sections, visible conditional 7-day refund policy |
 | [0054](ADR-0054-tools-place.md) | Fifth place Tools after Test: cards for delivered tools only; GOOSE/SV traffic moved there; Explorer, Find IEDs, inspector, 104/Modbus/DNP3 gateway proposed |
 | [0056](ADR-0056-windows-tls-verification.md) | License client verifies HTTPS with the Windows certificate check (truststore); fixes "cannot reach the license server" after the 2026 Let's Encrypt chain change |
+| [0057](ADR-0057-gateway-explorer-commands.md) | Gateway (lib60870, opendnp3, own Modbus), studio_control for confirmed commands to real IEDs from Tools, format 13 gateway section, autonomous tools with remembered settings |
+| [0058](ADR-0058-window-first-startup.md) | Window first: the autosave restores on a background thread; engineering requests wait behind the security/license checks; a protective recovery stop refuses all work |

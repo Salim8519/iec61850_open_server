@@ -4,6 +4,25 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-17: Explorer, Find IEDs, gateway, commands, autonomous tools (0081, 0082)
+
+- Delivered: IED Explorer, Find IEDs, and the gateway simulator (104/Modbus/DNP3).
+  - Specs: `ied-explorer.md`, `find-ieds.md` and `gateway.md`. ADR-0057.
+- Owner rules:
+  - commands to real IEDs are allowed from Tools only, after a confirmation in Explorer, or
+    through the gateway switch "Allow SCADA commands to real IEDs" (default on); SLD and
+    Test still refuse them;
+  - tools work by themselves (gateway proposes points, starts Run and resumes after
+    restart; Explorer watches key points);
+  - every tool setting is remembered (`tool-settings.json`).
+- New native programs: `studio_gateway` and `studio_control`, both licensed and sealed.
+  - Building needs `python studio/tools/fetch_gateway_deps.py`.
+  - The main build is `native/build` with `STUDIO_GATEWAY` ON (the default).
+- Open:
+  - third-party SCADA master and vendor relay evidence;
+  - the traffic inspector extensions (still a proposed spec);
+  - the installer, which only the owner's release request triggers.
+
 ## 2026-10-17: Tools place (change 0079)
 
 - Sidebar now has five places; Tools (after Test) lists cards for delivered tools only.

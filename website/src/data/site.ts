@@ -11,7 +11,7 @@ export const SITE = {
   trialDays: 7,
   refundDays: 7,
   movesPerYear: 2,
-  version: '0.1.0',
+  version: '0.1.5',
   requirements: 'Windows 10 or 11, 64-bit. 4 GB RAM. No Docker, Python or Node needed.',
 };
 

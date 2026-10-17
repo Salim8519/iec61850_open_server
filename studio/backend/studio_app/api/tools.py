@@ -1,4 +1,4 @@
-"""Tools place: IED Explorer and Find IEDs. Handlers validate and delegate only."""
+"""Tools place: IED Explorer, Find IEDs and remembered tool settings. Handlers validate and delegate only."""
 import csv
 import io
 from flask import Blueprint, Response, current_app, jsonify, request
@@ -88,6 +88,27 @@ def explorer_csv():
     name = (status["host"] or "device").replace(".", "-")
     return Response(stream.getvalue(), mimetype="text/csv",
                     headers={"Content-Disposition": f"attachment; filename=watch-{name}.csv"})
+
+
+@blueprint.post("/tools/explorer/operate")
+def explorer_operate():
+    data = body()
+    if not isinstance(data.get("ref"), str):
+        raise ValueError("Send the control reference, for example LD0/XCBR1.Pos")
+    return jsonify(explorer().operate(data["ref"], data.get("value"), data.get("options"), data.get("confirm") is True))
+
+
+@blueprint.get("/tools/memory")
+def tool_memory():
+    return jsonify(current_app.extensions["tool_memory"].get())
+
+
+@blueprint.put("/tools/memory/find")
+def remember_find():
+    choice = body().get("choice")
+    if not isinstance(choice, str) or len(choice) > 200:
+        raise ValueError("Send the chosen network as text")
+    return jsonify(current_app.extensions["tool_memory"].update("find", choice=choice))
 
 
 @blueprint.post("/tools/scan/preview")

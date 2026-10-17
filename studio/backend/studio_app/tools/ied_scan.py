@@ -21,8 +21,9 @@ def port_open(host, port, timeout=CONNECT_TIMEOUT_S):
 
 
 class ScanService:
-    def __init__(self, executable, probe=port_open, worker=WorkerProcess):
+    def __init__(self, executable, probe=port_open, worker=WorkerProcess, memory=None):
         self.executable = executable
+        self.memory = memory
         self.probe = probe
         self.worker = worker
         self.lock = threading.Lock()
@@ -49,6 +50,8 @@ class ScanService:
         if self.thread and self.thread.is_alive():
             raise ValueError("A scan is already running; stop it first")
         self.stop_event = threading.Event()
+        if self.memory is not None:
+            self.memory.update("find", range=planned["range"], port=port)
         with self.lock:
             self.state = {"state": "scanning", "range": planned["range"], "port": port, "total": planned["count"],
                           "probed": 0, "found": [], "message": f"Looking for IEDs on {planned['count']} address(es)",
@@ -131,6 +134,9 @@ class ScanService:
     def status(self):
         with self.lock:
             state = dict(self.state, found=[dict(entry) for entry in self.state["found"]])
+        if self.memory is not None and state["state"] == "idle":
+            remembered = self.memory.get()["find"]
+            state.update(range=remembered["range"], port=remembered["port"])
         if state["started"] and state["state"] == "scanning":
             state["seconds"] = round(time.time() - state["started"], 1)
         return state

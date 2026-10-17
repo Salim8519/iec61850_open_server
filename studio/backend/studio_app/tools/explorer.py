@@ -1,10 +1,12 @@
-"""IED Explorer: one read-only association to any IEC 61850 server, with a polled watch list."""
+"""IED Explorer: browse any IEC 61850 server, poll a watch list, and send confirmed commands."""
 import ipaddress
 import threading
 import time
 from studio_app.domain.explorer_tree import node_view
 from studio_app.domain.explorer_values import describe
 from studio_app.runtime.worker_process import WorkerProcess
+from .control_client import summary
+from .explorer_auto import remember, start_watching
 
 MAX_WATCH = 200
 MIN_INTERVAL_MS, MAX_INTERVAL_MS = 500, 60000
@@ -21,9 +23,11 @@ def check_endpoint(host, port):
 
 
 class ExplorerService:
-    def __init__(self, executable, emit=lambda kind, **payload: None):
+    def __init__(self, executable, emit=lambda kind, **payload: None, memory=None, control=None):
         self.executable = executable
         self.emit = emit
+        self.memory = memory
+        self.control = control
         self.lock = threading.RLock()
         self.spawn_lock = threading.Lock()
         self.process = None
@@ -76,8 +80,13 @@ class ExplorerService:
             raise RuntimeError(f"Could not open an IEC 61850 association to {host}:{port}. Check the address, "
                                "the cable and that the device allows another client.") from error
         with self.lock:
-            self.state, self.message = "connected", f"Connected to {host}:{port} (read-only)"
+            self.state, self.message = "connected", f"Connected to {host}:{port}"
         self.emit("explorer_connected", host=host, port=port)
+        if self.memory is not None:
+            try:
+                return start_watching(self, self.memory)
+            except Exception as error:
+                self.message = f"Connected (read-only). Automatic watching did not start: {error}"
         return self.status()
 
     def _event(self, event):
@@ -145,6 +154,8 @@ class ExplorerService:
             self.interval_ms = interval_ms
         with self.lock:
             self.watch = clean
+        if self.memory is not None:
+            remember(self, self.memory)
         return self.status()
 
     def start_polling(self):
@@ -198,9 +209,29 @@ class ExplorerService:
         if process is not None:
             process.close()
 
+    def operate(self, reference, value, options=None, confirmed=False):
+        """Send one command to the connected device, after the page's confirmation."""
+        if not confirmed:
+            raise ValueError("Confirm the command first")
+        if self.control is None:
+            raise RuntimeError("Commands are not available in this copy of ScadaBench")
+        if self.state != "connected" or not self.endpoint:
+            raise ValueError("Connect to a device first")
+        host, port = self.endpoint
+        result = self.control.operate(host, port, reference, value, options)
+        self.emit("explorer_command", host=host, ref=reference, value=value, ok=result.get("ok"),
+                  result=summary(result))
+        observed = None
+        try:
+            observed = self.read([{"ref": reference + ".stVal", "fc": "ST"}]).get(reference + ".stVal")
+        except Exception:
+            observed = None
+        return {"result": result, "summary": summary(result), "observed": observed}
+
     def status(self):
+        remembered = self.memory.get()["explorer"] if self.memory is not None else {"host": "", "port": 102}
         with self.lock:
-            host, port = self.endpoint or ("", 102)
+            host, port = self.endpoint or (remembered["host"], remembered["port"])
             return {"state": self.state, "message": self.message, "host": host, "port": port,
                     "watch": [{**item, **self.values.get(item["ref"], {"text": "", "status": "pending", "at": None})}
                               for item in self.watch],

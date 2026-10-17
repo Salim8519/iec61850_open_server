@@ -1,6 +1,7 @@
 """Compose Flask routes and long-lived application services."""
 import secrets
 import sys
+import threading
 from flask import Flask, jsonify
 from pydantic import ValidationError
 from werkzeug.exceptions import HTTPException
@@ -14,11 +15,15 @@ from studio_app.runtime.event_bus import EventBus
 from studio_app.simulation.coordinator import Coordinator
 from studio_app.api import projects, scl, signals, runtime, events, security, scenarios, ieds, traces, equipment
 from studio_app.api import test_panel, network, live, sld, signal_flow, health, test_mode, license, preferences, tools
+from studio_app.api import gateway
+from studio_app.gateway.manager import GatewayManager
 from studio_app.licensing.service import LicenseService, default_home
 from studio_app.networking.service import NetworkService
 from studio_app.launcher.frontend_assets import FrontendAssets
 from studio_app.tools.explorer import ExplorerService
 from studio_app.tools.ied_scan import ScanService
+from studio_app.tools.control_client import ControlClient
+from studio_app.tools.tool_memory import ToolMemory
 
 
 def create_app(settings=None, token=None, secret_key=None, admin_origin=None, license_service=None):
@@ -37,19 +42,24 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
     recovery = BackgroundRecovery(project_service)
     coordinator = Coordinator(project_service, bus, settings.native_executable, settings.directory)
     network_service = NetworkService(project_service, settings.directory, settings.native_executable)
+    control = ControlClient(settings.native_executable.with_name("studio_control.exe"))
+    memory = ToolMemory(settings.directory)
+    gateway_manager = GatewayManager(coordinator, project_service, settings.native_executable, control)
     app.extensions.update(projects=project_service, events=bus, runtime=coordinator, network=network_service,
                           studio_settings=settings, startup=recovery,
                           license=license_service, preferences=PreferenceStore(settings.directory),
-                          explorer=ExplorerService(settings.live_executable, bus.publish),
-                          scanner=ScanService(settings.live_executable))
+                          explorer=ExplorerService(settings.live_executable, bus.publish, memory, control),
+                          scanner=ScanService(settings.live_executable, memory=memory), tool_memory=memory,
+                          gateway=gateway_manager)
     app.before_request(security.protect_request)
     app.before_request(startup_gate.wait_for_project)  # After the security and license checks.
     for module in (projects, scl, signals, runtime, events, security, scenarios, ieds, traces,
                    test_panel, equipment, network, live, sld, signal_flow, health, test_mode, license,
-                   preferences, tools):
+                   preferences, tools, gateway):
         app.register_blueprint(module.blueprint, url_prefix="/api/v1")
     license_service.start_background_verify()
     recovery.start()
+    threading.Thread(target=_resume_gateway, args=(recovery, gateway_manager), name="gateway-resume", daemon=True).start()
 
     @app.errorhandler(StudioError)
     def engineering_error(error):
@@ -87,3 +97,10 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
         return frontend.asset(filename)
 
     return app
+
+
+def _resume_gateway(recovery, gateway_manager):
+    """Owner rule: a gateway that was running when the app closed starts again by itself."""
+    recovery.wait()
+    if recovery.error is None:
+        gateway_manager.autostart()

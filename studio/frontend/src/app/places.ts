@@ -7,7 +7,7 @@ export const PLACES: { id: PlaceId; title: string; heading: string; subtitle: st
   { id: 'diagram', title: 'SLD', heading: 'Single-line diagram (SLD)',
     subtitle: 'Draw your bay and connect each symbol to an IED signal.' },
   { id: 'test', title: 'Test', heading: 'Test', subtitle: 'Change values, run generators and timed sequences.' },
-  { id: 'tools', title: 'Tools', heading: 'Tools', subtitle: 'Explore and find IEDs, and watch GOOSE and Sampled Values traffic.' },
+  { id: 'tools', title: 'Tools', heading: 'Tools', subtitle: 'Explore and find IEDs, simulate a SCADA gateway, watch GOOSE and SV traffic.' },
   { id: 'settings', title: 'Settings', heading: 'Settings', subtitle: 'Network adapter, license and information about this app.' },
 ];
 

@@ -23,7 +23,9 @@ controls to standard IEC behavior. Format 8 can explicitly store the warned
 `concen_inverted_sbow` DPC profile. Format 11 (ADR-0029) adds `network`
 (mode, adapter) and per-IED `role`, `live`, `lab_ip` and `goose_publish`; formats
 2-10 open in loopback mode with every IED simulated. Format 12 (ADR-0033) retires the
-TRANSFORMER/LOAD/BUSBAR kinds and busbar width with a migration notice. Older builds
+TRANSFORMER/LOAD/BUSBAR kinds and busbar width with a migration notice. Format 13
+(ADR-0057) adds the `gateway` section (protocol, listen, settings and points per protocol,
+`real_commands`, `auto_start`); older formats open with an empty one. Older builds
 reject newer formats.
 Native signal/control models are rebuilt; pulse timers and live overrides are not
 restored as actions. See the [mapping decision](../decisions/ADR-0009-report-mapping-and-signal-tests.md)

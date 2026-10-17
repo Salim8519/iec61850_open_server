@@ -1,16 +1,19 @@
 // Wording for the Tools place. Each tool card lists only a tool that is built and usable;
 // planned tools are specified in docs/specs/proposed/ and appear here once delivered.
-export type ToolId = 'explorer' | 'find' | 'traffic';
+export type ToolId = 'explorer' | 'find' | 'gateway' | 'traffic';
 
 export type ToolCard = { id: ToolId; name: string; line: string; hint: string };
 
 export const TOOLS: ToolCard[] = [
   { id: 'explorer', name: 'IED Explorer',
-    line: 'Connect to any IED by address, browse its data and watch live values.',
-    hint: 'A read-only IEC 61850 client. Type an IP address, open the data model one level at a time and add values to a watch list that refreshes by itself. It never changes the device.' },
+    line: 'Connect to any IED by address, browse its data, watch live values and send commands.',
+    hint: 'An IEC 61850 client. Type an IP address: Explorer opens the data model and watches the key points by itself. Add any value to the watch list, and operate a breaker or switch after one confirmation.' },
   { id: 'find', name: 'Find IEDs',
     line: 'Scan a network for IEC 61850 devices and see who they are.',
     hint: 'Checks every address of a network for port 102, then asks each device for its vendor, model and firmware. Open any result straight in IED Explorer.' },
+  { id: 'gateway', name: 'Gateway simulator',
+    line: 'Let your SCADA talk to the station over IEC 104, Modbus TCP or DNP3.',
+    hint: 'ScadaBench acts as the substation gateway: it maps IED positions, statuses and measurements to SCADA points and turns SCADA commands into real IEC 61850 controls. It prepares the points and starts by itself.' },
   { id: 'traffic', name: 'GOOSE & Sampled Values traffic',
     line: 'See which GOOSE and Sampled Values messages are really on the network.',
     hint: 'Checks every GOOSE block and Sampled Values stream of your project against what arrives on the lab network adapter. Needs the free Npcap driver and a lab network.' },
@@ -25,9 +28,9 @@ export const TOOLS_COPY = {
 };
 
 export const EXPLORER_COPY = {
-  intro: 'Type the address of an IED (or a simulated one while Run is on) and press Connect. Explorer only reads; it never writes, controls or takes a report block.',
+  intro: 'Type the address of an IED (or a simulated one while Run is on) and press Connect. Explorer opens the key points by itself and keeps them updated. It never takes a report block, and it sends a command only after you confirm it.',
   address: 'IED address', port: 'Port', connect: 'Connect', disconnect: 'Disconnect',
-  readOnly: 'Read-only connection',
+  readOnly: 'Connected',
   treeTitle: 'Data model', treeHint: 'Open a logical device, then a logical node. Each level loads only when you open it, so even large IEDs open quickly.',
   filter: 'Filter logical nodes', pickNode: 'Pick a logical node on the left to see its data.',
   objectsHint: 'Open a data object to read its values. Add any value to the watch list to keep it updated.',
@@ -37,6 +40,10 @@ export const EXPLORER_COPY = {
   watchHint: 'Values refresh at the chosen interval while Watch is on. Export saves them as a CSV file.',
   start: 'Start watching', stop: 'Stop watching', readOnce: 'Read now', exportCsv: 'Export CSV', clear: 'Clear',
   every: 'Refresh every',
+  command: 'Command:', cancel: 'Cancel', nowReads: 'The device now reads:',
+  confirmTitle: (label: string, reference: string, host: string) => `Send "${label}" to ${reference} on ${host}?`,
+  confirmHint: 'This operates the device for real, using its own control model (select before operate when it asks for it). Make sure it is safe to switch.',
+  send: (label: string) => `Yes, send ${label}`,
 };
 
 export const FIND_COPY = {

@@ -91,6 +91,16 @@ from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
 | `GET /preferences` | - | `tour_seen_version`, `tour_version` |
 | `PUT /preferences` | `{tour_seen_version}` | Store UI preferences in the data folder |
 | `PUT /license/config` | `server_url` (https) | Change the license server address |
+| `GET /tools/explorer`, `POST /tools/explorer/connect` | `host`, `port` | IED Explorer status (warms the worker); connect, then autonomous key-point watch |
+| `GET /tools/explorer/devices`, `/nodes?device=`, `/node?ref=` | - | Lazy data model, one level per call |
+| `POST /tools/explorer/read`, `PUT /tools/explorer/watch`, `POST /tools/explorer/polling` | `items`, `interval_ms`, `on` | Read, set the remembered watch list, start/stop polling; `GET /tools/explorer/watch.csv` |
+| `POST /tools/explorer/operate` | `ref`, `value`, `confirm: true`, `options` | Operate a control via studio_control (ADR-0057); refused without `confirm` |
+| `GET /tools/memory`, `PUT /tools/memory/find` | `choice` | Remembered tool settings |
+| `POST /tools/scan/preview`, `/start`, `/stop`; `GET /tools/scan` | `range`, `port` | Find IEDs (<= 256 addresses) |
+| `GET/PUT /tools/gateway/config` | `protocol`, `listen`, `settings`, `real_commands` | Gateway settings (stopped only) |
+| `GET/PUT /tools/gateway/points?protocol=`, `POST /tools/gateway/propose` | `points` | Point list with live values; smart proposal |
+| `GET/POST /tools/gateway/points.csv` | CSV text (POST) | CSV point list with line diagnostics |
+| `POST /tools/gateway/start`, `/stop`; `GET /tools/gateway`, `/traffic?after=`, `/commands` | - | Autonomous start (points + Run), status, decoded traffic, command log |
 
 Packaged builds answer 402 `license_required` on every other `/api/v1` call until licensed
 (ADR-0046); development never does. License endpoints return `{error, code}` on failure.

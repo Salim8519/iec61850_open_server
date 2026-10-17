@@ -2,7 +2,9 @@
 
 Decision: [ADR-0031](../decisions/ADR-0031-read-only-live-acquisition.md).
 Owner policy (2026-10-13): use reports on free report blocks only, preview the block,
-release it on Stop, fall back to polling, and never send commands to real IEDs.
+release it on Stop, fall back to polling. Owner decision 2026-10-17 (ADR-0057): commands
+to real IEDs are allowed from Tools only (IED Explorer after a confirmation, and the gateway
+while "Allow SCADA commands to real IEDs" is on), through the separate `studio_control`.
 
 ## Purpose
 
@@ -27,7 +29,8 @@ the SCD so configuration differences are easy to find.
 
 ## Out of scope
 
-Commands to real IEDs, setting-group changes, file transfer, logs, and editing a
+Commands to real IEDs from SLD and Test (Tools only, see [IED Explorer](ied-explorer.md) and
+[Gateway simulator](gateway.md)), setting-group changes, file transfer, logs, and editing a
 real IED's datasets or report blocks.
 
 ## Rules

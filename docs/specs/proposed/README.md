@@ -4,15 +4,16 @@ All five station roadmap specifications below are promoted (changes 0058-0062).
 
 ## Roadmap: Tools place (owner, 2026-10-17, ADR-0054)
 
-Order: Explorer → Find IEDs → inspector → gateway (104 → Modbus TCP → DNP3). Real IEDs
-stay read-only; gateway commands reach simulated IEDs only.
+Order: Explorer → Find IEDs → inspector → gateway (104 → Modbus TCP → DNP3). Explorer,
+Find IEDs and the gateway are promoted (changes 0081, 0082). The owner then allowed commands
+to real IEDs from Tools with a confirmation (ADR-0057).
 
 | Specification | Feature | Prefix |
 | --- | --- | --- |
-| [IED Explorer](ied-explorer.md) | Browse any IED, watch list polling, CSV export | `EXPLORE` |
-| [Find IEDs](find-ieds.md) | Scan a confirmed subnet for port 102 and identify devices | `FIND` |
+| [IED Explorer](../ied-explorer.md) (promoted) | Browse any IED, watch list, confirmed commands | `EXPLORE` |
+| [Find IEDs](../find-ieds.md) (promoted) | Scan a previewed range for port 102 and identify devices | `FIND` |
 | [Traffic inspector](traffic-inspector.md) | GOOSE/SV timelines, late/missing frames, pcap | `INSPECT` |
-| [Gateway simulator](gateway-simulator.md) | IEC 104, Modbus TCP, DNP3 toward a SCADA master | `GW` |
+| [Gateway simulator](../gateway.md) (promoted) | IEC 104, Modbus TCP, DNP3 toward a SCADA master | `GW` |
 
 A proposed specification fixes **what** a large feature must do before any code is
 written, so that the implementation follows an agreed contract instead of being

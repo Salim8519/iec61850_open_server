@@ -7,7 +7,21 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · first public release</h2>
+    <h2>{SITE.version} · SCADA gateway simulator, IED commands, smarter tools</h2>
+    <ul>
+      <li>New gateway simulator in Tools: your SCADA connects over IEC 60870-5-104, Modbus TCP or DNP3 and sees the IEDs of your project as one station. Press Start and ScadaBench picks the useful points (positions, alarms and trips, measurements, health, commands), starts the IEDs and sends live values. Edit any address, or import and export the point list as CSV.</li>
+      <li>SCADA commands from the gateway operate the IEDs over real IEC 61850 MMS, with each device's own control model. A decoded traffic log and a command log show what was asked, what the IED did and what changed.</li>
+      <li>IED Explorer can now operate breakers, switches and other controls, always after a short confirmation. It also watches the key points of a device by itself as soon as you connect.</li>
+      <li>Tools remember your last address, watch list, network and gateway settings, and a gateway that was running starts again when you reopen ScadaBench.</li>
+      <li>Tested against independent IEC 104 and DNP3 master implementations and a Modbus TCP client. Tell us which SCADA you use so we can add it to our tests.</li>
+    </ul>
+    <h2>0.1.4 · license server fix, much faster start, Tools tab</h2>
+    <ul>
+      <li>Fixed "Cannot reach the license server" when starting the free trial or activating. After a certificate change on 16 October 2026, earlier versions could not check the server's certificate on many Windows PCs; ScadaBench now checks it the same way your browser does. Please install this version.</li>
+      <li>Opens in about a second: the window appears right away and your saved project loads in the background (a large 8-IED station is ready in about 7 seconds instead of about 30).</li>
+      <li>New Tools tab: browse a real IED's data model and find IEDs on your network, read-only. GOOSE and SV traffic moved here from Settings.</li>
+    </ul>
+    <h2>0.1.0 · first public release</h2>
     <ul>
       <li>IEC 61850 IED simulation from CID, ICD, IID and SCD with one MMS server per IED.</li>
       <li>Single-line diagram built from the SCD Substation section, Tidy up, bay templates and live colouring.</li>
