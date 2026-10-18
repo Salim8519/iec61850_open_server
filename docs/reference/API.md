@@ -11,7 +11,7 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | Method/path | Input | Result / invariant |
 | --- | --- | --- |
 | `POST /session` | `{token}` | Establish same-origin session |
-| `GET /project` | - | Project snapshot, session, revision, runtime, recovery notice |
+| `GET /project` | - | Project snapshot, session, revision, runtime, `running_ieds`, recovery notice |
 | `PUT /project/diagram` | `{diagram,revision,tab_id}` | Stopped-only revision-checked save |
 | `POST /project/save` | - | Atomic autosave |
 | `GET /project/download` | - | Current `.subsim` ZIP |
@@ -19,6 +19,8 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | `POST /runtime/start` | - | Start all workers after capability/preflight checks |
 | `POST /runtime/stop` | - | Stop workers and flush append-only run log |
 | `POST /runtime/pause` | - | Toggle automation pause; MMS remains active |
+| `POST /runtime/ieds/{id}/start` | - | Run (simulated) or connect (real) one IED; joins a running run (ADR-0067); returns `{state, running}` |
+| `POST /runtime/ieds/{id}/stop` | - | Stop or disconnect one IED; the others keep running; the last one stops the run |
 
 ## SCL and IEDs
 
@@ -47,6 +49,7 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | `POST /controls/operate` | `{ied_id,ref,value}` | Low-level independent native probe operation |
 | `POST /equipment/{node}/operate` | `{action}` or `{value}` | Typed mapped equipment command/feedback |
 | `GET /equipment/states` | - | Authoritative mapped canvas state snapshot |
+| `POST /equipment/{node}/test` | `{action, value?, row?}` | Test button on a running simulated IED: writes the bound point via the sample writer, sends no command; real IEDs refused (ADR-0067) |
 
 Equipment actions are Open/Close for CB/DS/ES, Operate/Reset for Trip Relay and
 Press for a Push Button. The server rejects mixed `action` and `value`.

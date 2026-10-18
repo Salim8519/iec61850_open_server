@@ -5,7 +5,7 @@ from studio_app.domain.equipment_control import SWITCHES, feedback_targets
 ACTION = {"open": "open", "closed": "close"}
 
 
-def apply_initial_states(coordinator):
+def apply_initial_states(coordinator, only=None):
     """Write each mapped CB/DS/ES start position into its IED before publishing."""
     nodes = coordinator.projects.project["diagram"]["nodes"]
     planned = defaultdict(list)
@@ -18,7 +18,7 @@ def apply_initial_states(coordinator):
         for binding, value in targets:
             planned[binding["ied_id"]].append((binding["ref"], value))
     for ied_id, items in planned.items():
-        if ied_id not in coordinator.sample_writer.locks:
+        if ied_id not in coordinator.sample_writer.locks or (only is not None and ied_id not in only):
             continue
         coordinator.sample_writer.apply(ied_id, [(ref, value, None) for ref, value in items],
                                         "initial_state")

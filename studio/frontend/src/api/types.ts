@@ -54,6 +54,8 @@ export type NetworkSettings = { mode: 'loopback' | 'lab'; adapter_guid: string; 
 export type Project = {
   id: string; name: string; session_id: string; revision: number;
   ieds: Ied[]; diagram: Diagram; runtime: string; network: NetworkSettings;
+  /** IEDs in the current run; one IED can run alone (ADR-0067). */
+  running_ieds?: string[];
   scenarios: Scenario[];
   test_panel: TestControl[];
   sources: { ied_id: string; ref: string; spec: SourceSpec }[];

@@ -46,7 +46,7 @@ class SampleWriter:
                     signal.update(timestamp=related.get("t", {}).get("value", 0),
                                   quality=related.get("q", {}).get("value", 0))
                     if source in {"manual", "scenario", "pulse", "pulse_return",
-                                  "control_feedback", "equipment_button"} and (ied_id, signal["ref"]) in coordinator.sources:
+                                  "control_feedback", "equipment_button", "equipment_test"} and (ied_id, signal["ref"]) in coordinator.sources:
                         coordinator.sources[(ied_id, signal["ref"])]["overridden"] = True
             for signal, related in samples:
                 if source not in {"pulse", "pulse_return"} and hasattr(coordinator, "pulses"):

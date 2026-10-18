@@ -10,6 +10,8 @@ import { RelayStatusEditor } from './RelayStatusEditor';
 import { AdvancedSettings, BasicSettings } from './SheetSettings';
 import { StateMappingEditor } from './StateMappingEditor';
 import { SwitchHints } from './SwitchHints';
+import { EquipmentTest, type RunTest } from './EquipmentTest';
+import { TEST_COPY } from '../../equipment/testButtons';
 import type { SwitchHints as Hints } from '../../equipment/energization';
 
 type Props = {
@@ -19,10 +21,11 @@ type Props = {
   applyColors: (active: string | null, inactive: string | null) => void;
   perform: (task: () => Promise<unknown>) => Promise<void>;
   showFlow?: (iedId: string) => void;
+  running: Set<string>; test: RunTest; testMessage?: string;
 };
 
 export function EquipmentSheet({ node, project, locked, busy, values, operation, section, hints, update, remove, duplicate,
-  operate, close, applyColors, perform, showFlow }: Props) {
+  operate, close, applyColors, perform, showFlow, running, test, testMessage }: Props) {
   const data = node.data;
   const info = kindInfo(data.kind);
   const switching = ['CB', 'DS', 'ES'].includes(data.kind);
@@ -32,7 +35,8 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
   const showState = !['JUNCTION', 'RELAY', 'INFEED'].includes(data.kind) && (!push || statusButton);
   const showControl = switching || trip || (push && !statusButton);
   const canAct = statusButton ? !!data.state_mapping : !!data.control_binding;
-  const missing = setupItems(data).filter(item => !item.done);
+  const missing = setupItems(data).filter(item => !item.done && !item.optional);
+  const optional = setupItems(data).filter(item => !item.done && item.optional);
   const linkedIed = data.control_binding?.ied_id ?? (data.state_mapping?.mode === 'contacts_to_dbpos'
     ? data.state_mapping.open.ied_id : data.state_mapping?.source.ied_id);
   const source = data.kind === 'SOURCE' && data.state_mapping?.mode === 'direct' ? data.state_mapping.source : null;
@@ -44,7 +48,8 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
     </div>
     <div className="sheet-body">
       {data.kind !== 'JUNCTION' && <div className="sheet-section" style={{ paddingBottom: 12 }}>
-        <StatusPill status={missing.length ? needsStatus(missing.map(item => item.label)) : UI_STATUS.equipment_ready} /></div>}
+        <StatusPill status={missing.length ? needsStatus(missing.map(item => item.label)) : UI_STATUS.equipment_ready} />
+        {optional.length > 0 && <p className="small muted" style={{ margin: '6px 0 0' }}>{TEST_COPY.commandHint}</p>}</div>}
       {locked && section && <section className="sheet-section"><h3>Power</h3>
         <p className="energy-sentence">{section}</p></section>}
       {locked && canAct && <section className="sheet-section"><h3>Operate</h3>
@@ -58,6 +63,7 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
           {data.push_mode === 'latching_status' ? 'Toggle' : 'Press'}</button>}</div>
         {switching && <SwitchHints hints={hints} />}
         {operation && <p className="small" role="status" style={{ margin: 0 }}>{operation}</p>}</section>}
+      {locked && <EquipmentTest node={node} project={project} running={running} busy={busy} test={test} message={testMessage} />}
       <section className="sheet-section"><BasicSettings data={data} locked={locked} update={update} /></section>
       {showState && <section className="sheet-section"><h3>{info.state} comes from</h3>
         <StateMappingEditor key={`${node.id}:state:${data.push_mode}`} data={data} ieds={project.ieds}

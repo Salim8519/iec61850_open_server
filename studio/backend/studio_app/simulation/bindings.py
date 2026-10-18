@@ -2,12 +2,14 @@
 from studio_app.domain.equipment_state import binding_keys
 
 
-def publish_bindings(coordinator):
+def publish_bindings(coordinator, only=None):
     bindings = {key for node in coordinator.projects.project["diagram"]["nodes"]
                 for key in binding_keys(node["data"].get("state_mapping"))}
     bindings.update((entry["ied_id"], entry["ref"]) for entry in coordinator.projects.project.get("test_panel", []))
     for ied_id, reference in bindings:
         if not ied_id or not reference or ied_id not in coordinator.supervisor.workers:
+            continue
+        if only is not None and ied_id not in only:
             continue
         signal = coordinator.index.get((ied_id, reference))
         if not signal:

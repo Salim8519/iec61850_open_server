@@ -1,6 +1,7 @@
 import { Download, FileUp, FolderOpen, MoreHorizontal, Pause, Play, Save, Square } from 'lucide-react';
 import type { Project } from '../api/types';
 import { Menu } from '../ui/Menu';
+import { runStateWords } from '../copy/running';
 
 // A download link, not a page navigation, so the app window's exit prompt does not appear.
 function downloadProject() {
@@ -17,8 +18,9 @@ export function TopBar({ title, subtitle, project, busy, saveState, run, openFil
   const runtime = project?.runtime || 'stopped';
   const running = runtime !== 'stopped';
   const active = project?.ieds.filter(ied => ied.role !== 'off').length || 0;
-  const state = !project ? 'Connecting…' : runtime === 'running' ? `Running · ${active} IED${active === 1 ? '' : 's'}`
-    : runtime === 'paused' ? 'Running · automation paused' : runtime === 'stopped' ? 'Stopped' : runtime;
+  const inRun = project?.running_ieds?.length ?? active;
+  const state = !project ? 'Connecting…' : runtime === 'running' || runtime === 'paused'
+    ? runStateWords(inRun, active, runtime === 'paused') : runtime === 'stopped' ? 'Stopped' : runtime;
   return <header className="topbar">
     <div className="topbar-title"><h1>{title}</h1><p>{subtitle}</p></div>
     <span className="small muted" aria-live="polite">{saveState}</span>
@@ -35,7 +37,7 @@ export function TopBar({ title, subtitle, project, busy, saveState, run, openFil
     ]} />}
     {running
       ? <button className="run-pill running" data-tour="run" disabled={busy} onClick={() => run('stop')}><Square size={15} />Stop</button>
-      : <button className="run-pill primary" data-tour="run" disabled={busy || !active} title={active ? 'Start all IEDs' : 'Add an IED first'}
+      : <button className="run-pill primary" data-tour="run" disabled={busy || !active} title={active ? 'Start every IED that is not set to Off' : 'Add an IED first'}
         onClick={() => run('start')}><Play size={16} />Run</button>}
   </header>;
 }

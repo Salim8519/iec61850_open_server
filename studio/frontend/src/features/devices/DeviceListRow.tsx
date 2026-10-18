@@ -14,8 +14,9 @@ export function DeviceListRow({ ied, active, mode, select, hints }: {
   return <button role="listitem" className={`list-row compact${active ? ' active' : ''}`} aria-current={active || undefined}
     onClick={select}>
     <span className="list-text"><strong>{ied.name}</strong><small>{ied.signal_count.toLocaleString()} data points</small>
+      {/* Status pills get their own line so "Simulated"/"Real device" are never cut (change 0097). */}
+      <span className="list-pills"><StatusPill status={roleStatus(ied.role, ied.state)} />
+        {badge && <StatusPill status={modeStatus(badge)} />}</span>
       {hints && <span className="list-hints">{hints}</span>}</span>
-    <span className="list-pills"><StatusPill status={roleStatus(ied.role, ied.state)} />
-      {badge && <StatusPill status={modeStatus(badge)} />}</span>
   </button>;
 }

@@ -28,17 +28,17 @@ function bounds(boxes: Box[]) {
   return { minX: Math.min(...boxes.map(box => box.x)), minY: Math.min(...boxes.map(box => box.y)) };
 }
 
-/** Beside the topmost bound equipment; everything else in a column at the left edge of the
- * drawing: IEDs outside the project (remote publishers) first, then unbound project IEDs. */
+/** Beside the topmost bound equipment; unbound project IEDs in a small column at the left edge.
+ * IEDs outside the project get no tag at all: the SLD stays clean (change 0097); they are
+ * listed in the toolbar and their GOOSE enters from the canvas edge (edgePoint). */
 export function placeTags(boxes: Box[], bound: Map<string, string[]>, tags: TagSpec[]): PlacedTag[] {
   const byId = new Map(boxes.map(box => [box.id, box]));
   const { minX, minY } = bounds(boxes);
   const stacked = new Map<string, number>();
   let edge = 0;
-  const order = (tag: TagSpec) => (tag.outside ? 0 : 1);
-  return [...tags].sort((a, b) => order(a) - order(b) || a.name.localeCompare(b.name)).map(tag => {
+  return tags.filter(tag => !tag.outside).sort((a, b) => a.name.localeCompare(b.name)).map(tag => {
     const anchors = (tag.iedId ? bound.get(tag.iedId) || [] : []).map(id => byId.get(id)).filter(Boolean) as Box[];
-    if (!tag.outside && anchors.length) {
+    if (anchors.length) {
       const anchor = [...anchors].sort((a, b) => a.y - b.y || a.x - b.x)[0];
       const index = stacked.get(anchor.id) || 0;
       stacked.set(anchor.id, index + 1);
@@ -48,21 +48,14 @@ export function placeTags(boxes: Box[], bound: Map<string, string[]>, tags: TagS
   });
 }
 
+/** Where a GOOSE dot from an IED outside the project starts: the left canvas edge, level with the receiver. */
+export function edgePoint(boxes: Box[], to: { x: number; y: number }) {
+  return { x: bounds(boxes).minX - EDGE_WIDTH - 60, y: to.y };
+}
+
 /** Tags grow back toward screen size when zoomed out, between 1× and 3× their drawing size. */
 export function tagScale(zoom: number): number {
   return Math.min(3, Math.max(1, 0.9 / (zoom || 1)));
-}
-
-/** Short tag names ("C09" for "C09_BCU") unless two IEDs would then look the same. */
-export function shortNames(names: string[]): Record<string, string> {
-  const short = (name: string) => {
-    const head = name.split('_')[0];
-    if (head !== name && head.length >= 2) return head;
-    return name.length <= 12 ? name : `${name.slice(0, 11)}…`;
-  };
-  const counts = new Map<string, number>();
-  for (const name of new Set(names)) counts.set(short(name), (counts.get(short(name)) || 0) + 1);
-  return Object.fromEntries([...new Set(names)].map(name => [name, counts.get(short(name))! > 1 ? name : short(name)]));
 }
 
 /** A gentle curve from the publisher tag to the subscriber tag; returns the SVG path and the

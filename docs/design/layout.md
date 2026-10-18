@@ -33,8 +33,9 @@ something is selected: status pill, Operate (while running), name and start posi
 "comes from" / "goes to" connections, then Advanced and object actions.
 
 Devices: 280 px list column with its own scroll (Import, filter bar, compact rows: name, data
-points, role/status pill) beside one detail card: a one-line header (name, "N points · N controls ·
-N notes", ?, Simulate / Real device / Off) and tabs Overview (thin stats line), Data points (table
+points, then the role/status pills on their own line so they are never cut, change 0097) beside one
+detail card: a one-line header (name, "N points · N controls · N notes", ?, *Run this IED* or
+*Connect*, Simulate / Real device / Off) and tabs Overview (thin stats line), Data points (table
 fills the height), Compare with SCD (real devices), Signal flow and Files. Test and Settings switch
 sections with a segmented control.
 
@@ -61,6 +62,8 @@ with a value chip (filled 1, hollow 0, dashed —). State fills (ADR-0026) colou
 the moving part; Intermediate is dashed amber and Invalid dashed red.
 
 Signal layers (ADR-0065): two toolbar switches with On/Off words. Small grey IED tags (11.5 px,
-1 px #A9B1BD border, 7 px radius) sit beside bound equipment and scale up when zoomed out;
-outside-project tags are dashed, problems add a dashed amber border with words. A pulse is one
+1 px #A9B1BD border, 7 px radius) show the full IED name beside bound equipment and scale up when
+zoomed out; a stopped IED's tag is dotted with "not running"; a problem adds one small ⚠ and a dashed
+amber border (words on hover). IEDs outside the project have no canvas tag: one toolbar button
+"N senders outside project ▾" opens a 340 px list (change 0097). A pulse is one
 5 px accent dot (hollow and dashed when expected) on a faint 1.5 px curve that fades in 2 s.

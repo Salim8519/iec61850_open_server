@@ -113,9 +113,16 @@
 
 - Signal layers (ADR-0065): *GOOSE messages* and *Who is reading* are remembered view switches;
   they never edit the diagram. One dot per real stNum change, at most one per link per second;
-  hollow "(expected)" dots when no listener runs; problems stay on the subscriber tag in words.
-  Clicking a tag or link opens its details in the sheet. GOOSE and MMS traffic must not
+  hollow "(expected)" dots when no listener runs; a problem is one small ⚠ on the subscriber tag.
+  A sender outside the project is one dot from the canvas edge for ~2 s, then nothing remains.
+  Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Needs lab network")
+  with one *Set up lab network* button; clicking a link opens its details. GOOSE and MMS traffic must not
   re-render equipment nodes.
+- Run one IED (ADR-0067): Devices *Run this IED* / *Connect* changes only that IED; the top bar
+  says "Running 1 of 2 IEDs". Any running IED locks the drawing and roles like a full Run.
+- Test buttons (ADR-0067): only while running, only for simulated IEDs, in the equipment sheet
+  and the right-click menu. They set the bound point as if the plant changed by itself; no command
+  is sent. "Set value" needs a number, so the right-click menu opens the sheet for it.
 
 Guided network and real-IED work (ADR-0028, ADR-0029, ADR-0031):
 - Windows changes are listed in plain sentences before Apply; nothing changes until

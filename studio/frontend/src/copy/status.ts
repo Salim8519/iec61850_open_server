@@ -87,7 +87,7 @@ export function roleStatus(role: string, state: string): Status {
   }
   if (state === 'running') return { label: 'Running', tone: 'good', hint: 'The simulated IED is answering on its address.' };
   if (state === 'failed') return { label: 'Stopped by error', tone: 'problem', hint: 'See Activity for the reason.' };
-  return { label: 'Simulated', tone: 'off', hint: 'Starts when you press Run.' };
+  return { label: 'Simulated', tone: 'off', hint: 'Not running. Starts with Run, or with "Run this IED" on its page.' };
 }
 
 export const needsStatus = (missing: string[]): Status => ({ label: `Needs: ${missing.join(', ').toLowerCase()}`,

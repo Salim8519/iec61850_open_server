@@ -1,19 +1,18 @@
 import type { GooseLinkMap, MmsClient } from '../api/signalLayers';
 import { changeText, expectedLinks, LINK_FADE_MS, observedLinks, PulseGate, pulseLabel,
   type GooseState, type PulseKind } from './signalPulses.ts';
-import { shortNames } from './signalLayout.ts';
 
 export type Pulse = { key: number; linkId: string; kind: PulseKind; label: string; start: number };
 export type ControlPulse = { key: number; iedId: string; peer: string; label: string; start: number };
 export type Layers = { goose: boolean; readers: boolean };
 export type SignalLayerState = {
-  layers: Layers; map: GooseLinkMap; names: Record<string, string>; goose: Record<string, GooseState>;
+  layers: Layers; map: GooseLinkMap; goose: Record<string, GooseState>;
   listening: boolean; pulses: Pulse[]; controls: ControlPulse[]; clients: Record<string, MmsClient[]>;
 };
 type Event = { kind: string; ied_id?: string; ref?: string; value?: unknown; [key: string]: unknown };
 
 export const EMPTY_MAP: GooseLinkMap = { ieds: [], blocks: [], links: [], diagnostics: [], summary: {}, running: false };
-const EMPTY: SignalLayerState = { layers: { goose: false, readers: false }, map: EMPTY_MAP, names: {}, goose: {},
+const EMPTY: SignalLayerState = { layers: { goose: false, readers: false }, map: EMPTY_MAP, goose: {},
   listening: false, pulses: [], controls: [], clients: {} };
 
 /** One snapshot for the SLD signal layers, fed by live events. Only the overlay subscribes,
@@ -45,7 +44,7 @@ export class SignalLayerStore {
       if (link.gocb_ref && link.live && link.live.state !== 'stopped' && !goose[link.gocb_ref]) goose[link.gocb_ref] = link.live;
     }
     const listening = map.running && (this.value.listening || map.links.some(link => link.live && link.live.state !== 'stopped'));
-    this.update({ map, goose, listening, names: shortNames(map.ieds.map(ied => ied.name)) });
+    this.update({ map, goose, listening });
   }
 
   setClients(clients: Record<string, MmsClient[]>) { this.update({ clients }); }
@@ -58,10 +57,10 @@ export class SignalLayerStore {
 
   private pulse(links: { id: string; publisher: string; subscriber: string; gocb_ref: string | null }[],
     kind: PulseKind, change: string, now: number) {
-    const names = this.value.names;
+    // Full IED names everywhere on the SLD (change 0097): "C03_Y1105", never "C03".
     const fresh = links.filter(link => this.gate.allow(link.id, now)).map(link => ({
       key: ++this.counter, linkId: link.id, kind, start: now,
-      label: pulseLabel(names[link.publisher] || link.publisher, names[link.subscriber] || link.subscriber, change, kind) }));
+      label: pulseLabel(link.publisher, link.subscriber, change, kind) }));
     if (fresh.length) this.update({ pulses: [...this.value.pulses.filter(item => now - item.start < LINK_FADE_MS), ...fresh] });
   }
 
@@ -90,7 +89,7 @@ export class SignalLayerStore {
       const name = this.value.map.ieds.find(ied => ied.ied_id === event.ied_id)?.name || '';
       const peer = String(event.peer || '');
       const control = { key: ++this.counter, iedId: event.ied_id, peer, start: now,
-        label: `${peer.split(':')[0] || 'A client'} operated ${String(event.ref || '').split('/').pop()}${name ? ` on ${this.value.names[name] || name}` : ''}` };
+        label: `${peer.split(':')[0] || 'A client'} operated ${String(event.ref || '').split('/').pop()}${name ? ` on ${name}` : ''}` };
       this.update({ controls: [...this.value.controls.filter(item => now - item.start < LINK_FADE_MS), control] });
     }
   }
