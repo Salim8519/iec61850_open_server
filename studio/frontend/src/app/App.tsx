@@ -67,7 +67,8 @@ export function App() {
         {!project && !studio.error && <div className="empty" role="status">
           Opening your last project… Large stations can take a few seconds.</div>}
         {project && current === 'diagram' && <DiagramPage studio={studio} project={project} locked={locked}
-          openDevices={iedId => { setFlowIed(iedId); setCurrent('devices'); }} />}
+          openDevices={iedId => { setFlowIed(iedId); setCurrent('devices'); }} openFile={openFile}
+          openNetwork={() => setCurrent('settings')} />}
         {project && current === 'devices' && <DevicesPage project={project} locked={locked} values={studio.values}
           perform={studio.perform} prepare={studio.prepare} importFile={openFile} addTemplate={studio.addTemplate}
           flowIed={flowIed} />}

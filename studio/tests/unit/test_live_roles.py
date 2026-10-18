@@ -32,7 +32,7 @@ def test_real_ied_is_not_simulated(tmp_path):
 
     coordinator = Coordinator(projects, EventBus(), tmp_path / "missing.exe", tmp_path)
     coordinator.supervisor = FakeSupervisor()
-    coordinator.live.start = lambda project: None
+    coordinator.live.start = lambda project, selected=None: None
     try:
         coordinator.start()
         assert started == ["Sim"]

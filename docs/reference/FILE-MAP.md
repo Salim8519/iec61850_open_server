@@ -12,8 +12,10 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Autosave/recovery/revisions | `projects/service.py`, `startup_recovery.py`, `migration_backup.py` |
 | SCL preservation/model | `scl/document.py`, `importer.py`, `model_builder.py`, `type_resolver.py` |
 | SCL validation/export | `scl/schema_validation.py`, `exporter.py` |
-| Simulation lifecycle | `simulation/coordinator.py` |
+| Simulation lifecycle | `simulation/coordinator.py`, `simulation/run_selection.py` (run/stop single IEDs, ADR-0067) |
 | Studio equipment operations | `simulation/equipment_control.py` |
+| Equipment test buttons (ADR-0067) | `domain/equipment_test.py`, `simulation/equipment_test.py`, `equipment/testButtons.ts`, `features/diagram/EquipmentTest.tsx`, `TestMenu.tsx` |
+| Run one IED from Devices | `features/devices/RunThisIed.tsx`, `copy/running.ts` (`RUN_ONE_COPY`, `runStateWords`) |
 | External-control feedback | `simulation/native_control_feedback.py` |
 | Authoritative canvas state | `simulation/equipment_states.py`, `frontend/src/equipment/liveValues.ts` |
 | Sources/scenarios/pulses | `simulation/automation.py`, `scenario_runner.py`, `pulses.py` |
@@ -50,7 +52,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | GOOSE link map (ADR-0065) | `scl/goose_vendor.py`, `goose_inventory.py`, `goose_remote.py`, `goose_sources.py`, `domain/goose_link_map.py`, `goose_link_live.py`, `projects/goose_links.py` |
 | GOOSE inputs (ADR-0066) | `domain/goose_inputs.py`, `acquisition/goose_inputs.py` |
 | MMS client access (ADR-0066) | `native/worker/server/access_log.*`, `read_hook.*`, `domain/mms_access.py`, `simulation/mms_access.py` |
-| SLD signal layers | `features/diagram/signals/`, `equipment/signalLayout.ts`, `signalPulses.ts`, `signalLayerStore.ts`, `copy/signalLayers.ts`, `api/signalLayers.ts`, `features/devices/GooseHint.tsx`, `GoosePartners.tsx`, `ReadByClients.tsx`, `useGooseLinks.ts` |
+| SLD signal layers | `features/diagram/signals/`, `equipment/signalLayout.ts`, `signalPulses.ts`, `signalLayerStore.ts`, `copy/signalLayers.ts`, `api/signalLayers.ts`, `signals/OutsideSenders.tsx`, `features/devices/GooseHint.tsx`, `GoosePartners.tsx`, `ReadByClients.tsx`, `useGooseLinks.ts` |
 | Real IED client | `native/live/`, `acquisition/real_session.py`, `live_values.py`, `domain/model_compare.py`, `access_policy.py` |
 | Guided UI and wording | `frontend/src/ui/`, `frontend/src/copy/`, `features/network/`, `features/settings/` |
 | Feature contracts | `docs/specs/`, `studio/tools/check_specs.py` |

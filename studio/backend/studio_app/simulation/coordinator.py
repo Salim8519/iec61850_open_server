@@ -23,6 +23,7 @@ from .pulses import Pulses
 from .control_compatibility import profiles as compatibility_profiles
 from studio_app.acquisition.manager import LiveManager
 from studio_app.projects.ied_settings import endpoint_conflicts
+from .run_selection import add_ieds, remove_ieds, runnable, simulated_of
 
 
 class Coordinator:
@@ -36,6 +37,7 @@ class Coordinator:
         self.index = {}
         self.ied_indexes = {}
         self.sources = {}
+        self.active = set()  # IEDs in the current run (simulated and real, ADR-0067)
         self.elapsed = 0
         self.last_automation_time = time.monotonic()
         self.cadence = Cadence(self.last_automation_time)
@@ -87,17 +89,20 @@ class Coordinator:
         if kind == "control_applied":
             self.native_control_feedback.enqueue(ied_id, event)
 
-    def start(self):
+    def start(self, ied_ids=None):
+        """Run every IED not set to Off, or only `ied_ids`; adds them when a run is already on."""
         with self.cycle_lock:
-            self._start()
+            if ied_ids is not None and self.state in {"running", "paused"}:
+                return add_ieds(self, set(ied_ids))
+            self._start(None if ied_ids is None else set(ied_ids))
 
-    def _start(self):
+    def _start(self, selection=None):
         with self.lock:
             if self.state != "stopped":
                 raise ValueError("Stop the current simulation first")
             project = self.projects.project
-            ieds = [ied for ied in project["ieds"] if ied.get("role", "simulated") != "off"]
-            simulated = [ied for ied in ieds if ied.get("role", "simulated") == "simulated"]
+            ieds = runnable(project, selection)
+            simulated = simulated_of(ieds)
             if not project["ieds"]:
                 raise ValueError("Import or create an IED before Run")
             if not ieds:
@@ -106,6 +111,7 @@ class Coordinator:
             if conflicts:
                 raise ValueError(conflicts[0])
             self.state = "starting"
+            self.active = {ied["id"] for ied in ieds}
             self.index = {(ied["id"], signal["ref"]): signal for ied in ieds for signal in ied["signals"]}
             self.ied_indexes = {ied["id"]: {signal["ref"]: signal for signal in ied["signals"]} for ied in ieds}
             running = {ied["id"] for ied in simulated}
@@ -125,11 +131,11 @@ class Coordinator:
             self.scenario_runner.reset(self.projects.project["scenarios"])
             self.state = "running"
             self.last_automation_time = time.monotonic()
-            self.emit("runtime", state=self.state)
+            self.emit("runtime", state=self.state, running=sorted(self.active))
             publish_bindings(self)
             apply_initial_states(self)
             apply_test_modes(self)
-            self.live.start(project)
+            self.live.start(project, self.active)
             self.last_automation_time = time.monotonic()
             self.cadence.reset(self.last_automation_time)
         except Exception as error:
@@ -138,14 +144,20 @@ class Coordinator:
             self.scenario_runner.stop()
             self.supervisor.stop(project["ieds"])
             self.state = "stopped"
+            self.active = set()
             self.emit("runtime", state=self.state, message=str(error))
             if self.log:
                 self.log.close()
                 self.log = None
             raise
 
-    def stop(self):
+    def stop(self, ied_ids=None):
+        """Stop the whole run, or only `ied_ids` while the other IEDs keep running."""
         with self.cycle_lock:
+            if ied_ids is not None and self.state in {"running", "paused"}:
+                selection = set(ied_ids)
+                if self.active - selection:
+                    return remove_ieds(self, selection)
             self.pulses.cancel()
             self.state = "stopping"
             self.live.stop()
@@ -153,6 +165,7 @@ class Coordinator:
             self.scenario_runner.stop()
             self.supervisor.stop(self.projects.project["ieds"])
             self.state = "stopped"
+            self.active = set()
             self.emit("runtime", state=self.state)
             if self.log:
                 self.log.close()

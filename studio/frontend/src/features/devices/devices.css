@@ -3,7 +3,8 @@
 .devices-list .list { gap: 6px; }
 .list-row.compact { min-height: 52px; padding: 6px 10px; gap: 10px; }
 .list-row.compact strong { font-size: 14px; }
-.list-pills { display: grid; gap: 4px; justify-items: end; flex-shrink: 0; }
+.list-pills { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
+.list-pills .status-pill { white-space: nowrap; }
 .list-hints { display: flex; flex-wrap: wrap; gap: 4px; }
 .device-detail { min-width: 0; }
 .detail-head.compact { align-items: center; flex-wrap: wrap; gap: 6px 10px; padding: 10px 16px; }

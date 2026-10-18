@@ -26,7 +26,7 @@ export function placeActivity(project: Project | null, activity: Activity | null
   const result: Partial<Record<PlaceId, Running>> = {};
   const runtime = project?.runtime ?? 'stopped';
   if (project && (runtime === 'running' || runtime === 'paused')) {
-    const count = project.ieds.filter(ied => ied.role !== 'off').length;
+    const count = project.running_ieds?.length ?? project.ieds.filter(ied => ied.role !== 'off').length;
     const paused = runtime === 'paused';
     result.devices = { labels: [paused ? RUNNING_COPY.iedsPaused(count) : RUNNING_COPY.ieds(count)], paused };
     result.diagram = { labels: [RUNNING_COPY.diagram], paused };

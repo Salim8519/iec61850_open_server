@@ -14,9 +14,11 @@ def _write(coordinator, ied):
     return len(writes)
 
 
-def apply_test_modes(coordinator):
+def apply_test_modes(coordinator, only=None):
     """At Run start: write every simulated IED's saved modes that differ from normal service."""
     for ied in coordinator.projects.project["ieds"]:
+        if only is not None and ied["id"] not in only:
+            continue
         settings = ied.get("test_mode") or {}
         if settings.get("devices") or settings.get("simulation"):
             _write(coordinator, ied)

@@ -14,11 +14,12 @@ import { DeviceSignals } from './DeviceSignals';
 import { LiveValueTable } from './LiveValueTable';
 import { SignalFlowView } from './SignalFlowView';
 import type { ModeSummary } from './useModes';
+import { RunThisIed } from './RunThisIed';
 
 type Tab = 'overview' | 'signals' | 'compare' | 'flow' | 'files';
 
-export function DeviceDetail({ ied, project, locked, values, perform, prepare, initialTab, mode, selectDevice }: {
-  ied: Ied; project: Project; locked: boolean; values: Record<string, unknown>;
+export function DeviceDetail({ ied, project, locked, busy = false, values, perform, prepare, initialTab, mode, selectDevice }: {
+  ied: Ied; project: Project; locked: boolean; busy?: boolean; values: Record<string, unknown>;
   perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>; initialTab?: Tab;
   mode?: ModeSummary; selectDevice?: (iedId: string) => void;
 }) {
@@ -50,6 +51,7 @@ export function DeviceDetail({ ied, project, locked, values, perform, prepare, i
       <span className="small muted detail-facts">{facts}</span>
       <HelpTip text={hint(`live.role.${ied.role}`)} label="What does this mode mean?" />
       <span className="gateway-spacer" />
+      <RunThisIed ied={ied} project={project} busy={busy} perform={perform} />
       <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
           { value: 'simulated', label: 'Simulate' }, { value: 'real', label: 'Real device' }, { value: 'off', label: 'Off' }]} />

@@ -4,6 +4,8 @@ import type { GooseLink, GooseLinkMap } from '../api/signalLayers';
 export const PULSE_MS = 700;
 export const LINK_FADE_MS = 2000;
 export const PULSE_GAP_MS = 1000;
+/** A dot from an IED outside the project travels from the canvas edge for ~2 s, then nothing remains. */
+export const EDGE_PULSE_MS = 2000;
 
 export type GooseState = { state: string; problem?: string; st_num?: number };
 export type PulseKind = 'observed' | 'expected';
@@ -25,7 +27,7 @@ export class PulseGate {
 /** Links that pulse for one listener frame: only a real stNum increase, never the first frame seen. */
 export function observedLinks(map: GooseLinkMap, gocbRef: string, previous?: number, next?: number): GooseLink[] {
   if (previous === undefined || next === undefined || next <= previous) return [];
-  return map.links.filter(link => link.gocb_ref === gocbRef && link.status === 'declared');
+  return map.links.filter(link => link.gocb_ref === gocbRef && (link.status === 'declared' || link.status === 'remote'));
 }
 
 /** Without a listener: a changed publisher value that belongs to a sent block's dataset is

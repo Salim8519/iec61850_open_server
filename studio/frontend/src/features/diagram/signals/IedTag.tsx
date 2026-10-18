@@ -2,23 +2,25 @@ import type { PlacedTag } from '../../../equipment/signalLayout';
 
 export type TagProblem = { text: string; tone: 'problem' | 'waiting' };
 
-/** A small grey IED name beside its equipment. Problems stay as words with a dashed border;
- * IEDs outside the project are dashed and say so; readers show as "◉ 2 read" with details on hover. */
-export function IedTag({ tag, scale, label, problems, readers, readersTitle, operated, selected, select }: {
-  tag: PlacedTag; scale: number; label: string; problems: TagProblem[]; readers: string; readersTitle: string;
-  operated?: { key: number; label: string }; selected: boolean; select: () => void;
+/** A small grey IED name beside its equipment, always the full IED name (change 0097).
+ * A GOOSE problem adds one small ⚠ only; the words are in the hover text and the side sheet.
+ * Readers show as "◉ 2 read" with details on hover. */
+export function IedTag({ tag, scale, problems, readers, readersTitle, operated, stopped, selected, select }: {
+  tag: PlacedTag; scale: number; problems: TagProblem[]; readers: string; readersTitle: string;
+  operated?: { key: number; label: string }; stopped: boolean; selected: boolean; select: () => void;
 }) {
   const tone = problems.some(item => item.tone === 'problem') ? ' problem' : problems.length ? ' waiting' : '';
-  const where = tag.outside ? (tag.remote ? 'not in any project file' : 'not in this project') : '';
-  return <button className={`ied-tag nodrag nopan${tag.outside ? ' outside' : ''}${tone}${selected ? ' selected' : ''}`}
+  const words = problems.map(item => item.text).join('\n');
+  return <button className={`ied-tag nodrag nopan${tone}${stopped ? ' stopped' : ''}${selected ? ' selected' : ''}`}
     style={{ transform: `translate(${tag.x}px, ${tag.y}px) scale(${scale})` }} onClick={select}
-    title={`${tag.name}${where ? ` (${where})` : ''}${readersTitle ? `\n${readersTitle}` : ''}`}
-    aria-label={`IED ${tag.name}${where ? `, ${where}` : ''}${problems.length ? `, ${problems.map(item => item.text).join(', ')}` : ''}`}>
-    <span className="ied-tag-name">{label}</span>
-    {tag.outside && <span className="ied-tag-note">outside project</span>}
-    {readers && <span className="ied-tag-readers">{readers}</span>}
-    {problems.slice(0, 2).map(item => <span key={item.text} className={`ied-tag-problem ${item.tone}`}>{item.text}</span>)}
-    {problems.length > 2 && <span className="ied-tag-problem">+{problems.length - 2} more</span>}
+    title={[tag.name, stopped ? 'IED not running' : '', words, readersTitle, 'Click for its GOOSE links'].filter(Boolean).join('\n')}
+    aria-label={`IED ${tag.name}${stopped ? ', not running' : ''}${problems.length ? `, ${words.replace(/\n/g, ', ')}` : ''}`}>
+    <span className="ied-tag-line">
+      <span className="ied-tag-name">{tag.name}</span>
+      {problems.length > 0 && <span className={`ied-tag-warn${tone}`} aria-hidden>⚠{problems.length > 1 ? problems.length : ''}</span>}
+      {stopped && <span className="ied-tag-note">not running</span>}
+      {readers && <span className="ied-tag-readers">{readers}</span>}
+    </span>
     {operated && <span key={operated.key} className="ied-tag-operated">{operated.label}</span>}
   </button>;
 }

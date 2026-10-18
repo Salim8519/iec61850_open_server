@@ -4,8 +4,9 @@ import test from 'node:test';
 import type { GooseLinkMap } from '../../frontend/src/api/signalLayers.ts';
 import type { EquipmentNode } from '../../frontend/src/api/types.ts';
 import { SignalLayerStore } from '../../frontend/src/equipment/signalLayerStore.ts';
-import { equipmentByIed, linkCurve, placeTags, shortNames } from '../../frontend/src/equipment/signalLayout.ts';
-import { PulseGate, problemWords, reducedMotion } from '../../frontend/src/equipment/signalPulses.ts';
+import { edgePoint, equipmentByIed, linkCurve, placeTags } from '../../frontend/src/equipment/signalLayout.ts';
+import { EDGE_PULSE_MS, observedLinks, PulseGate, problemWords, reducedMotion } from '../../frontend/src/equipment/signalPulses.ts';
+import { linkLine, linkStatus } from '../../frontend/src/copy/signalLayers.ts';
 
 const read = (path: string) => readFileSync(new URL(`../../frontend/src/${path}`, import.meta.url), 'utf8');
 const REF = 'PUBLD0/LLN0$GO$GoCB01';
@@ -53,7 +54,7 @@ test('observed pulses come only from a real stNum increase', () => {
   store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: 6 }, 4000);
   const [pulse] = store.get().pulses;
   assert.equal(pulse.kind, 'observed');
-  assert.match(pulse.label, /^PUB → SUB · /);
+  assert.match(pulse.label, /^PUB_BAY0001 → SUB_BAY0002 · /, "full IED names");
 });
 
 test('without a listener a publisher change is a hollow expected pulse', () => {
@@ -62,7 +63,7 @@ test('without a listener a publisher change is a hollow expected pulse', () => {
   store.handle({ kind: 'signal', ied_id: 'p', ref: 'PUBLD0/XCBR1.Pos.stVal', value: 1 }, 0);
   const [pulse] = store.get().pulses;
   assert.equal(pulse.kind, 'expected');
-  assert.equal(pulse.label, 'PUB → SUB · XCBR1.Pos Open (expected)');
+  assert.equal(pulse.label, 'PUB_BAY0001 → SUB_BAY0002 · XCBR1.Pos Open (expected)');
   store.handle({ kind: 'signal', ied_id: 'p', ref: 'PUBLD0/MMXU1.TotW.mag.f', value: 3 }, 5000);
   assert.equal(store.get().pulses.length, 1, 'a value outside the dataset sends no GOOSE');
   store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: 1 }, 6000);
@@ -87,16 +88,19 @@ test('reduced motion turns pulses into a static highlight; animation uses transf
   assert.match(css, /prefers-reduced-motion/);
 });
 
-test('problems persist as words with a dashed border, never colour alone', () => {
+test('problems persist as a small ⚠ with words on hover and a dashed border, never colour alone', () => {
   assert.deepEqual(problemWords('C09', { state: 'timeout' }), { text: '⚠ GOOSE lost from C09', tone: 'problem' });
   assert.match(problemWords('C09', { state: 'problem', problem: 'conf_rev_mismatch' })!.text, /revision differs/);
   assert.equal(problemWords('C09', { state: 'receiving' }), null);
   const css = read('features/diagram/signals/signal-layers.css');
   assert.match(css, /\.ied-tag\.problem[^}]*dashed/);
-  assert.match(css, /\.ied-tag\.outside[^}]*dashed/);
+  assert.match(css, /\.ied-tag\.stopped[^}]*dotted/);
+  const tag = read('features/diagram/signals/IedTag.tsx');
+  assert.match(tag, /⚠/);
+  assert.match(tag, /\{tag\.name\}/, 'the tag shows the full IED name');
 });
 
-test('tags sit beside bound equipment, remote publishers at the edge, and are never saved', () => {
+test('tags sit beside bound equipment, outside senders get no tag, and are never saved (change 0097)', () => {
   const nodes = [{ id: 'q1', type: 'equipment', position: { x: 100, y: 200 }, data: { kind: 'CB', label: 'Q1', rotation: 0,
     control_binding: { ied_id: 's', ref: 'x' } } }] as unknown as EquipmentNode[];
   const bound = equipmentByIed(nodes);
@@ -104,10 +108,32 @@ test('tags sit beside bound equipment, remote publishers at the edge, and are ne
   const tags = placeTags([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], bound, [
     { name: 'SUB_BAY0002', iedId: 's', outside: false, remote: false },
     { name: 'FAR', iedId: null, outside: true, remote: true }, { name: 'LOOSE', iedId: 'x', outside: false, remote: false }]);
-  assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y]), [['FAR', -70, 200], ['LOOSE', -70, 240], ['SUB_BAY0002', 190, 200]]);
-  assert.deepEqual(shortNames(['B09_BCU', 'B17_X230', 'B17_BCU', 'FEEDERPROTECTION1']),
-    { B09_BCU: 'B09', B17_X230: 'B17_X230', B17_BCU: 'B17_BCU', FEEDERPROTECTION1: 'FEEDERPROTE…' });
+  assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y]), [['LOOSE', -70, 200], ['SUB_BAY0002', 190, 200]]);
+  assert.deepEqual(edgePoint([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], { x: 190, y: 213 }), { x: -130, y: 213 });
   assert.match(linkCurve({ x: 0, y: 0 }, { x: 100, y: 0 }).path, /^M 0 0 Q 50 -25 100 0$/);
   const overlay = read('features/diagram/signals/SignalOverlay.tsx');
   assert.doesNotMatch(overlay, /updateDiagram|change\(/);
+});
+
+test('a GOOSE from a sender outside the project pulses once from the canvas edge for ~2 s', () => {
+  const remote = { ...map, links: [{ ...map.links[0], id: 'R1', publisher: 'FAR', status: 'remote' as const, remote: true }] };
+  assert.equal(observedLinks(remote, REF, 1, 2).length, 1);
+  assert.equal(observedLinks(remote, REF, 2, 2).length, 0, 'no pulse without a new stNum');
+  assert.equal(EDGE_PULSE_MS, 2000);
+  const overlay = read('features/diagram/signals/SignalOverlay.tsx');
+  assert.match(overlay, /edgePoint/);
+  assert.doesNotMatch(read('features/diagram/signals/IedTag.tsx'), /outside project/);
+});
+
+test('GOOSE status uses plain words instead of "Not watched"', () => {
+  const link = { ...map.links[0], live: null };
+  assert.equal(linkStatus(link, true, false).label, 'Needs lab network');
+  assert.match(linkStatus(link, true, false).hint, /only travels on a lab network/);
+  assert.equal(linkStatus(link, true, true).label, 'Not checked');
+  assert.equal(linkStatus({ ...link, status: 'remote' }, true).label, 'Outside project');
+  assert.equal(linkLine(link, 'SUB_BAY0002'), '← PUB_BAY0001 · GoCB01');
+  assert.equal(linkLine(link, 'PUB_BAY0001'), '→ SUB_BAY0002 · GoCB01');
+  for (const file of ['copy/signalLayers.ts', 'features/devices/GoosePartners.tsx', 'features/diagram/signals/SignalSheet.tsx']) {
+    assert.doesNotMatch(read(file), /Not watched/);
+  }
 });

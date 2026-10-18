@@ -21,19 +21,20 @@
 @keyframes signal-link-fade { 0% { opacity: 0.9; } 70% { opacity: 0.6; } 100% { opacity: 0; } }
 
 .ied-tag { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: flex-start;
-  gap: 1px; min-height: 26px; max-width: 220px; padding: 3px 8px; border: 1px solid var(--border-strong);
+  gap: 1px; min-height: 26px; padding: 3px 8px; border: 1px solid var(--border-strong);
   border-radius: 7px; background: #f4f5f8; color: var(--text-2); font: inherit; font-size: 11.5px;
   line-height: 1.3; text-align: left; box-shadow: var(--shadow-small); pointer-events: auto; cursor: pointer;
   transform-origin: 0 0; white-space: nowrap; }
 .ied-tag:hover, .ied-tag.selected { border-color: var(--accent); color: var(--text); }
 .ied-tag-name { font-weight: 700; }
-.ied-tag.outside { border-style: dashed; background: var(--surface); }
+.ied-tag-line { display: flex; align-items: center; gap: 6px; }
+.ied-tag.stopped { border-style: dotted; background: var(--surface); }
 .ied-tag-note { font-size: 10.5px; color: var(--text-3); }
 .ied-tag-readers { font-weight: 700; color: var(--teal); }
 .ied-tag.problem { border: 1.5px dashed var(--warning); background: var(--warning-soft); }
 .ied-tag.waiting { border-style: dotted; }
-.ied-tag-problem { font-weight: 600; color: #92400e; }
-.ied-tag-problem.waiting { font-weight: 500; color: var(--text-2); }
+.ied-tag-warn { font-weight: 700; color: #92400e; }
+.ied-tag-warn.waiting { color: var(--text-2); }
 .ied-tag-operated { font-weight: 700; color: var(--accent-hover); opacity: 0; animation: signal-operated 2s ease-out 1; }
 @keyframes signal-operated { 0% { opacity: 1; transform: translateY(-2px); } 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
 
@@ -47,4 +48,12 @@
 .signal-sheet dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 13px; }
 .signal-sheet dt { color: var(--text-3); }
 .signal-sheet dd { margin: 0; overflow-wrap: anywhere; }
-.signal-sheet .link-row { width: 100%; justify-content: space-between; }
+.signal-sheet .link-row { width: 100%; justify-content: space-between; gap: 8px; text-align: left; }
+.signal-sheet .link-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.outside-senders { position: relative; }
+.outside-popover { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 340px; max-width: 80vw;
+  padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-small);
+  background: var(--surface); box-shadow: var(--shadow-small); display: grid; gap: 8px; }
+.outside-popover p { margin: 0; }
+.outside-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.outside-row strong { overflow-wrap: anywhere; }

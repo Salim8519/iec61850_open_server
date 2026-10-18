@@ -23,14 +23,15 @@ export function kindInfo(kind: EquipmentKind): KindInfo {
   return INFO[kind];
 }
 
-export type SetupItem = { label: string; done: boolean };
+/** `optional`: a command link only adds SCADA-like operation; test buttons work without it (change 0097). */
+export type SetupItem = { label: string; done: boolean; optional?: boolean };
 
 /** What an object needs before it can show live state or accept operation. */
 export function setupItems(data: EquipmentData): SetupItem[] {
   const state = { label: kindInfo(data.kind).state, done: !!data.state_mapping };
   const command = { label: 'Command', done: !!data.control_binding };
   switch (data.kind) {
-    case 'CB': case 'DS': case 'ES': case 'TRIP_RELAY': return [state, command];
+    case 'CB': case 'DS': case 'ES': case 'TRIP_RELAY': return [state, { ...command, optional: true }];
     case 'CT': case 'VT': case 'SOURCE': return [state];
     case 'PUSH_BUTTON': return data.push_mode === 'spc_momentary' ? [command] : [state];
     case 'RELAY': return [{ label: 'At least one signal', done: !!data.relay_statuses?.length }];

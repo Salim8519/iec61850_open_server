@@ -18,6 +18,15 @@ class MmsAccess:
         with self.lock:
             self.clients, self.own = {}, {}
 
+    def forget(self, ied_ids):
+        """Drop the client lists of IEDs that stopped while the run continues."""
+        with self.lock:
+            for ied_id in ied_ids:
+                self.clients.pop(ied_id, None)
+            self.own = {key: value for key, value in self.own.items() if key[0] not in ied_ids}
+        for ied_id in ied_ids:
+            self.coordinator.events.publish("mms_access", ied_id=ied_id, clients=[])
+
     def mark_own(self, ied_id, control_ref):
         with self.lock:
             self.own[(ied_id, control_ref)] = time.monotonic() + OWN_COMMAND_S

@@ -45,6 +45,7 @@ changed, dropped or invented by accident.
 | [Guided tour](tour.md) | First-start walkthrough of the five places, reopened from Help |
 | [Tools](tools-page.md) | Tools place: cards for built tools only, GOOSE & SV traffic |
 | [Tool layout](tool-layout.md) | Tool pages and Devices fill the window; one remembered filter bar on every list |
+| [Run one IED, test buttons](run-single-ied.md) | Run/connect a single IED from Devices; equipment test buttons on simulated IEDs |
 | [IED Explorer](ied-explorer.md) | Browse any IED, autonomous watch list, commands after confirmation |
 | [Find IEDs](find-ieds.md) | Scan a previewed range for IEC 61850 devices and identify them |
 | [Gateway simulator](gateway.md) | IEC 104, Modbus TCP and DNP3 gateway with smart point list and autonomous start |

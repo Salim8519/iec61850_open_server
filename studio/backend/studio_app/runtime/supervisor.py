@@ -19,34 +19,42 @@ class Supervisor:
     def start(self, ieds, compatibility=None, network=None):
         if self.workers:
             raise ValueError("Simulation is already running")
-        if not self.executable.exists():
-            raise ValueError("Native IED engine is not built yet")
         if not ieds:
             raise ValueError("Import or create an IED before Run")
+        self.add(ieds, compatibility, network)
+
+    def add(self, ieds, compatibility=None, network=None, running=()):
+        """Start workers for more IEDs; `running` are the IEDs whose workers already listen."""
+        if not self.executable.exists():
+            raise ValueError("Native IED engine is not built yet")
+        if any(ied["id"] in self.workers for ied in ieds):
+            raise ValueError("This IED is already running")
         network = network or dict(DEFAULT_NETWORK)
-        assign_endpoints(ieds)
+        assign_endpoints([*running, *ieds])
         allowed = self.lab_addresses(network["adapter_guid"]) if network["mode"] == "lab" else ()
         preflight(ieds, network, allowed)
         self.work_directory.mkdir(parents=True, exist_ok=True)
         try:
-            compatibility = compatibility or {}
             for ied in ieds:
-                config = self.work_directory / (ied["id"] + ".cfg")
-                config.write_text(ied["cfg"], encoding="utf-8")
-                worker = WorkerProcess(self.executable, lambda event, key=ied["id"]: self.on_event(key, event))
-                self.workers[ied["id"]] = worker
-                controls = [{**control, "compatibility": compatibility.get(
-                    (ied["id"], control["ref"]), "standard")} for control in ied["controls"]]
-                started = worker.request("start", **start_request(ied, network, controls, config.resolve()))
-                check_capabilities(started)
-                ied["goose_state"] = started.get("goose", {})
-                for signal in ied["signals"]:
-                    if signal["kind"] in {"Dbpos", "Tcmd", "Quality", "Timestamp"} and signal["value"]:
-                        worker.request("update", ref=signal["ref"], value=signal["value"])
-                ied["state"] = "running"
+                self._launch(ied, compatibility or {}, network)
         except Exception:
-            self.stop(ieds)
+            self.stop_some(ieds)
             raise
+
+    def _launch(self, ied, compatibility, network):
+        config = self.work_directory / (ied["id"] + ".cfg")
+        config.write_text(ied["cfg"], encoding="utf-8")
+        worker = WorkerProcess(self.executable, lambda event, key=ied["id"]: self.on_event(key, event))
+        self.workers[ied["id"]] = worker
+        controls = [{**control, "compatibility": compatibility.get(
+            (ied["id"], control["ref"]), "standard")} for control in ied["controls"]]
+        started = worker.request("start", **start_request(ied, network, controls, config.resolve()))
+        check_capabilities(started)
+        ied["goose_state"] = started.get("goose", {})
+        for signal in ied["signals"]:
+            if signal["kind"] in {"Dbpos", "Tcmd", "Quality", "Timestamp"} and signal["value"]:
+                worker.request("update", ref=signal["ref"], value=signal["value"])
+        ied["state"] = "running"
 
     def update(self, ied_id, reference, value):
         if ied_id not in self.workers:
@@ -68,6 +76,15 @@ class Supervisor:
 
     def update_guarded(self, ied_id, updates, guard):
         return self.workers[ied_id].request("update_guarded", updates=updates, guard=guard)
+
+    def stop_some(self, ieds):
+        """Stop the workers of these IEDs only; other IEDs keep running."""
+        for ied in ieds:
+            worker = self.workers.pop(ied["id"], None)
+            if worker:
+                worker.close()
+            ied["state"] = "stopped"
+            ied.pop("goose_state", None)
 
     def stop(self, ieds):
         for worker in self.workers.values():

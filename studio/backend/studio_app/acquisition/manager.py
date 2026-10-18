@@ -36,17 +36,15 @@ class LiveManager:
         self.goose = GooseMonitor(self)
         self.sv = SvMonitor(self)
 
-    def start(self, project):
+    def start(self, project, selected=None):
+        """Start the listeners and connect the real IEDs in `selected` (all when None)."""
         ieds = project["ieds"]
-        real = [ied for ied in ieds if ied.get("role") == "real"]
+        real = [ied for ied in ieds if ied.get("role") == "real" and (selected is None or ied["id"] in selected)]
         needs_live = real or any((ied.get("goose") or {}).get("publishes") or (ied.get("goose") or {}).get("subscribes")
                                  or (ied.get("sv") or {}).get("publishes") for ied in ieds)
         if needs_live and not self.executable.exists():
             raise ValueError("The live client (studio_live.exe) is not built yet; rebuild the native programs")
-        for ied in real:
-            session = RealSession(self, ied, watched_points(project, ied))
-            self.sessions[ied["id"]] = session
-            session.start()
+        self.connect(project, real)
         try:
             self.goose.start(ieds, project["network"], npcap_status()["installed"])
         except Exception as error:
@@ -57,6 +55,20 @@ class LiveManager:
         except Exception as error:
             self.sv.status.update(state="failed", message=f"Sampled Values listener could not start: {error}")
             self.coordinator.emit("sv_listener_failed", message=str(error))
+
+    def connect(self, project, real):
+        """Connect more real IEDs while the run continues (client read only, ADR-0067)."""
+        if real and not self.executable.exists():
+            raise ValueError("The live client (studio_live.exe) is not built yet; rebuild the native programs")
+        for ied in real:
+            session = RealSession(self, ied, watched_points(project, ied))
+            self.sessions[ied["id"]] = session
+            session.start()
+
+    def disconnect(self, ied_id):
+        session = self.sessions.pop(ied_id, None)
+        if session:
+            session.stop()
 
     def stop(self):
         self.goose.stop()

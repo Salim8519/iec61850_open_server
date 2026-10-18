@@ -31,9 +31,11 @@ type Props = {
   change: (diagram: Diagram, group?: string) => void; toolbar?: ReactNode;
   /** View-only layers drawn in flow coordinates (spec signal-layers); never part of the diagram. */
   overlay?: ReactNode;
+  /** Right-click on an equipment while running opens its test menu (ADR-0067). */
+  nodeMenu?: (nodeId: string, x: number, y: number) => void;
 };
 
-function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar, overlay }: Props) {
+function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar, overlay, nodeMenu }: Props) {
   const flow = useReactFlow<NodeType>();
   const zoomTier = useZoomTier();
   const selectionRef = useRef(selection);
@@ -112,6 +114,10 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
     if (locked && node.data.kind === 'PUSH_BUTTON') operate(node.id, 'press');
   }, [locked, operate]);
   const paneClick = useCallback(() => setSelection([]), [setSelection]);
+  const nodeContext = useCallback((event: React.MouseEvent, node: NodeType) => {
+    event.preventDefault();
+    if (locked && nodeMenu) nodeMenu(node.id, event.clientX, event.clientY);
+  }, [locked, nodeMenu]);
   return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}><ModeBadges.Provider value={modeBadges}>
     <div className={`canvas zoom-${zoomTier}`} onDragOver={dragOver} onDrop={drop}>
       {toolbar}
@@ -120,7 +126,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
       <ReactFlow nodes={projection} edges={edges} nodeTypes={nodeTypes}
         onNodesChange={nodesChanged} onEdgesChange={edgesChanged} onConnect={connect}
         onNodeDragStop={dragStop} onSelectionDragStop={dragStop}
-        onNodeClick={nodeClick} onPaneClick={paneClick} onPaneContextMenu={noMenu}
+        onNodeClick={nodeClick} onPaneClick={paneClick} onPaneContextMenu={noMenu} onNodeContextMenu={nodeContext}
         connectionMode={ConnectionMode.Loose} connectionRadius={36} connectionLineStyle={connectionLineStyle}
         selectionOnDrag panOnDrag={panButtons} selectionMode={SelectionMode.Partial}
         multiSelectionKeyCode={multiKeys} nodeDragThreshold={3}

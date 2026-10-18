@@ -18,3 +18,18 @@ export const RUNNING_COPY = {
   scan: (probed: number, total: number) => `Find IEDs: scanning ${probed} of ${total}`,
   running: 'Running',
 };
+
+/** Top bar run state: "Running · 2 IEDs" when all run, "Running 1 of 2 IEDs" when only some do (ADR-0067). */
+export function runStateWords(inRun: number, notOff: number, paused: boolean): string {
+  if (paused) return 'Running · automation paused';
+  return inRun >= notOff ? `Running · ${plural(inRun, 'IED')}` : `Running ${inRun} of ${plural(notOff, 'IED')}`;
+}
+
+export const RUN_ONE_COPY = {
+  simulated: { start: 'Run this IED', stop: 'Stop this IED',
+    startHint: 'Start only this simulated IED: its MMS server, reports, polling answers, GOOSE (lab network) and all its points. Other IEDs stay as they are.',
+    stopHint: 'Stop only this simulated IED. Other running IEDs keep going.' },
+  real: { start: 'Connect', stop: 'Disconnect',
+    startHint: 'Read this real device as a client: free report blocks, else polling. Nothing is sent unless you operate.',
+    stopHint: 'Disconnect from this real device and give back every report block ScadaBench used.' },
+};
