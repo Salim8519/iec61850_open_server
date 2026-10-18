@@ -45,7 +45,9 @@ IED, as quiet IED tags and one dot per real change. Devices shows the same partn
 - Pulse: only when a listener frame raises stNum (never the first frame, never a
   retransmission), at most one per link per second, ~0.7 s dot then a ~2 s fading link and a
   label "PUB → SUB · change" (full names). A GOOSE from a sender outside the project moves one
-  dot from the canvas edge to the receiver tag for ~2 s, with no line, then nothing remains. Without a listener, a publisher value that is a dataset member of
+  dot from a fixed screen distance beside the receiver tag into it for ~2 s, with a fading line,
+  then nothing remains. Dot, line and label scale like the tags, so they stay readable when
+  zoomed out, and the receiver tag shows "← PUB · change" for ~2 s (ADR-0070). Without a listener, a publisher value that is a dataset member of
   a sent block gives a hollow dashed pulse labelled "(expected)". Reduced motion: static.
 - A subscriber problem is one small ⚠ on the receiver's tag (dashed border; words on hover);
   "waiting" only once a listener reports. Clicking a tag opens the side sheet with one line per
@@ -88,7 +90,9 @@ Sampled Values on the SLD, counting data-attribute writes (SP/CF/DC), R-GOOSE.
 | LAYER-13 | Without a listener, pulses are hollow and say "expected". | `studio/tests/frontend/signalLayers.test.ts::without a listener a publisher change is a hollow expected pulse` |
 | LAYER-14 | Reduced motion gives a static highlight; animation uses transform and opacity only. | `studio/tests/frontend/signalLayers.test.ts::reduced motion turns pulses into a static highlight; animation uses transform and opacity only` |
 | LAYER-15 | Problems persist as a small ⚠ with words on hover and a dashed border, never colour alone. | `studio/tests/frontend/signalLayers.test.ts::problems persist as a small ⚠ with words on hover and a dashed border, never colour alone` |
-| LAYER-20 | A GOOSE from a sender outside the project is one dot from the canvas edge for ~2 s. | `studio/tests/frontend/signalLayers.test.ts::a GOOSE from a sender outside the project pulses once from the canvas edge for ~2 s` |
+| LAYER-20 | A GOOSE from a sender outside the project is one dot that starts beside its receiver for ~2 s. | `studio/tests/frontend/signalLayers.test.ts::a GOOSE from a sender outside the project pulses once beside its receiver for ~2 s` |
+| LAYER-22 | An outside sender's dot starts 130-440 px from its receiver at any zoom; dot, line and words keep their screen size; the receiver tag names the sender for ~2 s. | `studio/tests/frontend/gooseVisibility.test.ts::an outside sender starts beside its receiver at every zoom, never off the drawing edge`, `studio/tests/frontend/gooseVisibility.test.ts::dot, line and words keep their screen size; the receiver tag names the sender for ~2 s` |
+| LAYER-23 | A receiving sender outside the project shows its live state in GOOSE partners; a silent one says "Outside project". | `studio/tests/frontend/gooseVisibility.test.ts::a receiving sender outside the project shows its live state, a silent one says Outside project` |
 | LAYER-21 | GOOSE status uses plain words ("Needs lab network", "Outside project"), never "Not watched". | `studio/tests/frontend/signalLayers.test.ts::GOOSE status uses plain words instead of "Not watched"` |
 | LAYER-16 | MMS reads are counted per client per logical node and summarised for the live view only. | `studio/tests/unit/test_mms_access.py::test_reads_are_counted_per_logical_node_and_clients_by_address`, `studio/tests/unit/test_mms_access.py::test_summaries_go_to_the_live_view_only` |
 | LAYER-17 | Observing reads never changes the MMS answer; the worker summarises at most once per second. | `studio/tests/unit/test_mms_access.py::test_worker_observes_reads_without_changing_the_answer`, `studio/tests/protocol/test_mms_access_wire.py::test_reads_are_counted_per_client_and_answers_are_unchanged` |
@@ -97,6 +101,6 @@ Sampled Values on the SLD, counting data-attribute writes (SP/CF/DC), R-GOOSE.
 
 ## Acceptance evidence
 
-Change [0094](../changes/2026/0094-goose-mms-signal-layers.md). Private vendor files are
+Change [0094](../changes/2026/0094-goose-mms-signal-layers.md); visibility between two machines: [0102](../changes/2026/0102-goose-visibility-and-timing.md). Private vendor files are
 checked only locally (`test_goose_link_map_vendor_files.py`, skipped elsewhere) and described
 generically.

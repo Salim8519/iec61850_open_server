@@ -30,7 +30,7 @@ function bounds(boxes: Box[]) {
 
 /** Beside the topmost bound equipment; unbound project IEDs in a small column at the left edge.
  * IEDs outside the project get no tag at all: the SLD stays clean (change 0097); they are
- * listed in the toolbar and their GOOSE enters from the canvas edge (edgePoint). */
+ * listed in the toolbar and their GOOSE flies in from beside the receiver (edgePoint). */
 export function placeTags(boxes: Box[], bound: Map<string, string[]>, tags: TagSpec[]): PlacedTag[] {
   const byId = new Map(boxes.map(box => [box.id, box]));
   const { minX, minY } = bounds(boxes);
@@ -48,9 +48,12 @@ export function placeTags(boxes: Box[], bound: Map<string, string[]>, tags: TagS
   });
 }
 
-/** Where a GOOSE dot from an IED outside the project starts: the left canvas edge, level with the receiver. */
-export function edgePoint(boxes: Box[], to: { x: number; y: number }) {
-  return { x: bounds(boxes).minX - EDGE_WIDTH - 60, y: to.y };
+/** Where a GOOSE dot from an IED outside the project starts: a fixed screen distance left of and
+ * above the receiver tag (`scale` is tagScale), so it starts in view at every zoom. The drawing's
+ * left edge put it off screen on large drawings (change 0102). */
+export const ENTRY_DISTANCE = 220;
+export function edgePoint(to: { x: number; y: number }, scale = 1) {
+  return { x: to.x - ENTRY_DISTANCE * scale, y: to.y - 40 * scale };
 }
 
 /** Tags grow back toward screen size when zoomed out, between 1× and 3× their drawing size. */

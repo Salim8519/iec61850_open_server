@@ -16,6 +16,10 @@ the [engineering ledger](history/INDEX.md).
   by latching push buttons; latches reset on restart.
 - 2026-10-19: test build 0.1.12 installed on the VM (0100): ScadaBench Operate and GE Viewer
   CLOSE/OPEN on Y755 work in lab mode, wire shows standard `SBOw`+`Oper` and Pos 01/10.
+- 2026-10-19: GOOSE host ↔ VM on 0.1.12 works both ways, with timeout and recovery (0101). Its
+  five findings were re-checked with public sample files and fixed in source (0102, ADR-0070).
+  Test build 0.1.13 is installed on the host; the VM still runs 0.1.12, so the GOOSE retest on
+  0.1.13 is still to do.
 
 ## 2026-10-18: Two-machine SCADA test and gateway firewall (0089, ADR-0062)
 

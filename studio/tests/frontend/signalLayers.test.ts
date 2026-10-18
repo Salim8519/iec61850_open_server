@@ -109,13 +109,13 @@ test('tags sit beside bound equipment, outside senders get no tag, and are never
     { name: 'SUB_BAY0002', iedId: 's', outside: false, remote: false },
     { name: 'FAR', iedId: null, outside: true, remote: true }, { name: 'LOOSE', iedId: 'x', outside: false, remote: false }]);
   assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y]), [['LOOSE', -70, 200], ['SUB_BAY0002', 190, 200]]);
-  assert.deepEqual(edgePoint([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], { x: 190, y: 213 }), { x: -130, y: 213 });
+  assert.deepEqual(edgePoint({ x: 190, y: 213 }), { x: -30, y: 173 });
   assert.match(linkCurve({ x: 0, y: 0 }, { x: 100, y: 0 }).path, /^M 0 0 Q 50 -25 100 0$/);
   const overlay = read('features/diagram/signals/SignalOverlay.tsx');
   assert.doesNotMatch(overlay, /updateDiagram|change\(/);
 });
 
-test('a GOOSE from a sender outside the project pulses once from the canvas edge for ~2 s', () => {
+test('a GOOSE from a sender outside the project pulses once beside its receiver for ~2 s', () => {
   const remote = { ...map, links: [{ ...map.links[0], id: 'R1', publisher: 'FAR', status: 'remote' as const, remote: true }] };
   assert.equal(observedLinks(remote, REF, 1, 2).length, 1);
   assert.equal(observedLinks(remote, REF, 2, 2).length, 0, 'no pulse without a new stNum');

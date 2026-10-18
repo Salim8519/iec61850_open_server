@@ -10,13 +10,14 @@
 .signal-layer { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 5; }
 .signal-links { position: absolute; left: 0; top: 0; overflow: visible; }
 .signal-link-hit { fill: none; stroke: transparent; stroke-width: 14px; pointer-events: stroke; cursor: pointer; }
-.signal-link-line { fill: none; stroke: var(--accent); stroke-width: 1.5px; opacity: 0;
+/* --signal-scale is the tag scale: line, words and dot keep their screen size when zoomed out (change 0102). */
+.signal-link-line { fill: none; stroke: var(--accent); stroke-width: calc(1.5px * var(--signal-scale, 1)); opacity: 0;
   animation: signal-link-fade 2s ease-out 1; pointer-events: none; }
 .signal-link.expected .signal-link-line { stroke-dasharray: 5 4; }
-.signal-link-label { font-size: 11px; font-weight: 600; fill: var(--text); paint-order: stroke;
-  stroke: var(--canvas-bg); stroke-width: 3px; text-anchor: middle; opacity: 0;
+.signal-link-label { font-size: calc(11px * var(--signal-scale, 1)); font-weight: 600; fill: var(--text); paint-order: stroke;
+  stroke: var(--canvas-bg); stroke-width: calc(3px * var(--signal-scale, 1)); text-anchor: middle; opacity: 0;
   animation: signal-link-fade 2s ease-out 1; pointer-events: none; }
-.pulse-dot { fill: var(--accent); stroke: var(--accent); stroke-width: 1.5px; pointer-events: none; }
+.pulse-dot { fill: var(--accent); stroke: var(--accent); stroke-width: calc(1.5px * var(--signal-scale, 1)); pointer-events: none; }
 .pulse-dot.expected { fill: var(--surface); stroke-width: 2px; }
 @keyframes signal-link-fade { 0% { opacity: 0.9; } 70% { opacity: 0.6; } 100% { opacity: 0; } }
 
@@ -35,11 +36,11 @@
 .ied-tag.waiting { border-style: dotted; }
 .ied-tag-warn { font-weight: 700; color: #92400e; }
 .ied-tag-warn.waiting { color: var(--text-2); }
-.ied-tag-operated { font-weight: 700; color: var(--accent-hover); opacity: 0; animation: signal-operated 2s ease-out 1; }
+.ied-tag-operated, .ied-tag-received { font-weight: 700; color: var(--accent-hover); opacity: 0; animation: signal-operated 2s ease-out 1; }
 @keyframes signal-operated { 0% { opacity: 1; transform: translateY(-2px); } 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .signal-link-line, .signal-link-label, .ied-tag-operated { animation: none; opacity: 0.9; }
+  .signal-link-line, .signal-link-label, .ied-tag-operated, .ied-tag-received { animation: none; opacity: 0.9; }
 }
 
 .signal-sheet table { width: 100%; border-collapse: collapse; font-size: 13px; }

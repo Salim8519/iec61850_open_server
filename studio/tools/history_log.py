@@ -75,7 +75,9 @@ def removed_git_lines():
         if cached:
             command.append("--cached")
         command.extend(["--", pathspec])
-        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+        # The ledger is UTF-8; the Windows default (cp1252) cannot decode e.g. "←" (change 0102).
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding="utf-8",
+                                errors="replace", check=False)
         if result.returncode == 0 and any(
                 line.startswith("-") and not line.startswith("---")
                 for line in result.stdout.splitlines()):

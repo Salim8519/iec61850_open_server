@@ -22,8 +22,14 @@ export const NOT_HEARD = {
   noListener: { label: 'Not checked', tone: 'off', hint: 'ScadaBench checks arriving GOOSE only when the free Npcap driver is installed. Install Npcap, then press Run again.' },
 } satisfies Record<string, Status>;
 
-/** One status for a GOOSE link: why nothing is sent, or what the listener last saw. */
+/** One status for a GOOSE link: why nothing is sent, or what the listener last saw. A sender
+ * outside the project whose GOOSE does arrive shows that live state, not "Outside project" (change 0102). */
 export function linkStatus(link: GooseLink, running: boolean, lab = false, outside = false): Status {
+  const remote = outside || link.status === 'remote';
+  if (remote && running && link.live && link.live.state !== 'waiting' && link.live.state !== 'stopped') {
+    const status = gooseStatus(link.live.state, link.live.problem);
+    return { ...status, hint: `${status.hint} ${link.publisher} is not in this project; its GOOSE comes from the network.` };
+  }
   if (NOT_SENT[link.status]) return NOT_SENT[link.status];
   if (outside) return NOT_SENT.remote;
   if (!running) return { label: 'Declared in SCD', tone: 'off', hint: 'Press Run to see whether it really arrives.' };
@@ -52,7 +58,7 @@ export const outsideNames = (ieds: { name: string; in_project: boolean }[]) =>
 
 export const OUTSIDE_COPY = {
   button: (count: number) => `${count} sender${count === 1 ? '' : 's'} outside project`,
-  intro: 'These IEDs send GOOSE to IEDs in this project, but their files are not imported. Their messages appear as one dot from the canvas edge.',
+  intro: 'These IEDs send GOOSE to IEDs in this project, but their files are not imported. Each new state they send appears as one dot flying into the IED that receives it.',
   importCid: 'Import its CID',
   importHint: 'Import the CID (or the station SCD) of this IED so ScadaBench can simulate it, or connect the real device on the lab network.',
 };

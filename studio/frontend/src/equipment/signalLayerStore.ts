@@ -1,8 +1,8 @@
 import type { GooseLinkMap, MmsClient } from '../api/signalLayers';
-import { changeText, expectedLinks, LINK_FADE_MS, observedLinks, PulseGate, pulseLabel,
+import { changeText, expectedLinks, LINK_FADE_MS, observedLinks, PulseGate, pulseLabel, receivedLabel,
   type GooseState, type PulseKind } from './signalPulses.ts';
 
-export type Pulse = { key: number; linkId: string; kind: PulseKind; label: string; start: number };
+export type Pulse = { key: number; linkId: string; kind: PulseKind; label: string; short: string; start: number };
 export type ControlPulse = { key: number; iedId: string; peer: string; label: string; start: number };
 export type Layers = { goose: boolean; readers: boolean };
 export type SignalLayerState = {
@@ -60,7 +60,8 @@ export class SignalLayerStore {
     // Full IED names everywhere on the SLD (change 0097): "C03_Y1105", never "C03".
     const fresh = links.filter(link => this.gate.allow(link.id, now)).map(link => ({
       key: ++this.counter, linkId: link.id, kind, start: now,
-      label: pulseLabel(link.publisher, link.subscriber, change, kind) }));
+      label: pulseLabel(link.publisher, link.subscriber, change, kind),
+      short: receivedLabel(link.publisher, change, kind) }));
     if (fresh.length) this.update({ pulses: [...this.value.pulses.filter(item => now - item.start < LINK_FADE_MS), ...fresh] });
   }
 

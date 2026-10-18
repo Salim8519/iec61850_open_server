@@ -6,11 +6,12 @@
 .equipment-node.draw { width: 40px; height: 40px; padding: 1px; display: grid; place-items: center; border-radius: 6px; }
 .equipment-node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px #1d4ed859; }
 .equipment-node:not(.draw):not(.relay).selected { border-top-color: var(--primary); }
+/* Names and states wrap instead of being cut ("PUSH_BUTTO…"): full words on the SLD (change 0102). */
 .equipment-label { font-size: 12px; font-weight: 700; color: var(--text); margin-top: 4px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  line-height: 1.25; overflow-wrap: anywhere; }
 .equipment-state { display: inline-block; max-width: 100%; margin-top: 4px; padding: 1px 7px;
   border-radius: 999px; font-size: 10.5px; font-weight: 650; line-height: 16px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid transparent; }
+  overflow-wrap: anywhere; border: 1px solid transparent; }
 /* Border style differs per tone so the state never relies on colour alone. */
 .equipment-state.tone-unmapped { color: #4b5768; border: 1px dashed #8d99a8; background: white; }
 .equipment-state.tone-awaiting { color: var(--primary); border: 1px dotted #5f86e0; background: white; }

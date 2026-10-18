@@ -110,7 +110,8 @@
 - Signal layers (ADR-0065): *GOOSE messages* and *Who is reading* are remembered view switches;
   they never edit the diagram. One dot per real stNum change, at most one per link per second;
   hollow "(expected)" dots when no listener runs; a problem is one small ⚠ on the subscriber tag.
-  A sender outside the project is one dot from the canvas edge for ~2 s, then nothing remains.
+  A sender outside the project is one dot flying in beside the receiver for ~2 s, then nothing remains;
+  dots and words keep their screen size and the receiver tag says "← sender · change" (ADR-0070).
   Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Needs lab network")
   with one *Put my IEDs on a network* button; clicking a link opens its details. GOOSE and MMS traffic must not
   re-render equipment nodes.

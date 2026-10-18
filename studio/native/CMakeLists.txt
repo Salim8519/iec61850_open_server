@@ -40,6 +40,9 @@ add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/server/server.cpp worker/updates/values.cpp worker/controls/controls.cpp
     worker/goose/publishing.cpp worker/server/access_log.cpp worker/server/read_hook.c common/npcap.cpp)
 target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker worker/server)
+if(WIN32)
+    target_link_libraries(studio_ied PRIVATE winmm)  # 1 ms timer for GOOSE retransmission (change 0102)
+endif()
 # The read hook alone needs the private MMS server layout (ADR-0066).
 set_source_files_properties(worker/server/read_hook.c PROPERTIES INCLUDE_DIRECTORIES
     "${IEC_SOURCE}/src/mms/inc_private;${IEC_SOURCE}/src/mms/iso_mms/asn1c;${IEC_SOURCE}/src/iec61850/inc_private")

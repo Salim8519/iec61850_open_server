@@ -4,7 +4,7 @@ import type { GooseLink, GooseLinkMap } from '../api/signalLayers';
 export const PULSE_MS = 700;
 export const LINK_FADE_MS = 2000;
 export const PULSE_GAP_MS = 1000;
-/** A dot from an IED outside the project travels from the canvas edge for ~2 s, then nothing remains. */
+/** A dot from an IED outside the project flies in beside the receiver for ~2 s, then nothing remains. */
 export const EDGE_PULSE_MS = 2000;
 
 export type GooseState = { state: string; problem?: string; st_num?: number };
@@ -75,6 +75,11 @@ export function changeText(name: string, value: unknown, dbpos: boolean): string
 
 export function pulseLabel(publisher: string, subscriber: string, change: string, kind: PulseKind): string {
   return `${publisher} → ${subscriber} · ${change || 'new state'}${kind === 'expected' ? ' (expected)' : ''}`;
+}
+
+/** The receiver tag's own line for ~2 s, readable at any zoom (change 0102): "← FEED1 · stNum 8". */
+export function receivedLabel(publisher: string, change: string, kind: PulseKind): string {
+  return `← ${publisher} · ${change || 'new state'}${kind === 'expected' ? ' (expected)' : ''}`;
 }
 
 /** True when the operating system asks for reduced motion; the overlay then shows a static highlight. */

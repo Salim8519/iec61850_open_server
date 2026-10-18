@@ -61,28 +61,32 @@ export function SignalOverlay({ store, iedNames, running, selection, select }: {
           const link = links.get(pulse.linkId)!;
           const to = at.get(link.subscriber);
           if (!to) return null;
-          // A sender outside the project has no tag: its one dot enters from the canvas edge, then nothing remains.
+          // A sender outside the project has no tag: its one dot enters near the receiver, then nothing remains.
           const outside = !at.has(link.publisher) && (link.status === 'remote' || outsiders.has(link.publisher));
-          const from = outside ? edgePoint(boxes, to) : at.get(link.publisher);
+          const from = outside ? edgePoint(to, scale) : at.get(link.publisher);
           if (!from) return null;
           const curve = linkCurve(from, to);
           const middle = curve.at(0.5);
           const duration = outside ? EDGE_PULSE_MS : PULSE_MS;
+          // Dot, line and words keep their screen size when zoomed out, like the tags (change 0102).
           return <g key={pulse.key} className={`signal-link ${pulse.kind}${outside ? ' edge' : ''}`}
-            onClick={() => select({ kind: 'link', id: link.id })}>
-            {!outside && <path d={curve.path} className="signal-link-hit" />}
-            {!outside && <path d={curve.path} className="signal-link-line" />}
-            {now - pulse.start < duration + 100 && <PulseDot curve={curve} kind={pulse.kind} start={pulse.start} duration={duration} />}
-            <text x={middle.x} y={middle.y - 8} className="signal-link-label">{pulse.label}</text>
+            style={{ ['--signal-scale' as string]: scale }} onClick={() => select({ kind: 'link', id: link.id })}>
+            <path d={curve.path} className="signal-link-hit" />
+            <path d={curve.path} className="signal-link-line" />
+            {now - pulse.start < duration + 100 && <PulseDot curve={curve} kind={pulse.kind} start={pulse.start}
+              duration={duration} radius={5 * scale} />}
+            <text x={middle.x} y={middle.y - 8 * scale} className="signal-link-label">{pulse.label}</text>
           </g>;
         })}
       </svg>}
       {placed.map(tag => {
         const clients = readers && tag.iedId ? state.clients[tag.iedId] : undefined;
         const operated = state.controls.filter(item => item.iedId === tag.iedId).at(-1);
+        const received = active.filter(pulse => links.get(pulse.linkId)!.subscriber === tag.name).at(-1);
         return <IedTag key={tag.name} tag={tag} scale={scale} problems={problems(tag.name)}
           readers={readerBadge(clients)} readersTitle={externalClients(clients).map(clientLine).join('\n')}
           operated={operated && { key: operated.key, label: operated.label }}
+          received={received && { key: received.key, label: received.short }}
           stopped={!!running && !!tag.iedId && !running.has(tag.iedId)}
           selected={selection?.kind === 'ied' && selection.name === tag.name}
           select={() => select({ kind: 'ied', name: tag.name })} />;

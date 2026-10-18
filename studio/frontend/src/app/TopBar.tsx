@@ -2,6 +2,7 @@ import { Download, FileUp, FolderOpen, Laptop, MoreHorizontal, Network, Pause, P
 import type { Project } from '../api/types';
 import { Menu } from '../ui/Menu';
 import { runStateWords } from '../copy/running';
+import { onLabNetwork } from '../features/network/endpoints';
 
 // A download link, not a page navigation, so the app window's exit prompt does not appear.
 function downloadProject() {
@@ -45,13 +46,17 @@ export function TopBar({ title, subtitle, project, busy, saveState, run, openFil
 
 /** Who can reach the IEDs ScadaBench publishes as (change 0098); opens the network setup. */
 function ReachChip({ project, open }: { project: Project; open: () => void }) {
-  const publishing = project.ieds.filter(ied => ied.role === 'simulated').length;
-  if (!publishing) return null;
+  const published = project.ieds.filter(ied => ied.role === 'simulated');
+  if (!published.length) return null;
   const lab = project.network.mode === 'lab';
+  // Only IEDs with a lab address are on the adapter; one added later answers on this PC only (change 0102).
+  const onNetwork = published.filter(ied => onLabNetwork(ied, project.network)).length;
+  const count = lab && onNetwork < published.length ? `${onNetwork} of ${published.length}` : String(published.length);
   return <button className="reach-chip" onClick={open}
-    title={lab ? 'Other PCs and devices on this adapter can reach your IEDs. Click to change.'
-      : 'Only programs on this PC can reach your IEDs. Click to put them on a network.'}>
+    title={lab ? `Other PCs and devices on this adapter can reach ${onNetwork < published.length
+      ? `${onNetwork} of your IEDs; the others answer on this PC only until you add them to the network`
+      : 'your IEDs'}. Click to change.` : 'Only programs on this PC can reach your IEDs. Click to put them on a network.'}>
     {lab ? <Network size={15} aria-hidden /> : <Laptop size={15} aria-hidden />}
-    {publishing} {publishing === 1 ? 'IED' : 'IEDs'} reachable from {lab ? <>“{project.network.adapter_label}”</> : 'this PC only'}
+    {count} {published.length === 1 ? 'IED' : 'IEDs'} reachable from {lab ? <>“{project.network.adapter_label}”</> : 'this PC only'}
   </button>;
 }

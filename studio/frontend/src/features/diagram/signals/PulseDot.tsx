@@ -3,10 +3,10 @@ import { PULSE_MS, reducedMotion, type PulseKind } from '../../../equipment/sign
 
 type Curve = { at: (t: number) => { x: number; y: number } };
 
-/** One dot along a link for ~0.7 s (~2 s from the canvas edge for a sender outside the project), moved with transform only. Solid = seen by the listener,
+/** One dot along a link for ~0.7 s (~2 s from beside the receiver for a sender outside the project), moved with transform only. Solid = seen by the listener,
  * hollow = expected from the publisher's change. Reduced motion: the dot rests at the subscriber. */
-export function PulseDot({ curve, kind, start, duration = PULSE_MS }: {
-  curve: Curve; kind: PulseKind; start: number; duration?: number;
+export function PulseDot({ curve, kind, start, duration = PULSE_MS, radius = 5 }: {
+  curve: Curve; kind: PulseKind; start: number; duration?: number; radius?: number;
 }) {
   const ref = useRef<SVGCircleElement>(null);
   const still = reducedMotion();
@@ -26,6 +26,6 @@ export function PulseDot({ curve, kind, start, duration = PULSE_MS }: {
     return () => cancelAnimationFrame(frame);
   }, [curve, start, still, duration]);
   const rest = curve.at(still ? 1 : 0);
-  return <circle ref={ref} r={5} cx={0} cy={0} className={`pulse-dot ${kind}${still ? ' still' : ''}`}
+  return <circle ref={ref} r={radius} cx={0} cy={0} className={`pulse-dot ${kind}${still ? ' still' : ''}`}
     style={{ transform: `translate(${rest.x}px, ${rest.y}px)` }} />;
 }
