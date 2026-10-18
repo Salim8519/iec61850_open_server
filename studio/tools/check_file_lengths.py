@@ -3,7 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXCLUDED_DIRS = {
-    "node_modules", "dist", "build", "__pycache__", ".venv", ".pytest_cache",
+    "node_modules", "dist", "dist-protected", "dist-sandbox", "build", "__pycache__", ".venv", ".pytest_cache",
     "fixtures", "schemas", "ied-templates", "bay-templates", "examples",
     "generated", "data", "reference-screens", "third_party",
 }

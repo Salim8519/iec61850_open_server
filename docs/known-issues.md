@@ -74,5 +74,3 @@ PCs never learn about refunds or moves; unsigned builds trigger SmartScreen. The
 Desktop window (0073): windowed EXE, second-launch focus and the close prompt are not yet
 verified in a built EXE. Without Edge/Chrome the default-browser tab has no exit control.
 The close prompt uses the browser's own "Leave site?" wording.
-IED Explorer (seen in change 0093): after a failed connect a still-associated live worker answers
-"Already connected" until it restarts; React's double effect in development can trigger it.

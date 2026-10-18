@@ -30,6 +30,7 @@ class ExplorerService:
         self.control = control
         self.lock = threading.RLock()
         self.spawn_lock = threading.Lock()
+        self.connect_lock = threading.Lock()
         self.process = None
         self.endpoint = None
         self.state = "disconnected"
@@ -67,7 +68,18 @@ class ExplorerService:
             return process
 
     def connect(self, host, port=102):
+        """One connect at a time; each starts from a worker with no association (no stale "Already connected")."""
         host, port = check_endpoint(host, port)
+        with self.connect_lock:
+            if self.state == "connected" and self.endpoint == (host, port) and self._alive():
+                return self.status()
+            return self._connect(host, port)
+
+    def _alive(self):
+        process = self.process
+        return process is not None and process.process.poll() is None
+
+    def _connect(self, host, port):
         self.disconnect()
         if not self.executable.exists():
             raise RuntimeError("The live client (studio_live.exe) is not built yet; rebuild the native programs")
@@ -193,11 +205,11 @@ class ExplorerService:
         """End the association; the worker stays warm for the next Connect."""
         self.stop_polling()
         with self.lock:
-            was_connected = self.state in ("connected", "lost")
             self.cache, self.values = {}, {}
             if self.state != "disconnected":
                 self.state, self.message = "disconnected", "Disconnected"
-        if was_connected and self.process is not None:
+        # Always reset the worker: after a failed or overlapping connect it can still hold an association.
+        if self._alive():
             try:
                 self.process.request("disconnect", timeout=10)
             except Exception:
