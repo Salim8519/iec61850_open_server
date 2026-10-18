@@ -89,10 +89,7 @@ class NativeControlFeedback:
             coordinator.emit("equipment_feedback_observed", node_id=node["id"],
                              control_ref=event["ref"], target_count=len(targets),
                              changed_count=changed, action=action,
-                             wire_value=wire_value,
-                             raw_wire_value=event.get("raw_ctl_value", wire_value),
-                             compatibility=event.get("compatibility"),
-                             origin="native_control")
+                             wire_value=wire_value, origin="native_control")
         except Exception as error:
             coordinator.emit("equipment_feedback_failed", node_id=node["id"],
                              control_ref=event.get("ref"), origin="native_control",

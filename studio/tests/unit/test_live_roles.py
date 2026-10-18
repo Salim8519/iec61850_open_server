@@ -24,7 +24,7 @@ def test_real_ied_is_not_simulated(tmp_path):
     class FakeSupervisor:
         workers = {}
 
-        def start(self, ieds, profiles, network):
+        def start(self, ieds, network):
             started.extend(ied["name"] for ied in ieds)
 
         def stop(self, ieds):

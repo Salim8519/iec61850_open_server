@@ -4,6 +4,17 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-18: Standard commands only, Operate reaches lab IEDs (0099, ADR-0069)
+
+- The CONCEN profile is gone (format 15 migrates it with a notice). Complete GE Viewer +
+  Concentrator captures showed standard `SBOw`+`Oper`; the profile turned Close into Open.
+  The CONCEN sections further down ("Breaker protocol contract", "Why trace 5 did not Open",
+  next steps 3-4) are history only.
+- Operate and gateway commands use `Supervisor.endpoint()` (the address the worker confirmed),
+  so they work in lab mode; before, they dialled loopback and timed out after 10 s.
+- Still open: GE Viewer needs the UR "PROCEED" virtual outputs (`Master/GGIO1.IndNNN`) driven
+  by latching push buttons; latches reset on restart. The VM needs a new build to get the fix.
+
 ## 2026-10-18: Two-machine SCADA test and gateway firewall (0089, ADR-0062)
 
 - Host (source app) and a VMware VM (portable 0.1.7) were tested against FreyrSCADA 104/DNP3

@@ -20,7 +20,7 @@ test('switchgear needs a position; a command link is optional (change 0097)', ()
   assert.deepEqual(setupItems(base('CB')), [
     { label: 'Position', done: false }, { label: 'Command', done: false, optional: true }]);
   const ready = base('CB', { state_mapping: { mode: 'direct', source: binding },
-    control_binding: { ied_id: 'i1', ref: 'IED1LD/XCBR1.Pos', compatibility: 'standard' } });
+    control_binding: { ied_id: 'i1', ref: 'IED1LD/XCBR1.Pos' } });
   assert.ok(setupItems(ready).every(item => item.done));
 });
 

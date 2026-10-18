@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
     } else if (std::string(argv[3]).rfind("sbo-", 0) == 0) {
         output = exercise_sbo(connection, argv[3], argv[4],
                               argc > 5 && std::string(argv[5]) == "true",
-                              argc > 6 ? std::stoi(argv[6]) : 0);
+                              argc > 6 ? std::stoi(argv[6]) : 0, argc > 7 ? argv[7] : "");
     } else if (std::string(argv[3]) == "reports") {
         output = receive_reports(connection, argv[4]);
     } else output = {{"ok", false}, {"error", "Unknown probe operation"}};

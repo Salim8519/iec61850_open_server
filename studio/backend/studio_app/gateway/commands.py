@@ -60,7 +60,7 @@ class CommandExecutor:
             manager.commands.update(entry["seq"], applied=f"refused: {reason}")
             manager.emit("gateway_command", point=label, result="refused", reason=reason)
             return False, reason
-        host, port = endpoint(ied)
+        host, port = endpoint(ied, manager.coordinator)
         control = next(item for item in ied["controls"] if item["ref"] == point["ref"])
         originator = "station" if event.get("protocol") == "manual" else "remote"
         result = manager.control.operate(host, port, point["ref"], value, {"originator": originator})
@@ -95,11 +95,12 @@ def position_text(value):
     return {0: "intermediate", 1: "open (OFF)", 2: "closed (ON)", 3: "bad state"}.get(value, str(value))
 
 
-def endpoint(ied):
+def endpoint(ied, coordinator=None):
+    """Where to send a command: the real device, or the address the simulated IED listens on."""
     if ied.get("role") == "real":
         host, port, _ = real_endpoint(ied)
         return host, port
-    return ied["ip"], ied["port"]
+    return coordinator.supervisor.endpoint(ied["id"])
 
 
 def refusal(point, ied, real_commands=True):

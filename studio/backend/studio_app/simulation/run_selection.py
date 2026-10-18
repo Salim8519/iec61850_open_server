@@ -6,7 +6,6 @@ keeping the signal index, sources, sample locks, workers and live sessions consi
 import threading
 from studio_app.projects.ied_settings import endpoint_conflicts
 from .bindings import publish_bindings
-from .control_compatibility import profiles as compatibility_profiles
 from .initial_state import apply_initial_states
 from .test_mode_apply import apply_test_modes
 
@@ -57,8 +56,7 @@ def add_ieds(coordinator, selection):
         coordinator.active |= ids
     try:
         if simulated:
-            coordinator.supervisor.add(simulated, compatibility_profiles(project["diagram"]), project["network"],
-                                       simulated_of(current))
+            coordinator.supervisor.add(simulated, project["network"], simulated_of(current))
         coordinator.live.connect(project, real)
     except Exception:
         _forget(coordinator, new)

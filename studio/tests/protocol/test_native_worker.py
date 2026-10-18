@@ -92,63 +92,66 @@ def test_enhanced_sbo_requires_matching_oper_and_reports_selection_lifecycle(tmp
         worker.close()
 
 
-def test_explicit_concen_profile_inverts_and_executes_sbow_only(tmp_path):
-    source = make_template("CompatBreaker").replace(b"<Val>3</Val>", b"<Val>4</Val>")
-    model = import_scl(source)[0]
-    config = tmp_path / "compat.cfg"
+def test_worker_refuses_the_removed_compatibility_profile(tmp_path):
+    model = import_scl(make_template("Removed"))[0]
+    config = tmp_path / "removed.cfg"
     config.write_text(model["cfg"], encoding="utf-8")
-    control = "CompatBreakerCTRL/XCBR1.Pos"
-    status = control + ".stVal"
-    controls = [{**item, "compatibility": "concen_inverted_sbow"}
-                if item["ref"] == control else item for item in model["controls"]]
-    events = []
-    worker = WorkerProcess(BIN / "studio_ied.exe", events.append)
+    controls = [{**item, "compatibility": "concen_inverted_sbow"} for item in model["controls"]]
+    worker = WorkerProcess(BIN / "studio_ied.exe", lambda event: None)
     try:
-        started = worker.request("start", cfg=str(config), ip="127.50.0.226", port=18116,
-                                 controls=controls, edition=2)
-        assert "concen_sbow_compatibility" in started["capabilities"]
-        worker.request("update", ref=status, value=1)
-        adapted = probe("127.50.0.226", "18116", "sbo-compat", control, "false")
-        assert adapted["selected"] and adapted["before"] != adapted["after_select"]
-        for _ in range(40):
-            if any(event["event"] == "control_compatibility_applied" for event in events):
-                break
-            time.sleep(0.05)
-        applied = [event for event in events if event["event"] == "control_applied"]
-        assert len(applied) == 1
-        assert applied[0]["raw_ctl_value"] is False
-        assert applied[0]["ctl_value"] is True and applied[0]["action"] == "close"
-        assert any(event["event"] == "control_compatibility_applied" for event in events)
-        worker.request("update", ref=status, value=2)
-        assert probe("127.50.0.226", "18116", "control", control, "false")["ok"]
-        assert probe("127.50.0.226", "18116", "read", status, "ST")["value"] != adapted["after_select"]
+        with pytest.raises(RuntimeError, match="compatibility profiles were removed"):
+            worker.request("start", cfg=str(config), ip="127.50.0.226", port=18116, controls=controls)
     finally:
         worker.close()
 
 
-def test_concen_compat_noop_keeps_native_state_and_timestamp_unchanged(tmp_path):
-    source = make_template("CompatBreaker").replace(b"<Val>3</Val>", b"<Val>4</Val>")
+def test_any_originator_gets_standard_sbo_open_on_oper_only(tmp_path):
+    """ADR-0069: orIdent never changes the meaning of ctlVal; Select reserves, Oper moves."""
+    source = make_template("StdBreaker").replace(b"<Val>3</Val>", b"<Val>4</Val>")
+    model = import_scl(source)[0]
+    config = tmp_path / "standard.cfg"
+    config.write_text(model["cfg"], encoding="utf-8")
+    control = "StdBreakerCTRL/XCBR1.Pos"
+    status = control + ".stVal"
+    events = []
+    worker = WorkerProcess(BIN / "studio_ied.exe", events.append)
+    try:
+        started = worker.request("start", cfg=str(config), ip="127.50.0.226", port=18116,
+                                 controls=model["controls"], edition=2)
+        assert "standard_controls" in started["capabilities"]
+        worker.request("update", ref=status, value=2)
+        result = probe("127.50.0.226", "18116", "sbo-sequence", control, "false", "0", "CONCEN")
+        assert result["ok"], result
+        assert result["before"] == result["after_select"] == "10"
+        assert result["after_operate"] == "01"
+        applied = [event for event in events if event["event"] == "control_applied"]
+        assert len(applied) == 1 and applied[0]["trigger"] == "Oper"
+        assert applied[0]["ctl_value"] is False and applied[0]["action"] == "open"
+        assert applied[0]["changed"] is True and "raw_ctl_value" not in applied[0]
+    finally:
+        worker.close()
+
+
+def test_command_to_the_current_position_keeps_state_and_timestamp(tmp_path):
+    source = make_template("StdBreaker").replace(b"<Val>3</Val>", b"<Val>4</Val>")
     model = import_scl(source)[0]
     config = tmp_path / "noop.cfg"
     config.write_text(model["cfg"], encoding="utf-8")
-    control = "CompatBreakerCTRL/XCBR1.Pos"
+    control = "StdBreakerCTRL/XCBR1.Pos"
     status = control + ".stVal"
-    controls = [{**item, "compatibility": "concen_inverted_sbow"}
-                if item["ref"] == control else item for item in model["controls"]]
     events = []
     worker = WorkerProcess(BIN / "studio_ied.exe", events.append)
     try:
         worker.request("start", cfg=str(config), ip="127.50.0.227", port=18117,
-                       controls=controls, edition=2)
+                       controls=model["controls"], edition=2)
         worker.request("update", ref=status, value=2)
         time.sleep(0.3)
-        result = probe("127.50.0.227", "18117", "sbo-compat-noop", control, "false")
-        assert result["selected"]
-        assert result["before"] == result["after_select"] == "10"
-        assert result["pre_t"] == result["before_t"] == result["after_select_t"]
+        before_t = probe("127.50.0.227", "18117", "read", control + ".t", "ST")["value"]
+        assert probe("127.50.0.227", "18117", "control", control, "true")["ok"]
+        assert probe("127.50.0.227", "18117", "read", status, "ST")["value"] == "10"
+        assert probe("127.50.0.227", "18117", "read", control + ".t", "ST")["value"] == before_t
         applied = [event for event in events if event["event"] == "control_applied"]
         assert len(applied) == 1 and applied[0]["changed"] is False
         assert applied[0]["action"] == "close" and applied[0]["value"] == 2
-        assert applied[0]["raw_ctl_value"] is False and applied[0]["ctl_value"] is True
     finally:
         worker.close()

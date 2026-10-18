@@ -20,7 +20,7 @@ Owners: `projects/archive.py`, `document.py`, `mapping_migration.py`, `service.p
 1. Assign deterministic loopback endpoints and preflight all listeners.
 2. Build one native configuration per IED and spawn one worker per IED.
 3. Require private capabilities `versioned_updates`, `atomic_control_feedback`,
-   `control_selection_events` and `concen_sbow_compatibility`.
+   `control_selection_events`, `standard_controls` and `goose_aware`.
 4. Push initial typed values, publish authoritative mapped states, then accept
    automation/manual/MMS activity.
 5. A worker failure marks its IED failed; there is no silent restart.
@@ -35,10 +35,9 @@ queue mirrors that semantic action to every mapped node outside the worker reade
 thread. Accepted no-op feedback still republishes the authoritative node state.
 
 Enhanced SBO model 4 normally reserves on `SBOw` and moves only on a matching
-`Oper`. Selection lifecycle comes from the native stack. The explicit
-`concen_inverted_sbow` exception applies only to DPC model 4 with exact origin
-`CONCEN`: successful `SBOw` is queued, Boolean-inverted and applied immediately.
-This is a workaround, not IEC semantics. See the current handover before changing it.
+`Oper`. Selection lifecycle comes from the native stack. There is no exception for
+any originator (ADR-0069). Studio commands are sent to the endpoint the worker
+confirmed at start (lab address in lab mode, loopback otherwise).
 
 ## Trip Relay
 

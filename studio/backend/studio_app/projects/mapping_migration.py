@@ -65,9 +65,20 @@ def _retire_legacy(result, notices):
                        "(no longer supported); its wires were removed too")
 
 
+def _standard_commands(result, notices):
+    """Formats 8-14 stored a per-command profile; only standard IEC 61850 remains (ADR-0069)."""
+    for node in result.get("nodes", []):
+        data = node.get("data", {})
+        binding = data.get("control_binding")
+        if binding and binding.pop("compatibility", "standard") != "standard":
+            notices.append(f"{data.get('label', node.get('id', 'equipment'))}: the CONCEN command mode was "
+                           "removed; commands now follow standard IEC 61850 (Close = true, moves on Operate)")
+
+
 def migrate_diagram(value, ieds, version):
     result = copy.deepcopy(value)
     notices = []
+    _standard_commands(result, notices)
     if version < 12:
         _retire_legacy(result, notices)
     if version >= 10:
@@ -103,9 +114,6 @@ def migrate_diagram(value, ieds, version):
                 data.pop(field, None)
     for node in result.get("nodes", []):
         data = node.get("data", {})
-        binding = data.get("control_binding")
-        if binding:
-            binding.setdefault("compatibility", "standard")
         if version >= 7:
             continue
         old_command = data.pop("trip_polarity", "operate_true" if version <= 4 else "operate_false")

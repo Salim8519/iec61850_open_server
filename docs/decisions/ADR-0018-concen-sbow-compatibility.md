@@ -1,6 +1,7 @@
 # ADR-0018: Explicit origin-scoped CONCEN SBO adaptation
 
-Status: accepted, 2026-09-16.
+Status: accepted, 2026-09-16. Superseded on 2026-10-18 by
+[ADR-0069](ADR-0069-standard-commands-and-listening-endpoint.md): the profile is removed.
 
 Standard enhanced Select-Before-Operate remains the default and still requires a
 matching `Oper`. One observed concentrator identified itself as `CONCEN`, inverted

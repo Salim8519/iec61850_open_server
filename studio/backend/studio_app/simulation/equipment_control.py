@@ -64,8 +64,9 @@ class EquipmentControl:
                 node_id, value, action)
             coordinator.energization.mark_own(node_id)
             coordinator.mms_access.mark_own(ied["id"], control["ref"])
-            result = mms_operate(
-                coordinator.supervisor.executable, ied, control["ref"], wire_value)
+            supervisor = coordinator.supervisor
+            result = mms_operate(supervisor.executable, ied, control["ref"], wire_value,
+                                 supervisor.endpoint(ied["id"]))
             try:
                 applied, changed = self._apply(planned)
             except Exception as error:

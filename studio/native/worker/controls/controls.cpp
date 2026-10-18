@@ -2,6 +2,8 @@
 #include <cstring>
 #include <stdexcept>
 
+// Standard IEC 61850 control only (ADR-0069): ctlVal true closes / sets, false opens /
+// resets, and the switch moves on Oper. Select only reserves the object.
 namespace {
 const char* selection_state(SelectStateChangedReason reason) {
     switch (reason) {
@@ -15,33 +17,16 @@ const char* selection_state(SelectStateChangedReason reason) {
     return "unknown";
 }
 
-std::string client_origin(ControlAction action) {
-    int size = 0;
-    auto value = ControlAction_getOrIdent(action, &size);
-    return value && size > 0 ? std::string(reinterpret_cast<char*>(value), size) : "";
-}
-
-bool compatibility_applies(ControlBinding* binding, ControlAction action) {
-    return binding->compatibility == "concen_inverted_sbow"
-        && client_origin(action) == "CONCEN";
-}
-
 std::string peer_of(ControlAction action) {
     auto client = ControlAction_getClientConnection(action);
     auto peer = client ? ClientConnection_getPeerAddress(client) : nullptr;
     return peer ? peer : "";
 }
 
-void apply_value(ControlBinding* binding, bool raw_target, bool target,
-        const char* trigger, const std::string& peer) {
+void apply_value(ControlBinding* binding, bool target, const std::string& peer) {
     if (!peer.empty()) binding->server->access.write(peer, binding->reference);
-    Json requested = {{"event", "control_requested"}, {"ref", binding->reference},
-        {"value", raw_target}, {"trigger", trigger}, {"peer", peer}};
-    if (raw_target != target) {
-        requested["adapted_value"] = target;
-        requested["compatibility"] = binding->compatibility;
-    }
-    emit_frame(requested);
+    emit_frame({{"event", "control_requested"}, {"ref", binding->reference},
+        {"value", target}, {"trigger", "Oper"}, {"peer", peer}});
     auto server = binding->server->handle;
     uint64_t now = Hal_getTimeInMs();
     Json result;
@@ -69,74 +54,25 @@ void apply_value(ControlBinding* binding, bool raw_target, bool target,
         result = target;
     }
     IedServer_unlockDataModel(server);
-    Json applied = {{"event", "control_applied"}, {"ref", binding->reference},
+    emit_frame({{"event", "control_applied"}, {"ref", binding->reference},
         {"cdc", binding->cdc}, {"action", binding->cdc == "DPC" ?
             (target ? "close" : "open") : (target ? "set_true" : "set_false")},
-        {"ctl_value", target}, {"raw_ctl_value", raw_target}, {"status_ref", binding->status},
-        {"value", result}, {"changed", changed}, {"timestamp", now}, {"trigger", trigger}, {"peer", peer}};
-    if (raw_target != target) applied["compatibility"] = binding->compatibility;
-    emit_frame(applied);
+        {"ctl_value", target}, {"status_ref", binding->status},
+        {"value", result}, {"changed", changed}, {"timestamp", now}, {"trigger", "Oper"}, {"peer", peer}});
 }
 
 void selection(ControlAction, void* parameter, bool selected,
         SelectStateChangedReason reason) {
     auto binding = static_cast<ControlBinding*>(parameter);
-    bool apply = false;
-    bool raw_target = false;
-    bool auto_applied = false;
-    std::string peer;
-    {
-        std::lock_guard<std::mutex> guard(binding->compatibility_lock);
-        if (selected && reason == SELECT_STATE_REASON_SELECTED
-                && binding->pending_compatibility) {
-            apply = true;
-            raw_target = binding->pending_raw_target;
-            binding->pending_applied = true;
-            auto client_peer = binding->pending_client ? ClientConnection_getPeerAddress(binding->pending_client) : nullptr;
-            peer = client_peer ? client_peer : "";
-        }
-        auto_applied = binding->pending_applied;
-    }
-    if (apply) {
-        binding->server->defer([binding, raw_target, peer] {
-            apply_value(binding, raw_target, !raw_target, "SBOw", peer);
-            emit_frame({{"event", "control_compatibility_applied"},
-                {"ref", binding->reference}, {"profile", binding->compatibility},
-                {"client_origin", "CONCEN"}, {"trigger", "SBOw"},
-                {"requested_value", raw_target}, {"executed_value", !raw_target},
-                {"requested_action", raw_target ? "close" : "open"},
-                {"executed_action", raw_target ? "open" : "close"}});
-        });
-    }
-    Json event = {{"event", "control_selection"}, {"ref", binding->reference},
+    emit_frame({{"event", "control_selection"}, {"ref", binding->reference},
         {"state", selection_state(reason)}, {"selected", selected},
-        {"model", binding->model}, {"sbo_timeout_ms", binding->sbo_timeout_ms}};
-    if (auto_applied) {
-        event["auto_applied"] = true;
-        event["compatibility"] = binding->compatibility;
-    }
-    emit_frame(event);
-    if (!selected) {
-        std::lock_guard<std::mutex> guard(binding->compatibility_lock);
-        binding->pending_client = nullptr;
-        binding->pending_ctl_num = -1;
-        binding->pending_compatibility = false;
-        binding->pending_applied = false;
-    }
+        {"model", binding->model}, {"sbo_timeout_ms", binding->sbo_timeout_ms}});
 }
 
-CheckHandlerResult check(ControlAction action, void* parameter, MmsValue* value, bool test, bool) {
+CheckHandlerResult check(ControlAction, void* parameter, MmsValue* value, bool, bool) {
     auto binding = static_cast<ControlBinding*>(parameter);
     if (binding->blocked) return CONTROL_OBJECT_ACCESS_DENIED;
     if (MmsValue_getType(value) != MMS_BOOLEAN) return CONTROL_VALUE_INVALID;
-    if (!test && ControlAction_isSelect(action) && compatibility_applies(binding, action)) {
-        std::lock_guard<std::mutex> guard(binding->compatibility_lock);
-        binding->pending_client = ControlAction_getClientConnection(action);
-        binding->pending_ctl_num = ControlAction_getCtlNum(action);
-        binding->pending_raw_target = MmsValue_getBoolean(value);
-        binding->pending_compatibility = true;
-        binding->pending_applied = false;
-    }
     return CONTROL_ACCEPTED;
 }
 
@@ -147,23 +83,7 @@ ControlHandlerResult operate(ControlAction action, void* parameter, MmsValue* va
         emit_frame({{"event", "control_test"}, {"ref", binding->reference}});
         return CONTROL_RESULT_OK;
     }
-    bool raw_target = MmsValue_getBoolean(value);
-    bool adapted = compatibility_applies(binding, action);
-    bool duplicate = false;
-    if (adapted) {
-        std::lock_guard<std::mutex> guard(binding->compatibility_lock);
-        duplicate = binding->pending_applied
-            && binding->pending_client == ControlAction_getClientConnection(action)
-            && binding->pending_ctl_num == ControlAction_getCtlNum(action)
-            && binding->pending_raw_target == raw_target;
-    }
-    if (duplicate) {
-        emit_frame({{"event", "control_compatibility_oper_confirmed"},
-            {"ref", binding->reference}, {"profile", binding->compatibility},
-            {"client_origin", "CONCEN"}, {"raw_ctl_value", raw_target}});
-        return CONTROL_RESULT_OK;
-    }
-    apply_value(binding, raw_target, adapted ? !raw_target : raw_target, "Oper", peer_of(action));
+    apply_value(binding, MmsValue_getBoolean(value), peer_of(action));
     return CONTROL_RESULT_OK;
 }
 }
@@ -176,13 +96,10 @@ void install_control(Server& server, const Json& config) {
     binding->cdc = config.at("cdc").get<std::string>();
     binding->model = config.value("model", 0);
     binding->sbo_timeout_ms = config.value("sbo_timeout_ms", 0);
-    binding->compatibility = config.value("compatibility", "standard");
     if (binding->cdc != "SPC" && binding->cdc != "DPC")
         throw std::runtime_error("Control CDC must be SPC or DPC");
-    if (binding->compatibility != "standard"
-            && !(binding->compatibility == "concen_inverted_sbow"
-                && binding->cdc == "DPC" && binding->model == 4))
-        throw std::runtime_error("Invalid control compatibility profile");
+    if (config.contains("compatibility"))
+        throw std::runtime_error("Control compatibility profiles were removed; send standard controls only");
     binding->feedback = server.attribute(binding->status);
     auto feedback_type = MmsValue_getType(IedServer_getAttributeValue(server.handle, binding->feedback));
     if ((binding->cdc == "SPC" && feedback_type != MMS_BOOLEAN)

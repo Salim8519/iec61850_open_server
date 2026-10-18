@@ -44,7 +44,6 @@ class ControlBinding(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ied_id: str
     ref: str
-    compatibility: Literal["standard", "concen_inverted_sbow"] = "standard"
 
 
 class RelayStatus(BaseModel):

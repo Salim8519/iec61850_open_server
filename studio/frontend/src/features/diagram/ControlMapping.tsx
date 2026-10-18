@@ -14,7 +14,6 @@ export function ControlMapping({ data, ieds, disabled, update }: {
   const ied = ieds.find(item => item.id === iedId);
   const controls = ied?.controls.filter(control => control.cdc === expected) || [];
   const selected = controls.find(control => control.ref === data.control_binding?.ref);
-  const compatibility = data.control_binding?.compatibility || 'standard';
   const noun = expected === 'DPC' ? 'breaker/switch control' : 'command';
   return <div className="stack">
     <label>IED<select disabled={disabled} value={iedId} onChange={event => {
@@ -29,24 +28,12 @@ export function ControlMapping({ data, ieds, disabled, update }: {
       onChange={event => {
         const control = controls.find(item => item.ref === event.target.value);
         const autoState = control && !data.state_mapping && data.kind !== 'PUSH_BUTTON';
-        update({ ...data, control_binding: control ? { ied_id: iedId, ref: control.ref, compatibility: 'standard' } : null,
+        update({ ...data, control_binding: control ? { ied_id: iedId, ref: control.ref } : null,
           ...(autoState ? { state_mapping: { mode: 'direct' as const,
             source: { ied_id: iedId, ref: control.status, report_ref: null } } } : {}) });
       }}>
       <option value="">Not mapped</option>{controls.map(control =>
         <option key={control.ref} value={control.ref}>{shortRef(control.ref, ied.name)}</option>)}</select></label>}
-    {selected?.model === 4 && expected === 'DPC' && data.control_binding && <>
-      <label>External client behavior<select disabled={disabled} value={compatibility}
-        onChange={event => update({ ...data, control_binding: {
-          ...data.control_binding!, compatibility: event.target.value as 'standard' | 'concen_inverted_sbow',
-        } })}>
-        <option value="standard">Standard enhanced SBO</option>
-        <option value="concen_inverted_sbow">CONCEN inverted SBO compatibility</option>
-      </select></label>
-      {compatibility === 'concen_inverted_sbow' && <p role="status" className="small import-unavailable">
-        Non-standard simulation mode: CONCEN Open/Close is inverted and its successful SBOw moves the switch immediately.
-      </p>}
-    </>}
     {selected && <div className="signal-pick"><span className="signal-pick-mark" aria-hidden="true"><Link2 size={14} /></span>
       <span className="signal-search-text" title={selected.ref}>
       <strong>{shortRef(selected.ref, ied?.name)}</strong>

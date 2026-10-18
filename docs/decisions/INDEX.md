@@ -19,7 +19,7 @@
 | [0015](ADR-0015-native-control-feedback.md) | Atomic native controls and shared mapped feedback |
 | [0016](ADR-0016-format-6-trip-and-live-canvas.md) | Reset-high legacy Trip migration and isolated live canvas values |
 | [0017](ADR-0017-trip-polarity-and-sbo-observability.md) | Independent Trip polarity, state hydration and enhanced-SBO lifecycle |
-| [0018](ADR-0018-concen-sbow-compatibility.md) | Explicit origin-scoped CONCEN SBO adaptation |
+| [0018](ADR-0018-concen-sbow-compatibility.md) | Explicit origin-scoped CONCEN SBO adaptation (superseded by ADR-0069) |
 | [0019](ADR-0019-single-session-project-revisions.md) | Shared tab identity and stale-write rejection |
 | [0020](ADR-0020-append-only-evidence-ledgers.md) | Append-only engineering and runtime evidence |
 | [0021](ADR-0021-sld-drawing-primitives.md) | SLD junctions, four-way terminals, loose wiring and drawn busbar length |
@@ -70,3 +70,4 @@
 | [0066](ADR-0066-goose-inputs-and-mms-access-events.md) | Simulated subscribers apply received GOOSE to their own ExtRef-bound inputs (refused on any problem); workers report MMS client address, reads per node and report blocks once per second without changing answers |
 | [0067](ADR-0067-run-single-ied-and-test-buttons.md) | Run or connect one IED inside one run (`running_ieds`, `POST /runtime/ieds/{id}/start` or `/stop`); any running IED locks the drawing; equipment test buttons write simulated points via the sample writer, no command; outside senders leave the canvas for a toolbar list |
 | [0068](ADR-0068-publish-wording-and-one-page-network.md) | Modes shown as Be this IED / Read real IED / Leave out (stored roles unchanged); role line and top-bar reachability; one-page network setup with one button and a suggested free address per problem row; no published IED names each mode |
+| [0069](ADR-0069-standard-commands-and-listening-endpoint.md) | Standard IEC 61850 commands for every client (CONCEN profile removed, format 15 migrates it with a notice; worker advertises `standard_controls`); Operate and gateway commands go to the endpoint the worker confirmed, so lab-mode IEDs are reached |

@@ -61,24 +61,15 @@ def test_switch_and_trip_relay_reject_wrong_wire_types(tmp_path):
         projects.diagram(diagram(node("TRIP_RELAY", boolean, dpc)))
 
 
-def test_concen_profile_is_explicit_enhanced_sbo_dpc_only(tmp_path):
+def test_command_bindings_are_standard_iec61850_only(tmp_path):
     projects = ProjectService(tmp_path)
     ied = projects.add_template("Profile")[0]
-    control = next(item for item in ied["controls"]
-                   if item["ref"] == "ProfileCTRL/XCBR1.Pos")
-    control["model"] = 4
-    binding = {"ied_id": ied["id"], "ref": control["ref"],
-               "compatibility": "concen_inverted_sbow"}
-    projects.diagram(diagram(node("CB", control=binding)))
-    assert projects.project["diagram"]["nodes"][0]["data"]["control_binding"] == binding
-    control["model"] = 3
-    with pytest.raises(StudioError, match="enhanced-SBO DPC"):
-        projects.diagram(diagram(node("CB", control=binding)))
-    control["model"] = 4
-    with pytest.raises(StudioError, match="same compatibility profile"):
-        projects.diagram(diagram(node("CB", control=binding, key="adapted"),
-                                 node("CB", control={"ied_id": ied["id"],
-                                      "ref": control["ref"]}, key="standard")))
+    binding = {"ied_id": ied["id"], "ref": "ProfileCTRL/XCBR1.Pos"}
+    projects.diagram(diagram(node("CB", control=binding, key="first"),
+                             node("CB", control=dict(binding), key="second")))
+    assert [item["data"]["control_binding"] for item in projects.project["diagram"]["nodes"]] == [binding] * 2
+    with pytest.raises(Exception):
+        projects.diagram(diagram(node("CB", control={**binding, "compatibility": "concen_inverted_sbow"})))
 
 
 def test_trip_relay_uses_one_boolean_state_and_one_spc_command(tmp_path):
@@ -89,7 +80,7 @@ def test_trip_relay_uses_one_boolean_state_and_one_spc_command(tmp_path):
     projects.diagram(diagram(node("TRIP_RELAY", state, command)))
     data = projects.project["diagram"]["nodes"][0]["data"]
     assert data["state_mapping"] == state
-    assert data["control_binding"] == {**command, "compatibility": "standard"}
+    assert data["control_binding"] == command
     assert data["trip_command_polarity"] == "operate_false"
     assert data["trip_state_polarity"] == "operated_true"
 
@@ -174,7 +165,7 @@ def test_format_six_preserves_command_and_adds_operated_high_state_with_backup(t
     assert Path(notice["backup"]).read_bytes() == payload
 
 
-def test_format_seven_preserves_trip_polarities_and_adds_standard_compatibility(tmp_path):
+def test_format_seven_preserves_trip_polarities_with_standard_commands(tmp_path):
     projects = ProjectService(tmp_path)
     model = projects.add_template("Seven")[0]
     command = {"ied_id": model["id"], "ref": "SevenCTRL/GGIO1.SPCSO1"}
@@ -184,7 +175,6 @@ def test_format_seven_preserves_trip_polarities_and_adds_standard_compatibility(
     with zipfile.ZipFile(io.BytesIO(projects.export())) as archive:
         document = json.loads(archive.read("project.json"))
     document["format"] = 7
-    document["diagram"]["nodes"][0]["data"]["control_binding"].pop("compatibility")
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("project.json", json.dumps(document))
@@ -192,22 +182,31 @@ def test_format_seven_preserves_trip_polarities_and_adds_standard_compatibility(
     data = projects.project["diagram"]["nodes"][0]["data"]
     assert data["trip_command_polarity"] == "operate_true"
     assert data["trip_state_polarity"] == "operated_false"
-    assert data["control_binding"]["compatibility"] == "standard"
+    assert data["control_binding"] == command
     assert projects.snapshot()["migration_notice"]["details"] == [
         "Existing controls remain in standard IEC 61850 mode."]
 
 
-def test_format_eight_preserves_explicit_concen_compatibility(tmp_path):
+def test_format_fourteen_concen_command_migrates_to_standard_with_notice(tmp_path):
     projects = ProjectService(tmp_path)
-    source_xml = make_template("Compat").replace(b"<Val>3</Val>", b"<Val>4</Val>")
-    model = projects.add_scl(source_xml, "compat.cid")[0]
-    command = {"ied_id": model["id"], "ref": "CompatCTRL/XCBR1.Pos",
-               "compatibility": "concen_inverted_sbow"}
-    projects.diagram(diagram(node("CB", control=command)))
-    projects.restore(projects.export())
-    saved = projects.project["diagram"]["nodes"][0]["data"]["control_binding"]
-    assert saved == command
-    assert projects.snapshot().get("migration_notice") is None
+    model = projects.add_template("Compat")[0]
+    command = {"ied_id": model["id"], "ref": "CompatCTRL/XCBR1.Pos"}
+    projects.diagram(diagram(node("CB", control=command, key="cb1")))
+    with zipfile.ZipFile(io.BytesIO(projects.export())) as archive:
+        document = json.loads(archive.read("project.json"))
+    document["format"] = 14
+    document["diagram"]["nodes"][0]["data"]["control_binding"]["compatibility"] = "concen_inverted_sbow"
+    stream = io.BytesIO()
+    with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("project.json", json.dumps(document))
+    payload = stream.getvalue()
+    projects.restore(payload)
+    assert projects.project["diagram"]["nodes"][0]["data"]["control_binding"] == command
+    notice = projects.snapshot()["migration_notice"]
+    assert "format 15" in notice["message"] and "standard IEC 61850" in notice["message"]
+    assert notice["details"] == ["cb1: the CONCEN command mode was removed; commands now follow "
+                                 "standard IEC 61850 (Close = true, moves on Operate)"]
+    assert Path(notice["backup"]).read_bytes() == payload
 
 
 def test_legacy_boolean_mapping_migrates_and_loss_has_verified_backup(tmp_path):

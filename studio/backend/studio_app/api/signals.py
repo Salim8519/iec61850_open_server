@@ -61,5 +61,5 @@ def operate_control():
     ied = projects().find_ied(data["ied_id"])
     runtime().mms_access.mark_own(ied["id"], data["ref"])
     result = operate(current_app.extensions["studio_settings"].native_executable,
-                     ied, data["ref"], data["value"])
+                     ied, data["ref"], data["value"], runtime().supervisor.endpoint(ied["id"]))
     return jsonify(result)

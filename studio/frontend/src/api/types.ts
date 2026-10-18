@@ -7,8 +7,7 @@ export type StateMapping =
   | { mode: 'direct'; source: SignalBinding }
   | { mode: 'single_to_dbpos'; source: SignalBinding }
   | { mode: 'contacts_to_dbpos'; open: SignalBinding; closed: SignalBinding };
-export type ControlCompatibility = 'standard' | 'concen_inverted_sbow';
-export type ControlBinding = { ied_id: string; ref: string; compatibility?: ControlCompatibility };
+export type ControlBinding = { ied_id: string; ref: string };
 export type RelayStatus = { id: string; label: string; source: SignalBinding };
 export type EquipmentData = {
   label: string; kind: EquipmentKind; rotation: number;

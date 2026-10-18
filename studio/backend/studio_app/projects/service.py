@@ -216,12 +216,15 @@ class ProjectService:
                             "network": network, "gateway": gateway}
             details = notices or (["No equipment was changed."] if version >= 11 else
                                   ["Existing controls remain in standard IEC 61850 mode."])
-            if version == 13:
+            standard = " Every command follows standard IEC 61850."
+            if version == 14:
+                message = f"Project upgraded to format {CURRENT_FORMAT}." + standard
+            elif version == 13:
                 message = (f"Project upgraded to format {CURRENT_FORMAT}: the gateway tool can now also act as "
-                           "SCADA master. Nothing else changed.")
+                           "SCADA master." + standard)
             elif version >= 11:
                 message = (f"Project upgraded to format {CURRENT_FORMAT}. "
-                           + ("Old unsupported drawing symbols were removed." if notices else
+                           + ("See the details for what changed." if notices else
                               "Nothing in your diagram changed."))
             elif version >= 10:
                 message = (f"Project upgraded to format {CURRENT_FORMAT}: network settings were added. "
@@ -230,8 +233,7 @@ class ProjectService:
                 message = (f"Project upgraded to format {CURRENT_FORMAT}: "
                            "push buttons no longer accept wires.")
             else:
-                message = (f"Project upgraded to format {CURRENT_FORMAT} with explicit "
-                           "control compatibility profiles.")
+                message = f"Project upgraded to format {CURRENT_FORMAT}." + standard
             self.migration_notice = ({
                 "message": message,
                 "details": details, "backup": recovery,

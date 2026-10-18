@@ -20,7 +20,6 @@ from .native_control_feedback import NativeControlFeedback
 from .mms_access import MmsAccess
 from .cadence import Cadence
 from .pulses import Pulses
-from .control_compatibility import profiles as compatibility_profiles
 from studio_app.acquisition.manager import LiveManager
 from studio_app.projects.ied_settings import endpoint_conflicts
 from .run_selection import add_ieds, remove_ieds, runnable, simulated_of
@@ -125,9 +124,8 @@ class Coordinator:
             self.native_control_feedback.reset(self.projects.project["diagram"])
         try:
             self.log = RunLog(self.directory / "logs")
-            profiles = compatibility_profiles(project["diagram"])
             if simulated:
-                self.supervisor.start(simulated, profiles, project["network"])
+                self.supervisor.start(simulated, project["network"])
             self.scenario_runner.reset(self.projects.project["scenarios"])
             self.state = "running"
             self.last_automation_time = time.monotonic()

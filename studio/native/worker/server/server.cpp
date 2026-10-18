@@ -36,45 +36,6 @@ void observed_read(void* context, const char* domain, const char* item, const ch
 Server::Server() = default;
 Server::~Server() { stop(); }
 
-void Server::start_tasks() {
-    tasks_stopping = false;
-    task_thread = std::thread([this] {
-        while (true) {
-            std::function<void()> task;
-            {
-                std::unique_lock<std::mutex> guard(task_lock);
-                task_ready.wait(guard, [this] { return tasks_stopping || !tasks.empty(); });
-                if (tasks.empty() && tasks_stopping) return;
-                task = std::move(tasks.front());
-                tasks.pop_front();
-            }
-            try { task(); }
-            catch (const std::exception& error) {
-                emit_frame({{"event", "control_compatibility_failed"}, {"message", error.what()}});
-            }
-        }
-    });
-}
-
-void Server::defer(std::function<void()> task) {
-    {
-        std::lock_guard<std::mutex> guard(task_lock);
-        if (tasks_stopping) return;
-        tasks.push_back(std::move(task));
-    }
-    task_ready.notify_one();
-}
-
-void Server::stop_tasks() {
-    {
-        std::lock_guard<std::mutex> guard(task_lock);
-        tasks_stopping = true;
-    }
-    task_ready.notify_all();
-    if (task_thread.joinable()) task_thread.join();
-    tasks.clear();
-}
-
 Json Server::start(const Json& config) {
     if (handle) throw std::runtime_error("IED already started");
     auto path = config.at("cfg").get<std::string>();
@@ -90,7 +51,6 @@ Json Server::start(const Json& config) {
     handle = IedServer_createWithConfig(model, nullptr, options);
     IedServerConfig_destroy(options);
     if (!handle) throw std::runtime_error("Unable to construct MMS server");
-    start_tasks();
     auto ip = config.at("ip").get<std::string>();
     IedServer_setLocalIpAddress(handle, ip.c_str());
     // What clients and Find IEDs see: the product name and that this IED is simulated (change 0089).
@@ -111,7 +71,7 @@ Json Server::start(const Json& config) {
     start_goose(*this);
     access.start();
     auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
-                                     "control_selection_events", "concen_sbow_compatibility", "goose_aware"});
+                                     "control_selection_events", "standard_controls", "goose_aware"});
     if (observing) capabilities.push_back("mms_access");
     return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
 }
@@ -125,7 +85,6 @@ DataAttribute* Server::attribute(const std::string& reference) {
 }
 
 void Server::stop() {
-    stop_tasks();
     access.stop();
     if (goose_thread.joinable()) goose_thread.join();
     goose_interface.clear();

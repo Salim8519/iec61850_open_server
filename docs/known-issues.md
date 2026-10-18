@@ -25,16 +25,12 @@ Outstanding release gates:
   matching operation and selection lifecycle events have local independent-probe
   evidence. UI operations drive explicitly mapped simulated Dbpos, Boolean or
   constructed-contact feedback after command acceptance.
-- A non-standard CONCEN compatibility profile can invert enhanced-SBO DPC values
-  and execute successful `SBOw` without `Oper`. It is origin-scoped, explicit and
-  disabled by default; it is a simulator workaround, not IEC interoperability
-  certification. Repeated selection can still be rejected while the stack owns
-  the selection, even after adapted feedback has moved.
-- Packet trace 5 proves that inversion prevents an operator-requested Open when
-  `CONCEN` sends `SBOw(false)`: the adapter executes Close and an already Closed
-  breaker remains unchanged. Trace 4 was identified as the opposite intent with
-  the same wire tuple, so software cannot safely infer both. Client correction or
-  an explicitly risk-accepted policy is still required; see the current handover.
+- Every client gets standard IEC 61850 control; the CONCEN profile was removed
+  (ADR-0069, change 0099) after a complete capture showed the GE concentrator
+  sending standard `SBOw`+`Oper`. GE UR FlexLogic is not simulated: HMIs such as
+  GE Viewer gate each command on PROCEED virtual outputs (`Master/GGIO1.IndNNN`,
+  e.g. CB close Ind008), which the project must drive with latching push buttons,
+  and push-button latches reset when the IEDs restart.
 - Direct signal assignment, configurable Trip polarity, Push Button modes and
   analog Source properties are implemented. External MMS control follows the same
   mapped feedback path as Studio operation. Format-7 Trip relays store independent

@@ -82,12 +82,8 @@
   invert either setting. Never auto-reset or copy raw `ctlVal` into feedback.
 - Enhanced-SBO selection displays "selected; waiting for Oper" with its imported
   timeout. Selection alone never changes switching position.
-- Enhanced-SBO DPC mappings may explicitly enable the warned CONCEN compatibility
-  profile. Only origin `CONCEN` is inverted and executed from successful `SBOw`;
-  standard clients and all SPC/Trip controls remain unchanged.
-- Never describe the CONCEN profile as automatic intent detection. If one origin
-  sends the same Boolean for operator-requested Open and Close, show that the input
-  is ambiguous and require an explicit client or compatibility-policy correction.
+- Commands have no per-client mode (ADR-0069). When an outside client seems to send
+  an unexpected value, diagnose it with a complete capture; never adapt the value.
 - Show the backend session and project revision in every tab. Synchronize remote
   tab edits automatically and reject a stale diagram save before it can overwrite
   the authoritative project.

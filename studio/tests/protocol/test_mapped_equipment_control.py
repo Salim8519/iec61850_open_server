@@ -71,36 +71,38 @@ def test_api_operation_drives_separately_selected_double_point(tmp_path):
         runtime.close()
 
 
-def test_mapped_concen_sbow_is_adapted_and_published_as_close(tmp_path):
-    app = create_app(Settings(tmp_path, BIN / "studio_ied.exe", tmp_path), "compat-token")
+def test_concen_originator_gets_standard_enhanced_sbo_close(tmp_path):
+    """Regression for 2026-10-18: a GE concentrator (orIdent CONCEN) Close must close on Oper."""
+    app = create_app(Settings(tmp_path, BIN / "studio_ied.exe", tmp_path), "standard-token")
     projects = app.extensions["projects"]
-    source = make_template("MappedCompat").replace(b"<Val>3</Val>", b"<Val>4</Val>")
-    ied = projects.add_scl(source, "compat.cid")[0]
+    source = make_template("MappedStd").replace(b"<Val>3</Val>", b"<Val>4</Val>")
+    ied = projects.add_scl(source, "standard.cid")[0]
     ied.update(ip="127.50.0.227", port=18117)
-    control_ref = "MappedCompatCTRL/XCBR1.Pos"
+    control_ref = "MappedStdCTRL/XCBR1.Pos"
     status_ref = control_ref + ".stVal"
     projects.diagram({"nodes": [{"id": "breaker", "position": {"x": 0, "y": 0},
                       "data": {"label": "Breaker", "kind": "CB",
                                "state_mapping": {"mode": "direct", "source": {
                                    "ied_id": ied["id"], "ref": status_ref, "report_ref": None}},
-                               "control_binding": {"ied_id": ied["id"], "ref": control_ref,
-                                   "compatibility": "concen_inverted_sbow"}}}], "edges": []})
+                               "control_binding": {"ied_id": ied["id"], "ref": control_ref}}}],
+                      "edges": []})
     runtime = app.extensions["runtime"]
     try:
         runtime.start()
         runtime.update(ied["id"], status_ref, 1)
         result = subprocess.run([str(BIN / "studio_probe.exe"), ied["ip"], str(ied["port"]),
-                                 "sbo-compat", control_ref, "false"],
+                                 "sbo-sequence", control_ref, "true", "0", "CONCEN"],
                                 capture_output=True, text=True, timeout=15)
         assert result.returncode == 0, result.stdout + result.stderr
-        assert json.loads(result.stdout)["after_select"] != json.loads(result.stdout)["before"]
+        outcome = json.loads(result.stdout)
+        assert outcome["ok"], outcome
+        assert outcome["after_select"] == outcome["before"], "Select alone must never move the switch"
         for _ in range(40):
             observed = [event for event in app.extensions["events"].after(0)
                         if event["kind"] == "equipment_feedback_observed"]
             if observed:
                 break
             time.sleep(0.05)
-        assert observed[-1]["raw_wire_value"] is False
         assert observed[-1]["wire_value"] is True and observed[-1]["action"] == "close"
         assert runtime.supervisor.read(ied["id"], status_ref) == 2
     finally:

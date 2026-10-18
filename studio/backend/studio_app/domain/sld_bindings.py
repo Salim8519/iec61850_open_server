@@ -24,7 +24,7 @@ def _state(ied, ref):
 def _control(ied, ref):
     control = next((item for item in ied["controls"] if item["ref"] == ref), None)
     if control and control.get("cdc") == "DPC":
-        return {"ied_id": ied["id"], "ref": ref, "compatibility": "standard"}
+        return {"ied_id": ied["id"], "ref": ref}
     return None
 
 

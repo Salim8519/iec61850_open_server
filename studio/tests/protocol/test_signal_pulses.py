@@ -89,7 +89,7 @@ def test_mms_control_invalidates_native_guard(lab):
     _, runtime, ied, _, _ = lab
     ref = "PulseCTRL/XCBR1.Pos.stVal"
     before = runtime.supervisor.read_versioned(ied["id"], ref)
-    operate(BIN / "studio_ied.exe", ied, "PulseCTRL/XCBR1.Pos", True)
+    operate(BIN / "studio_ied.exe", ied, "PulseCTRL/XCBR1.Pos", True, runtime.supervisor.endpoint(ied["id"]))
     with pytest.raises(RuntimeError, match="stale pulse"):
         runtime.supervisor.update_guarded(ied["id"], [{"ref": ref, "value": 1}],
                                            {"ref": ref, "revision": before["revision"]})

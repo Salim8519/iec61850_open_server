@@ -21,7 +21,7 @@ def test_loopback_mode_never_publishes():
 
 def test_stale_worker_is_rejected():
     current = ["versioned_updates", "atomic_control_feedback", "control_selection_events",
-               "concen_sbow_compatibility", "goose_aware"]
+               "standard_controls", "goose_aware"]
     check_capabilities({"capabilities": current})
     with pytest.raises(ValueError, match="outdated"):
         check_capabilities({"capabilities": current[:-1]})

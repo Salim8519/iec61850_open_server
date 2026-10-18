@@ -14,25 +14,17 @@ test('external control detail shows reference, raw value, action and feedback re
     /ctlVal=true \/ reset \/ feedback changed \(1\/1\)$/);
 });
 
-test('enhanced SBO selection explains whether Oper is required or adapted', () => {
+test('enhanced SBO selection explains that the switch moves only on Oper', () => {
   const selected = { id: 2, timestamp: 1, kind: 'control_selection',
     ref: 'BayCTRL/XCBR1.Pos', state: 'selected', sbo_timeout_ms: 30000 };
   assert.equal(eventDetails(selected),
     'BayCTRL/XCBR1.Pos / selected; waiting for Oper (30-second timeout)');
   assert.match(eventDetails({ ...selected, state: 'timed_out' }), /selection timed out$/);
   assert.match(eventDetails({ ...selected, state: 'operated' }), /selection completed$/);
-  assert.match(eventDetails({ ...selected, auto_applied: true }), /applied immediately$/);
-  assert.match(eventDetails({ ...selected, state: 'timed_out', auto_applied: true }),
-    /operation was already applied$/);
 });
 
-test('CONCEN adaptation is explicit about inversion and duplicate suppression', () => {
-  const applied = { id: 3, timestamp: 1, kind: 'control_compatibility_applied',
-    ref: 'BayCTRL/XCBR1.Pos', requested_action: 'open', executed_action: 'close' };
-  assert.equal(eventDetails(applied),
-    'BayCTRL/XCBR1.Pos / CONCEN open adapted to close and executed from SBOw');
-  assert.match(eventDetails({ ...applied, kind: 'control_compatibility_oper_confirmed' }),
-    /duplicate movement suppressed$/);
-  assert.match(eventDetails({ ...applied, kind: 'control_applied', raw_ctl_value: false,
-    ctl_value: true, action: 'close' }), /requested ctlVal=false \/ executed ctlVal=true \/ close$/);
+test('an applied control shows the value it was given, never an adapted one (ADR-0069)', () => {
+  const applied = { id: 3, timestamp: 1, kind: 'control_applied',
+    ref: 'BayCTRL/XCBR1.Pos', ctl_value: true, action: 'close' };
+  assert.equal(eventDetails(applied), 'BayCTRL/XCBR1.Pos / ctlVal=true / close');
 });

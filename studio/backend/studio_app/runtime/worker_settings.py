@@ -2,7 +2,7 @@
 from studio_app.domain.network_settings import effective_endpoint
 
 REQUIRED_CAPABILITIES = {"versioned_updates", "atomic_control_feedback", "control_selection_events",
-                         "concen_sbow_compatibility", "goose_aware"}
+                         "standard_controls", "goose_aware"}
 STALE_ENGINE = ("Native engine is outdated. Use the rebuilt portable application or rebuild the "
                 "native worker before Run")
 

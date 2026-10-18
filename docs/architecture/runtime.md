@@ -37,12 +37,12 @@ its independent state polarity resolves mapped Boolean feedback.
 Latching Push status uses the sample writer and does not invoke MMS Control.
 State and command bindings remain independently optional. Multiple nodes may share
 one control, and each node may map its own state without changing the command model.
-Enhanced-SBO selection never moves a breaker in standard mode. An explicit,
-off-by-default CONCEN compatibility profile is available only for enhanced-SBO
-DPC mappings: origin `CONCEN` is inverted and a successful `SBOw` queues the
-operation immediately. Raw and adapted values are logged; later matching `Oper`
-is acknowledged without duplicate movement. Native selection callbacks publish
-the full lifecycle with the imported timeout. `GET /api/v1/equipment/states`
+Every client gets standard IEC 61850 control (ADR-0069): `ctlVal` true closes or
+sets, false opens or resets, and enhanced-SBO selection only reserves; the switch
+moves on `Oper`. The originator identity never changes the meaning. ScadaBench's
+own commands (Operate, gateway) go to the endpoint each worker confirmed at start,
+so they reach lab-mode IEDs too. Native selection callbacks publish the full
+lifecycle with the imported timeout. `GET /api/v1/equipment/states`
 rehydrates authoritative canvas state after SSE connection or resynchronization.
 
 Every browser tab displays the same backend session identifier and project

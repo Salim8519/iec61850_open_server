@@ -5,4 +5,5 @@ extern "C" {
 }
 
 nlohmann::json exercise_sbo(IedConnection connection, const std::string& action,
-                            const std::string& reference, bool target, int wait_ms);
+                            const std::string& reference, bool target, int wait_ms,
+                            const std::string& origin = "");

@@ -19,8 +19,9 @@ equipment mappings. Opening any format 1-7 archive first creates an exact verifi
 recovery copy. Formats 1-5 receive Trip command Operate=0 / Reset=1; format 6
 preserves its explicit command polarity. Every migrated Trip receives state
 Operated=1 / Reset=0. Format 7 preserves both explicit fields and migrates all
-controls to standard IEC behavior. Format 8 can explicitly store the warned
-`concen_inverted_sbow` DPC profile. Format 11 (ADR-0029) adds `network`
+controls to standard IEC behavior. Format 8 could store a
+`concen_inverted_sbow` DPC profile; format 15 (ADR-0069) removes that field and
+migrates every binding to standard IEC 61850, with a notice for each CONCEN one. Format 11 (ADR-0029) adds `network`
 (mode, adapter) and per-IED `role`, `live`, `lab_ip` and `goose_publish`; formats
 2-10 open in loopback mode with every IED simulated. Format 12 (ADR-0033) retires the
 TRANSFORMER/LOAD/BUSBAR kinds and busbar width with a migration notice. Format 13
@@ -34,8 +35,8 @@ The format-6 compatibility boundary is recorded in
 [ADR-0016](../decisions/ADR-0016-format-6-trip-and-live-canvas.md).
 The format-7 polarity split and recovery rules are recorded in
 [ADR-0017](../decisions/ADR-0017-trip-polarity-and-sbo-observability.md).
-The format-8 compatibility field is recorded in
-[ADR-0018](../decisions/ADR-0018-concen-sbow-compatibility.md).
+The format-8 compatibility field ([ADR-0018](../decisions/ADR-0018-concen-sbow-compatibility.md))
+was removed in format 15 ([ADR-0069](../decisions/ADR-0069-standard-commands-and-listening-endpoint.md)).
 
 Original XML is retained independently of normalized runtime data. CID/ICD/SCD
 imports resolve DataTypeTemplates and exact references, including ldName/arrays.

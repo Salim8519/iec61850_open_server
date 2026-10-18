@@ -102,9 +102,6 @@ def _validate_control(data, ieds):
     expected = "DPC" if data["kind"] in SWITCHES else "SPC"
     if control.get("cdc") != expected:
         raise StudioError(f"{data['kind']} equipment requires a {expected} control")
-    profile = binding.get("compatibility", "standard")
-    if profile != "standard" and (data["kind"] not in SWITCHES or control.get("model") != 4):
-        raise StudioError("CONCEN compatibility requires an enhanced-SBO DPC switch control")
 
 
 def _settle_infeed(data):
@@ -128,7 +125,6 @@ def validate_diagram(value, ieds):
         raise StudioError("Wire identifiers must be unique")
     if any(edge["source"] not in ids or edge["target"] not in ids for edge in diagram["edges"]):
         raise StudioError("A wire references missing equipment")
-    profiles = {}
     for node in diagram["nodes"]:
         data = node["data"]
         if data["kind"] != "RELAY" and data.get("relay_statuses"):
@@ -138,13 +134,6 @@ def validate_diagram(value, ieds):
         _settle_infeed(data)
         _validate_state(data, ieds)
         _validate_control(data, ieds)
-        binding = data.get("control_binding")
-        if binding:
-            key = (binding["ied_id"], binding["ref"])
-            profile = binding.get("compatibility", "standard")
-            if key in profiles and profiles[key] != profile:
-                raise StudioError("Equipment sharing one control must use the same compatibility profile")
-            profiles[key] = profile
     return diagram
 
 
