@@ -28,6 +28,7 @@ changed, dropped or invented by accident.
 | [Lab network](lab-network.md) | Binding simulated IEDs to a real adapter |
 | [GOOSE](goose.md) | Publishing, receiving and supervising layer-2 GOOSE |
 | [Real IEDs](real-ieds.md) | Read-only live acquisition and SCD comparison |
+| [SCADA master](scada-master.md) | ScadaBench as 104 controlling station, DNP3 master or Modbus client; protocol converter |
 | [Beginner guidance](beginner-guidance.md) | Hints, plain wording and status display |
 | [UI structure](ui-structure.md) | Five places, design tokens, one implementation per job |
 | [SLD import](sld-import.md) | Single-line diagram built from the SCD `Substation` section |

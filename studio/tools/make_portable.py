@@ -10,7 +10,9 @@ A data folder next to the exe keeps projects in the folder (Settings.packaged_da
 """
 import argparse
 from pathlib import Path
+import shutil
 import subprocess
+import tempfile
 import time
 import zipfile
 
@@ -48,11 +50,16 @@ def make(folder, target):
 def extractor(folder, dist, version):
     """Build the self-extracting portable exe, retrying while an antivirus holds the file."""
     check(folder)
-    command = [str(ISCC), "/Q", f"/DSourceDir={folder}", f"/DOutputDir={dist}", f"/DAppVersion={version}",
+    # Built outside the scanned release folder, then moved in (antivirus locks, change 0090).
+    staging = Path(tempfile.mkdtemp(prefix="scadabench-portable-"))
+    command = [str(ISCC), "/Q", f"/DSourceDir={folder}", f"/DOutputDir={staging}", f"/DAppVersion={version}",
                str(STUDIO / "packaging" / "portable.iss")]
     for attempt in range(1, TRIES + 1):
         if subprocess.run(command, capture_output=True).returncode == 0:
-            return dist / f"ScadaBench-Portable-{version}.exe"
+            target = dist / f"ScadaBench-Portable-{version}.exe"
+            shutil.move(str(staging / target.name), str(target))
+            shutil.rmtree(staging, ignore_errors=True)
+            return target
         print(f"  Inno Setup try {attempt} failed (often an antivirus scan); retrying in 10 s")
         time.sleep(10)
     raise SystemExit("The portable exe could not be built; see the Inno Setup message by running ISCC by hand.")

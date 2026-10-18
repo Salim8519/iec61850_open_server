@@ -61,6 +61,7 @@ export const UI_STATUS: Record<string, Status> = {
   item_keep: { label: 'Already there', tone: 'info', hint: 'ScadaBench uses it as it is and will never remove it.' },
   item_add: { label: 'Will be added', tone: 'waiting', hint: 'Added when you press Apply; removed by Clean up.' },
   item_remove: { label: 'Will be removed', tone: 'waiting', hint: 'ScadaBench added this earlier and removes only this.' },
+  item_restore: { label: 'Will be switched on again', tone: 'waiting', hint: 'ScadaBench switched this Windows rule off; Clean up puts it back as it was.' },
   result_done: { label: 'Done', tone: 'good', hint: '' },
   result_failed: { label: 'Failed', tone: 'problem', hint: 'Windows refused this change.' },
   mode_loopback: { label: 'This PC only', tone: 'good', hint: 'Private addresses; nothing in Windows is changed.' },

@@ -6,8 +6,8 @@ import { commandChoices, type Choice } from './commandChoices';
 import { ValueText } from './ValueText';
 
 /** Send a command to the connected device, always after one small confirmation. */
-export function CommandPanel({ reference, host, attributes, fail }: {
-  reference: string; host: string; attributes: Attribute[]; fail: (message: string) => void;
+export function CommandPanel({ reference, host, attributes, fail, operated }: {
+  reference: string; host: string; attributes: Attribute[]; fail: (message: string) => void; operated?: () => void;
 }) {
   const choices = commandChoices(attributes);
   const [pending, setPending] = useState<Choice | null>(null);
@@ -19,7 +19,7 @@ export function CommandPanel({ reference, host, attributes, fail }: {
     setBusy(true); setAnswer(null);
     try { setAnswer(await explorerApi.operate(reference, choice.value)); }
     catch (error) { fail((error as Error).message); }
-    finally { setBusy(false); setPending(null); }
+    finally { setBusy(false); setPending(null); operated?.(); }  // the table below must not keep the old value (change 0089)
   };
   const options: Choice[] = choices === 'number' ? [{ label: `Send ${step}`, value: Number(step) }] : choices;
   return <div className="command-panel">

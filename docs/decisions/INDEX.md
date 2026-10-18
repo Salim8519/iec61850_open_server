@@ -62,3 +62,5 @@
 | [0058](ADR-0058-window-first-startup.md) | Window first: the autosave restores on a background thread; engineering requests wait behind the security/license checks; a protective recovery stop refuses all work |
 | [0059](ADR-0059-separate-run-running-dots.md) | Run and the gateway are separate; a running dot per place with words; gateway panel fills the window; page commands only after a warning, logged like SCADA commands |
 | [0060](ADR-0060-portable-version.md) | Portable version = the same sealed build with a data folder beside the exe; zip plus an Inno self-extractor (fits the 25 MiB Pages limit), no registry or uninstaller |
+| [0061](ADR-0061-scada-roles-master-converter.md) | SCADA roles in one tool (station gateway, SCADA master, protocol converter) with each protocol's own words; studio_master (104 controlling station, DNP3 master, Modbus client); discover all by default; format 14 |
+| [0062](ADR-0062-gateway-firewall.md) | Gateway on all adapters opens Windows Firewall through the network helper: reviewed allow rule for the gateway worker, leftover Block rules switched off and re-enabled by clean-up |

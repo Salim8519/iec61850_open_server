@@ -34,11 +34,13 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Tools place | `frontend/src/features/tools/ToolsPage.tsx`, `TrafficTool.tsx`, `copy/tools.ts` |
 | IED Explorer / Find IEDs | `backend/studio_app/tools/` (explorer, explorer_auto, ied_scan, control_client, tool_memory), `domain/explorer_*.py`, `scan_range.py`, `native/live/explore.cpp`, `identify.cpp`, `native/control/`, `features/tools/explorer/`, `find/` |
 | Gateway simulator | `backend/studio_app/gateway/`, `domain/gateway_*.py`, `api/gateway.py`, `native/gateway/`, `cmake/gateway_support.cmake`, `tools/fetch_gateway_deps.py`, `features/tools/gateway/`, `copy/gateway.ts` |
+| SCADA master / converter | `native/master/`, `gateway/master_manager.py`, `modbus_probe.py`, `converter.py`, `domain/master_rules.py`, `master_points.py`, `passthrough.py`, `api/gateway_master.py`, `features/tools/gateway/` (`ScadaTool`, `RoleSwitch`, `master/`, `converter/`), `copy/master.ts`, `converter.ts` |
 | Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
 | Devices | `features/devices/` (list, detail, connection, data points, compare, files) |
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |
 | Engineering history | `tools/history_log.py`, `docs/history/ledger-*.jsonl` |
 | Lab network workflow | `networking/service.py`, `address_plan.py`, `change_plan.py`, `journal.py`, `helper/` |
+| Gateway firewall (ADR-0062) | `networking/gateway_firewall.py` (preview/apply), `networking/firewall_rules.py` (read-only checks), `features/tools/gateway/GatewayFirewall.tsx` |
 | Adapter listing | `networking/ip_helper.py` (Windows IP Helper API), `networking/adapters.py` (normalise, PowerShell fallback) |
 | Network/IED settings, format 11 | `domain/network_settings.py`, `projects/ied_settings.py` |
 | SCL communication and GOOSE | `scl/communication.py`, `goose_controls.py`, `goose_links.py` |
@@ -51,7 +53,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Licensing (app) | `domain/license_policy.py`, `licensing/`, `api/license.py`, `api/security.py` gate, `frontend/src/features/license/` |
 | Licensing (native) | `native/common/license_guard.*`, `native/release/release_key.hpp`, `native/third_party/monocypher/` |
 | License server | `license-server/` (Go): `internal/api`, `store`, `security`, `certs`, `paypal`, `mail`, `sales`, `deploy/` (owner commands: `deploy-server.cmd`, `set-payments.cmd`, `set-price.cmd`, `payments.cmd`) |
-| Brand and website | `studio/branding/`, `tools/build_icons.py`, `website/` (Astro, Cloudflare Pages) |
+| Brand and website | `studio/branding/`, `tools/build_icons.py`, `tools/build_installer_art.py` (installer pictures), `website/` (Astro, Cloudflare Pages) |
 | Guided tour | `frontend/src/features/tour/`, `copy/tour.ts`, `projects/preferences.py`, `api/preferences.py` |
 | Desktop window (ADR-0048) | `studio/backend/studio_app/launcher/entrypoint.py`, `app_window.py`, `single_instance.py`, `window_focus.py`, `windowed.py` |
 | Protected release | `tools/configure_release.py`, `compile_protected.py`, `pack_frontend.py`, `make_portable.py` (portable zip), `packaging/studio_protected.spec`, `installer.iss` |

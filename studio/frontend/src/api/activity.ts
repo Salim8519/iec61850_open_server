@@ -5,6 +5,7 @@ export type Activity = {
   gateway: { state: 'stopped' | 'running' | 'failed'; protocol: string; port: number | null; clients: number };
   explorer: { state: string; host: string; polling: boolean; watched: number };
   scan: { state: string; probed: number; total: number };
+  master: { state: 'disconnected' | 'connected' | 'lost' | 'failed'; protocol: string; host: string; points: number };
   sequences: number;
 };
 

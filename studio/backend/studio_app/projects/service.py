@@ -216,7 +216,10 @@ class ProjectService:
                             "network": network, "gateway": gateway}
             details = notices or (["No equipment was changed."] if version >= 11 else
                                   ["Existing controls remain in standard IEC 61850 mode."])
-            if version >= 11:
+            if version == 13:
+                message = (f"Project upgraded to format {CURRENT_FORMAT}: the gateway tool can now also act as "
+                           "SCADA master. Nothing else changed.")
+            elif version >= 11:
                 message = (f"Project upgraded to format {CURRENT_FORMAT}. "
                            + ("Old unsupported drawing symbols were removed." if notices else
                               "Nothing in your diagram changed."))

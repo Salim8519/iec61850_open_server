@@ -15,10 +15,13 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 
 STUDIO = Path(__file__).resolve().parents[1]
 ROOT = STUDIO.parent
 NUITKA_VERSION = "4.3"
+INSTALLER_TRIES = 8
 sys.path.insert(0, str(STUDIO / "backend"))
 sys.path.insert(0, str(STUDIO / "tools"))
 import protected_source  # noqa: E402
@@ -103,7 +106,8 @@ def build_native(mode, release):
               "-DSTUDIO_ENFORCE_LICENSE=ON", "-DSTUDIO_GATEWAY=ON",  # explicit: an older cache may hold OFF
               f"-DSTUDIO_RELEASE_KEY_DIR={keys.as_posix()}"])
     mode.run(["cmake", "--build", mode.native_build, "--config", "Release", "--parallel", "8", "--target",
-              "studio_ied", "studio_live", "studio_probe", "studio_gateway", "studio_control", "studio_license_check"])
+              "studio_ied", "studio_live", "studio_probe", "studio_gateway", "studio_control", "studio_master",
+              "studio_license_check"])
     if not mode.dry_run:
         flag = subprocess.run([str(mode.native_bin / "studio_license_check.exe"), "enforced"],
                               capture_output=True, text=True).stdout.strip()
@@ -212,8 +216,25 @@ def installer(mode, version):
     if not iscc:
         print("  skipped: install Inno Setup 6 (jrsoftware.org) to get ScadaBench-Setup.exe")
         return
-    mode.run([iscc, f"/DSourceDir={mode.dist / 'ScadaBench'}", f"/DOutputDir={mode.dist}",
-              f"/DAppVersion={version}{'-sandbox' if mode.sandbox else ''}", STUDIO / "packaging/installer.iss"])
+    # Inno writes the setup outside the scanned release folder, then it is moved in: an antivirus
+    # watching studio/dist-protected locked every icon update in the 0.1.8 build (change 0090).
+    staging = Path(tempfile.mkdtemp(prefix="scadabench-setup-"))
+    command = [iscc, f"/DSourceDir={mode.dist / 'ScadaBench'}", f"/DOutputDir={staging}",
+               f"/DAppVersion={version}{'-sandbox' if mode.sandbox else ''}", STUDIO / "packaging/installer.iss"]
+    # Antivirus scanners briefly lock freshly built files ("used by another process", seen in the
+    # 0.1.7 build, change 0089); Inno Setup does not retry by itself. Same rule as make_portable.py.
+    for attempt in range(1, INSTALLER_TRIES + 1):
+        try:
+            mode.run(command)
+            for built in staging.glob("*.exe"):
+                shutil.move(str(built), str(mode.dist / built.name))
+            shutil.rmtree(staging, ignore_errors=True)
+            return
+        except subprocess.CalledProcessError:
+            if attempt == INSTALLER_TRIES:
+                raise
+            print(f"  Inno Setup try {attempt} failed (often an antivirus scan); retrying in 10 s", flush=True)
+            time.sleep(10)
 
 
 def main(argv=None):

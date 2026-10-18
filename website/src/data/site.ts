@@ -1,18 +1,20 @@
 // One place for names, prices and addresses used across the site.
+const VERSION = '0.1.8';
 export const SITE = {
   name: 'ScadaBench',
   tagline: 'IEC 61850 IED simulator & SCADA test bench',
   url: 'https://scadabench.com',
   licenseServer: 'https://license.scadabench.com',
-  download: '/download/ScadaBench-Setup.exe',
-  portable: '/download/ScadaBench-Portable.exe',
+  // Files carry the version (deploy.cmd publishes them under these names; old names redirect).
+  download: `/download/ScadaBench-Setup-${VERSION}.exe`,
+  portable: `/download/ScadaBench-Portable-${VERSION}.exe`,
   supportEmail: 'support@scadabench.com',
   price: '149',
   currency: 'USD',
   trialDays: 7,
   refundDays: 7,
   movesPerYear: 2,
-  version: '0.1.6',
+  version: VERSION,
   requirements: 'Windows 10 or 11, 64-bit. 4 GB RAM. No Docker, Python or Node needed.',
 };
 

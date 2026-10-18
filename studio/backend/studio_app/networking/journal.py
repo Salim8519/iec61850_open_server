@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 def item_key(item):
     if item["kind"] == "alias":
         return f"alias:{item['adapter_guid']}:{item['ip']}"
+    if item["kind"] == "unblock":
+        return f"unblock:{item['name']}"
     return f"firewall:{item['name']}"
 
 

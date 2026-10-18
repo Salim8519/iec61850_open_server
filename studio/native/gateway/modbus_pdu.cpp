@@ -136,7 +136,7 @@ std::vector<uint8_t> ModbusApplication::write_coils(uint8_t function, int start,
             return modbus_exception(function, ILLEGAL_ADDRESS);
         }
         if (point->monitor_only) {
-            summary += ": real IED, commands are never sent (exception 1)";
+            summary += ": real IED, and commands to real IEDs are off in the gateway settings (exception 1)";
             return modbus_exception(function, ILLEGAL_FUNCTION);
         }
     }

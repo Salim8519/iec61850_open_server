@@ -29,6 +29,16 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   logical_node: { term: 'Logical node', plain: 'One function inside a logical device, such as XCBR1 for a circuit breaker or MMXU1 for measurements.' },
   fc: { term: 'Functional constraint (FC)', plain: 'A two-letter label that says what a value is for: ST status, MX measurement, CO control, CF configuration, SP setting, DC description.' },
   dataset: { term: 'Dataset', plain: 'A named list of values that an IED sends together by report or GOOSE.' },
+  controlling_station: { term: 'Controlling station (104 master)', plain: 'In IEC 60870-5-104, the side that asks and commands: the SCADA or control centre. It opens the TCP connection, so it is also the TCP client.' },
+  controlled_station: { term: 'Controlled station (104 slave)', plain: 'In IEC 60870-5-104, the side that answers: the gateway or RTU in the substation. It waits for the connection, so it is also the TCP server.' },
+  dnp3_master: { term: 'DNP3 master', plain: 'The DNP3 side that polls for data and sends controls, normally the SCADA.' },
+  outstation: { term: 'Outstation', plain: 'The DNP3 name for the device that answers the master: an RTU, gateway or IED. DNP3 does not call it a slave.' },
+  modbus_roles: { term: 'Modbus client and server', plain: 'The Modbus client (formerly called master) sends requests; the Modbus server (formerly slave) answers them.' },
+  rtu: { term: 'RTU', plain: 'Remote terminal unit: a field device that collects signals and answers the SCADA.' },
+  station_gateway: { term: 'Station gateway', plain: 'A device with two sides. Toward the IEDs it is a client; toward SCADA it is a slave, outstation or server. Also called a data concentrator.' },
+  protocol_converter: { term: 'Protocol converter', plain: 'A gateway that reads devices in one protocol and offers the same points in another, for example DNP3 in, IEC 104 out.' },
+  upstream: { term: 'Upstream and downstream', plain: 'Upstream is toward the SCADA and control centre; downstream is toward the IEDs and field devices.' },
+  integrity_poll: { term: 'Integrity poll', plain: 'The DNP3 request for all current values, like the general interrogation of IEC 104.' },
 };
 
 export const glossaryTerm = (key: string): GlossaryEntry => GLOSSARY[key];

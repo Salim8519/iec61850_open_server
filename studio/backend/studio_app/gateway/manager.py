@@ -29,6 +29,7 @@ class GatewayManager:
         self.executor = CommandExecutor(self)
         self.stopping = threading.Event()
         self.syncer = None
+        self.converter = None  # ConverterSource, set by the app (protocol converter role)
 
     def emit(self, kind, **payload):
         self.coordinator.emit(kind, **payload)
@@ -76,9 +77,15 @@ class GatewayManager:
                 raise ValueError("The gateway is already running; stop it first")
             if not self.executable.exists():
                 raise RuntimeError("The gateway program (studio_gateway.exe) is not built yet; rebuild the native programs")
-            config = self._prepare()
+            role = self.config().get("role", "gateway")
+            if role == "master":
+                raise ValueError("The tool is set to SCADA master; switch it to Station gateway first")
+            config = self._prepare() if role == "gateway" else self.config()
             protocol = config["protocol"]
-            points, problems = validate_points(protocol, config["points"].get(protocol, []), self.projects.project["ieds"])
+            if role == "converter":
+                points, problems = self.converter.points(protocol)
+            else:
+                points, problems = validate_points(protocol, config["points"].get(protocol, []), self.projects.project["ieds"])
             if not points:
                 raise ValueError("The point list is empty. Press 'Propose from IEDs' or import a CSV point list first.")
             settings = dict(validate_settings(protocol, config["settings"].get(protocol)), bind=listen_address(config["listen"]))
@@ -137,7 +144,8 @@ class GatewayManager:
         for point in self.points.values():
             if point["kind"].startswith("command_"):
                 continue
-            current = sample(point, index, self.ied(point["ied"]), run_state)
+            current = (self.converter.sample(point) if point.get("source") == "remote"
+                       else sample(point, index, self.ied(point["ied"]), run_state))
             if self.sent.get(point["id"]) != current:
                 self.sent[point["id"]] = current
                 changed.append(current)
@@ -146,6 +154,8 @@ class GatewayManager:
         return len(changed)
 
     def _monitor_only(self, point, config):
+        if point.get("source") == "remote":
+            return not config.get("real_commands", True)
         role = (self.ied(point["ied"]) or {}).get("role", "off")
         return role == "off" or (role == "real" and not config.get("real_commands", True))
 
@@ -174,11 +184,14 @@ class GatewayManager:
                 "protocol": config["protocol"], "listen": config["listen"], "clients": sorted(self.clients),
                 "problems": self.problems, "run_state": self.coordinator.state,
                 "available": self.executable.exists(), "traffic_last": self.traffic.sequence,
-                "real_commands": config.get("real_commands", True), "auto_start": config.get("auto_start", False)}
+                "real_commands": config.get("real_commands", True), "auto_start": config.get("auto_start", False),
+                "role": config.get("role", "gateway")}
 
     def table(self, protocol):
         """The saved point list of one protocol with what each point carries now."""
         config = self.config()
+        if config.get("role") == "converter":
+            return self.converter.table(protocol)
         index, run_state = self.coordinator.index, self.coordinator.state
         names = {ied["id"]: ied["name"] for ied in self.projects.project["ieds"]}
         rows = []

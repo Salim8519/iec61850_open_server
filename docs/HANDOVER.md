@@ -4,6 +4,34 @@ Snapshot: 2026-09-16 after analysis of `commmand_traces_5.pcapng`. This file is 
 first operational context for the next LLM session; immutable details are also in
 the [engineering ledger](history/INDEX.md).
 
+## 2026-10-18: Two-machine SCADA test and gateway firewall (0089, ADR-0062)
+
+- Host (source app) and a VMware VM (portable 0.1.7) were tested against FreyrSCADA 104/DNP3
+  simulators, diagslave/modpoll and IEDExplorer, and ScadaBench against ScadaBench in every
+  role. What was observed is recorded in change 0089. 20 bugs were fixed, each with a test.
+- The gateway on "All network adapters" gets a Windows Firewall card (allow rule plus Windows'
+  leftover Block rules switched off, journaled, undone by clean-up).
+- Still open:
+  - host clean-up of the gateway firewall items and host lab network (need the owner's UAC);
+  - real IEDs (none available);
+  - a new portable or installer build carrying these fixes (the VM still runs 0.1.7);
+  - the Activity count is the newest 500 events, so it sits at 500.
+
+## 2026-10-18: SCADA master and protocol converter (0088, ADR-0061)
+
+- The tool is now "SCADA gateway & master", with "Act as" Station gateway / SCADA master /
+  Protocol converter. Each protocol keeps its own words (104 controlling/controlled station,
+  DNP3 master/outstation, Modbus client/server); a frontend test guards them.
+- New licensed and sealed worker `studio_master` (104, DNP3, Modbus). Project format 14 (`role`
+  plus the `master` block).
+- The master discovers all by default (GI or integrity poll; Modbus ranges and Find registers).
+  Commands go only through the REAL-device warning. It reconnects after a restart.
+- The converter relays DNP3 binary outputs and Modbus coils automatically, and 104 commands
+  through command routes.
+- Next: no third-party SCADA or RTU is recorded yet. Website claims must wait for evidence. No
+  EXE was built; the next release needs `studio_master.exe` (already in the specs and the
+  protected targets).
+
 ## 2026-10-17: Separate Run, running dots, page commands (0086, ADR-0059)
 
 - Gateway Start never starts the IEDs, and Run never starts the gateway. The gateway page

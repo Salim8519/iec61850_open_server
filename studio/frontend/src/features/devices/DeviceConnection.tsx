@@ -8,7 +8,7 @@ import { liveStatus } from '../../copy/status';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { StatusPill } from '../../ui/StatusPill';
 
-/** How ScadaBench reaches a real IED. Read-only: commands are never sent to real devices. */
+/** How ScadaBench reaches a real IED: it reads values here; commands follow the gateway and Explorer confirmations. */
 export function DeviceConnection({ ied, session, locked, perform }: {
   ied: Ied; session?: LiveSession; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {

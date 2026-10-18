@@ -7,7 +7,16 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · separate Run and gateway, running dots, commands from the point list, portable version</h2>
+    <h2>{SITE.version} · SCADA master and protocol converter, tested between two PCs</h2>
+    <ul>
+      <li>New SCADA master: ScadaBench connects to your gateway, RTU or protection device as IEC 104 controlling station, DNP3 master or Modbus TCP client, finds every point by itself (general and counter interrogation, integrity poll, or "Find registers" for Modbus) and sends commands after a warning. It reconnects by itself when the link drops, and values are marked "not current" while it is down.</li>
+      <li>New protocol converter: for example an IEC 104 SCADA on one side and a DNP3 or Modbus device on the other, with commands passed through.</li>
+      <li>Each protocol now uses its own words: controlling and controlled station for IEC 104, master and outstation for DNP3, client and server for Modbus.</li>
+      <li>Gateway on "All network adapters": ScadaBench now checks Windows Firewall, shows exactly what it will change and opens the gateway after one Windows approval. Settings › Network › Clean up undoes it.</li>
+      <li>Tested between two PCs with FreyrSCADA IEC 104 and DNP3 simulators, IEC-Test, proconX diagslave and modpoll, IED Explorer and the Siemens IEC 61850 Browser, and ScadaBench against ScadaBench in every role.</li>
+      <li>Fixes from that testing: DNP3 open breakers were shown as "reference error", DNP3 frozen counters were missing, IEC 104 counters were never read, clearer messages when a device refuses a command, and simulated IEDs now identify themselves as ScadaBench.</li>
+    </ul>
+    <h2>0.1.6 · separate Run and gateway, running dots, commands from the point list, portable version</h2>
     <ul>
       <li>Run and the gateway simulator are now separate: Run starts the IEDs, Start gateway starts the gateway, and neither starts the other. When the gateway runs without the IEDs, it says so and offers a "Run the IEDs" button.</li>
       <li>A green dot on each tab shows what is running there: IEDs on Devices and SLD, sequences on Test, and the gateway, IED Explorer or a network scan on Tools. Hover a tab to read what it is.</li>

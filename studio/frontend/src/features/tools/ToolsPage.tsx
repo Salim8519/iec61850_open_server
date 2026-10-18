@@ -1,20 +1,21 @@
 import { ArrowLeft, Radar, Radio, Router, Telescope } from 'lucide-react';
 import { useState } from 'react';
+import type { Activity } from '../../api/activity';
 import type { Project } from '../../api/types';
 import { TOOLS, TOOLS_COPY, type ToolId } from '../../copy/tools';
 import { ExplorerTool } from './explorer/ExplorerTool';
 import { FindTool } from './find/FindTool';
-import { GatewayTool } from './gateway/GatewayTool';
+import { ScadaTool } from './gateway/ScadaTool';
 import { TrafficTool } from './TrafficTool';
 import './tools.css';
 
 const ICONS: Record<ToolId, typeof Radio> = { explorer: Telescope, find: Radar, gateway: Router, traffic: Radio };
 
 /** The Tools place: a list of tool cards, or the one open tool with a way back. */
-export function ToolsPage({ project, locked, perform, tool, openTool, running, runIeds }: {
+export function ToolsPage({ project, locked, perform, tool, openTool, running, activity, runIeds }: {
   project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
   tool: ToolId | null; openTool: (tool: ToolId | null) => void; running: Partial<Record<ToolId, string>>;
-  runIeds: () => void;
+  activity: Activity | null; runIeds: () => void;
 }) {
   const [target, setTarget] = useState<{ host: string; port: number } | undefined>();
   if (tool) {
@@ -27,7 +28,7 @@ export function ToolsPage({ project, locked, perform, tool, openTool, running, r
       </div>
       {tool === 'explorer' && <ExplorerTool target={target} />}
       {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }} />}
-      {tool === 'gateway' && <GatewayTool runState={project.runtime} runIeds={runIeds} />}
+      {tool === 'gateway' && <ScadaTool runState={project.runtime} runIeds={runIeds} activity={activity} />}
       {tool === 'traffic' && <TrafficTool project={project} locked={locked} perform={perform} />}
     </div>;
   }

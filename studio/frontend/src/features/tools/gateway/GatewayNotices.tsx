@@ -14,6 +14,6 @@ export function GatewayNotices({ status, runState, runIeds }: {
       <button onClick={runIeds}><Play size={15} />{GATEWAY_COPY.runIeds}</button>
     </div>}
     {status.problems.length > 0 && <ul className="small gateway-warning">{status.problems.slice(0, 5).map(problem =>
-      <li key={problem}>Skipped: {problem}</li>)}</ul>}
+      <li key={problem}>{status.role === 'converter' ? problem : `Skipped: ${problem}`}</li>)}</ul>}
   </div>;
 }

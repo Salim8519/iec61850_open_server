@@ -11,7 +11,11 @@ export function toolActivity(activity: Activity | null): Partial<Record<ToolId, 
   if (!activity) return {};
   const result: Partial<Record<ToolId, string>> = {};
   const { gateway, explorer, scan } = activity;
-  if (gateway.state === 'running') result.gateway = RUNNING_COPY.gateway(gateway.protocol, gateway.port, gateway.clients);
+  const { master } = activity;
+  const labels = [gateway.state === 'running' && RUNNING_COPY.gateway(gateway.protocol, gateway.port, gateway.clients),
+    master && (master.state === 'connected' || master.state === 'lost')
+      && RUNNING_COPY.master(master.protocol, master.host, master.points, master.state === 'lost')].filter(Boolean);
+  if (labels.length) result.gateway = labels.join(' · ');
   if (explorer.state === 'connected') result.explorer = RUNNING_COPY.explorer(explorer.host, explorer.watched, explorer.polling);
   if (scan.state === 'scanning') result.find = RUNNING_COPY.scan(scan.probed, scan.total);
   return result;

@@ -95,3 +95,15 @@ def test_control_client_refuses_to_operate_without_license(certificate):
                            or_cat=3, or_ident="test", interlock_check=True, synchro_check=False, test=False)
     finally:
         worker.close()
+
+
+def test_master_refuses_to_connect_without_license(certificate):
+    master = ENFORCED / "studio_master.exe"
+    if not master.exists():
+        pytest.skip("enforced studio_master not built")
+    worker = WorkerProcess(master)
+    try:
+        with pytest.raises(RuntimeError, match="No license"):
+            worker.request("connect", timeout=10, protocol="iec104", settings={"host": "127.0.0.1", "port": 1})
+    finally:
+        worker.close()

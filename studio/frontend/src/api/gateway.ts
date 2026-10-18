@@ -9,7 +9,8 @@ export type GatewayConfig = { protocol: Protocol; listen: Listen; settings: Reco
   real_commands: boolean; auto_start: boolean };
 export type GatewayStatus = { state: 'stopped' | 'running' | 'failed'; message: string; protocol: Protocol; listen: Listen;
   opened: Record<string, string | number | boolean> | null; clients: string[]; problems: string[]; run_state: string;
-  available: boolean; traffic_last: number; real_commands: boolean; auto_start: boolean };
+  available: boolean; traffic_last: number; real_commands: boolean; auto_start: boolean;
+  role?: 'gateway' | 'master' | 'converter' };
 export type TrafficEntry = { seq: number; at: number; dir: string; peer: string; text: string };
 export type CommandEntry = { seq: number; at: number; label: string; protocol: string; peer: string; request: string;
   applied: string; observed: string };

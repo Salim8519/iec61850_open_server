@@ -60,6 +60,18 @@ def cleanup():
         return jsonify(network().cleanup(data.get("fingerprint"), data.get("confirm")))
 
 
+@blueprint.get("/network/gateway-firewall")
+def gateway_firewall_preview():
+    """What Windows Firewall needs so other computers reach the station gateway (ADR-0062)."""
+    return jsonify(current_app.extensions["gateway_firewall"].preview())
+
+
+@blueprint.post("/network/gateway-firewall")
+def gateway_firewall_apply():
+    data = body()
+    return jsonify(current_app.extensions["gateway_firewall"].apply(data.get("fingerprint"), data.get("confirm")))
+
+
 @blueprint.put("/ieds/<key>/settings")
 def ied_settings(key):
     with runtime().cycle_lock:

@@ -103,7 +103,8 @@ def explorer_operate():
 def running_activity():
     """Tools and sequences that are running now, for the running dots in the sidebar."""
     extensions = current_app.extensions
-    return jsonify(activity(extensions["runtime"], extensions["gateway"], extensions["explorer"], extensions["scanner"]))
+    return jsonify(activity(extensions["runtime"], extensions["gateway"], extensions["explorer"], extensions["scanner"],
+                            extensions.get("master")))
 
 
 @blueprint.get("/tools/memory")

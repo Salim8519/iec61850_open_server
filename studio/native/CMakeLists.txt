@@ -77,6 +77,14 @@ if(STUDIO_GATEWAY)
     target_include_directories(studio_gateway PRIVATE gateway worker ${LIB60870_HEADERS} "${JSON_SOURCE}/single_include")
     target_compile_definitions(studio_gateway PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
     target_link_libraries(studio_gateway PRIVATE lib60870 opendnp3 studio_license ws2_32)
+    # ScadaBench as SCADA master toward a real gateway, RTU or outstation (ADR-0061).
+    add_executable(studio_master master/main.cpp master/client_104.cpp master/iec104_decode.cpp
+        master/iec104_command_objects.cpp master/client_dnp3.cpp master/dnp3_values.cpp master/client_modbus.cpp
+        master/modbus_link.cpp master/modbus_reads.cpp master/value_events.cpp
+        gateway/traffic.cpp worker/ipc/framing.cpp)
+    target_include_directories(studio_master PRIVATE master gateway worker ${LIB60870_HEADERS} "${JSON_SOURCE}/single_include")
+    target_compile_definitions(studio_master PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
+    target_link_libraries(studio_master PRIVATE lib60870 opendnp3 studio_license ws2_32)
     # Test-only independent masters (never packaged).
     add_executable(studio_test_iec104_master testtools/iec104_master.cpp)
     target_include_directories(studio_test_iec104_master PRIVATE ${LIB60870_HEADERS})

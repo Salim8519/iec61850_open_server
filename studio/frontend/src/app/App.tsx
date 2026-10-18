@@ -74,7 +74,7 @@ export function App() {
         {project && current === 'test' && <TestPage project={project} locked={locked} values={studio.values}
           events={studio.events} perform={studio.perform} prepare={studio.prepare} />}
         {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}
-          tool={tool} openTool={setTool} running={toolActivity(running)} runIeds={() => studio.runtime('start')} />}
+          tool={tool} openTool={setTool} running={toolActivity(running)} activity={running} runIeds={() => studio.runtime('start')} />}
         {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform}
           openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} />}
       </main>

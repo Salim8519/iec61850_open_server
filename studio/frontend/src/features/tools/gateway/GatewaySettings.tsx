@@ -6,11 +6,12 @@ import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { StatusPill } from '../../../ui/StatusPill';
 
 /** Protocol, who may connect, the few settings SCADA must match, and Start/Stop. */
-export function GatewaySettings({ config, status, busy, save, start, stop, hide }: {
+export function GatewaySettings({ config, status, busy, save, start, stop, hide, words }: {
   config: GatewayConfig; status: GatewayStatus; busy: boolean;
   save: (protocol: Protocol, listen: Listen, settings: Record<string, number | boolean>, realCommands: boolean) => void;
-  start: () => void; stop: () => void; hide?: () => void;
+  start: () => void; stop: () => void; hide?: () => void; words?: Partial<typeof GATEWAY_COPY>;
 }) {
+  const copy = { ...GATEWAY_COPY, ...words };
   const running = status.state === 'running';
   const protocol = config.protocol;
   const values = config.settings[protocol];
@@ -25,34 +26,34 @@ export function GatewaySettings({ config, status, busy, save, start, stop, hide 
   const pill = running
     ? { label: 'Running', tone: 'good' as const, hint: status.message }
     : status.state === 'failed' ? { label: 'Stopped with a problem', tone: 'problem' as const, hint: status.message }
-    : { label: 'Stopped', tone: 'off' as const, hint: GATEWAY_COPY.startHint };
+    : { label: 'Stopped', tone: 'off' as const, hint: copy.startHint };
   return <div className="card">
     <div className="guide-section">
-      <p className="muted" style={{ margin: 0 }}>{GATEWAY_COPY.intro}</p>
+      <p className="muted" style={{ margin: 0 }}>{copy.intro}</p>
       <div className="row gateway-top">
         <SegmentedControl label="Protocol" value={protocol} disabled={running || busy}
           options={(Object.keys(PROTOCOL_NAMES) as Protocol[]).map(value => ({ value, label: PROTOCOL_NAMES[value] }))}
           onChange={next => save(next, config.listen, config.settings[next], real)} />
-        <SegmentedControl label={GATEWAY_COPY.listen} value={config.listen} disabled={running || busy}
-          options={[{ value: 'this_pc', label: GATEWAY_COPY.thisPc }, { value: 'network', label: GATEWAY_COPY.network }]}
+        <SegmentedControl label={copy.listen} value={config.listen} disabled={running || busy}
+          options={[{ value: 'this_pc', label: copy.thisPc }, { value: 'network', label: copy.network }]}
           onChange={next => save(protocol, next as Listen, values, real)} />
         <span className="gateway-spacer" />
         <StatusPill status={pill} />
-        {hide && <button className="ghost" onClick={hide}><ChevronUp size={16} />{GATEWAY_COPY.hideSettings}</button>}
+        {hide && <button className="ghost" onClick={hide}><ChevronUp size={16} />{copy.hideSettings}</button>}
         {running
-          ? <button onClick={stop} disabled={busy}><Square size={16} />{GATEWAY_COPY.stop}</button>
-          : <button className="primary" onClick={start} disabled={busy || !status.available}><Play size={16} />{GATEWAY_COPY.start}</button>}
+          ? <button onClick={stop} disabled={busy}><Square size={16} />{copy.stop}</button>
+          : <button className="primary" onClick={start} disabled={busy || !status.available}><Play size={16} />{copy.start}</button>}
       </div>
-      <p className="small muted" style={{ margin: 0 }}>{PROTOCOL_HINTS[protocol]} {config.listen === 'network' ? GATEWAY_COPY.listenHint : ''}</p>
+      <p className="small muted" style={{ margin: 0 }}>{PROTOCOL_HINTS[protocol]} {config.listen === 'network' ? copy.listenHint : ''}</p>
       <div className="form-grid gateway-fields">{MAIN_SETTINGS[protocol].map(field)}</div>
       <label className="row gateway-check"><input type="checkbox" checked={real} disabled={running || busy}
-        onChange={event => save(protocol, config.listen, values, event.target.checked)} />{GATEWAY_COPY.realCommands}</label>
-      <p className="small muted" style={{ margin: 0 }}>{real ? GATEWAY_COPY.realCommandsOn : GATEWAY_COPY.realCommandsOff}</p>
-      {config.auto_start && !running && <p className="small muted" style={{ margin: 0 }}>{GATEWAY_COPY.autoStart}</p>}
+        onChange={event => save(protocol, config.listen, values, event.target.checked)} />{copy.realCommands}</label>
+      <p className="small muted" style={{ margin: 0 }}>{real ? copy.realCommandsOn : copy.realCommandsOff}</p>
+      {config.auto_start && !running && <p className="small muted" style={{ margin: 0 }}>{copy.autoStart}</p>}
       {ADVANCED_SETTINGS[protocol].length > 0 && <Disclosure><div className="form-grid gateway-fields">
         {ADVANCED_SETTINGS[protocol].map(field)}</div></Disclosure>}
       {running && <p className="gateway-live" aria-live="polite"><strong>{status.message}</strong> ·{' '}
-        {status.clients.length ? `${GATEWAY_COPY.connected(status.clients.length)}: ${status.clients.join(', ')}` : GATEWAY_COPY.none}</p>}
+        {status.clients.length ? `${copy.connected(status.clients.length)}: ${status.clients.join(', ')}` : copy.none}</p>}
     </div>
   </div>;
 }

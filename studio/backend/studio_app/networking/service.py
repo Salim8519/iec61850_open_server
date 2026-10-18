@@ -11,12 +11,14 @@ from . import adapters as adapter_list
 from .address_plan import on_link, plan_addresses, validate_manual
 from .arp_probe import addresses_in_use
 from .change_plan import build_plan, describe, describe_removal
+from .firewall_rules import gateway_state
 from .elevation import ElevationCancelled, helper_command, run_elevated
 from .journal import NetworkJournal, item_key
 
 
 class NetworkService:
-    def __init__(self, projects, directory, program, adapters=None, rules=None, elevate=None, probe=None):
+    def __init__(self, projects, directory, program, adapters=None, rules=None, elevate=None, probe=None,
+                 firewall=None):
         self.projects = projects
         self.directory = Path(directory)
         self.program = Path(program)
@@ -26,6 +28,7 @@ class NetworkService:
         self._elevate = elevate or (lambda request, digest: run_elevated(
             *helper_command(request, digest, self.program)))
         self._probe = probe or addresses_in_use
+        self._gateway_state = firewall or gateway_state
         self.lock = threading.Lock()
         self.cache = (0.0, None)
         self.previews = {}
@@ -139,14 +142,29 @@ class NetworkService:
         label = describe if action == "apply" else describe_removal
         return [{**by_key.get(item_key(item), {}), "description": label(item)} for item in clean]
 
-    def _present(self, item):
-        if item["kind"] == "alias":
-            return any(address["ip"] == item["ip"] for adapter in self.adapters(refresh=True)
-                       if adapter["guid"] == item["adapter_guid"] for address in adapter["addresses"])
-        return item["name"] in self._list_rules()
-
     def leftovers(self):
-        return self.journal.leftovers(self._present)
+        """Journaled changes that still exist. Each Windows list is read once per call (change 0089)."""
+        outstanding = self.journal.outstanding()
+        memo = {}
+
+        def once(key, read):
+            if key not in memo:
+                memo[key] = read()
+            return memo[key]
+
+        def firewall():
+            return self._gateway_state([item["name"] for item in outstanding if item["kind"] == "unblock"])
+
+        def present(item):
+            if item["kind"] == "alias":
+                return any(address["ip"] == item["ip"] for adapter in once("adapters", lambda: self.adapters(refresh=True))
+                           if adapter["guid"] == item["adapter_guid"] for address in adapter["addresses"])
+            if item["kind"] == "gateway_firewall":
+                return item["name"] in once("firewall", firewall)[0]
+            if item["kind"] == "unblock":
+                return item["name"] in once("firewall", firewall)[1]
+            return item["name"] in once("rules", self._list_rules)
+        return self.journal.leftovers(present)
 
     def cleanup_preview(self):
         items = [{**item, "action": "remove", "description": describe_removal(item)} for item in self.leftovers()]

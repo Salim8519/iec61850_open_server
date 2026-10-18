@@ -44,9 +44,16 @@ class CommandExecutor:
         manager = self.manager
         point = manager.point(event.get("point_id"))
         value = bool(event.get("value"))
-        label = f"{point['ref'] if point else event.get('point_id')} {'ON / close' if value else 'OFF / open'}"
+        name = point.get("description") if point and point.get("source") == "remote" else point["ref"] if point else None
+        label = f"{name or event.get('point_id')} {'ON / close' if value else 'OFF / open'}"
         entry = manager.commands.add(point_id=event.get("point_id"), label=label, protocol=event.get("protocol"),
                                      peer=event.get("peer"), request="received", applied="", observed="")
+        if point is not None and point.get("source") == "remote":
+            ok, text = manager.converter.relay(point, value, manager.config().get("real_commands", True))
+            manager.commands.update(entry["seq"], applied=f"{'operated' if ok else 'refused'} by the device: {text}",
+                                    observed="see the device value in Points")
+            manager.emit("gateway_command", point=label, result="relayed", ok=ok, reason=text)
+            return ok, "" if ok else text
         ied = manager.ied(point["ied"]) if point else None
         reason = refusal(point, ied, manager.config().get("real_commands", True))
         if reason:

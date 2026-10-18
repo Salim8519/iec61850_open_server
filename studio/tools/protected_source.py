@@ -10,7 +10,8 @@ import subprocess
 
 STUDIO = Path(__file__).resolve().parents[1]
 PACKAGE = STUDIO / "backend/studio_app"
-SEALED = ("studio_ied.exe", "studio_live.exe", "studio_probe.exe", "studio_gateway.exe", "studio_control.exe")
+SEALED = ("studio_ied.exe", "studio_live.exe", "studio_probe.exe", "studio_gateway.exe", "studio_control.exe",
+          "studio_master.exe")
 SANDBOX = STUDIO / "build/license-sandbox"
 SANDBOX_URL = "http://127.0.0.1:8090"
 

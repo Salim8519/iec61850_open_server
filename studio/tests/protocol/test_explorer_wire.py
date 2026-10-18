@@ -56,6 +56,7 @@ def test_identify_reports_identity_and_devices(device, live):
     assert answer["identified"] is True
     assert "ExploreTestCTRL" in answer["devices"]
     assert {"vendor", "model", "revision", "connect_ms"} <= set(answer)
+    assert (answer["vendor"], answer["model"]) == ("ScadaBench", "Simulated IED"), "not the old product name"
 
 
 def test_identify_unreachable_port_gives_a_reason(live):

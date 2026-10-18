@@ -66,3 +66,25 @@ test('guided components do not hard-code hints', () => {
     assert.doesNotMatch(file.text, /<Hint\b[^>]*[^/]>/, `${file.name} passes text to <Hint>; use an id`);
   }
 });
+
+test('the clean-up card does not call changes from this session "earlier" (change 0089)', () => {
+  // It lists every active change, including ones applied a minute ago and the gateway firewall.
+  assert.ok(!/from an earlier session that/.test(HINTS['network.leftovers']));
+  assert.match(HINTS['network.leftovers'], /this session or an earlier one/);
+});
+
+test('the clean-up card says it is checking Windows instead of showing nothing (change 0089)', () => {
+  assert.match(HINTS['network.checking'], /Checking Windows/);
+  const card = read('frontend/src/features/network/CleanupCard.tsx');
+  assert.ok(card.includes('<Hint id="network.checking" compact />'));
+  assert.ok(card.includes("item.kind === 'unblock' ? UI_STATUS.item_restore"), 'a Windows rule is switched on again, not removed');
+  assert.match(UI_STATUS.item_restore.label, /switched on again/);
+  assert.ok(card.includes('disabled={locked || working}') && card.includes('<Hint id="network.approving" compact />'),
+    'while Windows asks for permission the page says so and the button cannot be pressed twice');
+});
+
+test('IED Explorer reads the data object again after a command (change 0089)', () => {
+  // Seen between two machines: "now reads on (closed)" above a table still showing "off (open)".
+  assert.ok(read('frontend/src/features/tools/explorer/NodeDetail.tsx').includes('operated={() => read(object.name, object.attributes)}'));
+  assert.ok(read('frontend/src/features/tools/explorer/CommandPanel.tsx').includes('operated?.()'));
+});

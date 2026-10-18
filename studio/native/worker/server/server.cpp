@@ -78,7 +78,8 @@ Json Server::start(const Json& config) {
     start_tasks();
     auto ip = config.at("ip").get<std::string>();
     IedServer_setLocalIpAddress(handle, ip.c_str());
-    IedServer_setServerIdentity(handle, "Substation Studio", "Laboratory simulator", "0.1");
+    // What clients and Find IEDs see: the product name and that this IED is simulated (change 0089).
+    IedServer_setServerIdentity(handle, "ScadaBench", "Simulated IED", "1");
     IedServer_setConnectionIndicationHandler(handle, connection, this);
     IedServer_setRCBEventHandler(handle, report, this);
     for (const auto& entry : config.value("controls", Json::array())) {

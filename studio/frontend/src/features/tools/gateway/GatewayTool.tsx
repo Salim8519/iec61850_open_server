@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 import { CommandLog } from './CommandLog';
+import { GatewayFirewall } from './GatewayFirewall';
 import { GatewayNotices } from './GatewayNotices';
 import { GatewaySettings } from './GatewaySettings';
 import { GatewayStatusBar } from './GatewayStatusBar';
@@ -44,6 +45,8 @@ export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: 
         start={() => { setSettingsOpen(false); act(gatewayApi.start); }}
         hide={running ? () => setSettingsOpen(false) : undefined} />}
     <GatewayNotices status={status} runState={runState} runIeds={runIeds} />
+    {config.listen === 'network' && <div className="card"><div className="guide-section">
+      <GatewayFirewall port={Number(config.settings[config.protocol].port)} /></div></div>}
     {!status.available && <p className="explorer-error">The gateway program is not built in this copy of ScadaBench.</p>}
     {error && <p className="explorer-error" role="alert">{error}</p>}
     <div className={`card gateway-panel${running ? ' running' : ''}`}>

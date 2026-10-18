@@ -32,7 +32,11 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 PrivilegesRequired=lowest
 WizardStyle=modern
+DisableWelcomePage=no
 SetupIconFile=..\branding\icon.ico
+; Brand pictures (tools/build_installer_art.py), one size per display scaling level (change 0090).
+WizardImageFile=..\branding\installer\wizard-164x314.bmp,..\branding\installer\wizard-192x386.bmp,..\branding\installer\wizard-246x459.bmp,..\branding\installer\wizard-273x556.bmp,..\branding\installer\wizard-328x628.bmp,..\branding\installer\wizard-355x669.bmp,..\branding\installer\wizard-410x797.bmp
+WizardSmallImageFile=..\branding\installer\small-55x55.bmp,..\branding\installer\small-64x68.bmp,..\branding\installer\small-83x80.bmp,..\branding\installer\small-92x97.bmp,..\branding\installer\small-110x106.bmp,..\branding\installer\small-119x123.bmp,..\branding\installer\small-138x140.bmp
 CloseApplications=yes
 
 [Languages]

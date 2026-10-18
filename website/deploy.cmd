@@ -5,10 +5,14 @@ setlocal
 cd /d "%~dp0"
 call npm ci --no-audit --no-fund || goto :failed
 call npm run build || goto :failed
-rem Ship the newest real installer (never the sandbox build). Pages allows files up to 25 MiB.
+rem Ship the newest real installer (never the sandbox build) under its versioned name; links to the
+rem old unversioned names redirect to it. Pages allows files up to 25 MiB.
+if exist dist\_redirects del dist\_redirects
 for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Setup-*.exe" 2^>nul') do (
   if not exist dist\download mkdir dist\download
-  copy /y "..\studio\dist-protected\%%F" dist\download\ScadaBench-Setup.exe >nul
+  copy /y "..\studio\dist-protected\%%F" "dist\download\%%F" >nul
+  findstr /c:"/download/%%F" dist\download\index.html >nul || (echo The download page does not link %%F: set the version in src\data\site.ts. & goto :failed)
+  >>dist\_redirects echo /download/ScadaBench-Setup.exe /download/%%F 302
   echo Installer included: %%F
   goto :installer_done
 )
@@ -16,7 +20,9 @@ echo No release installer found in studio\dist-protected; the download link will
 :installer_done
 rem The portable self-extractor of the same sealed build (studio\tools\make_portable.py), when present.
 for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Portable-*.exe" 2^>nul') do (
-  copy /y "..\studio\dist-protected\%%F" dist\download\ScadaBench-Portable.exe >nul
+  copy /y "..\studio\dist-protected\%%F" "dist\download\%%F" >nul
+  findstr /c:"/download/%%F" dist\download\index.html >nul || (echo The download page does not link %%F: set the version in src\data\site.ts. & goto :failed)
+  >>dist\_redirects echo /download/ScadaBench-Portable.exe /download/%%F 302
   echo Portable version included: %%F
   goto :portable_done
 )

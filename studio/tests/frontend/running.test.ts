@@ -8,7 +8,8 @@ const SRC = new URL('../../frontend/src/', import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, SRC), 'utf8');
 const idle = { gateway: { state: 'stopped' as const, protocol: 'iec104', port: null, clients: 0 },
   explorer: { state: 'disconnected', host: '', polling: false, watched: 0 },
-  scan: { state: 'idle', probed: 0, total: 0 }, sequences: 0 };
+  scan: { state: 'idle', probed: 0, total: 0 }, sequences: 0,
+  master: { state: 'disconnected' as const, protocol: 'iec104', host: '', points: 0 } };
 const project = (runtime: string) => ({ runtime, ieds: [{ role: 'simulated' }, { role: 'off' }] }) as never;
 
 test('each place gets its own running dot with its own words', () => {
@@ -22,7 +23,7 @@ test('each place gets its own running dot with its own words', () => {
   const places = placeActivity(project('stopped'), busy);
   assert.ok(!places.devices, 'a running gateway does not mean the IEDs run');
   assert.deepEqual(places.test?.labels, ['2 sequences running']);
-  assert.deepEqual(places.tools?.labels, ['Gateway: IEC 104 on port 2404 · 1 SCADA master',
+  assert.deepEqual(places.tools?.labels, ['Gateway: IEC 104 on port 2404 · 1 SCADA connection',
     'IED Explorer: connected to 10.0.0.5 · watching 40']);
   assert.deepEqual(Object.keys(toolActivity(busy)).sort(), ['explorer', 'gateway']);
 });

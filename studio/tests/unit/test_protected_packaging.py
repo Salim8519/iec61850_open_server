@@ -73,7 +73,7 @@ def test_protected_build_refuses_without_release_key_and_dry_run_lists_steps(mon
     monkeypatch.setattr(release_key, "configured", lambda: True)
     assert build.main(["--dry-run"]) == 0
     output = capsys.readouterr().out
-    for marker in ("-DSTUDIO_ENFORCE_LICENSE=ON", "-DSTUDIO_GATEWAY=ON", "studio_control", "nuitka", "--mode=module", "pack_frontend.py",
+    for marker in ("-DSTUDIO_ENFORCE_LICENSE=ON", "-DSTUDIO_GATEWAY=ON", "studio_control", "studio_master", "nuitka", "--mode=module", "pack_frontend.py",
                    "studio_protected.spec", "Leak check"):
         assert marker in output, marker
 
@@ -139,3 +139,51 @@ def test_native_enforcement_is_off_unless_release_build_asks():
         assert "license_check" not in (STUDIO / "packaging" / spec).read_text(encoding="utf-8")
     guard = (STUDIO / "native/common/license_guard.cpp").read_text(encoding="utf-8")
     assert "getenv(\"STUDIO_ENFORCE" not in guard and "native/build" not in guard
+
+
+def test_installer_step_retries_a_file_locked_by_antivirus(monkeypatch, tmp_path):
+    """0.1.7 build (change 0089): ISCC failed once with "used by another process"."""
+    import subprocess
+    tool = load_tool("compile_protected")
+    iscc = tmp_path / "ISCC.exe"
+    iscc.write_text("")
+    calls = []
+
+    def run(command, **options):
+        calls.append(command)
+        if len(calls) == 1:
+            raise subprocess.CalledProcessError(2, command)
+
+    monkeypatch.setattr(tool.shutil, "which", lambda name: str(iscc))
+    monkeypatch.setattr(tool.time, "sleep", lambda seconds: None)
+    monkeypatch.setenv("ProgramFiles(x86)", str(tmp_path / "none"))
+    monkeypatch.setenv("ProgramFiles", str(tmp_path / "none"))
+    mode = tool.Mode(sandbox=False, dry_run=False)
+    monkeypatch.setattr(tool.Mode, "run", lambda self, command, **options: run(command, **options))
+    tool.installer(mode, "9.9.9")
+    assert len(calls) == 2 and "/DAppVersion=9.9.9" in calls[1]
+
+
+def test_installer_is_built_outside_the_release_folder_then_moved_in(monkeypatch, tmp_path):
+    """0.1.8 build (change 0090): an antivirus watching dist-protected locked every icon update."""
+    from pathlib import Path
+    tool = load_tool("compile_protected")
+    iscc = tmp_path / "ISCC.exe"
+    iscc.write_text("")
+    outputs = []
+
+    def run(command, **options):
+        output = Path(next(part for part in map(str, command) if part.startswith("/DOutputDir="))[12:])
+        outputs.append(output)
+        (output / "ScadaBench-Setup-9.9.9.exe").write_bytes(b"setup")
+
+    monkeypatch.setattr(tool.shutil, "which", lambda name: str(iscc))
+    monkeypatch.setenv("ProgramFiles(x86)", str(tmp_path / "none"))
+    monkeypatch.setenv("ProgramFiles", str(tmp_path / "none"))
+    monkeypatch.setattr(tool.Mode, "dist", property(lambda self: tmp_path / "dist"))
+    mode = tool.Mode(sandbox=False, dry_run=False)
+    mode.dist.mkdir()
+    monkeypatch.setattr(tool.Mode, "run", lambda self, command, **options: run(command, **options))
+    tool.installer(mode, "9.9.9")
+    assert outputs[0] != mode.dist and not outputs[0].exists()
+    assert (mode.dist / "ScadaBench-Setup-9.9.9.exe").read_bytes() == b"setup"

@@ -49,7 +49,7 @@ export function NodeDetail({ reference, host, watched, addWatch, fail }: {
             {reading === object.name ? <Loader2 size={15} className="spin" /> : <RefreshCw size={15} />}</button>}
         </div>
         {isOpen && <CommandPanel reference={`${node.ref}.${object.name}`} host={host} attributes={object.attributes}
-          fail={fail} />}
+          fail={fail} operated={() => read(object.name, object.attributes)} />}
         {isOpen && <table className="attribute-table"><thead><tr><th>Attribute</th>
           <th><InfoTip term="fc" label="FC" /></th><th>Type</th><th>Value</th><th aria-label="Watch" /></tr></thead>
           <tbody>{object.attributes.map(attribute => {

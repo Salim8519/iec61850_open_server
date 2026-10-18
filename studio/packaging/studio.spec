@@ -7,6 +7,7 @@ workspace = studio.parent
 native = Path(os.environ.get("STUDIO_BUILD_NATIVE", studio / "native/build/Release"))
 frontend = Path(os.environ.get("STUDIO_BUILD_FRONTEND", studio / "frontend/dist"))
 required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
+            native / "studio_master.exe",
             frontend / "index.html"]
 for path in required:
     if not path.exists():
@@ -19,7 +20,8 @@ analysis = Analysis(
               (str(native / "studio_live.exe"), "native"),
               (str(native / "studio_probe.exe"), "native"),
               (str(native / "studio_gateway.exe"), "native"),
-              (str(native / "studio_control.exe"), "native")],
+              (str(native / "studio_control.exe"), "native"),
+              (str(native / "studio_master.exe"), "native")],
     datas=[(str(frontend), "frontend"),
            (str(studio / "schemas"), "schemas"),
            (str(studio / "packaging/README.md"), "."),

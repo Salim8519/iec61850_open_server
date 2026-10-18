@@ -2,6 +2,7 @@
 import ipaddress
 import math
 from .gateway_points import COMMAND_KINDS, KINDS, MAX_POINTS, PROTOCOLS, occupied, point_id
+from .master_rules import empty_master, normalize_master, validate_role
 
 DEFAULT_SETTINGS = {
     "iec104": {"port": 2404, "common_address": 1, "t1": 15, "t2": 10, "t3": 20, "k": 12, "w": 8},
@@ -16,7 +17,8 @@ LISTEN = {"this_pc": "127.0.0.1", "network": "0.0.0.0"}
 
 
 def empty_gateway():
-    return {"protocol": "iec104", "listen": "this_pc", "real_commands": True, "auto_start": False,
+    return {"role": "gateway", "master": empty_master(),
+            "protocol": "iec104", "listen": "this_pc", "real_commands": True, "auto_start": False,
             "settings": {key: dict(value) for key, value in DEFAULT_SETTINGS.items()},
             "points": {protocol: [] for protocol in PROTOCOLS}}
 
@@ -133,7 +135,8 @@ def normalize_gateway(raw):
     if protocol not in PROTOCOLS:
         raise ValueError(f"Unknown gateway protocol '{protocol}'")
     listen_address(raw.get("listen", "this_pc"))
-    result.update(protocol=protocol, listen=raw.get("listen", "this_pc"))
+    result.update(protocol=protocol, listen=raw.get("listen", "this_pc"), role=validate_role(raw.get("role", "gateway")),
+                  master=normalize_master(raw.get("master")))
     for flag in ("real_commands", "auto_start"):
         if isinstance(raw.get(flag), bool):
             result[flag] = raw[flag]

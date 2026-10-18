@@ -54,8 +54,10 @@ void Iec104Commands::handle(IMasterConnection connection, CS101_ASDU asdu, const
         return;
     }
     if (point->monitor_only || state == 0 || state == 3) {
-        traffic("rx", peer, what + (point->monitor_only ? ": real IED, commands are never sent (negative)"
-                                                        : ": invalid double command state (negative)"));
+        // The owner's switch decides (change 0089: the old text said real IEDs are "never" commanded).
+        traffic("rx", peer, what + (point->monitor_only
+            ? ": real IED, and commands to real IEDs are off in the gateway settings (negative)"
+            : ": invalid double command state (negative)"));
         reply(connection, asdu, CS101_COT_ACTIVATION_CON, true);
         return;
     }

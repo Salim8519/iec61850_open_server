@@ -1,20 +1,26 @@
 # Spec: Gateway simulator (IEC 60870-5-104, Modbus TCP, DNP3)
 
 Decisions: [ADR-0057](../decisions/ADR-0057-gateway-explorer-commands.md),
-[ADR-0059](../decisions/ADR-0059-separate-run-running-dots.md) (separate Run, page commands).
+[ADR-0059](../decisions/ADR-0059-separate-run-running-dots.md) (separate Run, page commands),
+[ADR-0061](../decisions/ADR-0061-scada-roles-master-converter.md) (roles: this spec is the Station gateway role;
+the SCADA master and protocol converter are in [scada-master.md](scada-master.md)).
 Change: [0082](../changes/2026/0082-gateway-simulator.md). Models: the FreyrSCADA IEC 104 and
 DNP3 simulators (point table, traffic log) and station gateways.
 
 ## Purpose
 
-ScadaBench acts as the station gateway, so a SCADA master can be tested against the project's
-IEDs over IEC 104, Modbus TCP or DNP3.
+ScadaBench acts as the station gateway, so a SCADA (104 controlling station, DNP3 master or Modbus
+client) can be tested against the project's IEDs over IEC 104, Modbus TCP or DNP3. Toward SCADA
+ScadaBench is the controlled station (104 slave), DNP3 outstation or Modbus server.
 
 ## Behaviour contract
 
 - **Workers.**
   - `studio_gateway` serves one protocol at a time on the chosen port: "This PC only" binds
     127.0.0.1, "All network adapters" binds 0.0.0.0.
+  - On "All network adapters" the tool checks Windows Firewall and offers, after review and one
+    UAC approval, an allow rule for the gateway worker and switching off Windows' leftover
+    Block rules for it (ADR-0062). Clean-up undoes both.
   - It has no IEC 61850 client. Every SCADA command is answered after the backend has run
     it through `studio_control`.
 - **Values.** Points follow the coordinator's signal index every 0.1 s.
@@ -70,3 +76,4 @@ IEDs over IEC 104, Modbus TCP or DNP3.
 | GW-08 | The gateway worker has no IEC 61850 client and refuses to listen without a license. | `studio/tests/unit/test_gateway_safety.py::test_native_gateway_has_no_iec61850_client`, `studio/tests/unit/test_native_enforcement.py::test_gateway_refuses_to_listen_without_license` |
 | GW-09 | A remembered gateway starts again by itself and never raises. | `studio/tests/unit/test_tool_autonomy.py::test_autostart_only_when_remembered_and_never_raises` |
 | GW-10 | Commands from the page are sent only after the warning, with confirmation, and run and log like SCADA commands. | `studio/tests/frontend/running.test.ts::gateway commands are sent only from the warning, with the confirmation flag`, `studio/tests/unit/test_tool_autonomy.py::test_saved_points_are_found_while_stopped_and_manual_commands_explain_refusals`, `studio/tests/protocol/test_gateway_runtime.py::test_iec104_master_operates_a_simulated_breaker` |
+| GW-11 | "All network adapters" is reachable from other computers only through a reviewed, journaled firewall change: an allow rule for the gateway worker only, Block rules switched off (never deleted) and re-enabled by clean-up. | `studio/tests/unit/test_gateway_firewall.py::test_plan_allows_the_gateway_port_and_switches_off_block_rules`, `studio/tests/unit/test_gateway_firewall.py::test_helper_accepts_only_the_gateway_worker_and_plain_rule_names`, `studio/tests/unit/test_gateway_firewall.py::test_cleanup_finds_the_gateway_changes_in_the_journal`, `studio/tests/unit/test_gateway_firewall.py::test_preview_then_apply_sends_only_what_was_reviewed` |

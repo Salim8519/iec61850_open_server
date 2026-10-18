@@ -48,3 +48,18 @@
 .gateway-confirm .row { gap: 8px; }
 .gateway-sent { margin: 0; padding: 6px 12px; border-radius: var(--radius-small); background: var(--warning-soft); }
 .gateway-sent.ok { background: var(--success-soft); color: var(--success); }
+/* Role switch above the gateway or master view; the chosen view keeps the full-height panel. */
+.scada-tool { display: flex; flex-direction: column; gap: 12px; }
+.content.tool-fill > .scada-tool { flex: 1 1 0; min-height: 560px; }
+.scada-tool > .gateway-fill { flex: 1 1 0; min-height: 520px; }
+.scada-tool > * { flex-shrink: 0; }
+.role-switch { display: grid; gap: 8px; padding: 10px 16px; }
+.role-row { gap: 12px; align-items: center; flex-wrap: wrap; }
+.side-diagram { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.side-step { gap: 8px; align-items: center; }
+.side-box { display: grid; gap: 2px; padding: 4px 10px; border: 1px dashed var(--border); border-radius: var(--radius-small);
+  background: var(--surface-2); position: relative; }
+.side-box.here { border: 2px solid var(--accent); background: var(--accent-soft); }
+.side-here { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+.gateway-firewall { display: flex; flex-direction: column; gap: 8px; }
+.gateway-firewall ul { padding-left: 20px; }

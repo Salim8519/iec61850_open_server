@@ -15,9 +15,12 @@ from studio_app.runtime.event_bus import EventBus
 from studio_app.simulation.coordinator import Coordinator
 from studio_app.api import projects, scl, signals, runtime, events, security, scenarios, ieds, traces, equipment
 from studio_app.api import test_panel, network, live, sld, signal_flow, health, test_mode, license, preferences, tools
-from studio_app.api import gateway
+from studio_app.api import gateway, gateway_master
+from studio_app.gateway.converter import ConverterSource
 from studio_app.gateway.manager import GatewayManager
+from studio_app.gateway.master_manager import MasterManager
 from studio_app.licensing.service import LicenseService, default_home
+from studio_app.networking.gateway_firewall import GatewayFirewall
 from studio_app.networking.service import NetworkService
 from studio_app.launcher.frontend_assets import FrontendAssets
 from studio_app.tools.explorer import ExplorerService
@@ -45,21 +48,25 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
     control = ControlClient(settings.native_executable.with_name("studio_control.exe"))
     memory = ToolMemory(settings.directory)
     gateway_manager = GatewayManager(coordinator, project_service, settings.native_executable, control)
+    master_manager = MasterManager(project_service, settings.native_executable, coordinator.emit)
+    gateway_manager.converter = ConverterSource(master_manager)
+    gateway_firewall = GatewayFirewall(network_service, gateway_manager.executable)
     app.extensions.update(projects=project_service, events=bus, runtime=coordinator, network=network_service,
                           studio_settings=settings, startup=recovery,
                           license=license_service, preferences=PreferenceStore(settings.directory),
                           explorer=ExplorerService(settings.live_executable, bus.publish, memory, control),
                           scanner=ScanService(settings.live_executable, memory=memory), tool_memory=memory,
-                          gateway=gateway_manager)
+                          gateway=gateway_manager, master=master_manager,
+                          gateway_firewall=gateway_firewall)
     app.before_request(security.protect_request)
     app.before_request(startup_gate.wait_for_project)  # After the security and license checks.
     for module in (projects, scl, signals, runtime, events, security, scenarios, ieds, traces,
                    test_panel, equipment, network, live, sld, signal_flow, health, test_mode, license,
-                   preferences, tools, gateway):
+                   preferences, tools, gateway, gateway_master):
         app.register_blueprint(module.blueprint, url_prefix="/api/v1")
     license_service.start_background_verify()
     recovery.start()
-    threading.Thread(target=_resume_gateway, args=(recovery, gateway_manager), name="gateway-resume", daemon=True).start()
+    threading.Thread(target=_resume_gateway, args=(recovery, gateway_manager, master_manager), name="gateway-resume", daemon=True).start()
 
     @app.errorhandler(StudioError)
     def engineering_error(error):
@@ -99,8 +106,9 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
     return app
 
 
-def _resume_gateway(recovery, gateway_manager):
-    """Owner rule: a gateway that was running when the app closed starts again by itself."""
+def _resume_gateway(recovery, gateway_manager, master_manager):
+    """Owner rule: a gateway or master that was running when the app closed starts again by itself."""
     recovery.wait()
     if recovery.error is None:
+        master_manager.autoconnect()  # first: a protocol converter serves what the master reads
         gateway_manager.autostart()

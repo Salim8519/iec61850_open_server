@@ -75,6 +75,17 @@ def test_iec104_interrogation_commands_and_refusals():
         gateway.close()
 
 
+def test_iec104_real_ied_refusal_names_the_owner_switch():
+    """Change 0089: the log said real IEDs are "never" commanded, but the owner's switch decides."""
+    gateway = Gateway("iec104", {"bind": "127.0.0.1", "port": 12405, "common_address": 7})
+    try:
+        frames = run("studio_test_iec104_master.exe", "127.0.0.1", 12405, 7, "sc:6002:1")
+        assert [(frame["cot"], frame["negative"]) for frame in frames if frame["type"] == 45] == [(7, True)]
+        assert any("commands to real IEDs are off in the gateway settings" in line for line in gateway.traffic)
+    finally:
+        gateway.close()
+
+
 def test_iec104_spontaneous_change_and_wrong_common_address():
     gateway = Gateway("iec104", {"bind": "127.0.0.1", "port": 12405, "common_address": 1})
     try:

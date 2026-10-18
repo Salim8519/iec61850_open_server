@@ -4,11 +4,14 @@ import { gatewayApi, type TrafficEntry } from '../../../api/gateway';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 
 const KEEP = 1000;
-const DIRECTION = { rx: { icon: ArrowDownLeft, word: 'from SCADA' }, tx: { icon: ArrowUpRight, word: 'to SCADA' },
-  info: { icon: Info, word: 'note' } } as const;
+const ICONS = { rx: ArrowDownLeft, tx: ArrowUpRight, info: Info } as const;
+const SCADA_WORDS = { rx: 'from SCADA', tx: 'to SCADA', info: 'note' };
+type Load = (after: number) => Promise<{ entries: TrafficEntry[]; last: number }>;
 
-/** Decoded traffic, newest at the bottom; it follows new lines unless paused. */
-export function TrafficLog({ running }: { running: boolean }) {
+/** Decoded traffic, newest at the bottom; it follows new lines unless paused. The master view passes its own source. */
+export function TrafficLog({ running, load: source = gatewayApi.traffic, words = SCADA_WORDS, hint = GATEWAY_COPY.trafficHint }: {
+  running: boolean; load?: Load; words?: Record<'rx' | 'tx' | 'info', string>; hint?: string;
+}) {
   const [lines, setLines] = useState<TrafficEntry[]>([]);
   const [paused, setPaused] = useState(false);
   const [filter, setFilter] = useState('');
@@ -16,7 +19,7 @@ export function TrafficLog({ running }: { running: boolean }) {
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (paused) return;
-    const load = () => gatewayApi.traffic(last.current).then(page => {
+    const load = () => source(last.current).then(page => {
       if (!page.entries.length) return;
       last.current = page.last;
       setLines(current => [...current, ...page.entries].slice(-KEEP));
@@ -24,7 +27,7 @@ export function TrafficLog({ running }: { running: boolean }) {
     load();
     const timer = setInterval(load, running ? 500 : 2000);
     return () => clearInterval(timer);
-  }, [paused, running]);
+  }, [paused, running, source]);
   useEffect(() => {
     if (!paused && box.current) box.current.scrollTop = box.current.scrollHeight;
   }, [lines, paused]);
@@ -32,7 +35,7 @@ export function TrafficLog({ running }: { running: boolean }) {
   const shown = needle ? lines.filter(line => `${line.peer} ${line.text}`.toLowerCase().includes(needle)) : lines;
   return <>
     <div className="guide-section row gateway-toolbar">
-      <span className="small muted">{GATEWAY_COPY.trafficHint}</span>
+      <span className="small muted">{hint}</span>
       <span className="gateway-spacer" />
       <label className="search-field"><Search size={16} /><input value={filter} placeholder={GATEWAY_COPY.filter}
         aria-label={GATEWAY_COPY.filter} onChange={event => setFilter(event.target.value)} /></label>
@@ -43,11 +46,11 @@ export function TrafficLog({ running }: { running: boolean }) {
     <div className="gateway-traffic" ref={box} role="log" aria-live={paused ? 'off' : 'polite'}>
       {shown.length === 0 && <p className="muted">No messages yet.</p>}
       {shown.map(line => {
-        const direction = DIRECTION[line.dir as keyof typeof DIRECTION] ?? DIRECTION.info;
-        const Icon = direction.icon;
+        const dir = (line.dir in ICONS ? line.dir : 'info') as keyof typeof ICONS;
+        const Icon = ICONS[dir];
         return <div key={line.seq} className={`traffic-line dir-${line.dir}`}>
           <span className="traffic-time">{new Date(line.at * 1000).toLocaleTimeString()}</span>
-          <Icon size={14} aria-label={direction.word} />
+          <Icon size={14} aria-label={words[dir]} />
           {line.peer && <span className="traffic-peer">{line.peer}</span>}
           <span className="traffic-text">{line.text}</span>
         </div>;
