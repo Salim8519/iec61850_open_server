@@ -1,12 +1,21 @@
-.explorer-connect-row { align-items: flex-end; gap: 12px; flex-wrap: wrap; }
-.explorer-connect-row label { display: grid; gap: 6px; font-weight: 600; }
+.explorer-bar { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; padding: 12px 16px; }
+.explorer-bar label { display: grid; gap: 4px; font-weight: 600; }
+.explorer-bar > .help-tip, .explorer-bar > .status-wrap { align-self: center; }
+.explorer-bar-error { flex-basis: 100%; font-size: 14px; }
 .explorer-host input { width: 220px; }
 .explorer-port input { width: 90px; }
 .explorer-error { margin: 0; color: var(--error); font-weight: 600; }
-.explorer-layout { display: grid; grid-template-columns: minmax(240px, 320px) 1fr; gap: 20px; align-items: start; }
-.explorer-tree { position: sticky; top: 12px; max-height: calc(100vh - 140px); display: flex; flex-direction: column; }
-.explorer-tree .search-field { width: 100%; }
+.explorer-split { --side-width: 300px; }
+.explorer-tree-filter .filter-bar { padding: 8px 10px; }
+.explorer-tree-filter .filter-search { width: 100%; }
 .tree { list-style: none; margin: 0; padding: 4px 8px 12px; overflow: auto; }
+/* The watch list stays pinned under the node with its own scroll; the node takes the rest. */
+.explorer-split .fill-column > .explorer-detail { flex: 1 1 0; min-height: 160px; }
+.explorer-watch { flex: 1 1 0; min-height: 200px; }
+.explorer-detail-body { display: block; }
+.watch-interval { width: auto; min-height: 32px; font-size: var(--font-size-small); }
+.explorer-watch .panel-head { gap: 8px; padding: 8px 12px; }
+.explorer-watch .panel-head button, .explorer-watch .panel-head .button { min-height: 32px; padding: 0 10px; }
 .tree ul { list-style: none; margin: 0; padding: 0 0 0 22px; }
 .tree-row { width: 100%; justify-content: flex-start; gap: 8px; border: 0; background: transparent; min-height: 36px;
   padding: 0 8px; font-weight: 500; }
@@ -14,7 +23,6 @@
 .tree-row:hover:not(:disabled) { background: var(--hover); }
 .tree-row.active { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
 .tree-loading { display: flex; gap: 8px; align-items: center; padding: 8px 12px; }
-.explorer-detail { min-height: 240px; }
 .object-list { display: grid; }
 .object { border-top: 1px solid var(--border); }
 .object-row { display: flex; align-items: center; justify-content: space-between; padding: 2px 12px; }
@@ -34,14 +42,11 @@
 .block-entry { padding: 6px 0; }
 .block-entry ul, .disclosure-body > ul { margin: 6px 0 0; padding-left: 18px; }
 .watch-empty { margin: 0; padding: 8px 20px 20px; }
-.watch-foot { margin: 0; padding: 10px 20px; border-top: 1px solid var(--border); }
-.explorer-watch .card-heading { flex-wrap: wrap; gap: 10px; }
-.explorer-watch .card-heading .row { flex-wrap: wrap; gap: 8px; align-items: center; }
 a.button.disabled { pointer-events: none; opacity: 0.5; }
 .spin { animation: tool-spin 0.9s linear infinite; }
 @keyframes tool-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
-@media (max-width: 1000px) { .explorer-layout { grid-template-columns: 1fr; } .explorer-tree { position: static; max-height: 360px; } }
+@media (max-width: 1000px), (max-height: 620px) { .explorer-tree { max-height: 360px; } .explorer-watch { min-height: 320px; } }
 .command-panel { margin: 0 12px 8px; display: grid; gap: 8px; }
 .command-row { gap: 8px; align-items: center; flex-wrap: wrap; }
 .command-step { width: 90px; }

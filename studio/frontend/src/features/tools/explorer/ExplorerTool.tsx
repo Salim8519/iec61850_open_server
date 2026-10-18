@@ -1,7 +1,8 @@
-import { Loader2, Plug, Unplug } from 'lucide-react';
+import { Loader2, Plug, Telescope, Unplug } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { explorerApi, type Attribute, type ExplorerStatus } from '../../../api/tools';
 import { EXPLORER_COPY } from '../../../copy/tools';
+import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
 import { StatusPill } from '../../../ui/StatusPill';
 import type { Status } from '../../../copy/status';
@@ -18,7 +19,8 @@ const PILL: Record<ExplorerStatus['state'], Status> = {
   lost: { label: 'Connection lost', tone: 'problem', hint: 'The device closed the connection. Press Connect to try again.' },
 };
 
-/** IED Explorer: connect by address, browse one level at a time, and watch chosen values. */
+/** IED Explorer: connect by address, browse one level at a time, and watch chosen values. A toolbar row,
+ *  then the model tree on the left and the node with the watch list pinned below it (ADR-0064). */
 export function ExplorerTool({ target }: { target?: { host: string; port: number } }) {
   const [status, setStatus] = useState<ExplorerStatus | null>(null);
   const [host, setHost] = useState(target?.host ?? '');
@@ -54,34 +56,32 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
     explorerApi.watch([...status.watch, ...items.map(({ ref, fc, type }) => ({ ref, fc, type }))]));
   const pending = busy && status?.state !== 'connected';
   return <>
-    <div className="card">
-      <form className="guide-section explorer-connect" onSubmit={event => { event.preventDefault(); connect(host, Number(port)); }}>
-        <p className="muted" style={{ margin: 0 }}>{EXPLORER_COPY.intro}</p>
-        <div className="row explorer-connect-row">
-          <label className="explorer-host">{EXPLORER_COPY.address}
-            <input value={host} onChange={event => setHost(event.target.value)} placeholder="192.168.1.10"
-              inputMode="decimal" autoComplete="off" spellCheck={false} disabled={connected} /></label>
-          <label className="explorer-port"><InfoTip term="mms" label={EXPLORER_COPY.port} />
-            <input value={port} onChange={event => setPort(event.target.value.replace(/\D/g, ''))} inputMode="numeric"
-              disabled={connected} /></label>
-          {connected
-            ? <button type="button" onClick={() => { setNode(''); run(explorerApi.disconnect); }} disabled={busy}>
-              <Unplug size={16} />{EXPLORER_COPY.disconnect}</button>
-            : <button type="submit" className="primary" disabled={pending || !host.trim()}>
-              {pending ? <Loader2 size={16} className="spin" /> : <Plug size={16} />}{EXPLORER_COPY.connect}</button>}
-          {status && <StatusPill status={pending ? PILL.connecting : PILL[status.state]} />}
-        </div>
-        {(error || (status?.state === 'lost' && status.message)) &&
-          <p className="explorer-error" role="alert">{error || status?.message}</p>}
-      </form>
-    </div>
-    {connected && status && <>
-      <div className="explorer-layout">
-        <ModelTree key={`${status.host}:${status.port}`} selected={node} select={setNode} fail={setError} />
+    <form className="card explorer-bar" onSubmit={event => { event.preventDefault(); connect(host, Number(port)); }}>
+      <label className="explorer-host">{EXPLORER_COPY.address}
+        <input value={host} onChange={event => setHost(event.target.value)} placeholder="192.168.1.10"
+          inputMode="decimal" autoComplete="off" spellCheck={false} disabled={connected} /></label>
+      <label className="explorer-port"><InfoTip term="mms" label={EXPLORER_COPY.port} />
+        <input value={port} onChange={event => setPort(event.target.value.replace(/\D/g, ''))} inputMode="numeric"
+          disabled={connected} /></label>
+      {connected
+        ? <button type="button" onClick={() => { setNode(''); run(explorerApi.disconnect); }} disabled={busy}>
+          <Unplug size={16} />{EXPLORER_COPY.disconnect}</button>
+        : <button type="submit" className="primary" disabled={pending || !host.trim()}>
+          {pending ? <Loader2 size={16} className="spin" /> : <Plug size={16} />}{EXPLORER_COPY.connect}</button>}
+      {status && <StatusPill status={pending ? PILL.connecting : PILL[status.state]} />}
+      <HelpTip text={EXPLORER_COPY.intro} label="How does IED Explorer work?" />
+      {(error || ((status?.state === 'lost' || status?.state === 'failed') && status.message)) &&
+        <p className="explorer-error explorer-bar-error" role="alert">{error || status?.message}</p>}
+    </form>
+    {connected && status ? <div className="fill-body fill-split explorer-split">
+      <ModelTree key={`${status.host}:${status.port}`} selected={node} select={setNode} fail={setError} />
+      <div className="fill-column">
         {node ? <NodeDetail reference={node} host={status.host} watched={watched} addWatch={addWatch} fail={setError} />
-          : <div className="card explorer-detail"><div className="guide-empty"><p>{EXPLORER_COPY.pickNode}</p></div></div>}
+          : <div className="card explorer-detail fill-grow panel-empty"><div className="guide-empty"><p>{EXPLORER_COPY.pickNode}</p></div></div>}
+        <WatchList status={status} run={run} />
       </div>
-      <WatchList status={status} run={run} />
-    </>}
+    </div> : <div className="card fill-body panel-empty"><div className="guide-empty">
+      <span className="guide-empty-icon"><Telescope size={24} /></span>
+      <h3>{EXPLORER_COPY.notConnected}</h3><p>{EXPLORER_COPY.intro}</p></div></div>}
   </>;
 }

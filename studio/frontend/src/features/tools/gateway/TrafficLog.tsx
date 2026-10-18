@@ -1,7 +1,11 @@
-import { ArrowDownLeft, ArrowUpRight, Info, Pause, Play, Search, Trash2 } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Info, Pause, Play, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { gatewayApi, type TrafficEntry } from '../../../api/gateway';
 import { GATEWAY_COPY } from '../../../copy/gateway';
+import { useListFilter } from '../../../state/useListFilter';
+import { FilterBar } from '../../../ui/FilterBar';
+import { HelpTip } from '../../../ui/HelpTip';
+import { TRAFFIC_FILTER, trafficMatches } from './logFilters';
 
 const KEEP = 1000;
 const ICONS = { rx: ArrowDownLeft, tx: ArrowUpRight, info: Info } as const;
@@ -14,7 +18,7 @@ export function TrafficLog({ running, load: source = gatewayApi.traffic, words =
 }) {
   const [lines, setLines] = useState<TrafficEntry[]>([]);
   const [paused, setPaused] = useState(false);
-  const [filter, setFilter] = useState('');
+  const filter = useListFilter('traffic', TRAFFIC_FILTER);
   const last = useRef(0);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -28,23 +32,19 @@ export function TrafficLog({ running, load: source = gatewayApi.traffic, words =
     const timer = setInterval(load, running ? 500 : 2000);
     return () => clearInterval(timer);
   }, [paused, running, source]);
+  const shown = lines.filter(line => trafficMatches(line, filter.values));
   useEffect(() => {
     if (!paused && box.current) box.current.scrollTop = box.current.scrollHeight;
-  }, [lines, paused]);
-  const needle = filter.trim().toLowerCase();
-  const shown = needle ? lines.filter(line => `${line.peer} ${line.text}`.toLowerCase().includes(needle)) : lines;
+  }, [shown.length, paused]);
   return <>
-    <div className="guide-section row gateway-toolbar">
-      <span className="small muted">{hint}</span>
-      <span className="gateway-spacer" />
-      <label className="search-field"><Search size={16} /><input value={filter} placeholder={GATEWAY_COPY.filter}
-        aria-label={GATEWAY_COPY.filter} onChange={event => setFilter(event.target.value)} /></label>
-      <button onClick={() => setPaused(!paused)}>{paused ? <><Play size={16} />{GATEWAY_COPY.resume}</>
-        : <><Pause size={16} />{GATEWAY_COPY.pause}</>}</button>
-      <button className="ghost" onClick={() => setLines([])}><Trash2 size={16} />{GATEWAY_COPY.clear}</button>
-    </div>
+    <FilterBar label="Filter messages" spec={TRAFFIC_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
+      shown={shown.length} total={lines.length} extra={<>
+        <button className="chip toggle" aria-pressed={paused} onClick={() => setPaused(!paused)}>
+          {paused ? <><Play size={14} />{GATEWAY_COPY.resume}</> : <><Pause size={14} />{GATEWAY_COPY.pause}</>}</button>
+        <button className="ghost filter-clear" onClick={() => setLines([])}><Trash2 size={14} />{GATEWAY_COPY.clear}</button>
+        <HelpTip text={hint} label="What is this?" /></>} />
     <div className="gateway-traffic" ref={box} role="log" aria-live={paused ? 'off' : 'polite'}>
-      {shown.length === 0 && <p className="muted">No messages yet.</p>}
+      {shown.length === 0 && <p className="muted">{lines.length ? GATEWAY_COPY.emptyFilter : 'No messages yet.'}</p>}
       {shown.map(line => {
         const dir = (line.dir in ICONS ? line.dir : 'info') as keyof typeof ICONS;
         const Icon = ICONS[dir];

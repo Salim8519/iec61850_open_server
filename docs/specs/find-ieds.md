@@ -20,6 +20,9 @@ firmware, so a beginner knows where to connect.
   logical devices through the read-only `identify` operation. A device that refuses is
   listed with the reason.
 - **Results.** Answer times, identity and an "Open in Explorer" button.
+- **Layout (ADR-0064).** The form is one toolbar row with the "N addresses" preview and a "?";
+  a thin progress line sits under it and the results fill the window, filtered by search,
+  Answered, IEC 61850 only, Not in project and vendor ([tool layout](tool-layout.md)).
 - **Safety.** No writes and no other ports. Only the previewed range is scanned.
 
 | ID | Rule | Enforced by |

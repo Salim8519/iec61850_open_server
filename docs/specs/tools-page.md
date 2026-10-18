@@ -16,6 +16,9 @@ before opening it, and every tool listed actually works.
 - Opening a card shows the tool in the same page with an "All tools" button back to the list.
 - Planned tools are specified in `docs/specs/proposed/` and are not listed until built.
 - GOOSE & Sampled Values traffic is the first tool. Settings → Network links to it.
+- An open tool shows one header row (All tools, the tool's name, its own switches) and fills the
+  window; only its panes scroll ([tool layout](tool-layout.md), ADR-0064). The GOOSE & SV traffic
+  report keeps the scrolling page.
 
 | ID | Rule | Enforced by |
 | --- | --- | --- |

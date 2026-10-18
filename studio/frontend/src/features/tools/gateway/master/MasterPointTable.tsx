@@ -1,7 +1,14 @@
-import { Download, Search, Send, Upload } from 'lucide-react';
+import { Download, PlugZap, Send, Upload } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { masterApi, type MasterCommand, type MasterPoint, type MasterStatus } from '../../../../api/master';
+import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { COMMANDS, MASTER_COPY } from '../../../../copy/master';
+import { useListFilter } from '../../../../state/useListFilter';
+import { FilterBar } from '../../../../ui/FilterBar';
+import { choicesOf, effective } from '../../../../ui/filterState';
+import { HelpTip } from '../../../../ui/HelpTip';
+import { Pager } from '../Pager';
+import { MASTER_POINT_FILTER, masterPointMatches } from '../pointFilters';
 import { MasterCommandForm, startValue } from './MasterCommandForm';
 
 const PAGE = 100;
@@ -9,11 +16,10 @@ const PAGE = 100;
 /** Every point the device reported: watched (ticked) by default, with names the user gives. */
 export function MasterPointTable({ status, fail }: { status: MasterStatus; fail: (message: string) => void }) {
   const [rows, setRows] = useState<MasterPoint[]>([]);
-  const [filter, setFilter] = useState('');
-  const [onlyWatched, setOnlyWatched] = useState(false);
   const [page, setPage] = useState(0);
   const [draft, setDraft] = useState<MasterCommand | null>(null);
   const [note, setNote] = useState('');
+  const filter = useListFilter('master-points', MASTER_POINT_FILTER);
   // A command drafted for another protocol must not survive a protocol switch (change 0089).
   useEffect(() => setDraft(null), [status.protocol]);
   const file = useRef<HTMLInputElement>(null);
@@ -23,6 +29,7 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
     const timer = setInterval(load, 1000);
     return () => clearInterval(timer);
   }, []);
+  useEffect(() => setPage(0), [filter.values]);
   const untick = (keys: string[]) => {
     const hidden = new Set(keys);
     setRows(current => current.map(row => ({ ...row, ticked: !hidden.has(row.key) })));
@@ -36,38 +43,39 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
   const importNames = (picked: File) => picked.text().then(masterApi.importLabels)
     .then(answer => setNote(`${answer.imported} names read from ${picked.name}.${answer.problems.length
       ? ` ${answer.problems.slice(0, 3).join(' ')}` : ''}`)).catch(error => fail(error.message));
-  const needle = filter.trim().toLowerCase();
-  const shown = useMemo(() => rows.filter(row => (!onlyWatched || row.ticked) && (!needle ||
-    `${row.label} ${row.address} ${row.group_name} ${row.type} ${row.value_text}`.toLowerCase().includes(needle))),
-  [rows, needle, onlyWatched]);
-  const pages = Math.max(1, Math.ceil(shown.length / PAGE));
-  const first = Math.min(page, pages - 1) * PAGE;
+  const options = useMemo(() => ({ group: choicesOf(rows.map(row => row.group_name)) }), [rows]);
+  const values = useMemo(() => effective(MASTER_POINT_FILTER, filter.values, options), [filter.values, options]);
+  const shown = useMemo(() => rows.filter(row => masterPointMatches(row, values)), [rows, values]);
+  const first = Math.min(page, Math.max(0, Math.ceil(shown.length / PAGE) - 1)) * PAGE;
   const watched = rows.filter(row => row.ticked).length;
+  const connected = status.state === 'connected' || status.state === 'lost';
   return <>
-    <div className="guide-section">
-      <p className="small muted row master-hint" style={{ margin: 0 }}><span>{MASTER_COPY.pointsHint}</span>
-        <span className="gateway-spacer" /><strong>{MASTER_COPY.points(rows.length)} · {watched} watched</strong></p>
+    <div className="panel-toolbar master-toolbar">
+      <button onClick={() => { const kind = COMMANDS[status.protocol][0]; setDraft({ kind, address: undefined,
+        value: startValue(kind), select: status.protocol !== 'modbus', code: kind === 'binary_output' ? 'latch' : undefined }); }}
+        disabled={!status.link_open || COMMANDS[status.protocol].length === 0}><Send size={16} />{MASTER_COPY.openForm}</button>
+      <button onClick={() => untick([])}>{MASTER_COPY.tickAll}</button>
+      <button onClick={() => untick(rows.map(row => row.key))}>{MASTER_COPY.untickAll}</button>
+      <a className="button" href={masterApi.csvUrl()} download><Download size={16} />{MASTER_COPY.exportCsv}</a>
+      <button onClick={() => file.current?.click()}><Upload size={16} />{MASTER_COPY.importLabels}</button>
+      <input ref={file} type="file" accept=".csv,text/csv" hidden aria-label="CSV point names"
+        onChange={event => { const picked = event.target.files?.[0]; if (picked) importNames(picked); event.target.value = ''; }} />
+      <HelpTip text={MASTER_COPY.pointsHint} label="What is this list?" />
+      <span className="gateway-spacer" />
+      <strong className="small">{MASTER_COPY.points(rows.length)} · {watched} watched</strong>
+    </div>
+    <FilterBar label="Filter points" spec={MASTER_POINT_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
+      shown={shown.length} total={rows.length} options={options} />
+    {(draft || note || (rows.length > 0 && rows[0].stale)) && <div className="guide-section panel-messages">
       {draft && <MasterCommandForm key={`${draft.kind}-${draft.address}`} draft={draft} host={status.host} protocol={status.protocol}
         close={() => setDraft(null)} fail={fail} />}
-      <div className="row gateway-toolbar master-toolbar">
-        <button onClick={() => { const kind = COMMANDS[status.protocol][0]; setDraft({ kind, address: undefined,
-          value: startValue(kind), select: status.protocol !== 'modbus', code: kind === 'binary_output' ? 'latch' : undefined }); }}
-          disabled={!status.link_open || COMMANDS[status.protocol].length === 0}><Send size={16} />{MASTER_COPY.openForm}</button>
-        <button onClick={() => untick([])}>{MASTER_COPY.tickAll}</button>
-        <button onClick={() => untick(rows.map(row => row.key))}>{MASTER_COPY.untickAll}</button>
-        <label className="row gateway-check small"><input type="checkbox" checked={onlyWatched}
-          onChange={event => { setOnlyWatched(event.target.checked); setPage(0); }} />{MASTER_COPY.onlyWatched}</label>
-        <a className="button" href={masterApi.csvUrl()} download><Download size={16} />{MASTER_COPY.exportCsv}</a>
-        <button onClick={() => file.current?.click()}><Upload size={16} />{MASTER_COPY.importLabels}</button>
-        <input ref={file} type="file" accept=".csv,text/csv" hidden aria-label="CSV point names"
-          onChange={event => { const picked = event.target.files?.[0]; if (picked) importNames(picked); event.target.value = ''; }} />
-        <label className="search-field"><Search size={16} /><input value={filter} placeholder="Filter points"
-          aria-label="Filter points" onChange={event => { setFilter(event.target.value); setPage(0); }} /></label>
-      </div>
       {note && <p className="small muted" style={{ margin: 0 }}>{note}</p>}
       {rows.length > 0 && rows[0].stale && <p className="small gateway-warning" style={{ margin: 0 }}>{MASTER_COPY.stale}</p>}
-    </div>
-    {rows.length === 0 ? <p className="muted watch-empty">{status.protocol === 'modbus' ? MASTER_COPY.noModbusPoints : MASTER_COPY.noPoints}</p> :
+    </div>}
+    {rows.length === 0 ? <div className="panel-empty"><div className="guide-empty">
+      <span className="guide-empty-icon"><PlugZap size={24} /></span>
+      <h3>{connected ? MASTER_COPY.points(0) : MASTER_COPY.emptyNotConnected}</h3>
+      <p>{status.protocol === 'modbus' ? MASTER_COPY.noModbusPoints : MASTER_COPY.noPoints}</p></div></div> :
       <div className="table-scroll"><table className="gateway-points master-points"><thead><tr>
         <th aria-label="Watched" /><th>Type</th><th>Address</th><th>Name</th><th>Value</th><th>Quality</th><th>Last cause</th>
         <th aria-label="Command" /></tr></thead>
@@ -86,9 +94,8 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
             kind: row.command!, address: row.address, value: startValue(row.command!), select: status.protocol !== 'modbus',
             code: row.command === 'binary_output' ? 'latch' : undefined })}>
             <Send size={14} />{MASTER_COPY.sendTo}</button>}</td>
-        </tr>)}</tbody></table></div>}
-    {pages > 1 && <div className="pager"><span>{shown.length} points · page {Math.min(page, pages - 1) + 1} of {pages}</span>
-      <span className="row"><button disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
-        <button disabled={page >= pages - 1} onClick={() => setPage(page + 1)}>Next</button></span></div>}
+        </tr>)}</tbody></table>
+        {shown.length === 0 && <p className="muted watch-empty">{GATEWAY_COPY.emptyFilter}</p>}</div>}
+    <Pager count={shown.length} page={page} size={PAGE} setPage={setPage} noun="points" />
   </>;
 }

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
 import { GATEWAY_COPY } from '../../../copy/gateway';
+import { TabBar } from '../../../ui/TabBar';
 import { CommandLog } from './CommandLog';
 import { GatewayFirewall } from './GatewayFirewall';
 import { GatewayNotices } from './GatewayNotices';
 import { GatewaySettings } from './GatewaySettings';
-import { GatewayStatusBar } from './GatewayStatusBar';
 import { PointTable } from './PointTable';
 import { TrafficLog } from './TrafficLog';
 import '../explorer/explorer.css';
@@ -13,13 +13,13 @@ import './gateway.css';
 
 type Tab = 'points' | 'traffic' | 'commands';
 
-/** Gateway simulator: ScadaBench as the station gateway towards a SCADA master. Run stays separate. */
+/** Gateway simulator: ScadaBench as the station gateway towards a SCADA master. Run stays separate.
+ *  Settings column on the left, the tabs fill the rest of the window (ADR-0064). */
 export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: () => void }) {
   const [config, setConfig] = useState<GatewayConfig | null>(null);
   const [status, setStatus] = useState<GatewayStatus | null>(null);
   const [tab, setTab] = useState<Tab>('points');
   const [busy, setBusy] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [error, setError] = useState('');
   const refresh = useCallback(() => gatewayApi.status().then(setStatus).catch(reason => setError(reason.message)), []);
   useEffect(() => {
@@ -34,28 +34,25 @@ export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: 
   };
   const save = (protocol: Protocol, listen: Listen, settings: Record<string, number | boolean>, realCommands: boolean) =>
     act(() => gatewayApi.saveConfig(protocol, listen, settings, realCommands).then(setConfig));
-  if (!config || !status) return <div className="card"><div className="guide-empty"><p>Loading the gateway…</p>
+  if (!config || !status) return <div className="card fill-body"><div className="guide-empty"><p>Loading the gateway…</p>
     {error && <p className="explorer-error">{error}</p>}</div></div>;
   const running = status.state === 'running';
-  const stop = () => act(gatewayApi.stop);
-  return <div className={running ? 'gateway-fill' : 'gateway-flow'}>
-    {running && !settingsOpen
-      ? <GatewayStatusBar status={status} busy={busy} stop={stop} showSettings={() => setSettingsOpen(true)} />
-      : <GatewaySettings config={config} status={status} busy={busy} save={save} stop={stop}
-        start={() => { setSettingsOpen(false); act(gatewayApi.start); }}
-        hide={running ? () => setSettingsOpen(false) : undefined} />}
-    <GatewayNotices status={status} runState={runState} runIeds={runIeds} />
-    {config.listen === 'network' && <div className="card"><div className="guide-section">
-      <GatewayFirewall port={Number(config.settings[config.protocol].port)} /></div></div>}
-    {!status.available && <p className="explorer-error">The gateway program is not built in this copy of ScadaBench.</p>}
-    {error && <p className="explorer-error" role="alert">{error}</p>}
-    <div className={`card gateway-panel${running ? ' running' : ''}`}>
-      <div className="tabbar" role="tablist">{(Object.keys(GATEWAY_COPY.tabs) as Tab[]).map(key =>
-        <button key={key} role="tab" aria-selected={tab === key} className={tab === key ? 'active' : ''}
-          onClick={() => setTab(key)}>{GATEWAY_COPY.tabs[key]}</button>)}</div>
-      {tab === 'points' && <PointTable protocol={config.protocol} locked={running} fail={setError} />}
-      {tab === 'traffic' && <TrafficLog running={running} />}
-      {tab === 'commands' && <CommandLog />}
+  return <div className="fill-body fill-split scada-split">
+    <aside className="card side-pane" aria-label={GATEWAY_COPY.settingsTitle}>
+      <GatewaySettings config={config} status={status} busy={busy} save={save} stop={() => act(gatewayApi.stop)}
+        start={() => act(gatewayApi.start)} error={error || (status.available ? '' : GATEWAY_COPY.notBuilt)}>
+        <GatewayNotices status={status} runState={runState} runIeds={runIeds} />
+        {config.listen === 'network' && <GatewayFirewall port={Number(config.settings[config.protocol].port)} />}
+      </GatewaySettings>
+    </aside>
+    <div className={`card fill-panel gateway-panel${running ? ' running' : ''}`}>
+      <TabBar label="Gateway views" value={tab} change={setTab}
+        tabs={(Object.keys(GATEWAY_COPY.tabs) as Tab[]).map(key => [key, GATEWAY_COPY.tabs[key]])} />
+      <div className="panel-body">
+        {tab === 'points' && <PointTable protocol={config.protocol} locked={running} fail={setError} />}
+        {tab === 'traffic' && <TrafficLog running={running} />}
+        {tab === 'commands' && <CommandLog />}
+      </div>
     </div>
   </div>;
 }

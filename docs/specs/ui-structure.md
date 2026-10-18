@@ -15,6 +15,8 @@ be easy for beginners and older users, and still be pro level.
   actions, AA contrast. Sizes are in rem so browser zoom scales everything.
 - Each form shows the common choice first. Rare options live in one "Advanced"
   disclosure (`ui/Disclosure.tsx`).
+- Tool pages and Devices fill the window and every list has the shared filter bar
+  (`ui/FilterBar.tsx`, [tool layout](tool-layout.md), ADR-0064).
 - One implementation per job: `features/test/signalActions.ts` is the only code
   that sets, pulses or resumes simulated values or saves a generator;
   `ValueControl` and `SourceEditor` are the only widgets for that.

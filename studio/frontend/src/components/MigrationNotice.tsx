@@ -1,15 +1,13 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
 import type { Project } from '../api/types';
+import { CompactNotice } from './CompactNotice';
 
+/** "Project upgraded to format …" as one compact line; the details and the recovery file stay one click away. */
 export function MigrationNotice({ notice }: { notice: Project['migration_notice'] }) {
-  const [dismissed, setDismissed] = useState(false);
-  if (!notice || dismissed) return null;
-  return <div className="notice" role="status"><div><span>{notice.message}</span>
-    <details><summary>Migration details and recovery file</summary>
-      <ul>{notice.details.map(item => <li key={item}>{item}</li>)}</ul>
-      <code>{notice.backup}</code>
-    </details></div>
-    <button className="ghost" aria-label="Dismiss migration notice" onClick={() => setDismissed(true)}><X size={16} /></button>
-  </div>;
+  if (!notice) return null;
+  return <CompactNotice message={notice.message} detailsLabel="Details and recovery file"
+    dismissLabel="Dismiss migration notice">
+    <ul>{notice.details.map(item => <li key={item}>{item}</li>)}</ul>
+    <p className="small" style={{ margin: 0 }}>Recovery file (the project before the upgrade):</p>
+    <code>{notice.backup}</code>
+  </CompactNotice>;
 }

@@ -7,6 +7,7 @@ import { TONES } from '../../frontend/src/copy/status.ts';
 const card = readFileSync(new URL('../../frontend/src/features/devices/TestModeCard.tsx', import.meta.url), 'utf8');
 const node = readFileSync(new URL('../../frontend/src/equipment/EquipmentNode.tsx', import.meta.url), 'utf8');
 const devices = readFileSync(new URL('../../frontend/src/features/devices/DevicesPage.tsx', import.meta.url), 'utf8');
+const deviceRow = readFileSync(new URL('../../frontend/src/features/devices/DeviceListRow.tsx', import.meta.url), 'utf8');
 const health = readFileSync(new URL('../../frontend/src/features/devices/HealthView.tsx', import.meta.url), 'utf8');
 const modes = readFileSync(new URL('../../backend/studio_app/domain/health_reads.py', import.meta.url), 'utf8');
 
@@ -30,7 +31,9 @@ test('mode badges have text and icon', () => {
   assert.equal(deviceBadge({ worst: 'on', simulation: true }), 'simulation');
   assert.equal(deviceBadge({ worst: 'test', simulation: false }), 'test');
   // Shown on device rows, on bound diagram equipment and in the health check (mode rows).
-  assert.match(devices, /deviceBadge\(modes\.ieds\[item\.id\]\)/);
+  // The list row moved to its own file in change 0093; the page still hands each row its mode.
+  assert.match(devices, /mode=\{modes\.ieds\[item\.id\]\}/);
+  assert.match(deviceRow, /deviceBadge\(mode\)/);
   assert.match(node, /equipment-mode.*modeStatus\(badge\)\.label/);
   assert.match(health, /Simulation traffic present/);
 });

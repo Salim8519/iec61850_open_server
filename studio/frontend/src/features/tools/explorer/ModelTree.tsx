@@ -1,16 +1,20 @@
-import { ChevronDown, ChevronRight, Cpu, Loader2, Search } from 'lucide-react';
+import { ChevronDown, ChevronRight, Cpu, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { explorerApi } from '../../../api/tools';
 import { EXPLORER_COPY } from '../../../copy/tools';
+import { useListFilter } from '../../../state/useListFilter';
+import { FilterBar } from '../../../ui/FilterBar';
+import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
+import { nodeMatches, TREE_FILTER } from './explorerFilters';
 
-/** Logical devices and their logical nodes; each device loads its nodes only when opened. */
+/** Logical devices and their logical nodes in the left column; each device loads its nodes only when opened. */
 export function ModelTree({ selected, select, fail }: {
   selected: string; select: (ref: string) => void; fail: (message: string) => void;
 }) {
   const [devices, setDevices] = useState<string[] | null>(null);
   const [open, setOpen] = useState<Record<string, string[] | 'loading'>>({});
-  const [filter, setFilter] = useState('');
+  const filter = useListFilter('explorer-tree', TREE_FILTER);
   useEffect(() => {
     explorerApi.devices().then(value => {
       setDevices(value.names);
@@ -23,19 +27,19 @@ export function ModelTree({ selected, select, fail }: {
     explorerApi.nodes(device).then(value => setOpen(current => ({ ...current, [device]: value.names })))
       .catch(error => { fail(error.message); setOpen(({ [device]: _, ...rest }) => rest); });
   };
-  const needle = filter.trim().toLowerCase();
-  return <div className="card explorer-tree">
-    <div className="card-heading"><h3><InfoTip term="logical_device" label={EXPLORER_COPY.treeTitle} /></h3></div>
-    <div className="guide-section">
-      <label className="search-field"><Search size={16} />
-        <input value={filter} onChange={event => setFilter(event.target.value)} placeholder={EXPLORER_COPY.filter}
-          aria-label={EXPLORER_COPY.filter} /></label>
+  const loaded = Object.values(open).flatMap(nodes => Array.isArray(nodes) ? nodes : []);
+  return <div className="card fill-panel explorer-tree">
+    <div className="panel-head"><h3><InfoTip term="logical_device" label={EXPLORER_COPY.treeTitle} /></h3>
+      <HelpTip text={EXPLORER_COPY.treeHint} label="How does the tree load?" /></div>
+    <div className="explorer-tree-filter">
+      <FilterBar label="Filter logical nodes" spec={TREE_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
+        shown={loaded.filter(name => nodeMatches(name, filter.values)).length} total={loaded.length} />
     </div>
-    <ul className="tree" role="tree" aria-label={EXPLORER_COPY.treeTitle}>
+    <ul className="tree fill-scroll panel-body" role="tree" aria-label={EXPLORER_COPY.treeTitle}>
       {devices === null && <li className="muted tree-loading"><Loader2 size={15} className="spin" />Loading…</li>}
       {devices?.map(device => {
         const nodes = open[device];
-        const shown = Array.isArray(nodes) ? nodes.filter(name => !needle || name.toLowerCase().includes(needle)) : [];
+        const shown = Array.isArray(nodes) ? nodes.filter(name => nodeMatches(name, filter.values)) : [];
         return <li key={device} role="treeitem" aria-expanded={!!nodes}>
           <button className="tree-row device" onClick={() => toggle(device)}>
             {nodes ? <ChevronDown size={15} /> : <ChevronRight size={15} />}<Cpu size={15} /><span>{device}</span>

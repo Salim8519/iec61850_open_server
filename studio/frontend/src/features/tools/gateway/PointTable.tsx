@@ -1,10 +1,16 @@
-import { Download, Lock, Save, Search, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
+import { Download, Lock, Save, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { gatewayApi, problemsOf, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
 import { ADDRESS_LABEL, GATEWAY_COPY, KIND_LABELS, KIND_WHERE } from '../../../copy/gateway';
+import { useListFilter } from '../../../state/useListFilter';
+import { FilterBar } from '../../../ui/FilterBar';
+import { choicesOf, effective } from '../../../ui/filterState';
+import { HelpTip } from '../../../ui/HelpTip';
 import { CommandButtons, CommandWarning, type PendingCommand } from './CommandSend';
 import { blockedReason } from './gatewayCommands';
+import { GATEWAY_POINT_FILTER, gatewayPointMatches } from './pointFilters';
 import { pointKey, mergeValues } from './pointRows';
+import { Pager } from './Pager';
 
 const PAGE = 100;
 
@@ -14,11 +20,11 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const [dirty, setDirty] = useState(false);
   const [problems, setProblems] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
-  const [filter, setFilter] = useState('');
   const [page, setPage] = useState(0);
   const [pending, setPending] = useState<PendingCommand | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState<{ ok: boolean; text: string } | null>(null);
+  const filter = useListFilter('scada-points', GATEWAY_POINT_FILTER);
   const file = useRef<HTMLInputElement>(null);
   const dirtyRef = useRef(false);
   dirtyRef.current = dirty;
@@ -27,6 +33,7 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   }).catch(error => fail(error.message));
   useEffect(() => { setRows(null); setDirty(false); setProblems([]); setNotes([]); load(); }, [protocol]);
   useEffect(() => { const timer = setInterval(load, 1000); return () => clearInterval(timer); }, [protocol]);
+  useEffect(() => setPage(0), [filter.values]);
   const edit = (next: GatewayPoint[]) => { setRows(next); setDirty(true); setProblems([]); };
   const update = (index: number, change: Partial<GatewayPoint>) => rows && edit(rows.map((row, at) => at === index ? { ...row, ...change } : row));
   const save = () => rows && gatewayApi.savePoints(protocol, rows)
@@ -43,40 +50,40 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
       .then(answer => setSent({ ok: answer.ok, text: GATEWAY_COPY.sentResult(command.label, command.row.ref, answer.ok, answer.reason) }))
       .catch(error => fail(error.message)).finally(() => { setSending(false); setPending(null); });
   };
-  const needle = filter.trim().toLowerCase();
-  const shown = useMemo(() => (rows ?? []).map((row, index) => ({ row, index })).filter(({ row }) => !needle ||
-    `${row.ref} ${row.ied_name ?? ''} ${row.address} ${KIND_LABELS[row.kind]} ${row.description}`.toLowerCase().includes(needle)),
-  [rows, needle]);
-  const pages = Math.max(1, Math.ceil(shown.length / PAGE));
-  const visible = shown.slice(Math.min(page, pages - 1) * PAGE, Math.min(page, pages - 1) * PAGE + PAGE);
+  const options = useMemo(() => ({ ied: choicesOf((rows ?? []).map(row => row.ied_name ?? row.ied)) }), [rows]);
+  const values = useMemo(() => effective(GATEWAY_POINT_FILTER, filter.values, options), [filter.values, options]);
+  const shown = useMemo(() => (rows ?? []).map((row, index) => ({ row, index }))
+    .filter(({ row }) => gatewayPointMatches(row, values)), [rows, values]);
+  const first = Math.min(page, Math.max(0, Math.ceil(shown.length / PAGE) - 1)) * PAGE;
   return <>
-    <div className="guide-section">
-      {!locked && <p className="small muted" style={{ margin: 0 }}>{GATEWAY_COPY.pointsHint}</p>}
+    <div className="panel-toolbar">
+      <button onClick={propose} disabled={locked}><Sparkles size={16} />{GATEWAY_COPY.propose}</button>
+      <button onClick={() => file.current?.click()} disabled={locked}><Upload size={16} />{GATEWAY_COPY.importCsv}</button>
+      <a className="button" href={gatewayApi.csvUrl(protocol)} download><Download size={16} />{GATEWAY_COPY.exportCsv}</a>
+      <input ref={file} type="file" accept=".csv,text/csv" hidden aria-label="CSV point list"
+        onChange={event => { const picked = event.target.files?.[0]; if (picked) importFile(picked); event.target.value = ''; }} />
+      <HelpTip text={GATEWAY_COPY.pointsHint} label="What is the point list?" />
+      <span className="gateway-spacer" />
+      {dirty && <><span className="small gateway-warning">{GATEWAY_COPY.unsaved}</span>
+        <button className="ghost" onClick={() => { setDirty(false); load(); }}><Undo2 size={16} />{GATEWAY_COPY.discard}</button>
+        <button className="primary" onClick={save}><Save size={16} />{GATEWAY_COPY.save}</button></>}
+      {locked && <span className="small muted row"><Lock size={14} />{GATEWAY_COPY.lockedPoints}</span>}
+      {!locked && !!rows?.length && <button className="ghost" onClick={() => edit([])}><Trash2 size={16} />{GATEWAY_COPY.removeAll}</button>}
+    </div>
+    <FilterBar label="Filter points" spec={GATEWAY_POINT_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
+      shown={shown.length} total={rows?.length ?? 0} options={options} />
+    {(pending || sent || notes.length > 0 || problems.length > 0) && <div className="guide-section panel-messages">
       {pending && <CommandWarning pending={pending} real={pending.row.ied_role === 'real'} busy={sending}
         cancel={() => setPending(null)} send={() => send(pending)} />}
       {sent && <p className={`small gateway-sent${sent.ok ? ' ok' : ''}`} role="status">{sent.text}</p>}
-      <div className="row gateway-toolbar">
-        <button onClick={propose} disabled={locked}><Sparkles size={16} />{GATEWAY_COPY.propose}</button>
-        <button onClick={() => file.current?.click()} disabled={locked}><Upload size={16} />{GATEWAY_COPY.importCsv}</button>
-        <a className="button" href={gatewayApi.csvUrl(protocol)} download><Download size={16} />{GATEWAY_COPY.exportCsv}</a>
-        <input ref={file} type="file" accept=".csv,text/csv" hidden aria-label="CSV point list"
-          onChange={event => { const picked = event.target.files?.[0]; if (picked) importFile(picked); event.target.value = ''; }} />
-        <label className="search-field"><Search size={16} /><input value={filter} placeholder="Filter points"
-          aria-label="Filter points" onChange={event => { setFilter(event.target.value); setPage(0); }} /></label>
-        <span className="gateway-spacer" />
-        {dirty && <><span className="small gateway-warning">{GATEWAY_COPY.unsaved}</span>
-          <button className="ghost" onClick={() => { setDirty(false); load(); }}><Undo2 size={16} />{GATEWAY_COPY.discard}</button>
-          <button className="primary" onClick={save}><Save size={16} />{GATEWAY_COPY.save}</button></>}
-        {locked && <span className="small muted row"><Lock size={14} />{GATEWAY_COPY.lockedPoints}</span>}
-      </div>
       {notes.map(note => <p key={note} className="small muted" style={{ margin: 0 }}>{note}</p>)}
       {problems.length > 0 && <ul className="gateway-problems" role="alert">{problems.slice(0, 20).map(problem =>
         <li key={problem}>{problem}</li>)}{problems.length > 20 && <li>…and {problems.length - 20} more</li>}</ul>}
-    </div>
+    </div>}
     {rows && rows.length === 0 ? <p className="muted watch-empty">{GATEWAY_COPY.emptyPoints}</p> :
       <div className="table-scroll"><table className="gateway-points"><thead><tr><th>Type</th><th>{ADDRESS_LABEL[protocol]}</th>
         <th>IED · reference</th><th>Scale</th><th>Value now</th><th>Description</th><th aria-label="Remove" /></tr></thead>
-        <tbody>{visible.map(({ row, index }) => <tr key={pointKey(row, index)}>
+        <tbody>{shown.slice(first, first + PAGE).map(({ row, index }) => <tr key={pointKey(row, index)}>
           <td><span className="type-cell"><select value={row.kind} disabled={locked} aria-label="Point type"
             onChange={event => update(index, { kind: event.target.value as PointKind })}>
             {(Object.keys(KIND_LABELS) as PointKind[]).map(kind => <option key={kind} value={kind}>{KIND_LABELS[kind]}</option>)}
@@ -88,18 +95,15 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
               <div className="small gateway-warning">Real IED: commands are refused</div>}</td>
           <td><input className="gateway-number" value={row.scale} disabled={locked} aria-label="Scale"
             onChange={event => update(index, { scale: Number(event.target.value) || 0 })} /></td>
-          <td className="small">{row.kind.startsWith('command')
+          <td className="small value-cell" title={row.kind.startsWith('command') ? undefined : row.value_text}>{row.kind.startsWith('command')
             ? <CommandButtons row={row} blocked={blockedReason(row, dirty)} ask={command => { setSent(null); setPending(command); }} />
-            : <span className={row.online ? '' : 'muted'}>{row.value_text ?? '—'}</span>}</td>
+            : <span className={row.online ? '' : 'muted'}>{row.online === false && '⚠ '}{row.value_text ?? '—'}</span>}</td>
           <td><input value={row.description} disabled={locked} aria-label="Description" placeholder="optional"
             onChange={event => update(index, { description: event.target.value })} /></td>
           <td><button className="ghost icon-button" disabled={locked} aria-label={`Remove ${row.ref}`} title="Remove"
             onClick={() => rows && edit(rows.filter((_, at) => at !== index))}><X size={15} /></button></td>
-        </tr>)}</tbody></table></div>}
-    {pages > 1 && <div className="pager"><span>{shown.length} points · page {Math.min(page, pages - 1) + 1} of {pages}</span>
-      <span className="row"><button disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
-        <button disabled={page >= pages - 1} onClick={() => setPage(page + 1)}>Next</button></span></div>}
-    {rows && rows.length > 0 && !locked && <div className="guide-section"><button className="ghost" onClick={() => edit([])}>
-      <Trash2 size={16} />Remove all points</button></div>}
+        </tr>)}</tbody></table>
+        {rows && rows.length > 0 && shown.length === 0 && <p className="muted watch-empty">{GATEWAY_COPY.emptyFilter}</p>}</div>}
+    <Pager count={shown.length} page={page} size={PAGE} setPage={setPage} noun="points" />
   </>;
 }

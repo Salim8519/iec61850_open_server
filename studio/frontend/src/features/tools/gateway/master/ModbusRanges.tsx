@@ -2,6 +2,7 @@ import { Plus, Radar, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { masterApi, type MasterStatus, type ModbusRange } from '../../../../api/master';
 import { DATA_TYPE_NAMES, RANGES_COPY, TABLE_NAMES } from '../../../../copy/master';
+import { HelpTip } from '../../../../ui/HelpTip';
 import { FindRegisters } from './FindRegisters';
 
 const BITS = new Set(['coils', 'discrete_inputs']);
@@ -32,17 +33,15 @@ export function ModbusRanges({ status, fail }: { status: MasterStatus; fail: (me
   const failed = new Map(status.poll_failures.map(item => [item.range, item.text]));
   const number = (value: string) => Number(value.replace(/\D/g, '') || 0);
   return <>
-    <div className="guide-section">
-      <p className="small muted" style={{ margin: 0 }}>{RANGES_COPY.hint}</p>
-      {(showFind ?? (ranges?.length === 0 || status.probe.state === 'running')) &&
-        <FindRegisters status={status} added={() => { load(); setShowFind(false); }} fail={fail} />}
-      <div className="row gateway-toolbar">
-        <button onClick={add} disabled={(ranges?.length ?? 0) >= 20}><Plus size={16} />{RANGES_COPY.add}</button>
-        <button onClick={() => setShowFind(!(showFind ?? ranges?.length === 0))}><Radar size={16} />{RANGES_COPY.find}…</button>
-        <span className="gateway-spacer" />
-        {dirty && <button className="primary" onClick={save}><Save size={16} />{RANGES_COPY.save}</button>}
-      </div>
+    <div className="panel-toolbar">
+      <button onClick={add} disabled={(ranges?.length ?? 0) >= 20}><Plus size={16} />{RANGES_COPY.add}</button>
+      <button onClick={() => setShowFind(!(showFind ?? ranges?.length === 0))}><Radar size={16} />{RANGES_COPY.find}…</button>
+      <HelpTip text={RANGES_COPY.hint} label="What is this?" />
+      <span className="gateway-spacer" />
+      {dirty && <button className="primary" onClick={save}><Save size={16} />{RANGES_COPY.save}</button>}
     </div>
+    {(showFind ?? (ranges?.length === 0 || status.probe.state === 'running')) && <div className="guide-section panel-messages">
+      <FindRegisters status={status} added={() => { load(); setShowFind(false); }} fail={fail} /></div>}
     {ranges && ranges.length === 0 ? <p className="muted watch-empty">{RANGES_COPY.empty}</p> :
       <div className="table-scroll"><table className="gateway-points"><thead><tr><th>{RANGES_COPY.table}</th>
         <th>{RANGES_COPY.start}</th><th>{RANGES_COPY.count}</th><th>{RANGES_COPY.type}</th><th>{RANGES_COPY.order}</th>

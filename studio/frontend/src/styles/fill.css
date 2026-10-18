@@ -1,0 +1,54 @@
+/* Fill-the-window pages (ADR-0064): tool pages and Devices never scroll as a page. The window
+   is split into panes; only a pane's list or table scrolls. Below 1000 px wide or 620 px high the
+   panes stack and the page scrolls again, so nothing is ever cut off. */
+.content.fill-page { height: 100%; max-width: 1600px; padding: 14px 24px 16px; gap: 12px; overflow: hidden; }
+.content.fill-page > .fill-body { flex: 1 1 0; min-height: 0; }
+.fill-split { display: grid; grid-template-columns: var(--side-width, 256px) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+  gap: 12px; min-height: 0; }  /* the row is the window's height, never the content's */
+.fill-split > * { min-height: 0; min-width: 0; }
+.fill-column { display: flex; flex-direction: column; gap: 12px; min-height: 0; min-width: 0; }
+.fill-column > * { flex-shrink: 0; }
+.fill-column > .fill-grow { flex: 1 1 0; min-height: 0; }
+/* The settings or list column: one card that scrolls on its own. */
+.side-pane { overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 12px; padding: 14px; }
+.side-pane > * { flex-shrink: 0; }
+.side-title { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; }
+.side-section { display: grid; gap: 10px; }
+.side-section + .side-section { border-top: 1px solid var(--border); padding-top: 12px; }
+.side-section label { font-weight: 600; }
+.side-section input, .side-section select { min-height: 36px; }
+.side-foot { display: grid; gap: 8px; padding: 10px 0 2px; border-top: 1px solid var(--border);
+  position: sticky; bottom: 0; z-index: 2; background: var(--surface); box-shadow: 0 -8px 8px -8px rgb(16 24 40 / 18%); }  /* status and Start stay in view */
+.side-foot button { width: 100%; min-height: var(--control-height-large); }
+.side-line { margin: 0; font-size: var(--font-size-small); color: var(--text-2); line-height: 1.45; }
+.side-error { margin: 0; font-size: var(--font-size-small); color: var(--error); font-weight: 600; line-height: 1.45; }
+.label-row { display: flex; align-items: center; gap: 4px; }
+/* A card whose last part (a table, a log) takes the remaining height. */
+.fill-panel { display: flex; flex-direction: column; min-height: 0; }
+.fill-panel > * { flex-shrink: 0; }
+.fill-panel > .panel-body { flex: 1 1 0; min-height: 0; }
+.panel-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.panel-body > * { flex-shrink: 0; }
+.panel-body > .table-scroll, .panel-body > .fill-scroll, .panel-body > .gateway-traffic {
+  flex: 1 1 0; min-height: 0; max-height: none; height: auto; overflow: auto; }
+.fill-scroll { overflow: auto; min-height: 0; }
+/* Scroll panes contain their absolutely placed children (screen-reader labels), so a long table
+   inside a pane can never stretch the page behind it. */
+.fill-page .table-scroll, .fill-page .fill-scroll, .fill-page .panel-body, .fill-page .gateway-traffic, .side-pane { position: relative; }
+.panel-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 16px;
+  border-bottom: 1px solid var(--border); }
+.panel-toolbar button, .panel-toolbar .button { min-height: 36px; }
+.panel-empty { flex: 1 1 0; display: grid; place-items: center; overflow: auto; }
+.panel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px;
+  border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.panel-head h3 { margin: 0; }
+@media (max-width: 1000px), (max-height: 620px) {
+  .content.fill-page { height: auto; overflow: visible; }
+  .content.fill-page > .fill-body, .fill-column > .fill-grow, .fill-panel > .panel-body { flex: none; }
+  .fill-split { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+  .fill-split > * { min-height: auto; }
+  .side-pane { overflow: visible; }
+  .side-foot { position: static; box-shadow: none; }
+  .fill-panel { min-height: 480px; }
+  .panel-body > .table-scroll, .panel-body > .fill-scroll, .panel-body > .gateway-traffic { flex: none; max-height: 70vh; }
+}

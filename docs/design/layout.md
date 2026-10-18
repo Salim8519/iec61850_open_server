@@ -15,12 +15,14 @@
 Shell: 232 px white sidebar with four places (Devices, SLD, Test, Settings at the
 bottom with Activity) that collapses to 72 px icons below 1100 px; a 64 px top bar
 with page title, one-line subtitle, File menu, run state words and one Run/Stop pill.
-Pages scroll inside a centred 1440 px column with 20 px gaps between cards.
+Pages scroll inside a centred 1440 px column with 20 px gaps between cards, except open tools
+and Devices, which fill the window (ADR-0064): a side column and panes that scroll on their own,
+the page itself never scrolls; below 1000×620 they stack and the page scrolls again.
 Targets: 1366×768 and 1920×1080.
 
 Calm rules: one title and one subtitle per page; one primary action per area; rare
 options inside a single "Advanced" disclosure; hints only in empty states, wizards
-and unclear settings; jargon through a "?" InfoTip. No gradients, decorative
+and unclear settings (longer ones behind a "?" HelpTip); jargon through a "?" InfoTip. No gradients, decorative
 dashboards, external fonts or remote runtime assets.
 
 Diagram: full-height canvas on #E9EDF2 with #B4BCC8 dots, #1F2937 2.5 px wires and
@@ -30,10 +32,16 @@ Measuring, Protection & control, Drawing. The 380 px right sheet appears only wh
 something is selected: status pill, Operate (while running), name and start position,
 "comes from" / "goes to" connections, then Advanced and object actions.
 
-Devices: 280 px list (name, data points, role/status pill) beside one detail card
-with a Simulate / Real device / Off segmented control and tabs Overview, Data points,
-Compare with SCD (real devices) and Files. Test and Settings switch sections with a
-segmented control.
+Devices: 280 px list column with its own scroll (Import, filter bar, compact rows: name, data
+points, role/status pill) beside one detail card: a one-line header (name, "N points · N controls ·
+N notes", ?, Simulate / Real device / Off) and tabs Overview (thin stats line), Data points (table
+fills the height), Compare with SCD (real devices), Signal flow and Files. Test and Settings switch
+sections with a segmented control.
+
+Tool pages (ADR-0064): a header row (All tools, title, the tool's own switch such as Act as), then
+either a settings column (status, inline errors and the primary button kept at its bottom) beside
+tabs that fill the rest, or a one-row toolbar above the results. Every list has the shared filter
+bar (search, chips with a tick when on, "N of M · Clear"). Long explanations sit behind "?".
 
 Live colouring (running only): live red solid 4 px, maybe live amber dotted, dead grey
 dashed, earthed green dash-dot, earth fault purple long dash 5 px; a bottom-right legend

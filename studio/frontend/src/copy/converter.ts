@@ -3,6 +3,7 @@
 export const CONVERTER_COPY = {
   deviceTitle: 'Downstream: the device ScadaBench reads',
   scadaTitle: 'Upstream: your SCADA',
+  columnTitle: 'Converter settings', deviceStep: '1 · Read the device', scadaStep: '2 · Serve to SCADA',
   intro: 'ScadaBench serves the watched device points to your SCADA. Connect to the device first, then start the upstream side. Untick device points you do not want to serve.',
   realCommands: 'Pass SCADA commands to the device',
   realCommandsOn: 'Commands from your SCADA on relayed points go on to the real device: binary outputs (DNP3), coils (Modbus) and your command routes.',

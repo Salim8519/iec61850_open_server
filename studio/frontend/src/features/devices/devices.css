@@ -1,0 +1,16 @@
+/* Devices fills the window (ADR-0064): a compact IED list with its own scroll, the detail beside it. */
+.devices-split { --side-width: 280px; }
+.devices-list .list { gap: 6px; }
+.list-row.compact { min-height: 52px; padding: 6px 10px; gap: 10px; }
+.list-row.compact strong { font-size: 14px; }
+.list-pills { display: grid; gap: 4px; justify-items: end; flex-shrink: 0; }
+.list-hints { display: flex; flex-wrap: wrap; gap: 4px; }
+.device-detail { min-width: 0; }
+.detail-head.compact { align-items: center; flex-wrap: wrap; gap: 6px 10px; padding: 10px 16px; }
+.detail-head.compact h2 { margin: 0; font-size: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40%; }
+.detail-facts { white-space: nowrap; }
+.stats-line { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 8px 12px; font-size: 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface-2); }
+.panel-note { margin: 0; padding: 6px 16px; border-bottom: 1px solid var(--border); }
+.list-row.compact .list-pills .status-pill { padding: 2px 8px; }
+.devices-list .filter-bar { gap: 6px; }

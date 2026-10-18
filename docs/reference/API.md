@@ -39,7 +39,7 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 
 | Method/path | Input | Result / invariant |
 | --- | --- | --- |
-| `GET /ieds/{id}/signals` | `q,fc,kind,writable,report,ref,offset,limit` | Filtered/paged typed signals |
+| `GET /ieds/{id}/signals` | `q,fc,kind,writable,report,ref,ld,bad_quality,in_dataset,offset,limit` | Filtered/paged typed signals and the IED's logical `devices` (read-only filters, change 0093) |
 | `POST /signals/update` | `{ied_id,ref,value,quality?}` | Acknowledged typed update |
 | `POST /signals/source` | `{ied_id,ref,spec}` | Configure validated source |
 | `POST /signals/pulse` | `{ied_id,ref,active_value?,duration_ms?}` | Guarded Boolean pulse |
@@ -90,8 +90,8 @@ from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
 | `POST /license/activate` | `license_key`, `move` | Activate (or move) a lifetime key online |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
-| `GET /preferences` | - | `tour_seen_version`, `tour_version` |
-| `PUT /preferences` | `{tour_seen_version}` | Store UI preferences in the data folder |
+| `GET /preferences` | - | `tour_seen_version`, `tour_version`, `list_filters` |
+| `PUT /preferences` | `{tour_seen_version?, list_filters?: {list: {key: text or bool}}}` | Store UI preferences in the data folder; a list's filters replace only that list (change 0093) |
 | `PUT /license/config` | `server_url` (https) | Change the license server address |
 | `GET /tools/explorer`, `POST /tools/explorer/connect` | `host`, `port` | IED Explorer status (warms the worker); connect, then autonomous key-point watch |
 | `GET /tools/explorer/devices`, `/nodes?device=`, `/node?ref=` | - | Lazy data model, one level per call |

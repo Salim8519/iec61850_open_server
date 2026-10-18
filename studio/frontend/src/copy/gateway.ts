@@ -44,7 +44,10 @@ export const GATEWAY_COPY = {
   startHint: 'Press Start gateway. The point list is prepared for you.',
   notRunning: 'The gateway is running, but the IEDs are not: every point is sent to SCADA as invalid until you press Run.',
   separateRun: 'The IEDs are not running. Run and the gateway are separate: start the IEDs with Run, and the gateway with Start gateway.',
-  runIeds: 'Run the IEDs', showSettings: 'Settings', hideSettings: 'Hide settings',
+  runIeds: 'Run the IEDs', settingsTitle: 'Gateway settings',
+  iedsOff: 'The IEDs are not running.',
+  skipped: (count: number) => count === 1 ? '1 point skipped' : `${count} points skipped`,
+  notBuilt: 'The gateway program is not built in this copy of ScadaBench.',
   saveFirst: 'Save the point list first', commandsOff: 'Commands to real IEDs are off (see the settings)',
   confirmTitle: (label: string, target: string) => `Send "${label}" to ${target}?`,
   realWarning: 'This is a REAL device. The command operates it for real, with its own control model (select before operate when it asks for it). Make sure it is safe to switch and that people on site know.',
@@ -67,7 +70,9 @@ export const GATEWAY_COPY = {
   unsaved: 'You have unsaved changes.',
   trafficHint: 'Decoded messages between SCADA and the gateway, newest at the bottom.',
   commandsHint: 'Every command, from SCADA or from this page, in three steps: what was asked, what the IED did, and what ScadaBench saw afterwards.',
-  pause: 'Pause', resume: 'Resume', clear: 'Clear view', filter: 'Filter messages',
+  pause: 'Pause', resume: 'Resume', clear: 'Clear view',
+  removeAll: 'Remove all points',
+  emptyFilter: 'No row matches the filter. Press Clear to see every row.',
 };
 
 // Windows Firewall for the gateway on "All network adapters" (ADR-0062).
@@ -78,6 +83,7 @@ export const FIREWALL_COPY = {
   closed: 'Other computers cannot reach the gateway yet: Windows Firewall stops them.',
   blocked: 'Windows made a rule that blocks the gateway, usually when its "allow access?" question was closed.',
   why: 'ScadaBench can fix this for you. It changes only these Windows Firewall rules, and Settings › Network › Clean up undoes them.',
+  changes: 'What ScadaBench will change',
   review: 'Allow through Windows Firewall…',
   admin: 'Windows will ask for administrator permission (a UAC prompt). Apply these changes?',
   apply: 'Yes, apply', cancel: 'Cancel',

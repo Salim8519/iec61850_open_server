@@ -15,6 +15,11 @@ reads to another SCADA.
 
 - **Roles.** "Act as" chooses Station gateway, SCADA master or Protocol converter. Only one
   role runs at a time, and switching is refused while anything runs.
+- **Layout (ADR-0064).** "Act as" sits in the tool's header row with a one-line "SCADA ⇄
+  ScadaBench ⇄ device" caption. The device connection is the left column (status, the device's
+  answer such as "No answer … within 10 s", Connect/Disconnect and "Ask for all values again" at
+  its bottom). The converter's column shows "1 · Read the device" above "2 · Serve to SCADA".
+  The tabs fill the rest; before Connect the points tab says that points appear by themselves.
 - **Words.** Each protocol uses its own words: controlling/controlled station (104 master/slave),
   DNP3 master/outstation, Modbus client/server.
 - **Discovery.**

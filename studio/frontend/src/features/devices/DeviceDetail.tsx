@@ -3,7 +3,10 @@ import { api } from '../../api/client';
 import type { LiveSession } from '../../api/network';
 import type { Ied, IedRole, Project } from '../../api/types';
 import { hint } from '../../copy/hints';
+import { HelpTip } from '../../ui/HelpTip';
 import { SegmentedControl } from '../../ui/SegmentedControl';
+import { TabBar } from '../../ui/TabBar';
+import { noteCount } from './deviceFilters';
 import { ComparisonView } from './ComparisonView';
 import { DeviceFiles } from './DeviceFiles';
 import { DeviceOverview } from './DeviceOverview';
@@ -38,22 +41,29 @@ export function DeviceDetail({ ied, project, locked, values, perform, prepare, i
   const tabs: { id: Tab; label: string }[] = [{ id: 'overview', label: 'Overview' }, { id: 'signals', label: 'Data points' },
     ...(ied.role === 'real' ? [{ id: 'compare' as const, label: 'Compare with SCD' }] : []),
     { id: 'flow', label: 'Signal flow' }, { id: 'files', label: 'Files' }];
-  return <div className="card">
-    <div className="detail-head">
-      <div><h2>{ied.name}</h2><p className="muted" style={{ margin: 0 }}>{hint(`live.role.${ied.role}`)}</p></div>
+  const notes = noteCount(ied);
+  const facts = [`${ied.signal_count.toLocaleString()} points`, `${ied.controls.length.toLocaleString()} controls`,
+    ...(notes ? [`${notes} ${notes === 1 ? 'note' : 'notes'}`] : [])].join(' · ');
+  return <div className="card fill-panel device-detail">
+    <div className="detail-head compact">
+      <h2>{ied.name}</h2>
+      <span className="small muted detail-facts">{facts}</span>
+      <HelpTip text={hint(`live.role.${ied.role}`)} label="What does this mode mean?" />
+      <span className="gateway-spacer" />
       <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
           { value: 'simulated', label: 'Simulate' }, { value: 'real', label: 'Real device' }, { value: 'off', label: 'Off' }]} />
     </div>
-    <nav className="tabbar" aria-label="Device sections">{tabs.map(item => <button key={item.id}
-      className={tab === item.id ? 'active' : ''} aria-current={tab === item.id ? 'page' : undefined}
-      onClick={() => setTab(item.id)}>{item.label}</button>)}</nav>
-    {tab === 'overview' && <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode} />}
-    {tab === 'signals' && (ied.role === 'real'
-      ? <LiveValueTable iedId={ied.id} live={session?.state === 'live'} values={values} />
-      : <DeviceSignals ied={ied} project={project} values={values} perform={perform} prepare={prepare} />)}
-    {tab === 'compare' && <ComparisonView iedId={ied.id} ready={session?.state === 'live'} />}
-    {tab === 'flow' && <SignalFlowView iedName={ied.name} running={running} />}
-    {tab === 'files' && <DeviceFiles ied={ied} locked={locked} perform={perform} prepare={prepare} />}
+    <TabBar label="Device sections" value={tab} change={setTab} tabs={tabs.map(item => [item.id, item.label])} />
+    <div className="panel-body">
+      {tab === 'overview' && <div className="fill-scroll">
+        <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode} /></div>}
+      {tab === 'signals' && (ied.role === 'real'
+        ? <LiveValueTable iedId={ied.id} live={session?.state === 'live'} values={values} />
+        : <DeviceSignals ied={ied} project={project} values={values} perform={perform} prepare={prepare} />)}
+      {tab === 'compare' && <ComparisonView iedId={ied.id} ready={session?.state === 'live'} />}
+      {tab === 'flow' && <div className="fill-scroll"><SignalFlowView iedName={ied.name} running={running} /></div>}
+      {tab === 'files' && <div className="fill-scroll"><DeviceFiles ied={ied} locked={locked} perform={perform} prepare={prepare} /></div>}
+    </div>
   </div>;
 }

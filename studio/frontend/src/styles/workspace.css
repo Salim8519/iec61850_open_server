@@ -26,7 +26,6 @@
 .sheet-section > h3 { margin: 0; }
 .sheet-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .sheet-actions button { flex: 1; min-height: var(--control-height-large); }
-.master-detail { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 20px; align-items: start; }
 .list { display: grid; gap: 8px; }
 .list-row { width: 100%; justify-content: flex-start; text-align: left; min-height: 64px; padding: 10px 14px;
   border: var(--line) solid var(--border); border-radius: var(--radius); background: var(--surface); gap: 12px; white-space: normal; }
@@ -48,7 +47,7 @@
 .form-grid label { align-content: start; }
 .form-grid { align-items: start; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 .generator-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
-.table-scroll { max-height: calc(100vh - 330px); overflow: auto; }
+.table-scroll { max-height: calc(100vh - 330px); overflow: auto; }  /* inside a fill pane it takes the pane's height instead */
 .reference-cell { max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .reference-cell .small { white-space: normal; }
 .reference-block { display: block; padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--border);
@@ -66,4 +65,4 @@
   border-radius: 12px; box-shadow: var(--shadow-large); padding: 8px; }
 .menu-item { width: 100%; justify-content: flex-start; border: 0; background: transparent; min-height: 40px; }
 .menu-item:hover:not(:disabled) { background: var(--hover); }
-@media (max-width: 1100px) { .master-detail { grid-template-columns: 1fr; } .sheet { width: 330px; } }
+@media (max-width: 1100px) { .sheet { width: 330px; } }
