@@ -104,3 +104,22 @@ def test_find_ieds_scans_a_range_and_identifies_the_stand_in(device):
     assert status["state"] == "done", status
     assert [entry["ip"] for entry in status["found"]] == [IP]
     assert status["found"][0]["identified"] is True and "ExploreTestCTRL" in status["found"][0]["devices"]
+
+
+def test_explorer_reconnects_after_overlapping_and_failed_connects(device):
+    import threading
+    from studio_app.tools.explorer import ExplorerService
+    service = ExplorerService(BIN / "studio_live.exe")
+    try:
+        threads = [threading.Thread(target=service.connect, args=(IP, PORT)) for _ in range(2)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(20)
+        assert service.status()["state"] == "connected"
+        service.state = "failed"  # the worker is still associated, as an overlapping connect used to leave it
+        assert service.connect(IP, PORT)["state"] == "connected"
+        assert "ExploreTestCTRL" in service.devices()
+    finally:
+        service.disconnect()
+        service.close()

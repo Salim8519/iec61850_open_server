@@ -37,6 +37,9 @@ the values that matter, and operate a control after one small confirmation.
 - **Layout (ADR-0064).** A toolbar row (address, port, Connect, status, ?); the model tree in the
   left column; the node detail with the watch list pinned below it, each scrolling on its own.
   The tree filters by logical-node class and the watch list by change and quality.
+- **Connect always starts clean.** One connect runs at a time; Connect and Disconnect reset the
+  live worker's association whatever the previous state, so a failed or repeated connect never
+  leaves it answering "Already connected" (change 0095).
 - **Read paths stay read-only.** `studio_live` has no write or control operation (LIVE-01).
   Commands use the separate `studio_control` worker.
 
@@ -50,3 +53,4 @@ the values that matter, and operate a control after one small confirmation.
 | EXPLORE-06 | A command is sent only with confirmation, only from the confirmation step, with choices that match the object. | `studio/tests/frontend/tools.test.ts::explorer sends a command only through the confirmation step and never writes`, `studio/tests/frontend/tools.test.ts::command choices follow the MMS types Explorer shows`, `studio/tests/integration/test_tools_api.py::test_bad_input_gets_actionable_errors` |
 | EXPLORE-07 | Commands use the device's control model and report the device's own refusal. | `studio/tests/protocol/test_control_client.py::test_breaker_closes_and_opens_with_its_own_control_model`, `studio/tests/protocol/test_control_client.py::test_blocked_control_reports_the_device_reason`, `studio/tests/protocol/test_control_client.py::test_unknown_object_is_explained`, `studio/tests/protocol/test_control_client.py::test_unreachable_device_is_explained` |
 | EXPLORE-08 | The control program refuses to operate without a valid license. | `studio/tests/unit/test_native_enforcement.py::test_control_client_refuses_to_operate_without_license` |
+| EXPLORE-09 | A failed, repeated or overlapping connect never leaves the live worker associated; the next Connect works. | `studio/tests/unit/test_explorer_connect.py::test_connect_after_a_failed_connect_resets_the_worker`, `studio/tests/unit/test_explorer_connect.py::test_overlapping_connects_to_one_device_both_succeed`, `studio/tests/protocol/test_explorer_wire.py::test_explorer_reconnects_after_overlapping_and_failed_connects` |

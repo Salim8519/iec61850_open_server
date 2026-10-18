@@ -1,5 +1,5 @@
 import { Loader2, Plug, Telescope, Unplug } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { explorerApi, type Attribute, type ExplorerStatus } from '../../../api/tools';
 import { EXPLORER_COPY } from '../../../copy/tools';
 import { HelpTip } from '../../../ui/HelpTip';
@@ -36,10 +36,15 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
     setNode('');
     run(() => explorerApi.connect(address.trim(), number));
   }, [run]);
+  // Open each "Explore" target once: React StrictMode runs effects twice in development, and two
+  // overlapping connects to the same device used to leave the live worker answering "Already connected".
+  const opened = useRef<typeof target>(undefined);
   useEffect(() => {
+    const fresh = opened.current !== target;
+    opened.current = target;
     explorerApi.status().then(value => {
       setStatus(value);
-      if (target && !(value.state === 'connected' && value.host === target.host && value.port === target.port))
+      if (target && fresh && !(value.state === 'connected' && value.host === target.host && value.port === target.port))
         connect(target.host, target.port);
       else if (value.host && !target) { setHost(value.host); setPort(String(value.port)); }
     }).catch(reason => setError(reason.message));
