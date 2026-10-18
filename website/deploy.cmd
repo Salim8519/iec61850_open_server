@@ -18,15 +18,24 @@ for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Setup
 )
 echo No release installer found in studio\dist-protected; the download link will not work yet.
 :installer_done
-rem The portable self-extractor of the same sealed build (studio\tools\make_portable.py), when present.
-for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Portable-*.exe" 2^>nul') do (
-  copy /y "..\studio\dist-protected\%%F" "dist\download\%%F" >nul
-  findstr /c:"/download/%%F" dist\download\index.html >nul || (echo The download page does not link %%F: set the version in src\data\site.ts. & goto :failed)
-  >>dist\_redirects echo /download/ScadaBench-Portable.exe /download/%%F 302
-  echo Portable version included: %%F
-  goto :portable_done
+rem With a saved API token (set-cloudflare-token.cmd) uploads use only api.cloudflare.com.
+set "TOKEN_FILE=%LOCALAPPDATA%\ScadaBench-deploy\cloudflare.token"
+if exist "%TOKEN_FILE%" (
+  set /p CLOUDFLARE_API_TOKEN=<"%TOKEN_FILE%"
+  set "CLOUDFLARE_ACCOUNT_ID=526f27c5e0f7387a16bc955c18425c7f"
+) else (
+  call npx --yes wrangler@4 whoami >nul 2>&1 || call npx --yes wrangler@4 login || goto :failed
 )
-echo No portable version found in studio\dist-protected; the portable link will not work yet.
+rem The portable exe that runs directly (ADR-0063) is over the 25 MiB Pages limit: it goes to the
+rem scadabench-downloads R2 bucket (download.scadabench.com); old portable links redirect to it.
+set "PORTABLE="
+for /f "delims=" %%F in ('dir /b /o-d "..\studio\dist-protected\ScadaBench-Portable-*.exe" 2^>nul') do if not defined PORTABLE set "PORTABLE=%%F"
+if not defined PORTABLE (echo No portable exe found in studio\dist-protected; the portable link will not work yet. & goto :portable_done)
+findstr /c:"download.scadabench.com/download/%PORTABLE%" dist\download\index.html >nul || (echo The download page does not link %PORTABLE%: set the version in src\data\site.ts. & goto :failed)
+call npx --yes wrangler@4 r2 object put "scadabench-downloads/download/%PORTABLE%" --file "..\studio\dist-protected\%PORTABLE%" --content-type application/vnd.microsoft.portable-executable --content-disposition "attachment; filename=%PORTABLE%" --remote || goto :failed
+>>dist\_redirects echo /download/ScadaBench-Portable.exe https://download.scadabench.com/download/%PORTABLE% 302
+>>dist\_redirects echo /download/ScadaBench-Portable-* https://download.scadabench.com/download/%PORTABLE% 302
+echo Portable exe uploaded: %PORTABLE%
 :portable_done
 rem Tutorial videos: the light 720p copies from marketing\videos\web_encode.py when present,
 rem otherwise the 1080p masters rendered by marketing\videos\make.py (never the raw captures).
@@ -42,14 +51,6 @@ goto :videos_done
 :no_videos
 echo No tutorial videos found; run marketing\videos\make.py, then web_encode.py.
 :videos_done
-rem With a saved API token (set-cloudflare-token.cmd) uploads use only api.cloudflare.com.
-set "TOKEN_FILE=%LOCALAPPDATA%\ScadaBench-deploy\cloudflare.token"
-if exist "%TOKEN_FILE%" (
-  set /p CLOUDFLARE_API_TOKEN=<"%TOKEN_FILE%"
-  set "CLOUDFLARE_ACCOUNT_ID=526f27c5e0f7387a16bc955c18425c7f"
-) else (
-  call npx --yes wrangler@4 whoami >nul 2>&1 || call npx --yes wrangler@4 login || goto :failed
-)
 call npx --yes wrangler@4 pages deploy dist --project-name scadabench --branch main --commit-dirty=true || goto :failed
 echo.
 echo Published. Live at https://scadabench.com (preview: https://scadabench.pages.dev)

@@ -1,13 +1,16 @@
 // One place for names, prices and addresses used across the site.
-const VERSION = '0.1.8';
+const VERSION = '0.1.9';
 export const SITE = {
   name: 'ScadaBench',
   tagline: 'IEC 61850 IED simulator & SCADA test bench',
   url: 'https://scadabench.com',
   licenseServer: 'https://license.scadabench.com',
   // Files carry the version (deploy.cmd publishes them under these names; old names redirect).
+  // The official installer, and the portable exe that runs directly with no install (ADR-0063).
+  // The portable exe is over the 25 MiB Pages file limit, so deploy.cmd puts it in the
+  // scadabench-downloads R2 bucket served at download.scadabench.com.
   download: `/download/ScadaBench-Setup-${VERSION}.exe`,
-  portable: `/download/ScadaBench-Portable-${VERSION}.exe`,
+  portable: `https://download.scadabench.com/download/ScadaBench-Portable-${VERSION}.exe`,
   supportEmail: 'support@scadabench.com',
   price: '149',
   currency: 'USD',

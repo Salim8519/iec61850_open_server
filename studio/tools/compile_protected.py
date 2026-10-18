@@ -5,7 +5,8 @@
     python studio/tools/compile_protected.py --dry-run    show every step, change nothing
 Steps: preflight -> frontend build + frontend.pak -> licensed native workers
 (-DSTUDIO_ENFORCE_LICENSE=ON) -> sealed studio_app copy -> Nuitka .pyd (no docstrings) ->
-PyInstaller one-folder app (fast start; no studio_app .py/.pyc, no loose UI files) ->
+PyInstaller one-folder app (fast start; no studio_app .py/.pyc, no loose UI files) plus the
+single-file ScadaBench-Portable-<version>.exe from the same analysis (ADR-0063) ->
 leak check -> optional code signing -> Inno Setup installer.
 """
 import argparse
@@ -170,6 +171,22 @@ def build_bundle(mode):
              cwd=ROOT, env=environment)
 
 
+def name_portable(mode, version):
+    """Give the single-file exe its versioned release name (an antivirus may hold it briefly)."""
+    built, target = mode.dist / "ScadaBench-Portable.exe", mode.dist / f"ScadaBench-Portable-{version}.exe"
+    if mode.dry_run:
+        return target
+    for attempt in range(1, INSTALLER_TRIES + 1):
+        try:
+            os.replace(built, target)
+            return target
+        except PermissionError:
+            if attempt == INSTALLER_TRIES:
+                raise
+            time.sleep(10)
+    return target
+
+
 def find_leaks(bundle, workpath):
     problems = []
     for path in bundle.rglob("*"):
@@ -195,14 +212,14 @@ def leak_check(mode):
     print("  no studio_app source, bytecode, symbols or loose UI files")
 
 
-def sign(mode):
+def sign(mode, portable):
     mode.step("Code signing")
     certificate, signtool = os.environ.get("STUDIO_SIGN_PFX"), shutil.which("signtool")
     if not certificate or not signtool:
         print("  skipped: set STUDIO_SIGN_PFX (and STUDIO_SIGN_PASSWORD) with signtool on PATH to sign.")
         print("  Unsigned builds show a Windows SmartScreen warning on first start.")
         return
-    targets = [mode.dist / "ScadaBench/ScadaBench.exe",
+    targets = [mode.dist / "ScadaBench/ScadaBench.exe", portable,
                *(mode.dist / "ScadaBench/_internal/native").glob("*.exe")]
     mode.run([signtool, "sign", "/fd", "SHA256", "/tr", "http://timestamp.digicert.com", "/td", "SHA256",
               "/f", certificate, "/p", os.environ.get("STUDIO_SIGN_PASSWORD", ""), *targets])
@@ -222,7 +239,7 @@ def installer(mode, version):
     command = [iscc, f"/DSourceDir={mode.dist / 'ScadaBench'}", f"/DOutputDir={staging}",
                f"/DAppVersion={version}{'-sandbox' if mode.sandbox else ''}", STUDIO / "packaging/installer.iss"]
     # Antivirus scanners briefly lock freshly built files ("used by another process", seen in the
-    # 0.1.7 build, change 0089); Inno Setup does not retry by itself. Same rule as make_portable.py.
+    # 0.1.7 build, change 0089); Inno Setup does not retry by itself.
     for attempt in range(1, INSTALLER_TRIES + 1):
         try:
             mode.run(command)
@@ -253,8 +270,9 @@ def main(argv=None):
     build_native(mode, release)
     build_backend(mode, release, args.version)
     build_bundle(mode)
+    portable = name_portable(mode, args.version)
     leak_check(mode)
-    sign(mode)
+    sign(mode, portable)
     if not args.skip_installer:
         installer(mode, args.version)
     print(f"\nDone{' (dry run)' if mode.dry_run else ''}: {mode.dist}")

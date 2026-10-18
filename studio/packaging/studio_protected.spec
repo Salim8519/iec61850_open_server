@@ -1,4 +1,6 @@
 # Protected release: Nuitka-compiled studio_app (.pyd), packed UI, licensed native workers.
+# One analysis makes both outputs, so they hold exactly the same files: the one-folder app the
+# installer ships, and the single-file portable exe that runs directly (ADR-0063).
 # Run only through studio/tools/compile_protected.py, which prepares every input below.
 from pathlib import Path
 import json
@@ -56,5 +58,8 @@ python_archive = PYZ(analysis.pure)
 executable = EXE(python_archive, analysis.scripts, [], exclude_binaries=True,
                  name="ScadaBench", debug=False, strip=False, upx=False, console=False,
                  icon=os.environ.get("STUDIO_ICON") or str(studio / "branding/icon.ico"))
+portable = EXE(python_archive, analysis.scripts, analysis.binaries, analysis.datas,
+               name="ScadaBench-Portable", debug=False, strip=False, upx=False, console=False,
+               icon=os.environ.get("STUDIO_ICON") or str(studio / "branding/icon.ico"))
 collection = COLLECT(executable, analysis.binaries, analysis.datas, strip=False,
                      upx=False, name="ScadaBench")

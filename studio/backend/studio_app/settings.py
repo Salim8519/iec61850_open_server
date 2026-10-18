@@ -32,6 +32,11 @@ class Settings:
             resources = Path(sys._MEIPASS)
             packed = resources / "frontend.pak"
             frontend = packed if packed.is_file() else resources / "frontend"
+            from studio_app.launcher import portable_runtime
+            if portable_runtime.is_single_file(root, resources):
+                directory = portable_runtime.data_directory(root)
+                native = portable_runtime.stage_native(resources / "native", directory)
+                return cls(directory, native / "studio_ied.exe", frontend)
             directory = cls.packaged_data_directory(root, os.environ.get("LOCALAPPDATA"))
             return cls(directory, resources / "native/studio_ied.exe", frontend)
         root = Path(__file__).resolve().parents[2]

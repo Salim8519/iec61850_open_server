@@ -4,7 +4,7 @@
 Edge (headless) draws the welcome panel and the small header icon once at high resolution;
 Windows System.Drawing writes the 24-bit BMP sizes Inno Setup picks per display scaling
 (100 % to 250 %). Outputs in studio/branding/installer/ are committed; run again only after
-changing the brand. Used by packaging/installer.iss and packaging/portable.iss (change 0090).
+changing the brand. Used by packaging/installer.iss (change 0090; the portable self-extractor was withdrawn in 0092).
 """
 from pathlib import Path
 import subprocess
