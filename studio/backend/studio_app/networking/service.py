@@ -16,6 +16,9 @@ from .elevation import ElevationCancelled, helper_command, run_elevated
 from .journal import NetworkJournal, item_key
 
 
+PICK_ROUNDS = 5  # re-picks when free addresses turn out to be in use on the network
+
+
 class NetworkService:
     def __init__(self, projects, directory, program, adapters=None, rules=None, elevate=None, probe=None,
                  firewall=None):
@@ -51,19 +54,19 @@ class NetworkService:
         ieds = [ied for ied in self.projects.project["ieds"] if ied.get("role", "simulated") == "simulated"]
         if not ieds:
             raise StudioError("There are no simulated IEDs to put on the network")
-        rows = plan_addresses(ieds, adapter, self.adapters(), strategy)
-        for row in rows:
-            override = (manual or {}).get(row["ied_id"])
-            if override:
-                try:
-                    row["proposed"], row["prefix"] = validate_manual(override.get("ip"), override.get("prefix"))
-                    row.update(status="ok", hint="Address typed by you.")
-                except ValueError as error:
-                    row.update(status="invalid_manual", hint=str(error))
         own = {item["ip"] for item in adapter["addresses"]}
-        candidates = [row["proposed"] for row in rows if row["status"] == "ok" and row["proposed"] not in own]
-        reachable = [address for address in candidates if on_link(address, adapter)]
-        in_use = self._probe(reachable)
+        avoid = set()
+        # A picked free address may answer on the network (another PC's lab IEDs): pick again
+        # around it instead of only reporting the clash (change 0091). Typed addresses stay.
+        for _ in range(PICK_ROUNDS):
+            rows = self._rows(ieds, adapter, strategy, manual, avoid)
+            candidates = [row["proposed"] for row in rows if row["status"] == "ok" and row["proposed"] not in own]
+            reachable = [address for address in candidates if on_link(address, adapter)]
+            in_use = set(self._probe(reachable))
+            picked = {row["proposed"] for row in rows if not (manual or {}).get(row["ied_id"])}
+            if strategy != "adapter" or not (in_use & picked):
+                break
+            avoid |= in_use
         for row in rows:
             if row["proposed"] in in_use:
                 row.update(status="in_use_on_network", hint=f"Another device already answers on {row['proposed']}. "
@@ -83,6 +86,18 @@ class NetworkService:
             self.previews[plan["fingerprint"]] = {"guid": adapter["guid"], "strategy": strategy,
                                                   "manual": manual or {}, "rows": rows}
         return result
+
+    def _rows(self, ieds, adapter, strategy, manual, avoid):
+        rows = plan_addresses(ieds, adapter, self.adapters(), strategy, avoid)
+        for row in rows:
+            override = (manual or {}).get(row["ied_id"])
+            if override:
+                try:
+                    row["proposed"], row["prefix"] = validate_manual(override.get("ip"), override.get("prefix"))
+                    row.update(status="ok", hint="Address typed by you.")
+                except ValueError as error:
+                    row.update(status="invalid_manual", hint=str(error))
+        return rows
 
     def apply(self, fingerprint, confirm):
         if confirm is not True:

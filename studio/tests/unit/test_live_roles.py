@@ -9,7 +9,7 @@ from studio_app.runtime.event_bus import EventBus
 
 
 def test_operating_real_ied_is_refused():
-    assert "not enabled in this version" in command_refusal({"name": "Relay", "role": "real"})
+    assert "nothing was sent from here" in command_refusal({"name": "Relay", "role": "real"})
     assert "switched off" in command_refusal({"name": "Relay", "role": "off"})
     assert command_refusal({"name": "Relay", "role": "simulated"}) is None
 

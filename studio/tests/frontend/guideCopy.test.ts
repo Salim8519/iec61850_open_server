@@ -88,3 +88,9 @@ test('IED Explorer reads the data object again after a command (change 0089)', (
   assert.ok(read('frontend/src/features/tools/explorer/NodeDetail.tsx').includes('operated={() => read(object.name, object.attributes)}'));
   assert.ok(read('frontend/src/features/tools/explorer/CommandPanel.tsx').includes('operated?.()'));
 });
+
+test('real-IED text says where commands are allowed instead of "never" (change 0091)', () => {
+  // IED Explorer and the gateway operate real IEDs after a confirmation; only reading happens here.
+  assert.ok(!/not enabled in this version|never operates/.test(HINTS['live.commands']));
+  assert.match(HINTS['live.commands'], /IED Explorer or the gateway/);
+});

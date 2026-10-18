@@ -77,3 +77,23 @@ def test_endpoint_override_keeps_scl(client):
     assert bad.status_code == 400 and "normal device address" in bad.json["error"]
     lab = test_client.put(f"/api/v1/ieds/{ied['id']}/settings", json={"lab_ip": "127.0.0.9"})
     assert lab.status_code == 400 and "normal device address" in lab.json["error"]
+
+
+def test_free_address_picker_skips_addresses_answering_on_the_network(client):
+    """Change 0091: the VM picked .21, which another PC's lab IED already used, and only reported it."""
+    app, test_client = client
+    network = app.extensions["network"]
+    probed = []
+
+    def probe(addresses):
+        probed.append(list(addresses))
+        return {address for address in addresses if address in {"192.168.50.21", "192.168.50.22"}}
+    network._probe = probe
+    preview = test_client.post("/api/v1/network/plan/preview", json={"adapter_guid": GUID, "strategy": "adapter"}).json
+    row = preview["rows"][0]
+    assert row["proposed"] == "192.168.50.23" and row["status"] == "ok" and preview["ready"]
+    assert len(probed) == 3, "picks again only while the picked address answers"
+    ied = app.extensions["projects"].project["ieds"][0]
+    typed = test_client.post("/api/v1/network/plan/preview", json={
+        "adapter_guid": GUID, "strategy": "adapter", "manual": {ied["id"]: {"ip": "192.168.50.21", "prefix": 24}}}).json
+    assert typed["rows"][0]["status"] == "in_use_on_network", "an address you typed is reported, never changed"

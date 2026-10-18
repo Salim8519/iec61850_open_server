@@ -89,8 +89,8 @@ def command_refusal(ied):
     """Plain reason why ScadaBench will not command this IED, or None when it may."""
     role = ied.get("role", "simulated")
     if role == "real":
-        return (f"{ied['name']} is a real device. Commands to real IEDs are not enabled in this version, "
-                "so ScadaBench did not send anything.")
+        return (f"{ied['name']} is a real device, so nothing was sent from here. Real equipment is "
+                "operated only from Tools (IED Explorer or the gateway), after a confirmation.")
     if role == "off":
         return f"{ied['name']} is switched off in this project. Set it to 'Simulate' to operate it."
     return None

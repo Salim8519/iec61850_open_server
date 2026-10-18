@@ -38,7 +38,7 @@ export const HINTS: Record<string, string> = {
   'live.access.auto_reports': 'Recommended. ScadaBench uses a report block only if the IED shows it as free, tells you which one, and gives it back on Stop. If none is free it polls instead.',
   'live.access.polling': 'Safest. ScadaBench only asks for values and never touches the IED report blocks. Updates are slower.',
   'live.poll': 'How often ScadaBench asks for values that do not arrive by report.',
-  'live.commands': 'Commands to real IEDs are not enabled in this version, so ScadaBench never operates real equipment.',
+  'live.commands': 'Here ScadaBench only reads from the real IED. Real equipment is operated only from Tools (IED Explorer or the gateway), always after a confirmation.',
   'live.compare': 'Shows where the device and the SCD file disagree. Differences usually mean the device runs another configuration.',
   'live.values': 'Values shown here come from the device. "Old value" means the connection was lost and the value may have changed since.',
   'live.locked': 'Stop the run to change roles or connection settings.',

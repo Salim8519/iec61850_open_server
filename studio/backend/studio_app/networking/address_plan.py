@@ -29,15 +29,17 @@ def _scd_interface(ied):
         return None
 
 
-def plan_addresses(ieds, adapter, all_adapters, strategy="scd"):
-    """Return rows of {ied_id, name, scd_ip, proposed, prefix, status, hint}."""
+def plan_addresses(ieds, adapter, all_adapters, strategy="scd", avoid=frozenset()):
+    """Return rows of {ied_id, name, scd_ip, proposed, prefix, status, hint}.
+
+    `avoid` holds addresses another device answered on, so a free address is never proposed twice."""
     if strategy not in STRATEGIES:
         raise ValueError("Address strategy must be 'scd' or 'adapter'")
     own = {item["ip"] for item in adapter.get("addresses", [])}
     elsewhere = {item["ip"]: other["name"] for other in all_adapters if other["guid"] != adapter["guid"]
                  for item in other.get("addresses", [])}
     networks = _adapter_networks(adapter)
-    taken = set(own) | set(elsewhere)
+    taken = set(own) | set(elsewhere) | set(avoid)
     rows, chosen = [], {}
     for ied in ieds:
         scd = _scd_interface(ied)

@@ -62,7 +62,10 @@ class GooseMonitor:
             with self.lock:
                 for item in event.get("watches", []):
                     if item["key"] in self.watches:
-                        self.watches[item["key"]].update(frames=item["frames"], age_ms=item["age_ms"])
+                        # Retransmissions raise sqNum without a state change; the stats carry it
+                        # (change 0091: the page showed sqNum 0 while frames 4, 5... arrived).
+                        self.watches[item["key"]].update(frames=item["frames"], age_ms=item["age_ms"],
+                                                         **({"sq_num": item["sq_num"]} if "sq_num" in item else {}))
         elif kind == "goose_unknown":
             with self.lock:
                 self.status["unknown"].append({key: event.get(key) for key in UNKNOWN_FIELDS})
