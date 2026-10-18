@@ -8,11 +8,13 @@ import { InfoTip } from '../../ui/InfoTip';
 import { endpointOf } from '../network/endpoints';
 import { DeviceConnection } from './DeviceConnection';
 import { TestModeCard } from './TestModeCard';
+import { GoosePartners } from './GoosePartners';
+import { ReadByClients } from './ReadByClients';
 import type { ModeSummary } from './useModes';
 
 /** The device's address, mode and facts; the facts are one thin line so the page stays short (change 0093). */
-export function DeviceOverview({ ied, project, locked, session, perform, mode }: {
-  ied: Ied; project: Project; locked: boolean; session?: LiveSession; mode?: ModeSummary;
+export function DeviceOverview({ ied, project, locked, session, perform, mode, selectDevice }: {
+  ied: Ied; project: Project; locked: boolean; session?: LiveSession; mode?: ModeSummary; selectDevice?: (iedId: string) => void;
   perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
@@ -42,6 +44,8 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode }:
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}
         onChange={event => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { goose_publish: event.target.checked }))} />
       <span>Send its <InfoTip term="goose" label="GOOSE" /> messages{lab ? '' : ' (works on the lab network only)'}</span></label>}
+    <GoosePartners ied={ied} project={project} open={iedId => selectDevice?.(iedId)} />
+    <ReadByClients ied={ied} running={project.runtime !== 'stopped'} />
     {(!!ied.warnings.length || !!ied.goose?.diagnostics?.length || ied.validation) && <Disclosure title={
       `File check details${ied.warnings.length + (ied.goose?.diagnostics?.length || 0) ? ` · ${ied.warnings.length + (ied.goose?.diagnostics?.length || 0)} notes` : ''}`}>
       {ied.validation && <p className="small" style={{ margin: 0 }}>File structure: <strong>{ied.validation.status}</strong>

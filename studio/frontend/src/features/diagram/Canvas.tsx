@@ -29,9 +29,11 @@ type Props = {
   modeBadges?: Record<string, string>;
   selection: string[]; setSelection: (ids: string[]) => void; operate: (nodeId: string, action: string) => void;
   change: (diagram: Diagram, group?: string) => void; toolbar?: ReactNode;
+  /** View-only layers drawn in flow coordinates (spec signal-layers); never part of the diagram. */
+  overlay?: ReactNode;
 };
 
-function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar }: Props) {
+function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar, overlay }: Props) {
   const flow = useReactFlow<NodeType>();
   const zoomTier = useZoomTier();
   const selectionRef = useRef(selection);
@@ -127,6 +129,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
         defaultEdgeOptions={defaultEdgeOptions}>
         <Background variant={BackgroundVariant.Dots} gap={20} size={1.6} color="#b4bcc8" />
         <Controls showInteractive={false} position="bottom-left" />
+        {overlay}
       </ReactFlow>
       {!diagram.nodes.length && <div className="canvas-empty"><h2>Start your single-line diagram</h2>
         <p>Press <strong>Add</strong> and pick a circuit breaker. Then connect it to an IED signal on the right.</p></div>}

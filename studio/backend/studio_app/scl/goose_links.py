@@ -43,6 +43,15 @@ def _matches(extref, fcda):
         extref.get("daName") == fcda.get("daName") or extref["daName"].startswith(fcda["daName"] + "."))
 
 
+def _member(values, fcdas):
+    """Position of the input in the block's dataset and the path left below that member."""
+    for index, fcda in enumerate(fcdas):
+        if _matches(values, fcda):
+            wanted, given = values.get("daName") or "", fcda.get("daName") or ""
+            return index, wanted[len(given):].lstrip(".") if wanted.startswith(given) else ""
+    return None, ""
+
+
 def _lgos_targets(ied):
     targets = {}
     for ld in ied.findall("AccessPoint/Server/LDevice"):
@@ -62,6 +71,7 @@ def goose_subscriptions(root, ied, catalogue=None):
     lgos = _lgos_targets(ied)
     subscriptions, diagnostics = {}, []
     for ld in ied.findall("AccessPoint/Server/LDevice"):
+        ld_domain = ld.get("ldName") or ied.get("name", "") + ld.get("inst", "")
         for ln in list(ld):
             for extref in ln.findall("Inputs/ExtRef"):
                 values = dict(extref.attrib)
@@ -89,9 +99,11 @@ def goose_subscriptions(root, ied, catalogue=None):
                 control = catalogue[candidates[0]]
                 entry = subscriptions.setdefault(control["gocb_ref"], {
                     **{key: value for key, value in control.items() if key != "fcdas"},
-                    "lgos": lgos.get(control["gocb_ref"]), "inputs": []})
+                    "lgos": lgos.get(control["gocb_ref"]), "member_count": len(control["fcdas"]), "inputs": []})
+                member, member_path = _member(values, control["fcdas"])
                 entry["inputs"].append({"int_addr": values.get("intAddr", ""), "desc": values.get("desc", ""),
-                                "match": "named" if values.get("srcCBName") else "data",
+                                        "match": "named" if values.get("srcCBName") else "data",
+                                        "ld": ld_domain, "member": member, "member_path": member_path,
                                         "source": f"{source}/{values.get('prefix', '')}"
                                                   f"{values.get('lnClass', '')}{values.get('lnInst', '')}."
                                                   f"{values.get('doName', '')}"

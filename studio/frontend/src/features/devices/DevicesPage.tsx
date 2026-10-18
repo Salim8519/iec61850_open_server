@@ -11,6 +11,8 @@ import { DEVICE_FILTER, deviceMatches, roleCounts } from './deviceFilters';
 import { HealthView } from './HealthView';
 import { SignalFlowView } from './SignalFlowView';
 import './devices.css';
+import { GooseHint } from './GooseHint';
+import { useGooseLinks } from './useGooseLinks';
 
 const FLOW = 'station-flow';
 const HEALTH = 'station-health';
@@ -30,6 +32,7 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
   useEffect(() => { if (flowIed) setSelected(flowIed); }, [flowIed]);
   const ied = project.ieds.find(item => item.id === selected);
   const { modes } = useModes(project.runtime !== 'stopped', project.revision);
+  const gooseLinks = useGooseLinks(project.revision, project.runtime !== 'stopped');
   if (!project.ieds.length) return <div className="content"><div className="card"><EmptyState icon={<Cpu size={26} />}
     title="Import your first IED" hintId="devices.empty" action={<div className="row" style={{ justifyContent: 'center' }}>
       <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD file</button>
@@ -43,7 +46,8 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
         <FilterBar label="Filter IEDs" spec={DEVICE_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
           shown={shown.length} total={project.ieds.length} counts={{ role: roleCounts(project.ieds) }} />
         <div className="list" role="list">{shown.map(item => <DeviceListRow key={item.id} ied={item}
-          active={item.id === selected} mode={modes.ieds[item.id]} select={() => setSelected(item.id)} />)}
+          active={item.id === selected} mode={modes.ieds[item.id]} select={() => setSelected(item.id)}
+          hints={<GooseHint map={gooseLinks} name={item.name} />} />)}
           {shown.length === 0 && <p className="small muted" style={{ margin: 0 }}>No IED matches. Press Clear to see them all.</p>}</div>
         <button className="ghost" disabled={locked} onClick={() => addTemplate(`Sample${project.ieds.length + 1}`)}>
           <LayoutTemplate size={16} />Add a sample IED</button>
@@ -58,7 +62,7 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
       {selected === FLOW && <div className="fill-scroll"><SignalFlowView running={project.runtime !== 'stopped'} /></div>}
       {selected === HEALTH && <div className="fill-scroll"><HealthView running={project.runtime !== 'stopped'} /></div>}
       {ied && <DeviceDetail ied={ied} project={project} locked={locked} values={values} perform={perform} prepare={prepare}
-        initialTab={ied.id === flowIed ? 'flow' : undefined} mode={modes.ieds[ied.id]} />}
+        initialTab={ied.id === flowIed ? 'flow' : undefined} mode={modes.ieds[ied.id]} selectDevice={setSelected} />}
     </div>
   </div>;
 }

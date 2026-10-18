@@ -13,6 +13,10 @@ import { SldImport } from './SldImport';
 import { TidyButton } from './TidyButton';
 import { useCanvasShortcuts } from './useCanvasShortcuts';
 import { useModes } from '../devices/useModes';
+import { SignalLayerSwitches } from './signals/SignalLayerSwitches';
+import { SignalOverlay, type SignalSelection } from './signals/SignalOverlay';
+import { SignalSheet } from './signals/SignalSheet';
+import { useSignalLayers } from './signals/useSignalLayers';
 import './diagram.css';
 
 type Studio = ReturnType<typeof useStudio>;
@@ -22,11 +26,17 @@ export function DiagramPage({ studio, project, locked, openDevices }: {
 }) {
   const [selection, setSelection] = useState<string[]>([]);
   const [operation, setOperation] = useState<{ nodeId: string; message: string } | null>(null);
+  const [signal, setSignal] = useState<SignalSelection>(null);
   const diagram = project.diagram;
   const iedKey = JSON.stringify(project.ieds.map(ied => [ied.id, ied.name]));
   const iedNames = useMemo(() => Object.fromEntries(project.ieds.map(ied => [ied.id, ied.name])), [iedKey]);
   const { modes } = useModes(project.runtime !== 'stopped', project.revision);
   const energy = useSyncExternalStore(studio.energization.subscribe, studio.energization.get, studio.energization.get);
+  const layers = useSignalLayers(studio.signalLayers, project.revision, project.runtime !== 'stopped');
+  const selectSignal = useCallback((next: SignalSelection) => { setSignal(next); if (next) setSelection([]); }, []);
+  useEffect(() => { if (selection.length) setSignal(null); }, [selection]);
+  const overlay = useMemo(() => <SignalOverlay store={studio.signalLayers} iedNames={iedNames} selection={signal}
+    select={selectSignal} />, [studio.signalLayers, iedNames, signal, selectSignal]);
   const selected = selection.length === 1 ? diagram.nodes.find(item => item.id === selection[0]) : undefined;
   useEffect(() => {
     const present = selection.filter(id => diagram.nodes.some(item => item.id === id));
@@ -68,12 +78,15 @@ export function DiagramPage({ studio, project, locked, openDevices }: {
     <span className="divider" />
     <button className="icon ghost" title="Undo" aria-label="Undo" disabled={locked || !studio.canUndo} onClick={studio.undo}><Undo2 size={18} /></button>
     <button className="icon ghost" title="Redo" aria-label="Redo" disabled={locked || !studio.canRedo} onClick={studio.redo}><Redo2 size={18} /></button>
+    <span className="divider" />
+    <SignalLayerSwitches layers={layers.state.layers} toggle={layers.toggle} />
     {!project.ieds.length && <><span className="divider" />
       <button className="ghost" onClick={() => openDevices()}><Cpu size={17} />Import an IED first</button></>}
   </div>;
   return <div className="diagram">
     <Canvas diagram={diagram} change={edit} locked={locked} selection={selection} setSelection={setSelection}
-      valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={modes.equipment} operate={operate} toolbar={toolbar} />
+      valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={modes.equipment} operate={operate} toolbar={toolbar} overlay={overlay} />
+    {signal && !selection.length && <SignalSheet state={layers.state} selection={signal} select={selectSignal} showFlow={openDevices} />}
     {selected && <LiveValues.Provider value={studio.equipmentValues}><EquipmentSheet node={selected} project={project}
       locked={locked} busy={studio.busy} values={studio.values} perform={studio.perform} operate={operate}
       operation={operation?.nodeId === selected.id ? operation.message : undefined} close={() => setSelection([])}

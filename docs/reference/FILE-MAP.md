@@ -47,6 +47,10 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | SCL communication and GOOSE | `scl/communication.py`, `goose_controls.py`, `goose_links.py` |
 | GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |
 | GOOSE observation and LGOS | `native/live/goose_traffic.cpp`, `acquisition/goose_monitor.py`, `domain/goose_supervision.py` |
+| GOOSE link map (ADR-0065) | `scl/goose_vendor.py`, `goose_inventory.py`, `goose_remote.py`, `goose_sources.py`, `domain/goose_link_map.py`, `goose_link_live.py`, `projects/goose_links.py` |
+| GOOSE inputs (ADR-0066) | `domain/goose_inputs.py`, `acquisition/goose_inputs.py` |
+| MMS client access (ADR-0066) | `native/worker/server/access_log.*`, `read_hook.*`, `domain/mms_access.py`, `simulation/mms_access.py` |
+| SLD signal layers | `features/diagram/signals/`, `equipment/signalLayout.ts`, `signalPulses.ts`, `signalLayerStore.ts`, `copy/signalLayers.ts`, `api/signalLayers.ts`, `features/devices/GooseHint.tsx`, `GoosePartners.tsx`, `ReadByClients.tsx`, `useGooseLinks.ts` |
 | Real IED client | `native/live/`, `acquisition/real_session.py`, `live_values.py`, `domain/model_compare.py`, `access_policy.py` |
 | Guided UI and wording | `frontend/src/ui/`, `frontend/src/copy/`, `features/network/`, `features/settings/` |
 | Feature contracts | `docs/specs/`, `studio/tools/check_specs.py` |

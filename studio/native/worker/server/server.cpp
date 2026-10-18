@@ -1,20 +1,35 @@
 #include "server.hpp"
 #include "controls/controls.hpp"
 #include "goose/publishing.hpp"
+#include "read_hook.h"
 extern "C" {
 #include "iec61850_config_file_parser.h"
 }
 #include <stdexcept>
 
 namespace {
-void connection(IedServer, ClientConnection, bool connected, void*) {
-    emit_frame({{"event", "connection"}, {"connected", connected}});
+// Peer "ip:port" of an MMS client; empty for events the server raises itself (ADR-0066).
+std::string peer_of(ClientConnection client) {
+    auto peer = client ? ClientConnection_getPeerAddress(client) : nullptr;
+    return peer ? peer : "";
 }
-void report(void*, ReportControlBlock* rcb, ClientConnection,
-        IedServer_RCBEventType event, const char* parameter, MmsDataAccessError error) {
+void connection(IedServer, ClientConnection client, bool connected, void* parameter) {
+    auto peer = peer_of(client);
+    static_cast<Server*>(parameter)->access.connection(peer, connected);
+    emit_frame({{"event", "connection"}, {"connected", connected}, {"peer", peer}});
+}
+void report(void* parameter, ReportControlBlock* rcb, ClientConnection client,
+        IedServer_RCBEventType event, const char* name, MmsDataAccessError error) {
+    auto peer = peer_of(client);
+    auto parent = ReportControlBlock_getParent(rcb);
+    std::string block = std::string(parent ? parent->name : "") + "." + ReportControlBlock_getName(rcb);
+    if (!peer.empty()) static_cast<Server*>(parameter)->access.report(peer, block, static_cast<int>(event));
     emit_frame({{"event", "report_control"}, {"name", ReportControlBlock_getName(rcb)},
-        {"kind", static_cast<int>(event)}, {"parameter", parameter ? parameter : ""},
-        {"error", static_cast<int>(error)}});
+        {"kind", static_cast<int>(event)}, {"parameter", name ? name : ""},
+        {"error", static_cast<int>(error)}, {"peer", peer}});
+}
+void observed_read(void* context, const char* domain, const char* item, const char* peer) {
+    static_cast<AccessLog*>(context)->read(domain, item, peer);
 }
 }
 
@@ -82,6 +97,7 @@ Json Server::start(const Json& config) {
     IedServer_setServerIdentity(handle, "ScadaBench", "Simulated IED", "1");
     IedServer_setConnectionIndicationHandler(handle, connection, this);
     IedServer_setRCBEventHandler(handle, report, this);
+    bool observing = studio_observe_reads(handle, observed_read, &access);
     for (const auto& entry : config.value("controls", Json::array())) {
         install_control(*this, entry);
     }
@@ -93,10 +109,11 @@ Json Server::start(const Json& config) {
         throw std::runtime_error("MMS bind failed: " + ip + ":" + std::to_string(port));
     }
     start_goose(*this);
-    return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose},
-        {"capabilities", Json::array({"versioned_updates", "atomic_control_feedback",
-                                      "control_selection_events", "concen_sbow_compatibility",
-                                      "goose_aware"})}};
+    access.start();
+    auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
+                                     "control_selection_events", "concen_sbow_compatibility", "goose_aware"});
+    if (observing) capabilities.push_back("mms_access");
+    return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
 }
 
 DataAttribute* Server::attribute(const std::string& reference) {
@@ -109,6 +126,7 @@ DataAttribute* Server::attribute(const std::string& reference) {
 
 void Server::stop() {
     stop_tasks();
+    access.stop();
     if (goose_thread.joinable()) goose_thread.join();
     goose_interface.clear();
     if (handle) { IedServer_stop(handle); IedServer_destroy(handle); handle = nullptr; }

@@ -1,5 +1,6 @@
 #pragma once
 #include "ipc/framing.hpp"
+#include "access_log.hpp"
 extern "C" {
 #include "iec61850_server.h"
 #include "iec61850_dynamic_model.h"
@@ -28,6 +29,7 @@ struct Server {
     bool tasks_stopping = false;
     std::string goose_interface;
     std::thread goose_thread;
+    AccessLog access;
     Server();
     ~Server();
     Json start(const Json& config);

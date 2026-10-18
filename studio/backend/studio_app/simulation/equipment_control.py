@@ -63,6 +63,7 @@ class EquipmentControl:
             node, ied, control, planned, semantic, wire_value = self._resolve(
                 node_id, value, action)
             coordinator.energization.mark_own(node_id)
+            coordinator.mms_access.mark_own(ied["id"], control["ref"])
             result = mms_operate(
                 coordinator.supervisor.executable, ied, control["ref"], wire_value)
             try:

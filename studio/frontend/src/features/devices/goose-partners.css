@@ -1,0 +1,7 @@
+/* Devices GOOSE hints and partner tables (spec signal-layers). Words carry the state. */
+.goose-hint { display: block; color: var(--text-2); font-size: 12px; }
+.partner-chip { min-height: 28px; padding: 2px 10px; border: 1px solid var(--border-strong); border-radius: 999px;
+  background: var(--surface); color: var(--accent-hover); font-size: 13px; font-weight: 600; cursor: pointer; }
+.partner-chip:hover { border-color: var(--accent); }
+.partner-chip.outside { display: inline-block; border-style: dashed; color: var(--text-2); cursor: default; }
+.goose-partners, .read-by-clients { display: grid; gap: 4px; }

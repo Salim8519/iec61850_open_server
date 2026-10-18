@@ -59,6 +59,7 @@ def configure_source():
 def operate_control():
     data = request.get_json()
     ied = projects().find_ied(data["ied_id"])
+    runtime().mms_access.mark_own(ied["id"], data["ref"])
     result = operate(current_app.extensions["studio_settings"].native_executable,
                      ied, data["ref"], data["value"])
     return jsonify(result)

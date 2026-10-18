@@ -1,0 +1,113 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import test from 'node:test';
+import type { GooseLinkMap } from '../../frontend/src/api/signalLayers.ts';
+import type { EquipmentNode } from '../../frontend/src/api/types.ts';
+import { SignalLayerStore } from '../../frontend/src/equipment/signalLayerStore.ts';
+import { equipmentByIed, linkCurve, placeTags, shortNames } from '../../frontend/src/equipment/signalLayout.ts';
+import { PulseGate, problemWords, reducedMotion } from '../../frontend/src/equipment/signalPulses.ts';
+
+const read = (path: string) => readFileSync(new URL(`../../frontend/src/${path}`, import.meta.url), 'utf8');
+const REF = 'PUBLD0/LLN0$GO$GoCB01';
+const map: GooseLinkMap = {
+  running: true, diagnostics: [], summary: {},
+  ieds: [{ name: 'PUB_BAY0001', ied_id: 'p', role: 'simulated', in_project: true, remote: false, desc: '', manufacturer: '' },
+    { name: 'SUB_BAY0002', ied_id: 's', role: 'simulated', in_project: true, remote: false, desc: '', manufacturer: '' }],
+  blocks: [{ publisher: 'PUB_BAY0001', ld_inst: 'LD0', name: 'GoCB01', gocb_ref: REF, go_id: 'g', dataset: 'DS',
+    dataset_ref: 'PUBLD0/LLN0$DS', conf_rev: 1, app_id: 1, mac: '01-0C-CD-01-00-01', status: 'sendable', label: '',
+    members: [], member_refs: ['PUBLD0/XCBR1.Pos.stVal'] }],
+  links: [{ id: 'L1', gocb_ref: REF, publisher: 'PUB_BAY0001', subscriber: 'SUB_BAY0002', block: 'GoCB01',
+    status: 'declared', remote: false, match: 'named', inputs: [], live: null }],
+};
+
+test('layer switches are remembered by the backend, not the browser', () => {
+  const hook = read('features/diagram/signals/useSignalLayers.ts');
+  assert.match(hook, /sld_goose_layer/);
+  assert.match(hook, /sld_readers_layer/);
+  assert.match(hook, /setPreferences/);
+  assert.doesNotMatch(hook, /localStorage/);
+  const prefs = readFileSync(new URL('../../backend/studio_app/projects/preferences.py', import.meta.url), 'utf8');
+  assert.match(prefs, /"sld_goose_layer": int, "sld_readers_layer": int/);
+});
+
+test('one pulse per link per second; extra changes are coalesced', () => {
+  const gate = new PulseGate();
+  assert.equal(gate.allow('L1', 0), true);
+  assert.equal(gate.allow('L1', 400), false);
+  assert.equal(gate.allow('L2', 400), true);
+  assert.equal(gate.allow('L1', 1000), true);
+  const store = new SignalLayerStore();
+  store.setMap(map);
+  for (const [st, at] of [[1, 0], [2, 100], [3, 200], [4, 300]] as const) {
+    store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: st }, at);
+  }
+  assert.equal(store.get().pulses.length, 1, 'first frame never pulses; three fast changes give one pulse');
+});
+
+test('observed pulses come only from a real stNum increase', () => {
+  const store = new SignalLayerStore();
+  store.setMap(map);
+  store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: 5 }, 0);
+  store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: 5 }, 2000);
+  assert.equal(store.get().pulses.length, 0, 'retransmission with the same stNum is quiet');
+  store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: 6 }, 4000);
+  const [pulse] = store.get().pulses;
+  assert.equal(pulse.kind, 'observed');
+  assert.match(pulse.label, /^PUB → SUB · /);
+});
+
+test('without a listener a publisher change is a hollow expected pulse', () => {
+  const store = new SignalLayerStore();
+  store.setMap(map);
+  store.handle({ kind: 'signal', ied_id: 'p', ref: 'PUBLD0/XCBR1.Pos.stVal', value: 1 }, 0);
+  const [pulse] = store.get().pulses;
+  assert.equal(pulse.kind, 'expected');
+  assert.equal(pulse.label, 'PUB → SUB · XCBR1.Pos Open (expected)');
+  store.handle({ kind: 'signal', ied_id: 'p', ref: 'PUBLD0/MMXU1.TotW.mag.f', value: 3 }, 5000);
+  assert.equal(store.get().pulses.length, 1, 'a value outside the dataset sends no GOOSE');
+  store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'receiving', st_num: 1 }, 6000);
+  store.handle({ kind: 'signal', ied_id: 'p', ref: 'PUBLD0/XCBR1.Pos.stVal', value: 2 }, 8000);
+  assert.ok(store.get().pulses.every(item => item.kind !== 'expected' || item.start < 8000),
+    'once a listener reports, no more expected pulses');
+  const css = read('features/diagram/signals/signal-layers.css');
+  assert.match(css, /\.pulse-dot\.expected[^}]*fill: (none|var\(--surface\))/);
+});
+
+test('reduced motion turns pulses into a static highlight; animation uses transform and opacity only', () => {
+  assert.equal(reducedMotion(() => ({ matches: true })), true);
+  assert.equal(reducedMotion(() => ({ matches: false })), false);
+  const dot = read('features/diagram/signals/PulseDot.tsx');
+  assert.match(dot, /reducedMotion\(\)/);
+  assert.match(dot, /transform/);
+  assert.doesNotMatch(dot, /style\.(left|top|cx|cy)\b/);
+  const css = read('features/diagram/signals/signal-layers.css');
+  for (const block of css.match(/@keyframes[^{]+\{([^{}]*\{[^}]*\})*[^}]*\}/g) || []) {
+    for (const property of block.match(/[a-z-]+(?=\s*:)/g) || []) assert.ok(['transform', 'opacity'].includes(property), property);
+  }
+  assert.match(css, /prefers-reduced-motion/);
+});
+
+test('problems persist as words with a dashed border, never colour alone', () => {
+  assert.deepEqual(problemWords('C09', { state: 'timeout' }), { text: '⚠ GOOSE lost from C09', tone: 'problem' });
+  assert.match(problemWords('C09', { state: 'problem', problem: 'conf_rev_mismatch' })!.text, /revision differs/);
+  assert.equal(problemWords('C09', { state: 'receiving' }), null);
+  const css = read('features/diagram/signals/signal-layers.css');
+  assert.match(css, /\.ied-tag\.problem[^}]*dashed/);
+  assert.match(css, /\.ied-tag\.outside[^}]*dashed/);
+});
+
+test('tags sit beside bound equipment, remote publishers at the edge, and are never saved', () => {
+  const nodes = [{ id: 'q1', type: 'equipment', position: { x: 100, y: 200 }, data: { kind: 'CB', label: 'Q1', rotation: 0,
+    control_binding: { ied_id: 's', ref: 'x' } } }] as unknown as EquipmentNode[];
+  const bound = equipmentByIed(nodes);
+  assert.deepEqual(bound.get('s'), ['q1']);
+  const tags = placeTags([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], bound, [
+    { name: 'SUB_BAY0002', iedId: 's', outside: false, remote: false },
+    { name: 'FAR', iedId: null, outside: true, remote: true }, { name: 'LOOSE', iedId: 'x', outside: false, remote: false }]);
+  assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y]), [['FAR', -70, 200], ['LOOSE', -70, 240], ['SUB_BAY0002', 190, 200]]);
+  assert.deepEqual(shortNames(['B09_BCU', 'B17_X230', 'B17_BCU', 'FEEDERPROTECTION1']),
+    { B09_BCU: 'B09', B17_X230: 'B17_X230', B17_BCU: 'B17_BCU', FEEDERPROTECTION1: 'FEEDERPROTE…' });
+  assert.match(linkCurve({ x: 0, y: 0 }, { x: 100, y: 0 }).path, /^M 0 0 Q 50 -25 100 0$/);
+  const overlay = read('features/diagram/signals/SignalOverlay.tsx');
+  assert.doesNotMatch(overlay, /updateDiagram|change\(/);
+});

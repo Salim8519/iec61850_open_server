@@ -3,6 +3,7 @@ import threading
 from datetime import datetime, timezone
 from studio_app.domain.goose_supervision import dataset_values, lgos_updates, watch_list
 from studio_app.runtime.worker_process import WorkerProcess
+from .goose_inputs import GooseInputs
 
 UNKNOWN_FIELDS = ("gocb_ref", "app_id", "mac", "src_mac", "vlan_id", "dataset", "go_id", "conf_rev", "st_num", "test")
 
@@ -14,6 +15,7 @@ class GooseMonitor:
         self.watches = {}
         self.status = {"state": "off", "message": "", "unknown": []}
         self.lock = threading.Lock()
+        self.inputs = GooseInputs(manager)
 
     def start(self, ieds, network, npcap_installed):
         self.watches = watch_list(ieds)
@@ -33,6 +35,7 @@ class GooseMonitor:
             return
         for watch in self.watches.values():
             watch.update(state="waiting", problem="", frames=0, st_num=None, sq_num=None)
+        self.inputs.prepare(ieds, self.watches)
         self.process = WorkerProcess(self.manager.executable, self._event)
         subscriptions = [{key: watch[key] for key in ("key", "gocb_ref", "app_id", "mac", "go_id",
                                                        "dataset_ref", "conf_rev")} for watch in self.watches.values()]
@@ -58,6 +61,7 @@ class GooseMonitor:
             payload = {key: value for key, value in event.items() if key not in {"event", "values"}}
             coordinator.emit("goose_status", **payload)
             self._route(watch, event)
+            self.inputs.apply(watch, event)
         elif kind == "goose_stats":
             with self.lock:
                 for item in event.get("watches", []):

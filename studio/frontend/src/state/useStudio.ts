@@ -5,6 +5,7 @@ import type { ImportPreview } from '../features/ieds/ImportSelection';
 import { createHistory, recordDiagram, sameEngineering, undoDiagram, redoDiagram, type DiagramHistory } from './diagramHistory';
 import { EquipmentValueStore } from '../equipment/liveValues';
 import { EnergizationStore, type Energization } from '../equipment/energization';
+import { SignalLayerStore } from '../equipment/signalLayerStore';
 
 export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
@@ -17,6 +18,7 @@ export function useStudio() {
   const [history, setHistory] = useState<DiagramHistory | null>(null);
   const equipmentValues = useMemo(() => new EquipmentValueStore(), []);
   const energization = useMemo(() => new EnergizationStore(), []);
+  const signalLayers = useMemo(() => new SignalLayerStore(), []);
   const historyRef = useRef<DiagramHistory | null>(null);
   const historyIdentity = useRef('');
   const tabId = useRef(crypto.randomUUID());
@@ -77,7 +79,9 @@ export function useStudio() {
       };
       stream.onmessage = message => {
         const event = JSON.parse(message.data) as StudioEvent;
-        setEvents(items => [...items.slice(-499), event]);
+        // Per-second MMS client summaries feed the SLD layer only, not Activity (spec signal-layers).
+        if (event.kind !== 'mms_access') setEvents(items => [...items.slice(-499), event]);
+        signalLayers.handle(event, performance.now());
         if (event.kind === 'signal' || event.kind === 'control_applied') {
           const ref = event.status_ref || event.ref;
           setValues(items => ({ ...items, [`${event.ied_id}:${ref}`]: event.value,
@@ -106,7 +110,7 @@ export function useStudio() {
         }
         if (event.kind === 'runtime' || event.kind === 'resync' || event.kind === 'worker_failed' || event.kind === 'live_status') {
           if (event.kind === 'runtime' && event.state === 'stopped') {
-            setValues({}); equipmentValues.clear(); energization.clear();
+            setValues({}); equipmentValues.clear(); energization.clear(); signalLayers.stopped();
           }
           refresh().catch(reason => setError(String(reason.message)));
           if (event.kind === 'resync') {
@@ -116,7 +120,7 @@ export function useStudio() {
       };
     }).catch(reason => setError(reason.message));
     return () => { disposed = true; stream?.close(); if (timer.current) clearTimeout(timer.current); };
-  }, [equipmentValues, energization, hydrateEquipment, refresh]);
+  }, [equipmentValues, energization, signalLayers, hydrateEquipment, refresh]);
 
   const perform = useCallback(async (task: () => Promise<unknown>) => {
     setBusy(true); setError('');
@@ -174,7 +178,7 @@ export function useStudio() {
     await api('/scl/import', 'POST', form);
     setImportPreview(null); setValues({});
   });
-  return { project, error, setError, busy, events, values, equipmentValues, energization, saveState, updateDiagram,
+  return { project, error, setError, busy, events, values, equipmentValues, energization, signalLayers, saveState, updateDiagram,
     canUndo: !!history?.past.length, canRedo: !!history?.future.length,
     undo, redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },

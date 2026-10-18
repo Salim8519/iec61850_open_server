@@ -17,6 +17,7 @@ from .energization_states import EnergizationStates
 from .equipment_states import EquipmentStates
 from .equipment_control import EquipmentControl
 from .native_control_feedback import NativeControlFeedback
+from .mms_access import MmsAccess
 from .cadence import Cadence
 from .pulses import Pulses
 from .control_compatibility import profiles as compatibility_profiles
@@ -49,6 +50,7 @@ class Coordinator:
         self.equipment_states.after_publish = self.energization.publish
         self.equipment_control = EquipmentControl(self)
         self.native_control_feedback = NativeControlFeedback(self)
+        self.mms_access = MmsAccess(self)
         self.live = LiveManager(self, Path(executable).with_name("studio_live.exe"))
         self.shutdown_event = threading.Event()
         self.thread = threading.Thread(target=self._tick, daemon=True)
@@ -62,7 +64,11 @@ class Coordinator:
 
     def on_worker_event(self, ied_id, event):
         kind = event.get("event", "native_event")
+        if kind == "mms_access":  # Per-second client summary: live view only (ADR-0066).
+            self.mms_access.update(ied_id, event)
+            return
         if kind == "control_applied":
+            event["external"] = self.mms_access.control(ied_id, event)
             self.pulses.cancel(ied_id, event.get("status_ref"), "New MMS control feedback")
             with self.lock:
                 signal = self.index.get((ied_id, event.get("status_ref")))
@@ -107,6 +113,7 @@ class Coordinator:
                             for item in project["sources"] if item["ied_id"] in running}
             self.elapsed = 0
             self.sample_writer.reset(simulated)
+            self.mms_access.reset()
             self.equipment_states.reset(self.projects.project["diagram"])
             self.energization.reset(self.projects.project["diagram"])
             self.native_control_feedback.reset(self.projects.project["diagram"])

@@ -26,6 +26,9 @@ be easy for beginners and older users, and still be pro level.
   The words are in the tooltip and screen-reader text; a paused Run is amber. Tool cards name
   what runs.
 
+- The SLD toolbar has two remembered view switches, *GOOSE messages* and *Who is reading*
+  ([signal layers](signal-layers.md)); they add no place and change no project data.
+
 ## Rules
 
 | ID | Rule | Enforced by |

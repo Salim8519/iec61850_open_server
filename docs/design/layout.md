@@ -59,3 +59,8 @@ resemble Open; reduced motion disables interpolation and holds a static ring. Tr
 has no terminals and is pressed by clicking it. Relay panels show one row per signal
 with a value chip (filled 1, hollow 0, dashed —). State fills (ADR-0026) colour only
 the moving part; Intermediate is dashed amber and Invalid dashed red.
+
+Signal layers (ADR-0065): two toolbar switches with On/Off words. Small grey IED tags (11.5 px,
+1 px #A9B1BD border, 7 px radius) sit beside bound equipment and scale up when zoomed out;
+outside-project tags are dashed, problems add a dashed amber border with words. A pulse is one
+5 px accent dot (hollow and dashed when expected) on a faint 1.5 px curve that fades in 2 s.
