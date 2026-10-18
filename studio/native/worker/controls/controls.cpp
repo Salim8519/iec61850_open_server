@@ -26,10 +26,17 @@ bool compatibility_applies(ControlBinding* binding, ControlAction action) {
         && client_origin(action) == "CONCEN";
 }
 
+std::string peer_of(ControlAction action) {
+    auto client = ControlAction_getClientConnection(action);
+    auto peer = client ? ClientConnection_getPeerAddress(client) : nullptr;
+    return peer ? peer : "";
+}
+
 void apply_value(ControlBinding* binding, bool raw_target, bool target,
-        const char* trigger) {
+        const char* trigger, const std::string& peer) {
+    if (!peer.empty()) binding->server->access.write(peer, binding->reference);
     Json requested = {{"event", "control_requested"}, {"ref", binding->reference},
-        {"value", raw_target}, {"trigger", trigger}};
+        {"value", raw_target}, {"trigger", trigger}, {"peer", peer}};
     if (raw_target != target) {
         requested["adapted_value"] = target;
         requested["compatibility"] = binding->compatibility;
@@ -66,7 +73,7 @@ void apply_value(ControlBinding* binding, bool raw_target, bool target,
         {"cdc", binding->cdc}, {"action", binding->cdc == "DPC" ?
             (target ? "close" : "open") : (target ? "set_true" : "set_false")},
         {"ctl_value", target}, {"raw_ctl_value", raw_target}, {"status_ref", binding->status},
-        {"value", result}, {"changed", changed}, {"timestamp", now}, {"trigger", trigger}};
+        {"value", result}, {"changed", changed}, {"timestamp", now}, {"trigger", trigger}, {"peer", peer}};
     if (raw_target != target) applied["compatibility"] = binding->compatibility;
     emit_frame(applied);
 }
@@ -77,6 +84,7 @@ void selection(ControlAction, void* parameter, bool selected,
     bool apply = false;
     bool raw_target = false;
     bool auto_applied = false;
+    std::string peer;
     {
         std::lock_guard<std::mutex> guard(binding->compatibility_lock);
         if (selected && reason == SELECT_STATE_REASON_SELECTED
@@ -84,12 +92,14 @@ void selection(ControlAction, void* parameter, bool selected,
             apply = true;
             raw_target = binding->pending_raw_target;
             binding->pending_applied = true;
+            auto client_peer = binding->pending_client ? ClientConnection_getPeerAddress(binding->pending_client) : nullptr;
+            peer = client_peer ? client_peer : "";
         }
         auto_applied = binding->pending_applied;
     }
     if (apply) {
-        binding->server->defer([binding, raw_target] {
-            apply_value(binding, raw_target, !raw_target, "SBOw");
+        binding->server->defer([binding, raw_target, peer] {
+            apply_value(binding, raw_target, !raw_target, "SBOw", peer);
             emit_frame({{"event", "control_compatibility_applied"},
                 {"ref", binding->reference}, {"profile", binding->compatibility},
                 {"client_origin", "CONCEN"}, {"trigger", "SBOw"},
@@ -153,7 +163,7 @@ ControlHandlerResult operate(ControlAction action, void* parameter, MmsValue* va
             {"client_origin", "CONCEN"}, {"raw_ctl_value", raw_target}});
         return CONTROL_RESULT_OK;
     }
-    apply_value(binding, raw_target, adapted ? !raw_target : raw_target, "Oper");
+    apply_value(binding, raw_target, adapted ? !raw_target : raw_target, "Oper", peer_of(action));
     return CONTROL_RESULT_OK;
 }
 }

@@ -9,8 +9,9 @@ from pathlib import Path
 import threading
 
 TOUR_VERSION = 1
-DEFAULTS = {"tour_seen_version": 0}
-TYPES = {"tour_seen_version": int}
+# The two SLD signal layers (spec signal-layers) are remembered as 0 (off) or 1 (on).
+DEFAULTS = {"tour_seen_version": 0, "sld_goose_layer": 0, "sld_readers_layer": 0}
+TYPES = {"tour_seen_version": int, "sld_goose_layer": int, "sld_readers_layer": int}
 
 
 class PreferenceStore:
@@ -38,7 +39,7 @@ class PreferenceStore:
         for key, value in changes.items():
             if not isinstance(value, TYPES[key]) or isinstance(value, bool):
                 raise ValueError(f"Preference {key} must be a whole number")
-            if not 0 <= value <= 1000:
+            if not 0 <= value <= (1 if key.startswith("sld_") else 1000):
                 raise ValueError(f"Preference {key} is out of range")
         with self._lock:
             current = {key: value for key, value in self.get().items() if key in TYPES}

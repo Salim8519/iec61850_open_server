@@ -1,4 +1,5 @@
 """Translate GSEControl blocks and their SCD addresses into native GoCB configuration."""
+from .goose_vendor import ge_function
 
 
 def gocb_reference(domain, name):
@@ -19,6 +20,10 @@ def goose_controls(ln0, domain, ld_inst, gse, datasets, ied_name, warnings):
         where = f"GOOSE block {ied_name}/{ld_inst}/{name}"
         if element.get("type", "GOOSE") != "GOOSE":
             warnings.append(f"{where} is {element.get('type')}; only GOOSE is published")
+            continue
+        if ge_function(element) == "disabled":
+            warnings.append(f"{where} is switched off in the file (vendor Function=Disabled), "
+                            "so it is not sent, like on the real device")
             continue
         dataset = element.get("datSet", "")
         if dataset not in names:

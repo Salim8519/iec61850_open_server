@@ -6,6 +6,7 @@ from .context import projects, runtime
 from studio_app.domain.goose_supervision import watch_list
 from studio_app.domain.sv_supervision import watch_list as sv_watch_list
 from studio_app.networking.npcap import npcap_status
+from studio_app.projects.goose_links import link_map
 
 blueprint = Blueprint("live", __name__)
 
@@ -63,6 +64,18 @@ def goose():
         watch.update(state="stopped", problem="", frames=0)
     return jsonify(running=False, npcap=npcap_status(), state="stopped", unknown=[], watches=watches,
                    message="Press Run to start listening for GOOSE")
+
+
+@blueprint.get("/goose/links")
+def goose_links():
+    running = runtime().state != "stopped"
+    watches = runtime().live.goose.snapshot()["watches"] if running else []
+    return jsonify(link_map(projects(), watches, running))
+
+
+@blueprint.get("/mms/access")
+def mms_access():
+    return jsonify(running=runtime().state != "stopped", ieds=runtime().mms_access.snapshot())
 
 
 @blueprint.get("/sv")
