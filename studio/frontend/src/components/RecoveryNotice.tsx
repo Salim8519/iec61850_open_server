@@ -1,16 +1,11 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
 import type { Project } from '../api/types';
+import { CompactNotice } from './CompactNotice';
 
+/** Startup recovery in one line; an unreadable autosave is a problem and keeps its diagnostic and backup path. */
 export function RecoveryNotice({ recovery }: { recovery: Project['startup_recovery'] }) {
-  const [dismissed, setDismissed] = useState(false);
-  if (!recovery || dismissed) return null;
-  return <div className={recovery.status === 'unreadable' ? 'error-banner' : 'notice'}
-    role={recovery.status === 'unreadable' ? 'alert' : 'status'}>
-    <div><span>{recovery.message}</span>
-      {recovery.backup && <details><summary>Recovery file and diagnostic</summary>
-        <p className="small">{recovery.details}</p><code>{recovery.backup}</code>
-      </details>}</div>
-    <button className="ghost" aria-label="Dismiss recovery notice" onClick={() => setDismissed(true)}><X size={16} /></button>
-  </div>;
+  if (!recovery) return null;
+  return <CompactNotice message={recovery.message} problem={recovery.status === 'unreadable'}
+    detailsLabel="Recovery file and diagnostic" dismissLabel="Dismiss recovery notice">
+    {recovery.backup ? <><p className="small" style={{ margin: 0 }}>{recovery.details}</p><code>{recovery.backup}</code></> : undefined}
+  </CompactNotice>;
 }

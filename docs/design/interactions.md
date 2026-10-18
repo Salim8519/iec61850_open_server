@@ -42,6 +42,11 @@
   readable when zoomed out (ADR-0045). A confirmed CB/DS/ES change pulses the card
   twice (a static ring with reduced motion); the first value after load never pulses.
 - Errors identify an object and link to its editor. Do not rely on toast-only errors.
+- Every list has the one filter bar (ADR-0064): filtering only hides rows on the page (Data
+  points filters in the backend over all points); the count says "N of M" and Clear resets.
+  Chips and dropdowns are remembered per list by the backend; the typed search and Pause are not.
+- Tool settings, status, errors and the primary button stay in the tool's left column; the
+  list beside it fills the window. Migration and recovery notices are one dismissible line.
 - Disable structural edits while running and explain why; allow runtime values.
 - Manual override visibly suspends an automatic source until released.
 - Stop ends the run. Pause Automation leaves MMS and manual control active.

@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { explorerApi, type Attribute, type NodeView, type ReadValue } from '../../../api/tools';
 import { EXPLORER_COPY } from '../../../copy/tools';
 import { Disclosure } from '../../../ui/Disclosure';
-import { Hint } from '../../../ui/Hint';
+import { hint } from '../../../copy/hints';
+import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
 import { CommandPanel } from './CommandPanel';
 import { ValueText } from './ValueText';
@@ -30,13 +31,13 @@ export function NodeDetail({ reference, host, watched, addWatch, fail }: {
     if (next.has(name)) next.delete(name); else { next.add(name); read(name, attributes); }
     setOpen(next);
   };
-  if (!node) return <div className="card explorer-detail"><div className="guide-empty">
+  if (!node) return <div className="card explorer-detail fill-grow"><div className="guide-empty">
     <Loader2 size={22} className="spin" /><p>Reading {reference}…</p></div></div>;
-  return <div className="card explorer-detail">
-    <div className="card-heading"><h3>{node.ref}</h3>
-      <span className="small muted">{node.objects.length} data objects · {node.leaf_count} values</span></div>
-    <div className="guide-section"><Hint id="tools.explorer.objects" compact /></div>
-    <div className="object-list">{node.objects.map(object => {
+  return <div className="card explorer-detail fill-grow fill-panel">
+    <div className="panel-head"><h3>{node.ref}</h3>
+      <span className="small muted">{node.objects.length} data objects · {node.leaf_count} values</span>
+      <HelpTip text={hint('tools.explorer.objects')} label="How do I read values?" /></div>
+    <div className="panel-body fill-scroll explorer-detail-body"><div className="object-list">{node.objects.map(object => {
       const isOpen = open.has(object.name);
       return <div key={object.name} className="object">
         <div className="object-row">
@@ -75,5 +76,5 @@ export function NodeDetail({ reference, host, watched, addWatch, fail }: {
       <ul className="small mono">{node.reports.map(report => <li key={report.ref}>{report.name}
         <span className="muted"> · {report.buffered ? 'buffered' : 'unbuffered'}</span></li>)}</ul>
     </Disclosure>}
-  </div>;
+  </div></div>;
 }

@@ -8,6 +8,7 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/workspace.css';
 import './styles/canvas-interaction.css';
+import './styles/fill.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode><LicenseBoundary><App /></LicenseBoundary></React.StrictMode>,

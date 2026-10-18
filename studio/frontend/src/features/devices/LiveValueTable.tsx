@@ -1,34 +1,41 @@
-import { RefreshCw, Search } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import type { Signal } from '../../api/types';
-import { Hint } from '../../ui/Hint';
+import { hint } from '../../copy/hints';
+import { UI_STATUS } from '../../copy/status';
+import { useListFilter } from '../../state/useListFilter';
+import { FilterBar } from '../../ui/FilterBar';
+import { HelpTip } from '../../ui/HelpTip';
 import { InfoTip } from '../../ui/InfoTip';
 import { StatusPill } from '../../ui/StatusPill';
-import { UI_STATUS } from '../../copy/status';
+import { LIVE_FILTER, signalQuery } from './deviceFilters';
 
 type Read = { values: Record<string, { value: unknown; live_state?: string }>; errors: Record<string, string> };
 
+/** The Data points tab of a real IED: the first 50 matching references, read on request. */
 export function LiveValueTable({ iedId, live, values }: { iedId: string; live: boolean; values: Record<string, unknown> }) {
-  const [query, setQuery] = useState('');
+  const filter = useListFilter('live-points', LIVE_FILTER);
   const [signals, setSignals] = useState<Signal[]>([]);
+  const [total, setTotal] = useState(0);
   const [read, setRead] = useState<Read | null>(null);
   const [error, setError] = useState('');
+  const query = signalQuery(filter.values, 0);
   useEffect(() => {
-    const timer = setTimeout(() => api<{ items: Signal[] }>(`/ieds/${iedId}/signals?q=${encodeURIComponent(query)}&offset=0`)
-      .then(result => setSignals(result.items.slice(0, 50))).catch(reason => setError(reason.message)), 150);
+    const timer = setTimeout(() => api<{ items: Signal[]; total: number }>(`/ieds/${iedId}/signals?${query}`)
+      .then(result => { setSignals(result.items.slice(0, 50)); setTotal(result.total); })
+      .catch(reason => setError(reason.message)), 150);
     return () => clearTimeout(timer);
   }, [iedId, query]);
   useEffect(() => setRead(null), [iedId, query]);
   const readNow = () => api<Read>(`/live/${iedId}/read`, 'POST', { refs: signals.map(item => item.ref) })
     .then(result => { setRead(result); setError(''); }).catch(reason => setError(reason.message));
-  return <div>
-    <div className="card-heading"><h2>Live values</h2><div className="row">
-      <div className="search-field"><Search size={14} /><input placeholder="Search references" value={query}
-        onChange={event => setQuery(event.target.value)} /></div>
-      <button disabled={!live || !signals.length} onClick={readNow}><RefreshCw size={14} />Read these now</button></div></div>
-    <div className="guide-section"><Hint id={live ? 'live.values' : 'live.not_running'} />
-      {error && <p role="alert" style={{ color: 'var(--error)', margin: 0 }}>{error}</p>}</div>
+  return <>
+    <FilterBar label="Filter live values" spec={LIVE_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
+      shown={Math.min(total, 50)} total={total} note={total > 50 ? '(first 50)' : ''} extra={<>
+        <HelpTip text={hint(live ? 'live.values' : 'live.not_running')} label="How are live values read?" />
+        <button disabled={!live || !signals.length} onClick={readNow}><RefreshCw size={14} />Read these now</button></>} />
+    {error && <p role="alert" className="panel-note side-error">{error}</p>}
     <div className="table-scroll"><table><thead><tr><th>Reference</th><th>FC</th><th>Value</th><th><InfoTip term="quality" label="Quality" /></th></tr></thead>
       <tbody>{signals.map(signal => {
         const value = read?.values[signal.ref]?.value ?? values[`${iedId}:${signal.ref}`];
@@ -40,6 +47,6 @@ export function LiveValueTable({ iedId, live, values }: { iedId: string; live: b
             : value === undefined ? <span className="muted">Not read yet</span> : <code>{String(value)}</code>}
             {stale && <StatusPill status={UI_STATUS.stale} />}</td>
           <td className="muted">{quality === undefined ? '—' : Number(quality) === 0 ? 'Good' : `Flags ${quality}`}</td></tr>;
-      })}</tbody></table></div>
-  </div>;
+      })}</tbody></table>{!signals.length && <div className="empty">No data points match your search.</div>}</div>
+  </>;
 }

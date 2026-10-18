@@ -34,6 +34,9 @@ the values that matter, and operate a control after one small confirmation.
   - Each command is sent only after a confirmation that names the object and the device.
   - `studio_control` operates with the device's own control model and reports the device's
     answer and AddCause. Explorer then reads `stVal` again and shows it.
+- **Layout (ADR-0064).** A toolbar row (address, port, Connect, status, ?); the model tree in the
+  left column; the node detail with the watch list pinned below it, each scrolling on its own.
+  The tree filters by logical-node class and the watch list by change and quality.
 - **Read paths stay read-only.** `studio_live` has no write or control operation (LIVE-01).
   Commands use the separate `studio_control` worker.
 

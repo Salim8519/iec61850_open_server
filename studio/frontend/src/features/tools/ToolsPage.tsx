@@ -1,10 +1,11 @@
 import { ArrowLeft, Radar, Radio, Router, Telescope } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { Activity } from '../../api/activity';
 import type { Project } from '../../api/types';
 import { TOOLS, TOOLS_COPY, type ToolId } from '../../copy/tools';
 import { ExplorerTool } from './explorer/ExplorerTool';
 import { FindTool } from './find/FindTool';
+import { knownAddresses } from './find/findFilters';
 import { ScadaTool } from './gateway/ScadaTool';
 import { TrafficTool } from './TrafficTool';
 import './tools.css';
@@ -21,14 +22,17 @@ export function ToolsPage({ project, locked, perform, tool, openTool, running, a
   if (tool) {
     const card = TOOLS.find(entry => entry.id === tool)!;
     const Icon = ICONS[tool];
-    return <div className={`content${tool === 'gateway' ? ' tool-fill' : ''}`}>
-      <div className="row tool-header">
-        <button className="ghost" onClick={() => openTool(null)}><ArrowLeft size={16} />{TOOLS_COPY.back}</button>
-        <h2><Icon size={20} aria-hidden /> {card.name}</h2>
-      </div>
+    // One header row per tool; the SCADA tool adds its "Act as" switch to the same row (ADR-0064).
+    const header = (extra?: ReactNode) => <div className="row tool-header">
+      <button className="ghost" onClick={() => openTool(null)}><ArrowLeft size={16} />{TOOLS_COPY.back}</button>
+      <h2><Icon size={20} aria-hidden /> {card.name}</h2>{extra}
+    </div>;
+    return <div className={`content${tool === 'traffic' ? '' : ' fill-page'}`}>
+      {tool !== 'gateway' && header()}
       {tool === 'explorer' && <ExplorerTool target={target} />}
-      {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }} />}
-      {tool === 'gateway' && <ScadaTool runState={project.runtime} runIeds={runIeds} activity={activity} />}
+      {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }}
+        known={knownAddresses(project)} />}
+      {tool === 'gateway' && <ScadaTool header={header} runState={project.runtime} runIeds={runIeds} activity={activity} />}
       {tool === 'traffic' && <TrafficTool project={project} locked={locked} perform={perform} />}
     </div>;
   }

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../../api/client';
 import type { ApplyResult } from '../../../api/network';
 import { FIREWALL_COPY as COPY } from '../../../copy/gateway';
+import { HelpTip } from '../../../ui/HelpTip';
 
 type FirewallItem = { kind: string; action: 'add' | 'keep'; description: string; ports?: number[] };
 type FirewallPreview = { items: FirewallItem[]; fingerprint: string; open: boolean; blocked: boolean };
@@ -32,17 +33,15 @@ export function GatewayFirewall({ port }: { port: number }) {
   if (preview.open) return <p className="small row" style={{ margin: 0 }}>
     <ShieldCheck size={16} aria-hidden="true" /><span>✓ {COPY.open(port)}{result ? ` ${result.message}` : ''}</span></p>;
   return <div className="gateway-firewall" role="group" aria-label={COPY.title}>
-    <p className="small gateway-warning row" style={{ margin: 0 }}><ShieldAlert size={16} aria-hidden="true" />
-      <strong>⚠ {COPY.closed}</strong></p>
-    {preview.blocked && <p className="small muted" style={{ margin: 0 }}>{COPY.blocked}</p>}
-    <p className="small muted" style={{ margin: 0 }}>{COPY.why}</p>
-    <ul className="small" style={{ margin: 0 }}>
+    <p className="small gateway-warning label-row" style={{ margin: 0 }}><ShieldAlert size={16} aria-hidden="true" />
+      <strong>⚠ {COPY.closed}</strong><HelpTip text={`${preview.blocked ? `${COPY.blocked} ` : ''}${COPY.why}`} label="Why?" /></p>
+    <details className="side-details small"><summary>{COPY.changes}</summary><ul>
       {preview.items.filter(item => item.action === 'add').map(item => <li key={item.description}>{item.description}</li>)}
-    </ul>
+    </ul></details>
     {result && !result.applied && <ul className="small gateway-warning">
       {result.results.filter(entry => !entry.ok).map(entry => <li key={entry.description}>{entry.description}: {entry.message}</li>)}</ul>}
     {!confirming ? <button onClick={() => setConfirming(true)}>{COPY.review}</button>
-      : <div className="row"><span className="small">{COPY.admin}</span>
+      : <div className="gateway-firewall-confirm"><span className="small">{COPY.admin}</span>
         <button className="primary" disabled={busy} onClick={apply}>{COPY.apply}</button>
         <button className="ghost" disabled={busy} onClick={() => setConfirming(false)}>{COPY.cancel}</button></div>}
   </div>;

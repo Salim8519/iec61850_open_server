@@ -33,8 +33,10 @@ ScadaBench is the controlled station (104 slave), DNP3 outstation or Modbus serv
   - A successful start is remembered (`auto_start`), and a user Stop clears it.
   - After the project is restored, a remembered gateway starts listening again (never the IEDs);
     a failure shows in its status.
-  - While running, a one-line status bar replaces the settings, and the Points, Traffic and
-    Commands panel fills the window with its own scroll.
+  - Running or stopped, the settings stay in the left column with the status, inline errors and
+    Start/Stop at its bottom, and the Points, Traffic and Commands panel fills the rest of the
+    window with its own scroll (ADR-0064, [tool layout](tool-layout.md); the running-only status
+    bar of ADR-0059 is replaced). Each tab has the shared filter bar.
 - **Smart point list.** The proposal keeps:
   - positions (double);
   - switchgear and supervision statuses and protection trips (single);

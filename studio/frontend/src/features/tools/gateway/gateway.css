@@ -1,9 +1,6 @@
 .gateway-top, .gateway-toolbar { align-items: center; gap: 10px; flex-wrap: wrap; }
 .gateway-spacer { flex: 1; }
-.gateway-fields label { display: grid; gap: 6px; font-weight: 600; }
-.gateway-fields input { width: 100%; }
 .gateway-check { gap: 8px; font-weight: 600; }
-.gateway-live { margin: 0; padding: 10px 14px; border-radius: var(--radius-small); background: var(--success-soft); }
 .gateway-warning { color: var(--warning); margin: 0; }
 .gateway-problems { margin: 0; padding: 10px 14px 10px 30px; border-radius: var(--radius-small); background: var(--warning-soft);
   color: #92400e; font-size: 14px; display: grid; gap: 4px; }
@@ -11,10 +8,10 @@
 .gateway-points select { min-width: 160px; }
 .type-cell { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
 .gateway-number { width: 84px; }
+.gateway-points td.value-cell { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gateway-points td:nth-child(6) input { width: 150px; }
-.gateway-toolbar .search-field { width: 240px; }
-.gateway-traffic { height: min(520px, calc(100vh - 360px)); overflow: auto; padding: 8px 20px 16px;
-  font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; background: var(--surface-2); border-top: 1px solid var(--border); }
+.gateway-traffic { overflow: auto; padding: 8px 20px 16px; min-height: 200px;
+  font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; background: var(--surface-2); }
 .traffic-line { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed var(--border); }
 .traffic-line svg { flex-shrink: 0; position: relative; top: 2px; }
 .traffic-time { color: var(--text-3); min-width: 86px; }
@@ -23,21 +20,16 @@
 .dir-rx svg { color: var(--accent); }
 .dir-tx svg { color: var(--success); }
 .dir-info .traffic-text { color: var(--text-2); font-style: italic; }
-/* While running, a one-line bar replaces the settings and the panel fills the window (no page scrolling). */
-.gateway-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 20px; }
+/* Settings column parts (ADR-0064): compact notices, details behind a summary. */
 .gateway-notices { display: grid; gap: 8px; }
-.gateway-run-note { gap: 12px; padding: 8px 14px; border-radius: var(--radius-small); background: var(--warning-soft);
-  border: 1px dashed #f0b35a; justify-content: space-between; flex-wrap: wrap; }
-.gateway-flow, .gateway-fill { display: flex; flex-direction: column; gap: 20px; }
-.gateway-fill { gap: 12px; }
-/* The open tool fills the page height (banners included); while running the panel takes what is left. */
-.content.tool-fill { min-height: 100%; height: 100%; padding-top: 16px; padding-bottom: 16px; gap: 12px; }
-.content.tool-fill > .gateway-fill { flex: 1 1 0; min-height: 520px; }
-.gateway-fill > * { flex-shrink: 0; }
-.gateway-panel { display: flex; flex-direction: column; min-height: 420px; }
-.gateway-fill > .gateway-panel { flex: 1 1 0; min-height: 300px; }
-.gateway-panel > * { flex-shrink: 0; }
-.gateway-panel > .table-scroll, .gateway-panel > .gateway-traffic { flex: 1 1 auto; min-height: 0; max-height: none; height: auto; }
+.gateway-run-note { display: grid; gap: 8px; padding: 8px 10px; border-radius: var(--radius-small); background: var(--warning-soft);
+  border: 1px dashed #f0b35a; color: #92400e; }
+.gateway-run-note button { min-height: 34px; }
+.side-details summary { font-weight: 600; }
+.side-details ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 2px; }
+.gateway-firewall { display: grid; gap: 8px; }
+.gateway-firewall-confirm { display: grid; gap: 6px; }
+.panel-messages { padding: 10px 16px; gap: 8px; border-bottom: 1px solid var(--border); max-height: 40%; overflow: auto; }
 .gateway-panel thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
 .gateway-send { gap: 6px; flex-wrap: nowrap; }
 .gateway-send button { min-height: 32px; padding: 0 10px; }
@@ -48,18 +40,13 @@
 .gateway-confirm .row { gap: 8px; }
 .gateway-sent { margin: 0; padding: 6px 12px; border-radius: var(--radius-small); background: var(--warning-soft); }
 .gateway-sent.ok { background: var(--success-soft); color: var(--success); }
-/* Role switch above the gateway or master view; the chosen view keeps the full-height panel. */
-.scada-tool { display: flex; flex-direction: column; gap: 12px; }
-.content.tool-fill > .scada-tool { flex: 1 1 0; min-height: 560px; }
-.scada-tool > .gateway-fill { flex: 1 1 0; min-height: 520px; }
-.scada-tool > * { flex-shrink: 0; }
-.role-switch { display: grid; gap: 8px; padding: 10px 16px; }
-.role-row { gap: 12px; align-items: center; flex-wrap: wrap; }
-.side-diagram { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.side-step { gap: 8px; align-items: center; }
-.side-box { display: grid; gap: 2px; padding: 4px 10px; border: 1px dashed var(--border); border-radius: var(--radius-small);
-  background: var(--surface-2); position: relative; }
-.side-box.here { border: 2px solid var(--accent); background: var(--accent-soft); }
-.side-here { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
-.gateway-firewall { display: flex; flex-direction: column; gap: 8px; }
-.gateway-firewall ul { padding-left: 20px; }
+/* The SCADA views keep a slightly narrower settings column so the tables get the width. */
+.scada-split { --side-width: 240px; }
+/* "Act as" sits in the tool's header row with a one-line "which side am I?" caption. */
+.role-switch { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1; min-width: 0; }
+.role-switch .segmented-control button { padding: 0 10px; }
+.side-caption { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; color: var(--text-2); }
+.side-caption-step { display: inline-flex; align-items: center; gap: 6px; }
+.side-here-box { padding: 2px 8px; border: 2px solid var(--accent); border-radius: var(--radius-small);
+  background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 1599px) { .side-caption .small { display: none; } }

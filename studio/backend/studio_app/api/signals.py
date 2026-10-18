@@ -17,19 +17,29 @@ def list_signals(ied_id):
     report = request.args.get("report")
     members = report_members(ied, report) if report else None
     exact = request.args.get("ref")
+    # Read-only display filters of the Data points tab (change 0093); they never change a value.
+    device = request.args.get("ld")
+    bad_only = request.args.get("bad_quality") == "true"
+    if request.args.get("in_dataset") == "true":
+        in_sets = {ref for dataset in ied.get("datasets", []) for ref in dataset["signal_refs"]}
+        members = in_sets if members is None else members & in_sets
+    index = {signal["ref"]: signal for signal in ied["signals"]}
+    bad = lambda signal: index.get(signal.get("quality_ref") or "", {}).get("value", 0) not in (0, None)
     filtered = [signal for signal in ied["signals"]
                 if query in (signal["ref"] + " " + signal["description"]).casefold()
                 and (not fc or signal["fc"] == fc) and (not exact or signal["ref"] == exact)
                 and (not kinds or signal["kind"] in kinds)
                 and (not writable or signal["writable"] and signal["fc"] != "CF")
-                and (members is None or signal["ref"] in members)]
+                and (members is None or signal["ref"] in members)
+                and (not device or signal["ref"].split("/", 1)[0] == device)
+                and (not bad_only or bad(signal))]
     offset = max(0, int(request.args.get("offset", 0)))
     limit = min(250, max(1, int(request.args.get("limit", 100))))
-    index = {signal["ref"]: signal for signal in ied["signals"]}
+    devices = sorted({signal["ref"].split("/", 1)[0] for signal in ied["signals"] if "/" in signal["ref"]})
     items = [{**signal, "quality": index.get(signal.get("quality_ref"), {}).get("value", 0),
               "timestamp": index.get(signal.get("timestamp_ref"), {}).get("value", 0)}
              for signal in filtered[offset:offset + limit]]
-    return jsonify(total=len(filtered), items=items)
+    return jsonify(total=len(filtered), items=items, devices=devices)
 
 
 @blueprint.post("/signals/update")

@@ -1,0 +1,26 @@
+/* The shared filter bar (change 0093). An active chip shows a tick and a solid accent border,
+   so the choice never depends on colour alone. */
+.filter-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 10px 16px;
+  border-bottom: 1px solid var(--border); background: var(--surface); }
+.filter-bar .filter-search { flex: 1 1 150px; width: auto; max-width: 280px; }
+.filter-bar .filter-search input { min-height: 36px; }
+.chip-group { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; border: 1px solid var(--border);
+  border-radius: 10px; background: var(--hover); }
+.chip { min-height: 32px; padding: 0 8px; gap: 5px; border-radius: 8px; font-size: var(--font-size-small);
+  font-weight: 600; color: var(--text-2); border: 1.5px solid transparent; background: transparent; }
+.chip:hover:not(:disabled) { background: var(--surface); border-color: var(--border-strong); }
+.chip.active { color: var(--accent); background: var(--surface); border-color: var(--accent); box-shadow: var(--shadow-small); }
+.chip.toggle { border: 1.5px dashed var(--border-strong); background: var(--surface); }
+.chip.toggle.active { border-style: solid; border-color: var(--accent); }
+.chip-box { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 4px;
+  border: 1.5px solid currentColor; }
+.chip-count { min-width: 20px; padding: 0 5px; border-radius: 999px; background: var(--surface-2);
+  border: 1px solid var(--border); font-size: 12px; color: var(--text-2); text-align: center; }
+.filter-select { width: auto; max-width: 220px; min-height: 36px; font-size: var(--font-size-small); }
+.filter-select.active { border-color: var(--accent); border-width: 2px; }
+.filter-spacer { flex: 1; }
+.filter-count { font-size: var(--font-size-small); color: var(--text-2); white-space: nowrap; font-weight: 600; }
+.filter-clear { min-height: 32px; padding: 0 10px; font-size: var(--font-size-small); }
+/* In a narrow side column the bar stacks: search on its own line. */
+.side-pane .filter-bar { padding: 0 0 10px; border-bottom: 0; background: transparent; }
+.side-pane .filter-bar .filter-search { width: 100%; }

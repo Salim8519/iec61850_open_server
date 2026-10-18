@@ -56,3 +56,27 @@ def test_bulk_confirmation_stale_preview_and_running_guard(lab):
     app.extensions["runtime"].state = "stopped"
     assert client.post("/api/v1/ieds/remove", json=body).status_code == 200
     assert projects.project["ieds"] == []
+
+
+def test_data_point_display_filters_only_narrow_the_list(lab):
+    """Change 0093: logical device, bad quality and in-a-dataset filters are read-only views."""
+    client, _, _, model = lab
+    key = model["id"]
+    url = f"/api/v1/ieds/{key}/signals"
+    everything = client.get(url).json
+    assert everything["devices"] == sorted({item["ref"].split("/")[0] for item in model["signals"]})
+    device = everything["devices"][0]
+    one = client.get(url, query_string={"ld": device}).json
+    assert one["total"] and all(item["ref"].startswith(f"{device}/") for item in one["items"])
+    members = {ref for dataset in model["datasets"] for ref in dataset["signal_refs"]}
+    in_sets = client.get(url, query_string={"in_dataset": "true", "limit": 250}).json
+    assert in_sets["total"] == len([item for item in model["signals"] if item["ref"] in members])
+    assert client.get(url, query_string={"bad_quality": "true"}).json["total"] == 0
+    target = next(item for item in model["signals"] if item.get("quality_ref"))
+    quality = next(item for item in model["signals"] if item["ref"] == target["quality_ref"])
+    before = [dict(item) for item in model["signals"]]
+    quality["value"] = 64
+    bad = client.get(url, query_string={"bad_quality": "true"}).json
+    assert target["ref"] in [item["ref"] for item in bad["items"]]
+    quality["value"] = before[model["signals"].index(quality)]["value"]
+    assert [dict(item) for item in model["signals"]] == before

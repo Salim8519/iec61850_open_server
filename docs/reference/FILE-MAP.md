@@ -36,7 +36,8 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Gateway simulator | `backend/studio_app/gateway/`, `domain/gateway_*.py`, `api/gateway.py`, `native/gateway/`, `cmake/gateway_support.cmake`, `tools/fetch_gateway_deps.py`, `features/tools/gateway/`, `copy/gateway.ts` |
 | SCADA master / converter | `native/master/`, `gateway/master_manager.py`, `modbus_probe.py`, `converter.py`, `domain/master_rules.py`, `master_points.py`, `passthrough.py`, `api/gateway_master.py`, `features/tools/gateway/` (`ScadaTool`, `RoleSwitch`, `master/`, `converter/`), `copy/master.ts`, `converter.ts` |
 | Value writes and generators | `features/test/signalActions.ts`, `ValueControl.tsx`, `SourceEditor.tsx` |
-| Devices | `features/devices/` (list, detail, connection, data points, compare, files) |
+| Devices | `features/devices/` (list, `DeviceListRow` with a hints slot, detail, connection, data points, compare, files, `deviceFilters.ts`) |
+| Fill-window layout and list filters (ADR-0064) | `styles/fill.css`, `ui/FilterBar.tsx`, `ui/filterState.ts`, `ui/HelpTip.tsx`, `ui/TabBar.tsx`, `state/useListFilter.ts`, `components/CompactNotice.tsx`, each list's `*Filters.ts`, `projects/list_filters.py` |
 | Event explanations | `frontend/src/features/event-log/eventDetails.ts` |
 | Engineering history | `tools/history_log.py`, `docs/history/ledger-*.jsonl` |
 | Lab network workflow | `networking/service.py`, `address_plan.py`, `change_plan.py`, `journal.py`, `helper/` |

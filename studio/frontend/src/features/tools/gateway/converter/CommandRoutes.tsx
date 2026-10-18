@@ -2,6 +2,7 @@ import { Plus, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { masterApi, type CommandRoute } from '../../../../api/master';
 import { CONVERTER_COPY, DEVICE_KINDS, UPSTREAM_KINDS } from '../../../../copy/converter';
+import { HelpTip } from '../../../../ui/HelpTip';
 
 /** Upstream command address -> device command; needed where the device cannot be discovered (IEC 104). */
 export function CommandRoutes({ locked, fail }: { locked: boolean; fail: (message: string) => void }) {
@@ -22,14 +23,12 @@ export function CommandRoutes({ locked, fail }: { locked: boolean; fail: (messag
     .catch(error => fail(error.message));
   const number = (value: string) => Number(value.replace(/\D/g, '') || 0);
   return <>
-    <div className="guide-section">
-      <p className="small muted" style={{ margin: 0 }}>{CONVERTER_COPY.routesHint}</p>
-      <div className="row gateway-toolbar">
-        <button onClick={add} disabled={locked}><Plus size={16} />{CONVERTER_COPY.addRoute}</button>
-        <span className="gateway-spacer" />
-        {locked && <span className="small muted">Stop serving to change the routes.</span>}
-        {dirty && <button className="primary" onClick={save}><Save size={16} />{CONVERTER_COPY.saveRoutes}</button>}
-      </div>
+    <div className="panel-toolbar">
+      <button onClick={add} disabled={locked}><Plus size={16} />{CONVERTER_COPY.addRoute}</button>
+      <HelpTip text={CONVERTER_COPY.routesHint} label="What are command routes?" />
+      <span className="gateway-spacer" />
+      {locked && <span className="small muted">Stop serving to change the routes.</span>}
+      {dirty && <button className="primary" onClick={save}><Save size={16} />{CONVERTER_COPY.saveRoutes}</button>}
     </div>
     {routes && routes.length === 0 ? <p className="muted watch-empty">{CONVERTER_COPY.routesEmpty}</p> :
       <div className="table-scroll"><table className="gateway-points"><thead><tr><th>{CONVERTER_COPY.upstream}</th>

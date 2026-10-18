@@ -10,6 +10,7 @@ import { DeviceConnection } from './DeviceConnection';
 import { TestModeCard } from './TestModeCard';
 import type { ModeSummary } from './useModes';
 
+/** The device's address, mode and facts; the facts are one thin line so the page stays short (change 0093). */
 export function DeviceOverview({ ied, project, locked, session, perform, mode }: {
   ied: Ied; project: Project; locked: boolean; session?: LiveSession; mode?: ModeSummary;
   perform: (task: () => Promise<unknown>) => Promise<void>;
@@ -24,6 +25,8 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode }:
     ['Address in the SCD', ied.scl_address?.ip || 'None'],
   ];
   return <div className="card-body">
+    <p className="stats-line" aria-label="Facts about this IED">{facts.map(([label, value]) =>
+      <span key={label}><span className="muted">{label}</span> <strong>{value}</strong></span>)}</p>
     {ied.role === 'simulated' && <div className="mode-banner">
       <div><h3 style={{ margin: 0 }}>Clients connect to</h3>
         <code style={{ fontSize: 18 }}>{endpoint.host}:{endpoint.port}</code>
@@ -35,7 +38,6 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode }:
     {ied.role === 'real' && <DeviceConnection ied={ied} session={session} locked={locked} perform={perform} />}
     {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>This device is switched off. It is ignored when you press Run.</p>}
     <TestModeCard ied={ied} summary={mode} perform={perform} />
-    <div className="facts">{facts.map(([label, value]) => <div className="fact" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
     {ied.role === 'simulated' && publishes > 0 && <label className="row" style={{ fontWeight: 500, color: 'var(--text)' }}>
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}
         onChange={event => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { goose_publish: event.target.checked }))} />

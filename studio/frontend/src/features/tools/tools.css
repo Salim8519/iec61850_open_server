@@ -2,8 +2,8 @@
 .tool-card { gap: 10px; padding: 20px; }
 .tool-card .row { align-items: center; gap: 12px; flex-wrap: nowrap; }
 .tool-icon { margin: 0; width: 40px; height: 40px; flex-shrink: 0; }
-.tool-header { align-items: center; gap: 12px; }
-.tool-header h2 { margin: 0; }
+.tool-header { align-items: center; gap: 8px; flex-wrap: wrap; row-gap: 6px; }
+.tool-header h2 { margin: 0; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .tool-live { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 3px 12px; border-radius: 999px;
   background: var(--success-soft); color: var(--success); font-size: var(--font-size-small); font-weight: 650; }
 .tool-live .live-dot { margin-left: 0; }

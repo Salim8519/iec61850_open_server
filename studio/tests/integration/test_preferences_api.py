@@ -39,3 +39,37 @@ def test_unknown_or_wrongly_typed_preferences_are_refused(tmp_path):
         assert client.put("/api/v1/preferences", json=[1]).status_code == 400
     finally:
         app.extensions["runtime"].close()
+
+
+def test_list_filters_are_remembered_per_list_and_survive_a_restart(tmp_path):
+    """Change 0093: chips and dropdowns of each list are kept by the backend, like the tour state."""
+    app, client = client_for(tmp_path)
+    try:
+        assert client.get("/api/v1/preferences").json["list_filters"] == {}
+        first = {"list_filters": {"scada-points": {"kind": "commands", "bad": True}}}
+        assert client.put("/api/v1/preferences", json=first).status_code == 200
+        second = client.put("/api/v1/preferences", json={"list_filters": {"devices-list": {"role": "real"}}})
+        assert second.json["list_filters"] == {"scada-points": {"kind": "commands", "bad": True},
+                                               "devices-list": {"role": "real"}}
+        assert client.put("/api/v1/preferences", json={"tour_seen_version": 1}).json["list_filters"]["devices-list"]
+    finally:
+        app.extensions["runtime"].close()
+    app, client = client_for(tmp_path)
+    try:
+        saved = client.get("/api/v1/preferences").json
+        assert saved["list_filters"]["scada-points"] == {"kind": "commands", "bad": True}
+        assert saved["tour_seen_version"] == 1
+    finally:
+        app.extensions["runtime"].close()
+
+
+def test_bad_list_filters_are_refused_and_damaged_ones_ignored(tmp_path):
+    app, client = client_for(tmp_path)
+    try:
+        for body in ({"list_filters": []}, {"list_filters": {"Bad Name": {}}},
+                     {"list_filters": {"points": {"kind": 3}}}, {"list_filters": {"points": {"kind": "x" * 500}}}):
+            assert client.put("/api/v1/preferences", json=body).status_code == 400, body
+        (tmp_path / "preferences.json").write_text('{"list_filters": {"ok": {"a": true}, "BAD": 1, "x": {"b": 5}}}')
+        assert client.get("/api/v1/preferences").json["list_filters"] == {"ok": {"a": True}, "x": {}}
+    finally:
+        app.extensions["runtime"].close()
