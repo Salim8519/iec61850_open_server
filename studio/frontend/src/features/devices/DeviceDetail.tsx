@@ -14,10 +14,10 @@ import type { ModeSummary } from './useModes';
 
 type Tab = 'overview' | 'signals' | 'compare' | 'flow' | 'files';
 
-export function DeviceDetail({ ied, project, locked, values, perform, prepare, initialTab, mode }: {
+export function DeviceDetail({ ied, project, locked, values, perform, prepare, initialTab, mode, selectDevice }: {
   ied: Ied; project: Project; locked: boolean; values: Record<string, unknown>;
   perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>; initialTab?: Tab;
-  mode?: ModeSummary;
+  mode?: ModeSummary; selectDevice?: (iedId: string) => void;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab ?? 'overview');
   useEffect(() => { if (initialTab) setTab(initialTab); }, [initialTab, ied.id]);
@@ -48,7 +48,8 @@ export function DeviceDetail({ ied, project, locked, values, perform, prepare, i
     <nav className="tabbar" aria-label="Device sections">{tabs.map(item => <button key={item.id}
       className={tab === item.id ? 'active' : ''} aria-current={tab === item.id ? 'page' : undefined}
       onClick={() => setTab(item.id)}>{item.label}</button>)}</nav>
-    {tab === 'overview' && <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode} />}
+    {tab === 'overview' && <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode}
+      selectDevice={selectDevice} />}
     {tab === 'signals' && (ied.role === 'real'
       ? <LiveValueTable iedId={ied.id} live={session?.state === 'live'} values={values} />
       : <DeviceSignals ied={ied} project={project} values={values} perform={perform} prepare={prepare} />)}

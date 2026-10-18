@@ -17,7 +17,8 @@ def with_live(link_map, watches, running):
             watch = by_ref.get(link["gocb_ref"])
             if not running:
                 live = {"state": "stopped"}
-            elif watch is not None:
+            elif watch is not None and watch.get("state") not in (None, "stopped"):
+                # While running, "stopped" means the listener is off (no lab mode or no Npcap): not watched.
                 live = {key: watch.get(key) for key in LIVE_FIELDS if watch.get(key) is not None}
         links.append({**link, "live": live})
     return {**link_map, "links": links, "running": running, "summary": summary(links)}

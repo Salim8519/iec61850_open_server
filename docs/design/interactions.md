@@ -106,6 +106,12 @@
 - Diagram edits that change no persisted field (for example React Flow size
   measurement on load or selection) are not saved and create no revision.
 
+- Signal layers (ADR-0065): *GOOSE messages* and *Who is reading* are remembered view switches;
+  they never edit the diagram. One dot per real stNum change, at most one per link per second;
+  hollow "(expected)" dots when no listener runs; problems stay on the subscriber tag in words.
+  Clicking a tag or link opens its details in the sheet. GOOSE and MMS traffic must not
+  re-render equipment nodes.
+
 Guided network and real-IED work (ADR-0028, ADR-0029, ADR-0031):
 - Windows changes are listed in plain sentences before Apply; nothing changes until
   Apply, and the administrator prompt is announced first.

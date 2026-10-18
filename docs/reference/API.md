@@ -66,6 +66,8 @@ Press for a Push Button. The server rejects mixed `action` and `value`.
 | `POST /network/gateway-firewall` | `{fingerprint,confirm:true}` | Allow rule + switch off Block rules for the gateway worker; 409 if Windows changed (ADR-0062) |
 | `PUT /ieds/{id}/settings` | `{role?,live?,lab_ip?,goose_publish?,port?}` | Stopped-only; SCL never rewritten |
 | `GET /goose` | - | Configured/observed GOOSE blocks, problems, unknown GOOSE |
+| `GET /goose/links` | - | GOOSE link map (ADR-0065): `ieds`, `blocks` (status, `member_refs`), `links` (status, inputs, `live`), `diagnostics`, `summary` |
+| `GET /mms/access` | - | MMS clients per simulated IED (ADR-0066): address, nodes read, report blocks, commands |
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
 | `GET /live/{id}/comparison` | - | SCD vs device categories, dataset and report diffs |
 | `GET /live/{id}/comparison.csv` | - | Same comparison as CSV |
@@ -74,6 +76,10 @@ Press for a Push Button. The server rejects mixed `action` and `value`.
 New SSE kinds: `goose_publishing`, `goose_control`, `goose_status`, `goose_unknown`,
 `goose_listener_failed`, `live_status`, `live_stale`, `live_read_error`. Signal events
 from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
+ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input_refused`
+(`reason`) and `mms_access` (client list, live view only, never in the run log); worker
+`connection`, `report_control` and control events carry `peer` (`ip:port`) and
+`control_applied` carries `external`. Signal events from GOOSE inputs have source `goose_input`.
 
 ## Scenarios, tests and events
 
@@ -90,8 +96,8 @@ from real devices carry `source` `live_report`, `live_poll` or `live_goose`.
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
 | `POST /license/activate` | `license_key`, `move` | Activate (or move) a lifetime key online |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
-| `GET /preferences` | - | `tour_seen_version`, `tour_version` |
-| `PUT /preferences` | `{tour_seen_version}` | Store UI preferences in the data folder |
+| `GET /preferences` | - | `tour_seen_version`, `tour_version`, `sld_goose_layer`, `sld_readers_layer` |
+| `PUT /preferences` | `{tour_seen_version?, sld_goose_layer?, sld_readers_layer?}` | Store UI preferences in the data folder (layers 0 or 1) |
 | `PUT /license/config` | `server_url` (https) | Change the license server address |
 | `GET /tools/explorer`, `POST /tools/explorer/connect` | `host`, `port` | IED Explorer status (warms the worker); connect, then autonomous key-point watch |
 | `GET /tools/explorer/devices`, `/nodes?device=`, `/node?ref=` | - | Lazy data model, one level per call |

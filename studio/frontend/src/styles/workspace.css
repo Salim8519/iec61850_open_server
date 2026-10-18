@@ -2,7 +2,9 @@
 .diagram { position: absolute; inset: 0; display: flex; }
 .canvas { flex: 1; min-width: 0; position: relative; background: var(--canvas-bg); }
 .canvas-toolbar { position: absolute; z-index: 6; left: 20px; top: 16px; display: flex; gap: 8px; align-items: center;
-  padding: 6px; background: var(--surface); border: var(--line) solid var(--border-strong); border-radius: 12px; box-shadow: var(--shadow); }
+  padding: 6px; background: var(--surface); border: var(--line) solid var(--border-strong); border-radius: 12px; box-shadow: var(--shadow);
+  flex-wrap: wrap; max-width: calc(100% - 40px); }
+.canvas:has(.canvas-lock) .canvas-toolbar { max-width: calc(100% - 280px); }
 .canvas-toolbar .divider { width: 1px; height: 26px; background: var(--border); }
 .canvas-empty { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); text-align: center;
   color: var(--text-2); pointer-events: none; }

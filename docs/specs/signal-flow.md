@@ -60,14 +60,16 @@ It does not write a second ExtRef resolver.
 - Without live data every edge reads "declared in SCD". Once Station health has
   results, the edge also shows the latest live verdict with its timestamp. A declared
   edge is never presented as traffic actually seen.
-- From the diagram, equipment bound to an IED offers "Show signal flow for this IED".
+- From the diagram, equipment bound to an IED offers "Show signal flow for this IED". The SLD
+  [signal layers](signal-layers.md) open the same link details from an IED tag or GOOSE link.
 - Stations with more than 60 IEDs open filtered to one IED, so the view stays readable.
 
 ## Out of scope
 
 - Editing subscriptions or writing `ExtRef` / `ClientLN`.
 - Configuration of the subscriber's internal logic.
-- Explicit MMS client associations not declared in SCL.
+- Explicit MMS client associations not declared in SCL (the live client list is in the
+  [signal layers](signal-layers.md), not in this declared graph).
 - R-GOOSE and R-SV.
 
 ## Rules

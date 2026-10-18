@@ -9,6 +9,8 @@ import { useModes } from './useModes';
 import { DeviceDetail } from './DeviceDetail';
 import { HealthView } from './HealthView';
 import { SignalFlowView } from './SignalFlowView';
+import { GooseHint } from './GooseHint';
+import { useGooseLinks } from './useGooseLinks';
 
 const FLOW = 'station-flow';
 const HEALTH = 'station-health';
@@ -25,6 +27,7 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
   useEffect(() => { if (flowIed) setSelected(flowIed); }, [flowIed]);
   const ied = project.ieds.find(item => item.id === selected);
   const { modes } = useModes(project.runtime !== 'stopped', project.revision);
+  const gooseLinks = useGooseLinks(project.revision, project.runtime !== 'stopped');
   if (!project.ieds.length) return <div className="content"><div className="card"><EmptyState icon={<Cpu size={26} />}
     title="Import your first IED" hintId="devices.empty" action={<div className="row" style={{ justifyContent: 'center' }}>
       <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD file</button>
@@ -37,7 +40,8 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
         <div className="list" role="list">{project.ieds.map(item => <button key={item.id} role="listitem"
           className={`list-row${item.id === selected ? ' active' : ''}`} onClick={() => setSelected(item.id)}>
           <Cpu size={22} style={{ color: 'var(--text-2)', flexShrink: 0 }} />
-          <span className="list-text"><strong>{item.name}</strong><small>{item.signal_count.toLocaleString()} data points</small></span>
+          <span className="list-text"><strong>{item.name}</strong><small>{item.signal_count.toLocaleString()} data points</small>
+            <GooseHint map={gooseLinks} name={item.name} /></span>
           <span className="stack" style={{ gap: 4, alignItems: 'flex-end' }}><StatusPill status={roleStatus(item.role, item.state)} />
             {deviceBadge(modes.ieds[item.id]) && <StatusPill status={modeStatus(deviceBadge(modes.ieds[item.id])!)} />}</span></button>)}</div>
         <button className="ghost" disabled={locked} onClick={() => addTemplate(`Sample${project.ieds.length + 1}`)}>
@@ -53,7 +57,7 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
       {selected === FLOW && <SignalFlowView running={project.runtime !== 'stopped'} />}
       {selected === HEALTH && <HealthView running={project.runtime !== 'stopped'} />}
       {ied && <DeviceDetail ied={ied} project={project} locked={locked} values={values} perform={perform} prepare={prepare}
-        initialTab={ied.id === flowIed ? 'flow' : undefined} mode={modes.ieds[ied.id]} />}
+        initialTab={ied.id === flowIed ? 'flow' : undefined} mode={modes.ieds[ied.id]} selectDevice={setSelected} />}
     </div>
   </div>;
 }

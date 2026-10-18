@@ -113,6 +113,9 @@ def test_live_join_never_marks_a_declared_link_received():
     running = with_live(result, [], True)
     assert all(link["live"] is None for link in running["links"])
     ref = next(link["gocb_ref"] for link in result["links"] if link["block"] == "GoCB01")
+    listener_off = with_live(result, [{"gocb_ref": ref, "state": "stopped"}], True)
+    assert all(link["live"] is None for link in listener_off["links"])
+    ref = next(link["gocb_ref"] for link in result["links"] if link["block"] == "GoCB01")
     seen = with_live(result, [{"gocb_ref": ref, "state": "timeout", "problem": "timeout", "st_num": 4}], True)
     assert seen["summary"]["SUB"]["not_heard"] == 1 and seen["summary"]["SUB"]["not_sent"] == 1
     assert seen["summary"]["PUB"]["sends_to"] == 1

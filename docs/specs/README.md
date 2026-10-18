@@ -33,6 +33,7 @@ changed, dropped or invented by accident.
 | [UI structure](ui-structure.md) | Five places, design tokens, one implementation per job |
 | [SLD import](sld-import.md) | Single-line diagram built from the SCD `Substation` section |
 | [Signal flow](signal-flow.md) | Declared GOOSE and report links between IEDs |
+| [Signal layers](signal-layers.md) | SLD switches for GOOSE messages and MMS readers, GOOSE link map, Devices partners |
 | [Station health](station-health.md) | Live network and real IEDs compared with the SCD |
 | [Sampled Values](sampled-values.md) | Listening to IEC 61850-9-2 streams and checking them against the SCD |
 | [Test mode](test-mode.md) | Mod/Beh/Sim of real and simulated IEDs, simulation traffic |
