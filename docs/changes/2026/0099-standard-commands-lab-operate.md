@@ -49,5 +49,6 @@ limitation, not part of this change.
 ## Limitations
 
 - The VM still runs packaged 0.1.10; it needs a new build to get this fix (no EXE built).
+  Retested on the VM with test build 0.1.12 in [0100](0100-test-build-0.1.12-vm-retest.md).
 - GE Viewer PROCEED outputs are not simulated; latching push buttons reset on IED restart.
 - Captures stay in the working folder (customer model names); they are not committed.

@@ -13,7 +13,9 @@ the [engineering ledger](history/INDEX.md).
 - Operate and gateway commands use `Supervisor.endpoint()` (the address the worker confirmed),
   so they work in lab mode; before, they dialled loopback and timed out after 10 s.
 - Still open: GE Viewer needs the UR "PROCEED" virtual outputs (`Master/GGIO1.IndNNN`) driven
-  by latching push buttons; latches reset on restart. The VM needs a new build to get the fix.
+  by latching push buttons; latches reset on restart.
+- 2026-10-19: test build 0.1.12 installed on the VM (0100): ScadaBench Operate and GE Viewer
+  CLOSE/OPEN on Y755 work in lab mode, wire shows standard `SBOw`+`Oper` and Pos 01/10.
 
 ## 2026-10-18: Two-machine SCADA test and gateway firewall (0089, ADR-0062)
 
