@@ -54,7 +54,8 @@ export function App() {
       openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)} />
     <div className="main">
       <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy}
-        saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save} />
+        saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save}
+        openNetwork={() => setCurrent('settings')} />
       <RecoveryNotice recovery={project?.startup_recovery} />
       <MigrationNotice notice={project?.migration_notice} />
       {studio.error && <div className="error-banner" role="alert"><span>{studio.error}</span>
@@ -71,7 +72,7 @@ export function App() {
           openNetwork={() => setCurrent('settings')} />}
         {project && current === 'devices' && <DevicesPage project={project} locked={locked} values={studio.values}
           perform={studio.perform} prepare={studio.prepare} importFile={openFile} addTemplate={studio.addTemplate}
-          flowIed={flowIed} />}
+          flowIed={flowIed} openNetwork={() => setCurrent('settings')} />}
         {project && current === 'test' && <TestPage project={project} locked={locked} values={studio.values}
           events={studio.events} perform={studio.perform} prepare={studio.prepare} />}
         {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}

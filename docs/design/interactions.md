@@ -116,7 +116,7 @@
   hollow "(expected)" dots when no listener runs; a problem is one small ⚠ on the subscriber tag.
   A sender outside the project is one dot from the canvas edge for ~2 s, then nothing remains.
   Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Needs lab network")
-  with one *Set up lab network* button; clicking a link opens its details. GOOSE and MMS traffic must not
+  with one *Put my IEDs on a network* button; clicking a link opens its details. GOOSE and MMS traffic must not
   re-render equipment nodes.
 - Run one IED (ADR-0067): Devices *Run this IED* / *Connect* changes only that IED; the top bar
   says "Running 1 of 2 IEDs". Any running IED locks the drawing and roles like a full Run.
@@ -127,6 +127,10 @@
 Guided network and real-IED work (ADR-0028, ADR-0029, ADR-0031):
 - Windows changes are listed in plain sentences before Apply; nothing changes until
   Apply, and the administrator prompt is announced first.
+- Network setup is one page (ADR-0068): network card, one row per published IED (SCD address by
+  default, a problem row offers one free address), one sentence for the Windows changes with the
+  exact list one click away, and one button "Put N IEDs on <card>". No IED published: name each
+  IED's mode and offer "Make them publish", never a bare error.
 - Every conflict, GOOSE problem and live state shows a fix hint next to it.
 - Real IEDs never receive commands; the refusal is shown, not hidden.
 - Old live values after a lost connection are marked "Old value", never shown as fresh.

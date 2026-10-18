@@ -25,6 +25,7 @@
 .run-pill.running { background: var(--success-soft); color: var(--success); border-color: #6fc28d; }
 .run-state { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-2); white-space: nowrap; }
 .run-state .dot.on { color: var(--success); }
+.reach-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px; font-size: 13px; color: var(--text-2); white-space: nowrap; }
 .page { flex: 1; min-height: 0; overflow: auto; position: relative; }
 .content { max-width: 1440px; margin: 0 auto; padding: 28px 32px 48px; display: flex; flex-direction: column; gap: 20px; }
 .content > * { flex-shrink: 0; }

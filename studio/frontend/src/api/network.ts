@@ -3,7 +3,7 @@ export type AdapterAddress = { ip: string; prefix: number; skip_as_source: boole
 export type Adapter = { guid: string; name: string; description: string; status: string; index: number;
   speed: string; kind: string; default_route: boolean; addresses: AdapterAddress[] };
 export type PlanRow = { ied_id: string; name: string; scd_ip: string; proposed: string; prefix: number | null;
-  status: string; hint: string };
+  status: string; hint: string; alternative?: { ip: string; prefix: number } };
 export type PlanItem = { kind: 'alias' | 'firewall' | 'gateway_firewall' | 'unblock'; action: 'add' | 'keep' | 'remove'; owned: boolean;
   description: string; ip?: string; name?: string };
 export type PlanPreview = { adapter: Adapter; rows: PlanRow[]; items: PlanItem[]; fingerprint: string;

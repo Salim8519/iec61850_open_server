@@ -23,6 +23,8 @@ simulated IEDs by adding app-owned alias addresses to one chosen adapter.
 - The journal is append-only; cleanup removes only what the journal says Studio
   added and has not yet removed.
 - The browser administration API stays on `127.0.0.1` in every mode.
+- The setup is one page (ADR-0068): it uses the SCD address of each IED set to *Be this IED*;
+  a row that cannot be used gets one free address on the card's own network to accept.
 
 ## Out of scope
 
@@ -46,6 +48,8 @@ simulated IEDs by adding app-owned alias addresses to one chosen adapter.
 | NET-10 | Runtime endpoint overrides never change the stored SCL source. | `studio/tests/integration/test_network_api.py::test_endpoint_override_keeps_scl` |
 | NET-11 | Leftover owned changes found at startup are reported, never silently removed. | `studio/tests/unit/test_network_journal.py::test_leftovers_are_reported_not_removed` |
 | NET-12 | Adapters are read through the Windows IP Helper API (PowerShell only as a logged fallback), match what `Get-NetAdapter` shows, list Ethernet ports first, and are fast enough for the adapter step to refresh by itself every 3 s. | `studio/tests/protocol/test_adapter_listing.py::test_native_list_matches_get_netadapter`, `studio/tests/unit/test_ip_helper.py::test_native_records_are_normalised_with_ethernet_first`, `studio/tests/unit/test_ip_helper.py::test_powershell_is_only_a_fallback` |
+| NET-13 | With no IED set to *Be this IED* the planner names the mode to choose instead of a bare error. | `studio/tests/integration/test_network_setup_page.py::test_nothing_to_publish_says_which_mode_to_choose` |
+| NET-14 | A taken or missing SCD address offers exactly one free address on the card's network; a free SCD address offers none. | `studio/tests/integration/test_network_setup_page.py::test_unusable_scd_address_offers_one_free_address`, `studio/tests/integration/test_network_setup_page.py::test_free_scd_address_offers_no_alternative` |
 
 ## Evidence still required
 

@@ -11,7 +11,7 @@ export const VERDICTS: Record<Verdict, Status> = {
 };
 
 export const AREAS: Record<string, { label: string; hint: string }> = {
-  role: { label: 'Role', hint: 'IEDs set to Off are not checked.' },
+  role: { label: 'Role', hint: 'IEDs that are left out are not checked.' },
   connection: { label: 'Connection', hint: 'Whether ScadaBench can talk to the device on port 102.' },
   model: { label: 'Data model', hint: 'Every data point in the SCD should exist on the device with the same type.' },
   datasets: { label: 'Datasets', hint: 'Datasets group the values that reports and GOOSE send.' },

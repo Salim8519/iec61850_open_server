@@ -8,7 +8,9 @@
 .list-hints { display: flex; flex-wrap: wrap; gap: 4px; }
 .device-detail { min-width: 0; }
 .detail-head.compact { align-items: center; flex-wrap: wrap; gap: 6px 10px; padding: 10px 16px; }
-.detail-head.compact h2 { margin: 0; font-size: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40%; }
+.detail-head.compact h2 { margin: 0; font-size: 20px; overflow-wrap: anywhere; }
+.role-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0; padding: 6px 16px; border-bottom: var(--line) solid var(--border); }
+.link-button { background: none; border: 0; padding: 0; min-height: 0; color: var(--primary); text-decoration: underline; cursor: pointer; }
 .detail-facts { white-space: nowrap; }
 .stats-line { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 8px 12px; font-size: 14px;
   border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface-2); }

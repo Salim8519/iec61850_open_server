@@ -51,6 +51,8 @@ code, .mono { font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px
 .error-banner { padding: 12px 20px; border: 1px solid #fecaca; background: var(--error-soft);
   color: var(--error); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .error-banner button { color: inherit; min-height: 30px; }
+.address-check { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.warning-banner { padding: 10px 14px; border: var(--line) dashed var(--warning); border-radius: 8px; background: var(--warning-soft); color: var(--warning); }
 table { width: 100%; border-collapse: collapse; text-align: left; }
 th { color: var(--text-2); font-size: var(--font-size-small); font-weight: 650; background: #eef1f5; }
 th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); }

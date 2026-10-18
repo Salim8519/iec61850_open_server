@@ -38,7 +38,7 @@ export const TEST_COPY = {
   title: 'Test',
   explain: (name: string) => `Sets the position in the simulated IED as if the ${name.toLowerCase()} moved by itself. No command is sent.`,
   explainOther: 'Sets the value in the simulated IED as if the plant changed by itself. No command is sent.',
-  real: 'Real device: test buttons never change it. Use its command link to operate it.',
+  real: 'Reads a real IED: test buttons never change it. Use its command link to operate it.',
   notRunning: 'IED not running. Run this IED from Devices (or press Run) to use the test buttons.',
   commandHint: 'Add a command link to operate it like SCADA.',
   valueLabel: 'New value',

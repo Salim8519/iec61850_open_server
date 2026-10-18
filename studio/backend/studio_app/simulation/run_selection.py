@@ -22,7 +22,7 @@ def runnable(project, selection=None):
         if ied is None:
             raise ValueError("Unknown IED")
         if ied.get("role", "simulated") == "off":
-            raise ValueError(f"{ied['name']} is set to Off. Choose 'Simulate' or 'Connect to real device' first.")
+            raise ValueError(f"{ied['name']} is left out. Choose 'Be this IED' or 'Read real IED' first.")
     return [ied for ied in ieds if ied["id"] in selection]
 
 

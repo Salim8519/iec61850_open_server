@@ -58,7 +58,7 @@ def _real_rows(ied, session, goose):
 def ied_rows(ied, running, session, goose):
     role = ied.get("role", "simulated")
     if role == "off":
-        return [result("role", "IED", "not_checked", "This IED is set to Off.")]
+        return [result("role", "IED", "not_checked", "This IED is left out.")]
     if not running:
         return [result("connection", "Run", "not_checked", "Press Run to check the station.")]
     if role == "simulated":

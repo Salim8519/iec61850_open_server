@@ -14,14 +14,15 @@ import { DeviceSignals } from './DeviceSignals';
 import { LiveValueTable } from './LiveValueTable';
 import { SignalFlowView } from './SignalFlowView';
 import type { ModeSummary } from './useModes';
+import { RoleLine } from './RoleLine';
 import { RunThisIed } from './RunThisIed';
 
 type Tab = 'overview' | 'signals' | 'compare' | 'flow' | 'files';
 
-export function DeviceDetail({ ied, project, locked, busy = false, values, perform, prepare, initialTab, mode, selectDevice }: {
+export function DeviceDetail({ ied, project, locked, busy = false, values, perform, prepare, initialTab, mode, selectDevice, openNetwork }: {
   ied: Ied; project: Project; locked: boolean; busy?: boolean; values: Record<string, unknown>;
   perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>; initialTab?: Tab;
-  mode?: ModeSummary; selectDevice?: (iedId: string) => void;
+  mode?: ModeSummary; selectDevice?: (iedId: string) => void; openNetwork?: () => void;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab ?? 'overview');
   useEffect(() => { if (initialTab) setTab(initialTab); }, [initialTab, ied.id]);
@@ -54,8 +55,9 @@ export function DeviceDetail({ ied, project, locked, busy = false, values, perfo
       <RunThisIed ied={ied} project={project} busy={busy} perform={perform} />
       <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
-          { value: 'simulated', label: 'Simulate' }, { value: 'real', label: 'Real device' }, { value: 'off', label: 'Off' }]} />
+          { value: 'simulated', label: 'Be this IED' }, { value: 'real', label: 'Read real IED' }, { value: 'off', label: 'Leave out' }]} />
     </div>
+    <RoleLine ied={ied} network={project.network} openNetwork={openNetwork} />
     <TabBar label="Device sections" value={tab} change={setTab} tabs={tabs.map(item => [item.id, item.label])} />
     <div className="panel-body">
       {tab === 'overview' && <div className="fill-scroll">

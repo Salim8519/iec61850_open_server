@@ -61,7 +61,7 @@ Press for a Push Button. The server rejects mixed `action` and `value`.
 | `GET /network` | - | Network mode and Npcap status |
 | `PUT /network` | `{mode,adapter_guid?,adapter_label?}` | Stopped-only; endpoint conflicts refused |
 | `GET /network/adapters` | `refresh=1` | Windows adapters with IPv4 addresses (cached 10 s) |
-| `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints, change items, fingerprint |
+| `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints (a row that cannot be used adds `alternative: {ip, prefix}`, change 0098), change items, fingerprint |
 | `POST /network/plan/apply` | `{fingerprint,confirm:true}` | Re-plan; 409 if changed; elevated helper; enters lab mode |
 | `GET /network/cleanup/preview` | - | Outstanding owned items and fingerprint |
 | `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |

@@ -106,7 +106,7 @@ class Coordinator:
             if not project["ieds"]:
                 raise ValueError("Import or create an IED before Run")
             if not ieds:
-                raise ValueError("Set at least one IED to 'Simulate' or 'Connect to real device' before Run")
+                raise ValueError("Set at least one IED to 'Be this IED' or 'Read real IED' before Run")
             conflicts = endpoint_conflicts(ieds, project["network"])
             if conflicts:
                 raise ValueError(conflicts[0])

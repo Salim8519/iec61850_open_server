@@ -27,15 +27,15 @@ export const PROBLEMS: Record<string, Status> = {
   go_id_mismatch: { label: 'Different GOOSE ID', tone: 'problem', hint: 'The publisher sends another GOOSE ID than the SCD. Subscribers that check the GOOSE ID will ignore it; load the matching configuration.' },
   needs_commission: { label: 'Publisher needs commissioning', tone: 'warning', hint: 'The publisher says its configuration is not finished. Finish commissioning the publishing IED.' },
   timeout: { label: 'Messages stopped', tone: 'problem', hint: 'No message within the allowed time. Check cables, the publisher and that it is running.' },
-  missing_scd_address: { label: 'No address in SCD', tone: 'warning', hint: 'This IED has no IP address in the SCD. Choose free adapter addresses or type one.' },
-  adapter_has_no_network: { label: 'Adapter has no network', tone: 'warning', hint: 'The adapter has no usable IPv4 network. Use the SCD addresses instead.' },
+  missing_scd_address: { label: 'No address in SCD', tone: 'warning', hint: 'This IED has no IP address in the SCD. Use the suggested free address or type one.' },
+  adapter_has_no_network: { label: 'Adapter has no network', tone: 'warning', hint: 'This network card has no usable IPv4 network. Type an address or pick another network card.' },
   network_full: { label: 'No free address', tone: 'problem', hint: 'There is no free address left in this network. Type an address in another network.' },
   already_on_adapter: { label: 'Already on adapter', tone: 'info', hint: 'ScadaBench will use this existing address and will not remove it later.' },
   used_by_other_adapter: { label: 'Used by another adapter', tone: 'problem', hint: 'Another adapter of this PC already has this address. Pick another address.' },
   duplicate: { label: 'Used twice', tone: 'problem', hint: 'Two IEDs would get the same address. Give each IED its own address.' },
   in_use_on_network: { label: 'Taken on the network', tone: 'problem', hint: 'Another device already answers on this address. Pick a different one.' },
   invalid_manual: { label: 'Address not valid', tone: 'problem', hint: 'Type an address like 192.168.1.21 with a prefix from 8 to 30.' },
-  ok: { label: 'Ready', tone: 'good', hint: 'No conflict found; this address will be added.' },
+  ok: { label: 'Free', tone: 'good', hint: 'No conflict found; this address will be added.' },
 };
 
 export const LIVE_STATES: Record<string, Status> = {
@@ -72,8 +72,8 @@ export const UI_STATUS: Record<string, Status> = {
   goose_off: { label: 'GOOSE off', tone: 'off', hint: 'This IED does not send GOOSE.' },
   goose_needs_lab: { label: 'Lab network only', tone: 'off', hint: 'GOOSE is sent only after you set up the lab network.' },
   goose_none: { label: 'No GOOSE in SCD', tone: 'off', hint: 'The SCD defines no publishable GOOSE block for this IED.' },
-  role_real: { label: 'Real device', tone: 'info', hint: 'ScadaBench reads this IED over the network.' },
-  role_off: { label: 'Off', tone: 'off', hint: 'Ignored when you press Run.' },
+  role_real: { label: 'Reads real IED', tone: 'info', hint: 'The real IED publishes; ScadaBench connects to it and reads it.' },
+  role_off: { label: 'Left out', tone: 'off', hint: 'Not part of Run.' },
   stale: { label: 'Old value', tone: 'warning', hint: 'The connection was lost; this value may have changed since.' },
 };
 
@@ -85,9 +85,9 @@ export function roleStatus(role: string, state: string): Status {
     if (state.startsWith('real_')) return { label: 'Connecting', tone: 'waiting', hint: 'ScadaBench is reaching the device.' };
     return UI_STATUS.role_real;
   }
-  if (state === 'running') return { label: 'Running', tone: 'good', hint: 'The simulated IED is answering on its address.' };
+  if (state === 'running') return { label: 'Publishing', tone: 'good', hint: 'ScadaBench is this IED now: it answers on its address and sends its reports and GOOSE.' };
   if (state === 'failed') return { label: 'Stopped by error', tone: 'problem', hint: 'See Activity for the reason.' };
-  return { label: 'Simulated', tone: 'off', hint: 'Not running. Starts with Run, or with "Run this IED" on its page.' };
+  return { label: 'Be this IED · stopped', tone: 'off', hint: 'ScadaBench publishes as this IED once it runs: press Run, or "Run this IED" on its page.' };
 }
 
 export const needsStatus = (missing: string[]): Status => ({ label: `Needs: ${missing.join(', ').toLowerCase()}`,

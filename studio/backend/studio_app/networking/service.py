@@ -53,7 +53,8 @@ class NetworkService:
         adapter = self.adapter(guid)
         ieds = [ied for ied in self.projects.project["ieds"] if ied.get("role", "simulated") == "simulated"]
         if not ieds:
-            raise StudioError("There are no simulated IEDs to put on the network")
+            raise StudioError("No IED is set to 'Be this IED', so there is nothing to put on the network. "
+                              "Set an IED to 'Be this IED' in Devices first.")
         own = {item["ip"] for item in adapter["addresses"]}
         avoid = set()
         # A picked free address may answer on the network (another PC's lab IEDs): pick again
@@ -75,6 +76,7 @@ class NetworkService:
                 row["hint"] = ("No other device answered on this address." if row["proposed"] in reachable else
                                "Not used on this PC. Devices in this new network can only be checked after the "
                                "address is added; Windows reports a clash then.")
+        self._add_alternatives(rows, ieds, adapter, strategy, in_use)
         ports = {ied.get("port", 102) for ied in ieds}
         plan = build_plan(adapter, rows, ports, self.program, self._list_rules())
         blocked = [row for row in rows if row["status"] not in {"ok", "already_on_adapter"}]
@@ -86,6 +88,18 @@ class NetworkService:
             self.previews[plan["fingerprint"]] = {"guid": adapter["guid"], "strategy": strategy,
                                                   "manual": manual or {}, "rows": rows}
         return result
+
+    def _add_alternatives(self, rows, ieds, adapter, strategy, in_use):
+        """Offer a free address on the adapter's own network for every row that cannot be used (change 0098)."""
+        if strategy != "scd" or all(row["status"] in {"ok", "already_on_adapter"} for row in rows):
+            return
+        keep = {row["proposed"] for row in rows if row["status"] in {"ok", "already_on_adapter"}}
+        free = {row["ied_id"]: row for row in plan_addresses(ieds, adapter, self.adapters(), "adapter",
+                                                              set(in_use) | keep)}
+        for row in rows:
+            other = free.get(row["ied_id"])
+            if row["status"] not in {"ok", "already_on_adapter"} and other and other["status"] == "ok"                     and other["proposed"] != row["proposed"]:
+                row["alternative"] = {"ip": other["proposed"], "prefix": other["prefix"]}
 
     def _rows(self, ieds, adapter, strategy, manual, avoid):
         rows = plan_addresses(ieds, adapter, self.adapters(), strategy, avoid)
