@@ -1,6 +1,7 @@
 package pytext
 
 import (
+	"math"
 	"math/big"
 	"strconv"
 	"strings"
@@ -39,7 +40,9 @@ func ParseFloat(text string) (float64, error) {
 		return 0, fail
 	}
 	switch strings.ToLower(body) {
-	case "inf", "infinity", "nan":
+	case "nan":
+		return math.NaN(), nil // Go's ParseFloat refuses a signed NaN; Python accepts "-nan"
+	case "inf", "infinity":
 		value, _ := strconv.ParseFloat(number, 64)
 		return value, nil
 	}
