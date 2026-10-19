@@ -36,6 +36,12 @@ var SelectAll = Selection{All: true}
 
 // Import builds one model per selected IED, exactly import_scl(source, filename, selected).
 func (im *Importer) Import(source []byte, filename string, selection Selection) ([]*pyjson.Object, error) {
+	return im.ImportNamed(source, filename, selection)
+}
+
+// ImportNamed is Import with the filename as stored in a project (any JSON value; Python
+// copies it into the model unchanged).
+func (im *Importer) ImportNamed(source []byte, filename any, selection Selection) ([]*pyjson.Object, error) {
 	doc, err := ParseDocument(source, false)
 	if err != nil {
 		return nil, err

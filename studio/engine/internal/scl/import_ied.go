@@ -12,7 +12,7 @@ import (
 type importRun struct {
 	root       *xmldoc.Element
 	source     []byte
-	filename   string
+	filename   any
 	types      map[typeKey]*xmldoc.Element
 	validation *pyjson.Object
 	newID      func() string
