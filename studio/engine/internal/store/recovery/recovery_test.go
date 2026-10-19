@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 
@@ -33,7 +34,7 @@ func validArchive(t *testing.T) []byte {
 }
 
 func TestPreserveMigrationKeepsExactBytes(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	payload := validArchive(t)
 	path, err := PreserveMigration(dir, payload)
 	if err != nil {
@@ -59,7 +60,7 @@ func TestPreserveMigrationKeepsExactBytes(t *testing.T) {
 }
 
 func TestDeleteBackupIsVerified(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	payload := validArchive(t)
 	path, err := WriteDeleteBackup(dir, payload)
 	if err != nil || !strings.HasPrefix(filepath.Base(path), "before-ied-delete-") {
@@ -71,8 +72,8 @@ func TestDeleteBackupIsVerified(t *testing.T) {
 }
 
 func TestRecoveryFolderLinkIsRefused(t *testing.T) {
-	dir := t.TempDir()
-	target := t.TempDir()
+	dir := testutil.TempDir(t)
+	target := testutil.TempDir(t)
 	if err := os.Symlink(target, filepath.Join(dir, "recovery")); err != nil {
 		t.Skipf("symbolic links need extra rights here: %v", err)
 	}
@@ -88,7 +89,7 @@ func TestRecoveryFolderLinkIsRefused(t *testing.T) {
 }
 
 func TestRecoverStartupResults(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	called := false
 	result, err := RecoverStartup(dir, func([]byte) error { called = true; return nil })
 	if result != nil || err != nil || called {
@@ -123,7 +124,7 @@ func TestRecoverStartupResults(t *testing.T) {
 }
 
 func TestRecoverStartupSizeLimitAndNonFile(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	file, _ := os.Create(filepath.Join(dir, "autosave.subsim"))
 	_ = file.Truncate(archive.MaxUnpacked + 1) // sparse: no real 100 MB written
 	_ = file.Close()
@@ -131,7 +132,7 @@ func TestRecoverStartupSizeLimitAndNonFile(t *testing.T) {
 	if details, _ := result.Get("details"); err != nil || details != "Saved archive exceeds the 100 MB project limit" {
 		t.Fatalf("size: %v %v", details, err)
 	}
-	other := t.TempDir()
+	other := testutil.TempDir(t)
 	_ = os.Mkdir(filepath.Join(other, "autosave.subsim"), 0o777)
 	_, err = RecoverStartup(other, nil)
 	if message(err) != "Autosave is not a regular local file; inspect it before starting ScadaBench" {

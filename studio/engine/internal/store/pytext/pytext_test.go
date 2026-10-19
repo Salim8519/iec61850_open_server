@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/pyjson"
@@ -57,7 +58,7 @@ func TestReprLikePython(t *testing.T) {
 }
 
 func TestOSErrorText(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	missing := filepath.Join(dir, "none", "x.subsim")
 	_, err := os.ReadFile(missing)
 	want := "[Errno 2] No such file or directory: '" + strings.ReplaceAll(missing, `\`, `\\`) + "'"

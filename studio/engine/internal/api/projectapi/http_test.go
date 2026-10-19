@@ -75,8 +75,16 @@ func (c goldenCase) request(t *testing.T) *http.Request {
 
 // TestFlaskParity replays every recorded request in order against one Go area and
 // compares status, headers (except Content-Length) and the exact body.
-func TestFlaskParity(t *testing.T) {
-	data, err := os.ReadFile("testdata/generated/http_golden.json")
+func TestFlaskParity(t *testing.T) { replay(t, "testdata/generated/http_golden.json") }
+
+// TestFlaskParityDesignRoutes replays http_gen_routes.py's recording (IED settings,
+// scenarios, SLD from SCL, signal flow).
+func TestFlaskParityDesignRoutes(t *testing.T) {
+	replay(t, "testdata/generated/http_routes_golden.json")
+}
+
+func replay(t *testing.T, path string) {
+	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Skip("http golden missing")
 	}

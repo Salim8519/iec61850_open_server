@@ -6,6 +6,7 @@ import (
 	"math/big"
 
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/store/archive"
 )
 
 // Journal line kinds (one pyjson.Compact object per line, "\n" terminated):
@@ -33,29 +34,53 @@ func snapRecord(rev uint64, sha string) *pyjson.Object {
 	return pyjson.NewObject().Set("snap", int64(rev)).Set("sha256", sha)
 }
 
-// changeRecord describes how next differs from prev.
-func changeRecord(rev uint64, prev, next *pyjson.Object) *pyjson.Object {
+// changeLine is the journal line of a change record from prev to next. Values in "set"
+// are the encoder's json.dumps bytes (memoised by identity, so an unchanged subtree is
+// never encoded again; Fold decodes either spacing). A key is set when its encoded value
+// differs from prev's; an identical value (same object) is never encoded.
+func changeLine(enc *archive.Encoder, rev uint64, prev, next *pyjson.Object) ([]byte, error) {
 	keys := next.Keys()
 	listed := make([]any, len(keys))
-	set := pyjson.NewObject()
-	record := pyjson.NewObject().Set("rev", int64(rev)).Set("keys", listed).Set("set", set)
 	for index, key := range keys {
 		listed[index] = key
+	}
+	head, _ := pyjson.Compact(pyjson.NewObject().Set("rev", int64(rev)).Set("keys", listed))
+	line := append(head[:len(head)-1], `,"set":{`...)
+	var scl *pyjson.Object
+	written := 0
+	for _, key := range keys {
 		value, _ := next.Get(key)
 		old, found := prev.Get(key)
 		if key == sclKey {
 			if oldTable, newTable, ok := tables(old, value); ok {
-				if scl := tableChange(oldTable, newTable); scl != nil {
-					record.Set("scl", scl)
-				}
+				scl = tableChange(oldTable, newTable)
 				continue
 			}
 		}
-		if !found || !same(old, value) {
-			set.Set(key, value)
+		if found && identical(old, value) {
+			continue
 		}
+		encoded, err := enc.Dumps(value)
+		if err != nil {
+			return nil, err
+		}
+		if found {
+			if before, err := enc.Dumps(old); err == nil && bytes.Equal(before, encoded) {
+				continue
+			}
+		}
+		if written > 0 {
+			line = append(line, ',')
+		}
+		line = append(append(pyjson.AppendString(line, key), ':'), encoded...)
+		written++
 	}
-	return record
+	line = append(line, '}')
+	if scl != nil {
+		encoded, _ := pyjson.Compact(scl) // digests and SCL texts only
+		line = append(append(line, `,"scl":`...), encoded...)
+	}
+	return append(line, '}', '\n'), nil
 }
 
 func tables(old, value any) (*pyjson.Object, *pyjson.Object, bool) {
@@ -111,27 +136,23 @@ func equalStrings(a, b []string) bool {
 	return true
 }
 
-// same reports whether two values encode identically; shared subtrees (immutable
-// snapshots) compare by pointer without encoding.
-func same(a, b any) bool {
+// identical reports whether two values are the same immutable value without encoding:
+// the same object or list (shared subtrees of copy-on-write snapshots) or equal scalars.
+func identical(a, b any) bool {
 	switch x := a.(type) {
 	case *pyjson.Object:
-		if y, ok := b.(*pyjson.Object); ok && x == y {
-			return true
-		}
+		y, ok := b.(*pyjson.Object)
+		return ok && x == y
 	case []any:
-		if y, ok := b.([]any); ok && len(x) == len(y) && (len(x) == 0 || &x[0] == &y[0]) {
-			return true
-		}
+		y, ok := b.([]any)
+		return ok && len(x) == len(y) && (len(x) == 0 || &x[0] == &y[0])
 	case *big.Int:
 		y, ok := b.(*big.Int)
 		return ok && x.Cmp(y) == 0
-	case nil, bool, string, int, int64, float64:
+	case nil, bool, string, int, int64:
 		return a == b
 	}
-	encodedA, errA := pyjson.Compact(a)
-	encodedB, errB := pyjson.Compact(b)
-	return errA == nil && errB == nil && bytes.Equal(encodedA, encodedB)
+	return false
 }
 
 var errMissing = errors.New("autosave journal refers to data that is not in the autosave")

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 
@@ -26,7 +27,7 @@ func TestKeyFormula(t *testing.T) {
 }
 
 func TestPutGetStripsIdentityAndMissesDamage(t *testing.T) {
-	cache := New(t.TempDir())
+	cache := New(testutil.TempDir(t))
 	key := Key("v1", "<SCL/>", "a.scd", nil)
 	if _, ok := cache.Get(key); ok {
 		t.Fatal("hit on empty cache")
@@ -57,7 +58,7 @@ func TestPutGetStripsIdentityAndMissesDamage(t *testing.T) {
 }
 
 func TestTrimKeepsNewestEntries(t *testing.T) {
-	cache := New(t.TempDir())
+	cache := New(testutil.TempDir(t))
 	old := time.Now().Add(-time.Hour)
 	var first string
 	for index := 0; index < MaxEntries; index++ {

@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/apperr"
@@ -20,7 +21,7 @@ func dumps(t *testing.T, value any) string {
 }
 
 func TestPreferencesUpdateWritesOnlyValidResults(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	store := NewPreferences(dir)
 	if store.Load() != nil {
 		t.Fatal("missing file should load as nil")
@@ -56,7 +57,7 @@ const defaults = `{"explorer": {"host": "", "port": 102, "interval_ms": 1000, "w
 	`"find": {"range": "", "port": 102, "choice": ""}}`
 
 func TestToolMemoryDefaultsAndDamage(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	memory := NewToolMemory(dir)
 	if got := dumps(t, memory.Get()); got != defaults {
 		t.Fatalf("defaults %s", got)
@@ -107,7 +108,7 @@ func TestToolMemoryCleaningRules(t *testing.T) {
 }
 
 func TestToolMemoryUpdateWritesCleanedSection(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	memory := NewToolMemory(dir)
 	section, err := memory.Update("explorer", pyjson.NewObject().Set("host", "10.0.0.5").
 		Set("interval_ms", int64(2000)).Set("unknown", true))

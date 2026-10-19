@@ -69,7 +69,9 @@ func gooseSubscriptions(ied *xmldoc.Element, cat *catalogue) ([]any, []any) {
 				if entry == nil {
 					entry = pyjson.NewObject()
 					for _, key := range chosen.control.Keys() {
-						entry.Set(key, get(chosen.control, key))
+						if key != "fcdas" { // inventory blocks carry their FCDA attributes
+							entry.Set(key, get(chosen.control, key))
+						}
 					}
 					var target any
 					if value, ok := lgos[ref]; ok {

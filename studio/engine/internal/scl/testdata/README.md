@@ -13,6 +13,7 @@ $py = "studio/.venv/Scripts/python.exe"
 & $py studio/engine/internal/scl/testdata/golden_gen.py        # golden/<case>/..., manifest, xsd_seed
 & $py studio/engine/internal/scl/testdata/xml_errors_gen.py    # golden/xml_errors.json
 & $py studio/engine/internal/scl/testdata/unicode_errors_gen.py # golden/utf8_errors.json
+& $py studio/engine/internal/scl/testdata/goose_sources_gen.py  # golden/goose_sources.json
 ```
 
 Run in this order (golden_gen reads the corpus manifest). Add `--verbose` to corpus_gen to print
@@ -51,6 +52,10 @@ twice must leave `git status` clean.
   single-step mutations (`random.Random(1234)`) of a small valid SCL document.
 - `golden/utf8_errors.json`: `[{input: base64, result}]`, `"OK"` or `str(UnicodeDecodeError)` of
   `bytes.decode("utf-8-sig")`. Positions are counted after a stripped BOM.
+
+- `golden/goose_sources.json`: `read_goose_sources` (blocks as `[[key, block], ...]`) and
+  `goose_inputs._with_members` over every UTF-8 case (all IEDs / first IED loaded), pairs of
+  GOOSE cases and synthetic multi-file stations; see the generator's docstring.
 
 Error objects are `{"type", "message", "code", "details"}` (`code`/`details` are `null` for
 non-`StudioError` exceptions). Every JSON golden is `json.dumps(value)` with Python defaults,

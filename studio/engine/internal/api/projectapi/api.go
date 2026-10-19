@@ -74,6 +74,13 @@ func (a *Area) Routes() []api.Route {
 		route("DELETE", "/ieds/{key}", a.removeIED),
 		route("POST", "/ieds/removal-preview", a.bulkPreview),
 		route("POST", "/ieds/remove", a.bulkRemove),
+		route("PUT", "/ieds/{key}/settings", a.iedSettings),
+		route("PUT", "/scenarios", a.putScenarios),
+		route("GET", "/project/substation-sources", a.substationSources),
+		route("POST", "/project/diagram/from-scl/preview", a.diagramPreview),
+		route("GET", "/signal-flow/sources", a.flowSources),
+		route("GET", "/signal-flow", a.flowGraph),
+		route("GET", "/signal-flow/edges/{edge_id}.csv", a.edgeCSV),
 		route("GET", "/preferences", a.getPreferences),
 		route("PUT", "/preferences", a.putPreferences),
 	}

@@ -3,6 +3,7 @@ package jsonfile
 import (
 	"os"
 	"path/filepath"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/pyjson"
@@ -23,7 +24,7 @@ func TestEncodeIsIndentTwoWithCRLF(t *testing.T) {
 }
 
 func TestWriteAndReadTolerance(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	path := filepath.Join(dir, "nested", "preferences.json")
 	if err := Write(path, pyjson.NewObject().Set("a", true)); err != nil {
 		t.Fatal(err)

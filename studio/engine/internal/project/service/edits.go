@@ -15,13 +15,17 @@ func (s *Service) Diagram(value any, expectedRevision *int64, changeSource any) 
 	if expectedRevision != nil && *expectedRevision != st.revision {
 		return apperr.Coded("Another tab changed this project. This tab must synchronize before saving.", "conflict")
 	}
-	diagram, err := project.ValidateDiagram(value, iedList(st.project))
+	diagram, err := project.ValidateDiagramWith(value, s.index.For(iedList(st.project)))
 	if err != nil {
 		return err
 	}
 	next := shallow(st.project)
 	next.Set("diagram", diagram)
-	return s.commit(next, st.notice, true, changeSource)
+	if err := s.commit(next, st.notice, true, changeSource); err != nil {
+		return err
+	}
+	s.validated, s.validatedIEDs = diagram, rawIEDs(st.project)
+	return nil
 }
 
 // FindNode is ProjectService.find_node: StudioError "Unknown equipment" (not_found).
@@ -60,34 +64,53 @@ func (s *Service) NodeData(nodeID string, changes *pyjson.Object) error {
 		return err
 	}
 	st := s.current.Load()
-	nodes := []any{}
-	for _, node := range diagramNodes(st.project) {
-		if id, _ := node.Get("id"); id == nodeID {
-			updated := shallow(node)
-			raw, _ := node.Get("data")
-			data := shallow(raw.(*pyjson.Object))
-			for _, key := range changes.Keys() {
-				value, _ := changes.Get(key)
-				data.Set(key, value)
-			}
-			updated.Set("data", data)
-			node = updated
-		}
-		nodes = append(nodes, node)
-	}
 	rawDiagram, _ := st.project.Get("diagram")
-	edges, _ := rawDiagram.(*pyjson.Object).Get("edges")
-	diagram, err := project.ValidateDiagram(pyjson.NewObject().Set("nodes", nodes).Set("edges", edges), iedList(st.project))
+	current := rawDiagram.(*pyjson.Object)
+	lookup := s.index.For(iedList(st.project))
+	var diagram *pyjson.Object
+	var err error
+	if current == s.validated {
+		same := sameList(rawIEDs(st.project), s.validatedIEDs)
+		diagram, err = project.NodeDataDiagram(current, nodeID, changes, lookup, same)
+	} else {
+		diagram, err = project.ValidateDiagramWith(nodeDataInput(current, nodeID, changes), lookup)
+	}
 	if err != nil {
 		return err
 	}
 	next := shallow(st.project)
 	next.Set("diagram", diagram)
-	return s.commit(next, st.notice, false, nil)
+	if err := s.commit(next, st.notice, false, nil); err != nil {
+		return err
+	}
+	s.validated, s.validatedIEDs = diagram, rawIEDs(st.project)
+	return nil
 }
 
-// Source is ProjectService.source: replace one signal source and re-validate all.
-func (s *Service) Source(iedID, reference string, spec any) error {
+// nodeDataInput is node_data's {"nodes": [...updated...], "edges": edges} for a diagram
+// that is not known to be validated output (full validation).
+func nodeDataInput(current *pyjson.Object, nodeID string, changes *pyjson.Object) *pyjson.Object {
+	nodes := []any{}
+	for _, node := range diagramNodes(pyjson.NewObject().Set("diagram", current)) {
+		if id, _ := node.Get("id"); id == nodeID {
+			updated := shallow(node)
+			rawData, _ := node.Get("data")
+			data := shallow(rawData.(*pyjson.Object))
+			for _, key := range changes.Keys() {
+				value, _ := changes.Get(key)
+				data.Set(key, value)
+			}
+			node = updated.Set("data", data)
+		}
+		nodes = append(nodes, node)
+	}
+	edges, _ := current.Get("edges")
+	return pyjson.NewObject().Set("nodes", nodes).Set("edges", edges)
+}
+
+// Source is ProjectService.source: replace one signal source and re-validate all (it
+// implements runtime.Project.Source).
+func (s *Service) Source(iedID, reference string, spec *pyjson.Object) error {
 	s.mutate.Lock()
 	defer s.mutate.Unlock()
 	st := s.current.Load()
@@ -103,7 +126,11 @@ func (s *Service) Source(iedID, reference string, spec any) error {
 		}
 		sources = append(sources, entry)
 	}
-	sources = append(sources, pyjson.NewObject().Set("ied_id", iedID).Set("ref", reference).Set("spec", spec))
+	var value any // a nil spec is Python's None, not a typed nil
+	if spec != nil {
+		value = spec
+	}
+	sources = append(sources, pyjson.NewObject().Set("ied_id", iedID).Set("ref", reference).Set("spec", value))
 	checked, err := project.ValidateSources(sources, iedList(st.project))
 	if err != nil {
 		return err
@@ -120,24 +147,6 @@ func (s *Service) Scenarios(value any) error {
 		return err
 	}
 	return s.replace("scenarios", checked, nil)
-}
-
-// TestPanel is ProjectService.test_panel (unchanged project when saving fails).
-func (s *Service) TestPanel(entries any) error {
-	s.mutate.Lock()
-	defer s.mutate.Unlock()
-	checked, err := project.ValidatePanel(entries, iedList(s.current.Load().project))
-	if err != nil {
-		return err
-	}
-	return s.replace("test_panel", checked, nil)
-}
-
-// Gateway is ProjectService.gateway(config): stored as given, change source "gateway".
-func (s *Service) Gateway(config any) error {
-	s.mutate.Lock()
-	defer s.mutate.Unlock()
-	return s.replace("gateway", config, "gateway")
 }
 
 // replace sets one top-level key and commits with a revision change. mutate is held.
