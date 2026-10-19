@@ -3,6 +3,7 @@ import { ShoppingCart } from 'lucide-react';
 import { buyUrl, getLicenseStatus, type LicenseStatus } from '../../api/license';
 import { licenseState } from '../../copy/license';
 import { StatusPill } from '../../ui/StatusPill';
+import { Spinner } from '../../ui/Spinner';
 import { KeyActivation, ServerOptions } from '../license/LicenseActions';
 
 /** Settings › License: current state, Machine ID, server address and upgrade from trial. */
@@ -11,7 +12,7 @@ export function LicenseSection() {
   const [error, setError] = useState('');
   useEffect(() => { getLicenseStatus().then(setStatus).catch(reason => setError(String(reason.message || reason))); }, []);
   if (error) return <div className="card"><div className="card-body"><p className="muted">{error}</p></div></div>;
-  if (!status) return null;
+  if (!status) return <div className="card"><div className="card-body"><Spinner label="Reading the license…" /></div></div>;
   const state = licenseState(status);
   const purchase = buyUrl(status);
   const rows: [string, string][] = [['Status', state.label]];

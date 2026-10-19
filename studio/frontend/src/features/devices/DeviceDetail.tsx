@@ -16,6 +16,7 @@ import { SignalFlowView } from './SignalFlowView';
 import type { ModeSummary } from './useModes';
 import { RoleLine } from './RoleLine';
 import { RunThisIed } from './RunThisIed';
+import { DeleteIed } from './DeleteIed';
 
 type Tab = 'overview' | 'signals' | 'compare' | 'flow' | 'files';
 
@@ -56,6 +57,7 @@ export function DeviceDetail({ ied, project, locked, busy = false, values, perfo
       <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
           { value: 'simulated', label: 'Be this IED' }, { value: 'real', label: 'Read real IED' }, { value: 'off', label: 'Leave out' }]} />
+      <DeleteIed compact iedId={ied.id} iedName={ied.name} disabled={locked} perform={perform} prepare={prepare} />
     </div>
     <RoleLine ied={ied} network={project.network} openNetwork={openNetwork} />
     <TabBar label="Device sections" value={tab} change={setTab} tabs={tabs.map(item => [item.id, item.label])} />

@@ -4,7 +4,7 @@ import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
   type NodeChange, type EdgeChange, type Connection, type NodeTypes } from '@xyflow/react';
 import type { Diagram, EquipmentKind, EquipmentNode as NodeType } from '../../api/types';
 import { EquipmentNode } from '../../equipment/EquipmentNode';
-import { IedNames, LiveValues, ModeBadges } from '../../equipment/liveContext';
+import { IedNames, LiveValues, ModeBadges, StoppedIeds } from '../../equipment/liveContext';
 import { stableFlowNodes, type FlowNodeCache } from '../../equipment/flowNodes';
 import { rememberMeasured, type MeasuredStore } from '../../equipment/measured';
 import type { EquipmentValueStore } from '../../equipment/liveValues';
@@ -23,6 +23,7 @@ const fitOptions = { maxZoom: 1, padding: 0.3 };
 const multiKeys = ['Shift', 'Control', 'Meta'];
 const deleteKeys = ['Delete', 'Backspace'];
 const noMenu = (event: React.MouseEvent | MouseEvent) => event.preventDefault();
+const NONE_STOPPED: ReadonlySet<string> = new Set();
 type Props = {
   diagram: Diagram; locked: boolean; valueStore: EquipmentValueStore; iedNames: Record<string, string>;
   energization: EnergizationStore;
@@ -33,9 +34,12 @@ type Props = {
   overlay?: ReactNode;
   /** Right-click on an equipment while running opens its test menu (ADR-0067). */
   nodeMenu?: (nodeId: string, x: number, y: number) => void;
+  /** While only some IEDs run (change 0106): the lock badge words and the IEDs that are stopped. */
+  lockNote?: ReactNode; stoppedIeds?: ReadonlySet<string>;
 };
 
-function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar, overlay, nodeMenu }: Props) {
+function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar, overlay, nodeMenu,
+  lockNote, stoppedIeds = NONE_STOPPED }: Props) {
   const flow = useReactFlow<NodeType>();
   const zoomTier = useZoomTier();
   const selectionRef = useRef(selection);
@@ -119,9 +123,10 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
     if (locked && nodeMenu) nodeMenu(node.id, event.clientX, event.clientY);
   }, [locked, nodeMenu]);
   return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}><ModeBadges.Provider value={modeBadges}>
+    <StoppedIeds.Provider value={stoppedIeds}>
     <div className={`canvas zoom-${zoomTier}`} onDragOver={dragOver} onDrop={drop}>
       {toolbar}
-      {locked && <div className="canvas-lock" role="status">Running · drawing is locked</div>}
+      {locked && <div className={`canvas-lock${lockNote ? ' partial' : ''}`} role="status">{lockNote ?? 'Running · drawing is locked'}</div>}
       {locked && <EnergizationLegend energy={energy} />}
       <ReactFlow nodes={projection} edges={edges} nodeTypes={nodeTypes}
         onNodesChange={nodesChanged} onEdgesChange={edgesChanged} onConnect={connect}
@@ -140,7 +145,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
       {!diagram.nodes.length && <div className="canvas-empty"><h2>Start your single-line diagram</h2>
         <p>Press <strong>Add</strong> and pick a circuit breaker. Then connect it to an IED signal on the right.</p></div>}
     </div>
-  </ModeBadges.Provider></IedNames.Provider></LiveValues.Provider>;
+  </StoppedIeds.Provider></ModeBadges.Provider></IedNames.Provider></LiveValues.Provider>;
 }
 
 export const Canvas = memo(function Canvas(props: Props) {

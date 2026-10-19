@@ -19,6 +19,8 @@ import { SignalSheet } from './signals/SignalSheet';
 import { useSignalLayers } from './signals/useSignalLayers';
 import { OutsideSenders } from './signals/OutsideSenders';
 import { TestMenu, type MenuAt } from './TestMenu';
+import { RunStrip } from './RunStrip';
+import { runSummary } from '../../copy/runShape';
 import './diagram.css';
 
 type Studio = ReturnType<typeof useStudio>;
@@ -35,6 +37,10 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile, op
   const runningKey = (project.running_ieds || []).join(',');
   const running = useMemo(() => new Set(runningKey ? runningKey.split(',') : []), [runningKey]);
   const diagram = project.diagram;
+  // Only some IEDs run (change 0106): name them on the lock badge and grey the stopped IEDs' equipment.
+  const summary = runSummary(project);
+  const stoppedKey = summary.shape === 'partial' ? summary.stopped.map(ied => ied.id).join(',') : '';
+  const stoppedIeds = useMemo(() => new Set(stoppedKey ? stoppedKey.split(',') : []), [stoppedKey]);
   const iedKey = JSON.stringify(project.ieds.map(ied => [ied.id, ied.name]));
   const iedNames = useMemo(() => Object.fromEntries(project.ieds.map(ied => [ied.id, ied.name])), [iedKey]);
   const { modes } = useModes(project.runtime !== 'stopped', project.revision);
@@ -103,7 +109,9 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile, op
   </div>;
   return <div className="diagram">
     <Canvas diagram={diagram} change={edit} locked={locked} selection={selection} setSelection={setSelection}
-      valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={modes.equipment} operate={operate} toolbar={toolbar} overlay={overlay} nodeMenu={openMenu} />
+      valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={modes.equipment} operate={operate} toolbar={toolbar} overlay={overlay} nodeMenu={openMenu}
+      stoppedIeds={stoppedIeds} lockNote={summary.shape === 'partial'
+        ? <RunStrip summary={summary} busy={studio.busy} runAll={() => studio.runtime('start')} /> : undefined} />
     {menu && menuNode && <TestMenu at={menu} node={menuNode} project={project} running={running} test={test}
       openSheet={() => setSelection([menuNode.id])} close={() => setMenu(null)} />}
     {signal && !selection.length && <SignalSheet state={layers.state} selection={signal} select={selectSignal} showFlow={openDevices}

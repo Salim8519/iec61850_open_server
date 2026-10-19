@@ -61,6 +61,9 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Licensing (native) | `native/common/license_guard.*`, `native/release/release_key.hpp`, `native/third_party/monocypher/` |
 | License server | `license-server/` (Go): `internal/api`, `store`, `security`, `certs`, `paypal`, `mail`, `sales`, `deploy/` (owner commands: `deploy-server.cmd`, `set-payments.cmd`, `set-price.cmd`, `payments.cmd`) |
 | Brand and website | `studio/branding/`, `tools/build_icons.py`, `tools/build_installer_art.py` (installer pictures), `website/` (Astro, Cloudflare Pages) |
+| Update check (ADR-0071) | app: `updates/versions.py` (pure rules), `updates/service.py`, `api/updates.py`, `frontend/src/api/updates.ts`, `app/UpdateNote.tsx`, `features/settings/UpdateSection.tsx`; server: `license-server/internal/release/`, `internal/api/release.go`, `cmd/license-server/release.go`, `deploy/release-record.ps1`, `owner.ps1 -Action release` |
+| Waiting indicators and pickers (change 0105) | `ui/Spinner.tsx`, `ui/useDelayed.ts`, `components/pickerMemory.ts`, `components/SignalSearchPicker.tsx`, `features/devices/DeleteIedsDialog.tsx`, `DeviceSelectBar.tsx` |
+| Run shapes (change 0106) | `copy/runShape.ts`, `features/devices/DeviceRunSummary.tsx`, `runGroups.ts`, `features/diagram/RunStrip.tsx`, `equipment/liveContext.ts` (`StoppedIeds`), `simulation/coordinator.py` (`start` adds the rest) |
 | Guided tour | `frontend/src/features/tour/`, `copy/tour.ts`, `projects/preferences.py`, `api/preferences.py` |
 | Desktop window (ADR-0048) | `studio/backend/studio_app/launcher/entrypoint.py`, `app_window.py`, `single_instance.py`, `window_focus.py`, `windowed.py` |
 | Protected release | `tools/configure_release.py`, `compile_protected.py`, `pack_frontend.py`, `packaging/studio_protected.spec` (installed folder + one-file portable exe), `installer.iss` |

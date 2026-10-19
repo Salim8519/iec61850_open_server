@@ -9,7 +9,9 @@ import { JunctionBody } from './JunctionBody';
 import { kindInfo, stateTone } from './kindInfo';
 import { colorScheme, paintFor, stateFill } from './stateColors';
 import './equipment-node.css';
-import { IedNames, LiveValues, ModeBadges } from './liveContext';
+import { IedNames, LiveValues, ModeBadges, StoppedIeds } from './liveContext';
+import { stateBindings } from './stateBindings';
+import { RUN_SHAPE_COPY } from '../copy/runShape';
 import { modeStatus } from '../copy/testMode';
 import { confirmedChange } from './readability';
 
@@ -17,6 +19,7 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const store = useContext(LiveValues);
   const iedNames = useContext(IedNames);
   const badge = useContext(ModeBadges)[id];
+  const stoppedIeds = useContext(StoppedIeds);
   const subscribe = useCallback((listener: () => void) => store.subscribe(id, listener), [id, store]);
   const snapshot = useCallback(() => store.get(id), [id, store]);
   const value = useSyncExternalStore(subscribe, snapshot, snapshot);
@@ -43,13 +46,17 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const tone = infeed ? (data.infeed_state === 'dead' ? 'unmapped' : 'live') :
     data.kind === 'PUSH_BUTTON' && !pushStatus ? (data.control_binding ? 'live' : 'unmapped') :
     stateTone(linked, value);
+  // Its value comes from an IED that is stopped while others run: say so instead of "Awaiting value".
+  const sources = [...new Set(stateBindings(data.state_mapping).map(item => item.ied_id))];
+  const idle = sources.length > 0 && sources.every(iedId => stoppedIeds.has(iedId));
   if (relay) return <div className={`equipment-node relay ${selected ? 'selected' : ''}`}>
     <RelayPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
   const scheme = colorScheme(data);
   const fill = stateFill(data, position, value, linked);
   const fillColor = scheme && (fill === 'active' ? scheme.active : fill === 'inactive' ? scheme.inactive : null);
   const paint = fillColor ? paintFor(fillColor) : undefined;
-  return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}`}
+  return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}${idle ? ' ied-stopped' : ''}`}
+    title={idle ? RUN_SHAPE_COPY.equipmentStoppedHint(sources.map(iedId => iedNames[iedId] || iedId).join(', ')) : undefined}
     data-pulse={changes ? changes % 2 ? 'a' : 'b' : undefined}>
     {!terminalLess && <Handle id="north" type="target" position={Position.Top} />}
     {!terminalLess && <Handle id="west" type="target" position={Position.Left} />}
@@ -62,7 +69,8 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
     </div>}
     {!junction && <div className="equipment-label">{data.label}</div>}
     {!junction && badge && <div className="equipment-mode" title={modeStatus(badge).hint}>{modeStatus(badge).label}</div>}
-    {!junction && <div className={`equipment-state tone-${tone}`}>
+    {!junction && idle && <div className="equipment-state tone-stopped">{RUN_SHAPE_COPY.equipmentStopped}</div>}
+    {!junction && !idle && <div className={`equipment-state tone-${tone}`}>
       {paint && <span className="state-dot" aria-hidden="true"
         style={{ background: paint.fill, borderColor: paint.outline }} />}
       {infeed ? data.infeed_state === 'dead' ? 'Set dead' : 'Set live' : data.kind === 'TRIP_RELAY' ? relayState : data.kind === 'PUSH_BUTTON' ?

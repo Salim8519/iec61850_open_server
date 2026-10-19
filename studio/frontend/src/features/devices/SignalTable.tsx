@@ -1,10 +1,11 @@
 import { ListPlus } from 'lucide-react';
 import type { Signal } from '../../api/types';
 import { ValueControl } from '../test/ValueControl';
+import { Spinner } from '../../ui/Spinner';
 
 /** The device's data points; values change through the shared ValueControl (UI-06). */
-export function SignalTable({ signals, values, iedId, running, perform, addTest }: {
-  signals: Signal[]; values: Record<string, unknown>; iedId: string; running: boolean;
+export function SignalTable({ signals, values, iedId, running, perform, addTest, loading = false }: {
+  signals: Signal[]; values: Record<string, unknown>; iedId: string; running: boolean; loading?: boolean;
   perform: (task: () => Promise<unknown>) => Promise<void>; addTest?: (signal: Signal) => void;
 }) {
   return <div className="table-scroll"><table>
@@ -23,5 +24,6 @@ export function SignalTable({ signals, values, iedId, running, perform, addTest 
           aria-label={`Add ${signal.ref} to test points`} onClick={() => addTest(signal)}><ListPlus size={17} /></button>}</td>
       </tr>;
     })}</tbody>
-  </table>{!signals.length && <div className="empty">No data points match your search.</div>}</div>;
+  </table>{!signals.length && (loading ? <div className="empty"><Spinner label="Loading data points…" /></div>
+    : <div className="empty">No data points match your search.</div>)}</div>;
 }

@@ -44,3 +44,7 @@
 }
 @keyframes change-ring-a { from { box-shadow: 0 0 0 4px #2563eb; } to { box-shadow: none; } }
 @keyframes change-ring-b { from { box-shadow: 0 0 0 4px #2563eb; } to { box-shadow: none; } }
+/* Its IED is stopped while others run (change 0106): grey, dashed outline, "IED stopped" in words. */
+.equipment-node.ied-stopped { border-style: dashed; background: var(--surface-2, #f4f5f8); }
+.equipment-node.ied-stopped .equipment-symbol { opacity: 0.55; }
+.equipment-state.tone-stopped { color: #4b5768; border: 1px dashed #8d99a8; background: white; }

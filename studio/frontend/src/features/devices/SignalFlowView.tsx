@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
+import { Spinner } from '../../ui/Spinner';
 import { Hint } from '../../ui/Hint';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { flowRows, LINK_STYLE, linkState, MANY_IEDS, wireVerdicts, type FlowEdge, type FlowGraph, type FlowType } from './signalFlow';
@@ -47,7 +48,8 @@ export function SignalFlowView({ iedName, running }: { iedName?: string; running
   }, [source, focus, iedName]);
   const rows = useMemo(() => graph ? flowRows(graph, type, query) : [], [graph, type, query]);
   if (!graph) return <div className={iedName ? '' : 'card'}><EmptyState icon={<Share2 size={22} />}
-    title="Signal flow" hintId={error ? 'flow.error' : 'flow.intro'} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
+    title="Signal flow" hintId={error ? 'flow.error' : 'flow.intro'}
+    action={error ? undefined : <Spinner label="Reading who sends what to whom…" />} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
   const problems = graph.diagnostics.filter(item => item.level === 'problem');
   const notes = graph.diagnostics.filter(item => item.level === 'info');
   const names = Object.fromEntries(graph.ieds.map(item => [item.name, item]));

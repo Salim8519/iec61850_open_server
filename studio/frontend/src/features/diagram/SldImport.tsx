@@ -4,6 +4,7 @@ import { api } from '../../api/client';
 import type { Diagram } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
 import { Hint } from '../../ui/Hint';
+import { SpinIcon } from '../../ui/Spinner';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { previewIsCurrent, sldAvailability, sldSummary, type SldMode, type SldPreview, type SldSource } from './sldPreview';
 import '../ieds/import-selection.css';
@@ -41,7 +42,8 @@ export function SldImport({ disabled, revision, apply, prepare }: {
   const stale = preview && !previewIsCurrent(preview, revision);
   return <>
     <button className="ghost" data-tour="diagram-build" disabled={disabled || busy} onClick={open}
-      title="Draw the single-line diagram from the substation SCD file"><Network size={17} />Build from SCD</button>
+      title="Draw the single-line diagram from the substation SCD file">{busy && !sources ? <SpinIcon size={17} />
+        : <Network size={17} />}{busy && !sources ? 'Reading the SCD…' : 'Build from SCD'}</button>
     {!sources && error && <span role="alert" className="import-unavailable">{error}</span>}
     <dialog ref={dialog} className="import-dialog" aria-labelledby="sld-import-title"
       onCancel={event => { event.preventDefault(); if (!busy) close(); }}>

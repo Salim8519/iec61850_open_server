@@ -4,7 +4,7 @@ import test from 'node:test';
 import type { GooseLinkMap } from '../../frontend/src/api/signalLayers.ts';
 import type { EquipmentNode } from '../../frontend/src/api/types.ts';
 import { SignalLayerStore } from '../../frontend/src/equipment/signalLayerStore.ts';
-import { edgePoint, equipmentByIed, linkCurve, placeTags } from '../../frontend/src/equipment/signalLayout.ts';
+import { edgePoint, equipmentByIed, linkCurve, MARK_SIZE, markScale, placeTags, tagCentre } from '../../frontend/src/equipment/signalLayout.ts';
 import { EDGE_PULSE_MS, observedLinks, PulseGate, problemWords, reducedMotion } from '../../frontend/src/equipment/signalPulses.ts';
 import { linkLine, linkStatus } from '../../frontend/src/copy/signalLayers.ts';
 
@@ -100,7 +100,7 @@ test('problems persist as a small ⚠ with words on hover and a dashed border, n
   assert.match(tag, /\{tag\.name\}/, 'the tag shows the full IED name');
 });
 
-test('tags sit beside bound equipment, outside senders get no tag, and are never saved (change 0097)', () => {
+test('a bound IED is a corner mark inside its equipment, outside senders get no tag, and tags are never saved (changes 0097, 0105)', () => {
   const nodes = [{ id: 'q1', type: 'equipment', position: { x: 100, y: 200 }, data: { kind: 'CB', label: 'Q1', rotation: 0,
     control_binding: { ied_id: 's', ref: 'x' } } }] as unknown as EquipmentNode[];
   const bound = equipmentByIed(nodes);
@@ -108,7 +108,15 @@ test('tags sit beside bound equipment, outside senders get no tag, and are never
   const tags = placeTags([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], bound, [
     { name: 'SUB_BAY0002', iedId: 's', outside: false, remote: false },
     { name: 'FAR', iedId: null, outside: true, remote: true }, { name: 'LOOSE', iedId: 'x', outside: false, remote: false }]);
-  assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y]), [['LOOSE', -70, 200], ['SUB_BAY0002', 190, 200]]);
+  // The mark's right edge sits 4 px inside the equipment's right edge (100 + 80 - 4), 4 px below its top.
+  assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y, tag.corner]), [['LOOSE', -70, 200, false], ['SUB_BAY0002', 176, 204, true]]);
+  const mark = tags[1];
+  assert.ok(mark.x - MARK_SIZE >= 100 && mark.x <= 180 && mark.y + MARK_SIZE <= 260, 'the mark stays inside its equipment');
+  const two = placeTags([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], new Map([['a', ['q1']], ['b', ['q1']]]), [
+    { name: 'A', iedId: 'a', outside: false, remote: false }, { name: 'B', iedId: 'b', outside: false, remote: false }]);
+  assert.deepEqual(two.map(tag => tag.x), [176, 154], 'a second IED on the same equipment steps left, no overlap');
+  assert.equal(markScale(0.1), 1.5);
+  assert.deepEqual(tagCentre(mark, 1, 1), { x: 167, y: 213 });
   assert.deepEqual(edgePoint({ x: 190, y: 213 }), { x: -30, y: 173 });
   assert.match(linkCurve({ x: 0, y: 0 }, { x: 100, y: 0 }).path, /^M 0 0 Q 50 -25 100 0$/);
   const overlay = read('features/diagram/signals/SignalOverlay.tsx');

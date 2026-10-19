@@ -102,6 +102,12 @@
   Pulse runs on the backend, including while automation is paused. Never replay on reopen.
 - Bulk deletion reviews all selected IEDs and affected test controls together, preserves
   drawing equipment/wires, and saves one recovery archive before changing the project.
+  Devices › *Select* puts tick boxes on the rows and a footer "N selected · Select all · Cancel ·
+  Delete N IEDs" (up to 20); the device header has a *Delete* button (change 0105).
+- Signal pickers remember IED, search, report and page for the browser tab. After a choice the
+  list stays open with the chosen row marked and the others offering *Use this*; *Undo* restores
+  the previous point and *Done* closes it. Switching between one point and two contacts keeps the
+  saved connection until the new one is complete (change 0105).
 - Properties list what each object still needs (ADR-0025). With one project IED,
   signal and control pickers preselect it; nothing saves until a point is chosen.
 - Diagram edits that change no persisted field (for example React Flow size

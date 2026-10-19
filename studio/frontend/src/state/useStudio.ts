@@ -11,6 +11,8 @@ export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  // What the running task is doing, in words, so a slow action never looks frozen (change 0105).
+  const [working, setWorking] = useState('');
   const [events, setEvents] = useState<StudioEvent[]>([]);
   const [saveState, setSaveState] = useState('All changes saved');
   const [values, setValues] = useState<Record<string, unknown>>({});
@@ -122,11 +124,11 @@ export function useStudio() {
     return () => { disposed = true; stream?.close(); if (timer.current) clearTimeout(timer.current); };
   }, [equipmentValues, energization, signalLayers, hydrateEquipment, refresh]);
 
-  const perform = useCallback(async (task: () => Promise<unknown>) => {
-    setBusy(true); setError('');
+  const perform = useCallback(async (task: () => Promise<unknown>, label = 'Working…') => {
+    setBusy(true); setError(''); setWorking(label);
     try { await task(); await refresh(); }
     catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+    finally { setBusy(false); setWorking(''); }
   }, [refresh]);
 
   const updateDiagram = useCallback((diagram: Diagram, group?: string, navigating = false) => {
@@ -156,10 +158,10 @@ export function useStudio() {
   const runtime = (action: string) => perform(async () => {
     if (current.current?.runtime === 'stopped') await saveDiagram();
     await api(`/runtime/${action}`, 'POST');
-  });
+  }, action === 'start' ? 'Starting the IEDs…' : action === 'stop' ? 'Stopping the IEDs…' : 'Changing automation…');
   const addTemplate = (name: string) => perform(async () => {
     await saveDiagram(); await api('/ieds/template', 'POST', { name });
-  });
+  }, 'Adding a sample IED…');
   const importFile = (file: File) => perform(async () => {
     await saveDiagram();
     if (file.name.toLowerCase().endsWith('.subsim')) {
@@ -169,7 +171,7 @@ export function useStudio() {
       const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
       setImportPreview({ ...preview, file });
     }
-  });
+  }, file.name.toLowerCase().endsWith('.subsim') ? 'Opening the project…' : 'Reading the file…');
   const confirmImport = (names: string[]) => perform(async () => {
     if (!importPreview) return;
     const form = new FormData();
@@ -177,8 +179,8 @@ export function useStudio() {
     form.append('selected_names', JSON.stringify(names));
     await api('/scl/import', 'POST', form);
     setImportPreview(null); setValues({});
-  });
-  return { project, error, setError, busy, events, values, equipmentValues, energization, signalLayers, saveState, updateDiagram,
+  }, 'Importing the IEDs…');
+  return { project, error, setError, busy, working, events, values, equipmentValues, energization, signalLayers, saveState, updateDiagram,
     canUndo: !!history?.past.length, canRedo: !!history?.future.length,
     undo, redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },

@@ -5,6 +5,7 @@ import type { Adapter, ApplyResult, PlanPreview } from '../../api/network';
 import { hint } from '../../copy/hints';
 import { Disclosure } from '../../ui/Disclosure';
 import { Hint } from '../../ui/Hint';
+import { SpinIcon, Spinner } from '../../ui/Spinner';
 import { AddressTable, type Manual } from './AddressTable';
 import { ResultStep, ReviewStep } from './ReviewStep';
 import { adapterLabel, changeSentence, usableAdapters } from './setupWords';
@@ -20,9 +21,13 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   const [applying, setApplying] = useState(false);
   const [result, setResult] = useState<ApplyResult | null>(null);
   const [error, setError] = useState('');
-  const load = useCallback((refresh: boolean) => {
+  // Only a Refresh the user pressed shows a turning icon; the quiet 3 s re-check does not.
+  const [refreshing, setRefreshing] = useState(false);
+  const load = useCallback((refresh: boolean, pressed = false) => {
+    if (pressed) setRefreshing(true);
     api<{ adapters: Adapter[] }>(`/network/adapters${refresh ? '?refresh=1' : ''}`)
-      .then(answer => setAdapters(answer.adapters)).catch(reason => setError(reason.message));
+      .then(answer => setAdapters(answer.adapters)).catch(reason => setError(reason.message))
+      .finally(() => { if (pressed) setRefreshing(false); });
   }, []);
   useEffect(() => load(false), [load]);
   // A plugged or unplugged cable shows up by itself until a network card is chosen.
@@ -61,28 +66,32 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     <h2 style={{ margin: 0 }}>Put your published IEDs on a network</h2>
     <div className="row" style={{ alignItems: 'center' }}>
       <label className="row" style={{ gap: 8 }}><strong style={{ whiteSpace: 'nowrap' }}>Network card</strong>
-        <select value={guid} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); }}
+        <select value={guid} disabled={!adapters} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); }}
           aria-label="Network card">
-          <option value="">Choose the card plugged into the IED or SCADA switch…</option>
+          <option value="">{adapters ? 'Choose the card plugged into the IED or SCADA switch…' : 'Looking for network cards…'}</option>
           {usable.map(adapter => <option key={adapter.guid} value={adapter.guid}>{adapterLabel(adapter)}</option>)}
         </select></label>
-      <button onClick={() => load(true)} aria-label="Refresh the network cards"><RefreshCw size={14} />Refresh</button>
+      <button onClick={() => load(true, true)} disabled={refreshing} aria-label="Refresh the network cards">
+        {refreshing ? <SpinIcon size={14} /> : <RefreshCw size={14} />}{refreshing ? 'Refreshing…' : 'Refresh'}</button>
     </div>
+    {!adapters && !error && <Spinner label="Looking for network cards…"
+      slowHint="Still working. Windows can take a few seconds to list its network cards." />}
     {!guid && <Hint id="network.adapter.pick" compact />}
     {!guid && <Hint id="network.adapter.virtual" compact />}
     {usable.find(item => item.guid === guid)?.default_route && <Hint id="network.adapter.default_route" compact />}
     {adapters && !usable.length && <p className="muted small">No suitable network card found. Plug in a USB
       Ethernet adapter or enable a virtual adapter; this list updates by itself.</p>}
     {error && <div className="error-banner" role="alert" style={{ borderRadius: 6 }}><span>{error}</span></div>}
-    {checking && !preview && <p className="small muted">Checking each address, including whether another device
-      already answers on it…</p>}
+    {checking && !preview && <Spinner label="Checking each address, including whether another device already answers on it…"
+      slowHint="Still checking. Addresses nobody answers on take a moment to confirm." />}
+    {checking && preview && <Spinner inline size={14} label="Checking again…" />}
     {preview && <AddressTable preview={preview} manual={manual} setManual={setManual} />}
     {preview && !preview.ready && <Hint id="network.address.fix" compact />}
     {preview && <p className="small" style={{ margin: 0 }}>{changeSentence(preview)}</p>}
     {preview && <Disclosure title="Show the exact Windows changes"><ReviewStep preview={preview} /></Disclosure>}
     <div className="row">
       <button className="primary" disabled={!preview?.ready || checking || applying} onClick={apply}>
-        <Check size={16} />{applying ? 'Waiting for Windows approval…'
+        {applying ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
           : `Put ${count || ''} ${count === 1 ? 'IED' : 'IEDs'} on ${preview ? `“${preview.adapter.name}”` : 'this card'}`}</button>
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>
     </div>

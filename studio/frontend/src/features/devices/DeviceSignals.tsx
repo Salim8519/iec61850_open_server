@@ -21,6 +21,8 @@ export function DeviceSignals({ ied, project, values, perform, prepare }: {
   const [total, setTotal] = useState(0);
   const [devices, setDevices] = useState<string[]>([]);
   const [message, setMessage] = useState('');
+  // True until the answer for the current IED and search arrives: never show "no match" too early.
+  const [loading, setLoading] = useState(true);
   const running = project.runtime !== 'stopped';
   const options = useMemo<Record<string, Choice[]>>(() => ({
     ld: devices.map(name => ({ value: name, label: name })),
@@ -34,9 +36,11 @@ export function DeviceSignals({ ied, project, values, perform, prepare }: {
   useEffect(() => { setOffset(0); }, [filter.values, ied.id]);
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
     const timer = setTimeout(() => api<{ items: Signal[]; total: number; devices?: string[] }>(`/ieds/${ied.id}/signals?${query}`)
       .then(result => { if (!cancelled) { setSignals(result.items); setTotal(result.total); setDevices(result.devices ?? []); } })
-      .catch(reason => { if (!cancelled) setMessage(reason.message); }), 150);
+      .catch(reason => { if (!cancelled) setMessage(reason.message); })
+      .finally(() => { if (!cancelled) setLoading(false); }), 150);
     return () => { cancelled = true; clearTimeout(timer); };
   }, [ied.id, query, running]);
   const addTest = (signal: Signal) => perform(async () => {
@@ -50,7 +54,8 @@ export function DeviceSignals({ ied, project, values, perform, prepare }: {
     <FilterBar label="Filter data points" spec={SIGNAL_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
       shown={total} total={ied.signal_count} options={options} />
     {message && <p className="small muted panel-note" role="status">{message}</p>}
-    <SignalTable signals={signals} values={values} iedId={ied.id} running={running} perform={perform} addTest={addTest} />
+    <SignalTable signals={signals} values={values} iedId={ied.id} running={running} perform={perform} addTest={addTest}
+      loading={loading} />
     <div className="pager"><span>{total ? offset + 1 : 0}–{Math.min(offset + PAGE, total)} of {total.toLocaleString()}</span>
       <div className="row"><button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - PAGE))}>Previous</button>
         <button disabled={offset + PAGE >= total} onClick={() => setOffset(offset + PAGE)}>Next</button></div></div>

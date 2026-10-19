@@ -7,10 +7,13 @@ import { StatusPill } from '../../ui/StatusPill';
 import { UI_STATUS } from '../../copy/status';
 import { NetworkSettings } from './NetworkSettings';
 import { LicenseSection } from './LicenseSection';
+import { UpdateSection } from './UpdateSection';
+import type { useUpdateStatus } from '../../api/updates';
 import './settings.css';
 
-export function SettingsPage({ project, locked, perform, openTraffic }: {
+export function SettingsPage({ project, locked, perform, openTraffic, update }: {
   project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>; openTraffic: () => void;
+  update: ReturnType<typeof useUpdateStatus>;
 }) {
   const [view, setView] = useState<'network' | 'license' | 'about'>('network');
   const [npcap, setNpcap] = useState<NpcapStatus | null>(null);
@@ -31,6 +34,7 @@ export function SettingsPage({ project, locked, perform, openTraffic }: {
       {npcap && <StatusPill status={npcap.installed ? UI_STATUS.npcap_ready : UI_STATUS.npcap_missing} />}</div>
       <table><tbody>{rows.map(([label, value]) => <tr key={label}><td className="muted" style={{ width: 240 }}>{label}</td>
         <td><strong>{value}</strong></td></tr>)}</tbody></table>
+      <UpdateSection status={update.status} change={update.change} checkNow={update.checkNow} />
       <div className="card-body"><p className="small muted" style={{ margin: 0 }}>ScadaBench is a laboratory tool. Do not connect it
         to an operational substation network. Logs are saved in the data folder next to the app.</p></div></div>}
   </div>;

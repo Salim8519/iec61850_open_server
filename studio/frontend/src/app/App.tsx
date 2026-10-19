@@ -19,6 +19,7 @@ import { place, type PlaceId } from './places';
 import { useExitConfirm } from './useExitConfirm';
 import { placeActivity, toolActivity } from './running';
 import { useActivity } from './useActivity';
+import { useUpdateStatus } from '../api/updates';
 
 export function App() {
   const studio = useStudio();
@@ -47,13 +48,15 @@ export function App() {
   const openFile = () => fileInput.current?.click();
   const info = place(current);
   const running = useActivity(!!project);
+  const update = useUpdateStatus();
   return <div className="app">
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} />}
     <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project} eventCount={studio.events.length}
-      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)} />
+      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)}
+      update={update.status} dismissUpdate={version => { update.change({ dismissed: version }).catch(() => {}); }} />
     <div className="main">
-      <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy}
+      <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy} working={studio.working}
         saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save}
         openNetwork={() => setCurrent('settings')} />
       <RecoveryNotice recovery={project?.startup_recovery} />
@@ -78,7 +81,7 @@ export function App() {
         {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}
           tool={tool} openTool={setTool} running={toolActivity(running)} activity={running} runIeds={() => studio.runtime('start')} />}
         {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform}
-          openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} />}
+          openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} update={update} />}
       </main>
     </div>
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}

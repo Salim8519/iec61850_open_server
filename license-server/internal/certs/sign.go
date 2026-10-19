@@ -104,6 +104,16 @@ func (s *Signer) Sign(p Payload) (Bundle, error) {
 	return Bundle{Payload: string(raw), Signature: base64.RawURLEncoding.EncodeToString(signature)}, nil
 }
 
+// ReleaseDomain prefixes every signed release record, so a release signature can never
+// pass as a license certificate (signed without a prefix) or the other way round.
+const ReleaseDomain = "scadabench-release-v1\n"
+
+// SignRelease signs ReleaseDomain + payload and returns the URL-safe base64 signature.
+func (s *Signer) SignRelease(payload []byte) string {
+	message := append([]byte(ReleaseDomain), payload...)
+	return base64.RawURLEncoding.EncodeToString(ed25519.Sign(s.private, message))
+}
+
 // Verify checks a bundle against a public key (used by tests and the admin CLI).
 func Verify(public ed25519.PublicKey, b Bundle) (Payload, error) {
 	signature, err := base64.RawURLEncoding.DecodeString(strings.TrimRight(b.Signature, "="))

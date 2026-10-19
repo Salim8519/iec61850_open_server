@@ -18,7 +18,7 @@ export function DeviceFiles({ ied, locked, perform, prepare }: {
       <hr style={{ margin: '8px 0' }} />
       <div className="row" style={{ justifyContent: 'space-between' }}><div><h3 style={{ margin: 0 }}>Remove from project</h3>
         <p className="small muted" style={{ margin: 0 }}>A backup of the project is saved first.</p></div>
-        <DeleteIed iedId={ied.id} disabled={locked} prepare={prepare} perform={perform} /></div>
+        <DeleteIed iedId={ied.id} iedName={ied.name} disabled={locked} prepare={prepare} perform={perform} /></div>
     </div>
   </div>;
 }

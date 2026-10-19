@@ -1,4 +1,4 @@
-import { Cpu, HeartPulse, LayoutTemplate, Share2, Upload } from 'lucide-react';
+import { Cpu, HeartPulse, LayoutTemplate, ListChecks, Share2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { Project } from '../../api/types';
 import { useListFilter } from '../../state/useListFilter';
@@ -13,6 +13,11 @@ import { SignalFlowView } from './SignalFlowView';
 import './devices.css';
 import { GooseHint } from './GooseHint';
 import { useGooseLinks } from './useGooseLinks';
+import { DeleteIedsDialog } from './DeleteIedsDialog';
+import { DeviceSelectBar } from './DeviceSelectBar';
+import { DeviceRunSummary } from './DeviceRunSummary';
+import { runGroups } from './runGroups';
+import { runSummary } from '../../copy/runShape';
 
 const FLOW = 'station-flow';
 const HEALTH = 'station-health';
@@ -26,6 +31,12 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
 }) {
   const [selected, setSelected] = useState(flowIed ?? '');
   const filter = useListFilter('devices-list', DEVICE_FILTER);
+  // Choosing several IEDs to delete: null when not choosing (change 0105).
+  const [picked, setPicked] = useState<string[] | null>(null);
+  const [deleting, setDeleting] = useState<string[] | null>(null);
+  useEffect(() => { if (locked) setPicked(null); }, [locked]);
+  const toggle = (id: string) => setPicked(current => current && (current.includes(id)
+    ? current.filter(item => item !== id) : [...current, id]));
   useEffect(() => {
     if (selected !== FLOW && selected !== HEALTH && !project.ieds.some(item => item.id === selected)) setSelected(project.ieds[0]?.id || '');
   }, [project.ieds, selected]);
@@ -39,15 +50,26 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
       <button className="large" disabled={locked} onClick={() => addTemplate('Feeder01')}><LayoutTemplate size={18} />Use a sample IED</button>
     </div>} /></div></div>;
   const shown = project.ieds.filter(item => deviceMatches(item, filter.values));
+  const run = runSummary(project);
+  const live = new Set(run.shape === 'partial' ? run.running.map(item => item.id) : []);
   return <div className="content fill-page devices-page">
+    <DeviceRunSummary project={project} perform={perform} />
     <div className="fill-body fill-split devices-split">
       <aside className="card side-pane devices-list" aria-label="IEDs">
-        <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD</button>
+        <div className="devices-list-head">
+          <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD</button>
+          <button className={picked ? 'large active-toggle' : 'large'} disabled={locked} aria-pressed={!!picked}
+            title={locked ? 'Stop the run to delete IEDs' : 'Choose several IEDs to delete'}
+            onClick={() => setPicked(picked ? null : [])}><ListChecks size={18} />Select</button>
+        </div>
         <FilterBar label="Filter IEDs" spec={DEVICE_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
           shown={shown.length} total={project.ieds.length} counts={{ role: roleCounts(project.ieds) }} />
-        <div className="list" role="list">{shown.map(item => <DeviceListRow key={item.id} ied={item}
-          active={item.id === selected} mode={modes.ieds[item.id]} select={() => setSelected(item.id)}
-          hints={<GooseHint map={gooseLinks} name={item.name} />} />)}
+        <div className="list" role="list">{runGroups(shown, run).map(group => [
+          group.label && <div key={group.label} className="section-label">{group.label}</div>,
+          ...group.ieds.map(item => <DeviceListRow key={item.id} ied={item} live={live.has(item.id)}
+            active={item.id === selected} mode={modes.ieds[item.id]} checked={picked ? picked.includes(item.id) : undefined}
+            select={() => picked ? toggle(item.id) : setSelected(item.id)}
+            hints={<GooseHint map={gooseLinks} name={item.name} />} />)])}
           {shown.length === 0 && <p className="small muted" style={{ margin: 0 }}>No IED matches. Press Clear to see them all.</p>}</div>
         <button className="ghost" disabled={locked} onClick={() => addTemplate(`Sample${project.ieds.length + 1}`)}>
           <LayoutTemplate size={16} />Add a sample IED</button>
@@ -58,6 +80,8 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
         <button className={`list-row compact${selected === FLOW ? ' active' : ''}`} onClick={() => setSelected(FLOW)}>
           <Share2 size={18} style={{ color: 'var(--text-2)', flexShrink: 0 }} />
           <span className="list-text"><strong>Signal flow</strong><small>Who sends GOOSE and reports to whom</small></span></button>
+        {picked && <DeviceSelectBar count={picked.length} shown={shown.length} cancel={() => setPicked(null)}
+          selectShown={() => setPicked(shown.map(item => item.id))} remove={() => setDeleting(picked)} />}
       </aside>
       {selected === FLOW && <div className="fill-scroll"><SignalFlowView running={project.runtime !== 'stopped'} /></div>}
       {selected === HEALTH && <div className="fill-scroll"><HealthView running={project.runtime !== 'stopped'} /></div>}
@@ -65,5 +89,7 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
         initialTab={ied.id === flowIed ? 'flow' : undefined} mode={modes.ieds[ied.id]} selectDevice={setSelected}
         openNetwork={openNetwork} />}
     </div>
+    {deleting && <DeleteIedsDialog ids={deleting} close={() => setDeleting(null)} done={() => setPicked(null)}
+      perform={perform} prepare={prepare} />}
   </div>;
 }

@@ -7,6 +7,7 @@ import '../../components/signal-search-picker.css';
 import { shortRef } from '../../equipment/relayDisplay';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
+import { Spinner } from '../../ui/Spinner';
 import { ValueControl } from './ValueControl';
 
 type Item = TestControl & { signal: Signal; automatic: boolean; overridden: boolean };
@@ -17,11 +18,13 @@ export function TestPoints({ project, values, perform, prepare }: {
 }) {
   const [items, setItems] = useState<Item[]>([]);
   const [adding, setAdding] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const running = project.runtime !== 'stopped';
   const entries = project.test_panel || [];
   useEffect(() => {
     let cancelled = false;
-    const load = () => api<{ items: Item[] }>('/project/test-panel').then(result => { if (!cancelled) setItems(result.items); });
+    const load = () => api<{ items: Item[] }>('/project/test-panel')
+      .then(result => { if (!cancelled) { setItems(result.items); setLoaded(true); } });
     load();
     const timer = running ? setInterval(load, 1000) : undefined;
     return () => { cancelled = true; clearInterval(timer); };
@@ -37,11 +40,12 @@ export function TestPoints({ project, values, perform, prepare }: {
       {(adding || !!items.length) && <button className={adding ? '' : 'primary'} disabled={running} onClick={() => setAdding(!adding)}>
         {adding ? <><X size={16} />Close</> : <><Plus size={16} />Add test point</>}</button>}
     </div>
-    {adding && <div className="card"><div className="card-body"><SignalSearchPicker ieds={project.ieds} writableOnly chooseLabel="Add"
+    {adding && <div className="card"><div className="card-body"><SignalSearchPicker ieds={project.ieds} writableOnly chooseLabel="Add" memoryKey="test-points"
       exclude={new Set(entries.map(item => `${item.ied_id}:${item.ref}`))}
       choose={(binding, signal) => save([...entries, { id: crypto.randomUUID(), label: (signal.description || signal.ref).slice(0, 100),
         ...binding, duration_ms: 1000, active_value: true }])} /></div></div>}
-    {!items.length && !adding && <div className="card"><EmptyState icon={<ListChecks size={24} />} title="No test points yet"
+    {!loaded && !items.length && <div className="card"><div className="card-body"><Spinner label="Loading your test points…" /></div></div>}
+    {loaded && !items.length && !adding && <div className="card"><EmptyState icon={<ListChecks size={24} />} title="No test points yet"
       hintId="test.points.empty" action={<button className="primary" disabled={running} onClick={() => setAdding(true)}>
         <Plus size={16} />Add test point</button>} /></div>}
     {!!items.length && <div className="card"><table><thead><tr><th>Name</th><th>Value</th><th style={{ width: 120 }} /></tr></thead>

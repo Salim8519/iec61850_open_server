@@ -14,7 +14,8 @@ Start, stop or connect one IED while the others keep their state, and move simul
 
 **Run model** (`simulation/coordinator.py`, `simulation/run_selection.py`, `runtime/supervisor.py`,
 `acquisition/manager.py`, `POST /runtime/ieds/<id>/start|stop`)
-- The top bar *Run* still starts every IED that is not *Off*; *Stop* stops everything.
+- The top bar *Run* still starts every IED that is not *Off*; *Stop* stops everything. During a
+  partial run *Run all* adds every stopped IED that is not *Off* to the run (change 0106).
 - Devices header: a simulated IED shows *Run this IED* / *Stop this IED* (its MMS server, reports,
   polling answers, GOOSE in lab mode and all its points); a real IED shows *Connect* /
   *Disconnect* (client read: free report blocks, else polling; sends nothing unless operated).
@@ -28,6 +29,11 @@ Start, stop or connect one IED while the others keep their state, and move simul
 - Equipment bound to a stopped IED has no value; its SLD tag says "not running" and the test
   section says "IED not running".
 - The top bar says "Running · 2 IEDs" or "Running 1 of 2 IEDs".
+- Three run shapes never look alike (change 0106): ○ stopped, ◐ some IEDs (amber dashed run state,
+  white *Stop all* and *Run all*, half-filled sidebar dots), ● all IEDs (green). Devices shows one
+  line naming the live IEDs with *Run the other N* and lists running IEDs first; the SLD lock badge
+  names the live IEDs, and equipment whose state comes only from stopped IEDs is grey and dashed with
+  "IED stopped". Wire colours stay the backend's (an unknown switch gives "Maybe live").
 - Running any IED locks the drawing and the IED roles, exactly as a full Run does (one rule,
   no partial edit mode). Stop everything to edit.
 
@@ -58,6 +64,8 @@ Editing the drawing or roles while some IEDs run; test buttons on real devices.
 | RUNONE-04 | A test button changes the simulated IED over MMS without any command; real IEDs are refused. | `studio/tests/protocol/test_run_single_ied.py::test_test_button_moves_breaker_without_command` |
 | RUNONE-05 | Test buttons only for running simulated IEDs. | `studio/tests/frontend/testButtons.test.ts::test buttons only for running simulated IEDs; real IEDs use commands` |
 | RUNONE-06 | Devices status pills sit on their own line so they are never cut. | `studio/tests/frontend/testButtons.test.ts::Devices rows put status pills on their own line so nothing is cut` |
+| RUNONE-07 | Stopped, partial and full runs have distinct shapes and words; green only when all run; Devices groups running IEDs first; SLD greys stopped IEDs' equipment in words. | `studio/tests/frontend/runShape.test.ts::the run has three shapes and left-out IEDs never count`, `studio/tests/frontend/runShape.test.ts::Devices groups running IEDs first only during a partial run`, `studio/tests/frontend/runShape.test.ts::top bar is green only when all run; SLD greys equipment of stopped IEDs in words` |
+| RUNONE-08 | *Run all* during a partial run adds the remaining IEDs; with nothing left it is refused. | `studio/tests/protocol/test_run_single_ied.py::test_run_all_during_a_partial_run_adds_the_rest` |
 
 ## Acceptance evidence
 

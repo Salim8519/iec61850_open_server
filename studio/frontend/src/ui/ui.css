@@ -70,3 +70,12 @@
 .mode-banner h2 { margin: 0 0 4px; }
 .guide-section { padding: 16px 20px; display: grid; gap: 12px; }
 .help-bubble { position: fixed; z-index: 60; }
+/* Shared waiting indicator (change 0105): ring + words, never a silent wait. */
+.ui-spin { animation: ui-spin 0.9s linear infinite; flex-shrink: 0; }
+@keyframes ui-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ui-spin { animation: none; } }
+.ui-spinner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--text-2); font-size: 14px; }
+.ui-spinner.inline { display: inline-flex; font-size: 13px; }
+.ui-spinner .ui-spin { color: var(--primary); }
+.ui-spinner-slow { flex-basis: 100%; font-size: 13px; color: var(--muted); }
+.boot-wait { min-height: 100vh; display: grid; place-items: center; background: var(--bg, #eceef2); }

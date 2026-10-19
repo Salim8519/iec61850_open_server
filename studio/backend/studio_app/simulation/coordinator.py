@@ -93,6 +93,11 @@ class Coordinator:
         with self.cycle_lock:
             if ied_ids is not None and self.state in {"running", "paused"}:
                 return add_ieds(self, set(ied_ids))
+            if self.state in {"running", "paused"}:
+                # "Run all" during a partial run adds every IED not Off that is not running yet (change 0106).
+                rest = {ied["id"] for ied in runnable(self.projects.project)} - self.active
+                if rest:
+                    return add_ieds(self, rest)
             self._start(None if ied_ids is None else set(ied_ids))
 
     def _start(self, selection=None):

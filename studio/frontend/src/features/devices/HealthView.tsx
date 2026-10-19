@@ -4,6 +4,7 @@ import { api } from '../../api/client';
 import { areaInfo, verdictStatus } from '../../copy/health';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
+import { Spinner } from '../../ui/Spinner';
 import { Hint } from '../../ui/Hint';
 import { StatusPill } from '../../ui/StatusPill';
 
@@ -30,7 +31,7 @@ export function HealthView({ running }: { running: boolean }) {
     return () => clearInterval(timer);
   }, [load, running]);
   if (!health) return <div className="card"><EmptyState icon={<HeartPulse size={22} />} title="Health check"
-    hintId="health.intro" />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
+    hintId="health.intro" action={error ? undefined : <Spinner label="Checking the station…" />} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
   const ieds = [...health.ieds].sort((a, b) => ORDER.indexOf(a.verdict) - ORDER.indexOf(b.verdict));
   return <div className="card">
     <div className="card-heading"><h2>Health check</h2><span className="row">

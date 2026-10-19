@@ -18,6 +18,8 @@ button.danger-outline { color: var(--error); border-color: #f19a9a; background: 
 button.danger-outline:hover:not(:disabled) { background: var(--error-soft); }
 button.ghost { border-color: transparent; background: transparent; }
 button.ghost:hover:not(:disabled) { background: var(--hover); }
+button.ghost.danger-text { color: var(--error); }
+button.ghost.danger-text:hover:not(:disabled) { background: var(--error-soft); }
 button.icon { padding: 0; width: var(--control-height); }
 button.large, .button.large { min-height: var(--control-height-large); padding: 0 20px; font-size: 1rem; }
 input, select, textarea {

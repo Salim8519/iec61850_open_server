@@ -17,3 +17,20 @@
 .panel-note { margin: 0; padding: 6px 16px; border-bottom: 1px solid var(--border); }
 .list-row.compact .list-pills .status-pill { padding: 2px 8px; }
 .devices-list .filter-bar { gap: 6px; }
+/* Choosing several IEDs (change 0105): a tick box per row and a footer that stays in view. */
+.devices-list-head { display: flex; gap: 6px; }
+.devices-list-head > .primary { flex: 1; min-width: 0; }
+.row-check { width: 20px; height: 20px; flex-shrink: 0; display: grid; place-items: center; align-self: center;
+  border: var(--line) solid var(--border-strong); border-radius: 5px; background: var(--surface); color: white; }
+.row-check.on { background: var(--accent); border-color: var(--accent); }
+.list-row.checked { border-color: var(--accent); background: var(--accent-soft); }
+.device-select-bar .small-button { min-height: 32px; padding: 0 8px; font-size: 13px; }
+.devices-list-head > button:not(.primary) { padding: 0 12px; }
+.devices-list-head > .active-toggle { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+/* Some IEDs run (change 0106): one summary line, running rows first with a solid left bar. */
+.device-run-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; flex-shrink: 0;
+  padding: 8px 14px; border: 1.5px dashed var(--warning); border-radius: var(--radius); background: var(--warning-soft); color: #92400e; }
+.device-run-summary .device-run-words { flex: 1; min-width: 240px; overflow-wrap: anywhere; }
+.device-run-summary button { min-height: 36px; }
+.list-row.compact.is-live { box-shadow: inset 4px 0 0 var(--success); }
+.list-row.compact.is-live.active { box-shadow: 0 0 0 1px var(--accent), inset 4px 0 0 var(--success); }

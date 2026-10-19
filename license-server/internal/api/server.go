@@ -12,6 +12,7 @@ import (
 	"substation-license-server/internal/config"
 	"substation-license-server/internal/logging"
 	"substation-license-server/internal/paypal"
+	"substation-license-server/internal/release"
 	"substation-license-server/internal/sales"
 	"substation-license-server/internal/security"
 	"substation-license-server/internal/store"
@@ -43,6 +44,8 @@ type Server struct {
 	Sales    *sales.Book
 	Now      func() time.Time
 	usage    dataUsage
+	// releaseBody is the signed newest-version answer, built once by LoadRelease.
+	releaseBody *release.Signed
 }
 
 // New builds a server with the documented production limits.
@@ -75,6 +78,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/v1/health", s.limited(security.ClassGeneral, s.health))
 	mux.HandleFunc("GET /api/v1/challenge", s.limited(security.ClassGeneral, s.challenge))
 	mux.HandleFunc("GET /api/v1/product", s.product)
+	mux.HandleFunc("GET /api/v1/release", s.latestRelease)
 	mux.HandleFunc("POST /api/v1/trial", s.limited(security.ClassSensitive, s.trial))
 	mux.HandleFunc("POST /api/v1/activate", s.limited(security.ClassSensitive, s.activate))
 	mux.HandleFunc("POST /api/v1/transfer", s.limited(security.ClassSensitive, s.transfer))

@@ -53,6 +53,8 @@ goto :videos_done
 echo No tutorial videos found; run marketing\videos\make.py, then web_encode.py.
 :videos_done
 call npx --yes wrangler@4 pages deploy dist --project-name scadabench --branch main --commit-dirty=true || goto :failed
+rem Tell installed apps (daily, quiet update check) which version the site now offers.
+if exist "..\studio\dist-protected\%SETUP%" powershell -NoProfile -ExecutionPolicy Bypass -File "..\license-server\deploy\owner.ps1" -Action release || echo The website is live, but installed apps were not told about %VERSION%. Run it again with: powershell -File license-server\deploy\owner.ps1 -Action release
 echo.
 echo Published. Live at https://scadabench.com (preview: https://scadabench.pages.dev)
 pause

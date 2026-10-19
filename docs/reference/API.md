@@ -99,6 +99,9 @@ ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
 | `POST /license/activate` | `license_key`, `move` | Activate (or move) a lifetime key online |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
+| `GET /app/update` | - | `current, auto, checked_at, checking, error, available, important, dismissed, latest` (ADR-0071; stored answer, no internet call) |
+| `POST /app/update/check` | - | Ask the license server now (a repeat within 60 s reuses the answer); failures are an `error` code, never a 5xx |
+| `PUT /app/update` | `{auto?: bool, dismissed?: version or null}` | Once-a-day switch; hide the note for one version (not for an important update) |
 | `GET /preferences` | - | `tour_seen_version`, `tour_version`, `list_filters`, `sld_goose_layer`, `sld_readers_layer` |
 | `PUT /preferences` | `{tour_seen_version?, list_filters?: {list: {key: text or bool}}, sld_goose_layer?, sld_readers_layer?}` | Store UI preferences in the data folder; a list's filters replace only that list (change 0093); layers 0 or 1 (change 0094) |
 | `PUT /license/config` | `server_url` (https) | Change the license server address |
