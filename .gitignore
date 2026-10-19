@@ -36,3 +36,4 @@ studio/release-archive/
 # Module-integrity signing secret (never commit)
 studio/native/release/module_signing.seed
 *.pcapng
+license-server/gateway/.wrangler/

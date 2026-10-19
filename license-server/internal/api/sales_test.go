@@ -11,7 +11,7 @@ import (
 
 func TestQuotedPriceSurvivesPriceChangeButForgedInvoiceDoesNot(t *testing.T) {
 	s := newTestServer(t)
-	invoice := s.newInvoice("0.10", "USD")
+	invoice := s.newInvoice("0.10", "USD", false)
 	s.Config.LicensePrice = "149.00"
 	if !s.paidAmountAccepted(invoice, "0.10", "USD") {
 		t.Fatal("buyer who was quoted 0.10 before the price change is refused")

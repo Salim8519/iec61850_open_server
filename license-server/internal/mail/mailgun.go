@@ -33,10 +33,21 @@ func New(domain, apiKey, from, region string) *Mailgun {
 
 // Send posts one plain-text message.
 func (m *Mailgun) Send(ctx context.Context, to, subject, text string) error {
+	return m.post(ctx, url.Values{"from": {m.From}, "to": {to}, "subject": {subject}, "text": {text}})
+}
+
+// SendNews posts one news message with one-click unsubscribe headers (RFC 8058),
+// which mailbox providers expect from bulk senders.
+func (m *Mailgun) SendNews(ctx context.Context, to, subject, text, unsubscribeURL string) error {
+	return m.post(ctx, url.Values{"from": {m.From}, "to": {to}, "subject": {subject}, "text": {text},
+		"h:List-Unsubscribe":      {"<" + unsubscribeURL + ">"},
+		"h:List-Unsubscribe-Post": {"List-Unsubscribe=One-Click"}, "o:tag": {"news"}})
+}
+
+func (m *Mailgun) post(ctx context.Context, form url.Values) error {
 	if m == nil || m.Domain == "" || m.APIKey == "" {
 		return errors.New("mailgun is not configured")
 	}
-	form := url.Values{"from": {m.From}, "to": {to}, "subject": {subject}, "text": {text}}
 	endpoint := fmt.Sprintf("%s/v3/%s/messages", m.BaseURL, url.PathEscape(m.Domain))
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, strings.NewReader(form.Encode()))
 	if err != nil {

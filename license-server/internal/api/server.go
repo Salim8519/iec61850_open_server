@@ -41,9 +41,13 @@ type Server struct {
 	Log      *logging.Capped
 	Payments Payments
 	Mailer   Mailer
+	News     NewsMailer
 	Sales    *sales.Book
 	Now      func() time.Time
 	usage    dataUsage
+	owner    *ownerState
+	// livePrice holds a price changed on the owner page (no restart needed).
+	livePrice livePrice
 	// releaseBody is the signed newest-version answer, built once by LoadRelease.
 	releaseBody *release.Signed
 }
@@ -59,7 +63,8 @@ func New(cfg config.Config, db *store.Store, signer *certs.Signer, log *logging.
 	}
 	return &Server{Config: cfg, Store: db, Signer: signer, Log: log,
 		Limiter: security.NewLimiter(limits), Sales: sales.Open(cfg.DataDir),
-		Pow: security.NewVerifier(cfg.PowSecret, cfg.PowDifficulty), Now: time.Now}
+		Pow: security.NewVerifier(cfg.PowSecret, cfg.PowDifficulty), Now: time.Now,
+		owner: newOwnerState(cfg.DataDir)}
 }
 
 type apiError struct {
@@ -89,6 +94,9 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /api/v1/admin/{action}", s.admin)
 	mux.HandleFunc("GET /buy", s.buyPage)
 	mux.HandleFunc("GET /activate", s.activatePage)
+	mux.HandleFunc("GET /unsubscribe", s.unsubscribePage)
+	mux.HandleFunc("POST /unsubscribe", s.unsubscribePage)
+	s.mountOwner(mux)
 	mux.Handle("GET /static/{name}", staticHandler())
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/buy", http.StatusFound)

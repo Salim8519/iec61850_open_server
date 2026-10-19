@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"substation-license-server/internal/certs"
@@ -14,13 +15,15 @@ import (
 
 // set changes settings without questions (used by the Windows deploy command).
 // Secrets never appear on the command line: with --secrets-stdin they are read as
-// "paypal_client_secret=..." / "mailgun_api_key=..." lines from standard input.
+// "paypal_client_secret=..." / "mailgun_api_key=..." / "admin_gateway_secret=..." lines
+// from standard input.
 func set(args []string) error {
 	text := map[string]*string{}
 	var trialDays *int
 	var secretsStdin *bool
 	names := []string{"listen", "public-url", "price", "currency", "support-email", "paypal-mode",
-		"paypal-client-id", "paypal-webhook-id", "mailgun-domain", "mailgun-region", "mailgun-from", "notify-email", "seller-name"}
+		"paypal-client-id", "paypal-webhook-id", "mailgun-domain", "mailgun-region", "mailgun-from", "notify-email", "seller-name",
+		"admin-path", "admin-origin", "marketing-from", "marketing-domain"}
 	dataDir, err := flags("set", args, func(fs *flag.FlagSet) {
 		for _, name := range names {
 			text[name] = fs.String(name, "", name)
@@ -39,7 +42,9 @@ func set(args []string) error {
 		"currency": &cfg.LicenseCurrency, "support-email": &cfg.SupportEmail, "paypal-mode": &cfg.PayPalMode,
 		"paypal-client-id": &cfg.PayPalClientID, "paypal-webhook-id": &cfg.PayPalWebhookID,
 		"mailgun-domain": &cfg.MailgunDomain, "mailgun-region": &cfg.MailgunRegion, "mailgun-from": &cfg.MailgunFrom,
-		"notify-email": &cfg.NotifyEmail, "seller-name": &cfg.SellerName}
+		"notify-email": &cfg.NotifyEmail, "seller-name": &cfg.SellerName,
+		"admin-path": &cfg.AdminPath, "admin-origin": &cfg.AdminOrigin,
+		"marketing-from": &cfg.MarketingFrom, "marketing-domain": &cfg.MarketingDomain}
 	for name, value := range text {
 		if v := strings.TrimSpace(*value); v != "" {
 			*targets[name] = v
@@ -52,6 +57,9 @@ func set(args []string) error {
 	}
 	if cfg.PayPalMode != "sandbox" && cfg.PayPalMode != "live" {
 		return errors.New("--paypal-mode must be sandbox or live")
+	}
+	if err := checkAdminPath(cfg.AdminPath); err != nil {
+		return err
 	}
 	if *trialDays > 0 {
 		cfg.TrialDays = *trialDays
@@ -75,6 +83,24 @@ func set(args []string) error {
 	return nil
 }
 
+var adminPathPattern = regexp.MustCompile(`^/[a-z0-9][a-z0-9-]{2,39}$`)
+
+// checkAdminPath keeps the owner page off the public routes.
+func checkAdminPath(path string) error {
+	if path == "" {
+		return nil
+	}
+	if !adminPathPattern.MatchString(path) {
+		return errors.New("--admin-path must look like /yourname (3-40 lowercase letters, digits or -)")
+	}
+	for _, taken := range []string{"/api", "/buy", "/activate", "/static", "/unsubscribe"} {
+		if strings.HasPrefix(path, taken) {
+			return fmt.Errorf("--admin-path cannot start with %s", taken)
+		}
+	}
+	return nil
+}
+
 func readSecrets(cfg *config.Config) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
@@ -88,6 +114,8 @@ func readSecrets(cfg *config.Config) error {
 			cfg.PayPalClientSecret = strings.TrimSpace(value)
 		case "mailgun_api_key":
 			cfg.MailgunAPIKey = strings.TrimSpace(value)
+		case "admin_gateway_secret":
+			cfg.AdminGatewaySecret = strings.TrimSpace(value)
 		default:
 			return fmt.Errorf("unknown secret %q", key)
 		}

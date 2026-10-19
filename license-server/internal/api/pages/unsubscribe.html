@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{template "head" .}}
+<title>Unsubscribe · ScadaBench news</title>
+</head>
+<body>
+{{template "header" .}}
+<main class="wrap single">
+  <section class="pay" aria-labelledby="title">
+    {{if .Done}}
+      <p class="done">{{template "lock"}} Done</p>
+      <h2 id="title">You will not get ScadaBench news any more</h2>
+      <p class="hint">License emails for keys you bought still arrive, because they are not news.
+        Changed your mind? Tick the news box the next time you buy.</p>
+    {{else}}
+      <h2 id="title">Stop ScadaBench news emails?</h2>
+      <p class="hint">Press the button and we will not send you news again. One click, no sign-in.</p>
+      <form method="post" action="/unsubscribe?t={{.Token}}">
+        <button class="btn btn-dark" type="submit">Unsubscribe</button>
+      </form>
+    {{end}}
+  </section>
+</main>
+{{template "footer" .}}
+</body>
+</html>

@@ -15,7 +15,7 @@ DATA_DIR=/var/lib/substation-license
 UNIT=/etc/systemd/system/license-server.service
 TUNNEL_UNIT=/etc/systemd/system/scadabench-tunnel.service
 TUNNEL_ENV=/etc/scadabench/tunnel.env
-GO_VERSION=1.22.12
+GO_VERSION=1.25.6
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE="$(cd "$HERE/.." && pwd)"
 RECONFIGURE=0
@@ -37,7 +37,7 @@ binary() {
   fi
   say "Building on this server (downloads Go once if needed)"
   local go=go
-  if ! command -v go >/dev/null || ! go version | grep -Eq 'go1\.(2[2-9]|[3-9][0-9])'; then
+  if ! command -v go >/dev/null || ! go version | grep -Eq 'go1\.(2[4-9]|[3-9][0-9])'; then
     curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz" -o /tmp/go.tgz
     rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tgz && rm -f /tmp/go.tgz
     go=/usr/local/go/bin/go

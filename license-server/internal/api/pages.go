@@ -48,8 +48,9 @@ func (d pageData) Amount() string {
 }
 
 func (s *Server) data() pageData {
-	return pageData{Product: s.Config.ProductName, Price: s.Config.LicensePrice,
-		Currency: s.Config.LicenseCurrency, ClientID: s.Config.PayPalClientID,
+	price, currency := s.price()
+	return pageData{Product: s.Config.ProductName, Price: price,
+		Currency: currency, ClientID: s.Config.PayPalClientID,
 		CheckoutReady: s.Config.PayPalReady() && s.Payments != nil, Support: s.Config.SupportEmail,
 		Transfers: s.Config.MaxTransfersPerYear, TrialDays: s.Config.TrialDays,
 		Seller: s.Config.SellerName, Asset: assetVersion}

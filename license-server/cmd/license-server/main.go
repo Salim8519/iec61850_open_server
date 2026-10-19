@@ -41,6 +41,9 @@ Everyday commands:
   list                      list keys and the number of trial machines
   payments [--json]         every recorded payment, refund and reversal, with buyer details
   release < release.json    publish the newest app version the Windows app checks (JSON on stdin)
+  admin-setup --password-stdin   create or replace the owner page login (password on stdin);
+                            prints the authenticator key and recovery codes once
+  admin-status              say whether the owner login exists (no secrets shown)
   backup --out FILE.tar.gz  save database, settings and signing key (keep it offline!)
   keygen [--force]          create the Ed25519 signing key (configure does this once)
 
@@ -71,6 +74,10 @@ func main() {
 		err = payments(args)
 	case "release":
 		err = publishRelease(args)
+	case "admin-setup":
+		err = adminSetup(args)
+	case "admin-status":
+		err = adminStatus(args)
 	case "issue", "revoke", "reset-hwid", "reset-trial", "delete", "list", "certificate":
 		err = adminCommand(command, args)
 	default:
@@ -125,6 +132,15 @@ func buildServer(cfg config.Config, db *store.Store) (*api.Server, *logging.Capp
 	}
 	if cfg.MailReady() {
 		server.Mailer = mail.New(cfg.MailgunDomain, cfg.MailgunAPIKey, cfg.MailgunFrom, cfg.MailgunRegion)
+		// News may use its own sending domain so bulk mail never hurts license emails.
+		domain, from := cfg.MailgunDomain, cfg.MailgunFrom
+		if cfg.MarketingDomain != "" {
+			domain = cfg.MarketingDomain
+		}
+		if cfg.MarketingFrom != "" {
+			from = cfg.MarketingFrom
+		}
+		server.News = mail.New(domain, cfg.MailgunAPIKey, from, cfg.MailgunRegion)
 	}
 	return server, logger, nil
 }

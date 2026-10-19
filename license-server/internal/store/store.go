@@ -14,6 +14,7 @@ var (
 	bucketTrials   = []byte("trials")
 	bucketLicenses = []byte("licenses")
 	bucketOrders   = []byte("orders")
+	bucketNews     = []byte("subscribers")
 
 	// ErrTrialUsed means this machine already had its one trial.
 	ErrTrialUsed = errors.New("this computer has already used its free trial")
@@ -50,6 +51,8 @@ type License struct {
 	Reason      string  `json:"reason,omitempty"`
 	OrderID     string  `json:"order_id,omitempty"`
 	Transfers   []int64 `json:"transfers,omitempty"`
+	// Note is the owner's own label, for example "Ahmed, friend" (owner page only).
+	Note string `json:"note,omitempty"`
 }
 
 // Order is one completed PayPal purchase.
@@ -77,7 +80,7 @@ func Open(path string) (*Store, error) {
 		return nil, err
 	}
 	err = db.Update(func(tx *bolt.Tx) error {
-		for _, name := range [][]byte{bucketTrials, bucketLicenses, bucketOrders} {
+		for _, name := range [][]byte{bucketTrials, bucketLicenses, bucketOrders, bucketNews} {
 			if _, err := tx.CreateBucketIfNotExists(name); err != nil {
 				return err
 			}

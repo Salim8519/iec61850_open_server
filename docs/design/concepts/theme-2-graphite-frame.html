@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Graphite frame theme</title>
+<style>
+:root {
+  --bg: #1b1f29;
+  --side: #1f2430;
+  --top: #1f2430;
+  --surface: #272d3a;
+  --surface2: #2f3645;
+  --text: #e5e7eb;
+  --text2: #a3acb9;
+  --border: #343b4a;
+  --borderS: #4a5366;
+  --accent: #60a5fa;
+  --accentSoft: #1e2c44;
+  --onAccent: #0b1a2e;
+  --canvas: #e7eaee;
+  --dot: #c3c9d2;
+  --wire: #1f2937;
+  --sym: #ffffff;
+  --symLine: #7d8796;
+  --live: #dc2626;
+  --dead: #9ca3af;
+  --earth: #15803d;
+  --ok: #4ade80;
+  --okSoft: #163023;
+  --warn: #fbbf24;
+  --tag: #ffffff;
+  --tagLine: #a9b1bd;
+  font-family: 'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif; font-size: 15px; line-height: 1.5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+.pitch { display: flex; align-items: center; gap: 14px; padding: 8px 16px; background: #000; color: #ddd; font-size: 13px; flex-wrap: wrap; }
+.pitch b { color: #fff; } .pitch a { color: #aaa; text-decoration: none; padding: 3px 10px; border: 1px solid #333; border-radius: 99px; }
+.pitch a.on { color: #000; background: #fff; border-color: #fff; } .pitch nav { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.app { flex: 1; display: grid; grid-template-columns: 232px 1fr; min-height: 0; }
+aside { background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 14px 10px; gap: 4px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; padding: 4px 8px 16px; }
+.logo { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; }
+.nav { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 10px; color: var(--text2); font-weight: 500; }
+.nav svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.nav.on { background: var(--accentSoft); color: var(--accent); }
+.spacer { flex: 1; }
+main { display: grid; grid-template-rows: 64px 1fr; min-width: 0; }
+header { background: var(--top); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; padding: 0 20px; }
+h1 { font-size: 20px; margin: 0; font-weight: 600; } .sub { font-size: 13px; color: var(--text2); }
+.btn { height: 40px; padding: 0 16px; border-radius: 10px; border: 1.5px solid var(--borderS); background: var(--surface); color: var(--text); font: inherit; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--onAccent); }
+.run { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--ok); font-weight: 500; font-size: 14px; }
+.run i { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px var(--okSoft); }
+.work { display: grid; grid-template-columns: 1fr 360px; min-height: 0; }
+.canvas { position: relative; background-color: var(--canvas); background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size: 18px 18px; overflow: hidden; }
+.canvas svg.sld { position: absolute; inset: 0; width: 100%; height: 100%; }
+.float { position: absolute; display: flex; gap: 6px; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgb(0 0 0 / 18%); }
+.float .btn { height: 34px; padding: 0 12px; font-size: 14px; border-width: 1px; }
+.sw { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; padding: 0 8px; }
+.sw b { color: var(--accent); }
+.legend { right: 14px; bottom: 14px; flex-direction: column; gap: 4px; font-size: 12.5px; padding: 10px 14px; color: var(--text2); }
+.legend div { display: flex; align-items: center; gap: 10px; }
+.sheet { background: var(--surface); border-left: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow: auto; }
+.kicker { font-size: 12.5px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border-radius: 99px; border: 1.5px solid var(--ok); color: var(--ok); background: var(--okSoft); font-size: 13px; font-weight: 600; }
+.card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.row { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; }
+.row span:first-child { color: var(--text2); }
+.tag { display: inline-flex; padding: 1px 8px; border: 1px solid var(--tagLine); border-radius: 7px; background: var(--tag); font-size: 12px; color: var(--text2); }
+.adv { color: var(--text2); font-size: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
+</style></head><body>
+<div class="pitch"><b>Graphite frame</b><span>Dark chrome around a light drawing canvas.</span><nav><a href="theme-1-control-room.html" class="">Control room</a> <a href="theme-2-graphite-frame.html" class="on">Graphite frame</a> <a href="theme-3-blueprint.html" class="">Blueprint</a> <a href="theme-4-warm-paper.html" class="">Warm paper</a></nav></div>
+<div class="app">
+<aside>
+  <div class="brand"><div class="logo"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M9 1 3 9h4l-1 6 6-8H8z" fill="var(--onAccent)"/></svg></div>Substation Studio</div>
+  <div class="nav"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/></svg>Devices</div>
+  <div class="nav on"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6v12M16 6v5M14 11h4v4h-4z"/></svg>Single line diagram</div>
+  <div class="nav"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 10h14l-5-10V3"/></svg>Test</div>
+  <div class="spacer"></div>
+  <div class="nav"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Activity</div>
+  <div class="nav"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>Settings</div>
+</aside>
+<main>
+  <header>
+    <div><h1>Single line diagram</h1><div class="sub">Demo substation · 3 IEDs running</div></div>
+    <button class="btn">File</button>
+    <div class="run"><i></i>Running · 00:12:41</div>
+    <button class="btn primary">Stop</button>
+  </header>
+  <div class="work">
+    <div class="canvas">
+      <svg class="sld" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet" fill="none" stroke-linecap="round">
+        <!-- incomer -->
+        <line x1="450" y1="20" x2="450" y2="110" stroke="var(--live)" stroke-width="4"/>
+        <circle cx="450" cy="40" r="14" stroke="var(--symLine)" stroke-width="2" fill="var(--sym)"/>
+        <circle cx="450" cy="58" r="14" stroke="var(--symLine)" stroke-width="2" fill="var(--sym)"/>
+        <text x="472" y="52" font-size="13" fill="var(--text2)" stroke="none">T1 33/11 kV</text>
+        <!-- busbar -->
+        <line x1="100" y1="110" x2="800" y2="110" stroke="var(--live)" stroke-width="6"/>
+        <text x="100" y="98" font-size="13" fill="var(--text2)" stroke="none">11 kV Bus A</text>
+        <!-- bay 1 (closed) -->
+        <g stroke="var(--live)" stroke-width="4">
+          <line x1="260" y1="110" x2="260" y2="160"/><line x1="260" y1="184" x2="260" y2="242"/>
+          <line x1="260" y1="284" x2="260" y2="520"/>
+        </g>
+        <g stroke="var(--symLine)" stroke-width="2.5"><line x1="250" y1="160" x2="270" y2="160"/><line x1="260" y1="160" x2="260" y2="184"/><line x1="250" y1="184" x2="270" y2="184"/></g>
+        <rect x="241" y="242" width="38" height="42" rx="4" fill="var(--live)" stroke="var(--symLine)" stroke-width="2.5"/>
+        <rect x="229" y="230" width="62" height="66" rx="10" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 5"/>
+        <circle cx="260" cy="340" r="11" stroke="var(--symLine)" stroke-width="2.5" fill="var(--sym)"/>
+        <circle cx="260" cy="356" r="11" stroke="var(--symLine)" stroke-width="2.5" fill="var(--sym)"/>
+        <g stroke="var(--symLine)" stroke-width="2.5"><line x1="260" y1="420" x2="300" y2="420"/><line x1="300" y1="420" x2="318" y2="404"/><line x1="322" y1="420" x2="340" y2="420"/><line x1="340" y1="410" x2="340" y2="430"/><line x1="346" y1="414" x2="346" y2="426"/></g>
+        <text x="296" y="270" font-size="14" font-weight="600" fill="var(--text)" stroke="none">Q0</text>
+        <text x="236" y="545" font-size="13" fill="var(--text2)" stroke="none">Feeder 1</text>
+        <!-- bay 2 (open breaker, dead below) -->
+        <g stroke="var(--live)" stroke-width="4"><line x1="640" y1="110" x2="640" y2="160"/><line x1="640" y1="184" x2="640" y2="242"/></g>
+        <g stroke="var(--symLine)" stroke-width="2.5"><line x1="630" y1="160" x2="650" y2="160"/><line x1="640" y1="160" x2="640" y2="184"/><line x1="630" y1="184" x2="650" y2="184"/></g>
+        <rect x="621" y="242" width="38" height="42" rx="4" fill="var(--sym)" stroke="var(--symLine)" stroke-width="2.5"/>
+        <g stroke="var(--symLine)" stroke-width="2.5"><line x1="640" y1="244" x2="640" y2="258"/><line x1="640" y1="270" x2="640" y2="282"/></g>
+        <line x1="640" y1="284" x2="640" y2="520" stroke="var(--dead)" stroke-width="3" stroke-dasharray="9 7"/>
+        <text x="676" y="270" font-size="14" font-weight="600" fill="var(--text)" stroke="none">Q0</text>
+        <text x="616" y="545" font-size="13" fill="var(--text2)" stroke="none">Feeder 2</text>
+        <!-- IED tags + pulse -->
+        <path d="M330 200 C 450 150, 520 150, 560 200" stroke="var(--accent)" stroke-width="1.5" opacity=".45"/>
+        <circle cx="470" cy="165" r="5" fill="var(--accent)" stroke="none"/>
+        <g font-size="12" stroke="none">
+          <rect x="290" y="188" width="150" height="24" rx="7" fill="var(--tag)" stroke="var(--tagLine)"/>
+          <text x="300" y="205" fill="var(--text2)">IED_F1_Protection</text>
+          <rect x="490" y="188" width="140" height="24" rx="7" fill="var(--tag)" stroke="var(--tagLine)"/>
+          <text x="500" y="205" fill="var(--text2)">IED_F2_Control</text>
+        </g>
+      </svg>
+      <div class="float" style="left:14px;top:14px">
+        <button class="btn">+ Add</button><button class="btn">Undo</button><button class="btn">Redo</button>
+        <span class="sw">Signals <b>On</b></span><span class="sw">IED tags <b>On</b></span>
+      </div>
+      <div class="float" style="left:14px;bottom:14px"><button class="btn">−</button><button class="btn">100%</button><button class="btn">+</button></div>
+      <div class="float legend">
+        <div><svg width="34" height="6"><line x1="2" y1="3" x2="32" y2="3" stroke="var(--live)" stroke-width="4"/></svg>Live</div>
+        <div><svg width="34" height="6"><line x1="2" y1="3" x2="32" y2="3" stroke="var(--dead)" stroke-width="3" stroke-dasharray="6 4"/></svg>Dead</div>
+        <div><svg width="34" height="6"><line x1="2" y1="3" x2="32" y2="3" stroke="var(--earth)" stroke-width="3" stroke-dasharray="10 3 2 3"/></svg>Earthed</div>
+      </div>
+    </div>
+    <div class="sheet">
+      <div><div class="kicker">Circuit breaker</div><h1>Feeder 1 · Q0</h1></div>
+      <div><span class="pill"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" fill="none"/></svg>Closed · good quality</span></div>
+      <button class="btn primary" style="height:44px;justify-content:center">Operate: open breaker</button>
+      <div class="card">
+        <div class="row"><span>Start position</span><span>Closed</span></div>
+        <div class="row"><span>Comes from</span><span>11 kV Bus A</span></div>
+        <div class="row"><span>Goes to</span><span>Feeder 1 cable</span></div>
+      </div>
+      <div class="card">
+        <div class="row"><span>Controlled by</span><span class="tag">IED_F1_Protection</span></div>
+        <div class="row"><span>Last change</span><span>12:04:31.208</span></div>
+        <div class="row"><span>Reports</span><span style="color:var(--ok)">Arriving</span></div>
+      </div>
+      <div class="adv">Advanced ▾</div>
+    </div>
+  </div>
+</main>
+</div>
+</body></html>

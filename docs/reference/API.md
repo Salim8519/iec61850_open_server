@@ -134,6 +134,13 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 Packaged builds answer 402 `license_required` on every other `/api/v1` call until licensed
 (ADR-0046); development never does. License endpoints return `{error, code}` on failure.
 
+License server owner page (ADR-0072, [spec](../specs/owner-page.md)): under the configured
+`<owner path>`, reachable only with the gateway Worker's `X-Admin-Gateway` secret (otherwise 404):
+`GET /api/session`, `POST /api/login|logout|logout-all`, `GET /api/overview|licenses|purchases|activity|issues|disk|subscribers|news/status`,
+`POST /api/licenses/issue|note|revoke|reset-hwid|resend`, `POST /api/subscribers/add|remove`, `POST /api/news/test`;
+with a fresh `X-Confirm-Code`: `POST /api/licenses/delete`, `/api/disk/clean`, `/api/news/send`.
+Public: `GET/POST /unsubscribe?t=` (POST is RFC 8058 one-click); `POST /api/v1/checkout/create-order` accepts `news`.
+
 Private native IPC is not HTTP: version-1 length-prefixed JSON on worker stdin/stdout.
 `studio/backend/studio_app/runtime/worker_protocol.py` owns framing; native worker
 capabilities are validated before an IED is marked running.

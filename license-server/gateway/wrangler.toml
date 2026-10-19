@@ -1,0 +1,11 @@
+# Owner page gateway Worker (ADR-0072). Deployed by license-server\deploy\admin.ps1,
+# which adds the route (scadabench.com/<owner path>*) and the ADMIN_GATEWAY_SECRET secret.
+name = "scadabench-owner-gateway"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+account_id = "526f27c5e0f7387a16bc955c18425c7f"
+workers_dev = false
+preview_urls = false
+
+[vars]
+UPSTREAM = "https://license.scadabench.com"

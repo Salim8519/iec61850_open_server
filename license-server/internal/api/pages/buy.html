@@ -39,6 +39,8 @@
       {{if .CheckoutReady}}
         <p class="paywith"><span>Pay securely with</span>
           <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-color.svg" alt="PayPal" width="84" height="22"></p>
+        <label class="optin"><input id="news" type="checkbox"> <span>Email me about new ScadaBench versions
+          and tips (a few times a year, unsubscribe with one click).</span></label>
         <div id="paypal-buttons" class="paypal"><p class="loading">Loading secure PayPal checkout…</p></div>
         <img class="marks" src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"
           alt="Accepted: PayPal, Mastercard, Visa, Discover, American Express" width="319" height="110" loading="lazy">
@@ -92,7 +94,8 @@
     .then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy key"; }, 1800); });
   paypal.Buttons({
     style: { layout: "vertical", shape: "pill", color: "gold", label: "pay", height: 48 },
-    createOrder: async () => (await postJSON("/api/v1/checkout/create-order", { hwid })).id,
+    createOrder: async () => (await postJSON("/api/v1/checkout/create-order",
+      { hwid, news: document.getElementById("news").checked })).id,
     onApprove: async (data) => {
       show("status", "Confirming your payment with PayPal…", "");
       try { showKey(await postJSON("/api/v1/checkout/capture-order", { order_id: data.orderID })); }
