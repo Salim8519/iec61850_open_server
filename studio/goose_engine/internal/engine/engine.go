@@ -42,12 +42,14 @@ type Engine struct {
 	link     linkState
 	storms   map[string]time.Time
 	stopTick chan struct{}
+	wake     chan struct{} // the share check may have to start ticking
 }
 
 // New returns an engine that reports events through emit.
 func New(emit func(map[string]any), newPort PortFactory) *Engine {
 	e := &Engine{emit: emit, guard: guard.New(RatePerSecond), newPort: newPort,
-		sources: map[string]frame.MAC{}, storms: map[string]time.Time{}, stopTick: make(chan struct{})}
+		sources: map[string]frame.MAC{}, storms: map[string]time.Time{}, stopTick: make(chan struct{}),
+		wake: make(chan struct{}, 1)}
 	_, _ = rand.Read(e.prefix[:])
 	go e.tick()
 	return e

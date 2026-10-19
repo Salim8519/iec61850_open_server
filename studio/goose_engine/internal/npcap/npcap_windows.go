@@ -16,7 +16,7 @@ import (
 const (
 	openPromiscuous    = 1
 	openNoCaptureLocal = 8
-	readTimeoutMs      = 1
+	readTimeoutMs      = 1 // unused once non-blocking; pcap_open needs a value
 	snapLength         = 65536
 	gooseFilter        = "ether proto 0x88b8 or (vlan and ether proto 0x88b8)"
 )
@@ -46,7 +46,8 @@ func load() {
 		return
 	}
 	for _, name := range []string{"pcap_open", "pcap_next_ex", "pcap_sendpacket", "pcap_compile",
-		"pcap_setfilter", "pcap_freecode", "pcap_setmintocopy", "pcap_geterr", "pcap_close"} {
+		"pcap_setfilter", "pcap_freecode", "pcap_setmintocopy", "pcap_setnonblock", "pcap_getevent",
+		"pcap_geterr", "pcap_close"} {
 		proc, err := wpcap.FindProc(name)
 		if err != nil {
 			loadError = fmt.Errorf("Npcap is too old: %s is missing", name)
@@ -63,7 +64,10 @@ func Available() error {
 }
 
 // Handle is one open adapter. It must be used from a single goroutine.
-type Handle struct{ p uintptr }
+type Handle struct {
+	p     uintptr
+	event uintptr
+}
 
 type bpfProgram struct {
 	length uint32
@@ -87,8 +91,9 @@ func Open(guid string) (*Handle, error) {
 	filter, _ := syscall.BytePtrFromString(gooseFilter)
 	var program bpfProgram
 	if r, _, _ := procs["pcap_compile"].Call(p, uintptr(unsafe.Pointer(&program)), uintptr(unsafe.Pointer(filter)), 1, 0xFFFFFFFF); r != 0 {
+		message := h.lastError() // read before Close: the text lives in the handle
 		h.Close()
-		return nil, fmt.Errorf("GOOSE filter failed: %s", h.lastError())
+		return nil, fmt.Errorf("GOOSE filter failed: %s", message)
 	}
 	r, _, _ := procs["pcap_setfilter"].Call(p, uintptr(unsafe.Pointer(&program)))
 	procs["pcap_freecode"].Call(uintptr(unsafe.Pointer(&program)))
@@ -97,10 +102,23 @@ func Open(guid string) (*Handle, error) {
 		return nil, errors.New("GOOSE filter could not be applied")
 	}
 	procs["pcap_setmintocopy"].Call(p, 0)
+	if r, _, _ := procs["pcap_setnonblock"].Call(p, 1, uintptr(unsafe.Pointer(&errbuf[0]))); int32(r) != 0 {
+		h.Close()
+		return nil, fmt.Errorf("could not switch the adapter to event mode: %s", cString(errbuf))
+	}
+	if h.event, _, _ = procs["pcap_getevent"].Call(p); h.event == 0 {
+		h.Close()
+		return nil, errors.New("the adapter has no receive event")
+	}
 	return h, nil
 }
 
-// Next waits up to 1 ms for a frame. It returns nil, nil on timeout.
+// Event is the Windows event Npcap signals when frames are waiting. Npcap owns it
+// (pcap_close releases it) and clears it on every read, before copying frames, so
+// a frame arriving after a read always signals it again.
+func (h *Handle) Event() uintptr { return h.event }
+
+// Next returns the next waiting frame without blocking, or nil, nil when none is waiting.
 func (h *Handle) Next() ([]byte, error) {
 	var header, data uintptr
 	r, _, _ := procs["pcap_next_ex"].Call(h.p, uintptr(unsafe.Pointer(&header)), uintptr(unsafe.Pointer(&data)))
@@ -132,11 +150,14 @@ func (h *Handle) Send(b []byte) error {
 func (h *Handle) Close() {
 	if h.p != 0 {
 		procs["pcap_close"].Call(h.p)
-		h.p = 0
+		h.p, h.event = 0, 0
 	}
 }
 
 func (h *Handle) lastError() string {
+	if h.p == 0 {
+		return "the adapter is closed"
+	}
 	r, _, _ := procs["pcap_geterr"].Call(h.p)
 	if r == 0 {
 		return "unknown Npcap error"
