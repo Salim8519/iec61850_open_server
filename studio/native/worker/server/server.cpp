@@ -2,6 +2,7 @@
 #include "controls/controls.hpp"
 #include "goose/publishing.hpp"
 #include "read_hook.h"
+#include "schedule.h"
 extern "C" {
 #include "iec61850_config_file_parser.h"
 }
@@ -63,11 +64,13 @@ Json Server::start(const Json& config) {
     }
     auto goose = prepare_goose(*this, config);
     int port = config.value("port", 102);
-    IedServer_start(handle, port);
+    // Same single-threaded MMS server, driven by the worker's event loop (workstream G).
+    IedServer_startThreadless(handle, port);
     if (!IedServer_isRunning(handle)) {
         stop();
         throw std::runtime_error("MMS bind failed: " + ip + ":" + std::to_string(port));
     }
+    loop.start(handle);
     start_goose(*this);
     access.start();
     auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
@@ -87,8 +90,9 @@ DataAttribute* Server::attribute(const std::string& reference) {
 void Server::stop() {
     access.stop();
     if (goose_thread.joinable()) goose_thread.join();
+    loop.stop();
     goose_interface.clear();
-    if (handle) { IedServer_stop(handle); IedServer_destroy(handle); handle = nullptr; }
+    if (handle) { studio_server_stop(handle); IedServer_destroy(handle); handle = nullptr; }
     controls.clear();
     revisions.clear();
     if (model) { IedModel_destroy(model); model = nullptr; }

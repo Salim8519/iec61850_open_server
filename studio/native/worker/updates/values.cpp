@@ -125,6 +125,7 @@ Json update_batch(Server& server, const Json& updates, const Json& guard) {
     }
     auto revision = guarded ? server.revisions[guarded] : 0;
     IedServer_unlockDataModel(server.handle);
+    server.loop.kick();  // reports queued by this update go out on the loop's next tick
     return guarded ? Json{{"values", result}, {"revision", revision}} : result;
 }
 

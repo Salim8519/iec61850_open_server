@@ -6,7 +6,9 @@
 #include <thread>
 
 namespace {
-void gocb_event(MmsGooseControlBlock control, int event, void*) {
+void gocb_event(MmsGooseControlBlock control, int event, void* parameter) {
+    // A client changed GoEna; the next frames go out on the following periodic runs.
+    static_cast<Server*>(parameter)->loop.poll_for(20);
     auto ln = MmsGooseControlBlock_getLogicalNode(control);
     std::string name = MmsGooseControlBlock_getName(control);
     std::string node = ln ? ln->name : "";
@@ -34,7 +36,7 @@ Json prepare_goose(Server& server, const Json& config) {
     }
     server.goose_interface = interface_id;
     IedServer_setGooseInterfaceId(server.handle, server.goose_interface.c_str());
-    IedServer_setGoCBHandler(server.handle, gocb_event, nullptr);
+    IedServer_setGoCBHandler(server.handle, gocb_event, &server);
     summary["active"] = true;
     return summary;
 }
@@ -42,9 +44,11 @@ Json prepare_goose(Server& server, const Json& config) {
 void start_goose(Server& server) {
     if (server.goose_interface.empty()) return;
     auto handle = server.handle;
-    server.goose_thread = std::thread([handle] {
+    auto loop = &server.loop;
+    server.goose_thread = std::thread([handle, loop] {
         emit_frame({{"event", "goose_publishing"}, {"state", "starting"}});
         IedServer_enableGoosePublishing(handle);
+        loop->poll_for(20);  // the first frames go out on the next periodic runs
         emit_frame({{"event", "goose_publishing"}, {"state", "active"}});
     });
 }

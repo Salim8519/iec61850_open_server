@@ -1,6 +1,7 @@
 #pragma once
 #include "ipc/framing.hpp"
 #include "access_log.hpp"
+#include "event_loop.hpp"
 extern "C" {
 #include "iec61850_server.h"
 #include "iec61850_dynamic_model.h"
@@ -22,6 +23,7 @@ struct Server {
     std::string goose_interface;
     std::thread goose_thread;
     AccessLog access;
+    EventLoop loop;
     Server();
     ~Server();
     Json start(const Json& config);

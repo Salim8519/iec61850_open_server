@@ -48,3 +48,13 @@ See [array-parser decision](../../docs/decisions/ADR-0006-native-array-parser.md
 operation table has no control or data write (spec `docs/specs/real-ieds.md`).
 The probe supports `read`, `control`, `reports` and `browse`. Browsing obtains the
 model, type descriptions and dataset membership over TCP/MMS, not from source XML.
+
+`studio_ied` drives the vendor's single-threaded MMS server with its own event loop
+(workstream G, [stream log](../../docs/architecture/go-engine/streams/g-native.md)): one
+thread sleeps until a socket is ready, a control/report/GOOSE deadline of the vendor's own
+schedule is due, or an update arrives. `hal/socket_studio.c` compiles the vendor socket HAL
+unmodified under renamed symbols; only the loop thread selects its wait/poll modes, every
+other thread and executable keeps the vendor behaviour. `worker/server/schedule.c` reads
+private scheduling fields; `cmake/event_loop_support.cmake` pins those vendor files by hash.
+`studio_test_mms_bench` (test-only, never packaged) and `studio/tools/native_speed_bench.py`
+measure multi-client latency, control round trip, GOOSE gaps and idle CPU.
