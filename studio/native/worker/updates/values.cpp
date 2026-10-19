@@ -64,8 +64,7 @@ static void set_unsigned(MmsValue* target, DataAttributeType type, uint32_t valu
     if (MmsValue_toUint32(target) != value) throw std::runtime_error("The device model could not store this integer");
 }
 
-static MmsValue* prepare_value(Server& server, const std::string& reference, const Json& value) {
-    auto attribute = server.attribute(reference);
+static MmsValue* prepare_value(Server& server, DataAttribute* attribute, const Json& value) {
     IedServer_lockDataModel(server.handle);
     auto current = IedServer_getAttributeValue(server.handle, attribute);
     auto candidate = current ? MmsValue_clone(current) : nullptr;
@@ -100,12 +99,19 @@ Json update_batch(Server& server, const Json& updates, const Json& guard) {
     if (!updates.is_array() || updates.empty() || updates.size() > 256)
         throw std::runtime_error("Update batch must contain 1 to 256 attributes");
     using Value = std::unique_ptr<MmsValue, decltype(&MmsValue_delete)>;
-    std::vector<std::pair<DataAttribute*, Value>> candidates;
-    // Validate every entry before changing any live attribute.
+    struct Candidate {
+        std::string reference;
+        DataAttribute* attribute;
+        Value value;
+    };
+    std::vector<Candidate> candidates;
+    candidates.reserve(updates.size());
+    // Validate every entry before changing any live attribute; each reference resolves once.
     for (const auto& item : updates) {
         auto reference = item.at("ref").get<std::string>();
         auto attribute = server.attribute(reference);
-        candidates.emplace_back(attribute, Value(prepare_value(server, reference, item.at("value")), MmsValue_delete));
+        Value value(prepare_value(server, attribute, item.at("value")), MmsValue_delete);
+        candidates.push_back({std::move(reference), attribute, std::move(value)});
     }
     auto guarded = guard.is_null() ? nullptr : server.attribute(guard.at("ref").get<std::string>());
     auto expected = guard.is_null() ? 0 : guard.at("revision").get<uint64_t>();
@@ -115,14 +121,12 @@ Json update_batch(Server& server, const Json& updates, const Json& guard) {
         throw std::runtime_error("Signal changed; stale pulse action cancelled");
     }
     for (auto& candidate : candidates) {
-        IedServer_updateAttributeValue(server.handle, candidate.first, candidate.second.get());
-        ++server.revisions[candidate.first];
+        IedServer_updateAttributeValue(server.handle, candidate.attribute, candidate.value.get());
+        ++server.revisions[candidate.attribute];
     }
     Json result = Json::object();
-    for (const auto& item : updates) {
-        auto reference = item.at("ref").get<std::string>();
-        result[reference] = value_json(server, server.attribute(reference));
-    }
+    for (const auto& candidate : candidates)
+        result[candidate.reference] = value_json(server, candidate.attribute);
     auto revision = guarded ? server.revisions[guarded] : 0;
     IedServer_unlockDataModel(server.handle);
     server.loop.kick();  // reports queued by this update go out on the loop's next tick
