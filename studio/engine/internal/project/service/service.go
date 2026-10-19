@@ -16,6 +16,7 @@ import (
 	"studio-engine/internal/scl"
 	"studio-engine/internal/store/archive"
 	"studio-engine/internal/store/autosave"
+	"studio-engine/internal/store/modelcache"
 )
 
 // Config wires the service to its data folder and collaborators.
@@ -29,6 +30,8 @@ type Config struct {
 	// change durable).
 	OnSnapshotError func(error)
 	NewID           func() string
+	// ModelCache, when set, keeps derived IED models so reopening skips the SCL rebuild.
+	ModelCache *modelcache.Cache
 }
 
 type state struct {

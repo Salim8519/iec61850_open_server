@@ -4,7 +4,6 @@ import (
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/project"
 	"studio-engine/internal/pyjson"
-	"studio-engine/internal/scl"
 	"studio-engine/internal/store/archive"
 	"studio-engine/internal/store/recovery"
 )
@@ -39,7 +38,7 @@ func (s *Service) Restore(payload []byte, persist bool) error {
 		if !ok {
 			return apperr.ValueError("Stored SCL source is not text")
 		}
-		built, err := s.config.Importer.ImportNamed([]byte(source), group.Filename, scl.Selection{Names: names})
+		built, err := s.storedModels(source, group.Filename, names)
 		if err != nil {
 			return err
 		}
