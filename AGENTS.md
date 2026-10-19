@@ -15,6 +15,10 @@
 - Avoid stale-build/cache surprises. A launcher must identify an existing session
   before reusing it and must not silently run incompatible backend/native code.
 - Do not build or promote the packaged EXE unless the user explicitly requests it.
+- Go engine (ADR-0074, ADR-0076): **all new backend code is written in Go** under
+  `studio/engine`. The Python backend is frozen as the stable engine: no new features,
+  only owner-approved critical fixes. Python stays the default until the Go gates pass.
+  Go must behave byte-identically to Python; see `docs/architecture/go-engine/`.
 
 ## File and responsibility boundaries
 

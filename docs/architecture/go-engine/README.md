@@ -14,6 +14,7 @@ speed. Same screens, texts, defaults, API, events, files, limits and protocol be
 | [Architecture](architecture.md) | Process model, coexistence, packages, concurrency, data model, risks |
 | [Parity inventory](inventory/00-index.md) | 127 routes, 61 event kinds, ~30 disk artefacts, 7 processes, ~150 limits/defaults |
 | [Tests and gates](tests/06-gates.md) | 550 Python, 178 frontend, 21 Go tests classified; harness, golden replay, SCL corpus, gates |
+| [Workstreams](workstreams.md) | Six parallel streams, ownership, shared contracts, integration order (ADR-0076) |
 | [Capacity](capacity/capacity-audit.md) | RAM/CPU per component and per point, where Python breaks, Go budgets, benchmark S1-S10 |
 
 ## Rules that hold for every phase
@@ -28,8 +29,8 @@ speed. Same screens, texts, defaults, API, events, files, limits and protocol be
    rules in 0111 §3) while the visible behaviour stays byte-identical.
 5. Every phase ends with its gate. Go must be **equal or faster on every timing** and **within its
    RAM/CPU budget**; a regression blocks the phase.
-6. New features during the migration go into Python first, with a parity test, and onto the Go
-   checklist, so the engines never drift.
+6. New backend code is written only in Go; Python is frozen as the stable engine (critical fixes
+   only), and phases P0-P5 run in parallel workstreams ([ADR-0076](../../decisions/ADR-0076-go-only-development-and-parallel-workstreams.md)).
 7. AGENTS.md applies to Go: files under 300 lines, one responsibility each, domain code pure, ADRs
    for contracts and dependencies, change record and ledger line for every step, no EXE unless asked.
 
