@@ -16,6 +16,7 @@ speed. Same screens, texts, defaults, API, events, files, limits and protocol be
 | [Tests and gates](tests/06-gates.md) | 550 Python, 178 frontend, 21 Go tests classified; harness, golden replay, SCL corpus, gates |
 | [Workstreams](workstreams.md) | Six parallel streams, ownership, shared contracts, integration order (ADR-0076) |
 | [Capacity](capacity/capacity-audit.md) | RAM/CPU per component and per point, where Python breaks, Go budgets, benchmark S1-S10 |
+| [Speed plan](speed-plan.md) | Owner's speed/lightness/network plan (2026-10-20): targets, phases 0-4, lanes and file ownership |
 
 ## Rules that hold for every phase
 
