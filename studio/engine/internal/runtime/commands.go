@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"sync"
@@ -82,7 +83,8 @@ func (m *commandClient) operate(ied *pyjson.Object, state string, ref string, va
 	result, err := process.CanvasOperate(host, port, ref, flag, m.keep, probeTimeout)
 	failed := apperr.RuntimeError(fmt.Sprintf("MMS control failed or command termination was not received from %s:%d", host, port))
 	if err != nil {
-		if failure, isApp := err.(*apperr.Error); isApp && failure.Message == "Native canvas_operate request timed out" {
+		var timeout *native.TimeoutError
+		if errors.As(err, &timeout) && timeout.Op == "canvas_operate" {
 			return nil, errProbeTimeout
 		}
 		return nil, failed

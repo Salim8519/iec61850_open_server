@@ -30,7 +30,7 @@ type Worker struct {
 	command *exec.Cmd
 	stdin   io.WriteCloser
 	onEvent EventFunc
-	inbox   *fifo[inboxItem]
+	inbox   *Fifo[inboxItem]
 
 	mu       sync.Mutex
 	writeMu  sync.Mutex
@@ -73,7 +73,7 @@ func Start(executable string, onEvent EventFunc) (*Worker, error) {
 		return nil, err
 	}
 	_ = adopt(command.Process.Pid)
-	w := &Worker{command: command, stdin: stdin, onEvent: onEvent, inbox: newFifo[inboxItem](),
+	w := &Worker{command: command, stdin: stdin, onEvent: onEvent, inbox: NewFifo[inboxItem](),
 		pending: map[string]chan *pyjson.Object{}, done: make(chan struct{}), drained: make(chan struct{})}
 	stdoutDone, stderrDone := make(chan struct{}), make(chan struct{})
 	go w.wait(stdoutDone, stderrDone)
@@ -112,9 +112,9 @@ func (w *Worker) read(stdout io.Reader, done chan struct{}) {
 			break
 		}
 		_, isEvent := frame.Get("event")
-		w.inbox.push(inboxItem{frame: frame, event: isEvent})
+		w.inbox.Push(inboxItem{frame: frame, event: isEvent})
 	}
-	w.inbox.push(inboxItem{end: true, failure: failure})
+	w.inbox.Push(inboxItem{end: true, failure: failure})
 }
 
 // diagnostics turns each stderr line into a native_diagnostic event (worker_process.py:53-55).
@@ -126,7 +126,7 @@ func (w *Worker) diagnostics(stderr io.Reader, done chan struct{}) {
 		if len(line) > 0 {
 			event := pyjson.NewObject().Set("event", "native_diagnostic").
 				Set("message", pyStrip(decodeReplace(line)))
-			w.inbox.push(inboxItem{frame: event, event: true})
+			w.inbox.Push(inboxItem{frame: event, event: true})
 		}
 		if err != nil {
 			return
@@ -137,14 +137,14 @@ func (w *Worker) diagnostics(stderr io.Reader, done chan struct{}) {
 func (w *Worker) dispatch() {
 	defer close(w.drained)
 	for {
-		item, ok := w.inbox.pop()
+		item, ok := w.inbox.Pop()
 		if !ok {
 			return
 		}
 		switch {
 		case item.end:
 			w.finish(item.failure)
-			w.inbox.close()
+			w.inbox.Close()
 		case item.event:
 			w.deliver(item.frame)
 		default:

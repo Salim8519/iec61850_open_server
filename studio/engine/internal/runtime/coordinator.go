@@ -55,6 +55,12 @@ type Coordinator struct {
 	cadence                 *cadence
 	iedStates               map[string]string
 	gooseStates             map[string]any
+	// endpoints is supervisor.endpoints: where each started worker confirmed it listens.
+	endpoints map[string]endpoint
+	// index is coordinator.ied_indexes (and index): the value tables of the IEDs of the last
+	// Run, kept after Stop as Python kept them, replaced at the next Run.
+	index map[string]*valueTable
+	hub   hub
 
 	emitMu sync.Mutex
 	log    *RunLog
@@ -82,7 +88,9 @@ func New(opt Options) *Coordinator {
 	}
 	c := &Coordinator{opt: opt, epoch: time.Now(), state: "stopped", active: map[string]bool{},
 		runs: map[string]*running{}, srcs: map[sourceKey]*source{}, iedStates: map[string]string{},
-		gooseStates: map[string]any{}, shutdown: make(chan struct{})}
+		gooseStates: map[string]any{}, endpoints: map[string]endpoint{}, index: map[string]*valueTable{},
+		shutdown: make(chan struct{})}
+	c.tables.hub = &c.hub
 	c.cadence = newCadence(c.now())
 	c.lastAutomation = c.now()
 	c.pulses = newPulses(c)

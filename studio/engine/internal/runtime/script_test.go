@@ -8,6 +8,7 @@ import (
 
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/pyval"
+	"studio-engine/internal/testutil"
 )
 
 // nativeDir is the folder of the untracked native workers (STUDIO_NATIVE_BIN overrides).
@@ -25,7 +26,7 @@ func nativeDir(t *testing.T) string {
 }
 
 // loadProject reads the synthetic template project and moves its IEDs to portBase+1, +2.
-func loadProject(t *testing.T, portBase int64) *pyjson.Object {
+func loadProject(t testing.TB, portBase int64) *pyjson.Object {
 	t.Helper()
 	raw, err := os.ReadFile(filepath.Join("testdata", "project.json"))
 	if err != nil {
@@ -87,7 +88,7 @@ func runScript(t *testing.T, portBase int64) ([]*pyjson.Object, *MemoryProject) 
 	requireMux(t, nativeDir(t))
 	project := NewMemoryProject(loadProject(t, portBase))
 	bus := &MemoryBus{}
-	c := New(Options{NativeDir: nativeDir(t), DataDir: t.TempDir(), Bus: bus, Project: project})
+	c := New(Options{NativeDir: nativeDir(t), DataDir: testutil.TempDir(t), Bus: bus, Project: project})
 	defer func() { c.Close() }()
 	var ids []string
 	for _, ied := range projectIeds(project.Current()) {

@@ -42,7 +42,7 @@ func (c *Coordinator) onWorkerEvent(iedID string, event *pyjson.Object) {
 	if kind == "worker_failed" {
 		c.pulses.cancel(iedID, "", false, "IED worker failed")
 		c.mu.Lock()
-		c.iedStates[iedID] = "failed"
+		c.setIedStateLocked(iedID, "failed")
 		c.mu.Unlock()
 	}
 	payload := pyval.Obj("ied_id", iedID)

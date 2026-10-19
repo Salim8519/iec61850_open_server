@@ -38,16 +38,26 @@ func (c *Coordinator) signalInfo(iedID, ref string) (signal.Signal, error) {
 	return info, nil
 }
 
-// Signal is Coordinator.signal: the signal dict with its runtime value, quality and time.
-func (c *Coordinator) Signal(iedID, ref string) (*pyjson.Object, error) {
-	model, table, err := c.modelFor(iedID)
+// Signal is Coordinator.signal: the signal dict with its runtime value, quality, time and
+// live_state. Ids and refs come from request bodies, so they may be any JSON value: a
+// non-text id finds no IED and a non-text ref no signal, as Python's == lookups did.
+func (c *Coordinator) Signal(iedID, ref any) (*pyjson.Object, error) {
+	id, text := iedID.(string)
+	if !text {
+		return nil, apperr.Coded("Unknown IED", "not_found")
+	}
+	model, table, err := c.modelFor(id)
 	if err != nil {
 		return nil, err
 	}
-	if _, ok := model.lookup(ref); !ok {
+	name, text := ref.(string)
+	if !text {
 		return nil, apperr.ValueError("Unknown signal reference")
 	}
-	return table.view(ref), nil
+	if _, ok := model.lookup(name); !ok {
+		return nil, apperr.ValueError("Unknown signal reference")
+	}
+	return table.view(name), nil
 }
 
 // Value returns the runtime value of a signal (the "value" key Python kept on the signal
