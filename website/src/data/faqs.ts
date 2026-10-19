@@ -12,7 +12,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
     { q: 'Do I need any hardware?', a: 'No. ScadaBench runs the IEDs on your Windows PC. Real relays are only needed if you want to compare them with the SCD.' },
     { q: 'Which Windows versions are supported?', a: SITE.requirements },
     { q: 'Does it work without internet?', a: 'Yes. Internet is only used to start the trial or activate a key. Offline PCs can be activated with a license file.' },
-    { q: 'Where do I learn how to use it?', a: 'The tutorials page has seven short narrated videos on the real app, each with the steps in text. The app also opens a guided tour on first start.' },
+    { q: 'Where do I learn how to use it?', a: 'The tutorials page has nine short narrated videos on the real app, each with the steps in text. The app also opens a guided tour on first start.' },
   ] },
   { id: 'technical', title: 'Technical', items: [
     { q: 'Which files can I import?', a: 'CID, ICD, IID and SCD files in SCL 2003, 2007B and 2007B4. Original SCL and vendor extensions are kept.' },

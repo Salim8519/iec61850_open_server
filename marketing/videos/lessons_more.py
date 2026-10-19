@@ -1,12 +1,50 @@
-"""Lessons 4-6: GOOSE and the lab network, real IEDs and health, activation."""
+"""Lessons 4-6: simulation and test values, GOOSE and the lab network, real IEDs and health."""
 from __future__ import annotations
 
-import json
 import re
 import subprocess
 
 from director import start_app
-from lessons_basics import STATION, button, import_station, open_import, tab
+from lessons_basics import ADD, IMPORT, STATION, button, import_station, open_import, run_all, tab
+
+
+def simulation(d, page, data) -> None:
+    d.click(button(page, "Skip tour"), after=0.3)
+    d.say("Simulation means ScadaBench plays the IED. Your SCADA connects to it like to the real relay.")
+    d.click(button(page, "Use a sample IED"), after=0.6)
+    d.say("Test points keep the values you change most.")
+    d.click(button(page, "Test"))
+    d.click(button(page, "Add test point"), after=0.5)
+    search = page.get_by_placeholder("Search signals…")
+    d.say("Search for the breaker position, and add it.")
+    d.type(search, "XCBR1.Pos.stVal")
+    d.click(page.locator(".signal-search-row").get_by_role("button", name="Add", exact=True).first, after=0.3)
+    d.say("Then a measurement.")
+    d.type(search, "AnIn1.mag.f")
+    d.click(page.locator(".signal-search-row").get_by_role("button", name="Add", exact=True).first, after=0.3)
+    d.click(button(page, "Close"))
+    d.say("Press Run. Clients now read these values.")
+    run_all(d, page, 1)
+    d.say("Close the breaker. Every connected client gets the new position.")
+    position = page.locator("select").filter(has_text="Closed (2)").first
+    d.point(position)
+    position.select_option(label="Closed (2)")
+    d.wait(0.8)
+    d.say("Set a measurement the same way.")
+    value = page.locator("input.signal-input").last
+    d.type(value, "132.5")
+    d.click(button(page, "Set"), after=0.8)
+    d.say("Generators move values for you. Sequences play timed steps or a CSV trace.")
+    d.click(tab(page, "Generators"), after=1.0)
+    d.click(tab(page, "Sequences"), after=1.2)
+    d.say("And every change is listed in Activity, with its time.")
+    d.point(page.get_by_role("button", name=re.compile(r"^Activity")), pause=0.8)
+
+
+def ethernet_label(page) -> str:
+    """The text of the wired Ethernet choice in the network card list (labels hold live addresses)."""
+    return page.evaluate("""() => [...document.querySelectorAll('main select option')]
+        .map(o => o.textContent).find(t => /^Ethernet ·/.test(t)) || ''""")
 
 
 def goose(d, page, data) -> None:
@@ -14,35 +52,29 @@ def goose(d, page, data) -> None:
     d.say("GOOSE is the fast message IEDs send each other, for trips and interlocks.")
     import_station(d, page, narrate=False)
     d.say("It is multicast on the Ethernet: one publisher, many subscribers.")
-    d.click(button(page, "Settings"), after=0.6)
-    d.say("Settings lists every GOOSE block in the SCD.")
-    d.point(page.get_by_text("Feed1SwiPosCtl").first, pause=0.6)
-    d.say("Each has an APPID and a multicast MAC address, so subscribers know what to listen to.")
-    d.point(page.get_by_text("APPID").first, pause=0.8)
-    d.say("GOOSE needs the free Npcap driver; ScadaBench checks it for you.")
-    d.point(page.get_by_text(re.compile("Npcap")).first, pause=0.6)
-    d.say("GOOSE runs on a real cable, so set up the lab network.")
-    d.click(button(page, "Set up lab network"), after=0.8)
-    d.say("Pick the adapter that goes to your test network.")
-    d.click(page.get_by_role("button", name=re.compile(r"^Ethernet")).first, after=0.4)
-    d.click(button(page, "Next"), after=0.6)
-    d.say("Keep the addresses from the SCD, so every device finds its IED.")
-    next_button = button(page, "Next")
-    for _ in range(80):
-        if next_button.is_enabled():
-            break
-        d.wait(0.5)
-    d.settle()
-    d.click(next_button, after=0.8)
-    d.say("Review every Windows change. Nothing happens until you press Apply.")
-    d.point(page.get_by_text(re.compile(r"^Add address .* for FEED1$")).first, pause=0.6)
-    d.say("Later, one click removes only what ScadaBench added.")
-    d.point(page.get_by_text(re.compile(r"^Allow other devices")).first, pause=0.6)
-    d.settle()
-    d.click(button(page, "Devices"))  # leave the wizard without applying anything
-    d.say("Signal flow shows who sends GOOSE and reports to whom.")
+    d.say("Each IED shows its GOOSE partners from the SCD. FEED1 sends to both busbar IEDs.")
+    d.point(page.get_by_text("GOOSE").filter(has_text=re.compile("^GOOSE$")).last, pause=0.3)
+    d.point(page.locator("td").filter(has_text=re.compile("Sends")).first, pause=0.8)
+    d.say("Signal flow draws who sends GOOSE and reports to whom.")
     d.click(page.get_by_role("button", name=re.compile(r"^Signal flow")).first, after=2.0)
-    d.say("Press Run, and your IEDs publish their GOOSE, just like the SCD says.")
+    d.say("GOOSE runs on a real cable, so put your IEDs on a network.")
+    d.click(button(page, "Settings"), after=0.6)
+    d.click(button(page, "Put my IEDs on a network"), after=0.8)
+    d.say("Pick the network card that goes to your test switch.")
+    card = page.locator("main select").first
+    d.point(card)
+    card.select_option(label=ethernet_label(page))
+    d.say("Each IED keeps its address from the SCD, and ScadaBench checks it is free.")
+    page.get_by_text(re.compile(r"^Put \d+ IEDs on")).first.wait_for(timeout=60000)
+    d.point(page.get_by_text("from the SCD").first, pause=0.8)
+    d.say("You see every Windows change before it happens. Clean up removes only what ScadaBench added.")
+    d.click(page.get_by_text("Show the exact Windows changes").first, after=1.2)
+    d.settle()
+    d.click(button(page, "Cancel"), after=0.4)  # leave without changing Windows
+    d.say("Tools shows the GOOSE that is really on the wire, block by block.")
+    d.click(button(page, "Tools"), after=0.6)
+    d.point(page.get_by_text("GOOSE & Sampled Values traffic", exact=True).first, pause=0.8)
+    d.say("Press Run, and your IEDs publish their GOOSE, just like the SCD says. The SLD shows each message as a moving dot.")
 
 
 def _start_station_copy(browser, index: int) -> tuple[subprocess.Popen, str]:
@@ -54,12 +86,12 @@ def _start_station_copy(browser, index: int) -> tuple[subprocess.Popen, str]:
     button(page, "Skip tour").first.click()
     button(page, "Devices").first.click()
     with page.expect_file_chooser() as chooser:
-        page.get_by_role("button", name=re.compile(r"^Import CID . SCD")).first.click()
+        page.get_by_role("button", name=IMPORT).first.click()
     chooser.value.set_files(str(STATION))
-    page.locator("input[type=checkbox]").nth(index).check()
-    page.get_by_role("button", name=re.compile(r"^Add \d")).first.click()
+    page.locator("dialog.import-dialog input[type=checkbox]").nth(index).check()
+    page.get_by_role("button", name=ADD).first.click()
     button(page, "Run").first.click()
-    page.get_by_text("Running · 1 IED").wait_for(timeout=90000)
+    page.get_by_text("Running · 1 IED").first.wait_for(timeout=90000)
     address = page.get_by_text(re.compile(r"^127\.\d+\.\d+\.\d+:102$")).first.inner_text()
     context.close()
     return process, address.split(":")[0]
@@ -69,79 +101,32 @@ def real_devices(d, page, data) -> None:
     station, address = _start_station_copy(page.context.browser, 1)
     try:
         d.click(button(page, "Skip tour"), after=0.3)
-        d.say("Simulate is for when the relay is not there. Real device is for when it is.")
+        d.say("Simulate is for when the relay is not there. Read real IED is for when it is.")
         d.say("Import the SCD and pick the relay to check.")
         open_import(d, page)
-        d.click(page.locator("input[type=checkbox]").nth(1), after=0.2)
-        d.click(page.get_by_role("button", name=re.compile(r"^Add \d")), after=0.3)
+        d.click(page.locator("dialog.import-dialog input[type=checkbox]").nth(1), after=0.2)
+        d.click(page.get_by_role("button", name=ADD), after=0.3)
         page.get_by_text("Choose IEDs to add").wait_for(state="hidden", timeout=90000)
         d.wait(0.6)
-        d.say("Choose Real device. ScadaBench connects as a client, and only reads.")
-        d.click(page.get_by_text("Real device", exact=True).first, after=0.6)
+        d.say("Choose Read real IED. ScadaBench connects as a client, and only reads.")
+        d.click(tab(page, "Read real IED").last, after=0.6)
         d.say("Enter its address. Here, a second ScadaBench plays the real relay.")
         field = page.get_by_placeholder(re.compile(r"^(e\.g\. |\d+\.\d+)"))
         d.type(field, address)
+        d.say("Reports are used only when a block is free, and given back on Stop.")
+        d.point(page.get_by_text("Reports (recommended)").first, pause=0.6)
         d.click(button(page, "Save connection"), after=0.6)
-        d.say("Press Run. It uses free report blocks only, and gives them back on Stop.")
+        d.say("Press Run. Live means values are arriving from the device.")
         d.click(button(page, "Run"), after=0.5)
-        page.get_by_text("Values are arriving from the device").first.wait_for(timeout=120000)
-        d.point(page.get_by_text(re.compile(r"will use report block")).first, pause=1.2)
+        arriving = page.get_by_text("Values are arriving from the device.")
+        arriving.first.wait_for(timeout=120000)
+        d.point(arriving, pause=1.0)
         d.settle()
         d.say("Compare with SCD reads the device model and lists every difference.")
-        d.click(button(page, "Compare with SCD"), after=3.0)
+        d.click(tab(page, "Compare with SCD"), after=3.0)
         d.say("Health check gives one verdict per IED.")
         d.click(page.get_by_role("button", name=re.compile(r"^Health check")).first, after=3.0)
         d.say("Export it as CSV or HTML for your commissioning report.")
     finally:
         station.kill()
         station.wait()
-
-
-DEMO_HWID = "4f1c9a2e7b3d5c8f0a6e1b9d2c7f4a3e5b8d0c6f1a9e2b7d3c5f8a0e6b1d9c2f"
-UNLICENSED = {"licensed": False, "mode": "unlicensed", "plan": None, "days_remaining": None, "expires_at": None,
-              "reason": None, "license_id": None, "email": None, "enforced": True,
-              "server_url": "https://license.scadabench.com", "masked_key": None, "hwid": DEMO_HWID,
-              "transfer_available": False}
-LICENSED = {**UNLICENSED, "licensed": True, "mode": "lifetime", "plan": "lifetime", "license_id": "SUBS-DEMO",
-            "email": "you@example.com", "masked_key": "SUBS-••••-••••-••••-R8WC"}
-
-
-def activation_prepare(page) -> None:
-    """The development build has no license lock, so the license screens get demo answers."""
-    state = {"status": UNLICENSED}
-
-    def status(route):
-        route.fulfill(status=200, content_type="application/json", body=json.dumps(state["status"]))
-
-    def activate(route):
-        state["status"] = LICENSED
-        status(route)
-
-    page.route("**/api/v1/license/status", status)
-    page.route("**/api/v1/license/activate", activate)
-
-
-def activation(d, page, data) -> None:
-    d.say("A new install opens on the activation screen.")
-    d.say("Start a free 7-day trial, no card needed. Or buy a lifetime license.")
-    d.point(button(page, "Start 7-day free trial"), pause=0.8)
-    d.say("Have a key? It is in your purchase email. Paste it here.")
-    d.type(page.get_by_placeholder("SUBS-XXXX-XXXX-XXXX-XXXX"), "SUBS-7K4P-QX2M-9TDF-R8WC")
-    d.click(button(page, "Activate this computer"), after=1.2)
-    page.get_by_text("Engine connected").wait_for(timeout=15000)
-    d.say("Done. Your projects open exactly as before.")
-    try:  # a new install also opens the first-start tour; close it for this lesson
-        button(page, "Skip tour").first.wait_for(timeout=4000)
-        d.click(button(page, "Skip tour"), after=0.3)
-    except Exception:
-        pass
-    d.click(button(page, "Settings"))
-    d.click(tab(page, "License"), after=1.0)
-    d.say("New computer? Enter the key there and choose Move the key here.")
-    d.say("No internet on site? Copy the Machine ID, and use the offline page on any other PC.")
-    d.settle()
-    page.goto("https://license.scadabench.com/activate")
-    page.get_by_text("without internet").first.wait_for(timeout=20000)
-    d.type(page.locator("#key"), "SUBS-7K4P-QX2M-9TDF-R8WC", after=0.2)
-    d.type(page.locator("#hwid"), DEMO_HWID, after=0.4)
-    d.say("Download the license file, and load it on the offline PC.")

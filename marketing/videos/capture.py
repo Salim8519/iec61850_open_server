@@ -45,12 +45,15 @@ class Screencast:
     def first_timestamp(self) -> float:
         return self.frames[0][1]
 
-    def assemble(self, target: Path, tail: float = 0.5) -> Path:
-        """Write the frames with their real durations, then resample to 30 fps."""
+    def assemble(self, target: Path, tail: float = 0.5, until: float | None = None) -> Path:
+        """Write the frames with their real durations, then resample to 30 fps. until (seconds after
+        the first frame) holds the last frame: the screencast only sends frames when the screen
+        changes, so a still final screen would otherwise cut the last narration line short."""
         if len(self.frames) < 2:
             raise RuntimeError("the screencast captured no frames")
         lines = ["ffconcat version 1.0"]
-        for (path, stamp), (_, following) in zip(self.frames, self.frames[1:] + [(None, self.frames[-1][1] + tail)]):
+        end = max(self.frames[-1][1] + tail, self.frames[0][1] + (until or 0.0))
+        for (path, stamp), (_, following) in zip(self.frames, self.frames[1:] + [(None, end)]):
             lines += [f"file '{path.name}'", f"duration {max(following - stamp, 0.001):.4f}"]
         lines.append(f"file '{self.frames[-1][0].name}'")
         listing = self.folder / "frames.ffconcat"

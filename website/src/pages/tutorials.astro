@@ -5,9 +5,9 @@ import Closing from '../components/Closing.astro';
 import { TUTORIALS, lengthOf, posterOf, totalSeconds, videoOf } from '../data/tutorials';
 const totalMinutes = Math.ceil(totalSeconds / 60);
 ---
-<Base title="Tutorials" description="Learn IEC 61850 with ScadaBench: CID and SCD files, the single-line diagram, IED simulation, GOOSE and real devices, in seven short narrated videos.">
+<Base title="Tutorials" description="Learn IEC 61850 with ScadaBench: CID and SCD files, the single-line diagram, IED simulation, GOOSE, real devices, IED Explorer and the SCADA gateway, in nine short narrated videos.">
   <PageHeader eyebrow="Tutorials" title={`Learn IEC 61850 in ${totalMinutes} minutes.`}
-    lede="Seven short narrated lessons on the real app: IEC 61850, CID and SCD files, the SLD, simulation, GOOSE and real devices." />
+    lede="Nine short narrated lessons on the real app: IEC 61850, CID and SCD files, the SLD, simulation, GOOSE, real devices, IED Explorer and the SCADA gateway." />
   <section class="section">
     <div class="wrap list">
       {TUTORIALS.map((tutorial, index) => (

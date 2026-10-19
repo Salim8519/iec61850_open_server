@@ -7,7 +7,18 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · GOOSE and IEC 61850 clients on the SLD, pages without scrolling, filters</h2>
+    <h2>{SITE.version} · Operate from the SLD, one-page network setup, standard commands, clearer GOOSE</h2>
+    <ul>
+      <li>Click a breaker or switch on the SLD while the IEDs run: Operate sends a real IEC 61850 command, exactly like SCADA. Test buttons move a simulated breaker by itself (open, closed, moving, bad state) without sending any command.</li>
+      <li>Run or connect a single IED straight from Devices, without starting the whole station.</li>
+      <li>Clearer roles for every IED: Be this IED, Read real IED or Leave out. The top bar shows who can reach your IEDs.</li>
+      <li>Putting your IEDs on a network is now one page: pick the network card, see each address checked, and review every Windows change before it happens.</li>
+      <li>Commands use the standard IEC 61850 sequence for every client (select before operate when the device asks for it). The vendor-specific command profile was removed; projects that used it are updated automatically, with a notice. Operate and gateway commands now also reach IEDs on the lab network.</li>
+      <li>GOOSE: repeated messages now stay within the allowed time. A message from a sender outside your project shows as a short line into its receiver with the sender and the change, and those partners now read "Receiving".</li>
+      <li>IED Explorer no longer stays stuck on "Already connected" after a failed or repeated connect.</li>
+      <li>Long equipment names wrap instead of being cut off, and nine new tutorial videos show the current app.</li>
+    </ul>
+    <h2>0.1.10 · GOOSE and IEC 61850 clients on the SLD, pages without scrolling, filters</h2>
     <ul>
       <li>Two new switches on the SLD: "GOOSE messages" and "Who is reading". Both are off by default and remembered. When on, small IED tags appear beside the equipment each IED controls.</li>
       <li>GOOSE on the SLD: one quiet dot travels from the sender to each receiver only when a value really changes (not on repeats). Problems such as a lost GOOSE stay written on the receiver's tag until fixed. Senders that are not in your project appear at the edge of the drawing.</li>

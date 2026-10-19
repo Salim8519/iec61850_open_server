@@ -192,4 +192,5 @@ def _record(name, scenario, url, data, raw, prepare) -> Path:
         director.finish(name, shift=wall_start - cast.first_timestamp)
         context.close()
         browser.close()
-    return cast.assemble(OUT / f"{name}.capture.mp4")
+    until = director.captions[-1]["end"] + 1.0 if director.captions else None
+    return cast.assemble(OUT / f"{name}.capture.mp4", until=until)
