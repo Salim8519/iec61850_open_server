@@ -84,6 +84,7 @@ var parityScript = []scriptStep{
 }
 
 func runScript(t *testing.T, portBase int64) ([]*pyjson.Object, *MemoryProject) {
+	requireMux(t, nativeDir(t))
 	project := NewMemoryProject(loadProject(t, portBase))
 	bus := &MemoryBus{}
 	c := New(Options{NativeDir: nativeDir(t), DataDir: t.TempDir(), Bus: bus, Project: project})

@@ -1,10 +1,12 @@
 package runtime
 
 import (
+	"path/filepath"
 	"sort"
 	"testing"
 	"time"
 
+	"studio-engine/internal/native"
 	"studio-engine/internal/runtime/pyval"
 )
 
@@ -21,6 +23,7 @@ func percentile(values []float64, p float64) float64 {
 // TestOperateTiming measures canvas CB operations like testdata/time_operate_python.py:
 // "done" is the Operate call, "symbol" the first equipment_state with the new position.
 func TestOperateTiming(t *testing.T) {
+	requireMux(t, nativeDir(t))
 	for _, keep := range []time.Duration{0, 10 * time.Second} {
 		project := NewMemoryProject(loadProject(t, 21500+int64(keep/time.Second)*10))
 		project.Current().Set("sources", []any{})
@@ -29,6 +32,12 @@ func TestOperateTiming(t *testing.T) {
 		if err := c.Start(nil); err != nil {
 			t.Fatal(err)
 		}
+		closed := false
+		t.Cleanup(func() {
+			if !closed {
+				c.Close()
+			}
+		})
 		time.Sleep(500 * time.Millisecond)
 		var done, symbol []float64
 		for i := 0; i < 30; i++ {
@@ -63,7 +72,23 @@ func TestOperateTiming(t *testing.T) {
 			time.Sleep(100 * time.Millisecond)
 		}
 		c.Close()
+		closed = true
 		t.Logf("keep %v: done p50 %.1f p95 %.1f ms; symbol p50 %.1f p95 %.1f ms (%d ops)", keep,
 			percentile(done, 0.5), percentile(done, 0.95), percentile(symbol, 0.5), percentile(symbol, 0.95), len(done))
+	}
+}
+
+// requireMux skips when the native folder's studio_control lacks control_mux_v1, as in a
+// checkout whose native binaries were built before the multiplexed canvas mode.
+func requireMux(t *testing.T, folder string) {
+	t.Helper()
+	process, err := native.StartControl(filepath.Join(folder, "studio_control.exe"))
+	if err != nil {
+		t.Skipf("studio_control unavailable in %s: %v", folder, err)
+	}
+	defer process.Close()
+	hello, err := process.Hello()
+	if err != nil || !native.HasCapabilities(hello, []string{native.MuxCapability}) {
+		t.Skipf("studio_control in %s is older than %s; rebuild the native tools", folder, native.MuxCapability)
 	}
 }

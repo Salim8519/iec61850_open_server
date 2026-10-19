@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"studio-engine/internal/native"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime"
 )
@@ -91,6 +92,15 @@ func TestStoppedAnswersMatchFlask(t *testing.T) {
 func TestRunOperateAndStopOverHTTP(t *testing.T) {
 	if _, err := os.Stat(filepath.Join("..", "..", "..", "..", "native", "build", "Release", "studio_ied.exe")); err != nil {
 		t.Skip("native build required")
+	}
+	control, err := native.StartControl(filepath.Join("..", "..", "..", "..", "native", "build", "Release", "studio_control.exe"))
+	if err != nil {
+		t.Skip("studio_control unavailable")
+	}
+	hello, err := control.Hello()
+	control.Close()
+	if err != nil || !native.HasCapabilities(hello, []string{native.MuxCapability}) {
+		t.Skip("studio_control is older than " + native.MuxCapability + "; rebuild the native tools")
 	}
 	server, coordinator, _ := newServer(t, 21310)
 	status, body := call(t, server, "POST", "/runtime/start", "", "")
