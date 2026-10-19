@@ -13,6 +13,21 @@ type Lookup func(ref string) (Signal, bool)
 type Companions struct {
 	Q, T       Signal
 	HasQ, HasT bool
+	// Order lists the found companions ('q', 't') in the order Python's dict holds them.
+	Order []byte
+}
+
+// Refs are the companion references in dict order.
+func (c Companions) Refs() []string {
+	refs := make([]string, 0, 2)
+	for _, key := range c.Order {
+		if key == 'q' {
+			refs = append(refs, c.Q.Ref)
+		} else {
+			refs = append(refs, c.T.Ref)
+		}
+	}
+	return refs
 }
 
 // FindCompanions walks up the reference like sample.companions.
@@ -26,11 +41,13 @@ func FindCompanions(item Signal, lookup Lookup) Companions {
 		if !result.HasQ {
 			if candidate, ok := lookup(parent + ".q"); ok && candidate.Kind == "Quality" && candidate.FC == item.FC {
 				result.Q, result.HasQ = candidate, true
+				result.Order = append(result.Order, 'q')
 			}
 		}
 		if !result.HasT {
 			if candidate, ok := lookup(parent + ".t"); ok && candidate.Kind == "Timestamp" && candidate.FC == item.FC {
 				result.T, result.HasT = candidate, true
+				result.Order = append(result.Order, 't')
 			}
 		}
 		parent = parent[:strings.LastIndex(parent, ".")]

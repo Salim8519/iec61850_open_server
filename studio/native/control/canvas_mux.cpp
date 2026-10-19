@@ -100,10 +100,12 @@ void CanvasMux::run(Lane& lane, std::string ip, int port) {
             if (!association.handle) association.handle = open(ip, port);
             auto result = canvas_command(association.handle, request.at("ref").get<std::string>(),
                                          request.at("value").get<bool>());
-            reply(request, result);  // before closing: the caller does not wait for the release
+            // keep_ms 0: release before replying, as the probe process ended before Python went on,
+            // so the IED's disconnect event comes before the feedback writes (same event order).
             int keep_ms = request.value("keep_ms", 0);
             if (keep_ms <= 0) association.close();
             else association.idle_until = std::chrono::steady_clock::now() + std::chrono::milliseconds(keep_ms);
+            reply(request, result);
         } catch (const std::exception& error) {
             association.close();
             refuse(request, error.what());
