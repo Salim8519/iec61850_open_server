@@ -110,6 +110,8 @@ def stopped_routes():
     http("PUT", f"/api/v1/ieds/{feed}/test-mode", {"devices": {"FEED1LD1": 3}, "simulation": True})
     http("PUT", f"/api/v1/ieds/{bus}/test-mode", raw="not json", ctype="text/plain")
     http("PUT", "/api/v1/ieds/nope/test-mode", {})
+    http("PUT", "/api/v1/ieds/nope/test-mode", ["x"])
+    http("PUT", f"/api/v1/ieds/{bus}/test-mode", ["x"])
 
 
 def prepare_run():
@@ -153,6 +155,8 @@ def running_scenario(script):
     http("POST", "/api/v1/health/refresh")
     http("POST", "/api/v1/goose/conflicts", {"choice": "stop", "ied_id": bus})
     http("GET", "/api/v1/goose/share")
+    http("PUT", f"/api/v1/ieds/{feed}/test-mode", [1])
+    http("PUT", f"/api/v1/ieds/{bus}/test-mode", {"devices": {"BUS1LD1": 2}})
     if os.environ.get("STUDIO_BENCH"):
         bench(feed)
     del captured[:]

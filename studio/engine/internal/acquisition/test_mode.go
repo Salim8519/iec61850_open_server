@@ -1,8 +1,10 @@
 package acquisition
 
 import (
+	"errors"
 	"strings"
 
+	"studio-engine/internal/acquisition/livedom"
 	"studio-engine/internal/acquisition/modes"
 	"studio-engine/internal/acquisition/pyv"
 	"studio-engine/internal/apperr"
@@ -81,6 +83,10 @@ func (t *TestModes) Set(iedID string, value any) (*pyjson.Object, error) {
 	}
 	if !pyv.Equal(pyv.Get(ied, "role"), "simulated") {
 		return nil, apperr.New(RealRefusal)
+	}
+	if _, isObject := value.(*pyjson.Object); pyv.Truthy(value) && !isObject {
+		// validate_test_mode calls value.get: AttributeError, a 500 in Flask (not a StudioError).
+		return nil, errors.New("'" + livedom.TypeName(value) + "' object has no attribute 'get'")
 	}
 	settings, err := modes.ValidateTestMode(value)
 	if err != nil {
