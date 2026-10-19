@@ -3,6 +3,7 @@ package service
 import (
 	"os"
 	"path/filepath"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 
@@ -35,7 +36,7 @@ func TestModelCacheRestoreIsIdentical(t *testing.T) {
 	}
 	want := publicSnapshot(t, plain)
 
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	cached, err := New(Config{DataDir: dir, ModelCache: modelcache.New(dir),
 		Importer: &scl.Importer{Validator: loadSeed(t)}})
 	if err != nil {

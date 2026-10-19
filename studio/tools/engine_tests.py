@@ -21,7 +21,10 @@ def test(cases=None):
     environment = {**os.environ, "CGO_ENABLED": "0", "STUDIO_PYTHON": str(python)}
     if cases:
         environment["PYJSON_CASES"] = str(cases)
-    completed = subprocess.run([go_command(), "test", "./...", "-timeout", "60m"], cwd=ENGINE,
+    # -trimpath: the antivirus here refuses some untrimmed test binaries ("Access is denied");
+    # -p 2 keeps the laptop usable while the suite runs.
+    command = [go_command(), "test", "-trimpath", "-p", "2", "./...", "-timeout", "60m"]
+    completed = subprocess.run(command, cwd=ENGINE,
                                env=environment, capture_output=True, text=True)
     if completed.returncode:
         return [f"studio/engine: go test failed\n{completed.stdout}{completed.stderr}".strip()]

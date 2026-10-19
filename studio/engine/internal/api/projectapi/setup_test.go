@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"studio-engine/internal/testutil"
 	"sync"
 	"testing"
 
@@ -92,7 +93,7 @@ func counterIDs() func() string {
 // newArea wires the routes like the app: one id counter for the service and importer,
 // startup recovery run to completion before the first request.
 func newArea(t *testing.T) (http.Handler, *fakeRuntime) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	ids := counterIDs()
 	projects, err := service.New(service.Config{DataDir: dir, NewID: ids,
 		Importer: &scl.Importer{Validator: loadSeed(t), NewID: ids}})

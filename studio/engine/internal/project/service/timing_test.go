@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 
@@ -24,13 +25,13 @@ func TestOpenSaveTimings(t *testing.T) {
 	if os.Getenv("STUDIO_TIMING") == "" {
 		t.Skip("STUDIO_TIMING not set")
 	}
-	archive := filepath.Join(t.TempDir(), "big.subsim")
+	archive := filepath.Join(testutil.TempDir(t), "big.subsim")
 	python(t, "big", archive)
 	payload, err := os.ReadFile(archive)
 	if err != nil {
 		t.Fatal(err)
 	}
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	s, err := New(Config{DataDir: dir, ModelCache: modelcache.New(dir), Importer: &scl.Importer{Validator: loadSeed(t)}})
 	if err != nil {
 		t.Fatal(err)

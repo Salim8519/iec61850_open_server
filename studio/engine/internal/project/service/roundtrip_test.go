@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 
@@ -56,7 +57,7 @@ func str(o *pyjson.Object, key string) string {
 }
 
 func newService(t testing.TB) *Service {
-	s, err := New(Config{DataDir: t.TempDir(), Importer: &scl.Importer{Validator: loadSeed(t)}})
+	s, err := New(Config{DataDir: testutil.TempDir(t), Importer: &scl.Importer{Validator: loadSeed(t)}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +93,7 @@ func python(t *testing.T, args ...string) string {
 // TestPythonArchiveOpensInGo: a project built and saved by the Python engine restores in Go
 // to the same snapshot, and Go's re-export reopens in Python to the same snapshot again.
 func TestPythonArchiveRoundTrip(t *testing.T) {
-	folder := t.TempDir()
+	folder := testutil.TempDir(t)
 	pythonFile := filepath.Join(folder, "python.subsim")
 	want := python(t, "make", pythonFile)
 	payload, err := os.ReadFile(pythonFile)
