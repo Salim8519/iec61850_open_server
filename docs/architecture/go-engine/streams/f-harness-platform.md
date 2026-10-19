@@ -131,6 +131,10 @@ Backend = the venv `python.exe` launcher stub plus the interpreter (grouped by i
   (`wait_event`, operate, IPC tap `studio_ipc_tap.exe`), route coverage report (C9) and the UI-recorded tour
   are not done. Corpus Python goldens are not committed (large); stream B records them with
   `python -m parity.corpus.run record --out ...` when it needs them.
+- Line endings: corpus fixtures are byte-exact (`corpus/fixtures/.gitattributes`: `* -text`). The public files
+  outside it (`scd/*.scd`, the demo station) are checked out with the machine's `core.autocrlf`, so their hashes in
+  `golden/generated/public_manifest.json` match this checkout (autocrlf=true); on another setting the recorder
+  refuses them until `python -m parity.replay.manifest --write` is re-run (the `corpus:public_*` copies are exact).
 - Seams translate only what the 28 files use: a `LicenseService` with a custom `client_factory` or
   `legacy_hwid_provider` raises `NotImplementedError`; clocks given as lambdas are frozen to their first value.
 
