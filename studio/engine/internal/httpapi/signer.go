@@ -39,20 +39,16 @@ func (s signer) signature(value string) string {
 	return b64.EncodeToString(mac.Sum(nil))
 }
 
-// dumps serializes and signs a session object at time now.
+// dumps serializes and signs a session object at time now. The engine only ever stores
+// {"authenticated": true}, which Flask never compresses (zlib output would be longer);
+// Go's deflate bytes differ from zlib's, so larger sessions are written uncompressed,
+// which Flask also reads.
 func (s signer) dumps(session *pyjson.Object, now time.Time) (string, error) {
 	payload, err := pyjson.Compact(session)
 	if err != nil {
 		return "", err
 	}
-	var packed bytes.Buffer
-	writer, _ := zlib.NewWriterLevel(&packed, zlib.BestCompression)
-	_, _ = writer.Write(payload)
-	_ = writer.Close()
 	value := b64.EncodeToString(payload)
-	if packed.Len() < len(payload)-1 {
-		value = "." + b64.EncodeToString(packed.Bytes())
-	}
 	stamp := b64.EncodeToString(big.NewInt(now.Unix()).Bytes())
 	value += "." + stamp
 	return value + "." + s.signature(value), nil

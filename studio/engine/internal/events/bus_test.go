@@ -98,3 +98,15 @@ func TestAfterWaitsOnceForPublish(t *testing.T) {
 		t.Fatalf("future cursor: %+v", items)
 	}
 }
+
+// BenchmarkPublish measures one signal event: encode once, store in the ring, wake readers.
+func BenchmarkPublish(b *testing.B) {
+	bus := NewBus(Capacity)
+	payload := pyjson.NewObject().Set("ied_id", "ied-1").Set("ref", "LD0/MMXU1.TotW.mag.f").
+		Set("value", 1234.5).Set("source", "automation").Set("quality", "good").
+		Set("source_timestamp", 1760900000.25).Set("updates", pyjson.NewObject())
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = bus.Publish("signal", payload)
+	}
+}

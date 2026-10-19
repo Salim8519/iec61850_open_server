@@ -38,40 +38,62 @@ func (rt *router) add(r api.Route) error {
 	return nil
 }
 
-// resolve finds the route for r and stores its path values on r.
-func (rt *router) resolve(r *http.Request) (*route, []string, error) {
+// resolution is the routing outcome: a route, Flask's automatic OPTIONS answer (methods),
+// a merge-slashes redirect, or a 404/405 error.
+type resolution struct {
+	route    *route
+	options  []string
+	redirect string
+	err      error
+}
+
+// resolve finds the route for r and stores its path values on r. As Werkzeug, a path with
+// "//" that matches nothing is retried with merged slashes and redirected when that matches.
+func (rt *router) resolve(r *http.Request) resolution {
 	method := r.Method
-	if method == http.MethodHead {
+	if method == http.MethodHead || method == http.MethodOptions {
 		method = http.MethodGet
 	}
+	allowed := map[string]bool{}
+	best, values := rt.find(r.URL.Path, method, r.Method == http.MethodOptions, allowed)
+	if best == nil {
+		if merged := mergedPath(r.URL.Path); merged != "" {
+			if found, _ := rt.find(merged, method, r.Method == http.MethodOptions, allowed); found != nil {
+				return resolution{redirect: merged}
+			}
+		}
+	}
+	switch {
+	case best != nil && r.Method == http.MethodOptions:
+		return resolution{options: allowedMethods(allowed)}
+	case best != nil:
+		for name, value := range values {
+			r.SetPathValue(name, value)
+		}
+		return resolution{route: best}
+	case len(allowed) == 0:
+		return resolution{err: ErrNotFound}
+	}
+	return resolution{err: ErrMethodNotAllowed}
+}
+
+// find returns the preferred route for path and method (any method when anyMethod, as
+// every rule accepts Flask's automatic OPTIONS) and records the methods of matching rules.
+func (rt *router) find(path, method string, anyMethod bool, allowed map[string]bool) (*route, map[string]string) {
 	var best *route
 	var bestValues map[string]string
-	allowed := map[string]bool{}
 	for index := range rt.routes {
 		candidate := &rt.routes[index]
-		values, ok := candidate.pattern.match(r.URL.Path)
+		values, ok := candidate.pattern.match(path)
 		if !ok {
 			continue
 		}
 		allowed[candidate.method] = true
-		if candidate.method == method && (best == nil || candidate.pattern.before(best.pattern)) {
+		if (anyMethod || candidate.method == method) && (best == nil || candidate.pattern.before(best.pattern)) {
 			best, bestValues = candidate, values
 		}
 	}
-	if best != nil {
-		for name, value := range bestValues {
-			r.SetPathValue(name, value)
-		}
-		return best, nil, nil
-	}
-	if len(allowed) == 0 {
-		return nil, nil, ErrNotFound
-	}
-	methods := allowedMethods(allowed)
-	if r.Method == http.MethodOptions {
-		return nil, methods, nil
-	}
-	return nil, nil, ErrMethodNotAllowed
+	return best, bestValues
 }
 
 // allowedMethods lists the methods of the matching rules plus Flask's automatic HEAD

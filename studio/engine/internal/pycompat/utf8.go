@@ -46,6 +46,12 @@ func DecodeUTF8(data []byte) (string, error) {
 // DecodeUTF8Replace is bytes.decode("utf-8", "replace"): every invalid sequence CPython
 // reports becomes one U+FFFD.
 func DecodeUTF8Replace(data []byte) string {
+	return DecodeUTF8With(data, func([]byte) string { return string(utf8.RuneError) })
+}
+
+// DecodeUTF8With decodes UTF-8 with a Python error handler: replace receives each
+// invalid sequence as CPython's decoder reports it and returns its replacement text.
+func DecodeUTF8With(data []byte, replace func(invalid []byte) string) string {
 	if utf8.Valid(data) {
 		return string(data)
 	}
@@ -57,7 +63,7 @@ func DecodeUTF8Replace(data []byte) string {
 			break
 		}
 		out.Write(data[pos:start])
-		out.WriteRune(utf8.RuneError)
+		out.WriteString(replace(data[start:end]))
 		pos = end
 	}
 	return out.String()

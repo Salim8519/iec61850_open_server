@@ -43,14 +43,14 @@ func quoteHeaderValue(value string) string {
 	return `"` + strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(value) + `"`
 }
 
-// percentQuote is urllib.parse.quote(text, safe): letters, digits, "_.-~", "/" and safe
+// percentQuote is urllib.parse.quote(text, safe): letters, digits, "_.-~" and safe
 // stay; every other UTF-8 byte becomes %XX.
 func percentQuote(text, safe string) string {
 	var out strings.Builder
 	for i := 0; i < len(text); i++ {
 		c := text[i]
 		if (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') ||
-			strings.IndexByte("_.-~/", c) >= 0 || strings.IndexByte(safe, c) >= 0 {
+			strings.IndexByte("_.-~", c) >= 0 || strings.IndexByte(safe, c) >= 0 {
 			out.WriteByte(c)
 			continue
 		}

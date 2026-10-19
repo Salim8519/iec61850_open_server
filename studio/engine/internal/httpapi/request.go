@@ -36,27 +36,32 @@ func Latin1(raw string) string {
 	return string(runes)
 }
 
-// Arg is request.args.get(name): the first value of name in the query string, parsed as
-// urllib.parse.parse_qsl(keep_blank_values=True) with UTF-8 "replace" decoding.
-func Arg(r *http.Request, name string) (string, bool) {
+// Arg is request.args.get(name) of Werkzeug 3.1: the query string must be UTF-8 (else
+// the UnicodeDecodeError, a ValueError, that Flask answered with 400); it is split on '&'
+// as parse_qsl(keep_blank_values=True) and the first value of name is returned.
+func Arg(r *http.Request, name string) (string, bool, error) {
+	if _, err := pycompat.DecodeUTF8([]byte(r.URL.RawQuery)); err != nil {
+		return "", false, err
+	}
 	for _, part := range strings.Split(r.URL.RawQuery, "&") {
 		if part == "" {
 			continue
 		}
 		key, value, _ := strings.Cut(part, "=")
 		if unquotePlus(key) == name {
-			return unquotePlus(value), true
+			return unquotePlus(value), true, nil
 		}
 	}
-	return "", false
+	return "", false, nil
 }
 
-// unquotePlus is urllib.parse.unquote_plus: '+' is a space, %XX escapes are decoded
-// (invalid escapes stay as written), the bytes are UTF-8 decoded with "replace".
+// unquotePlus is urllib.parse.unquote_plus with Werkzeug's "werkzeug.url_quote" error
+// handler: '+' is a space, %XX escapes are decoded (invalid escapes stay as written), and
+// bytes that are not UTF-8 are written back as uppercase %XX.
 func unquotePlus(text string) string {
 	text = strings.ReplaceAll(text, "+", " ")
 	if !strings.Contains(text, "%") {
-		return pycompat.DecodeUTF8Replace([]byte(text))
+		return text
 	}
 	out := make([]byte, 0, len(text))
 	for i := 0; i < len(text); i++ {
@@ -67,7 +72,13 @@ func unquotePlus(text string) string {
 		}
 		out = append(out, text[i])
 	}
-	return pycompat.DecodeUTF8Replace(out)
+	return pycompat.DecodeUTF8With(out, func(invalid []byte) string {
+		quoted := make([]byte, 0, 3*len(invalid))
+		for _, b := range invalid {
+			quoted = append(quoted, '%', "0123456789ABCDEF"[b>>4], "0123456789ABCDEF"[b&0xf])
+		}
+		return string(quoted)
+	})
 }
 
 func isHex(c byte) bool {

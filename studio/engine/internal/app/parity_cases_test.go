@@ -71,6 +71,15 @@ var parityRequests = []request{
 	{name: "events stream", method: "GET", path: "/api/v1/events", auth: "bearer", stream: true},
 	{name: "events stream cursor", method: "GET", path: "/api/v1/events?after=%2B1_0", auth: "bearer", stream: true},
 	{name: "events post", method: "POST", path: "/api/v1/events", auth: "bearer"},
+	{name: "events escaped cursor", method: "GET", path: "/api/v1/events?after=%e9", auth: "bearer"},
+	{name: "events raw byte cursor", method: "GET", path: "/api/v1/events?after=\xe9", auth: "bearer", headers: map[string]string{"Last-Event-ID": "3"}},
+	{name: "double slash known", method: "GET", path: "/api/v1/project//test-panel", auth: "bearer"},
+	{name: "double slash unknown", method: "GET", path: "/api//v1/nope", auth: "bearer"},
+	{name: "double slash query", method: "GET", path: "/api/v1/project///test-panel?a=%27&b=\"x\"", auth: "bearer"},
+	{name: "double slash wrong method", method: "POST", path: "/api/v1/project//test-panel", auth: "bearer"},
+	{name: "double slash options", method: "OPTIONS", path: "/api/v1//project/test-panel", auth: "bearer"},
+	{name: "double slash variable", method: "PUT", path: "/api/v1/ieds//F1/settings", auth: "bearer"},
+	{name: "double slash events", method: "GET", path: "//api/v1/events?after=x", auth: "bearer"},
 }
 
 // exchange sends one request to base and returns the response description.
@@ -108,7 +117,7 @@ func exchange(t *testing.T, base string, item request, cookie string) string {
 	} else {
 		body, _ = io.ReadAll(response.Body)
 	}
-	return describe(response, body)
+	return strings.ReplaceAll(describe(response, body), ":"+port, ":{port}")
 }
 
 // firstEvent reads an SSE body up to its first blank line.

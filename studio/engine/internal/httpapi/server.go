@@ -86,17 +86,23 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, err)
 		}
 	}()
+	if rejectBadURI(w, r) {
+		return
+	}
+	normalizePath(r)
 	if s.protect(w, r) || s.waitForStartup(w, r) {
 		return
 	}
-	target, methods, err := s.router.resolve(r)
+	found := s.router.resolve(r)
 	switch {
-	case err != nil:
-		WriteError(w, err)
-	case target == nil:
-		writeOptions(w, methods)
+	case found.err != nil:
+		WriteError(w, found.err)
+	case found.redirect != "":
+		writeRedirect(w, r, found.redirect)
+	case found.route == nil:
+		writeOptions(w, found.options)
 	default:
-		target.handler.ServeHTTP(w, r)
+		found.route.handler.ServeHTTP(w, r)
 	}
 }
 

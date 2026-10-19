@@ -79,9 +79,14 @@ func (a Area) stream(w http.ResponseWriter, r *http.Request) error {
 // startCursor parses the reconnect cursor with Python's int() rules; a bad value is the
 // ValueError Flask answered with 400.
 func startCursor(r *http.Request) (int64, error) {
+	// Python evaluates request.args.get("after", 0) even when the header is present.
+	after, hasAfter, err := httpapi.Arg(r, "after")
+	if err != nil {
+		return 0, err
+	}
 	text, found := httpapi.Header(r, "Last-Event-ID")
 	if !found {
-		if text, found = httpapi.Arg(r, "after"); !found {
+		if text, found = after, hasAfter; !found {
 			return 0, nil
 		}
 	}
