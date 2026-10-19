@@ -8,6 +8,8 @@
   python roundtrip.py big <out.subsim>    the timing project: template plus every IED of the
                                           public SCDs (scd/*.scd, demo station) up to 20
   python roundtrip.py savetime <in.subsim>  "<median restore> <first save> <median save>"
+  python roundtrip.py recover <data folder>  startup recovery of the folder; prints the
+                                          recovery result, then the snapshot
 
 Snapshots are json.dumps(snapshot) without session_id and revision.
 """
@@ -68,8 +70,19 @@ def save_times(service, payload):
     return sorted(restores)[2], saves[0], sorted(saves)[2]
 
 
+def recover(folder):
+    """Open a data folder the way the Python app starts: startup recovery of autosave.subsim."""
+    from studio_app.projects.startup_recovery import recover_startup
+    service = ProjectService(folder)
+    result = recover_startup(service)
+    print(json.dumps(result))
+    print(snapshot(service))
+
+
 def main():
     mode, path = sys.argv[1], Path(sys.argv[2])
+    if mode == "recover":
+        return recover(path)
     with tempfile.TemporaryDirectory() as folder:
         service = ProjectService(Path(folder))
         if mode == "make":
