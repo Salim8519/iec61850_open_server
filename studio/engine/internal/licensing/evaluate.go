@@ -1,0 +1,142 @@
+package licensing
+
+import (
+	"errors"
+	"os"
+
+	"studio-engine/internal/licensing/pytext"
+	"studio-engine/internal/pyjson"
+)
+
+// evaluate is LicenseService._evaluate: integrity, revoked reason, certificate, policy.
+func (s *Service) evaluate() (Status, error) {
+	if !s.options.Enforce {
+		return DevelopmentStatus(), nil
+	}
+	folder := s.options.NativeFolder
+	if folder == "" {
+		folder = "."
+	}
+	if problem := IntegrityProblem(folder, s.options.ExpectedFiles, s.options.Debugger); problem != "" {
+		return Unlicensed(problem, nil, nil, nil), nil
+	}
+	state, err := readObject(s.stateFile)
+	if err != nil {
+		return Status{}, err
+	}
+	revoked, _ := state.Get("revoked_reason")
+	text, err := pytext.ReadText(os.ReadFile(s.certFile))
+	if errors.Is(err, pytext.ErrUTF8) {
+		return Status{}, uncaught("license.cert is not UTF-8")
+	}
+	if err != nil {
+		if !truthy(revoked) {
+			revoked = NoLicense
+		}
+		return Unlicensed(revoked, nil, nil, nil), nil
+	}
+	payload, err := s.verifyText(text)
+	var certificate *CertificateError
+	if errors.As(err, &certificate) {
+		return Unlicensed(certificate.Message, nil, nil, nil), nil
+	}
+	if err != nil {
+		return Status{}, err
+	}
+	now := s.now()
+	bound, err := s.machineFor(payload)
+	if err != nil {
+		return Status{}, err
+	}
+	s.mu.Lock()
+	s.boundHWID = bound
+	s.mu.Unlock()
+	status, err := EvaluateCertificate(payload, bound, now, s.anchor.MaxSeen(), false)
+	if err != nil {
+		return Status{}, uncaught(err.Error())
+	}
+	if status.Licensed {
+		s.anchor.Advance(now)
+	}
+	return status, nil
+}
+
+func (s *Service) verifyText(input any) (*pyjson.Object, error) {
+	bundle, err := ParseBundle(input)
+	if err != nil {
+		return nil, err
+	}
+	return VerifyBundle(bundle, s.options.Keys)
+}
+
+// Current is LicenseService.current: the cached status, re-evaluated when refresh is
+// set or the cache is older than StatusCacheSeconds (or the clock went backwards).
+// Evaluation runs outside the lock (Go rule: no lock across I/O); concurrent refreshes
+// at worst evaluate twice.
+func (s *Service) Current(refresh bool) (Status, error) {
+	s.mu.Lock()
+	age := s.options.Clock() - s.cachedAt
+	if !refresh && s.cached != nil && age >= 0 && age < StatusCacheSeconds {
+		cached := *s.cached
+		s.mu.Unlock()
+		return cached, nil
+	}
+	s.mu.Unlock()
+	status, err := s.evaluate()
+	if err != nil {
+		return Status{}, err
+	}
+	s.mu.Lock()
+	s.cached, s.cachedAt = &status, s.options.Clock()
+	s.mu.Unlock()
+	return status, nil
+}
+
+// invalidate drops the cached status (Python: self._cached = None).
+func (s *Service) invalidate() {
+	s.mu.Lock()
+	s.cached = nil
+	s.mu.Unlock()
+}
+
+// Enforced reports whether this build checks licenses (Gate).
+func (s *Service) Enforced() bool { return s.options.Enforce }
+
+// Licensed is LicenseService.is_licensed (Gate).
+func (s *Service) Licensed() (bool, error) {
+	status, err := s.Current(false)
+	return status.Licensed, err
+}
+
+// Status is LicenseService.status(): the policy fields plus enforced, server_url,
+// masked_key, hwid and transfer_available, in Python's key order.
+func (s *Service) Status() (*pyjson.Object, error) {
+	current, err := s.Current(true)
+	if err != nil {
+		return nil, err
+	}
+	result := current.Object()
+	serverURL, hwid := "", any(nil)
+	if s.options.Enforce {
+		if serverURL, err = s.ServerURL(); err != nil {
+			return nil, err
+		}
+		if hwid, err = s.HWID(); err != nil {
+			return nil, err
+		}
+	}
+	reason, _ := current.Reason.(string)
+	return result.Set("enforced", s.options.Enforce).Set("server_url", serverURL).
+		Set("masked_key", MaskKey(current.LicenseID)).Set("hwid", hwid).
+		Set("transfer_available", reason == WrongMachine), nil
+}
+
+// StatusBody is the GET /api/v1/license/status body: Status() plus app_version, as
+// Flask's jsonify writes it.
+func (s *Service) StatusBody(appVersion string) ([]byte, error) {
+	status, err := s.Status()
+	if err != nil {
+		return nil, err
+	}
+	return pyjson.Flask(status.Set("app_version", appVersion))
+}

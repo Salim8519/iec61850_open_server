@@ -1,0 +1,2813 @@
+{
+"loopback": [
+{
+"ips": [
+"",
+"",
+""
+],
+"after": [
+"127.50.0.2",
+"127.50.0.3",
+"127.50.0.4"
+],
+"ok": "null"
+},
+{
+"ips": [
+"127.50.0.2",
+"",
+"127.50.0.3",
+""
+],
+"after": [
+"127.50.0.2",
+"127.50.0.4",
+"127.50.0.3",
+"127.50.0.5"
+],
+"ok": "null"
+},
+{
+"ips": [],
+"after": [],
+"ok": "null"
+},
+{
+"ips": [
+"10.0.0.1"
+],
+"after": [
+"10.0.0.1"
+],
+"ok": "null"
+},
+{
+"ips": [
+"127.50.0.2",
+"127.50.0.3",
+"127.50.0.4",
+"127.50.0.5",
+"127.50.0.6",
+"127.50.0.7",
+"127.50.0.8",
+"127.50.0.9",
+"127.50.0.10",
+"127.50.0.11",
+"127.50.0.12",
+"127.50.0.13",
+"127.50.0.14",
+"127.50.0.15",
+"127.50.0.16",
+"127.50.0.17",
+"127.50.0.18",
+"127.50.0.19",
+"127.50.0.20",
+"127.50.0.21",
+"127.50.0.22",
+"127.50.0.23",
+"127.50.0.24",
+"127.50.0.25",
+"127.50.0.26",
+"127.50.0.27",
+"127.50.0.28",
+"127.50.0.29",
+"127.50.0.30",
+"127.50.0.31",
+"127.50.0.32",
+"127.50.0.33",
+"127.50.0.34",
+"127.50.0.35",
+"127.50.0.36",
+"127.50.0.37",
+"127.50.0.38",
+"127.50.0.39",
+"127.50.0.40",
+"127.50.0.41",
+"127.50.0.42",
+"127.50.0.43",
+"127.50.0.44",
+"127.50.0.45",
+"127.50.0.46",
+"127.50.0.47",
+"127.50.0.48",
+"127.50.0.49",
+"127.50.0.50",
+"127.50.0.51",
+"127.50.0.52",
+"127.50.0.53",
+"127.50.0.54",
+"127.50.0.55",
+"127.50.0.56",
+"127.50.0.57",
+"127.50.0.58",
+"127.50.0.59",
+"127.50.0.60",
+"127.50.0.61",
+"127.50.0.62",
+"127.50.0.63",
+"127.50.0.64",
+"127.50.0.65",
+"127.50.0.66",
+"127.50.0.67",
+"127.50.0.68",
+"127.50.0.69",
+"127.50.0.70",
+"127.50.0.71",
+"127.50.0.72",
+"127.50.0.73",
+"127.50.0.74",
+"127.50.0.75",
+"127.50.0.76",
+"127.50.0.77",
+"127.50.0.78",
+"127.50.0.79",
+"127.50.0.80",
+"127.50.0.81",
+"127.50.0.82",
+"127.50.0.83",
+"127.50.0.84",
+"127.50.0.85",
+"127.50.0.86",
+"127.50.0.87",
+"127.50.0.88",
+"127.50.0.89",
+"127.50.0.90",
+"127.50.0.91",
+"127.50.0.92",
+"127.50.0.93",
+"127.50.0.94",
+"127.50.0.95",
+"127.50.0.96",
+"127.50.0.97",
+"127.50.0.98",
+"127.50.0.99",
+"127.50.0.100",
+"127.50.0.101",
+"127.50.0.102",
+"127.50.0.103",
+"127.50.0.104",
+"127.50.0.105",
+"127.50.0.106",
+"127.50.0.107",
+"127.50.0.108",
+"127.50.0.109",
+"127.50.0.110",
+"127.50.0.111",
+"127.50.0.112",
+"127.50.0.113",
+"127.50.0.114",
+"127.50.0.115",
+"127.50.0.116",
+"127.50.0.117",
+"127.50.0.118",
+"127.50.0.119",
+"127.50.0.120",
+"127.50.0.121",
+"127.50.0.122",
+"127.50.0.123",
+"127.50.0.124",
+"127.50.0.125",
+"127.50.0.126",
+"127.50.0.127",
+"127.50.0.128",
+"127.50.0.129",
+"127.50.0.130",
+"127.50.0.131",
+"127.50.0.132",
+"127.50.0.133",
+"127.50.0.134",
+"127.50.0.135",
+"127.50.0.136",
+"127.50.0.137",
+"127.50.0.138",
+"127.50.0.139",
+"127.50.0.140",
+"127.50.0.141",
+"127.50.0.142",
+"127.50.0.143",
+"127.50.0.144",
+"127.50.0.145",
+"127.50.0.146",
+"127.50.0.147",
+"127.50.0.148",
+"127.50.0.149",
+"127.50.0.150",
+"127.50.0.151",
+"127.50.0.152",
+"127.50.0.153",
+"127.50.0.154",
+"127.50.0.155",
+"127.50.0.156",
+"127.50.0.157",
+"127.50.0.158",
+"127.50.0.159",
+"127.50.0.160",
+"127.50.0.161",
+"127.50.0.162",
+"127.50.0.163",
+"127.50.0.164",
+"127.50.0.165",
+"127.50.0.166",
+"127.50.0.167",
+"127.50.0.168",
+"127.50.0.169",
+"127.50.0.170",
+"127.50.0.171",
+"127.50.0.172",
+"127.50.0.173",
+"127.50.0.174",
+"127.50.0.175",
+"127.50.0.176",
+"127.50.0.177",
+"127.50.0.178",
+"127.50.0.179",
+"127.50.0.180",
+"127.50.0.181",
+"127.50.0.182",
+"127.50.0.183",
+"127.50.0.184",
+"127.50.0.185",
+"127.50.0.186",
+"127.50.0.187",
+"127.50.0.188",
+"127.50.0.189",
+"127.50.0.190",
+"127.50.0.191",
+"127.50.0.192",
+"127.50.0.193",
+"127.50.0.194",
+"127.50.0.195",
+"127.50.0.196",
+"127.50.0.197",
+"127.50.0.198",
+"127.50.0.199",
+"127.50.0.200",
+"127.50.0.201",
+"127.50.0.202",
+"127.50.0.203",
+"127.50.0.204",
+"127.50.0.205",
+"127.50.0.206",
+"127.50.0.207",
+"127.50.0.208",
+"127.50.0.209",
+"127.50.0.210",
+"127.50.0.211",
+"127.50.0.212",
+"127.50.0.213",
+"127.50.0.214",
+"127.50.0.215",
+"127.50.0.216",
+"127.50.0.217",
+"127.50.0.218",
+"127.50.0.219",
+"127.50.0.220",
+"127.50.0.221",
+"127.50.0.222",
+"127.50.0.223",
+"127.50.0.224",
+"127.50.0.225",
+"127.50.0.226",
+"127.50.0.227",
+"127.50.0.228",
+"127.50.0.229",
+"127.50.0.230",
+"127.50.0.231",
+"127.50.0.232",
+"127.50.0.233",
+"127.50.0.234",
+"127.50.0.235",
+"127.50.0.236",
+"127.50.0.237",
+"127.50.0.238",
+"127.50.0.239",
+"127.50.0.240",
+"127.50.0.241",
+"127.50.0.242",
+"127.50.0.243",
+"127.50.0.244",
+"127.50.0.245",
+"127.50.0.246",
+"127.50.0.247",
+"127.50.0.248",
+"127.50.0.249",
+"127.50.0.250",
+"127.50.0.251",
+"127.50.0.252",
+"127.50.0.253",
+"",
+""
+],
+"after": [
+"127.50.0.2",
+"127.50.0.3",
+"127.50.0.4",
+"127.50.0.5",
+"127.50.0.6",
+"127.50.0.7",
+"127.50.0.8",
+"127.50.0.9",
+"127.50.0.10",
+"127.50.0.11",
+"127.50.0.12",
+"127.50.0.13",
+"127.50.0.14",
+"127.50.0.15",
+"127.50.0.16",
+"127.50.0.17",
+"127.50.0.18",
+"127.50.0.19",
+"127.50.0.20",
+"127.50.0.21",
+"127.50.0.22",
+"127.50.0.23",
+"127.50.0.24",
+"127.50.0.25",
+"127.50.0.26",
+"127.50.0.27",
+"127.50.0.28",
+"127.50.0.29",
+"127.50.0.30",
+"127.50.0.31",
+"127.50.0.32",
+"127.50.0.33",
+"127.50.0.34",
+"127.50.0.35",
+"127.50.0.36",
+"127.50.0.37",
+"127.50.0.38",
+"127.50.0.39",
+"127.50.0.40",
+"127.50.0.41",
+"127.50.0.42",
+"127.50.0.43",
+"127.50.0.44",
+"127.50.0.45",
+"127.50.0.46",
+"127.50.0.47",
+"127.50.0.48",
+"127.50.0.49",
+"127.50.0.50",
+"127.50.0.51",
+"127.50.0.52",
+"127.50.0.53",
+"127.50.0.54",
+"127.50.0.55",
+"127.50.0.56",
+"127.50.0.57",
+"127.50.0.58",
+"127.50.0.59",
+"127.50.0.60",
+"127.50.0.61",
+"127.50.0.62",
+"127.50.0.63",
+"127.50.0.64",
+"127.50.0.65",
+"127.50.0.66",
+"127.50.0.67",
+"127.50.0.68",
+"127.50.0.69",
+"127.50.0.70",
+"127.50.0.71",
+"127.50.0.72",
+"127.50.0.73",
+"127.50.0.74",
+"127.50.0.75",
+"127.50.0.76",
+"127.50.0.77",
+"127.50.0.78",
+"127.50.0.79",
+"127.50.0.80",
+"127.50.0.81",
+"127.50.0.82",
+"127.50.0.83",
+"127.50.0.84",
+"127.50.0.85",
+"127.50.0.86",
+"127.50.0.87",
+"127.50.0.88",
+"127.50.0.89",
+"127.50.0.90",
+"127.50.0.91",
+"127.50.0.92",
+"127.50.0.93",
+"127.50.0.94",
+"127.50.0.95",
+"127.50.0.96",
+"127.50.0.97",
+"127.50.0.98",
+"127.50.0.99",
+"127.50.0.100",
+"127.50.0.101",
+"127.50.0.102",
+"127.50.0.103",
+"127.50.0.104",
+"127.50.0.105",
+"127.50.0.106",
+"127.50.0.107",
+"127.50.0.108",
+"127.50.0.109",
+"127.50.0.110",
+"127.50.0.111",
+"127.50.0.112",
+"127.50.0.113",
+"127.50.0.114",
+"127.50.0.115",
+"127.50.0.116",
+"127.50.0.117",
+"127.50.0.118",
+"127.50.0.119",
+"127.50.0.120",
+"127.50.0.121",
+"127.50.0.122",
+"127.50.0.123",
+"127.50.0.124",
+"127.50.0.125",
+"127.50.0.126",
+"127.50.0.127",
+"127.50.0.128",
+"127.50.0.129",
+"127.50.0.130",
+"127.50.0.131",
+"127.50.0.132",
+"127.50.0.133",
+"127.50.0.134",
+"127.50.0.135",
+"127.50.0.136",
+"127.50.0.137",
+"127.50.0.138",
+"127.50.0.139",
+"127.50.0.140",
+"127.50.0.141",
+"127.50.0.142",
+"127.50.0.143",
+"127.50.0.144",
+"127.50.0.145",
+"127.50.0.146",
+"127.50.0.147",
+"127.50.0.148",
+"127.50.0.149",
+"127.50.0.150",
+"127.50.0.151",
+"127.50.0.152",
+"127.50.0.153",
+"127.50.0.154",
+"127.50.0.155",
+"127.50.0.156",
+"127.50.0.157",
+"127.50.0.158",
+"127.50.0.159",
+"127.50.0.160",
+"127.50.0.161",
+"127.50.0.162",
+"127.50.0.163",
+"127.50.0.164",
+"127.50.0.165",
+"127.50.0.166",
+"127.50.0.167",
+"127.50.0.168",
+"127.50.0.169",
+"127.50.0.170",
+"127.50.0.171",
+"127.50.0.172",
+"127.50.0.173",
+"127.50.0.174",
+"127.50.0.175",
+"127.50.0.176",
+"127.50.0.177",
+"127.50.0.178",
+"127.50.0.179",
+"127.50.0.180",
+"127.50.0.181",
+"127.50.0.182",
+"127.50.0.183",
+"127.50.0.184",
+"127.50.0.185",
+"127.50.0.186",
+"127.50.0.187",
+"127.50.0.188",
+"127.50.0.189",
+"127.50.0.190",
+"127.50.0.191",
+"127.50.0.192",
+"127.50.0.193",
+"127.50.0.194",
+"127.50.0.195",
+"127.50.0.196",
+"127.50.0.197",
+"127.50.0.198",
+"127.50.0.199",
+"127.50.0.200",
+"127.50.0.201",
+"127.50.0.202",
+"127.50.0.203",
+"127.50.0.204",
+"127.50.0.205",
+"127.50.0.206",
+"127.50.0.207",
+"127.50.0.208",
+"127.50.0.209",
+"127.50.0.210",
+"127.50.0.211",
+"127.50.0.212",
+"127.50.0.213",
+"127.50.0.214",
+"127.50.0.215",
+"127.50.0.216",
+"127.50.0.217",
+"127.50.0.218",
+"127.50.0.219",
+"127.50.0.220",
+"127.50.0.221",
+"127.50.0.222",
+"127.50.0.223",
+"127.50.0.224",
+"127.50.0.225",
+"127.50.0.226",
+"127.50.0.227",
+"127.50.0.228",
+"127.50.0.229",
+"127.50.0.230",
+"127.50.0.231",
+"127.50.0.232",
+"127.50.0.233",
+"127.50.0.234",
+"127.50.0.235",
+"127.50.0.236",
+"127.50.0.237",
+"127.50.0.238",
+"127.50.0.239",
+"127.50.0.240",
+"127.50.0.241",
+"127.50.0.242",
+"127.50.0.243",
+"127.50.0.244",
+"127.50.0.245",
+"127.50.0.246",
+"127.50.0.247",
+"127.50.0.248",
+"127.50.0.249",
+"127.50.0.250",
+"127.50.0.251",
+"127.50.0.252",
+"127.50.0.253",
+"127.50.0.254",
+""
+],
+"error": "StudioError",
+"message": "No free loopback addresses",
+"code": "validation",
+"details": []
+},
+{
+"ips": [
+"127.50.0.2",
+"127.50.0.3",
+"127.50.0.4",
+"127.50.0.5",
+"127.50.0.6",
+"127.50.0.7",
+"127.50.0.8",
+"127.50.0.9",
+"127.50.0.10",
+"127.50.0.11",
+"127.50.0.12",
+"127.50.0.13",
+"127.50.0.14",
+"127.50.0.15",
+"127.50.0.16",
+"127.50.0.17",
+"127.50.0.18",
+"127.50.0.19",
+"127.50.0.20",
+"127.50.0.21",
+"127.50.0.22",
+"127.50.0.23",
+"127.50.0.24",
+"127.50.0.25",
+"127.50.0.26",
+"127.50.0.27",
+"127.50.0.28",
+"127.50.0.29",
+"127.50.0.30",
+"127.50.0.31",
+"127.50.0.32",
+"127.50.0.33",
+"127.50.0.34",
+"127.50.0.35",
+"127.50.0.36",
+"127.50.0.37",
+"127.50.0.38",
+"127.50.0.39",
+"127.50.0.40",
+"127.50.0.41",
+"127.50.0.42",
+"127.50.0.43",
+"127.50.0.44",
+"127.50.0.45",
+"127.50.0.46",
+"127.50.0.47",
+"127.50.0.48",
+"127.50.0.49",
+"127.50.0.50",
+"127.50.0.51",
+"127.50.0.52",
+"127.50.0.53",
+"127.50.0.54",
+"127.50.0.55",
+"127.50.0.56",
+"127.50.0.57",
+"127.50.0.58",
+"127.50.0.59",
+"127.50.0.60",
+"127.50.0.61",
+"127.50.0.62",
+"127.50.0.63",
+"127.50.0.64",
+"127.50.0.65",
+"127.50.0.66",
+"127.50.0.67",
+"127.50.0.68",
+"127.50.0.69",
+"127.50.0.70",
+"127.50.0.71",
+"127.50.0.72",
+"127.50.0.73",
+"127.50.0.74",
+"127.50.0.75",
+"127.50.0.76",
+"127.50.0.77",
+"127.50.0.78",
+"127.50.0.79",
+"127.50.0.80",
+"127.50.0.81",
+"127.50.0.82",
+"127.50.0.83",
+"127.50.0.84",
+"127.50.0.85",
+"127.50.0.86",
+"127.50.0.87",
+"127.50.0.88",
+"127.50.0.89",
+"127.50.0.90",
+"127.50.0.91",
+"127.50.0.92",
+"127.50.0.93",
+"127.50.0.94",
+"127.50.0.95",
+"127.50.0.96",
+"127.50.0.97",
+"127.50.0.98",
+"127.50.0.99",
+"127.50.0.100",
+"127.50.0.101",
+"127.50.0.102",
+"127.50.0.103",
+"127.50.0.104",
+"127.50.0.105",
+"127.50.0.106",
+"127.50.0.107",
+"127.50.0.108",
+"127.50.0.109",
+"127.50.0.110",
+"127.50.0.111",
+"127.50.0.112",
+"127.50.0.113",
+"127.50.0.114",
+"127.50.0.115",
+"127.50.0.116",
+"127.50.0.117",
+"127.50.0.118",
+"127.50.0.119",
+"127.50.0.120",
+"127.50.0.121",
+"127.50.0.122",
+"127.50.0.123",
+"127.50.0.124",
+"127.50.0.125",
+"127.50.0.126",
+"127.50.0.127",
+"127.50.0.128",
+"127.50.0.129",
+"127.50.0.130",
+"127.50.0.131",
+"127.50.0.132",
+"127.50.0.133",
+"127.50.0.134",
+"127.50.0.135",
+"127.50.0.136",
+"127.50.0.137",
+"127.50.0.138",
+"127.50.0.139",
+"127.50.0.140",
+"127.50.0.141",
+"127.50.0.142",
+"127.50.0.143",
+"127.50.0.144",
+"127.50.0.145",
+"127.50.0.146",
+"127.50.0.147",
+"127.50.0.148",
+"127.50.0.149",
+"127.50.0.150",
+"127.50.0.151",
+"127.50.0.152",
+"127.50.0.153",
+"127.50.0.154",
+"127.50.0.155",
+"127.50.0.156",
+"127.50.0.157",
+"127.50.0.158",
+"127.50.0.159",
+"127.50.0.160",
+"127.50.0.161",
+"127.50.0.162",
+"127.50.0.163",
+"127.50.0.164",
+"127.50.0.165",
+"127.50.0.166",
+"127.50.0.167",
+"127.50.0.168",
+"127.50.0.169",
+"127.50.0.170",
+"127.50.0.171",
+"127.50.0.172",
+"127.50.0.173",
+"127.50.0.174",
+"127.50.0.175",
+"127.50.0.176",
+"127.50.0.177",
+"127.50.0.178",
+"127.50.0.179",
+"127.50.0.180",
+"127.50.0.181",
+"127.50.0.182",
+"127.50.0.183",
+"127.50.0.184",
+"127.50.0.185",
+"127.50.0.186",
+"127.50.0.187",
+"127.50.0.188",
+"127.50.0.189",
+"127.50.0.190",
+"127.50.0.191",
+"127.50.0.192",
+"127.50.0.193",
+"127.50.0.194",
+"127.50.0.195",
+"127.50.0.196",
+"127.50.0.197",
+"127.50.0.198",
+"127.50.0.199",
+"127.50.0.200",
+"127.50.0.201",
+"127.50.0.202",
+"127.50.0.203",
+"127.50.0.204",
+"127.50.0.205",
+"127.50.0.206",
+"127.50.0.207",
+"127.50.0.208",
+"127.50.0.209",
+"127.50.0.210",
+"127.50.0.211",
+"127.50.0.212",
+"127.50.0.213",
+"127.50.0.214",
+"127.50.0.215",
+"127.50.0.216",
+"127.50.0.217",
+"127.50.0.218",
+"127.50.0.219",
+"127.50.0.220",
+"127.50.0.221",
+"127.50.0.222",
+"127.50.0.223",
+"127.50.0.224",
+"127.50.0.225",
+"127.50.0.226",
+"127.50.0.227",
+"127.50.0.228",
+"127.50.0.229",
+"127.50.0.230",
+"127.50.0.231",
+"127.50.0.232",
+"127.50.0.233",
+"127.50.0.234",
+"127.50.0.235",
+"127.50.0.236",
+"127.50.0.237",
+"127.50.0.238",
+"127.50.0.239",
+"127.50.0.240",
+"127.50.0.241",
+"127.50.0.242",
+"127.50.0.243",
+"127.50.0.244",
+"127.50.0.245",
+"127.50.0.246",
+"127.50.0.247",
+"127.50.0.248",
+"127.50.0.249",
+"127.50.0.250",
+"127.50.0.251",
+"127.50.0.252",
+"127.50.0.253",
+"127.50.0.254",
+""
+],
+"after": [
+"127.50.0.2",
+"127.50.0.3",
+"127.50.0.4",
+"127.50.0.5",
+"127.50.0.6",
+"127.50.0.7",
+"127.50.0.8",
+"127.50.0.9",
+"127.50.0.10",
+"127.50.0.11",
+"127.50.0.12",
+"127.50.0.13",
+"127.50.0.14",
+"127.50.0.15",
+"127.50.0.16",
+"127.50.0.17",
+"127.50.0.18",
+"127.50.0.19",
+"127.50.0.20",
+"127.50.0.21",
+"127.50.0.22",
+"127.50.0.23",
+"127.50.0.24",
+"127.50.0.25",
+"127.50.0.26",
+"127.50.0.27",
+"127.50.0.28",
+"127.50.0.29",
+"127.50.0.30",
+"127.50.0.31",
+"127.50.0.32",
+"127.50.0.33",
+"127.50.0.34",
+"127.50.0.35",
+"127.50.0.36",
+"127.50.0.37",
+"127.50.0.38",
+"127.50.0.39",
+"127.50.0.40",
+"127.50.0.41",
+"127.50.0.42",
+"127.50.0.43",
+"127.50.0.44",
+"127.50.0.45",
+"127.50.0.46",
+"127.50.0.47",
+"127.50.0.48",
+"127.50.0.49",
+"127.50.0.50",
+"127.50.0.51",
+"127.50.0.52",
+"127.50.0.53",
+"127.50.0.54",
+"127.50.0.55",
+"127.50.0.56",
+"127.50.0.57",
+"127.50.0.58",
+"127.50.0.59",
+"127.50.0.60",
+"127.50.0.61",
+"127.50.0.62",
+"127.50.0.63",
+"127.50.0.64",
+"127.50.0.65",
+"127.50.0.66",
+"127.50.0.67",
+"127.50.0.68",
+"127.50.0.69",
+"127.50.0.70",
+"127.50.0.71",
+"127.50.0.72",
+"127.50.0.73",
+"127.50.0.74",
+"127.50.0.75",
+"127.50.0.76",
+"127.50.0.77",
+"127.50.0.78",
+"127.50.0.79",
+"127.50.0.80",
+"127.50.0.81",
+"127.50.0.82",
+"127.50.0.83",
+"127.50.0.84",
+"127.50.0.85",
+"127.50.0.86",
+"127.50.0.87",
+"127.50.0.88",
+"127.50.0.89",
+"127.50.0.90",
+"127.50.0.91",
+"127.50.0.92",
+"127.50.0.93",
+"127.50.0.94",
+"127.50.0.95",
+"127.50.0.96",
+"127.50.0.97",
+"127.50.0.98",
+"127.50.0.99",
+"127.50.0.100",
+"127.50.0.101",
+"127.50.0.102",
+"127.50.0.103",
+"127.50.0.104",
+"127.50.0.105",
+"127.50.0.106",
+"127.50.0.107",
+"127.50.0.108",
+"127.50.0.109",
+"127.50.0.110",
+"127.50.0.111",
+"127.50.0.112",
+"127.50.0.113",
+"127.50.0.114",
+"127.50.0.115",
+"127.50.0.116",
+"127.50.0.117",
+"127.50.0.118",
+"127.50.0.119",
+"127.50.0.120",
+"127.50.0.121",
+"127.50.0.122",
+"127.50.0.123",
+"127.50.0.124",
+"127.50.0.125",
+"127.50.0.126",
+"127.50.0.127",
+"127.50.0.128",
+"127.50.0.129",
+"127.50.0.130",
+"127.50.0.131",
+"127.50.0.132",
+"127.50.0.133",
+"127.50.0.134",
+"127.50.0.135",
+"127.50.0.136",
+"127.50.0.137",
+"127.50.0.138",
+"127.50.0.139",
+"127.50.0.140",
+"127.50.0.141",
+"127.50.0.142",
+"127.50.0.143",
+"127.50.0.144",
+"127.50.0.145",
+"127.50.0.146",
+"127.50.0.147",
+"127.50.0.148",
+"127.50.0.149",
+"127.50.0.150",
+"127.50.0.151",
+"127.50.0.152",
+"127.50.0.153",
+"127.50.0.154",
+"127.50.0.155",
+"127.50.0.156",
+"127.50.0.157",
+"127.50.0.158",
+"127.50.0.159",
+"127.50.0.160",
+"127.50.0.161",
+"127.50.0.162",
+"127.50.0.163",
+"127.50.0.164",
+"127.50.0.165",
+"127.50.0.166",
+"127.50.0.167",
+"127.50.0.168",
+"127.50.0.169",
+"127.50.0.170",
+"127.50.0.171",
+"127.50.0.172",
+"127.50.0.173",
+"127.50.0.174",
+"127.50.0.175",
+"127.50.0.176",
+"127.50.0.177",
+"127.50.0.178",
+"127.50.0.179",
+"127.50.0.180",
+"127.50.0.181",
+"127.50.0.182",
+"127.50.0.183",
+"127.50.0.184",
+"127.50.0.185",
+"127.50.0.186",
+"127.50.0.187",
+"127.50.0.188",
+"127.50.0.189",
+"127.50.0.190",
+"127.50.0.191",
+"127.50.0.192",
+"127.50.0.193",
+"127.50.0.194",
+"127.50.0.195",
+"127.50.0.196",
+"127.50.0.197",
+"127.50.0.198",
+"127.50.0.199",
+"127.50.0.200",
+"127.50.0.201",
+"127.50.0.202",
+"127.50.0.203",
+"127.50.0.204",
+"127.50.0.205",
+"127.50.0.206",
+"127.50.0.207",
+"127.50.0.208",
+"127.50.0.209",
+"127.50.0.210",
+"127.50.0.211",
+"127.50.0.212",
+"127.50.0.213",
+"127.50.0.214",
+"127.50.0.215",
+"127.50.0.216",
+"127.50.0.217",
+"127.50.0.218",
+"127.50.0.219",
+"127.50.0.220",
+"127.50.0.221",
+"127.50.0.222",
+"127.50.0.223",
+"127.50.0.224",
+"127.50.0.225",
+"127.50.0.226",
+"127.50.0.227",
+"127.50.0.228",
+"127.50.0.229",
+"127.50.0.230",
+"127.50.0.231",
+"127.50.0.232",
+"127.50.0.233",
+"127.50.0.234",
+"127.50.0.235",
+"127.50.0.236",
+"127.50.0.237",
+"127.50.0.238",
+"127.50.0.239",
+"127.50.0.240",
+"127.50.0.241",
+"127.50.0.242",
+"127.50.0.243",
+"127.50.0.244",
+"127.50.0.245",
+"127.50.0.246",
+"127.50.0.247",
+"127.50.0.248",
+"127.50.0.249",
+"127.50.0.250",
+"127.50.0.251",
+"127.50.0.252",
+"127.50.0.253",
+"127.50.0.254",
+""
+],
+"error": "StudioError",
+"message": "No free loopback addresses",
+"code": "validation",
+"details": []
+}
+],
+"preflight": [
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "192.168.10.21",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "Relay uses 192.168.10.21, but the project is in 'This PC only' mode. Set up the lab network first (Network tab).",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+18140
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": "192.168.77.21"
+}
+],
+"network": {
+"mode": "lab",
+"adapter_label": "Lab NIC"
+},
+"addresses": [
+"192.168.77.99"
+],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "Relay needs address 192.168.77.21, which is not set up on Lab NIC. Open Network > Set up lab network and apply the address plan.",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "lab",
+"adapter_label": "Lab NIC"
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+18140
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": "192.168.77.21"
+}
+],
+"network": {
+"mode": "lab"
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "Relay needs address 192.168.77.21, which is not set up on the selected adapter. Open Network > Set up lab network and apply the address plan.",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": ""
+},
+{
+"name": "Other",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+18140
+]
+],
+"error": "StudioError",
+"message": "Two IEDs use 127.50.0.240:18140; give each IED its own address",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": "192.168.77.21"
+}
+],
+"network": {
+"mode": "lab",
+"adapter_label": "Lab NIC"
+},
+"addresses": [
+"192.168.77.21"
+],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"192.168.77.21",
+18140
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 0,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "MMS port must be between 1 and 65535",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 65536,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "MMS port must be between 1 and 65535",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": "102",
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+102
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": " 1_02 ",
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+102
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": "x",
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "ValueError",
+"message": "invalid literal for int() with base 10: 'x'",
+"code": null,
+"details": null
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 102.9,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+102
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": true,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+1
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "::1",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "Relay: only IPv4 addresses are supported",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "fe80::1%3",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "StudioError",
+"message": "Relay: only IPv4 addresses are supported",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "localhost",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "ValueError",
+"message": "'localhost' does not appear to be an IPv4 or IPv6 address",
+"code": null,
+"details": null
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "ValueError",
+"message": "'' does not appear to be an IPv4 or IPv6 address",
+"code": null,
+"details": null
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.050.0.1",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [],
+"error": "ValueError",
+"message": "'127.050.0.1' does not appear to be an IPv4 or IPv6 address",
+"code": null,
+"details": null
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": ""
+},
+{
+"name": "B",
+"ip": "127.50.0.241",
+"port": 18140,
+"lab_ip": ""
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [
+[
+"127.50.0.241",
+18140
+]
+],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+18140
+],
+[
+"127.50.0.241",
+18140
+]
+],
+"error": "StudioError",
+"message": "B cannot listen on 127.50.0.241:18140 because another program is using it ([Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted). Close that program or change the port.",
+"code": "validation",
+"details": []
+},
+{
+"ieds": [
+{
+"name": "Relay",
+"ip": "127.50.0.240",
+"port": 18140,
+"lab_ip": "192.168.77.21"
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": "X"
+},
+"addresses": [
+"192.168.77.21"
+],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.50.0.240",
+18140
+]
+],
+"ok": "null"
+},
+{
+"ieds": [
+{
+"name": "NoPort",
+"ip": "127.0.0.9"
+}
+],
+"network": {
+"mode": "loopback",
+"adapter_label": ""
+},
+"addresses": [],
+"busy": [],
+"bind_error": "[Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted",
+"binds": [
+[
+"127.0.0.9",
+102
+]
+],
+"ok": "null"
+}
+],
+"npcap": [
+{
+"layout": "file",
+"out": "{\"installed\": true, \"path\": \"<ROOT>\\\\System32\\\\Npcap\\\\wpcap.dll\", \"download\": \"https://npcap.com/#download\", \"message\": \"Npcap is installed, so ScadaBench can share GOOSE with the network and hear real devices.\"}"
+},
+{
+"layout": "missing",
+"out": "{\"installed\": false, \"path\": \"\", \"download\": \"https://npcap.com/#download\", \"message\": \"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\"}"
+},
+{
+"layout": "folder",
+"out": "{\"installed\": false, \"path\": \"\", \"download\": \"https://npcap.com/#download\", \"message\": \"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\"}"
+}
+],
+"readers": [
+{
+"reader": "gateway_rules",
+"stdout": "",
+"ok": "[]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "  \r\n",
+"ok": "[]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "a\r\n\r\n b \n",
+"ok": "[\"a\", \"b\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "{\"name\": \"a\", \"display\": \"b\"}",
+"ok": "[\"{\\\"name\\\": \\\"a\\\", \\\"display\\\": \\\"b\\\"}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "[{\"name\": \"a\"}, {\"name\": 5, \"display\": null}]",
+"ok": "[\"[{\\\"name\\\": \\\"a\\\"}, {\\\"name\\\": 5, \\\"display\\\": null}]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "[]",
+"ok": "[\"[]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "not json",
+"ok": "[\"not json\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "[{\"display\": \"x\"}]",
+"ok": "[\"[{\\\"display\\\": \\\"x\\\"}]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "{\"gateway\": [\"a\", \"b\"], \"disabled\": \"xy\"}",
+"ok": "[\"{\\\"gateway\\\": [\\\"a\\\", \\\"b\\\"], \\\"disabled\\\": \\\"xy\\\"}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "{\"gateway\": null}",
+"ok": "[\"{\\\"gateway\\\": null}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "[1]",
+"ok": "[\"[1]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "gateway_rules",
+"stdout": "{\"gateway\": [], \"disabled\": [\"n1\"]}",
+"ok": "[\"{\\\"gateway\\\": [], \\\"disabled\\\": [\\\"n1\\\"]}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "",
+"ok": "[]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "  \r\n",
+"ok": "[]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "a\r\n\r\n b \n",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "{\"name\": \"a\", \"display\": \"b\"}",
+"ok": "[{\"name\": \"a\", \"display\": \"b\"}]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "[{\"name\": \"a\"}, {\"name\": 5, \"display\": null}]",
+"ok": "[{\"name\": \"a\", \"display\": \"\"}, {\"name\": \"5\", \"display\": \"None\"}]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "[]",
+"ok": "[]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "not json",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "[{\"display\": \"x\"}]",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "{\"gateway\": [\"a\", \"b\"], \"disabled\": \"xy\"}",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "{\"gateway\": null}",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "[1]",
+"error": "TypeError",
+"message": "'int' object is not subscriptable",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking",
+"stdout": "{\"gateway\": [], \"disabled\": [\"n1\"]}",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\Studio\\native\\studio_gateway.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "",
+"ok": "[]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "  \r\n",
+"ok": "[]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "a\r\n\r\n b \n",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "{\"name\": \"a\", \"display\": \"b\"}",
+"ok": "[{\"name\": \"a\", \"display\": \"b\"}]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "[{\"name\": \"a\"}, {\"name\": 5, \"display\": null}]",
+"ok": "[{\"name\": \"a\", \"display\": \"\"}, {\"name\": \"5\", \"display\": \"None\"}]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "[]",
+"ok": "[]",
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "not json",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "[{\"display\": \"x\"}]",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "{\"gateway\": [\"a\", \"b\"], \"disabled\": \"xy\"}",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "{\"gateway\": null}",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "[1]",
+"error": "TypeError",
+"message": "'int' object is not subscriptable",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "blocking_quote",
+"stdout": "{\"gateway\": [], \"disabled\": [\"n1\"]}",
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$found = @(Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True -ErrorAction SilentlyContinue | Where-Object { ($_ | Get-NetFirewallApplicationFilter).Program -eq 'C:\\O''Brien\\g.exe' -and ($_ | Get-NetFirewallPortFilter).Protocol -in 'TCP','Any' } | ForEach-Object { @{ name = $_.Name; display = $_.DisplayName } }); ConvertTo-Json -InputObject $found -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "  \r\n",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "a\r\n\r\n b \n",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "{\"name\": \"a\", \"display\": \"b\"}",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "[{\"name\": \"a\"}, {\"name\": 5, \"display\": null}]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "[]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "not json",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "[{\"display\": \"x\"}]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "{\"gateway\": [\"a\", \"b\"], \"disabled\": \"xy\"}",
+"ok": "[[\"a\", \"b\"], [\"x\", \"y\"]]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "{\"gateway\": null}",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "[1]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state",
+"stdout": "{\"gateway\": [], \"disabled\": [\"n1\"]}",
+"ok": "[[], [\"n1\"]]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @('a''b','TCP x')) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "  \r\n",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "a\r\n\r\n b \n",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "{\"name\": \"a\", \"display\": \"b\"}",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "[{\"name\": \"a\"}, {\"name\": 5, \"display\": null}]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "[]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "not json",
+"error": "JSONDecodeError",
+"message": "Expecting value: line 1 column 1 (char 0)",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "[{\"display\": \"x\"}]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "{\"gateway\": [\"a\", \"b\"], \"disabled\": \"xy\"}",
+"ok": "[[\"a\", \"b\"], [\"x\", \"y\"]]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "{\"gateway\": null}",
+"ok": "[[], []]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "[1]",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null,
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "state_empty",
+"stdout": "{\"gateway\": [], \"disabled\": [\"n1\"]}",
+"ok": "[[], [\"n1\"]]",
+"calls": [
+{
+"script": "$g = @(Get-NetFirewallRule -Name 'ScadaBench-Gateway-*' -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }); $d = @(foreach ($n in @($null)) { if ($n) { $r = Get-NetFirewallRule -Name $n -ErrorAction SilentlyContinue; if ($r -and \"$($r.Enabled)\" -eq 'False') { $n } } }); ConvertTo-Json -InputObject @{ gateway = $g; disabled = $d } -Compress",
+"timeout": 60
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "",
+"ok": "[]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "  \r\n",
+"ok": "[]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "a\r\n\r\n b \n",
+"ok": "[\"a\", \"b\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "{\"name\": \"a\", \"display\": \"b\"}",
+"ok": "[\"{\\\"name\\\": \\\"a\\\", \\\"display\\\": \\\"b\\\"}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "[{\"name\": \"a\"}, {\"name\": 5, \"display\": null}]",
+"ok": "[\"[{\\\"name\\\": \\\"a\\\"}, {\\\"name\\\": 5, \\\"display\\\": null}]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "[]",
+"ok": "[\"[]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "not json",
+"ok": "[\"not json\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "[{\"display\": \"x\"}]",
+"ok": "[\"[{\\\"display\\\": \\\"x\\\"}]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "{\"gateway\": [\"a\", \"b\"], \"disabled\": \"xy\"}",
+"ok": "[\"{\\\"gateway\\\": [\\\"a\\\", \\\"b\\\"], \\\"disabled\\\": \\\"xy\\\"}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "{\"gateway\": null}",
+"ok": "[\"{\\\"gateway\\\": null}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "[1]",
+"ok": "[\"[1]\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+},
+{
+"reader": "studio_rules",
+"stdout": "{\"gateway\": [], \"disabled\": [\"n1\"]}",
+"ok": "[\"{\\\"gateway\\\": [], \\\"disabled\\\": [\\\"n1\\\"]}\"]",
+"calls": [
+{
+"script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name",
+"timeout": 20
+}
+]
+}
+],
+"shell": [
+{
+"module": "adapters",
+"exit_code": 0,
+"stderr": "",
+"ok": "[]",
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "firewall_rules",
+"exit_code": 0,
+"stderr": "",
+"ok": "[]",
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "adapters",
+"exit_code": 1,
+"stderr": "first\r\nsecond line\r\n",
+"error": "RuntimeError",
+"message": "Windows could not list network adapters: second line",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "firewall_rules",
+"exit_code": 1,
+"stderr": "first\r\nsecond line\r\n",
+"error": "RuntimeError",
+"message": "Windows Firewall could not be read: second line",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "adapters",
+"exit_code": 1,
+"stderr": "",
+"error": "RuntimeError",
+"message": "Windows could not list network adapters: unknown error",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "firewall_rules",
+"exit_code": 1,
+"stderr": "",
+"error": "RuntimeError",
+"message": "Windows Firewall could not be read: unknown error",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "adapters",
+"exit_code": 1,
+"stderr": "  \n\n",
+"error": "RuntimeError",
+"message": "Windows could not list network adapters: unknown error",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "firewall_rules",
+"exit_code": 1,
+"stderr": "  \n\n",
+"error": "RuntimeError",
+"message": "Windows Firewall could not be read: unknown error",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "adapters",
+"exit_code": 2,
+"stderr": "only",
+"error": "RuntimeError",
+"message": "Windows could not list network adapters: only",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+},
+{
+"module": "firewall_rules",
+"exit_code": 2,
+"stderr": "only",
+"error": "RuntimeError",
+"message": "Windows Firewall could not be read: only",
+"code": null,
+"details": null,
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"Get-Thing"
+],
+"timeout": 7,
+"flags": 134217728
+}
+]
+}
+],
+"fallback": {
+"fallback": "[{\"guid\": \"x\", \"name\": \"Ethernet\", \"description\": \"NIC\", \"status\": \"Up\", \"addresses\": {\"ip\": \"10.0.0.5\", \"prefix\": 8}}]",
+"ok": "[{\"guid\": \"{X}\", \"name\": \"Ethernet\", \"description\": \"NIC\", \"status\": \"Up\", \"index\": null, \"mac\": \"\", \"speed\": \"\", \"kind\": \"ethernet\", \"default_route\": false, \"addresses\": [{\"ip\": \"10.0.0.5\", \"prefix\": 8, \"skip_as_source\": false, \"origin\": \"\"}]}]",
+"script": "\n$ErrorActionPreference = 'Stop'\n$routes = @(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue |\n  Select-Object -ExpandProperty ifIndex)\n$result = @(Get-NetAdapter | ForEach-Object {\n  $a = $_\n  $ips = @(Get-NetIPAddress -InterfaceIndex $a.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue |\n    ForEach-Object { @{ ip = $_.IPAddress; prefix = [int]$_.PrefixLength;\n      skip_as_source = [bool]$_.SkipAsSource; origin = [string]$_.PrefixOrigin } })\n  @{ guid = [string]$a.InterfaceGuid; name = $a.Name; description = $a.InterfaceDescription;\n     status = [string]$a.Status; index = [int]$a.ifIndex; mac = $a.MacAddress;\n     speed = [string]$a.LinkSpeed; virtual = [bool]$a.Virtual;\n     default_route = ($routes -contains $a.ifIndex); addresses = $ips }\n})\nConvertTo-Json -InputObject $result -Depth 5 -Compress\n",
+"rules_script": "Get-NetFirewallRule -Name 'SubstationStudio-MMS-*' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name"
+},
+"probe": [
+{
+"addresses": [
+"192.168.50.21",
+"",
+"192.168.50.22",
+"192.168.50.21"
+],
+"asked": [
+"192.168.50.21",
+"192.168.50.21",
+"192.168.50.22"
+],
+"ok": "[\"192.168.50.21\"]"
+},
+{
+"addresses": [],
+"asked": [],
+"ok": "[]"
+},
+{
+"addresses": [
+"x"
+],
+"asked": [],
+"error": "AddressValueError",
+"message": "Expected 4 octets in 'x'",
+"code": null,
+"details": null
+},
+{
+"addresses": [
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1"
+],
+"asked": [
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1",
+"10.0.0.1"
+],
+"ok": "[\"10.0.0.1\"]"
+},
+{
+"addresses": [
+""
+],
+"asked": [],
+"ok": "[]"
+}
+]
+}

@@ -1,0 +1,141 @@
+{
+  "engine": "python",
+  "arguments": {
+    "engine": "python",
+    "scenarios": "S1,S9",
+    "ieds": "2",
+    "points": "5000",
+    "seconds": "60",
+    "sources": "100",
+    "operates": "200",
+    "clients": "1",
+    "repeats": "5",
+    "tabs": "1,3,10"
+  },
+  "provenance": {
+    "source_sha256": "faf64973adcc9c7809d102a743f49331fc268ce6175ba93fec358a82135fed51",
+    "python": "3.12.6 (tags/v3.12.6:a4a2d2b, Sep  6 2024, 20:11:23) [MSC v.1940 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "dependencies": {
+      "Flask": "3.1.2",
+      "waitress": "3.0.2",
+      "lxml": "6.0.2",
+      "defusedxml": "0.7.1"
+    },
+    "natives": {
+      "studio_control.exe": "98ece4aea573fc0b3f67faa85ce0673a338a952efbc939a657c49eed1009d7d6",
+      "studio_gateway.exe": "531a0352522d27b6fffe71d42e740c72326deb776bdaf2a1d733cac6f6075bd1",
+      "studio_goose.exe": "e3a510b1885c3109ec3fd5cef3acfd0c99025448abc8a277152c53d057c18eff",
+      "studio_ied.exe": "085a4c68d33d342f3a472630d2d2c7bb5b54f61cc8e45f462e4dedf22d18028e",
+      "studio_license_check.exe": "8f658e31ecb7d6bbc9d7fd116e69dcb30a17243c54fdbd183f31b7789179e037",
+      "studio_live.exe": "0df00da30e4f61d17b49bf7bef8fb492c9500eeb4fc22650c24ab237fbb23280",
+      "studio_master.exe": "5ceb8a71810fde8b6a017a263d139bbb87e61f36aca94612c0a8457a4c5cb428",
+      "studio_probe.exe": "e69d3fa5cf48c3e6f26e9031ae4ec8303f4f20a1bc7f5000124078fc8cf27665",
+      "studio_sv_test_publisher.exe": "12d1c82832f49b1e976fd6155caad3e5c882c2189d11c6aadf8774ec3a5a7bbe",
+      "studio_test_dnp3_master.exe": "974c284096b7540b251effafbddba659658c3fc035e2b40486a36e42355c7bc0",
+      "studio_test_iec104_master.exe": "0a4b69c859c25c537c4d8c173a8b4b3b7046816d452a22ddeabfa56e9ede4793"
+    },
+    "machine": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "logical_cpus": 16,
+    "recorded_at": "2026-10-20T01:23:44+0400"
+  },
+  "results": [
+    {
+      "scenario": "S1",
+      "ieds": 2,
+      "points_per_ied": 5000,
+      "seconds": 60,
+      "ready_seconds": 1.864,
+      "import_seconds": [
+        0.132,
+        0.106
+      ],
+      "idle_after_import": {
+        "backend": {
+          "samples": 5,
+          "processes": 2,
+          "ws_peak_mb": 80.8,
+          "ws_mean_mb": 80.8,
+          "private_peak_mb": 59.6,
+          "cpu_percent_one_core": 0.39,
+          "handles_last": 415
+        },
+        "children": {
+          "samples": 0,
+          "processes": 0,
+          "ws_peak_mb": 0.0,
+          "ws_mean_mb": 0,
+          "private_peak_mb": 0.0,
+          "cpu_percent_one_core": null,
+          "handles_last": 0
+        }
+      },
+      "run_seconds": 0.244,
+      "workers": 2,
+      "stop_seconds": 0.03,
+      "idle": {
+        "backend": {
+          "samples": 60,
+          "processes": 2,
+          "ws_peak_mb": 81.1,
+          "ws_mean_mb": 81.1,
+          "private_peak_mb": 59.8,
+          "cpu_percent_one_core": 0.29,
+          "handles_last": 450
+        },
+        "children": {
+          "samples": 60,
+          "processes": 4,
+          "ws_peak_mb": 36.4,
+          "ws_mean_mb": 36.4,
+          "private_peak_mb": 11.7,
+          "cpu_percent_one_core": 4.36,
+          "handles_last": 476
+        }
+      }
+    },
+    {
+      "scenario": "S9",
+      "ieds": 2,
+      "points_per_ied": 5000,
+      "open_seconds": 0.173,
+      "timings": {
+        "save": [
+          0.0156,
+          0.0061,
+          0.0064,
+          0.006,
+          0.006
+        ],
+        "download": [
+          0.0247,
+          0.0042,
+          0.0044,
+          0.0041,
+          0.0053
+        ],
+        "diagram_edit": [
+          0.0067,
+          0.0064,
+          0.0062,
+          0.0062,
+          0.0068
+        ],
+        "project_get": [
+          0.0158,
+          0.003,
+          0.0025,
+          0.0025,
+          0.0024
+        ]
+      },
+      "delete_ied_seconds": 0.1369,
+      "median": {
+        "save": 0.0061,
+        "download": 0.0044,
+        "diagram_edit": 0.0064,
+        "project_get": 0.0025
+      }
+    }
+  ]
+}

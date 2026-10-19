@@ -1,0 +1,17 @@
+{"name": "demo-diagram", "steps": [
+  {"req": "POST /api/v1/session", "json": {"token": "golden-session-token"}},
+  {"req": "POST /api/v1/scl/import", "multipart": {"file": "@demo"},
+   "form": {"selected_names": "[\"FEED1\",\"FEED2\",\"BUS1\",\"BUS2\",\"TR1\",\"TR2\"]"}},
+  {"req": "GET /api/v1/project"},
+  {"req": "GET /api/v1/project/substation-sources", "bind": {"source": "sources.0.id"}},
+  {"req": "POST /api/v1/project/diagram/from-scl/preview", "json": {"source_id": "$source", "mode": "sideways"}},
+  {"req": "POST /api/v1/project/diagram/from-scl/preview", "json": {"source_id": "$source", "mode": "replace"},
+   "bind": {"diagram": "diagram"}},
+  {"req": "PUT /api/v1/project/diagram", "json": {"diagram": "$diagram", "revision": "$rev", "tab_id": "golden-tab"}},
+  {"req": "PUT /api/v1/project/diagram", "json": {"diagram": "$diagram", "revision": 1, "tab_id": "golden-tab"}},
+  {"req": "PUT /api/v1/project/diagram", "json": {"diagram": "$diagram", "revision": "$rev"}},
+  {"req": "GET /api/v1/project"},
+  {"req": "GET /api/v1/signal-flow"},
+  {"req": "POST /api/v1/project/save"},
+  {"req": "GET /api/v1/project/download"}
+]}

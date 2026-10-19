@@ -1,0 +1,23 @@
+{"name": "demo-import", "steps": [
+  {"req": "POST /api/v1/session", "json": {"token": "golden-session-token"}},
+  {"req": "POST /api/v1/scl/validate", "multipart": {"file": "@demo"}},
+  {"req": "POST /api/v1/scl/preview", "multipart": {"file": "@demo"}},
+  {"req": "POST /api/v1/scl/import", "multipart": {"file": "@demo"}},
+  {"req": "POST /api/v1/scl/import", "multipart": {"file": "@demo"},
+   "form": {"selected_names": "[\"FEED1\",\"FEED2\",\"BUS1\",\"BUS2\",\"TR1\",\"TR2\"]"}},
+  {"req": "GET /api/v1/project", "bind": {"feed1": "ieds.0.id", "tr1": "ieds.4.id"}},
+  {"req": "GET /api/v1/ieds/{$feed1}/signals"},
+  {"req": "GET /api/v1/ieds/{$feed1}/signals", "query": {"q": "Pos", "limit": 25}},
+  {"req": "GET /api/v1/ieds/{$feed1}/signals", "query": {"writable": "true"}},
+  {"req": "GET /api/v1/ieds/{$feed1}/signals", "query": {"report": "wrong"}},
+  {"req": "GET /api/v1/ieds/{$tr1}/source"},
+  {"req": "POST /api/v1/ieds/{$tr1}/export-scl", "json": {"overrides": {}}},
+  {"req": "POST /api/v1/ieds/{$tr1}/export-scl", "json": {"other": 1}},
+  {"req": "GET /api/v1/ieds/0123456789abcdef0123456789abcdef/source"},
+  {"req": "GET /api/v1/signal-flow/sources"},
+  {"req": "GET /api/v1/signal-flow"},
+  {"req": "GET /api/v1/health"},
+  {"req": "GET /api/v1/health.csv"},
+  {"req": "GET /api/v1/ieds/{$feed1}/removal-preview"},
+  {"req": "GET /api/v1/project/download"}
+]}

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "note": "Event kinds not listed as periodic are causal: compared as exact ordered lists at the step that caused them.",
+  "periodic": ["goose_status", "sv_status", "live_status", "mms_access", "automation_late", "live_stale"],
+  "reasons": {
+    "goose_status": "GOOSE monitor summary refreshed on a timer",
+    "sv_status": "SV monitor summary refreshed on a timer",
+    "live_status": "real-IED session summary refreshed on a timer",
+    "mms_access": "about once per second per simulated IED while MMS clients exist (events.md)",
+    "automation_late": "depends on scheduler timing of the machine",
+    "live_stale": "staleness depends on poll timing"
+  }
+}

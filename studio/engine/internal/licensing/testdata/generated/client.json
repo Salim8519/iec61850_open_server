@@ -1,0 +1,623 @@
+{
+"hwid": "abababababababababababababababababababababababababababababababab",
+"key": "SUBS-2345-6789-ABCD-EFGH",
+"cases": [
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-TEST-TEST-TEST-TEST\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\\\"}\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "\"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-TEST-TEST-TEST-TEST\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\\\"}\""
+},
+{
+"call": "activate",
+"url": "http://127.0.0.1:1//",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": {\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"}}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/activate",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"payload\":\"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\",\"signature\":\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"}"
+},
+{
+"call": "transfer",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"x\", \"extra\": [1]}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/transfer",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "\"x\""
+},
+{
+"call": "verify",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"status\": \"valid\"}"
+}
+],
+"requests": [
+{
+"method": "POST",
+"path": "api/v1/verify",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"status\":\"valid\"}"
+},
+{
+"call": "verify_number_key",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"status\": \"revoked\"}"
+}
+],
+"requests": [
+{
+"method": "POST",
+"path": "api/v1/verify",
+"body": "{\"license_key\": 5, \"hwid\": \"abababababababababababababababababababababababababababababababab\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"status\":\"revoked\"}"
+},
+{
+"call": "activate",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 409,
+"body": "{\"error\": \"Key used elsewhere.\", \"code\": \"bound_elsewhere\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/activate",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "Key used elsewhere.",
+"code": "bound_elsewhere"
+},
+{
+"call": "activate",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 500,
+"body": "<html>oops</html>"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/activate",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "License server error 500",
+"code": "server_error"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 400,
+"body": "{\"error\": \"\", \"code\": \"x\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "License server error 400",
+"code": "x"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 404,
+"body": "{\"code\": null}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "License server error 404",
+"code": null
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 429,
+"body": "{\"error\": 5}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "5",
+"code": "server_error"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 403,
+"body": "[1]"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"urlerror": true
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "Cannot reach the license server. Check the internet connection, or use offline activation.",
+"code": "offline"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{bad"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "Cannot reach the license server. Check the internet connection, or use offline activation.",
+"code": "offline"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n\", \"timestamp\": 1, \"difficulty\": 0, \"mac\": \"m\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "The license server asked for an unexpected puzzle. Try again later.",
+"code": "server_error"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n\", \"timestamp\": 1, \"difficulty\": 27}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "The license server asked for an unexpected puzzle. Try again later.",
+"code": "server_error"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n\", \"difficulty\": 4}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "KeyError",
+"message": "'timestamp'",
+"code": null
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n\", \"timestamp\": 1, \"difficulty\": \"6\", \"mac\": null}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"c\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n\", \"pow_ts\": 1, \"pow_difficulty\": \"6\", \"pow_mac\": null, \"pow_counter\": 115}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "\"c\""
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"no\": \"certificate\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "KeyError",
+"message": "'certificate'",
+"code": null
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "\ufeff{\"certificate\": \"bom\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "\"bom\""
+},
+{
+"call": "trial",
+"url": "ftp://license.example",
+"answers": [],
+"requests": [],
+"error": "LicenseServerError",
+"message": "No license server address is set. Open 'Server & offline options' and enter the address from your purchase email.",
+"code": "no_server"
+},
+{
+"call": "trial",
+"url": "",
+"answers": [],
+"requests": [],
+"error": "LicenseServerError",
+"message": "No license server address is set. Open 'Server & offline options' and enter the address from your purchase email.",
+"code": "no_server"
+},
+{
+"call": "verify",
+"url": "http://localhost:1",
+"answers": [
+{
+"status": 200,
+"body": "[]"
+}
+],
+"requests": [
+{
+"method": "POST",
+"path": "api/v1/verify",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "[]"
+}
+]
+}

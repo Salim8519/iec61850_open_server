@@ -1,0 +1,1506 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "alias": "demo",
+      "path": "marketing/videos/demo/scadabench_demo.scd",
+      "sha256": "1c0f10548dc536b4b12f7eb505719f196fa85c24809615114d1bc64c71b208d5",
+      "ieds": [
+        "BUS1",
+        "BUS2",
+        "FEED1",
+        "FEED2",
+        "TR1",
+        "TR2"
+      ]
+    },
+    {
+      "alias": "model_substation",
+      "path": "scd/model_substation.scd",
+      "sha256": "98581ad202474c0dbd13e7d58b868b568a106c7b68ed7b68bd634c10b3170a97",
+      "ieds": [
+        "BUS1",
+        "BUS2",
+        "FEED1",
+        "FEED2",
+        "TR1",
+        "TR2"
+      ]
+    },
+    {
+      "alias": "open_substation",
+      "path": "scd/open_substation.scd",
+      "sha256": "e18580112c52905f8e4dabfec793648d07c5688543ef2851d3af84698f4164fd",
+      "ieds": [
+        "IED1_XCBR",
+        "IED2_PTOC",
+        "IED3_SMV",
+        "IED4_SMV"
+      ]
+    },
+    {
+      "alias": "protection_relay",
+      "path": "scd/protection_relay.scd",
+      "sha256": "4a3e94c723c8e69d34bd57fa7e9a77c19905fb071e20b7507a332eca1ac524d0",
+      "ieds": [
+        "IED1_XCBR"
+      ]
+    },
+    {
+      "alias": "corpus:public_open_substation",
+      "path": "studio/tests/parity/corpus/fixtures/public_open_substation.scd",
+      "sha256": "e18580112c52905f8e4dabfec793648d07c5688543ef2851d3af84698f4164fd",
+      "ieds": [
+        "IED1_XCBR",
+        "IED2_PTOC",
+        "IED3_SMV",
+        "IED4_SMV"
+      ]
+    },
+    {
+      "alias": "corpus:public_model_substation",
+      "path": "studio/tests/parity/corpus/fixtures/public_model_substation.scd",
+      "sha256": "98581ad202474c0dbd13e7d58b868b568a106c7b68ed7b68bd634c10b3170a97",
+      "ieds": [
+        "BUS1",
+        "BUS2",
+        "FEED1",
+        "FEED2",
+        "TR1",
+        "TR2"
+      ]
+    },
+    {
+      "alias": "corpus:public_protection_relay",
+      "path": "studio/tests/parity/corpus/fixtures/public_protection_relay.scd",
+      "sha256": "4a3e94c723c8e69d34bd57fa7e9a77c19905fb071e20b7507a332eca1ac524d0",
+      "ieds": [
+        "IED1_XCBR"
+      ]
+    },
+    {
+      "alias": "corpus:public_demo",
+      "path": "studio/tests/parity/corpus/fixtures/public_demo.scd",
+      "sha256": "1c0f10548dc536b4b12f7eb505719f196fa85c24809615114d1bc64c71b208d5",
+      "ieds": [
+        "BUS1",
+        "BUS2",
+        "FEED1",
+        "FEED2",
+        "TR1",
+        "TR2"
+      ]
+    },
+    {
+      "alias": "corpus:template",
+      "path": "studio/tests/parity/corpus/fixtures/template.scd",
+      "sha256": "dbfdcd8b1cb0b2621f762e6649d2955cf966542c7efbab8ee1b04c6a75bb0d14",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:bom_utf8",
+      "path": "studio/tests/parity/corpus/fixtures/bom_utf8.scd",
+      "sha256": "5e5dc4b64ef0d4e871e61f5e21b3b0cd578b30b123de32c59a7dab15606f1ecd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:utf8_no_declaration",
+      "path": "studio/tests/parity/corpus/fixtures/utf8_no_declaration.scd",
+      "sha256": "638eb370bd46a56a3d4f4188f61e1d7126e0e74fa18c479f1bd60b712951d13d",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:utf16le_bom",
+      "path": "studio/tests/parity/corpus/fixtures/utf16le_bom.scd",
+      "sha256": "8087486e63438c28363a17cf1cf14201666a0b22efa6a0a0c15c01fa79fa23d1",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:utf16be_bom",
+      "path": "studio/tests/parity/corpus/fixtures/utf16be_bom.scd",
+      "sha256": "c7e32a4542c31c36bace15d5fc4abf357f4ce74693a561a35618265c1643c571",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:latin1_desc",
+      "path": "studio/tests/parity/corpus/fixtures/latin1_desc.scd",
+      "sha256": "09eeb582f018acc2454101411321218b506dd6da817a01313ecbf87e8cac350a",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:windows1252",
+      "path": "studio/tests/parity/corpus/fixtures/windows1252.scd",
+      "sha256": "b02714c871b5562a0a41aebe29fa8a4ab93c18985025794d5180cb974a9ea108",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:utf8_invalid_byte",
+      "path": "studio/tests/parity/corpus/fixtures/utf8_invalid_byte.scd",
+      "sha256": "45adfb3a087745ee755e036f7454691fda7a6599e2d76457d8de86b5f5a6c4aa",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:usascii_charref",
+      "path": "studio/tests/parity/corpus/fixtures/usascii_charref.scd",
+      "sha256": "40fe4bec81d49988d0ef8e04262627aa9073873976bffb969ba5f49cf1c81a98",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:crlf",
+      "path": "studio/tests/parity/corpus/fixtures/crlf.scd",
+      "sha256": "c7b78215ace2399571ee9003703737740dafffdc0399e48238daf94ca8806b39",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:cr_only",
+      "path": "studio/tests/parity/corpus/fixtures/cr_only.scd",
+      "sha256": "56a61f2d9a9cf2a7ff651822f450661517e4e278df44e5b642a854ed1f9bc4ff",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:lf",
+      "path": "studio/tests/parity/corpus/fixtures/lf.scd",
+      "sha256": "2372af6df0a196c587e48d227b075388b2d6fbe051e354790ebf50223f7664f1",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:tab_newline_attr",
+      "path": "studio/tests/parity/corpus/fixtures/tab_newline_attr.scd",
+      "sha256": "f5edef11d93d7d455f1dca798db30355241b441dd6dc69f54c1b9f16df7394b7",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:trailing_whitespace",
+      "path": "studio/tests/parity/corpus/fixtures/trailing_whitespace.scd",
+      "sha256": "6822c1ad43f3310626589f14be63e2ae335b32230e6bac3a2b41077b112a3053",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:trailing_garbage",
+      "path": "studio/tests/parity/corpus/fixtures/trailing_garbage.scd",
+      "sha256": "0fed38da261d0ab859a4dfc36365ed33925c799d632d2bae105dbaab358904c9",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:blank",
+      "path": "studio/tests/parity/corpus/fixtures/blank.scd",
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:empty",
+      "path": "studio/tests/parity/corpus/fixtures/empty.scd",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:html_page",
+      "path": "studio/tests/parity/corpus/fixtures/html_page.scd",
+      "sha256": "a010adc6fd8044c2672784d7e77df4b2efeb9cea1f30dfe499266c1bbf9fb13b",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:zip_renamed",
+      "path": "studio/tests/parity/corpus/fixtures/zip_renamed.scd",
+      "sha256": "6d809bd427733d4d3627c81a868cd1dbbdf57505c3422fe99285b9fd16702f3f",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:foreign_root",
+      "path": "studio/tests/parity/corpus/fixtures/foreign_root.scd",
+      "sha256": "7bb1fea3da68ef6a4d69a485b123dcc0a8101cd5de647f27b90c1e58a5a0296e",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:crlf_protection_relay",
+      "path": "studio/tests/parity/corpus/fixtures/crlf_protection_relay.scd",
+      "sha256": "4a3e94c723c8e69d34bd57fa7e9a77c19905fb071e20b7507a332eca1ac524d0",
+      "ieds": [
+        "IED1_XCBR"
+      ]
+    },
+    {
+      "alias": "corpus:bom_open_substation",
+      "path": "studio/tests/parity/corpus/fixtures/bom_open_substation.scd",
+      "sha256": "743a054f764b2dbc0278f032643ddd2c21138c3b7ab6d3b8e05f78cb42dacefd",
+      "ieds": [
+        "IED1_XCBR",
+        "IED2_PTOC",
+        "IED3_SMV",
+        "IED4_SMV"
+      ]
+    },
+    {
+      "alias": "corpus:size_at_limit",
+      "path": null,
+      "sha256": "baa825c9179a7cf1de2f3b9797bce71de130686f71f3d930baddce7a4a19e89f",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:size_over_limit",
+      "path": null,
+      "sha256": "84b96835af43fdd703eeff0d2d5a0e526e6d4d3cc57d81b0ee1924f45d280f36",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:doctype_plain",
+      "path": "studio/tests/parity/corpus/fixtures/doctype_plain.scd",
+      "sha256": "858d5028b7f157d90900b358ef70524b33b7ecb2ae54d19b11d183e39b2f7277",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:entity_internal",
+      "path": "studio/tests/parity/corpus/fixtures/entity_internal.scd",
+      "sha256": "46b3dd7d5c5ed0b4cfe003bef8596f40228996dd6925984ed274c0b322a81c29",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:entity_external",
+      "path": "studio/tests/parity/corpus/fixtures/entity_external.scd",
+      "sha256": "3117de14be3b70d4cb3ccd569299c6e5377a11ebe220c52ee0b419c32bc23242",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:entity_laughs",
+      "path": "studio/tests/parity/corpus/fixtures/entity_laughs.scd",
+      "sha256": "608e61d9547d79836f08f22ac7b71a5ca9f3b8b493501a34910ad1857e0ea3d0",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:entity_parameter",
+      "path": "studio/tests/parity/corpus/fixtures/entity_parameter.scd",
+      "sha256": "d78b40157cf07a41d8b4ac775745d1327522b10a890fcb2f139f1ff321cf07a9",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:xinclude",
+      "path": "studio/tests/parity/corpus/fixtures/xinclude.scd",
+      "sha256": "8c5a2c3a1f916c0012f1ed079b85114a7db5b2e91661f82deb7fc6f3570f34dd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comment_before_root",
+      "path": "studio/tests/parity/corpus/fixtures/comment_before_root.scd",
+      "sha256": "4355adeced050dc69f946a3765b1107b55c16612b61e1829589ae6e043d4c3fd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comment_in_ied",
+      "path": "studio/tests/parity/corpus/fixtures/comment_in_ied.scd",
+      "sha256": "f7460712256df5d6d9345dda22ad99e0fd1911cf238340567fa38cd9700cb7b9",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comment_in_templates",
+      "path": "studio/tests/parity/corpus/fixtures/comment_in_templates.scd",
+      "sha256": "9efe8e73f2725911b4a2b060068bfb0d1f8c3721895e557864aa6f98e90ad65f",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comment_between_val",
+      "path": "studio/tests/parity/corpus/fixtures/comment_between_val.scd",
+      "sha256": "f803eb032dc08b3e9cad364e372fb9be7d2c6529ff0649ed82b272e6fe0ecfcd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comment_dashes",
+      "path": "studio/tests/parity/corpus/fixtures/comment_dashes.scd",
+      "sha256": "6b2bf47a8ada47667c9dc6876251707b0f91bf4aa674020e762c9254d386e55b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comment_non_ascii",
+      "path": "studio/tests/parity/corpus/fixtures/comment_non_ascii.scd",
+      "sha256": "ae1f384c7cac2e91fc3b7cf2a92c4df9cd71e2d45222b119d58ca40a3c0109c0",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:processing_instruction",
+      "path": "studio/tests/parity/corpus/fixtures/processing_instruction.scd",
+      "sha256": "daf03563d5a1911107ef86536aaec771c9e9abd99e987eefff9d3a0babfe4bad",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:cdata_val",
+      "path": "studio/tests/parity/corpus/fixtures/cdata_val.scd",
+      "sha256": "c8e59a88dede7d10054c60fa1b055b26b6cca7e020f021c84ebe214cee3e5379",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:space_preserve",
+      "path": "studio/tests/parity/corpus/fixtures/space_preserve.scd",
+      "sha256": "22cf34b94315f6fd33778c6a3d6cb9666f54e93842cb4065365689deef6aec5c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:escaped_desc",
+      "path": "studio/tests/parity/corpus/fixtures/escaped_desc.scd",
+      "sha256": "13dfa0dfc75ecb4f53be554862330b1ab044242bb2935defd5a52dbe7213051d",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:scl_prefix",
+      "path": "studio/tests/parity/corpus/fixtures/scl_prefix.scd",
+      "sha256": "54f5de9bf3a16e95d3fc00b23ab30ab76a9df1d682c755cde5a3bf397eeed288",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:default_ns_redeclared",
+      "path": "studio/tests/parity/corpus/fixtures/default_ns_redeclared.scd",
+      "sha256": "d41f474742dffef82a2265221886bde01966ccb4d61705b2269f79f53188652a",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:foreign_attributes",
+      "path": "studio/tests/parity/corpus/fixtures/foreign_attributes.scd",
+      "sha256": "b3ca9cb2bc80499a603d27a7dc83bb0bfe4ef4c482617d69398552721428b750",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:private_foreign",
+      "path": "studio/tests/parity/corpus/fixtures/private_foreign.scd",
+      "sha256": "91c0f2f3dca4bdad06b2ec45ebba951d83434b51dbe53ff33c9d73b639805aca",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:version_absent",
+      "path": "studio/tests/parity/corpus/fixtures/version_absent.scd",
+      "sha256": "f23041794ce5e391b4cb44e4352aa3bf9a7702af61a39506b776f5fe729d313a",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:version_2003",
+      "path": "studio/tests/parity/corpus/fixtures/version_2003.scd",
+      "sha256": "2da97e090015fef9dfd86b7fa28bdf5e009b04dca2db001868fe0d0d4d1d5421",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:version_2007a",
+      "path": "studio/tests/parity/corpus/fixtures/version_2007a.scd",
+      "sha256": "91dabd6fa32bf8a5f9a1b4c6da8175775c52d89291df166ab8ad63076b9efcdb",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:version_2007b",
+      "path": "studio/tests/parity/corpus/fixtures/version_2007b.scd",
+      "sha256": "c1516dae09185a4516b1a22ccf93a6d23a68831b48f7bc813ed4fbacd393e3c8",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:version_unknown",
+      "path": "studio/tests/parity/corpus/fixtures/version_unknown.scd",
+      "sha256": "248abe9c1bada0b6dc154305a87a19c79bcc8d543a284e790058587b0a137f6c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:name_space",
+      "path": "studio/tests/parity/corpus/fixtures/name_space.scd",
+      "sha256": "369fdccdf52ac779d082782202406f36e95820a75238374be786afc01820e9d8",
+      "ieds": [
+        "Bay 1"
+      ]
+    },
+    {
+      "alias": "corpus:name_leading_digit",
+      "path": "studio/tests/parity/corpus/fixtures/name_leading_digit.scd",
+      "sha256": "efb8c463e17148b905b886d09e99f7d085fdf17d87d2a13c820c94e8d21f0593",
+      "ieds": [
+        "1Bay"
+      ]
+    },
+    {
+      "alias": "corpus:name_non_ascii",
+      "path": "studio/tests/parity/corpus/fixtures/name_non_ascii.scd",
+      "sha256": "bfdce5585bfc2ad4841940f11bd43b30a6d4df1edf4c21858c4a5c7c033f84b0",
+      "ieds": [
+        "\u00c41"
+      ]
+    },
+    {
+      "alias": "corpus:name_quote",
+      "path": "studio/tests/parity/corpus/fixtures/name_quote.scd",
+      "sha256": "380d2042a0580c3e415de28a0c68032f7c2861dbe6595cef2512cc22e7aca37e",
+      "ieds": [
+        "it's"
+      ]
+    },
+    {
+      "alias": "corpus:name_missing",
+      "path": "studio/tests/parity/corpus/fixtures/name_missing.scd",
+      "sha256": "1e76aa768d676d4654f099d524485e4ec7a7dbc3f357ee34b8f12992b2012b9c",
+      "ieds": []
+    },
+    {
+      "alias": "corpus:name_65_chars",
+      "path": "studio/tests/parity/corpus/fixtures/name_65_chars.scd",
+      "sha256": "6c60256de38a57815ec4e6816afdd6f6aef11dba987797a999e15d08348e782b",
+      "ieds": [
+        "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
+      ]
+    },
+    {
+      "alias": "corpus:name_duplicate",
+      "path": "studio/tests/parity/corpus/fixtures/name_duplicate.scd",
+      "sha256": "f4b38a81ef146b24994747f4696203083567b17476ab954a37b06aadf539ac09",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:ld_inst_empty",
+      "path": "studio/tests/parity/corpus/fixtures/ld_inst_empty.scd",
+      "sha256": "40140a3c45817c6a104dbfc5dca69fb6a9448b515ec4b8597fed67f507c5b3dc",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:ld_inst_long",
+      "path": "studio/tests/parity/corpus/fixtures/ld_inst_long.scd",
+      "sha256": "9d7846f21714c2720e344309c3ac78cd9aeb16a27e9a3b72cb26ee06f2395c19",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:ln_prefix_digits",
+      "path": "studio/tests/parity/corpus/fixtures/ln_prefix_digits.scd",
+      "sha256": "e5bd6bace6ff8eca86d339ffe47a3fc9fef9e587e0acf2038ee8f0b27f663ad7",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:ln_class_unknown",
+      "path": "studio/tests/parity/corpus/fixtures/ln_class_unknown.scd",
+      "sha256": "22ca839ecd151bda739340c09cb19a345297148fe467e5b902ac88e39ec99902",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:ln_duplicate",
+      "path": "studio/tests/parity/corpus/fixtures/ln_duplicate.scd",
+      "sha256": "04e195e12f366cbab171d14507307cc788c7510b1e24a77521444746b0599e68",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:templates_missing",
+      "path": "studio/tests/parity/corpus/fixtures/templates_missing.scd",
+      "sha256": "2a3b2fd02dd4bb70a22fd485d3c017397c4d2897665c8bbc368aafe6799abd1b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:lntype_unresolved",
+      "path": "studio/tests/parity/corpus/fixtures/lntype_unresolved.scd",
+      "sha256": "add60c1a198315a05d289bdff636d089e3bef8e6adb316c4859e11eb2a23fa4e",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:dotype_unresolved",
+      "path": "studio/tests/parity/corpus/fixtures/dotype_unresolved.scd",
+      "sha256": "188aae0de72d209618505340c8e57610475537a0ede4bca5e573e00668bd1af5",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:datype_cycle",
+      "path": "studio/tests/parity/corpus/fixtures/datype_cycle.scd",
+      "sha256": "53ac883ebef4532c91e75c8f861309e9c17ef891c41bd33e2f5007f8bc9bbfa4",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:btype_unknown",
+      "path": "studio/tests/parity/corpus/fixtures/btype_unknown.scd",
+      "sha256": "b7db22efb0fae9955c1d9df9da3f181846583d567b47eb3f25d6d19775d4d5fa",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:fc_unknown",
+      "path": "studio/tests/parity/corpus/fixtures/fc_unknown.scd",
+      "sha256": "a6bcf8e725a266bd17415da332840444f2b9aa041012060bab31cf218b2e3b6b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:da_count",
+      "path": "studio/tests/parity/corpus/fixtures/da_count.scd",
+      "sha256": "9a35d0b800aa258868fea0ea883aecfafd8167f2dfb42710563b31fd7f296e4e",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:bda_count",
+      "path": "studio/tests/parity/corpus/fixtures/bda_count.scd",
+      "sha256": "59e85db5b8a3ef625e3d0bcd8e4d2ec419be887832d74d6c86c505e60109dc9b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:doi_ix",
+      "path": "studio/tests/parity/corpus/fixtures/doi_ix.scd",
+      "sha256": "fa38071ece674b491dd5dc93c2f789b779bb01d7802a9bb6eb2a943fb19a5069",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:dai_ix",
+      "path": "studio/tests/parity/corpus/fixtures/dai_ix.scd",
+      "sha256": "caa8454a3fc6f4209741f4ab087af1b16a933e2ef82e42d2ef7e1e9c0f6163ee",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:sdi_value",
+      "path": "studio/tests/parity/corpus/fixtures/sdi_value.scd",
+      "sha256": "d811ed1c3d3270abc72e4816dd8103442182bd02050489bce972f162bc39001b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:sgroup_values",
+      "path": "studio/tests/parity/corpus/fixtures/sgroup_values.scd",
+      "sha256": "51e92464ce2311c0fdebfda7ccf7ec8cea5be87fe0f3717cc517e63a99bf8855",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:val_kind_import",
+      "path": "studio/tests/parity/corpus/fixtures/val_kind_import.scd",
+      "sha256": "087a931d2b38fb9ade8194a8beeb05a7fa832d5c3e458de97bad386dbe51be69",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_negative_ord",
+      "path": "studio/tests/parity/corpus/fixtures/enum_negative_ord.scd",
+      "sha256": "b3eebf72fd86423395bf93134c7f2dc643fa81e6379d9a03c449edb8c8e150df",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_gaps",
+      "path": "studio/tests/parity/corpus/fixtures/enum_gaps.scd",
+      "sha256": "e15a10f5d0396f11769e44ae21f0640785d0ac46720f9ed9f04e6139b618691f",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_duplicate_ord",
+      "path": "studio/tests/parity/corpus/fixtures/enum_duplicate_ord.scd",
+      "sha256": "3caa9b53d00083dc66a528c0e3054bb405904539bc6009a259315e656eecdd46",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_empty_literal",
+      "path": "studio/tests/parity/corpus/fixtures/enum_empty_literal.scd",
+      "sha256": "0d83c32515dc9dcf6dba1baaeb66e0a241383ef9203ee0a10cf75782f961ae68",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_non_ascii",
+      "path": "studio/tests/parity/corpus/fixtures/enum_non_ascii.scd",
+      "sha256": "4cd82e073177a34091a9182fe2ab64fe4f6c21815999f4d579ad6683a408d5ea",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_missing",
+      "path": "studio/tests/parity/corpus/fixtures/enum_missing.scd",
+      "sha256": "8bbdae60af4bda8f3b60b3f7ba982140b6e492d650a9dccf33f59f8adf9b752d",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_val_unknown",
+      "path": "studio/tests/parity/corpus/fixtures/enum_val_unknown.scd",
+      "sha256": "fc68abda05769d5ec2c80e8ae7a9af7c3e3ba7d3bbd1db654c82a45e106b05ad",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:enum_val_literal",
+      "path": "studio/tests/parity/corpus/fixtures/enum_val_literal.scd",
+      "sha256": "a259672296595741734379326025b6156e544ba33a5ff79e1aae9bbaa669884c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_00_1e3",
+      "path": "studio/tests/parity/corpus/fixtures/float32_00_1e3.scd",
+      "sha256": "1af9fd21e3c2cbaf46edd3620ab2316aa71a5a5f5d9596517f0fe93604b0272d",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_01_1e_7",
+      "path": "studio/tests/parity/corpus/fixtures/float32_01_1e_7.scd",
+      "sha256": "cfa0ede8377ccd809572f6d2028367c326071f89a18c103d28ebed36614fc47c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_02__0",
+      "path": "studio/tests/parity/corpus/fixtures/float32_02__0.scd",
+      "sha256": "f0de7fd94ed51cbe62d2e5e30cab783fe17b0995310a7c3cc4d97f1a98234eda",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_03_0_1",
+      "path": "studio/tests/parity/corpus/fixtures/float32_03_0_1.scd",
+      "sha256": "415a67d12466719e769412b4cdb1e33b19007942eaf11152bc0429326b09b603",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_04_2_5",
+      "path": "studio/tests/parity/corpus/fixtures/float32_04_2_5.scd",
+      "sha256": "fbf881862632a02586e391867550e5fab82665e6ee3a831d6926f615a79fc425",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_05_2_5",
+      "path": "studio/tests/parity/corpus/fixtures/float32_05_2_5.scd",
+      "sha256": "889be062d5630eb8e2692f619f639c3f57d2af66a6682231dad57f7cae8b33a1",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_06_nan",
+      "path": "studio/tests/parity/corpus/fixtures/float32_06_nan.scd",
+      "sha256": "bac237898bf84112c5ffd36e1076a556cc9805d31988ecc00e2eb400d9d50186",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_07_inf",
+      "path": "studio/tests/parity/corpus/fixtures/float32_07_inf.scd",
+      "sha256": "8f3d4feb7512131147bb93769823c8179b9c36535dec062993bb77d75a8e2be5",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_08__inf",
+      "path": "studio/tests/parity/corpus/fixtures/float32_08__inf.scd",
+      "sha256": "2f98f25b0dc9cd29617dc83288363e3e84d3ba8ae24d9ee8bd6734786bbb679a",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_09_1e309",
+      "path": "studio/tests/parity/corpus/fixtures/float32_09_1e309.scd",
+      "sha256": "a58c7845bb3b0b677269cb09fb9631d2c2ec2c9819a5c0880254508e5fb11bbd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_10_3_4028236e38",
+      "path": "studio/tests/parity/corpus/fixtures/float32_10_3_4028236e38.scd",
+      "sha256": "9a72d91bf457e5281bcd87b9bd27ef3383b3bab317be9fdc2ca4350607165044",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_11_0_30000000000000004",
+      "path": "studio/tests/parity/corpus/fixtures/float32_11_0_30000000000000004.scd",
+      "sha256": "1254310b8d444904d38ff6200cf80f575f7428431673aae99fd44d7bc4f3b9ea",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_12_1234567_0",
+      "path": "studio/tests/parity/corpus/fixtures/float32_12_1234567_0.scd",
+      "sha256": "7f4a2e8e9962d2830ae097c89b629b4a0fe449cede75a62667264ae27916b4db",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:float32_13_1e16",
+      "path": "studio/tests/parity/corpus/fixtures/float32_13_1e16.scd",
+      "sha256": "93b27df9eaaff3964c48a12ef5440d92772a4f7ef293552775c715f7b45f8898",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8_00__129",
+      "path": "studio/tests/parity/corpus/fixtures/int8_00__129.scd",
+      "sha256": "efe4a06135677d8d8d4c0ba70513ae5deadfb71ba1e6b810e73c73f7d13234a3",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8_01__128",
+      "path": "studio/tests/parity/corpus/fixtures/int8_01__128.scd",
+      "sha256": "731c8931b9bbfac96d3acb56850bad57a4afc709db20003846db33f2d68ed0e7",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8_02_127",
+      "path": "studio/tests/parity/corpus/fixtures/int8_02_127.scd",
+      "sha256": "fee84dd8d5e7a434afa1b521e897900297a6323a1b8f8c7655d62f2e9bd22caf",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8_03_128",
+      "path": "studio/tests/parity/corpus/fixtures/int8_03_128.scd",
+      "sha256": "3b05219b7cbc03e03ac6e5ea95095d0c84d996551d5586983ec59214428a6889",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8u_00__1",
+      "path": "studio/tests/parity/corpus/fixtures/int8u_00__1.scd",
+      "sha256": "c5eaacbe0c40c679ecb16cff2d231f026810e476efca70398b7f1edc2c1916bc",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8u_01_0",
+      "path": "studio/tests/parity/corpus/fixtures/int8u_01_0.scd",
+      "sha256": "3efea23d5556e875a84c9f7d49e24e2ca17b867e8166b0de1f166d07d16999b6",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8u_02_255",
+      "path": "studio/tests/parity/corpus/fixtures/int8u_02_255.scd",
+      "sha256": "b36e6343622ddad0bfaafca7fd3517cbc4df26f3d0b9d72cffc8a0becdd59ec2",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int8u_03_256",
+      "path": "studio/tests/parity/corpus/fixtures/int8u_03_256.scd",
+      "sha256": "a0afd6ba5da1a4dcfea433749b92f24bec560857fe7cbd5c3f9a0e37c60b15de",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int16_00__32769",
+      "path": "studio/tests/parity/corpus/fixtures/int16_00__32769.scd",
+      "sha256": "8dbe45f7295f0aea98f293ae2eddae86268653a1513f4dda3b00be21b5b95fdc",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int16_01_32767",
+      "path": "studio/tests/parity/corpus/fixtures/int16_01_32767.scd",
+      "sha256": "2b2150711a540adcbb4216a746d5959451eb34288dad90fef145c6f9ac2636b5",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int16u_00_65535",
+      "path": "studio/tests/parity/corpus/fixtures/int16u_00_65535.scd",
+      "sha256": "8345d8aae3de1643bb091edfee6b8989704cf8fc67ffa962f0f3710d41f30287",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int16u_01_65536",
+      "path": "studio/tests/parity/corpus/fixtures/int16u_01_65536.scd",
+      "sha256": "6ba69ee90e8ffbdb3e4d6d89f7870252a72cafd37165c1aa5936c9e36e5d3c24",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_00__2147483649",
+      "path": "studio/tests/parity/corpus/fixtures/int32_00__2147483649.scd",
+      "sha256": "7ecd3de142ea2470f30b9e182190cafe150663cb7b5db88b8bf8eba51fbf7e1c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_01__2147483648",
+      "path": "studio/tests/parity/corpus/fixtures/int32_01__2147483648.scd",
+      "sha256": "f51f64e8c093fc0d33e43e13054d4ef480b5a1b10c8070357da5214c8301b738",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_02_2147483647",
+      "path": "studio/tests/parity/corpus/fixtures/int32_02_2147483647.scd",
+      "sha256": "cdd7792300bec5a30d8e9ce34bee83a031cb7158bc8e54ec774a7d7a6c755bba",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_03_2147483648",
+      "path": "studio/tests/parity/corpus/fixtures/int32_03_2147483648.scd",
+      "sha256": "7e6fec27c388e0696ebcc6dc605ea99c6aeab89043ba9c2eca406f7517c67502",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_04__5",
+      "path": "studio/tests/parity/corpus/fixtures/int32_04__5.scd",
+      "sha256": "8e209a119108c09b6e01908e8d1e08fa5f10de96b6030d6bfe0551878d35cca1",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_05_05",
+      "path": "studio/tests/parity/corpus/fixtures/int32_05_05.scd",
+      "sha256": "d614aefdb39eaab989b266351bfbd59f8f7f4d37ea7509d3a8bb84e11514b80a",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_06_0x10",
+      "path": "studio/tests/parity/corpus/fixtures/int32_06_0x10.scd",
+      "sha256": "1daada98a718b27ce71b0393775606d5a8c25e33b03d95fea255947ddbb6e438",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_07_1_0",
+      "path": "studio/tests/parity/corpus/fixtures/int32_07_1_0.scd",
+      "sha256": "a3bdb27d012c8251b18af60bf6cb43627ee404c1a19f313f80e611e6c7386810",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32_08_1_000",
+      "path": "studio/tests/parity/corpus/fixtures/int32_08_1_000.scd",
+      "sha256": "34869a1f99b3cd67f984ee9bf3f3110a3272b35c11c842da6b01ac32abbe3be6",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32u_00_4294967295",
+      "path": "studio/tests/parity/corpus/fixtures/int32u_00_4294967295.scd",
+      "sha256": "76428a58ca7b68abb8c38232b0b55b77f0a40f4f48c352a018ef67cd9eadd7ef",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int32u_01_4294967296",
+      "path": "studio/tests/parity/corpus/fixtures/int32u_01_4294967296.scd",
+      "sha256": "f1e5ec3ecd465d156ba112eb1efb05fc1bce25d6e5ed78864177a106b3f9d546",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int64_00_9223372036854775807",
+      "path": "studio/tests/parity/corpus/fixtures/int64_00_9223372036854775807.scd",
+      "sha256": "ac3d630cfaa519eb62d180acfb4cc40a30df60cf93e417e7b2754c6bf3616bd5",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:int64_01_9223372036854775808",
+      "path": "studio/tests/parity/corpus/fixtures/int64_01_9223372036854775808.scd",
+      "sha256": "1a56c809c2cd1cf369b58711f89c013da8b8574fa00815a470bd82d9cfb8b71c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_00_true",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_00_true.scd",
+      "sha256": "8bcf4323794d8536cf8321b3ed76651cb5c085a93121f0f51fa610ad79743abd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_01_false",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_01_false.scd",
+      "sha256": "da943186a385f9d04022719b0f897daa6b86ad3b2318640bc06d1fba5d8d1fd9",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_02_1",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_02_1.scd",
+      "sha256": "900e58db16e6e6d2ecd843f996f90bc94aa1679593edea6460b4df035a5adba4",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_03_0",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_03_0.scd",
+      "sha256": "f6d022aa3b3cf1ae9ffeb4697a59bc4aef7d55fab3920bd25ac8fec29f72cafa",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_04_true",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_04_true.scd",
+      "sha256": "2d1e9e1d36e4e9f8fcc96d8998800c93bea290abe55ab17945e1f71eb60153ac",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_05_true",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_05_true.scd",
+      "sha256": "c765d6cdacc04d377cba8bfbac7379ef18328708826e469b13ef5d02d9981548",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_06_yes",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_06_yes.scd",
+      "sha256": "f2ef3ceb6241982e6c6e87ec1f80e58dd983bd2f3895c88ce604feb459f32db5",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:boolean_07_empty",
+      "path": "studio/tests/parity/corpus/fixtures/boolean_07_empty.scd",
+      "sha256": "3e370eb0a33777f9a9e1ea875c310cd075feda0bcd042bc5a96f77d4fea878a8",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_00_timestamp",
+      "path": "studio/tests/parity/corpus/fixtures/other_00_timestamp.scd",
+      "sha256": "c7becbb1021b72108d8c0ae9ad37e4eb4c5f34f80a5b49a4d1309b542772f4d0",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_01_quality",
+      "path": "studio/tests/parity/corpus/fixtures/other_01_quality.scd",
+      "sha256": "5291f772ed6e0c31d07e1faffdaf30fa5065a02cd8476ea3f9206c5489cc1e15",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_02_dbpos",
+      "path": "studio/tests/parity/corpus/fixtures/other_02_dbpos.scd",
+      "sha256": "6ce85463d260285b939947caee80bce109901c13f240daa670ff771aa1e65b59",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_03_visstring64",
+      "path": "studio/tests/parity/corpus/fixtures/other_03_visstring64.scd",
+      "sha256": "cb8c5d5fa70b844d7c7f8d19f199f43499e1d2edb8e081a0bf01c323ac71e904",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_04_visstring255",
+      "path": "studio/tests/parity/corpus/fixtures/other_04_visstring255.scd",
+      "sha256": "c404f8bef095ae5a95681ede6076d932c6ddb446a1c76708f249c730e437bb5c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_05_unicode255",
+      "path": "studio/tests/parity/corpus/fixtures/other_05_unicode255.scd",
+      "sha256": "9bd67169ff8e3657fa3f6238efa4cc860dbecbf7e916a6c5136b3e4d04dfaebc",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_06_octet64",
+      "path": "studio/tests/parity/corpus/fixtures/other_06_octet64.scd",
+      "sha256": "f2a501845d7e42f80e7ce3bacd87a8bf5b028e0727135c4ef7fc6fd857dc82cd",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_07_octet64",
+      "path": "studio/tests/parity/corpus/fixtures/other_07_octet64.scd",
+      "sha256": "adbf9a9e5c6fd9c8abb25b82dd4b08e9d5eeef36284f3c0c972c01c634ab3672",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_08_objref",
+      "path": "studio/tests/parity/corpus/fixtures/other_08_objref.scd",
+      "sha256": "f05456bfdfee805290188cbcd7a511b1b9988f53435dddcd0dd7cee5048b4ea2",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_09_check",
+      "path": "studio/tests/parity/corpus/fixtures/other_09_check.scd",
+      "sha256": "ae79deeff465687124f240432143f788834e5a590407de7dd2776b08edaba9e8",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_10_entrytime",
+      "path": "studio/tests/parity/corpus/fixtures/other_10_entrytime.scd",
+      "sha256": "1898cdcf50147bd52e6d993b478ed1a4d3bfa5fe05edfbcf69765363c2927f2b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_11_tcmd",
+      "path": "studio/tests/parity/corpus/fixtures/other_11_tcmd.scd",
+      "sha256": "04e21f97ccc15e5c276d153c528f8fbfcd73df51c0789bbd7b39f872b67abf69",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:other_12_phycomaddr",
+      "path": "studio/tests/parity/corpus/fixtures/other_12_phycomaddr.scd",
+      "sha256": "f8481c7df8f00f007f9c7516e3162c29d8de34258badc714d0981e619f42bed6",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_emoji",
+      "path": "studio/tests/parity/corpus/fixtures/desc_emoji.scd",
+      "sha256": "7c2f9248f8b0f6f61b49538ba5898fabe6d2026ba6e68498fb1b98868ae0fa67",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_arabic",
+      "path": "studio/tests/parity/corpus/fixtures/desc_arabic.scd",
+      "sha256": "893790b133c1b685d75fe6890a914cb3c9b806504fd857bf54ee0bfb7aab4dc9",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_combining",
+      "path": "studio/tests/parity/corpus/fixtures/desc_combining.scd",
+      "sha256": "9bbefb68d3fd932462db1404f68f71c628a1640528b950e23d03dcbe01a7e09b",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_zwj",
+      "path": "studio/tests/parity/corpus/fixtures/desc_zwj.scd",
+      "sha256": "58613f3733d26dea8822c1775abe31d06a2c191e10735f31524ab16efd2f6303",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_line_separator",
+      "path": "studio/tests/parity/corpus/fixtures/desc_line_separator.scd",
+      "sha256": "9eb83400b8a38d71c569a0cf8e808914eff7ac891f8fee69f64e589cd18325da",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_long_4k",
+      "path": "studio/tests/parity/corpus/fixtures/desc_long_4k.scd",
+      "sha256": "8747311b23bfd30db8a3167638c1836486d554458bb31c53a0cea0e274f8002e",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:desc_control_ref",
+      "path": "studio/tests/parity/corpus/fixtures/desc_control_ref.scd",
+      "sha256": "8ec90bd83880a0518cbecc6053d2cc92b2b04a6a1a9ff59b4a821d400dc33322",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comm_basic",
+      "path": "studio/tests/parity/corpus/fixtures/comm_basic.scd",
+      "sha256": "8f6a31c75aadecc2299e740145853ff21b89d841cebfb1b06ff2ca73a445da03",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comm_no_ip",
+      "path": "studio/tests/parity/corpus/fixtures/comm_no_ip.scd",
+      "sha256": "0198428ade9656ce91acfc8819ffbac87de5ca40db86621bb579907307604bbf",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comm_ipv6",
+      "path": "studio/tests/parity/corpus/fixtures/comm_ipv6.scd",
+      "sha256": "e7411188beb65b3c663944ca92c4daff4bf5d70fab561437e2f92fd5b9d01b4c",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:comm_bad_ip",
+      "path": "studio/tests/parity/corpus/fixtures/comm_bad_ip.scd",
+      "sha256": "4d78b550b52addd6a5fbda0ef8a845b24ea686a9552f8dccff1bc8acf3d754bf",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_basic",
+      "path": "studio/tests/parity/corpus/fixtures/goose_basic.scd",
+      "sha256": "96ca4311f250587d81cab16a906dc7d04e17b03508844981537d1ec9ec586d2d",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_mac_lower",
+      "path": "studio/tests/parity/corpus/fixtures/goose_mac_lower.scd",
+      "sha256": "6375d0f6956d29a037319207e3ff613b6ee50e6aa65630ebf19da555b4c3a4fe",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_mac_colon",
+      "path": "studio/tests/parity/corpus/fixtures/goose_mac_colon.scd",
+      "sha256": "710275bfe908f15c6483866a72d9bc9850e23234e69432f55ef57d63ee605acc",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_appid_0x",
+      "path": "studio/tests/parity/corpus/fixtures/goose_appid_0x.scd",
+      "sha256": "450f39107a76c555b8a9a621170733fd869083269bf2f6e70707bbf18c32ff61",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_appid_decimal",
+      "path": "studio/tests/parity/corpus/fixtures/goose_appid_decimal.scd",
+      "sha256": "921a32fb7dbde548ee864079b36da1c7de8b72cb87acd1fb5837705143486691",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_appid_bad",
+      "path": "studio/tests/parity/corpus/fixtures/goose_appid_bad.scd",
+      "sha256": "abae05e5006a45e943716c35636a9ad523460cc630021cdbfc0122c51b92b443",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_vlan_max",
+      "path": "studio/tests/parity/corpus/fixtures/goose_vlan_max.scd",
+      "sha256": "e7af9013a2a8f5f496112041dc8e1f3ca00c4c3ffd12b2f02f62dead578164b3",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_vlan_over",
+      "path": "studio/tests/parity/corpus/fixtures/goose_vlan_over.scd",
+      "sha256": "c25e71f6d904c0cd36e4ac8cdbeab7b3f3c575882f16dc210a8177bb5f38e3c7",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_priority_8",
+      "path": "studio/tests/parity/corpus/fixtures/goose_priority_8.scd",
+      "sha256": "094e02fe1c70915cc11ab7ee5f6b07f74551f6b0890df6a2d70918127a98d1cc",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:goose_no_dataset",
+      "path": "studio/tests/parity/corpus/fixtures/goose_no_dataset.scd",
+      "sha256": "de6c651557da802994ed19044a8c92f9bc38bee90fd340fac5b47e9a5ea15878",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:sv_control",
+      "path": "studio/tests/parity/corpus/fixtures/sv_control.scd",
+      "sha256": "bea03a35f84f962af4baa466b50749785cab080ec5c8b592bedfb19b161f7f00",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:report_unnamed",
+      "path": "studio/tests/parity/corpus/fixtures/report_unnamed.scd",
+      "sha256": "891bbad567fc610df92c839a63559d3f3eaa24593199c94eed02195bf9dadade",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:report_max_zero",
+      "path": "studio/tests/parity/corpus/fixtures/report_max_zero.scd",
+      "sha256": "9bc65e7634f6e8458ee1dfec015988a58b1871d347738bb2e213cd8d54969094",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:report_indexed",
+      "path": "studio/tests/parity/corpus/fixtures/report_indexed.scd",
+      "sha256": "5d069bf88e2d889340d6d3dc65a5995bf16298a6a41eda6f149daa98f39e6710",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:extref_basic",
+      "path": "studio/tests/parity/corpus/fixtures/extref_basic.scd",
+      "sha256": "ef216aaecfca48851edb785a920ae097351ae89b559e6e7709fef8a6a8cb3e68",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:extref_pipe",
+      "path": "studio/tests/parity/corpus/fixtures/extref_pipe.scd",
+      "sha256": "1f3e91e68b46c66111fb6f2c755677a03c46bb09e6289e58533822821d8f1de8",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:extref_no_ied",
+      "path": "studio/tests/parity/corpus/fixtures/extref_no_ied.scd",
+      "sha256": "55ac0b33473d11308ce7bebfc7f7628f639567a6eecf9943273bf51ba098d6b0",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:two_access_points",
+      "path": "studio/tests/parity/corpus/fixtures/two_access_points.scd",
+      "sha256": "5ec61c12faf77831602a46e46fa7c5f9c14706cb3f8d272afb2042a157f858a3",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:server_at",
+      "path": "studio/tests/parity/corpus/fixtures/server_at.scd",
+      "sha256": "bc53dccb66295eebffaabcd9bb07df49cce8ea10c57c400a6a06084718a989a7",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:substation_basic",
+      "path": "studio/tests/parity/corpus/fixtures/substation_basic.scd",
+      "sha256": "fa41f638fcc938cc0642d7cdd1d266834d34832a160f205df049e02497e83894",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:substation_lnode_absent",
+      "path": "studio/tests/parity/corpus/fixtures/substation_lnode_absent.scd",
+      "sha256": "703eca0a78929d2b8d2c3db00bbec61dec948c6f815a2cd31e39a26f5cb6c5eb",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:substation_lnode_present",
+      "path": "studio/tests/parity/corpus/fixtures/substation_lnode_present.scd",
+      "sha256": "fd16e4aef90198b943c3c368baf64de8dbbd03fd9696fff304aeda9564b7e224",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:substation_esld",
+      "path": "studio/tests/parity/corpus/fixtures/substation_esld.scd",
+      "sha256": "fcca621a594f3845986ef4b5054009616b56771bb865de71b16d1a6b2216512e",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:substation_transformer",
+      "path": "studio/tests/parity/corpus/fixtures/substation_transformer.scd",
+      "sha256": "2aa7d2ed776ee1b3b26ba9dbe75f6e71985c6fd8eab8c5a3c88eb1dc287c4437",
+      "ieds": [
+        "Corpus"
+      ]
+    },
+    {
+      "alias": "corpus:substation_two",
+      "path": "studio/tests/parity/corpus/fixtures/substation_two.scd",
+      "sha256": "f86a15a71b1978b9f5fa15c02871ebfcb2be069056d48c534c8c3ae4601f4321",
+      "ieds": [
+        "Corpus"
+      ]
+    }
+  ]
+}

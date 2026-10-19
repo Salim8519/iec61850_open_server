@@ -1,0 +1,2 @@
+# Corpus inputs are byte-exact (BOMs, CR/LF/CRLF, encodings): never convert line endings.
+* -text
