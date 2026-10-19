@@ -41,6 +41,7 @@ class Engine:
         self.data = self.scratch / "data"
         self.url = self.token = self.port = self.process = self.job = None
         self.cookie, self.lines, self._ready = "", [], threading.Event()
+        self.popen_options = {}  # lifecycle runs give the launcher its own hidden console (Ctrl+C)
 
     def start(self, timeout=60):
         (self.scratch / "home").mkdir()
@@ -52,7 +53,7 @@ class Engine:
         self.job = Job()
         self.process = subprocess.Popen(command(self.engine, self.python) + args, env=env, cwd=str(self.scratch),
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
-                                        text=True, encoding="utf-8", errors="replace")
+                                        text=True, encoding="utf-8", errors="replace", **self.popen_options)
         self.job.assign(self.process)
         threading.Thread(target=self._read, daemon=True).start()
         if not self._ready.wait(timeout) or not self.token:

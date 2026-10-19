@@ -14,7 +14,7 @@ native = Path(os.environ["STUDIO_PROTECTED_NATIVE"])
 compiled = protected / "nuitka"
 imports = json.loads((protected / "hidden_imports.json").read_text(encoding="utf-8"))
 modules = sorted(compiled.glob("studio_app*.pyd"))
-required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
+required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_goose.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
             native / "studio_master.exe",
             protected / "frontend.pak"]
 if len(modules) != 1:
@@ -35,6 +35,7 @@ analysis = Analysis(
     binaries=[(str(modules[0]), "."),
               (str(native / "studio_ied.exe"), "native"),
               (str(native / "studio_live.exe"), "native"),
+              (str(native / "studio_goose.exe"), "native"),
               (str(native / "studio_probe.exe"), "native"),
               (str(native / "studio_gateway.exe"), "native"),
               (str(native / "studio_control.exe"), "native"),

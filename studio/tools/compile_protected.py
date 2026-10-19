@@ -115,6 +115,12 @@ def build_native(mode, release):
         if flag != "1":
             raise SystemExit("Native workers were built without license enforcement; refusing to package.")
         print("  enforcement: ON")
+    # The Go GOOSE engine ships beside the workers exactly as in development (ADR-0073).
+    goose = mode.native_bin / "studio_goose.exe"
+    print(f"  $ go build ./cmd/studio_goose -> {goose}", flush=True)
+    if not mode.dry_run:
+        import build_goose_engine
+        build_goose_engine.build(output=goose)
 
 
 def c_compiler_flag():
