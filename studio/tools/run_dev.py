@@ -107,6 +107,9 @@ def main(arguments):
         print(f"ScadaBench development mode is already running: {current}", flush=True)
         print(f"Open in your browser: {target}", flush=True)
         return 0
+    # The GOOSE engine is Go and builds in seconds: never run one older than its source.
+    subprocess.run([sys.executable, str(STUDIO / "tools/build_goose_engine.py"), "--if-stale", "--skip-tests"],
+                   check=True)
     frontend_port = available_port(5173, 5199)
     frontend_url = f"http://127.0.0.1:{frontend_port}"
     backend = str(STUDIO / "backend")

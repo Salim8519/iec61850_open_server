@@ -28,8 +28,8 @@ IED, as quiet IED tags and one dot per real change. Devices shows the same partn
   (warning), remote publisher (info), APPID 0 (hint), duplicate APPID (warning), shared MAC
   (hint). None fails an import.
 - Live join per goCBRef: stopped → `stopped`; running without a watching listener → `null`
-  (shown as "Needs lab network" in *This PC only* mode, "Not checked" in lab mode without
-  Npcap; a sender outside the project shows "Outside project", change 0097); otherwise the listener's state, problem and stNum. A declared link is never
+  (shown as "Not checked yet"; GOOSE runs inside ScadaBench in every mode since ADR-0073, so no
+  lab network is needed; a sender outside the project shows "Outside project", change 0097); otherwise the listener's state, problem and stNum. A declared link is never
   presented as received without listener evidence.
 
 **SLD** (`features/diagram/signals/`, `equipment/signalLayout.ts`, `signalPulses.ts`,
@@ -53,8 +53,7 @@ IED, as quiet IED tags and one dot per real change. Devices shows the same partn
   a sent block gives a hollow dashed pulse labelled "(expected)". Reduced motion: static.
 - A subscriber problem is one small ⚠ on the receiver's tag (dashed border; words on hover);
   "waiting" only once a listener reports. Clicking a tag opens the side sheet with one line per
-  link, e.g. "← C11_Y120 · GoCB01 · Needs lab network", the reason on hover, and one *Set up lab
-  network* button (to Settings › Network) when a link needs it. Clicking a link opens its details.
+  link, e.g. "← C11_Y120 · GoCB01 · Receiving", the reason on hover. Clicking a link opens its details.
 - *Who is reading*: "◉ n read" for external MMS clients; hover lists IP, nodes read and report
   blocks; an external control shows one "‹ip› operated ‹object›" line.
 
@@ -95,7 +94,7 @@ Sampled Values on the SLD, counting data-attribute writes (SP/CF/DC), R-GOOSE.
 | LAYER-20 | A GOOSE from a sender outside the project is one dot that starts beside its receiver for ~2 s. | `studio/tests/frontend/signalLayers.test.ts::a GOOSE from a sender outside the project pulses once beside its receiver for ~2 s` |
 | LAYER-22 | An outside sender's dot starts 130-440 px from its receiver at any zoom; dot, line and words keep their screen size; the receiver tag names the sender for ~2 s. | `studio/tests/frontend/gooseVisibility.test.ts::an outside sender starts beside its receiver at every zoom, never off the drawing edge`, `studio/tests/frontend/gooseVisibility.test.ts::dot, line and words keep their screen size; the receiver tag names the sender for ~2 s` |
 | LAYER-23 | A receiving sender outside the project shows its live state in GOOSE partners; a silent one says "Outside project". | `studio/tests/frontend/gooseVisibility.test.ts::a receiving sender outside the project shows its live state, a silent one says Outside project` |
-| LAYER-21 | GOOSE status uses plain words ("Needs lab network", "Outside project"), never "Not watched". | `studio/tests/frontend/signalLayers.test.ts::GOOSE status uses plain words instead of "Not watched"` |
+| LAYER-21 | GOOSE status uses plain words ("Not checked yet", "Outside project"), never "Not watched" or "Needs lab network". | `studio/tests/frontend/signalLayers.test.ts::GOOSE status uses plain words instead of "Not watched"` |
 | LAYER-16 | MMS reads are counted per client per logical node and summarised for the live view only. | `studio/tests/unit/test_mms_access.py::test_reads_are_counted_per_logical_node_and_clients_by_address`, `studio/tests/unit/test_mms_access.py::test_summaries_go_to_the_live_view_only` |
 | LAYER-17 | Observing reads never changes the MMS answer; the worker summarises at most once per second. | `studio/tests/unit/test_mms_access.py::test_worker_observes_reads_without_changing_the_answer`, `studio/tests/protocol/test_mms_access_wire.py::test_reads_are_counted_per_client_and_answers_are_unchanged` |
 | LAYER-18 | Connection, report and control events carry the client address; ScadaBench's own command is not external. | `studio/tests/protocol/test_mms_access_wire.py::test_report_client_and_control_carry_the_peer`, `studio/tests/unit/test_mms_access.py::test_scadabench_own_command_is_not_an_external_control` |

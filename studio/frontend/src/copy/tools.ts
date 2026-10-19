@@ -16,7 +16,7 @@ export const TOOLS: ToolCard[] = [
     hint: 'Station gateway: ScadaBench serves your IEDs to SCADA over IEC 104, Modbus TCP or DNP3. SCADA master: it connects to a gateway or RTU, finds every point by itself and sends commands after a confirmation.' },
   { id: 'traffic', name: 'GOOSE & Sampled Values traffic',
     line: 'See which GOOSE and Sampled Values messages are really on the network.',
-    hint: 'Checks every GOOSE block and Sampled Values stream of your project against what arrives on the lab network adapter. Needs the free Npcap driver and a lab network.' },
+    hint: 'Checks every GOOSE block and Sampled Values stream of your project against what really arrives. GOOSE needs nothing extra; Sampled Values need the free Npcap driver and a lab network.' },
 ];
 
 export const TOOLS_COPY = {

@@ -18,7 +18,7 @@ export const AREAS: Record<string, { label: string; hint: string }> = {
   reports: { label: 'Report blocks', hint: 'Report blocks send values to clients such as SCADA.' },
   report_settings: { label: 'Report settings', hint: 'The dataset and configuration revision of each report block.' },
   goose_device: { label: 'GOOSE block on device', hint: 'GOOSE ID, dataset, revision and on/off of each GOOSE block, read from the device.' },
-  goose_wire: { label: 'GOOSE on the network', hint: 'What the listener actually received on the lab adapter.' },
+  goose_wire: { label: 'GOOSE on the network', hint: 'What ScadaBench actually received, from simulated IEDs or real devices.' },
   mode: { label: 'Mode', hint: 'Whether each logical device is on, blocked, in test or off, and whether the IED is in simulation.' },
 };
 

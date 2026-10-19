@@ -1,4 +1,5 @@
 #pragma once
+#include "goose_inbox.hpp"
 #include "ipc/framing.hpp"
 extern "C" {
 #include "goose_receiver.h"
@@ -12,8 +13,9 @@ extern "C" {
 #include <string>
 #include <thread>
 
-// Receives layer-2 GOOSE for the configured control blocks and reports what was
-// actually seen on the wire. It never publishes and never changes any device.
+// Decodes the GOOSE frames the Studio GOOSE engine forwards (ADR-0073) for the
+// configured control blocks and reports what was actually received, and whether it
+// came from a simulated IED ("app") or the network ("wire"). It never publishes.
 struct GooseWatch {
     std::string key;
     std::string gocb_ref;
@@ -39,6 +41,10 @@ public:
     void on_observed(GooseSubscriber subscriber);
 private:
     void supervise();
+    GooseInbox inbox;
+    std::mutex deliver_lock;  // one frame at a time through the receiver
+    bool from_wire = false;   // origin of the frame being decoded, under deliver_lock
+    uint8_t from_mac[6] = {}; // its source MAC; libiec61850 keeps it for observers only
     GooseReceiver receiver = nullptr;
     std::map<std::string, std::unique_ptr<GooseWatch>> watches;
     // Publishers seen on the wire but not in the project; listed once each, up to a limit.

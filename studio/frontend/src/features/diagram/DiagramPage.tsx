@@ -25,9 +25,9 @@ import './diagram.css';
 
 type Studio = ReturnType<typeof useStudio>;
 
-export function DiagramPage({ studio, project, locked, openDevices, openFile, openNetwork }: {
+export function DiagramPage({ studio, project, locked, openDevices, openFile }: {
   studio: Studio; project: Project; locked: boolean; openDevices: (flowIedId?: string) => void;
-  openFile: () => void; openNetwork: () => void;
+  openFile: () => void;
 }) {
   const [selection, setSelection] = useState<string[]>([]);
   const [operation, setOperation] = useState<{ nodeId: string; message: string } | null>(null);
@@ -114,8 +114,7 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile, op
         ? <RunStrip summary={summary} busy={studio.busy} runAll={() => studio.runtime('start')} /> : undefined} />
     {menu && menuNode && <TestMenu at={menu} node={menuNode} project={project} running={running} test={test}
       openSheet={() => setSelection([menuNode.id])} close={() => setMenu(null)} />}
-    {signal && !selection.length && <SignalSheet state={layers.state} selection={signal} select={selectSignal} showFlow={openDevices}
-      lab={project.network.mode === 'lab'} openNetwork={openNetwork} />}
+    {signal && !selection.length && <SignalSheet state={layers.state} selection={signal} select={selectSignal} showFlow={openDevices} />}
     {selected && <LiveValues.Provider value={studio.equipmentValues}><EquipmentSheet node={selected} project={project}
       locked={locked} busy={studio.busy} values={studio.values} perform={studio.perform} operate={operate}
       operation={operation?.nodeId === selected.id ? operation.message : undefined} close={() => setSelection([])}

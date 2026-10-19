@@ -19,7 +19,11 @@ From the repository root, after all workers using the normal output have stopped
 ```powershell
 cmake -S studio/native -B studio/native/build -G "Visual Studio 16 2019" -A x64
 cmake --build studio/native/build --config Release --target studio_ied studio_live studio_probe studio_gateway --parallel 4
+python studio/tools/build_goose_engine.py
 ```
+
+The GOOSE engine `studio_goose.exe` is Go (`studio/goose_engine`, ADR-0073) and lands in
+the same folder. The development launcher rebuilds it whenever a Go source is newer.
 
 Independent test masters for the gateway (never packaged): `studio_test_iec104_master`
 (lib60870 client) and `studio_test_dnp3_master` (opendnp3 master).

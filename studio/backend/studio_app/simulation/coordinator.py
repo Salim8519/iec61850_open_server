@@ -41,7 +41,8 @@ class Coordinator:
         self.last_automation_time = time.monotonic()
         self.cadence = Cadence(self.last_automation_time)
         self.log = None
-        self.supervisor = Supervisor(executable, directory / "runtime", self.on_worker_event)
+        self.supervisor = Supervisor(executable, directory / "runtime", self.on_worker_event,
+                                     goose_bus=lambda ieds: self.live.engine.bus_for(ieds))
         self.scenario_runner = ScenarioRunner(self.update, self.supervisor.read, self.emit)
         self.sample_writer = SampleWriter(self)
         self.automation = Automation(self)

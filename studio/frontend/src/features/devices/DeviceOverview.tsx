@@ -45,7 +45,7 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
     {ied.role === 'simulated' && publishes > 0 && <label className="row" style={{ fontWeight: 500, color: 'var(--text)' }}>
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}
         onChange={event => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { goose_publish: event.target.checked }))} />
-      <span>Send its <InfoTip term="goose" label="GOOSE" /> messages{lab ? '' : ' (works on the lab network only)'}</span></label>}
+      <span>Send its <InfoTip term="goose" label="GOOSE" /> messages</span></label>}
     <GoosePartners ied={ied} project={project} open={iedId => selectDevice?.(iedId)} />
     <ReadByClients ied={ied} running={project.runtime !== 'stopped'} />
     {(!!ied.warnings.length || !!ied.goose?.diagnostics?.length || ied.validation) && <Disclosure title={

@@ -1,7 +1,8 @@
 // GOOSE publishing for simulated IEDs. libiec61850 owns the GoCB state and frames;
-// this module only selects the adapter and reports what the stack did.
+// this module only points the stack at the Studio GOOSE engine and reports what it did.
+// A worker never receives a network adapter (GOOSE-05, ADR-0073): the engine alone
+// decides whether a frame may leave this PC.
 #include "publishing.hpp"
-#include "npcap.hpp"
 #include <thread>
 
 namespace {
@@ -26,18 +27,12 @@ Json prepare_goose(Server& server, const Json& config) {
     auto settings = config.value("goose", Json::object());
     if (!settings.value("publish", false) || summary["control_blocks"] == 0) return summary;
     summary["requested"] = true;
-    auto status = npcap_status();
-    summary["npcap"] = status;
-    if (!status["available"].get<bool>()) {
-        summary["reason"] = "Npcap is not installed, so GOOSE cannot be sent";
+    auto interface_id = settings.value("interface", "");
+    if (interface_id.rfind("udp:", 0) != 0) {
+        summary["reason"] = "GOOSE is sent only through the ScadaBench GOOSE engine";
         return summary;
     }
-    try {
-        server.goose_interface = npcap_interface_for(settings.at("adapter_guid").get<std::string>());
-    } catch (const std::exception& error) {
-        summary["reason"] = error.what();
-        return summary;
-    }
+    server.goose_interface = interface_id;
     IedServer_setGooseInterfaceId(server.handle, server.goose_interface.c_str());
     IedServer_setGoCBHandler(server.handle, gocb_event, nullptr);
     summary["active"] = true;

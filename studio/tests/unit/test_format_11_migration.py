@@ -27,8 +27,10 @@ def test_format_10_opens_in_loopback_mode(tmp_path):
     projects = ProjectService(tmp_path / "b")
     projects.restore(legacy)
     assert CURRENT_FORMAT >= 11
-    # Older projects open in loopback mode; Sampled Values use the visible 50 Hz default (ADR-0038).
-    assert projects.project["network"] == {"mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 50}
+    # Older projects open in loopback mode; Sampled Values use the visible 50 Hz default (ADR-0038)
+    # and GOOSE stays inside ScadaBench until the user shares it (ADR-0073).
+    assert projects.project["network"] == {"mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 50,
+                                           "goose_reach": "inside", "goose_uplink_guid": "", "goose_share_guid": ""}
     ied = projects.project["ieds"][0]
     assert ied["role"] == "simulated" and ied["lab_ip"] == "" and ied["goose_publish"] is True
     assert ied["ip"].startswith("127.50.0.")
@@ -50,7 +52,7 @@ def test_settings_survive_save_and_reopen(tmp_path):
     ied.update(role="real", lab_ip="192.168.10.21",
                live={"ip": "10.1.1.5", "port": 102, "access": "polling", "poll_ms": 500})
     projects.project["network"] = {"mode": "lab", "adapter_guid": "{15A6105F-A715-444F-9D7C-AA259A2EED8A}",
-                                   "adapter_label": "Lab NIC"}
+                                   "adapter_label": "Lab NIC", "goose_reach": "inside"}
     reopened = ProjectService(tmp_path / "copy")
     reopened.restore(projects.export())
     stored = reopened.project["ieds"][0]

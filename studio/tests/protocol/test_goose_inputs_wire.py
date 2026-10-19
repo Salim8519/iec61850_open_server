@@ -1,8 +1,8 @@
-"""IED to IED over the wire: a simulated subscriber's input follows the publisher's GOOSE (GOOSE-16).
+"""IED to IED: a simulated subscriber's input follows the publisher's GOOSE (GOOSE-16).
 
-Two studio_ied workers and the studio_live listener run on one lab adapter; frames travel
-the real wire, so this is the same path as two machines. The subscriber's value is checked
-with studio_probe, an independent MMS client. Set STUDIO_GOOSE_ADAPTER to the adapter GUID.
+Two studio_ied workers publish through the app's GOOSE engine to studio_live, exactly as
+a Run does (ADR-0073); no adapter or Npcap is needed. The subscriber's value is checked
+with studio_probe, an independent MMS client.
 """
 import json
 import os
@@ -15,12 +15,11 @@ from studio_app.acquisition.goose_inputs import GooseInputs
 from studio_app.domain.goose_supervision import watch_list
 from studio_app.runtime.worker_process import WorkerProcess
 from studio_app.scl.importer import import_scl
+from goose_engine_rig import READY, EngineRig
 
 ROOT = Path(__file__).resolve().parents[3]
 BIN = Path(os.environ.get("STUDIO_NATIVE_BIN", ROOT / "studio/native/build/Release"))
-ADAPTER = os.environ.get("STUDIO_GOOSE_ADAPTER", "")
-pytestmark = [pytest.mark.skipif(not (BIN / "studio_live.exe").exists(), reason="Native build required"),
-              pytest.mark.skipif(not ADAPTER, reason="Set STUDIO_GOOSE_ADAPTER to a lab adapter GUID")]
+pytestmark = pytest.mark.skipif(not READY, reason="Native build and GOOSE engine required")
 WRONG = 'intAddr="Tr" desc="Trip"'
 TARGET = "IED1_XCBRGenericIO/CILO1.EnaCls.stVal"
 
@@ -73,25 +72,25 @@ def wait_for(items, predicate, seconds):
 def run(tmp_path, conf_rev_shift=0):
     ieds = station()
     workers = {}
-    received = []
-    listener = WorkerProcess(BIN / "studio_live.exe", received.append)
+    rig = EngineRig()
+    received = rig.received
     try:
+        bus = rig.publish("IED2_PTOC", ["IED2_PTOCGenericIO/LLN0$GO$gcbEvents"])
         for name, ied in ieds.items():
             config = tmp_path / f"{name}.cfg"
             config.write_text(ied["cfg"], encoding="utf-8")
             workers[name] = WorkerProcess(BIN / "studio_ied.exe", lambda event: None)
             workers[name].request("start", cfg=str(config), ip=ied["ip"], port=ied["port"],
                                   controls=ied["controls"], edition=2,
-                                  goose={"publish": name == "IED2_PTOC", "adapter_guid": ADAPTER})
+                                  goose={"publish": name == "IED2_PTOC", "interface": bus})
         watches = watch_list(list(ieds.values()))
         watch = watches["IED2_PTOCGenericIO/LLN0$GO$gcbEvents"]
         coordinator = Coordinator(workers, ieds)
         inputs = GooseInputs(type("Manager", (), {"coordinator": coordinator})())
         inputs.prepare(list(ieds.values()), watches)
         assert watch["subscribers"][0]["applied_inputs"] == 1
-        listener.request("goose_start", timeout=30, adapter_guid=ADAPTER, subscriptions=[{
-            **{key: watch[key] for key in ("key", "gocb_ref", "app_id", "mac", "go_id", "dataset_ref")},
-            "conf_rev": watch["conf_rev"] + conf_rev_shift}])
+        rig.listen([{**{key: watch[key] for key in ("key", "gocb_ref", "app_id", "mac", "go_id", "dataset_ref")},
+                     "conf_rev": watch["conf_rev"] + conf_rev_shift}])
         seen = 0
 
         def pump():
@@ -112,9 +111,9 @@ def run(tmp_path, conf_rev_shift=0):
         time.sleep(0.3)
         return coordinator.emitted, before, read_target(ieds["IED1_XCBR"])
     finally:
-        listener.close()
         for worker in workers.values():
             worker.close()
+        rig.close()
 
 
 def test_subscriber_input_follows_the_publisher(tmp_path):

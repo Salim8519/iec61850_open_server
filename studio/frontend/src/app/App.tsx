@@ -20,6 +20,7 @@ import { useExitConfirm } from './useExitConfirm';
 import { placeActivity, toolActivity } from './running';
 import { useActivity } from './useActivity';
 import { useUpdateStatus } from '../api/updates';
+import { GooseConflicts } from '../features/network/GooseConflicts';
 
 export function App() {
   const studio = useStudio();
@@ -71,8 +72,7 @@ export function App() {
         {!project && !studio.error && <div className="empty" role="status">
           Opening your last project… Large stations can take a few seconds.</div>}
         {project && current === 'diagram' && <DiagramPage studio={studio} project={project} locked={locked}
-          openDevices={iedId => { setFlowIed(iedId); setCurrent('devices'); }} openFile={openFile}
-          openNetwork={() => setCurrent('settings')} />}
+          openDevices={iedId => { setFlowIed(iedId); setCurrent('devices'); }} openFile={openFile} />}
         {project && current === 'devices' && <DevicesPage project={project} locked={locked} values={studio.values}
           perform={studio.perform} prepare={studio.prepare} importFile={openFile} addTemplate={studio.addTemplate}
           flowIed={flowIed} openNetwork={() => setCurrent('settings')} />}
@@ -84,6 +84,7 @@ export function App() {
           openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} update={update} />}
       </main>
     </div>
+    {project && <GooseConflicts project={project} events={studio.events} />}
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}
     {activity && <EventLog events={studio.events} close={() => setActivity(false)}
       session={project ? `${project.session_id.slice(0, 8)} · revision ${project.revision}` : undefined} />}

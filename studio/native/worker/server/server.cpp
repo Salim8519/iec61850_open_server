@@ -71,7 +71,7 @@ Json Server::start(const Json& config) {
     start_goose(*this);
     access.start();
     auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
-                                     "control_selection_events", "standard_controls", "goose_aware"});
+                                     "control_selection_events", "standard_controls", "goose_aware", "goose_bus"});
     if (observing) capabilities.push_back("mms_access");
     return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
 }

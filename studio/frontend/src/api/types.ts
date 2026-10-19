@@ -49,7 +49,8 @@ export type IedRole = 'simulated' | 'real' | 'off';
 export type LiveSettings = { ip: string; port: number; access: 'auto_reports' | 'polling'; poll_ms: number };
 export type GooseControl = { name: string; gocb_ref: string; go_id: string; dataset_ref: string; app_id: number;
   mac: string; vlan_id: number; vlan_priority: number; conf_rev: number };
-export type NetworkSettings = { mode: 'loopback' | 'lab'; adapter_guid: string; adapter_label: string };
+export type NetworkSettings = { mode: 'loopback' | 'lab'; adapter_guid: string; adapter_label: string;
+  goose_reach?: 'inside' | 'outside' };
 export type Project = {
   id: string; name: string; session_id: string; revision: number;
   ieds: Ied[]; diagram: Diagram; runtime: string; network: NetworkSettings;

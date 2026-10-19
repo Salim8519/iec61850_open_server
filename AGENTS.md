@@ -3,7 +3,8 @@
 ## Product contract
 
 - Build the portable Windows application in `studio/`; preserve the existing demo.
-- The runtime is Flask + Waitress, React/TypeScript, and native libiec61850 workers.
+- The runtime is Flask + Waitress, React/TypeScript, native libiec61850 workers and the Go
+  GOOSE engine `studio_goose.exe` (ADR-0073).
 - Start at `docs/llm/START-HERE.md`, then read the linked architecture/design
   documents relevant to the change.
 - Keep the interface offline, English, and usable without development tools.

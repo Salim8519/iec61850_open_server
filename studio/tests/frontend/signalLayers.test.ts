@@ -135,9 +135,8 @@ test('a GOOSE from a sender outside the project pulses once beside its receiver 
 
 test('GOOSE status uses plain words instead of "Not watched"', () => {
   const link = { ...map.links[0], live: null };
-  assert.equal(linkStatus(link, true, false).label, 'Needs lab network');
-  assert.match(linkStatus(link, true, false).hint, /only travels on a lab network/);
-  assert.equal(linkStatus(link, true, true).label, 'Not checked');
+  assert.equal(linkStatus(link, true).label, 'Not checked yet');  // GOOSE needs no lab network (ADR-0073)
+  assert.doesNotMatch(linkStatus(link, true).hint, /lab network|Npcap/);
   assert.equal(linkStatus({ ...link, status: 'remote' }, true).label, 'Outside project');
   assert.equal(linkLine(link, 'SUB_BAY0002'), '← PUB_BAY0001 · GoCB01');
   assert.equal(linkLine(link, 'PUB_BAY0001'), '→ SUB_BAY0002 · GoCB01');

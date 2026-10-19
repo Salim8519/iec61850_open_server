@@ -27,7 +27,7 @@ export function runStateWords(inRun: number, notOff: number, paused: boolean): s
 
 export const RUN_ONE_COPY = {
   simulated: { start: 'Run this IED', stop: 'Stop this IED',
-    startHint: 'Start only this simulated IED: its MMS server, reports, polling answers, GOOSE (lab network) and all its points. Other IEDs stay as they are.',
+    startHint: 'Start only this simulated IED: its MMS server, reports, polling answers, GOOSE and all its points. Other IEDs stay as they are.',
     stopHint: 'Stop only this simulated IED. Other running IEDs keep going.' },
   real: { start: 'Connect', stop: 'Disconnect',
     startHint: 'Read this real device as a client: free report blocks, else polling. Nothing is sent unless you operate.',

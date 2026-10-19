@@ -1,0 +1,16 @@
+/* "Where GOOSE goes" (ADR-0073): the reach choice, the share warning and the conflict prompt. */
+.goose-reach-options { display: grid; gap: 8px; }
+.goose-reach-option { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--border);
+  border-radius: 10px; cursor: pointer; }
+.goose-reach-option.selected { border-color: var(--accent); background: var(--surface-2); }
+.goose-reach-option input { margin-top: 3px; }
+.goose-reach-option span { display: flex; flex-direction: column; gap: 2px; }
+.goose-confirm { border: 1px solid #f19a9a; background: var(--error-soft); border-radius: 10px; padding: 10px 14px; }
+.goose-confirm.real { border-width: 2px; border-color: var(--error); }
+.goose-confirm p { margin: 0 0 6px; display: flex; gap: 8px; align-items: flex-start; }
+.goose-confirm ul { margin: 0 0 6px; padding-left: 22px; }
+.goose-conflicts { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: min(460px, calc(100vw - 40px));
+  display: flex; flex-direction: column; gap: 10px; }
+.goose-conflicts .goose-confirm { background: var(--surface); box-shadow: var(--shadow-small); }
+.goose-pill { display: inline-flex; align-items: center; min-height: 32px; padding: 0 8px;
+  white-space: nowrap; color: var(--warning); border: 1px dashed var(--warning); background: var(--warning-soft); }

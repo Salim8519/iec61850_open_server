@@ -6,6 +6,7 @@ import { hint } from '../../copy/hints';
 import { TOOLS_COPY } from '../../copy/tools';
 import { InfoTip } from '../../ui/InfoTip';
 import { CleanupCard } from '../network/CleanupCard';
+import { GooseReach } from '../network/GooseReach';
 import { NetworkSetup } from '../network/NetworkSetup';
 import { NoPublishers } from '../network/NoPublishers';
 
@@ -33,6 +34,7 @@ export function NetworkSettings({ project, locked, perform, openTraffic }: {
     {!publishing && <div className="card"><div className="guide-section">
       <NoPublishers ieds={project.ieds} locked={locked} perform={perform} /></div></div>}
     {locked && <p className="small muted" style={{ margin: 0 }}>{hint('network.locked')}</p>}
+    <GooseReach revision={project.revision} perform={perform} />
     <div className="card"><div className="guide-section row" style={{ justifyContent: 'space-between' }}>
       <span className="muted">{TOOLS_COPY.settingsLink}</span>
       <button onClick={openTraffic}><Radio size={16} />{TOOLS_COPY.openTraffic}</button></div></div>

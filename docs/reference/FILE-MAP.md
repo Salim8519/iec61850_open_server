@@ -47,8 +47,9 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Adapter listing | `networking/ip_helper.py` (Windows IP Helper API), `networking/adapters.py` (normalise, PowerShell fallback) |
 | Network/IED settings, format 11 | `domain/network_settings.py`, `projects/ied_settings.py` |
 | SCL communication and GOOSE | `scl/communication.py`, `goose_controls.py`, `goose_links.py` |
-| GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |
-| GOOSE observation and LGOS | `native/live/goose_traffic.cpp`, `acquisition/goose_monitor.py`, `domain/goose_supervision.py` |
+| GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/hal/` (Ethernet dispatch: `udp:` → engine, numbers → Npcap), `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |
+| GOOSE engine (ADR-0073, Go) | `goose_engine/` (`internal/frame`, `guard`, `bus`, `uplink`, `npcap`, `engine`, `ipc`, `cmd/studio_goose`), `tools/build_goose_engine.py`, `acquisition/goose_engine.py`, `goose_share.py`, `domain/goose_reach.py`, `projects/goose_reach.py`, `api/goose_share.py`, `features/network/GooseReach.tsx`, `GooseShareWarning.tsx`, `GooseConflicts.tsx`, `copy/gooseReach.ts`; tests `protocol/goose_engine_rig.py`, `engine_wire_rig.py`, `npcap_peer.py` |
+| GOOSE observation and LGOS | `native/live/goose_traffic.cpp`, `goose_inbox.cpp`, `acquisition/goose_monitor.py`, `domain/goose_supervision.py` |
 | GOOSE link map (ADR-0065) | `scl/goose_vendor.py`, `goose_inventory.py`, `goose_remote.py`, `goose_sources.py`, `domain/goose_link_map.py`, `goose_link_live.py`, `projects/goose_links.py` |
 | GOOSE inputs (ADR-0066) | `domain/goose_inputs.py`, `acquisition/goose_inputs.py` |
 | MMS client access (ADR-0066) | `native/worker/server/access_log.*`, `read_hook.*`, `domain/mms_access.py`, `simulation/mms_access.py` |

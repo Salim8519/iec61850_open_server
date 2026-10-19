@@ -118,8 +118,8 @@
   hollow "(expected)" dots when no listener runs; a problem is one small ⚠ on the subscriber tag.
   A sender outside the project is one dot flying in beside the receiver for ~2 s, then nothing remains;
   dots and words keep their screen size and the receiver tag says "← sender · change" (ADR-0070).
-  Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Needs lab network")
-  with one *Put my IEDs on a network* button; clicking a link opens its details. GOOSE and MMS traffic must not
+  Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Receiving");
+  clicking a link opens its details. GOOSE and MMS traffic must not
   re-render equipment nodes.
 - Run one IED (ADR-0067): Devices *Run this IED* / *Connect* changes only that IED; the top bar
   says "Running 1 of 2 IEDs". Any running IED locks the drawing and roles like a full Run.

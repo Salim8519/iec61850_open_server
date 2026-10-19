@@ -68,7 +68,10 @@ Press for a Push Button. The server rejects mixed `action` and `value`.
 | `GET /network/gateway-firewall` | - | Gateway firewall check: items, fingerprint, `open`, `blocked`, `needs_admin` (no elevation) |
 | `POST /network/gateway-firewall` | `{fingerprint,confirm:true}` | Allow rule + switch off Block rules for the gateway worker; 409 if Windows changed (ADR-0062) |
 | `PUT /ieds/{id}/settings` | `{role?,live?,lab_ip?,goose_publish?,port?}` | Stopped-only; SCL never rewritten |
-| `GET /goose` | - | Configured/observed GOOSE blocks, problems, unknown GOOSE |
+| `GET /goose` | - | Configured/observed GOOSE blocks (`origin` app/wire, `src_mac`), problems, unknown GOOSE, `engine` (ADR-0073) |
+| `GET /goose/share` | - | Where GOOSE goes: `reach`, picked `uplink`, Advanced `choices`, `risk` {level, reasons}, `npcap`, `state`, `message`, `conflicts` |
+| `PUT /goose/share` | `{reach, uplink_guid?, adapter_guid?, confirm?}` | Allowed while running. `outside` needs `confirm:true`, Npcap and the `adapter_guid` shown (GOOSE-19) |
+| `POST /goose/conflicts` | `{ied_id, choice: stop\|continue, confirm?}` | Answer a conflict for this Run; `continue` needs `confirm:true` |
 | `GET /goose/links` | - | GOOSE link map (ADR-0065): `ieds`, `blocks` (status, `member_refs`), `links` (status, inputs, `live`), `diagnostics`, `summary` |
 | `GET /mms/access` | - | MMS clients per simulated IED (ADR-0066): address, nodes read, report blocks, commands |
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
@@ -83,6 +86,8 @@ ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input
 (`reason`) and `mms_access` (client list, live view only, never in the run log); worker
 `connection`, `report_control` and control events carry `peer` (`ip:port`) and
 `control_applied` carries `external`. Signal events from GOOSE inputs have source `goose_input`.
+ADR-0073 adds `goose_conflict` (`ied_id`, `gocb_ref`, `src_mac`, `sharing`), `goose_share` (`state`
+off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`ied_id`, `limit_per_second`).
 
 ## Scenarios, tests and events
 

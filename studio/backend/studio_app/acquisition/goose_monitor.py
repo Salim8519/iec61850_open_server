@@ -1,4 +1,4 @@
-"""Observe GOOSE on the lab adapter and route it to supervision and live values."""
+"""Decode GOOSE from the app's GOOSE engine and route it to supervision and live values."""
 import threading
 from datetime import datetime, timezone
 from studio_app.domain.goose_supervision import dataset_values, lgos_updates, watch_list
@@ -17,18 +17,11 @@ class GooseMonitor:
         self.lock = threading.Lock()
         self.inputs = GooseInputs(manager)
 
-    def start(self, ieds, network, npcap_installed):
+    def start(self, ieds):
+        """GOOSE runs in every network mode, with or without Npcap (ADR-0073, GOOSE-17)."""
         self.watches = watch_list(ieds)
         for watch in self.watches.values():
             watch.update(state="stopped", problem="", frames=0)
-        if network["mode"] != "lab" or not network.get("adapter_guid"):
-            self.status = {"state": "off", "unknown": [],
-                           "message": "GOOSE needs a network adapter. Set up the lab network to use it."}
-            return
-        if not npcap_installed:
-            self.status = {"state": "needs_npcap", "unknown": [],
-                           "message": "Install the free Npcap driver to send and receive GOOSE."}
-            return
         if not self.watches:
             self.status = {"state": "nothing_to_watch", "unknown": [],
                            "message": "No IED in this project publishes or subscribes to GOOSE."}
@@ -36,13 +29,16 @@ class GooseMonitor:
         for watch in self.watches.values():
             watch.update(state="waiting", problem="", frames=0, st_num=None, sq_num=None)
         self.inputs.prepare(ieds, self.watches)
+        self.manager.engine.ensure()
         self.process = WorkerProcess(self.manager.executable, self._event)
         subscriptions = [{key: watch[key] for key in ("key", "gocb_ref", "app_id", "mac", "go_id",
                                                        "dataset_ref", "conf_rev")} for watch in self.watches.values()]
-        self.process.request("goose_start", timeout=30, adapter_guid=network["adapter_guid"],
-                             subscriptions=subscriptions)
-        self.status = {"state": "listening", "unknown": [],
-                       "message": f"Listening for GOOSE on {network.get('adapter_label') or 'the lab adapter'}"}
+        started = self.process.request("goose_start", timeout=30, subscriptions=subscriptions)
+        if not started.get("inbox_port"):  # an older studio_live listens on an adapter instead
+            raise ValueError("The GOOSE listener is outdated (no goose_inbox). Rebuild studio_live.exe.")
+        self.manager.engine.deliver(started["inbox_port"])
+        self.status = {"state": "inside", "unknown": [],
+                       "message": "GOOSE runs inside ScadaBench. Nothing is sent to the network."}
 
     def _event(self, event):
         kind = event.get("event")
@@ -52,8 +48,8 @@ class GooseMonitor:
             if watch is None:
                 return
             with self.lock:
-                watch.update({key: event[key] for key in ("state", "problem", "st_num", "sq_num", "frames")
-                              if key in event})
+                watch.update({key: event[key] for key in ("state", "problem", "st_num", "sq_num", "frames",
+                                                          "origin", "src_mac") if key in event})
                 # Received header fields are kept apart from the expected SCD values of the watch.
                 watch.update({f"received_{key}": event[key] for key in ("conf_rev", "go_id", "dataset", "test")
                               if key in event})
@@ -102,7 +98,11 @@ class GooseMonitor:
 
     def snapshot(self):
         with self.lock:
-            return {**self.status, "watches": [dict(watch) for watch in self.watches.values()]}
+            status = dict(self.status)
+            watches = [dict(watch) for watch in self.watches.values()]
+        if self.process is not None and status["state"] != "failed":
+            status["state"], status["message"] = self.manager.share.status(self.manager.coordinator.projects.project)
+        return {**status, "watches": watches, "engine": self.manager.engine.snapshot()}
 
     def stop(self):
         process, self.process = self.process, None

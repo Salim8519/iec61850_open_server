@@ -48,7 +48,7 @@ export function SvTraffic({ running, revision, lab, locked, perform }: { running
           <td>{stream.publisher}</td>
           <td><code>{`0x${stream.app_id.toString(16).toUpperCase().padStart(4, '0')}`}</code><div className="small"><code>{stream.mac}</code></div></td>
           <td>{lab ? <StatusPill status={svStatus(stream.state, stream.problems)} showHint={stream.state !== 'receiving'} />
-            : <StatusPill status={UI_STATUS.goose_needs_lab} />}</td>
+            : <StatusPill status={UI_STATUS.sv_needs_lab} />}</td>
           <td className="small">{stream.received_rate ? `${Math.round(stream.received_rate)}/s` : '–'}
             <div className="muted">SCD {stream.expected_rate ? `${stream.expected_rate}/s` : 'not stated'}</div></td>
           <td className="small">{stream.received_lost ?? '–'}</td>

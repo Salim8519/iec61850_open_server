@@ -15,7 +15,7 @@ from studio_app.runtime.event_bus import EventBus
 from studio_app.simulation.coordinator import Coordinator
 from studio_app.api import projects, scl, signals, runtime, events, security, scenarios, ieds, traces, equipment
 from studio_app.api import test_panel, network, live, sld, signal_flow, health, test_mode, license, preferences, tools, updates
-from studio_app.api import gateway, gateway_master
+from studio_app.api import gateway, gateway_master, goose_share
 from studio_app.gateway.converter import ConverterSource
 from studio_app.gateway.manager import GatewayManager
 from studio_app.gateway.master_manager import MasterManager
@@ -66,7 +66,7 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
     app.before_request(startup_gate.wait_for_project)  # After the security and license checks.
     for module in (projects, scl, signals, runtime, events, security, scenarios, ieds, traces,
                    test_panel, equipment, network, live, sld, signal_flow, health, test_mode, license,
-                   preferences, tools, gateway, gateway_master, updates):
+                   preferences, tools, gateway, gateway_master, updates, goose_share):
         app.register_blueprint(module.blueprint, url_prefix="/api/v1")
     license_service.start_background_verify()
     update_service.start_background()
