@@ -17,7 +17,7 @@ import (
 // state changes the hub might not report (project edits of an IED's role).
 const (
 	MinGap    = 100 * time.Millisecond
-	FullSweep = time.Second
+	FullSweep = 10 * time.Second
 	batchSize = 500
 )
 
@@ -35,10 +35,11 @@ type syncer struct {
 	byIED   map[string][]int
 	remote  []int
 
-	mu    sync.Mutex
-	deps  map[[2]string][]int // (ied, ref) of a value, its quality and its timestamp -> points
-	dirty map[int]bool
-	all   bool
+	mu      sync.Mutex
+	deps    map[[2]string][]int // (ied, ref) of a value, its quality and its timestamp -> points
+	dirty   map[int]bool
+	all     bool
+	rebuild bool // re-read quality and timestamp references (start, run state change)
 
 	wake    chan struct{}
 	stop    chan struct{}
@@ -50,7 +51,7 @@ type syncer struct {
 
 func newSyncer(manager *Manager, process worker.Process, points []*pyjson.Object, sweep time.Duration) *syncer {
 	s := &syncer{manager: manager, process: process, sent: map[string]Sample{}, byIED: map[string][]int{},
-		deps: map[[2]string][]int{}, dirty: map[int]bool{}, all: true, wake: make(chan struct{}, 1),
+		deps: map[[2]string][]int{}, dirty: map[int]bool{}, all: true, rebuild: true, wake: make(chan struct{}, 1),
 		stop: make(chan struct{}), done: make(chan struct{}), sweep: sweep}
 	for _, point := range points {
 		if kind, _ := get(point, "kind").(string); strings.HasPrefix(kind, "command_") {
@@ -81,7 +82,7 @@ func (s *syncer) notify(change Change) {
 	marked := false
 	switch {
 	case change.IEDID == "":
-		s.all, marked = true, true
+		s.all, s.rebuild, marked = true, true, true
 	case change.Ref == "":
 		for _, index := range s.byIED[change.IEDID] {
 			s.dirty[index], marked = true, true
@@ -153,8 +154,8 @@ func (s *syncer) run() {
 // flush sends the changed samples of the marked points, in point order, 500 per request.
 func (s *syncer) flush() (int, error) {
 	s.mu.Lock()
-	all, dirty := s.all, s.dirty
-	s.all, s.dirty = false, map[int]bool{}
+	all, rebuild, dirty := s.all, s.rebuild, s.dirty
+	s.all, s.rebuild, s.dirty = false, false, map[int]bool{}
 	s.mu.Unlock()
 	var indexes []int
 	if all {
@@ -162,7 +163,9 @@ func (s *syncer) flush() (int, error) {
 		for index := range indexes {
 			indexes[index] = index
 		}
-		s.rebuildDeps()
+		if rebuild {
+			s.rebuildDeps()
+		}
 	} else {
 		for index := range dirty {
 			indexes = append(indexes, index)

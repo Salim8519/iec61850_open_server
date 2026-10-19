@@ -70,6 +70,21 @@ func Float(value any) (float64, bool) {
 
 // Equal is Python's == between two values decoded by pyjson (1 == 1.0 == True).
 func Equal(a, b any) bool {
+	// Fast paths for the common same-type values (no allocation).
+	switch x := a.(type) {
+	case int64:
+		if y, ok := b.(int64); ok {
+			return x == y
+		}
+	case float64:
+		if y, ok := b.(float64); ok {
+			return x == y
+		}
+	case bool:
+		if y, ok := b.(bool); ok {
+			return x == y
+		}
+	}
 	if IsNumber(a) && IsNumber(b) {
 		return numberEqual(a, b)
 	}
