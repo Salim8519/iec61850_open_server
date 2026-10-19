@@ -212,4 +212,3 @@ func (c *Coordinator) EquipmentStates() (states []any, energization *pyjson.Obje
 	}
 	return states, energization
 }
-

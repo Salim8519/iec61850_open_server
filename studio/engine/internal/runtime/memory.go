@@ -41,9 +41,9 @@ func (b *MemoryBus) Events() []*pyjson.Object {
 // MemoryProject is an in-memory Project over one project tree (tests, parity recorder and
 // the Go preview until stream B's project actor is merged). Mutations replace the tree.
 type MemoryProject struct {
-	mu      sync.Mutex
-	project *pyjson.Object
-	Saves   int
+	mu       sync.Mutex
+	project  *pyjson.Object
+	Saves    int
 	OnChange func()
 }
 

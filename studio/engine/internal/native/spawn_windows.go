@@ -13,23 +13,21 @@ import (
 // one Job Object with JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE, so no worker outlives the server
 // even when the server is killed (architecture §2).
 const (
-	createNoWindow           = 0x08000000
-	jobObjectExtendedLimit   = 9
-	jobLimitKillOnJobClose   = 0x2000
-	processSetQuota          = 0x0100
-	processTerminate         = 0x0001
-	jobObjectAssignProcess   = 0x0001
-	extendedLimitInfoPadding = 0
+	createNoWindow         = 0x08000000
+	jobObjectExtendedLimit = 9
+	jobLimitKillOnJobClose = 0x2000
+	processSetQuota        = 0x0100
+	processTerminate       = 0x0001
 )
 
 var (
-	kernel32                 = syscall.NewLazyDLL("kernel32.dll")
-	procCreateJobObject      = kernel32.NewProc("CreateJobObjectW")
-	procSetInformationJob    = kernel32.NewProc("SetInformationJobObject")
-	procAssignProcessToJob   = kernel32.NewProc("AssignProcessToJobObject")
-	procOpenProcess          = kernel32.NewProc("OpenProcess")
-	jobOnce                  sync.Once
-	jobHandle                syscall.Handle
+	kernel32               = syscall.NewLazyDLL("kernel32.dll")
+	procCreateJobObject    = kernel32.NewProc("CreateJobObjectW")
+	procSetInformationJob  = kernel32.NewProc("SetInformationJobObject")
+	procAssignProcessToJob = kernel32.NewProc("AssignProcessToJobObject")
+	procOpenProcess        = kernel32.NewProc("OpenProcess")
+	jobOnce                sync.Once
+	jobHandle              syscall.Handle
 )
 
 type ioCounters struct {

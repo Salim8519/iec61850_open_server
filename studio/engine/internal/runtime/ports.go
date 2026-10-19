@@ -39,8 +39,8 @@ type Live interface {
 // NoLive is the Live used until stream D is merged: no real IEDs, no GOOSE engine.
 type NoLive struct{}
 
-func (NoLive) Start(*pyjson.Object, []string) error                { return nil }
-func (NoLive) Connect(*pyjson.Object, []*pyjson.Object) error      { return nil }
-func (NoLive) Disconnect(string)                                   {}
-func (NoLive) Stop()                                               {}
+func (NoLive) Start(*pyjson.Object, []string) error               { return nil }
+func (NoLive) Connect(*pyjson.Object, []*pyjson.Object) error     { return nil }
+func (NoLive) Disconnect(string)                                  {}
+func (NoLive) Stop()                                              {}
 func (NoLive) BusFor([]*pyjson.Object) (map[string]string, error) { return map[string]string{}, nil }

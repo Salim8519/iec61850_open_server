@@ -4,6 +4,7 @@
 package pyval
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 	"strconv"
@@ -226,9 +227,41 @@ func Repr(value any) string {
 
 func inner(value any) string {
 	if text, ok := value.(string); ok {
-		return "'" + strings.ReplaceAll(strings.ReplaceAll(text, `\`, `\\`), "'", `\'`) + "'"
+		return quote(text)
 	}
 	return Repr(value)
+}
+
+// quote is repr() of a str: single quotes unless the text has ' and no ", escapes for
+// backslash, the quote, \n \r \t and other control characters.
+func quote(text string) string {
+	mark := byte('\'')
+	if strings.Contains(text, "'") && !strings.Contains(text, `"`) {
+		mark = '"'
+	}
+	var out strings.Builder
+	out.WriteByte(mark)
+	for _, r := range text {
+		switch {
+		case r == '\\':
+			out.WriteString(`\\`)
+		case r == rune(mark):
+			out.WriteByte('\\')
+			out.WriteRune(r)
+		case r == '\n':
+			out.WriteString(`\n`)
+		case r == '\r':
+			out.WriteString(`\r`)
+		case r == '\t':
+			out.WriteString(`\t`)
+		case r < 0x20 || r == 0x7f:
+			out.WriteString(fmt.Sprintf(`\x%02x`, r))
+		default:
+			out.WriteRune(r)
+		}
+	}
+	out.WriteByte(mark)
+	return out.String()
 }
 
 // TypeName is type(value).__name__.

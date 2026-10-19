@@ -17,14 +17,14 @@ const (
 )
 
 type accessClient struct {
-	peer, ip           string
-	firstSeen          float64
-	lastRead           *float64
-	reads, writes      map[string]int64
-	readOrder          []string
-	totalReads         int64
-	rcbs               []any
-	own                bool
+	peer, ip      string
+	firstSeen     float64
+	lastRead      *float64
+	reads, writes map[string]int64
+	readOrder     []string
+	totalReads    int64
+	rcbs          []any
+	own           bool
 }
 
 type mmsAccess struct {

@@ -72,7 +72,10 @@ var parityScript = []scriptStep{
 	{"wait", waitFor(0.6)},
 	{"scenario s1", func(c *Coordinator, _ []string) error { return c.StartScenario("s1") }},
 	{"wait", waitFor(0.9)},
-	{"test es1 closed", func(c *Coordinator, _ []string) error { _, err := c.EquipmentTest("es1", "closed", nil, nil); return err }},
+	{"test es1 closed", func(c *Coordinator, _ []string) error {
+		_, err := c.EquipmentTest("es1", "closed", nil, nil)
+		return err
+	}},
 	{"press pb1", func(c *Coordinator, _ []string) error { _, err := c.Operate("pb1", nil, "press"); return err }},
 	{"stop BayB", func(c *Coordinator, ids []string) error { return c.Stop([]string{ids[1]}) }},
 	{"start BayB", func(c *Coordinator, ids []string) error { return c.Start([]string{ids[1]}) }},

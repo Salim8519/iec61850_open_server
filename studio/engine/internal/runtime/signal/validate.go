@@ -16,9 +16,9 @@ import (
 
 // Signal is the part of an imported signal dict the runtime reads.
 type Signal struct {
-	Ref, Kind, FC             string
-	Writable                  bool
-	QualityRef, TimestampRef  string
+	Ref, Kind, FC            string
+	Writable                 bool
+	QualityRef, TimestampRef string
 }
 
 // Validate is domain/signal.validate_value: it returns the value Python would send to the
