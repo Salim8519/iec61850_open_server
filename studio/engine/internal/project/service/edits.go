@@ -108,8 +108,9 @@ func nodeDataInput(current *pyjson.Object, nodeID string, changes *pyjson.Object
 	return pyjson.NewObject().Set("nodes", nodes).Set("edges", edges)
 }
 
-// Source is ProjectService.source: replace one signal source and re-validate all.
-func (s *Service) Source(iedID, reference string, spec any) error {
+// Source is ProjectService.source: replace one signal source and re-validate all (it
+// implements runtime.Project.Source).
+func (s *Service) Source(iedID, reference string, spec *pyjson.Object) error {
 	s.mutate.Lock()
 	defer s.mutate.Unlock()
 	st := s.current.Load()
@@ -125,7 +126,11 @@ func (s *Service) Source(iedID, reference string, spec any) error {
 		}
 		sources = append(sources, entry)
 	}
-	sources = append(sources, pyjson.NewObject().Set("ied_id", iedID).Set("ref", reference).Set("spec", spec))
+	var value any // a nil spec is Python's None, not a typed nil
+	if spec != nil {
+		value = spec
+	}
+	sources = append(sources, pyjson.NewObject().Set("ied_id", iedID).Set("ref", reference).Set("spec", value))
 	checked, err := project.ValidateSources(sources, iedList(st.project))
 	if err != nil {
 		return err
@@ -142,24 +147,6 @@ func (s *Service) Scenarios(value any) error {
 		return err
 	}
 	return s.replace("scenarios", checked, nil)
-}
-
-// TestPanel is ProjectService.test_panel (unchanged project when saving fails).
-func (s *Service) TestPanel(entries any) error {
-	s.mutate.Lock()
-	defer s.mutate.Unlock()
-	checked, err := project.ValidatePanel(entries, iedList(s.current.Load().project))
-	if err != nil {
-		return err
-	}
-	return s.replace("test_panel", checked, nil)
-}
-
-// Gateway is ProjectService.gateway(config): stored as given, change source "gateway".
-func (s *Service) Gateway(config any) error {
-	s.mutate.Lock()
-	defer s.mutate.Unlock()
-	return s.replace("gateway", config, "gateway")
 }
 
 // replace sets one top-level key and commits with a revision change. mutate is held.
