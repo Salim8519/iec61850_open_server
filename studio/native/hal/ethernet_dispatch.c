@@ -4,11 +4,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ethernet_backend.h"
+#include "studio_hal.h"
 
 struct sEthernetSocket {
     PcapSocket pcap;
     StudioUdpSocket udp;
 };
+
+/* studio_ied's event loop learns when GOOSE frames leave, to schedule retransmissions. */
+static StudioFrameObserver sendObserver = NULL;
+static void* sendObserverContext = NULL;
+
+void StudioEthernet_setSendObserver(StudioFrameObserver observer, void* context)
+{
+    sendObserverContext = context;
+    sendObserver = observer;
+}
 
 void Ethernet_getInterfaceMACAddress(const char* interfaceId, uint8_t* addr)
 {
@@ -49,6 +60,7 @@ void Ethernet_sendPacket(EthernetSocket self, uint8_t* buffer, int packetSize)
 {
     if (self->udp) StudioUdp_send(self->udp, buffer, packetSize);
     else Pcap_Ethernet_sendPacket(self->pcap, buffer, packetSize);
+    if (sendObserver) sendObserver(sendObserverContext);
 }
 
 void Ethernet_setMode(EthernetSocket self, EthernetSocketMode mode)

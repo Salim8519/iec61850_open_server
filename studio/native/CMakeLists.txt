@@ -11,6 +11,7 @@ include(cmake/goose_options.cmake)
 add_subdirectory("${IEC_SOURCE}" libiec61850 EXCLUDE_FROM_ALL)
 include(cmake/parser_array_fix.cmake)
 include(cmake/goose_support.cmake)
+include(cmake/event_loop_support.cmake)
 include(cmake/sv_support.cmake)
 set(STUDIO_HEADERS
     "${IEC_SOURCE}/src/iec61850/inc" "${IEC_SOURCE}/src/mms/inc"
@@ -38,13 +39,14 @@ add_executable(studio_license_check testtools/license_check.cpp)
 target_link_libraries(studio_license_check PRIVATE studio_license)
 add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/server/server.cpp worker/updates/values.cpp worker/controls/controls.cpp
-    worker/goose/publishing.cpp worker/server/access_log.cpp worker/server/read_hook.c)
-target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker worker/server)
+    worker/goose/publishing.cpp worker/server/access_log.cpp worker/server/read_hook.c
+    worker/server/event_loop.cpp worker/server/schedule.c)
+target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker worker/server hal)
 if(WIN32)
     target_link_libraries(studio_ied PRIVATE winmm)  # 1 ms timer for GOOSE retransmission (change 0102)
 endif()
-# The read hook alone needs the private MMS server layout (ADR-0066).
-set_source_files_properties(worker/server/read_hook.c PROPERTIES INCLUDE_DIRECTORIES
+# The read hook (ADR-0066) and the event-loop schedule need private libiec61850 layouts.
+set_source_files_properties(worker/server/read_hook.c worker/server/schedule.c PROPERTIES INCLUDE_DIRECTORIES
     "${IEC_SOURCE}/src/mms/inc_private;${IEC_SOURCE}/src/mms/iso_mms/asn1c;${IEC_SOURCE}/src/iec61850/inc_private")
 add_executable(studio_live live/main.cpp live/goose_traffic.cpp live/goose_inbox.cpp live/mms_session.cpp
     live/reports.cpp live/sv_traffic.cpp live/sv_header.cpp live/explore.cpp live/identify.cpp
@@ -65,7 +67,11 @@ add_executable(studio_sv_test_publisher testtools/sv_test_publisher.cpp worker/i
 target_include_directories(studio_sv_test_publisher PRIVATE ${STUDIO_HEADERS} worker)
 target_include_directories(studio_sv_test_publisher PRIVATE "${IEC_SOURCE}/src/sampled_values"
     "${IEC_SOURCE}/src/mms/inc_private")
-foreach(studio_target studio_ied studio_live studio_probe studio_control studio_sv_test_publisher)
+# Test-only MMS load client for latency evidence (never packaged).
+add_executable(studio_test_mms_bench testtools/mms_bench.cpp)
+target_include_directories(studio_test_mms_bench PRIVATE ${STUDIO_HEADERS})
+foreach(studio_target studio_ied studio_live studio_probe studio_control studio_sv_test_publisher
+        studio_test_mms_bench)
     target_compile_definitions(${studio_target} PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
     target_link_libraries(${studio_target} PRIVATE iec61850 studio_license)
     if(WIN32)
