@@ -45,8 +45,7 @@ func (p *fakeProjects) SaveTestPanel(entries []any) error {
 
 // fakeRuntime is stream C's coordinator as the routes see it.
 type fakeRuntime struct {
-	state   string
-	signals map[string]*pyjson.Object
+	state string
 }
 
 func (r *fakeRuntime) RunState() string                             { return r.state }
@@ -54,20 +53,11 @@ func (r *fakeRuntime) Signal(string, string) (service.Signal, bool) { return ser
 func (r *fakeRuntime) Endpoint(string) (string, any, error) {
 	return "", nil, apperr.ValueError("IED is not running")
 }
-func (r *fakeRuntime) Emit(string, *pyjson.Object)                {}
-func (r *fakeRuntime) Subscribe(func(service.Change)) func()      { return func() {} }
-func (r *fakeRuntime) Source(_, ref any) *pyjson.Object           { return nil }
-func (r *fakeRuntime) RunningSequences() int                      { return 0 }
-func (r *fakeRuntime) SignalRecord(iedID, ref any) *pyjson.Object { return r.signals[ref.(string)] }
+func (r *fakeRuntime) Emit(string, *pyjson.Object)           {}
+func (r *fakeRuntime) Subscribe(func(service.Change)) func() { return func() {} }
+func (r *fakeRuntime) RunningSequences() int                 { return 0 }
 
 type panelRuntime struct{ *fakeRuntime }
-
-func (r panelRuntime) Signal(iedID, ref any) (*pyjson.Object, error) {
-	if record := r.signals[ref.(string)]; record != nil {
-		return record, nil
-	}
-	return nil, apperr.ValueError("Unknown signal reference")
-}
 
 func (r panelRuntime) Stopped(fn func() error) error {
 	if r.state != "stopped" {

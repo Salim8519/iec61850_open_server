@@ -5,18 +5,14 @@ import (
 
 	"studio-engine/internal/api"
 	"studio-engine/internal/gateway/service"
-	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/explorer"
 	"studio-engine/internal/tools/memory"
 	"studio-engine/internal/tools/scan"
 )
 
-// Runtime is what the test panel and the activity dots need from the IED runtime (stream C).
+// Runtime is what saving the test panel and the activity dots need from the IED runtime.
+// GET /project/test-panel belongs to internal/api/runtimeapi (one owner per route).
 type Runtime interface {
-	// Signal is coordinator.signal(ied_id, ref): the live record while running, else the model's.
-	Signal(iedID, ref any) (*pyjson.Object, error)
-	// Source is coordinator.sources.get((ied_id, ref)), nil when the signal has none.
-	Source(iedID, ref any) *pyjson.Object
 	// Stopped holds the runtime's cycle lock while fn runs, after refusing with
 	// StudioError "Stop the simulation before editing its structure" unless stopped.
 	Stopped(fn func() error) error
@@ -27,7 +23,6 @@ type Runtime interface {
 // Projects is the project service as the gateway and the test panel use it (stream B).
 type Projects interface {
 	service.Projects
-	TestPanel() []any
 	// SaveTestPanel stores the validated list, saves and announces the change; on a save
 	// failure the previous list stays.
 	SaveTestPanel(entries []any) error
@@ -45,7 +40,7 @@ type Deps struct {
 }
 
 // Area serves the routes of api/tools.py, api/gateway.py, api/gateway_master.py,
-// api/test_panel.py (the panel only) and api/traces.py.
+// api/test_panel.py (PUT /project/test-panel only) and api/traces.py.
 type Area struct{ deps Deps }
 
 // New returns the area for deps.
