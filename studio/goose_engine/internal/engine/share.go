@@ -45,6 +45,7 @@ func (e *Engine) SetUplink(adapter string, share bool) map[string]any {
 	}
 	status := e.statusLocked()
 	e.mu.Unlock()
+	e.poke()
 	if nowShare && !wasShare {
 		e.emit(map[string]any{"event": "goose_share", "state": "checking"})
 		for _, conflict := range e.guard.Waiting() {
@@ -76,17 +77,33 @@ func (e *Engine) uplinkState(adapter, state, message string) {
 		e.stopSharing()
 	}
 	e.mu.Unlock()
+	e.poke()
 	e.emit(map[string]any{"event": "goose_uplink", "adapter_guid": adapter, "state": state, "message": message})
 }
 
-// tick opens sharing once the listen window has passed with the adapter open.
+// tickEvery is how often the listen window is checked while sharing is waiting for it.
+const tickEvery = 100 * time.Millisecond
+
+// tick opens sharing once the listen window has passed with the adapter open. It
+// ticks only while that is pending, so an idle engine never wakes.
 func (e *Engine) tick() {
-	ticker := time.NewTicker(100 * time.Millisecond)
+	ticker := time.NewTicker(tickEvery)
 	defer ticker.Stop()
+	ticking := true
 	for {
+		if pending := e.sharePending(); pending != ticking {
+			ticking = pending
+			if ticking {
+				ticker.Reset(tickEvery)
+			} else {
+				ticker.Stop()
+			}
+		}
 		select {
 		case <-e.stopTick:
 			return
+		case <-e.wake:
+			continue
 		case <-ticker.C:
 		}
 		e.mu.Lock()
@@ -102,6 +119,21 @@ func (e *Engine) tick() {
 		if ready {
 			e.emit(map[string]any{"event": "goose_share", "state": "sharing"})
 		}
+	}
+}
+
+// sharePending reports whether sharing waits for the listen window on an open adapter.
+func (e *Engine) sharePending() bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.link.share && e.link.port != nil && !e.sharing.Load() && e.link.state == "open"
+}
+
+// poke makes tick re-check whether it has to tick.
+func (e *Engine) poke() {
+	select {
+	case e.wake <- struct{}{}:
+	default:
 	}
 }
 

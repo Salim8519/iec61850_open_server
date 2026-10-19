@@ -20,6 +20,9 @@ func Open(string) (*Handle, error) { return nil, ErrMissing }
 // Next never delivers frames.
 func (*Handle) Next() ([]byte, error) { return nil, ErrMissing }
 
+// Event is never signalled.
+func (*Handle) Event() uintptr { return 0 }
+
 // Send never transmits.
 func (*Handle) Send([]byte) error { return ErrMissing }
 

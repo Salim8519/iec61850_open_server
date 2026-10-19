@@ -21,18 +21,25 @@ type Port interface {
 	Close()
 }
 
+// opener opens the adapter; tests replace it with a fake device.
+type opener func(guid string) (device, error)
+
 // Uplink keeps the adapter open, reopening it every RetryEvery when it is lost.
 type Uplink struct {
 	guid     string
+	open     opener
+	sig      *signals
 	out      chan []byte
 	allow    atomic.Bool
+	pending  atomic.Bool   // a send wake is already on its way
+	wakes    atomic.Uint64 // returns from the wait, for the idle measurements
 	onFrame  func([]byte)
 	onState  func(state, message string)
 	stop     chan struct{}
 	done     chan struct{}
 	mu       sync.Mutex
 	openedAt time.Time
-	open     bool
+	isOpen   bool
 	failing  bool
 }
 
@@ -42,19 +49,42 @@ const RetryEvery = 2 * time.Second
 // Start opens the adapter in the background. onState gets open, lost, error,
 // needs_npcap and send_failed changes; onFrame gets every GOOSE frame heard.
 func Start(guid string, onFrame func([]byte), onState func(state, message string)) *Uplink {
-	u := &Uplink{guid: guid, out: make(chan []byte, 1024), onFrame: onFrame, onState: onState,
-		stop: make(chan struct{}), done: make(chan struct{})}
+	return start(guid, openNpcap, onFrame, onState)
+}
+
+func start(guid string, open opener, onFrame func([]byte), onState func(state, message string)) *Uplink {
+	u := &Uplink{guid: guid, open: open, out: make(chan []byte, 1024), onFrame: onFrame,
+		onState: onState, stop: make(chan struct{}), done: make(chan struct{})}
+	sig, err := newSignals()
+	if err != nil {
+		close(u.done)
+		onState("error", "could not create the adapter wait events: "+err.Error())
+		return u
+	}
+	u.sig = sig
 	go u.run()
 	return u
 }
 
-// Send queues a frame. It refuses while sending is not allowed or the queue is full.
+func openNpcap(guid string) (device, error) {
+	handle, err := npcap.Open(guid)
+	if err != nil {
+		return nil, err
+	}
+	return handle, nil
+}
+
+// Send queues a frame and wakes the adapter thread at once. It refuses while
+// sending is not allowed or the queue is full.
 func (u *Uplink) Send(frame []byte) bool {
-	if !u.allow.Load() {
+	if !u.allow.Load() || u.sig == nil {
 		return false
 	}
 	select {
 	case u.out <- frame:
+		if u.pending.CompareAndSwap(false, true) {
+			u.sig.kick()
+		}
 		return true
 	default:
 		return false
@@ -68,21 +98,27 @@ func (u *Uplink) AllowSend(allowed bool) { u.allow.Store(allowed) }
 func (u *Uplink) OpenSince() (time.Time, bool) {
 	u.mu.Lock()
 	defer u.mu.Unlock()
-	return u.openedAt, u.open
+	return u.openedAt, u.isOpen
 }
 
 // Close stops the uplink and releases the adapter.
 func (u *Uplink) Close() {
 	u.allow.Store(false)
 	close(u.stop)
+	if u.sig != nil {
+		u.sig.halt()
+	}
 	<-u.done
+	if u.sig != nil {
+		u.sig.release()
+	}
 }
 
 func (u *Uplink) run() {
 	runtime.LockOSThread()
 	defer close(u.done)
 	for {
-		handle, err := npcap.Open(u.guid)
+		dev, err := u.open(u.guid)
 		if err != nil {
 			state := "error"
 			if errors.Is(err, npcap.ErrMissing) {
@@ -92,8 +128,8 @@ func (u *Uplink) run() {
 		} else {
 			u.setOpen(true)
 			u.onState("open", "")
-			lost := u.pump(handle)
-			handle.Close()
+			lost := u.pump(dev)
+			dev.Close()
 			u.setOpen(false)
 			if lost == nil {
 				return
@@ -108,52 +144,10 @@ func (u *Uplink) run() {
 	}
 }
 
-// pump alternates a 1 ms receive wait with draining the outbound queue, so the
-// handle is only ever used from this goroutine.
-func (u *Uplink) pump(handle *npcap.Handle) error {
-	for {
-		select {
-		case <-u.stop:
-			return nil
-		default:
-		}
-		frame, err := handle.Next()
-		if err != nil {
-			return err
-		}
-		if frame != nil {
-			u.onFrame(frame)
-		}
-		u.flush(handle)
-	}
-}
-
-func (u *Uplink) flush(handle *npcap.Handle) {
-	for i := 0; i < 256; i++ {
-		select {
-		case frame := <-u.out:
-			if !u.allow.Load() {
-				continue
-			}
-			if err := handle.Send(frame); err != nil {
-				if !u.failing {
-					u.failing = true
-					u.onState("send_failed", err.Error())
-				}
-			} else if u.failing {
-				u.failing = false
-				u.onState("open", "")
-			}
-		default:
-			return
-		}
-	}
-}
-
 func (u *Uplink) setOpen(open bool) {
 	u.mu.Lock()
 	defer u.mu.Unlock()
-	u.open = open
+	u.isOpen = open
 	if open {
 		u.openedAt = time.Now()
 	}

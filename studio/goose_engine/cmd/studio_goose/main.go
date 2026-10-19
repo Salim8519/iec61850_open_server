@@ -1,5 +1,6 @@
 // studio_goose is ScadaBench's GOOSE engine. The backend starts one per Run and talks
-// to it over stdin/stdout frames; diagnostics go to stderr.
+// to it over stdin/stdout frames; diagnostics go to stderr. It asks Windows for no
+// timer resolution: the adapter thread waits on events, not on timers.
 package main
 
 import (
@@ -13,8 +14,6 @@ import (
 
 func main() {
 	log.SetOutput(os.Stderr)
-	restore := millisecondTimer()
-	defer restore()
 	out := ipc.NewWriter(os.Stdout)
 	emit := func(event map[string]any) {
 		if err := out.Write(event); err != nil {
