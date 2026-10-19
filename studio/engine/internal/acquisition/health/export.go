@@ -63,6 +63,10 @@ func CSVText(health *pyjson.Object) string {
 	return out.String()
 }
 
+// CSVField quotes one field like Python's csv module (default dialect, QUOTE_MINIMAL);
+// other CSV downloads of the live area use it too.
+func CSVField(text string) string { return csvField(text) }
+
 // csvField applies the csv module's QUOTE_MINIMAL rule for the default dialect: quote a
 // field that contains the delimiter, the quote character, "\r" or "\n", doubling quotes.
 func csvField(text string) string {
