@@ -15,12 +15,12 @@ func TestKnownAnswers(t *testing.T) {
 		}
 	}
 	for text, want := range map[string]string{
-		"7.0":    "invalid literal for int() with base 10: '7.0'",
-		"\x1c7":  "invalid literal for int() with base 10: '\\x1c7'",
-		"1__0":   "invalid literal for int() with base 10: '1__0'",
-		"it's":   `invalid literal for int() with base 10: "it's"`,
-		"":       "invalid literal for int() with base 10: ''",
-		"é": "invalid literal for int() with base 10: 'é'",
+		"7.0":   "invalid literal for int() with base 10: '7.0'",
+		"\x1c7": "invalid literal for int() with base 10: '\\x1c7'",
+		"1__0":  "invalid literal for int() with base 10: '1__0'",
+		"it's":  `invalid literal for int() with base 10: "it's"`,
+		"":      "invalid literal for int() with base 10: ''",
+		"é":     "invalid literal for int() with base 10: 'é'",
 	} {
 		if _, err := ParseInt(text); err == nil || err.Error() != want {
 			t.Errorf("int(%q) error %v; want %s", text, err, want)
