@@ -6,6 +6,7 @@
 - [Runtime and contracts](architecture/runtime.md)
 - [Project and SCL preservation](architecture/project-format.md)
 - [Network lifecycle](architecture/networking.md)
+- [Go engine plan](architecture/go-engine/README.md)
 - [HTTP and event API](reference/API.md)
 - [Core algorithms](reference/ALGORITHMS.md)
 - [File ownership map](reference/FILE-MAP.md)

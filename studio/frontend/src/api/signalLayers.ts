@@ -34,5 +34,4 @@ export type MmsClient = {
   rcbs: string[]; connected_s: number;
 };
 
-export const getLinkMap = () => api<GooseLinkMap>('/goose/links');
 export const getMmsAccess = () => api<{ running: boolean; ieds: Record<string, MmsClient[]> }>('/mms/access');

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { getPreferences, setPreferences } from '../../../api/preferences';
-import { getLinkMap, getMmsAccess } from '../../../api/signalLayers';
+import { LINK_MAP, polls } from '../../../api/polls';
+import { getMmsAccess, type GooseLinkMap } from '../../../api/signalLayers';
 import type { Layers, SignalLayerStore } from '../../../equipment/signalLayerStore';
 
 /** The two SLD switches, remembered by the backend (preferences sld_goose_layer / sld_readers_layer),
@@ -19,11 +20,7 @@ export function useSignalLayers(store: SignalLayerStore, revision: number, runni
   const active = state.layers.goose || state.layers.readers;
   useEffect(() => {
     if (!active) return;
-    let disposed = false;
-    const load = () => getLinkMap().then(map => { if (!disposed) store.setMap(map); }).catch(() => {});
-    load();
-    const timer = running ? setInterval(load, 5000) : undefined;
-    return () => { disposed = true; if (timer) clearInterval(timer); };
+    return polls.subscribe<GooseLinkMap>(LINK_MAP, running ? 5000 : null, map => store.setMap(map));
   }, [active, revision, running, store]);
   useEffect(() => {
     if (state.layers.readers && running) getMmsAccess().then(result => store.setClients(result.ieds)).catch(() => {});

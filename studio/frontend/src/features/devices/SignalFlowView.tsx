@@ -1,6 +1,7 @@
 import { Download, Search, Share2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
+import { HEALTH, polls } from '../../api/polls';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
 import { Spinner } from '../../ui/Spinner';
@@ -24,11 +25,8 @@ export function SignalFlowView({ iedName, running }: { iedName?: string; running
   const [live, setLive] = useState<Record<string, { state: string; checked_at: string }>>({});
   useEffect(() => {
     if (!running) { setLive({}); return; }
-    const load = () => api<{ ieds: { checks: { area: string; item: string; message: string; observed_at: string | null }[] }[] }>('/health')
-      .then(value => setLive(wireVerdicts(value.ieds))).catch(() => {});
-    load();
-    const timer = setInterval(load, 3000);
-    return () => clearInterval(timer);
+    return polls.subscribe<{ ieds: { checks: { area: string; item: string; message: string; observed_at: string | null }[] }[] }>(
+      HEALTH, 3000, value => setLive(wireVerdicts(value.ieds)));
   }, [running]);
   useEffect(() => {
     api<{ sources: Source[] }>('/signal-flow/sources').then(value => {

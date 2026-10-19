@@ -1,6 +1,7 @@
 import { Download, FileText, HeartPulse, RefreshCw } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
+import { HEALTH, polls } from '../../api/polls';
 import { areaInfo, verdictStatus } from '../../copy/health';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
@@ -23,13 +24,8 @@ export function HealthView({ running }: { running: boolean }) {
   const [open, setOpen] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const load = useCallback(() => api<Health>('/health').then(setHealth).catch(reason => setError(reason.message)), []);
-  useEffect(() => {
-    load();
-    if (!running) return;
-    const timer = setInterval(load, 3000);
-    return () => clearInterval(timer);
-  }, [load, running]);
+  useEffect(() => polls.subscribe<Health>(HEALTH, running ? 3000 : null, setHealth,
+    reason => setError(reason.message)), [running]);
   if (!health) return <div className="card"><EmptyState icon={<HeartPulse size={22} />} title="Health check"
     hintId="health.intro" action={error ? undefined : <Spinner label="Checking the station…" />} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
   const ieds = [...health.ieds].sort((a, b) => ORDER.indexOf(a.verdict) - ORDER.indexOf(b.verdict));

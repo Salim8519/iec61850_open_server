@@ -7,6 +7,16 @@ from .health_reads import MODE_NAMES
 
 _SIM = re.compile(r"^([^/]+)/LPHD\d*\.Sim\.stVal$")
 _BEH = re.compile(r"^([^/]+)/([^.]+)\.Beh\.stVal$")
+MODE_SUFFIXES = (".Mod.stVal", ".Beh.stVal", ".Sim.stVal")
+
+
+def mode_signals(signals):
+    """Reference and FC of the only points mode_points and mode_items read (Mod, Beh, Sim).
+
+    A model of 90,000 points has a few hundred of these, so health can keep a small list.
+    """
+    return [{"ref": signal["ref"], "fc": signal["fc"]} for signal in signals
+            if signal["ref"].endswith(MODE_SUFFIXES)]
 
 
 def derive_beh(ld_mod, ln_mod=1):
