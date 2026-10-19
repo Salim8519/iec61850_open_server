@@ -66,11 +66,11 @@ func fromUTF16(data []byte, big bool) ([]byte, bool) {
 
 // codecChoice is what expat and pyexpat do with a declared encoding name.
 type codecChoice struct {
-	keep      bool             // same encoding, nothing to do
-	incorrect bool             // "encoding specified in XML declaration is incorrect"
-	table     func(byte) rune  // 8-bit decoding of the bytes after the declaration
-	failure   string           // Python exception text that ends the parse (no position)
-	unknown   bool             // expat "unknown encoding" at the name
+	keep      bool            // same encoding, nothing to do
+	incorrect bool            // "encoding specified in XML declaration is incorrect"
+	table     func(byte) rune // 8-bit decoding of the bytes after the declaration
+	failure   string          // Python exception text that ends the parse (no position)
+	unknown   bool            // expat "unknown encoding" at the name
 }
 
 func chooseCodec(name string, wide int) codecChoice {
