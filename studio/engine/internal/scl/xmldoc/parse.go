@@ -11,7 +11,7 @@ type Options struct {
 // ("mismatched tag: line 3, column 2", "EntitiesForbidden(name='e', ...)", ...).
 func Parse(data []byte, options Options) (*Document, error) {
 	buf, start, wide, odd := detect(data)
-	s := &scanner{buf: buf, start: start, keep: options.Nodes, oddTail: odd, doc: &Document{}}
+	s := &scanner{buf: buf, start: start, keep: options.Nodes, oddTail: odd, doc: &Document{Version: "1.0"}}
 	if string(data) == "\xef" || string(data) == "\xef\xbb" {
 		return nil, s.fail(errUnclosed, 0) // an incomplete byte order mark
 	}
@@ -95,6 +95,7 @@ func (s *scanner) declFields(p, end int) (string, int, error) {
 		return bad(next)
 	}
 	if s.word(name, "version") {
+		s.doc.Version = string(s.buf[value:s.quoteEnd(value)])
 		name, value, next, ok = s.pseudo(next, end)
 		if !ok {
 			return bad(next)

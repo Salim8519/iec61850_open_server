@@ -68,4 +68,7 @@ type Document struct {
 	Before, After []Node
 	// Doctype is true when the document has a DOCTYPE declaration.
 	Doctype bool
+	// Version is the XML declaration's version ("1.0" without a declaration), which lxml
+	// repeats when it serialises the document.
+	Version string
 }
