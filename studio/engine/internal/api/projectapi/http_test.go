@@ -76,7 +76,7 @@ func (c goldenCase) request(t *testing.T) *http.Request {
 // TestFlaskParity replays every recorded request in order against one Go area and
 // compares status, headers (except Content-Length) and the exact body.
 func TestFlaskParity(t *testing.T) {
-	data, err := os.ReadFile("testdata/http_golden.json")
+	data, err := os.ReadFile("testdata/generated/http_golden.json")
 	if err != nil {
 		t.Skip("http golden missing")
 	}

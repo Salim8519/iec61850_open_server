@@ -12,7 +12,7 @@ import (
 )
 
 func TestSnapshotWriterCoalescesAndKeepsTheLatest(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	writer := NewSnapshotWriter(dir, nil, nil, nil)
 	for rev := 1; rev <= 50; rev++ {
 		writer.Request(uint64(rev), doc(fmt.Sprint(rev), "<SCL/>"))
@@ -30,7 +30,7 @@ func TestSnapshotWriterCoalescesAndKeepsTheLatest(t *testing.T) {
 }
 
 func TestSnapshotWriterReportsErrors(t *testing.T) {
-	missing := filepath.Join(t.TempDir(), "missing")
+	missing := filepath.Join(tempDir(t), "missing")
 	var mu sync.Mutex
 	var reported []uint64
 	writer := NewSnapshotWriter(missing, nil, nil, func(rev uint64, err error) {
@@ -51,7 +51,7 @@ func TestSnapshotWriterReportsErrors(t *testing.T) {
 }
 
 func TestSnapshotTrimsJournalAndCloseRemovesIt(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	encoder := archive.NewEncoder()
 	journal, _ := OpenJournal(dir, encoder)
 	writer := NewSnapshotWriter(dir, encoder, journal, nil)
@@ -86,7 +86,7 @@ func TestSnapshotTrimsJournalAndCloseRemovesIt(t *testing.T) {
 }
 
 func TestCrashAfterPartialSnapshotFoldsTheRest(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	encoder := archive.NewEncoder()
 	journal, _ := openTest(t, dir)
 	writer := NewSnapshotWriter(dir, encoder, journal, nil)

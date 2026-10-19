@@ -34,7 +34,7 @@ func loadSeed(t *testing.T) seedValidator {
 	}
 	decoded, _ := pyjson.Decode(data)
 	entries := decoded.([]any)
-	if golden, err := os.ReadFile("testdata/http_golden.json"); err == nil {
+	if golden, err := os.ReadFile("testdata/generated/http_golden.json"); err == nil {
 		recorded, _ := pyjson.Decode(golden)
 		more, _ := get(object(recorded), "xsd").([]any)
 		entries = append(entries, more...)

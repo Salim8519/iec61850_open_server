@@ -13,7 +13,7 @@ import (
 )
 
 func TestWriteAutosaveReplacesThroughTemp(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	saveDoc(t, dir, doc("one"))
 	saveDoc(t, dir, doc("two"))
 	assertAutosave(t, dir, doc("two"))
@@ -23,7 +23,7 @@ func TestWriteAutosaveReplacesThroughTemp(t *testing.T) {
 }
 
 func TestJournalFoldsEveryCommitAfterACrash(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	scl := strings.Repeat("<SCL big=\"1\"/>\n", 1000)
 	base := doc("base", scl)
 	saveDoc(t, dir, base)
@@ -57,7 +57,7 @@ func TestJournalFoldsEveryCommitAfterACrash(t *testing.T) {
 }
 
 func TestFirstCommitIsFullUnlessAutosaveMatches(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	journal, _ := openTest(t, dir)
 	if err := journal.Commit(1, doc("a"), doc("b")); err != nil { // no autosave on disk
 		t.Fatal(err)
@@ -80,7 +80,7 @@ func TestFirstCommitIsFullUnlessAutosaveMatches(t *testing.T) {
 }
 
 func TestFoldTornAndDamagedLines(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	saveDoc(t, dir, doc("a"))
 	journal, _ := openTest(t, dir)
 	_ = journal.Commit(1, doc("a"), doc("b"))
@@ -111,7 +111,7 @@ func TestFoldTornAndDamagedLines(t *testing.T) {
 }
 
 func TestFoldRefusesAForeignAutosave(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	saveDoc(t, dir, doc("a"))
 	journal, _ := openTest(t, dir)
 	_ = journal.Commit(1, doc("a"), doc("b"))
@@ -126,7 +126,7 @@ func TestFoldRefusesAForeignAutosave(t *testing.T) {
 }
 
 func TestCommitRefusesNonFiniteAndOldRevisions(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	journal, _ := openTest(t, dir)
 	err := journal.Commit(1, nil, derive(doc("a"), "bad", math.Inf(-1)))
 	if appErr, ok := err.(*apperr.Error); !ok || appErr.Message != "Out of range float values are not JSON compliant: -inf" {
@@ -142,7 +142,7 @@ func TestCommitRefusesNonFiniteAndOldRevisions(t *testing.T) {
 }
 
 func TestFoldSkipsRecordsAlreadyInAMarkedSnapshot(t *testing.T) {
-	dir := t.TempDir()
+	dir := tempDir(t)
 	scl := "<SCL>one</SCL>"
 	saveDoc(t, dir, doc("0", scl))
 	journal, _ := openTest(t, dir)

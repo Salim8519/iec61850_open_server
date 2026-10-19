@@ -1,6 +1,6 @@
 """Record the frozen Flask app's answers for the projectapi routes (http_golden.json).
 
-  python http_gen.py            writes http_golden.json next to this script
+  python http_gen.py            writes generated/http_golden.json
 
 Public inputs only (scd/model_substation.scd and generated payloads). Ids are made
 deterministic: every uuid4() the app takes is the next counter value as 32 hex digits,
@@ -197,7 +197,7 @@ def main():
             app.extensions["runtime"].close()
     text = json.dumps({"ids_before_requests": 2, "cases": rec.cases,
                        "xsd": [xsd[key] for key in sorted(xsd)]}, indent=1, ensure_ascii=False)
-    (HERE / "http_golden.json").write_text(text + "\n", encoding="utf-8", newline="\n")
+    (HERE / "generated" / "http_golden.json").write_text(text + "\n", encoding="utf-8", newline="\n")
     print(len(rec.cases), "cases")
 
 
