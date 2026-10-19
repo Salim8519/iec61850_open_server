@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}ReportControl': The attribute 'name' is required but missing.", "code": "validation", "details": []}

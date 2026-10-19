@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}DOType': This element is not expected. Expected is ( {http://www.iec.ch/61850/2003/SCL}EnumType ).", "code": "validation", "details": []}

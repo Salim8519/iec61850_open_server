@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Invalid or unsafe XML: EntitiesForbidden(name='x', system_id='file:///c:/windows/win.ini', public_id=None)", "code": "validation", "details": []}

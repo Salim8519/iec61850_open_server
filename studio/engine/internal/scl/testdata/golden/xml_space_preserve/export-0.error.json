@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}Val', attribute '{http://www.w3.org/XML/1998/namespace}space': The attribute '{http://www.w3.org/XML/1998/namespace}space' is not allowed.", "code": "validation", "details": []}

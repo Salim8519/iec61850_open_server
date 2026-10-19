@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}P': [facet 'minLength'] The value has a length of '0'; this underruns the allowed minimum length of '1'.", "code": "validation", "details": []}

@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}LN': Duplicate key-sequence ['1', 'XSWI', ''] in unique identity-constraint '{http://www.iec.ch/61850/2003/SCL}uniqueLNInLDevice'."}]}

@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}MaxTime': 'abc' is not a valid value of the atomic type 'xs:decimal'.", "code": "validation", "details": []}
