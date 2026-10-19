@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/scl"
@@ -24,7 +25,7 @@ func TestGoldenSeedIsServedWithoutHelper(t *testing.T) {
 	if len(entries) == 0 {
 		t.Fatal("the golden seed has no verdicts")
 	}
-	dataDir := t.TempDir()
+	dataDir := testutil.TempDir(t)
 	config := Config{HelperPath: filepath.Join(dataDir, "missing", "studio_xsd.exe"),
 		SchemasDir: bundledSchemas, DataDir: dataDir}
 	seeding := New(config)
@@ -60,7 +61,7 @@ func TestGoldenSeedIsServedWithoutHelper(t *testing.T) {
 func TestSeededDocumentValidatesFromCache(t *testing.T) {
 	source := []byte("<SCL>seeded</SCL>")
 	verdict := scl.SchemaVerdict{Status: "invalid", Errors: []scl.SchemaError{{Line: 1, Message: "from Python"}}}
-	dataDir := t.TempDir()
+	dataDir := testutil.TempDir(t)
 	validator := New(Config{HelperPath: filepath.Join(dataDir, "none.exe"), SchemasDir: bundledSchemas, DataDir: dataDir})
 	defer validator.Close()
 	entry := SeedEntry{SHA256: sha256Hex(source), Schema: "SCL2007B", Verdict: verdict}

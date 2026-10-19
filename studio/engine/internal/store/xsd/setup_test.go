@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 
@@ -31,7 +32,7 @@ func newFixture(t *testing.T, timeout time.Duration) *fixture {
 
 func newFixtureWithHelper(t *testing.T, helper string, timeout time.Duration) *fixture {
 	t.Helper()
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	log := filepath.Join(dir, "fake.log")
 	t.Setenv("STUDIO_XSD_FAKE", "1")
 	t.Setenv("STUDIO_XSD_FAKE_LOG", log)

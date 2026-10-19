@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/scl"
@@ -31,7 +32,7 @@ func TestCacheFileIsPythonJSON(t *testing.T) {
 }
 
 func TestCacheHitSurvivesRestart(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	key := cacheKey(sha256Hex([]byte("<SCL/>")), "SCL2007B", "digest")
 	if err := newCache(dir, 4).put(key, sampleVerdict); err != nil {
 		t.Fatal(err)
@@ -51,7 +52,7 @@ func TestCacheHitSurvivesRestart(t *testing.T) {
 }
 
 func TestCacheCorruptFileIsMiss(t *testing.T) {
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	key := cacheKey(sha256Hex([]byte("doc")), "SCL2003", "digest")
 	store := newCache(dir, 4)
 	for name, content := range map[string]string{
@@ -108,7 +109,7 @@ func TestSchemaDigestReadsOnlyXSDFiles(t *testing.T) {
 	if other == first {
 		t.Fatal("different schema folders must have different digests")
 	}
-	if _, err := newSchemaDigests(t.TempDir()).get("SCL2007B"); err == nil {
+	if _, err := newSchemaDigests(testutil.TempDir(t)).get("SCL2007B"); err == nil {
 		t.Fatal("a missing schema folder must fail")
 	} else {
 		requireRuntime(t, err, "bundled XSD files for SCL2007B")

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"studio-engine/internal/testutil"
 	"sync"
 	"testing"
 	"time"
@@ -60,7 +61,7 @@ func TestDoctypeIsValueErrorAndNotCached(t *testing.T) {
 }
 
 func TestMissingHelperOnCacheMiss(t *testing.T) {
-	f := newFixtureWithHelper(t, filepath.Join(t.TempDir(), "studio_xsd.exe"), time.Second)
+	f := newFixtureWithHelper(t, filepath.Join(testutil.TempDir(t), "studio_xsd.exe"), time.Second)
 	_, err := f.validator.Validate([]byte("<SCL/>"), "SCL2007B")
 	requireRuntime(t, err, "SCL schema validation is not available: the studio_xsd helper is missing. Reinstall ScadaBench.")
 }

@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/pyjson"
@@ -86,7 +87,7 @@ func writeGoArchives(t *testing.T, dir string) {
 		write(name, payload, docs[name])
 	}
 	// An autosave produced by folding a journal.
-	foldDir := t.TempDir()
+	foldDir := testutil.TempDir(t)
 	journal, _ := autosave.OpenJournal(foldDir, nil)
 	if err := journal.Commit(1, nil, docs["small"]); err != nil {
 		t.Fatal(err)
@@ -118,7 +119,7 @@ func TestPythonCrossCheck(t *testing.T) {
 	if python == "" {
 		t.Skip("set STUDIO_PYTHON to studio/.venv/Scripts/python.exe to run the live cross-check")
 	}
-	goDir := t.TempDir()
+	goDir := testutil.TempDir(t)
 	writeGoArchives(t, goDir)
 	var report struct {
 		Files  int      `json:"files"`
@@ -128,7 +129,7 @@ func TestPythonCrossCheck(t *testing.T) {
 	if err := json.Unmarshal(bytes.TrimSpace(out), &report); err != nil || report.Files != 8 || len(report.Errors) > 0 {
 		t.Fatalf("Python verification: %s", out)
 	}
-	generated := t.TempDir()
+	generated := testutil.TempDir(t)
 	runPython(t, python, "generate", generated)
 	err := filepath.WalkDir(fixtures, func(path string, entry os.DirEntry, err error) error {
 		if err != nil || entry.IsDir() || entry.Name() == "python_archive.subsim" {

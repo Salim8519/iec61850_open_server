@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/pyjson"
@@ -104,7 +105,7 @@ func TestPythonSettingsFilesResaveIdentically(t *testing.T) {
 			t.Errorf("%s re-saved differently:\n%q\n%q", name, again, original)
 		}
 	}
-	dir := t.TempDir()
+	dir := testutil.TempDir(t)
 	original := readFixture(t, settings.ToolSettingsName)
 	_ = os.WriteFile(filepath.Join(dir, settings.ToolSettingsName), original, 0o666)
 	memory := settings.NewToolMemory(dir)
