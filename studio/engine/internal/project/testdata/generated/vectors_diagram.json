@@ -1,0 +1,3627 @@
+[
+ {
+  "name": "duplicate nodes",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB"
+      }
+     },
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS"
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Equipment identifiers must be unique",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "duplicate wires",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB"
+      }
+     },
+     {
+      "id": "b",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "b",
+       "kind": "DS"
+      }
+     }
+    ],
+    "edges": [
+     {
+      "id": "w",
+      "source": "a",
+      "target": "b"
+     },
+     {
+      "id": "w",
+      "source": "b",
+      "target": "a"
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Wire identifiers must be unique",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "missing wire end",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB"
+      }
+     }
+    ],
+    "edges": [
+     {
+      "id": "w",
+      "source": "a",
+      "target": "zz"
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A wire references missing equipment",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "good wires",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB"
+      }
+     },
+     {
+      "id": "b",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "b",
+       "kind": "DS"
+      }
+     }
+    ],
+    "edges": [
+     {
+      "id": "w",
+      "source": "a",
+      "target": "b",
+      "sourceHandle": "s",
+      "targetHandle": null
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"b\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"b\", \"kind\": \"DS\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": [{\"id\": \"w\", \"source\": \"a\", \"target\": \"b\", \"sourceHandle\": \"s\", \"targetHandle\": null}]}"
+ },
+ {
+  "name": "relay statuses on CB",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+          "report_ref": null
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only a relay accepts named status entries",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "relay ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s1",
+         "label": "Trip",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+          "report_ref": null
+         }
+        },
+        {
+         "id": "s2",
+         "label": "Pos",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+          "report_ref": null
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [{\"id\": \"s1\", \"label\": \"Trip\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Loc.stVal\", \"report_ref\": null}}, {\"id\": \"s2\", \"label\": \"Pos\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.stVal\", \"report_ref\": null}}], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "relay duplicate",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+          "report_ref": null
+         }
+        },
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+          "report_ref": null
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Relay status identifiers must be unique",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "relay unknown ied",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "99999999999999999999999999999999",
+          "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+          "report_ref": null
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A signal binding references an unknown IED",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "relay unknown signal",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "nope",
+          "report_ref": null
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A signal binding references an unknown signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "relay report member",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+          "report_ref": "BayControllerCTRL/LLN0.RP.EventsRCB"
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [{\"id\": \"s\", \"label\": \"x\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.stVal\", \"report_ref\": \"BayControllerCTRL/LLN0.RP.EventsRCB\"}}], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "relay report not member",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+          "report_ref": "BayControllerCTRL/LLN0.RP.EventsRCB"
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Selected signal is not a member of the chosen report",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "relay report unknown",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+          "report_ref": "zz"
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Unknown report reference",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "relay report empty",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "11111111111111111111111111111111",
+          "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+          "report_ref": ""
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [{\"id\": \"s\", \"label\": \"x\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.stVal\", \"report_ref\": \"\"}}], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "relay state mapping",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A relay uses named status entries instead of a single state mapping",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "infeed defaults",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "INFEED"
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"INFEED\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null, \"infeed_type\": \"line\", \"infeed_state\": \"live\"}}], \"edges\": []}"
+ },
+ {
+  "name": "infeed values",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "INFEED",
+       "infeed_type": "grid",
+       "infeed_state": "dead"
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"INFEED\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null, \"infeed_type\": \"grid\", \"infeed_state\": \"dead\"}}], \"edges\": []}"
+ },
+ {
+  "name": "infeed on CB",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "infeed_type": "grid"
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only an infeed accepts infeed settings",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "infeed state on CB",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "infeed_state": "live"
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only an infeed accepts infeed settings",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "infeed mapping",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "INFEED",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "An infeed is a drawing point and does not accept a state mapping",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "junction mapping",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "JUNCTION",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A junction is a drawing point and does not accept a state mapping",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "junction control",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "JUNCTION",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A junction is a drawing point and does not accept a control binding",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "CB direct dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "CB direct bool",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a Dbpos signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "CB single bool",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"single_to_dbpos\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Loc.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "CB single dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a BOOLEAN signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "CB control ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "CB control spc",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "CB equipment requires a DPC control",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "DS direct dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"DS\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "DS direct bool",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a Dbpos signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "DS single bool",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"DS\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"single_to_dbpos\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Loc.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "DS single dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a BOOLEAN signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "DS control ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"DS\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "DS control spc",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "DS equipment requires a DPC control",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "ES direct dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "ES",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"ES\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "ES direct bool",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "ES",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a Dbpos signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "ES single bool",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "ES",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"ES\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"single_to_dbpos\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Loc.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "ES single dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "ES",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a BOOLEAN signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "ES control ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "ES",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"ES\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "ES control spc",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "ES",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "ES equipment requires a DPC control",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "contacts ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "contacts_to_dbpos",
+        "open": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        },
+        "closed": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"contacts_to_dbpos\", \"open\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Loc.stVal\", \"report_ref\": null}, \"closed\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.SPCSO1.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "contacts same",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "contacts_to_dbpos",
+        "open": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        },
+        "closed": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": "BayControllerCTRL/LLN0.RP.EventsRCB"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Open and closed contacts must be different signals",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "contacts open dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "contacts_to_dbpos",
+        "open": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        },
+        "closed": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a BOOLEAN signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "contacts closed dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "contacts_to_dbpos",
+        "open": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        },
+        "closed": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a BOOLEAN signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "contacts on VT",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "contacts_to_dbpos",
+        "open": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        },
+        "closed": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Constructed double-point state is only valid for CB, DS or ES equipment",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "CF signal",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.ctlModel",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a runtime-editable status signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "quality signal",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.q",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Pos.q\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "health signal",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/LLN0.Health.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/LLN0.Health.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "trip relay ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "TRIP_RELAY",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"TRIP_RELAY\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/XCBR1.Loc.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "trip relay single",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "TRIP_RELAY",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Trip relay state requires one Boolean signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "trip relay dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "TRIP_RELAY",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "State mapping requires a BOOLEAN signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "trip relay control",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "TRIP_RELAY",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"TRIP_RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.SPCSO1\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "trip relay dpc",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "TRIP_RELAY",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "TRIP_RELAY equipment requires a SPC control",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "push spc_momentary state",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "spc_momentary",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only a latching or self-resetting push button accepts one Boolean state signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "push spc_momentary control",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "spc_momentary",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"PUSH_BUTTON\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.SPCSO1\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "push latching_status state",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "latching_status",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"PUSH_BUTTON\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.SPCSO1.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"latching_status\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "push latching_status control",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "latching_status",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only a momentary command push button accepts a command binding",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "push self_resetting state",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "self_resetting",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"PUSH_BUTTON\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.SPCSO1.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"self_resetting\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "push self_resetting control",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "self_resetting",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/GGIO1.SPCSO1"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only a momentary command push button accepts a command binding",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "push contacts",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "PUSH_BUTTON",
+       "push_mode": "latching_status",
+       "state_mapping": {
+        "mode": "contacts_to_dbpos",
+        "open": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        },
+        "closed": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.SPCSO1.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Only a latching or self-resetting push button accepts one Boolean state signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "source ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.AnIn1.mag.f",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"SOURCE\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.AnIn1.mag.f\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "source st",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/LLN0.Health.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "source single",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.AnIn1.mag.f",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "source control",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "This equipment type does not accept a control binding",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "CT single",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CT",
+       "state_mapping": {
+        "mode": "single_to_dbpos",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Constructed double-point state is only valid for CB, DS or ES equipment",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "CT direct ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/GGIO1.AnIn1.mag.f",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"11111111111111111111111111111111\", \"ref\": \"BayControllerCTRL/GGIO1.AnIn1.mag.f\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "unknown control ied",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "99999999999999999999999999999999",
+        "ref": "BayControllerCTRL/XCBR1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Equipment references an unknown control",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "unknown control ref",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "11111111111111111111111111111111",
+        "ref": "zz"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Equipment references an unknown control",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "Bay2 ok",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "22222222222222222222222222222222",
+         "ref": "Bay2CTRL/XSWI1.Pos.stVal",
+         "report_ref": null
+        }
+       },
+       "control_binding": {
+        "ied_id": "22222222222222222222222222222222",
+        "ref": "Bay2CTRL/XSWI1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"DS\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"22222222222222222222222222222222\", \"ref\": \"Bay2CTRL/XSWI1.Pos.stVal\", \"report_ref\": null}}, \"control_binding\": {\"ied_id\": \"22222222222222222222222222222222\", \"ref\": \"Bay2CTRL/XSWI1.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "cross ied",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "DS",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "22222222222222222222222222222222",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "A signal binding references an unknown signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "no ieds",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "11111111111111111111111111111111",
+         "ref": "BayControllerCTRL/XCBR1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A signal binding references an unknown IED",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT BOOLEAN",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/LLN0.Loc.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE BOOLEAN",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Loc.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT Dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/CSWI1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/CSWI1.Pos.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE Dbpos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/CSWI1.Pos.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT Enum",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Beh.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/LLN0.Beh.stVal\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE Enum",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Beh.stVal",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT FLOAT32",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/PTOC1.StrVal.setMag.f",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/PTOC1.StrVal.setMag.f\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE FLOAT32",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/PTOC1.StrVal.setMag.f",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT INT32",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/TCTR1.AmpSv.instMag.i",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/TCTR1.AmpSv.instMag.i\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE INT32",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/TCTR1.AmpSv.instMag.i",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"SOURCE\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/TCTR1.AmpSv.instMag.i\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 VT Quality",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Beh.q",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/LLN0.Beh.q\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE Quality",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Beh.q",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT Timestamp",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Beh.t",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/LLN0.Beh.t\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE Timestamp",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LLN0.Beh.t",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 VT VisString255",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "VT",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LPHD1.PhyNam.vendor",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": {\"mode\": \"direct\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/LPHD1.PhyNam.vendor\", \"report_ref\": null}}, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 SOURCE VisString255",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "SOURCE",
+       "state_mapping": {
+        "mode": "direct",
+        "source": {
+         "ied_id": "33333333333333333333333333333333",
+         "ref": "FEED1LD1/LPHD1.PhyNam.vendor",
+         "report_ref": null
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "err": {
+   "class": "StudioError",
+   "message": "Analog source requires one numeric MX signal",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "FEED1 control FEED1LD1/CSWI1.Pos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "33333333333333333333333333333333",
+        "ref": "FEED1LD1/CSWI1.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/CSWI1.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 control FEED1LD1/CSWI2.Pos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "33333333333333333333333333333333",
+        "ref": "FEED1LD1/CSWI2.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/CSWI2.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 control FEED1LD1/CSWI3.Pos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "33333333333333333333333333333333",
+        "ref": "FEED1LD1/CSWI3.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/CSWI3.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 control FEED1LD1/CSWI4.Pos",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "CB",
+       "control_binding": {
+        "ied_id": "33333333333333333333333333333333",
+        "ref": "FEED1LD1/CSWI4.Pos"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/CSWI4.Pos\"}, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 report FEED1LD1/LLN0.BR.ReportControl_00101",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "33333333333333333333333333333333",
+          "ref": "FEED1LD1/XCBR1.Pos.stVal",
+          "report_ref": "FEED1LD1/LLN0.BR.ReportControl_00101"
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [{\"id\": \"s\", \"label\": \"x\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/XCBR1.Pos.stVal\", \"report_ref\": \"FEED1LD1/LLN0.BR.ReportControl_00101\"}}], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "FEED1 report FEED1LD1/LLN0.BR.ReportControl_00201",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "a",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "a",
+       "kind": "RELAY",
+       "relay_statuses": [
+        {
+         "id": "s",
+         "label": "x",
+         "source": {
+          "ied_id": "33333333333333333333333333333333",
+          "ref": "FEED1LD1/XCBR1.Pos.stVal",
+          "report_ref": "FEED1LD1/LLN0.BR.ReportControl_00201"
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"a\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"a\", \"kind\": \"RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [{\"id\": \"s\", \"label\": \"x\", \"source\": {\"ied_id\": \"33333333333333333333333333333333\", \"ref\": \"FEED1LD1/XCBR1.Pos.stVal\", \"report_ref\": \"FEED1LD1/LLN0.BR.ReportControl_00201\"}}], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}], \"edges\": []}"
+ },
+ {
+  "name": "all kinds plain",
+  "fn": "validate_diagram",
+  "args": {
+   "diagram": {
+    "nodes": [
+     {
+      "id": "n0",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n0",
+       "kind": "CB"
+      }
+     },
+     {
+      "id": "n1",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n1",
+       "kind": "DS"
+      }
+     },
+     {
+      "id": "n2",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n2",
+       "kind": "ES"
+      }
+     },
+     {
+      "id": "n3",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n3",
+       "kind": "CT"
+      }
+     },
+     {
+      "id": "n4",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n4",
+       "kind": "VT"
+      }
+     },
+     {
+      "id": "n5",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n5",
+       "kind": "SOURCE"
+      }
+     },
+     {
+      "id": "n6",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n6",
+       "kind": "RELAY"
+      }
+     },
+     {
+      "id": "n7",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n7",
+       "kind": "TRIP_RELAY"
+      }
+     },
+     {
+      "id": "n8",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n8",
+       "kind": "PUSH_BUTTON"
+      }
+     },
+     {
+      "id": "n9",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n9",
+       "kind": "JUNCTION"
+      }
+     },
+     {
+      "id": "n10",
+      "position": {
+       "x": 0,
+       "y": 0
+      },
+      "data": {
+       "label": "n10",
+       "kind": "INFEED"
+      }
+     }
+    ]
+   }
+  },
+  "ieds": [
+   "BayController",
+   "Bay2",
+   "FEED1"
+  ],
+  "out": "{\"nodes\": [{\"id\": \"n0\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n0\", \"kind\": \"CB\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n1\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n1\", \"kind\": \"DS\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n2\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n2\", \"kind\": \"ES\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n3\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n3\", \"kind\": \"CT\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n4\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n4\", \"kind\": \"VT\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n5\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n5\", \"kind\": \"SOURCE\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n6\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n6\", \"kind\": \"RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n7\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n7\", \"kind\": \"TRIP_RELAY\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n8\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n8\", \"kind\": \"PUSH_BUTTON\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n9\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n9\", \"kind\": \"JUNCTION\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null}}, {\"id\": \"n10\", \"type\": \"equipment\", \"position\": {\"x\": 0.0, \"y\": 0.0}, \"data\": {\"label\": \"n10\", \"kind\": \"INFEED\", \"rotation\": 0, \"state_mapping\": null, \"control_binding\": null, \"relay_statuses\": [], \"trip_command_polarity\": \"operate_false\", \"trip_state_polarity\": \"operated_true\", \"push_mode\": \"spc_momentary\", \"push_value\": true, \"push_rest_value\": false, \"push_reset_ms\": 1000, \"initial_position\": \"open\", \"active_color\": null, \"inactive_color\": null, \"infeed_type\": \"line\", \"infeed_state\": \"live\"}}], \"edges\": []}"
+ }
+]
