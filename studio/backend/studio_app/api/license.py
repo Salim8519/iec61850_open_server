@@ -6,7 +6,7 @@ from studio_app.licensing.service import LicenseActionError
 from studio_app.version import __version__
 
 blueprint = Blueprint("license", __name__)
-CONFLICTS = {"bound_elsewhere", "transfer_limit", "trial_used"}
+CONFLICTS = {"bound_elsewhere", "transfer_limit", "trial_used", "email_required", "email_used"}
 
 
 def _service():
@@ -17,7 +17,7 @@ def _run(action):
     try:
         return jsonify(action())
     except LicenseServerError as error:
-        status = 503 if error.code in {"offline", "no_server", "server_error"} else \
+        status = 503 if error.code in {"offline", "no_server", "server_error", "bad_time"} else \
             409 if error.code in CONFLICTS else 400
         return jsonify(error=str(error), code=error.code), status
     except (LicenseActionError, CertificateError) as error:
@@ -36,7 +36,13 @@ def status():
 
 @blueprint.post("/license/trial")
 def trial():
-    return _run(lambda: _service().start_trial())
+    body = _body()
+    return _run(lambda: _service().start_trial(body.get("email") or None, body.get("code") or None))
+
+
+@blueprint.post("/license/trial/email-code")
+def trial_email_code():
+    return _run(lambda: _service().request_trial_code(_body().get("email", "")))
 
 
 @blueprint.post("/license/activate")
@@ -48,6 +54,11 @@ def activate():
 @blueprint.post("/license/activate-offline")
 def activate_offline():
     return _run(lambda: _service().activate_offline(_body().get("certificate", "")))
+
+
+@blueprint.post("/license/check-online")
+def check_online():
+    return _run(lambda: _service().check_online_now())
 
 
 @blueprint.put("/license/config")

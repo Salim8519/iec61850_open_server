@@ -51,8 +51,8 @@ def test_seven_day_trial_counts_down_then_expires(tmp_path):
 
 def test_clock_rollback_is_detected_from_anchor_and_issue_time(tmp_path):
     install(tmp_path, bundle(type="trial", expires_at=NOW + 7 * DAY))
-    assert service(tmp_path, now=NOW + 3 * DAY).is_licensed()
-    rolled_back = service(tmp_path, now=NOW + DAY).status()
+    assert service(tmp_path, now=NOW + 4 * DAY).is_licensed()
+    rolled_back = service(tmp_path, now=NOW + DAY).status()  # trials allow 48 h of drift (0106)
     assert not rolled_back["licensed"] and "rollback" in rolled_back["reason"]
     assert policy.evaluate_certificate({"version": 1, "type": "trial", "hwid": HWID, "issued_at": NOW,
                                         "expires_at": NOW + DAY}, HWID, NOW - 3600, 0, False).reason \
@@ -121,7 +121,7 @@ class FakeClient:
     def __init__(self, url):
         self.url = url
 
-    def start_trial(self, machine):
+    def start_trial(self, machine, parts=None, email=None, code=None):
         return json.loads(bundle(type="trial", expires_at=NOW + 7 * DAY, hwid=machine))
 
     def activate(self, key, machine):

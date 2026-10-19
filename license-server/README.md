@@ -36,6 +36,10 @@ for: Checkout order approved, Payment capture completed, refunded, reversed.
 | Free a key for a new PC | `sudo license-server-admin reset-hwid --key SUBS-...` |
 | Cancel a key | `sudo license-server-admin revoke --key SUBS-... --reason refund` |
 | Re-send a license file | `sudo license-server-admin certificate --key SUBS-...` |
+| Let a customer's PC start a trial again | `sudo license-server-admin reset-trial --hwid <Machine ID>` (also forgets the hardware that blocked it) |
+| Stop asking one network for an email | `sudo license-server-admin reset-trial-ip --ip 203.0.113.7` |
+| Let an email address confirm one more trial | `sudo license-server-admin allow-email --trial-email name@company.com` |
+| Trial rules | more than `trial_ip_email_after` (3) new trials from one IP in `trial_ip_window_days` (30) ask for an email; Mailgun sends the code (if mail is down, no code is needed) |
 | Back up everything | `sudo license-server-admin backup --out /root/license-backup.tar.gz` |
 | Change settings | `sudo bash deploy/setup.sh --configure` |
 | Update after new code | `sudo bash deploy/setup.sh` (or `push.ps1` again) |
@@ -55,9 +59,10 @@ existing ScadaBench installs accept. If it ever leaks: `keygen --force`, then ru
 
 ## Endpoints
 
-`GET /api/v1/health`, `GET /api/v1/challenge`, `POST /api/v1/trial|activate|transfer|verify`,
+`GET /api/v1/health`, `GET /api/v1/challenge`, `POST /api/v1/trial|trial/email-code|activate|transfer|verify`,
 `POST /api/v1/checkout/create-order|capture-order`, `POST /api/v1/webhooks/paypal`,
-`POST /api/v1/admin/{issue,revoke,reset-hwid,list,certificate,backup}` (local + token only),
+`POST /api/v1/admin/{issue,revoke,reset-hwid,reset-trial,reset-trial-parts,reset-trial-ip,allow-email,list,certificate,backup}`
+(local + token only),
 `GET /buy`, `GET /activate`.
 
 ## Development

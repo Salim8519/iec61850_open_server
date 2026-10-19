@@ -50,3 +50,11 @@ def bundle(seed=TEST_SEED, **fields):
     text = json.dumps(payload, separators=(",", ":"), sort_keys=True)
     signature = base64.urlsafe_b64encode(sign(text.encode("utf-8"), seed)).decode().rstrip("=")
     return json.dumps({"payload": text, "signature": signature})
+
+
+def stamp(moment, seed=TEST_SEED):
+    """A license-server time stamp, signed like certs.SignTime (returns the bundle dict)."""
+    payload = {"kid": key_id(public_key(seed)), "purpose": "server-time", "time": moment, "version": 1}
+    text = json.dumps(payload, separators=(",", ":"), sort_keys=True)
+    signature = base64.urlsafe_b64encode(sign(text.encode("utf-8"), seed)).decode().rstrip("=")
+    return {"payload": text, "signature": signature}

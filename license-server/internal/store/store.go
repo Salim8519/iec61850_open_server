@@ -35,6 +35,10 @@ type Trial struct {
 	IssuedAt  int64  `json:"issued_at"`
 	ExpiresAt int64  `json:"expires_at"`
 	IP        string `json:"ip"`
+	// Parts are salted hashes of the machine parts (empty for old clients).
+	Parts TrialParts `json:"parts,omitempty"`
+	// Email is true when the trial needed (and passed) an email confirmation.
+	Email bool `json:"email,omitempty"`
 }
 
 // License is one sold or admin-issued key.
@@ -77,7 +81,8 @@ func Open(path string) (*Store, error) {
 		return nil, err
 	}
 	err = db.Update(func(tx *bolt.Tx) error {
-		for _, name := range [][]byte{bucketTrials, bucketLicenses, bucketOrders} {
+		for _, name := range [][]byte{bucketTrials, bucketLicenses, bucketOrders, bucketTrialParts, bucketTrialIPs,
+			bucketTrialRefusals, bucketTrialEmails, bucketTrialEmailCode} {
 			if _, err := tx.CreateBucketIfNotExists(name); err != nil {
 				return err
 			}
@@ -113,28 +118,6 @@ func put(tx *bolt.Tx, bucket []byte, key string, value any) error {
 		return err
 	}
 	return tx.Bucket(bucket).Put([]byte(key), raw)
-}
-
-// StartTrial grants the one trial per machine. A machine that still has an
-// unexpired trial gets the same trial back (reinstall), never a new one.
-func (s *Store) StartTrial(hwid, ip string, now time.Time, days int) (Trial, error) {
-	var trial Trial
-	err := s.db.Update(func(tx *bolt.Tx) error {
-		found, err := get(tx, bucketTrials, hwid, &trial)
-		if err != nil {
-			return err
-		}
-		if found {
-			if now.Unix() < trial.ExpiresAt {
-				return nil
-			}
-			return ErrTrialUsed
-		}
-		trial = Trial{HWID: hwid, IssuedAt: now.Unix(),
-			ExpiresAt: now.Add(time.Duration(days) * 24 * time.Hour).Unix(), IP: ip}
-		return put(tx, bucketTrials, hwid, trial)
-	})
-	return trial, err
 }
 
 // TrialCount returns how many machines started a trial.

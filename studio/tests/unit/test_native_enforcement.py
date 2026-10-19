@@ -61,6 +61,17 @@ def test_worker_accepts_pre_v2_license_only_before_cutoff(certificate):
     assert "another computer" in error or "rollback" in error
 
 
+def test_worker_applies_the_trial_online_rule(certificate):
+    """ADR-0046 addendum 2026-10-19: no signed time yet = grace; grace over = online check."""
+    import time
+    now, day = int(time.time()), 86400
+    certificate.write_text(bundle(type="trial", hwid=hwid.machine_id(), issued_at=now - day,
+                                  expires_at=now + 6 * day, license_id="TRIAL-test"), encoding="utf-8")
+    assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()
+    (certificate.parent / ".grace_start").write_text(str(now - 4 * day))
+    assert "online check" in start_error(ENFORCED / "studio_ied.exe")
+
+
 def test_live_client_and_probe_refuse_without_license(certificate):
     worker = WorkerProcess(ENFORCED / "studio_live.exe")
     try:

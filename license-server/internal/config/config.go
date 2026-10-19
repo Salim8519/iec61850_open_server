@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Config holds every operator setting. Secrets never leave this file except
@@ -21,6 +22,8 @@ type Config struct {
 	DataDir         string `json:"data_dir"`
 
 	TrialDays           int    `json:"trial_days"`
+	TrialIPEmailAfter   int    `json:"trial_ip_email_after"`
+	TrialIPWindowDays   int    `json:"trial_ip_window_days"`
 	LicensePrice        string `json:"license_price"`
 	LicenseCurrency     string `json:"license_currency"`
 	ProductName         string `json:"product_name"`
@@ -55,7 +58,7 @@ type Config struct {
 func Defaults(dataDir string) Config {
 	return Config{
 		ListenAddr: "127.0.0.1:8090", PublicURL: "http://127.0.0.1:8090", TrustCloudflare: true,
-		DataDir: dataDir, TrialDays: 7, LicensePrice: "149.00", LicenseCurrency: "USD",
+		DataDir: dataDir, TrialDays: 7, TrialIPEmailAfter: 3, TrialIPWindowDays: 30, LicensePrice: "149.00", LicenseCurrency: "USD",
 		ProductName: "ScadaBench Lifetime License", MaxTransfersPerYear: 2,
 		PayPalMode: "sandbox", MailgunRegion: "us", PowDifficulty: 18, RateGeneral: 10, RateSensitive: 5,
 		LogDir: filepath.Join(dataDir, "logs"), LogMaxMegabytes: 5, LogMaxFiles: 3, MaxDataMB: 45,
@@ -141,6 +144,16 @@ func (c Config) MailReady() bool {
 	return c.MailgunDomain != "" && c.MailgunAPIKey != "" && c.MailgunFrom != ""
 }
 
+// TrialIPWindow is the period in which new trials from one IP are counted; more than
+// TrialIPEmailAfter of them ask the next trial for an email (never a refusal).
+func (c Config) TrialIPWindow() time.Duration {
+	days := c.TrialIPWindowDays
+	if days <= 0 {
+		days = 30
+	}
+	return time.Duration(days) * 24 * time.Hour
+}
+
 // RandomHex returns n random bytes as lowercase hex.
 func RandomHex(n int) string {
 	buf := make([]byte, n)
@@ -166,7 +179,8 @@ func applyEnv(c *Config) {
 		}
 	}
 	numbers := map[string]*int{"LICENSE_TRIAL_DAYS": &c.TrialDays, "LICENSE_POW_DIFFICULTY": &c.PowDifficulty,
-		"LICENSE_RATE_GENERAL": &c.RateGeneral, "LICENSE_RATE_SENSITIVE": &c.RateSensitive}
+		"LICENSE_RATE_GENERAL": &c.RateGeneral, "LICENSE_RATE_SENSITIVE": &c.RateSensitive,
+		"LICENSE_TRIAL_IP_EMAIL_AFTER": &c.TrialIPEmailAfter, "LICENSE_TRIAL_IP_WINDOW_DAYS": &c.TrialIPWindowDays}
 	for name, target := range numbers {
 		if value, err := strconv.Atoi(os.Getenv(name)); err == nil {
 			*target = value

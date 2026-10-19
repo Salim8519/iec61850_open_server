@@ -71,17 +71,6 @@ func (s *Store) ResetHWID(key string) (License, error) {
 	})
 }
 
-// ResetTrial forgets a machine's trial so it can start one again (owner testing).
-func (s *Store) ResetTrial(hwid string) (bool, error) {
-	found := false
-	err := s.db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(bucketTrials)
-		found = bucket.Get([]byte(hwid)) != nil
-		return bucket.Delete([]byte(hwid))
-	})
-	return found, err
-}
-
 // DeleteLicense removes a key completely (owner testing; use revoke for customers).
 func (s *Store) DeleteLicense(key string) error {
 	return s.db.Update(func(tx *bolt.Tx) error {

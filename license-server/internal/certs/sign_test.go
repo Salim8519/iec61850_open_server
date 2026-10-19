@@ -85,8 +85,11 @@ func TestWriteCrossLanguageVector(t *testing.T) {
 		LicenseID: "SUBS-TEST-TEST-TEST-TEST", MaxMachines: 1, Type: "lifetime"})
 	trial, _ := signer.Sign(Payload{ExpiresAt: 1760000000 + 7*86400, HWID: hwid, IssuedAt: 1760000000,
 		LicenseID: "TRIAL-abababababab", MaxMachines: 1, Type: "trial"})
+	stamp, _ := signer.SignTime(1760000000)
+	parts := map[string]string{"guid": PartHash("guid", "1a2b3c4d-aaaa-bbbb-cccc-0123456789ef"),
+		"volume": PartHash("volume", "A1B2C3D4"), "firmware": PartHash("firmware", "00112233445566778899aabbccddeeff")}
 	raw, _ := json.MarshalIndent(map[string]any{"public_key": signer.PublicHex(), "kid": signer.KeyID,
-		"hwid": hwid, "lifetime": lifetime, "trial": trial}, "", "  ")
+		"hwid": hwid, "lifetime": lifetime, "trial": trial, "server_time": stamp, "part_hashes": parts}, "", "  ")
 	if err := os.WriteFile(target, append(raw, '\n'), 0o644); err != nil {
 		t.Fatal(err)
 	}

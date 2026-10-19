@@ -31,6 +31,11 @@ func adminCommand(command string, args []string) error {
 		set.StringVar(&request.HWID, "hwid", "", "bind to this Machine ID now (offline delivery)")
 		set.StringVar(&request.Key, "key", "", "license key")
 		set.StringVar(&request.Reason, "reason", "", "revocation reason")
+		set.StringVar(&request.IP, "ip", "", "network address (reset-trial-ip)")
+		set.StringVar(&request.TrialEmail, "trial-email", "", "address that may start one more trial (allow-email)")
+		set.StringVar(&request.Parts.GUID, "guid-hash", "", "MachineGuid part hash (reset-trial-parts)")
+		set.StringVar(&request.Parts.Volume, "volume-hash", "", "volume serial part hash (reset-trial-parts)")
+		set.StringVar(&request.Parts.Firmware, "firmware-hash", "", "firmware UUID part hash (reset-trial-parts)")
 	})
 	if err != nil {
 		return err

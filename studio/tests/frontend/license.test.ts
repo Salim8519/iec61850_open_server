@@ -49,3 +49,18 @@ test('a new computer can start the trial; only an expired trial disables it', ()
   assert.match(gate, /const trialEnded = status\.plan === 'trial' && !status\.transfer_available;/);
   assert.doesNotMatch(gate, /reason\?\.includes\('trial'\)/);
 });
+
+test('a trial that could not confirm the date online offers "Check online now"', () => {
+  const gate = readFileSync(new URL('../../frontend/src/features/license/LicenseGate.tsx', import.meta.url), 'utf8');
+  assert.match(gate, /status\.online_check_required && /);
+  assert.match(gate, /online\.run\(checkOnline, changed\)/);
+  assert.equal(LICENSE_COPY.checkOnlineButton, 'Check online now');
+});
+
+test('a trial the server wants confirmed asks for an email, and a mail outage never blocks', () => {
+  const start = readFileSync(new URL('../../frontend/src/features/license/TrialStart.tsx', import.meta.url), 'utf8');
+  assert.match(start, /'email_required'/);
+  assert.match(start, /answer\.status === 'no_code_needed'\) await trial\.run\(\(\) => startTrial\(email\), changed\)/);
+  assert.match(start, /startTrial\(email, code\)/);
+  assert.match(LICENSE_COPY.emailHint, /one free trial per person/);
+});

@@ -11,6 +11,7 @@
 .license-choice h2 { margin: 0; }
 .license-choice .button, .license-choice button { justify-self: start; }
 .license-hint { margin: -4px 0 0; }
+.license-online { display: grid; gap: 10px; justify-items: start; }
 .license-key { display: grid; gap: 10px; }
 .license-message { padding: 12px 14px; border-radius: var(--radius-small); border: var(--line) solid var(--border);
   font-size: 14px; display: grid; gap: 6px; }

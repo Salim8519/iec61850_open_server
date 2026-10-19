@@ -1,20 +1,17 @@
 #include "license_guard.hpp"
 #include "integrity.hpp"
+#include "license_clock.hpp"
 #include "obfuscate.hpp"
 #include "release_key.hpp"
+#include "signed_bundle.hpp"
 #include <nlohmann/json.hpp>
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
 #include <mutex>
-#include <sstream>
 #include <stdexcept>
-extern "C" {
-#include "monocypher-ed25519.h"
-}
 #ifdef _WIN32
 #include <windows.h>
 #include <bcrypt.h>
@@ -22,39 +19,6 @@ extern "C" {
 
 namespace license {
 namespace {
-
-constexpr long long kClockTolerance = 300;
-
-int base64_value(char c) {
-    if (c >= 'A' && c <= 'Z') return c - 'A';
-    if (c >= 'a' && c <= 'z') return c - 'a' + 26;
-    if (c >= '0' && c <= '9') return c - '0' + 52;
-    if (c == '-' || c == '+') return 62;
-    if (c == '_' || c == '/') return 63;
-    return -1;
-}
-
-// Decode base64url or standard base64, with or without padding.
-bool decode_base64(const std::string& text, std::vector<std::uint8_t>& out) {
-    unsigned buffer = 0;
-    int bits = 0;
-    for (char c : text) {
-        if (c == '=') break;
-        int value = base64_value(c);
-        if (value < 0) return false;
-        buffer = (buffer << 6) | static_cast<unsigned>(value);
-        bits += 6;
-        if (bits >= 8) {
-            bits -= 8;
-            out.push_back(static_cast<std::uint8_t>((buffer >> bits) & 0xFF));
-        }
-    }
-    return true;
-}
-
-std::string key_id(const PublicKey& key) {
-    return sha256_hex(std::string(reinterpret_cast<const char*>(key.data()), key.size())).substr(0, 8);
-}
 
 Verdict fail(const std::string& reason) { return {false, reason}; }
 
@@ -178,33 +142,20 @@ std::string compute_legacy_hwid() {
 
 Verdict verify_certificate_text(const std::string& text, const std::vector<PublicKey>& keys,
                                 const std::string& hwid, long long now, long long anchor,
-                                long long hwid_issued_before) {
+                                long long hwid_issued_before, long long tolerance) {
     if (keys.empty()) return fail("This build has no license key configured");
     nlohmann::json bundle, payload;
     try {
         bundle = nlohmann::json::parse(text);
-        if (bundle.contains("certificate")) bundle = bundle.at("certificate");
-        payload = nlohmann::json::parse(bundle.at("payload").get<std::string>());
     } catch (const std::exception&) {
         return fail("The license file is damaged");
     }
-    const std::string message = bundle.at("payload").get<std::string>();
-    std::vector<std::uint8_t> signature;
-    if (!bundle.contains("signature") || !bundle.at("signature").is_string() ||
-        !decode_base64(bundle.at("signature").get<std::string>(), signature) || signature.size() != 64) {
-        return fail("The license signature is unreadable");
+    switch (check_signed_bundle(bundle, keys, payload)) {
+        case BundleCheck::ok: break;
+        case BundleCheck::damaged: return fail("The license file is damaged");
+        case BundleCheck::unreadable_signature: return fail("The license signature is unreadable");
+        case BundleCheck::bad_signature: return fail("The license file is damaged or was changed");
     }
-    const std::string kid = payload.value("kid", "");
-    bool signed_ok = false;
-    for (const auto& key : keys) {
-        if (!kid.empty() && key_id(key) != kid) continue;
-        if (crypto_ed25519_check(signature.data(), key.data(),
-                                 reinterpret_cast<const std::uint8_t*>(message.data()), message.size()) == 0) {
-            signed_ok = true;
-            break;
-        }
-    }
-    if (!signed_ok) return fail("The license file is damaged or was changed");
     try {
         if (payload.at("version").get<int>() != 1) return fail("Unsupported license version");
         const auto type = payload.at("type").get<std::string>();
@@ -215,7 +166,7 @@ Verdict verify_certificate_text(const std::string& text, const std::vector<Publi
             return fail("The license belongs to another computer");
         }
         const long long expires = payload.value("expires_at", 0LL);
-        if (now + kClockTolerance < std::max(issued, anchor)) return fail("System clock rollback detected");
+        if (now + tolerance < std::max(issued, anchor)) return fail("System clock rollback detected");
         if (expires > 0 && now >= expires) return fail("The license has expired");
     } catch (const std::exception&) {
         return fail("The license file is damaged");
@@ -246,13 +197,6 @@ bool enforced() {
 #ifdef STUDIO_ENFORCE_LICENSE
 namespace {
 
-std::string read_file(const std::string& path) {
-    std::ifstream stream(path, std::ios::binary);
-    std::ostringstream content;
-    content << stream.rdbuf();
-    return content.str();
-}
-
 std::string certificate_path() {
     if (const char* explicit_path = std::getenv("STUDIO_LICENSE_CERT_PATH")) return explicit_path;
     const char* base = std::getenv("LOCALAPPDATA");
@@ -274,17 +218,16 @@ void require_valid_license() {
         integrity::verify_module(module, signature ? signature : "", integrity::module_keys());
     }
     const auto path = certificate_path();
-    const auto text = read_file(path);
+    const auto text = read_text_file(path);
     if (text.empty()) throw std::runtime_error("No license on this computer. Activate Studio first.");
     const auto directory = path.substr(0, path.find_last_of("\\/") + 1);
-    const auto anchor_text = read_file(directory + ".time_anchor");
-    const long long anchor = anchor_text.empty() ? 0 : std::atoll(anchor_text.c_str());
     const auto now = static_cast<long long>(std::time(nullptr));
-    auto verdict = verify_certificate_text(text, release_keys(), compute_hwid(), now, anchor);
+    // Anchor, signed server time and grace start from all three places (ADR-0046 addendum).
+    const auto clock = read_clock_state(directory, release_keys(), true);
+    auto verdict = verify_license(text, release_keys(), compute_hwid(), now, clock);
     if (!verdict.ok && verdict.reason.find("another computer") != std::string::npos) {
         // Licenses activated by pre-v2 builds stay valid on the same PC (ADR-0051).
-        auto legacy = verify_certificate_text(text, release_keys(), compute_legacy_hwid(), now, anchor,
-                                              kLegacyIssuedBefore);
+        auto legacy = verify_license(text, release_keys(), compute_legacy_hwid(), now, clock, kLegacyIssuedBefore);
         if (legacy.ok) verdict = legacy;
     }
     if (!verdict.ok) throw std::runtime_error("License check failed: " + verdict.reason);

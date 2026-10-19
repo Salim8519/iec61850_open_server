@@ -13,8 +13,11 @@ import (
 
 type machineRequest struct {
 	security.Solution
-	HWID       string `json:"hwid"`
-	LicenseKey string `json:"license_key"`
+	HWID       string           `json:"hwid"`
+	LicenseKey string           `json:"license_key"`
+	Parts      store.TrialParts `json:"parts"`
+	Email      string           `json:"email"`
+	EmailCode  string           `json:"email_code"`
 }
 
 func (s *Server) readMachine(r *http.Request, needKey, needPow bool) (machineRequest, error) {
@@ -56,23 +59,6 @@ func (s *Server) trialCertificate(trial store.Trial) (certs.Bundle, error) {
 		IssuedAt: trial.IssuedAt, LicenseID: "TRIAL-" + trial.HWID[:12], MaxMachines: 1, Type: "trial"})
 }
 
-func (s *Server) trial(r *http.Request, ip string) (any, error) {
-	request, err := s.readMachine(r, false, true)
-	if err != nil {
-		return nil, err
-	}
-	if s.dataFull() {
-		return nil, errTrialsPaused
-	}
-	trial, err := s.Store.StartTrial(request.HWID, ip, s.Now(), s.Config.TrialDays)
-	if err != nil {
-		return nil, err
-	}
-	bundle, err := s.trialCertificate(trial)
-	s.Log.Event("trial", map[string]any{"ip": ip, "hwid": request.HWID[:12]})
-	return map[string]any{"certificate": bundle}, err
-}
-
 func (s *Server) activate(r *http.Request, ip string) (any, error) {
 	request, err := s.readMachine(r, true, true)
 	if err != nil {
@@ -88,7 +74,7 @@ func (s *Server) activate(r *http.Request, ip string) (any, error) {
 	}
 	bundle, err := s.CertificateFor(license, request.HWID)
 	s.Log.Event("activate", map[string]any{"ip": ip, "key": logging.MaskKey(license.Key), "hwid": request.HWID[:12]})
-	return map[string]any{"certificate": bundle}, err
+	return s.withTime(map[string]any{"certificate": bundle}), err
 }
 
 func (s *Server) transfer(r *http.Request, ip string) (any, error) {
@@ -102,33 +88,34 @@ func (s *Server) transfer(r *http.Request, ip string) (any, error) {
 	}
 	bundle, err := s.CertificateFor(license, request.HWID)
 	s.Log.Event("transfer", map[string]any{"ip": ip, "key": logging.MaskKey(license.Key), "hwid": request.HWID[:12]})
-	return map[string]any{"certificate": bundle}, err
+	return s.withTime(map[string]any{"certificate": bundle}), err
 }
 
-// verify lets installed apps learn about refunds, revocations and moves.
+// verify lets installed apps learn about refunds, revocations and moves; every
+// answer carries the signed server time that trial apps confirm once a day.
 func (s *Server) verify(r *http.Request, ip string) (any, error) {
 	request, err := s.readMachine(r, false, false)
 	if err != nil {
 		return nil, err
 	}
 	if request.LicenseKey == "" || strings.HasPrefix(request.LicenseKey, "TRIAL-") {
-		return map[string]any{"status": "valid", "time": s.Now().Unix()}, nil
+		return s.withTime(map[string]any{"status": "valid"}), nil
 	}
 	license, err := s.Store.GetLicense(request.LicenseKey)
 	if errors.Is(err, store.ErrUnknownKey) {
-		return map[string]any{"status": "unknown", "time": s.Now().Unix()}, nil
+		return s.withTime(map[string]any{"status": "unknown"}), nil
 	}
 	if err != nil {
 		return nil, err
 	}
 	switch {
 	case license.Revoked:
-		return map[string]any{"status": "revoked", "time": s.Now().Unix()}, nil
+		return s.withTime(map[string]any{"status": "revoked"}), nil
 	case license.HWID != request.HWID:
-		return map[string]any{"status": "moved", "time": s.Now().Unix()}, nil
+		return s.withTime(map[string]any{"status": "moved"}), nil
 	}
 	bundle, err := s.CertificateFor(license, request.HWID)
-	return map[string]any{"status": "valid", "certificate": bundle, "time": s.Now().Unix()}, err
+	return s.withTime(map[string]any{"status": "valid", "certificate": bundle}), err
 }
 
 // IssueKey creates an admin key; with hwid it is pre-bound for offline delivery.

@@ -35,7 +35,12 @@ Everyday commands:
                             create a key; with --hwid also prints an offline license.cert
   revoke --key K [--reason R]
   reset-hwid --key K        let a key be activated on a new computer
-  reset-trial --hwid H      let this Machine ID start a free trial again (testing)
+  reset-trial --hwid H [--guid-hash G --volume-hash V --firmware-hash F]
+                            let this Machine ID (and hardware) start a free trial again
+  reset-trial-parts --guid-hash G --volume-hash V --firmware-hash F
+                            forget hardware parts so they no longer block a new trial
+  reset-trial-ip --ip A     clear the recent new-trial count of one network address
+  allow-email --trial-email E   let this email address confirm one more free trial
   delete --key K            remove a key completely (testing; use revoke for customers)
   certificate --key K       print license.cert for an activated key (email it to the customer)
   list                      list keys and the number of trial machines
@@ -68,7 +73,9 @@ func main() {
 		err = backup(args)
 	case "payments":
 		err = payments(args)
-	case "issue", "revoke", "reset-hwid", "reset-trial", "delete", "list", "certificate":
+	case "issue", "revoke", "reset-hwid", "reset-trial", "reset-trial-parts", "reset-trial-ip", "allow-email", "delete",
+		"list",
+		"certificate":
 		err = adminCommand(command, args)
 	default:
 		err = fmt.Errorf("unknown command %q; run `license-server help`", command)

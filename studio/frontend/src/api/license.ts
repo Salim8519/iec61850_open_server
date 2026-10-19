@@ -14,6 +14,8 @@ export type LicenseStatus = {
   masked_key: string | null;
   hwid: string | null;
   transfer_available: boolean;
+  /** A trial that could not confirm the date online for longer than its offline grace. */
+  online_check_required?: boolean;
   app_version: string;
 };
 
@@ -24,7 +26,7 @@ export class LicenseError extends Error {
 
 export const LICENSE_REQUIRED_EVENT = 'studio-license-required';
 
-async function call(path: string, method = 'GET', body?: unknown): Promise<LicenseStatus> {
+async function call<T = LicenseStatus>(path: string, method = 'GET', body?: unknown): Promise<T> {
   const response = await fetch(`/api/v1/license${path}`, {
     method, credentials: 'same-origin',
     headers: { 'X-Studio-Frontend': window.location.origin, ...(body ? { 'Content-Type': 'application/json' } : {}) },
@@ -32,11 +34,16 @@ async function call(path: string, method = 'GET', body?: unknown): Promise<Licen
   });
   const data = await response.json().catch(() => ({ error: `Request failed (${response.status})` }));
   if (!response.ok) throw new LicenseError(data.error || `Request failed (${response.status})`, data.code || 'error');
-  return data as LicenseStatus;
+  return data as T;
 }
 
 export const getLicenseStatus = () => call('/status');
-export const startTrial = () => call('/trial', 'POST', {});
+/** email/code only when the server asked for a confirmed email (a shared office, a reused PC). */
+export const startTrial = (email?: string, code?: string) => call('/trial', 'POST', { email, code });
+/** "sent": a 6-digit code is on its way; "no_code_needed": mail is unavailable, just continue. */
+export const requestTrialCode = (email: string) =>
+  call<{ status: 'sent' | 'no_code_needed' }>('/trial/email-code', 'POST', { email });
+export const checkOnline = () => call('/check-online', 'POST', {});
 export const activateLicense = (licenseKey: string, move = false) =>
   call('/activate', 'POST', { license_key: licenseKey, move });
 export const activateOffline = (certificate: string) => call('/activate-offline', 'POST', { certificate });

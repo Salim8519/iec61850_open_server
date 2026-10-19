@@ -33,10 +33,11 @@ std::string compose_legacy_hwid(const std::string& machine_guid, std::uint32_t v
 std::string compute_legacy_hwid();
 
 // Verify a license.cert JSON text. now/anchor are Unix seconds. hwid_issued_before > 0
-// accepts the hwid only for certificates issued earlier (the legacy v1 path).
+// accepts the hwid only for certificates issued earlier (the legacy v1 path). tolerance
+// is how far the clock may sit behind the anchor (trials pass a generous one).
 Verdict verify_certificate_text(const std::string& text, const std::vector<PublicKey>& keys,
                                 const std::string& hwid, long long now, long long anchor,
-                                long long hwid_issued_before = 0);
+                                long long hwid_issued_before = 0, long long tolerance = 300);
 
 std::vector<PublicKey> release_keys();
 

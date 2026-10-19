@@ -62,6 +62,54 @@ development keeps working exactly as before. Blueprint: `PROTECTION_AND_LICENSIN
 - Limits stay honest: these raise the cost of reverse engineering and patching; they do not
   make it impossible.
 
+**Addendum (2026-10-19, owner: stop trial cheaters, never block honest users — "smart, not
+soft"; change [0106](../changes/2026/0106-trial-hardening.md))**
+- **Problem.** Trials were keyed only on the combined machine ID, so changing one
+  identifier (or cloning a VM) gave a new trial. Deleting `.time_anchor` and setting the
+  clock back stretched a running trial.
+- **Rule.** Only clear proof refuses; a suspicion asks for one extra step; errors and
+  outages never count against a user. Paid licenses are unchanged.
+- **Hardware parts.** `/api/v1/trial` also takes salted part hashes
+  (`SHA256_HEX("scadabench-trial-part-v1|" + guid|volume|firmware + "|" + value)`, the HWID
+  normalisation). Placeholder firmware UUIDs (empty, one repeated byte such as all 0 / all F,
+  `03000200-0400-0500-0006-000700080009` and similar, both byte orders) and volume serials
+  0 / FFFFFFFF are never sent or compared. Every usable part (at least two) matching an
+  ended trial = refused. Two of three = suspicious. One alone = nothing. Hardware that matches a
+  *running* trial continues that trial under the new machine ID. Old clients without parts
+  keep the machine-ID rule.
+- **Network.** IP never refuses. More than `trial_ip_email_after` (3) new trials from one
+  IP within `trial_ip_window_days` (30) = suspicious.
+- **Suspicious = confirmed email.** `POST /api/v1/trial/email-code` mails a 6-digit code
+  (Mailgun, 15 min, 5 tries, HMAC-bound to machine ID and address). One trial per
+  normalised address (lowercase, no `+tag`, Gmail dots removed), stored only as a salted
+  hash. A short list of throwaway-mail domains is refused. Mailgun down or not set up →
+  no code needed (logged), the address is still one-per-trial.
+- **Signed server time.** Trial, activate, transfer and verify answers carry `server_time`
+  `{kid, purpose: "server-time", time, version: 1}`, signed with the certificate key; it
+  has no `type`/`hwid`, so a stamp and a license can never stand in for each other.
+- **Three copies.** The anchor, the newest genuine stamp and the missing-anchor mark live
+  in a dot-file, `HKCU\Software\ScadaBench` (REG_SZ) and `license_state.json`. Write
+  failures are ignored.
+- **Trial clock.** Rollback = the clock more than 48 h behind the latest anchor copy or the
+  signed time (lifetime keeps 300 s). Signed time past `expires_at` ends the trial. A quiet
+  online check runs daily; failures never stop a trial. Only when every anchor copy and the
+  stamp are gone is one online check asked for within 3 days ("Check online now"), never
+  an instant block.
+- **Unchanged.** Lifetime licenses (no daily check, 300 s rule, offline-friendly), the
+  weekly revocation check, development mode. Python and the native guard
+  (`license_clock.cpp`) apply identical rules; a parity test runs both on the same files.
+- **Logs and overrides.** Every refusal or extra step is logged with its reason and signals,
+  never a full machine ID, part hash, key or email. Owner: `license-server reset-trial`
+  (also a refused machine's hardware), `reset-trial-parts`, `reset-trial-ip`, `allow-email`;
+  `license_admin.py reset-trial [--machine-id]`, `reset-trial-ip`, `allow-email`; `list`
+  shows busy networks.
+- **Deploy order.** Deploy the server before a client release with this change (an older
+  server sends no stamp and has no email step; trials still work, rollback relies on the
+  anchors alone).
+- **Accepted limits.** An offline PC whose owner deletes every copy, the run log, and resets
+  the clock each time can still stretch a trial in 3-day steps; with the mail service down,
+  the email step accepts any unique address; binary patching stays out of scope.
+
 **Compatibility**
 - Development: no behaviour change; Settings gains a License tab that reads "Development mode".
 - Packaged builds now require a license and store data per user by default.

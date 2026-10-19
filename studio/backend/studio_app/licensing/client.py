@@ -4,8 +4,11 @@ import json
 import ssl
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+from studio_app.domain import trial_policy
 
 TIMEOUT_SECONDS = 20
+# Server refusals and extra steps shown in the app's own plain words.
+FRIENDLY_ERRORS = trial_policy.SERVER_ERRORS
 MAX_DIFFICULTY = 26
 _context = None
 
@@ -73,8 +76,9 @@ class LicenseClient:
                 detail = json.loads(error.read(1 << 16))
             except (ValueError, OSError):
                 detail = {}
-            raise LicenseServerError(detail.get("error") or f"License server error {error.code}",
-                                     detail.get("code", "server_error")) from None
+            code = detail.get("code", "server_error")
+            raise LicenseServerError(FRIENDLY_ERRORS.get(code) or detail.get("error")
+                                     or f"License server error {error.code}", code) from None
         except (URLError, OSError, ValueError) as error:
             raise LicenseServerError("Cannot reach the license server. Check the internet connection, "
                                      "or use offline activation.", "offline") from error
@@ -86,16 +90,26 @@ class LicenseClient:
                 "pow_difficulty": challenge["difficulty"], "pow_mac": challenge["mac"],
                 "pow_counter": counter}
 
-    def start_trial(self, hwid):
-        return self._call("POST", "/api/v1/trial", {"hwid": hwid, **self._proof()})["certificate"]
+    # Trial, activate and transfer return the whole answer: the certificate plus the
+    # signed server time ("server_time") that trials anchor their clock to.
+    def start_trial(self, hwid, parts=None, email=None, code=None):
+        body = {"hwid": hwid, **self._proof()}
+        if parts:
+            body["parts"] = {kind: value for kind, value in parts.items() if value}
+        if email:
+            body.update(email=email, email_code=str(code or "").strip())
+        return self._call("POST", "/api/v1/trial", body)
+
+    def request_trial_code(self, hwid, email):
+        return self._call("POST", "/api/v1/trial/email-code", {"hwid": hwid, "email": email, **self._proof()})
 
     def activate(self, license_key, hwid):
         body = {"license_key": license_key, "hwid": hwid, **self._proof()}
-        return self._call("POST", "/api/v1/activate", body)["certificate"]
+        return self._call("POST", "/api/v1/activate", body)
 
     def transfer(self, license_key, hwid):
         body = {"license_key": license_key, "hwid": hwid, **self._proof()}
-        return self._call("POST", "/api/v1/transfer", body)["certificate"]
+        return self._call("POST", "/api/v1/transfer", body)
 
     def verify(self, license_key, hwid):
         return self._call("POST", "/api/v1/verify", {"license_key": license_key, "hwid": hwid})

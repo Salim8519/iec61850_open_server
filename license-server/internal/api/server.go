@@ -76,6 +76,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/v1/challenge", s.limited(security.ClassGeneral, s.challenge))
 	mux.HandleFunc("GET /api/v1/product", s.product)
 	mux.HandleFunc("POST /api/v1/trial", s.limited(security.ClassSensitive, s.trial))
+	mux.HandleFunc("POST /api/v1/trial/email-code", s.limited(security.ClassSensitive, s.trialEmailCode))
 	mux.HandleFunc("POST /api/v1/activate", s.limited(security.ClassSensitive, s.activate))
 	mux.HandleFunc("POST /api/v1/transfer", s.limited(security.ClassSensitive, s.transfer))
 	mux.HandleFunc("POST /api/v1/verify", s.limited(security.ClassGeneral, s.verify))
@@ -141,6 +142,13 @@ func (s *Server) writeError(w http.ResponseWriter, r *http.Request, ip string, e
 		known = apiError{http.StatusConflict, "transfer_limit", err.Error()}
 	case errors.Is(err, store.ErrTrialUsed):
 		known = apiError{http.StatusConflict, "trial_used", err.Error()}
+	case errors.Is(err, store.ErrEmailRequired):
+		known = apiError{http.StatusConflict, "email_required", err.Error()}
+	case errors.Is(err, store.ErrEmailUsed):
+		known = apiError{http.StatusConflict, "email_used", err.Error()}
+	case errors.Is(err, store.ErrBadCode):
+		known = apiError{http.StatusBadRequest, "bad_code", err.Error()}
+		s.Limiter.Fail(ip, s.Now())
 	default:
 		s.Log.Event("internal_error", map[string]any{"path": r.URL.Path, "error": err.Error()})
 		known = apiError{http.StatusInternalServerError, "server_error", "The license server had a problem. Try again later."}

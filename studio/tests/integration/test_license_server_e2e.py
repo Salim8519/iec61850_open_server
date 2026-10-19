@@ -11,6 +11,7 @@ import pytest
 from studio_app.licensing.client import LicenseServerError
 from studio_app.licensing.release_key import key_id
 from studio_app.licensing.service import LicenseService
+from studio_app.licensing.trial_parts import part_hash
 
 ROOT = Path(__file__).resolve().parents[3]
 SERVER_SOURCE = ROOT / "license-server"
@@ -31,7 +32,8 @@ def server(tmp_path_factory):
     data = work / "data"
     port = free_port()
     env = {**os.environ, "LICENSE_DATA_DIR": str(data), "LICENSE_LISTEN_ADDR": f"127.0.0.1:{port}",
-           "LICENSE_POW_DIFFICULTY": "10", "LICENSE_RATE_SENSITIVE": "100"}
+           "LICENSE_POW_DIFFICULTY": "10", "LICENSE_RATE_SENSITIVE": "100",
+           "LICENSE_RATE_GENERAL": "1000", "LICENSE_TRIAL_IP_EMAIL_AFTER": "2"}
     created = subprocess.run([str(binary), "keygen"], env=env, capture_output=True, text=True, check=True)
     public_hex = created.stdout.strip().rsplit(" ", 1)[-1]
     process = subprocess.Popen([str(binary), "serve"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -53,9 +55,9 @@ def server(tmp_path_factory):
     process.wait(timeout=10)
 
 
-def machine(tmp_path, server, name, hwid):
+def machine(tmp_path, server, name, hwid, parts=None):
     studio = LicenseService(tmp_path / name, tmp_path / (name + "-data"), True, hwid_provider=lambda: hwid,
-                            keys=server["keys"])
+                            keys=server["keys"], parts_provider=lambda: parts or {})
     studio.set_server_url(server["url"])
     return studio
 
@@ -72,6 +74,30 @@ def test_trial_is_granted_once_per_machine(tmp_path, server):
     assert status["licensed"] and status["mode"] == "trial" and status["days_remaining"] == 7
     reinstall = machine(tmp_path, server, "pc1-reinstalled", "11" * 32)
     assert reinstall.start_trial()["expires_at"] == status["expires_at"]
+
+
+def test_trial_parts_and_signed_time_with_the_real_server(tmp_path, server):
+    parts = {"guid": part_hash("guid", "e2e-guid"), "volume": part_hash("volume", "0000E2E1"),
+             "firmware": part_hash("firmware", "e2e0" * 8)}
+    first = machine(tmp_path, server, "pcP1", "21" * 32, parts)
+    status = first.start_trial()
+    assert status["licensed"] and first.trial_clock.confirmed() is not None  # Go-signed time verifies
+    # Same hardware, machine ID changed (e.g. firmware update): the running trial continues.
+    moved = machine(tmp_path, server, "pcP2", "22" * 32, {**parts, "firmware": part_hash("firmware", "e2e1" * 8)})
+    assert moved.start_trial()["expires_at"] == status["expires_at"]
+    # A third new trial from one network (LICENSE_TRIAL_IP_EMAIL_AFTER=2 here): an email
+    # step, never a refusal. This server has no mail set up, so no code is needed.
+    clone = machine(tmp_path, server, "pcP3", "23" * 32, {"guid": part_hash("guid", "other"), "volume": parts["volume"]})
+    with pytest.raises(LicenseServerError) as asked:
+        clone.start_trial()
+    assert asked.value.code == "email_required"
+    assert clone.request_trial_code("lab.engineer@example.com") == {"status": "no_code_needed"}
+    assert clone.start_trial("lab.engineer@example.com")["licensed"]
+    again = machine(tmp_path, server, "pcP4", "24" * 32)
+    with pytest.raises(LicenseServerError) as reused:
+        again.request_trial_code("Lab.Engineer+2@example.com")
+    assert reused.value.code == "email_used"
+    assert first.check_online_now()["licensed"]
 
 
 def test_lifetime_key_locks_to_one_pc_and_can_move(tmp_path, server):

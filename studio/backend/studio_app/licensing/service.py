@@ -1,21 +1,22 @@
 """Own this computer's license state: certificate file, clock anchor and activation."""
 import json
-import logging
 import os
 from pathlib import Path
 import re
 import threading
 import time
-from studio_app.domain import license_policy
+from urllib.parse import urlparse
+from studio_app.domain import license_policy, trial_policy
 from . import certificate, integrity, release_key
-from .client import LicenseClient, LicenseServerError
+from .client import LicenseClient
 from .certificate import CertificateError
+from .clock_store import ClockValue
+from .online_check import OnlineChecks
 from .time_anchor import TimeAnchor
+from .trial_clock import TrialClock
 
 KEY_PATTERN = re.compile(r"^SUBS(-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{4}){4}$")
 STATUS_CACHE_SECONDS = 60
-VERIFY_EVERY_SECONDS = 7 * 86400
-logger = logging.getLogger(__name__)
 
 
 class LicenseActionError(ValueError):
@@ -35,10 +36,10 @@ def mask_key(license_id):
     return "SUBS-****-****-****-" + str(license_id)[-4:]
 
 
-class LicenseService:
+class LicenseService(OnlineChecks):
     def __init__(self, home, data_dir, enforce, hwid_provider=None, clock=time.time, keys=None,
                  client_factory=LicenseClient, native_folder=None, expected_files=None,
-                 legacy_hwid_provider=None):
+                 legacy_hwid_provider=None, registry=None, parts_provider=None):
         self.home = Path(home)
         self.native_folder = native_folder
         self.expected_files = expected_files
@@ -49,7 +50,11 @@ class LicenseService:
         self.cert_file = self.home / "license.cert"
         self.config_file = self.home / "client_config.json"
         self.state_file = self.home / "license_state.json"
-        self.anchor = TimeAnchor(self.home / ".time_anchor", Path(data_dir) / "logs/runs.jsonl")
+        # registry: clock_store.WindowsRegistry() in the app; tests pass a fake or None.
+        self.anchor = TimeAnchor(ClockValue("time_anchor", self.home, registry), Path(data_dir) / "logs/runs.jsonl")
+        self.trial_clock = TrialClock(self.home, registry, keys)
+        self._parts_provider = parts_provider
+        self._stop = threading.Event()
         self._hwid_provider = hwid_provider
         self._hwid = None
         self._legacy_hwid_provider = legacy_hwid_provider
@@ -106,6 +111,17 @@ class LicenseService:
         configured = self._read_json(self.config_file, {}).get("server_url")
         return (configured or release_key.DEFAULT_SERVER_URL or "").rstrip("/")
 
+    def server_host(self):
+        return urlparse(self.server_url()).hostname or "the license server"
+
+    def trial_parts(self):
+        """Salted part hashes for the server's trial check; {} when they cannot be read."""
+        from . import trial_parts
+        try:
+            return (self._parts_provider or trial_parts.machine_parts)()
+        except (OSError, ValueError):
+            return {}
+
     # ----- evaluation --------------------------------------------------
     def _evaluate(self):
         if not self.enforce:
@@ -124,10 +140,22 @@ class LicenseService:
             return license_policy.unlicensed(str(error))
         now = int(self.clock())
         self._bound_hwid = self._machine_for(payload)
-        status = license_policy.evaluate_certificate(payload, self._bound_hwid, now, self.anchor.max_seen(), False)
+        if payload.get("type") != "trial":  # lifetime: exactly the original rule
+            status = license_policy.evaluate_certificate(payload, self._bound_hwid, now, self.anchor.max_seen(), False)
+        else:
+            status = self._evaluate_trial(payload, now)
         if status.licensed:
             self.anchor.advance(now)
         return status
+
+    def _evaluate_trial(self, payload, now):
+        confirmed = self.trial_clock.confirmed()
+        if trial_policy.anchor_missing(self.anchor.value.read_ints(), confirmed):
+            self.trial_clock.mark_suspicious(now)  # asks one quiet online check, never blocks now
+        status = license_policy.evaluate_certificate(
+            payload, self._bound_hwid, now, trial_policy.latest_seen(self.anchor.max_seen(), confirmed), False,
+            trial_policy.TRIAL_CLOCK_TOLERANCE_SECONDS)
+        return trial_policy.apply(status, confirmed, self.trial_clock.suspicious_since(), now, self.server_host())
 
     def current(self, refresh=False):
         with self._lock:
@@ -154,6 +182,7 @@ class LicenseService:
             raise LicenseActionError("Development mode does not use licenses.", "development")
 
     def _install(self, bundle):
+        """Install a certificate (bare, or a server answer that may carry a signed time)."""
         payload = certificate.verify_bundle(certificate.parse_bundle(bundle), self.keys)
         now = int(self.clock())
         status = license_policy.evaluate_certificate(payload, self._machine_for(payload), now,
@@ -166,15 +195,26 @@ class LicenseService:
             state.update(revoked_reason=None, last_verify=now)
             self._write(self.state_file, json.dumps(state))
             self.anchor.advance(now)
+            if payload.get("type") == "trial" and isinstance(bundle, dict):
+                self.trial_clock.remember(bundle.get("server_time"))
             self._cached = None
         return self.status()
 
     def _client(self):
         return self.client_factory(self.server_url())
 
-    def start_trial(self):
+    def start_trial(self, email=None, code=None):
+        """Start (or get back) this PC's trial; email/code only when the server asked for them."""
         self._require_enforced()
-        return self._install(self._client().start_trial(self.hwid()))
+        return self._install(self._client().start_trial(self.hwid(), self.trial_parts(), email, code))
+
+    def request_trial_code(self, email):
+        """Ask the server to email a trial code; "no_code_needed" when mail is unavailable."""
+        self._require_enforced()
+        address = str(email or "").strip()
+        if "@" not in address or len(address) > 254:
+            raise LicenseActionError(trial_policy.BAD_EMAIL, "bad_email")
+        return {"status": self._client().request_trial_code(self.hwid(), address).get("status", "sent")}
 
     @staticmethod
     def normalize_key(license_key):
@@ -207,52 +247,3 @@ class LicenseService:
         config["server_url"] = url
         self._write(self.config_file, json.dumps(config, indent=2))
         return self.status()
-
-    # ----- background revocation check ---------------------------------
-    def verify_online_if_due(self):
-        """Learn about refunds or key moves; offline PCs simply keep their license."""
-        if not self.enforce:
-            return None
-        status = self.current(refresh=True)
-        state = self._read_json(self.state_file, {})
-        if not status.licensed or status.plan != "lifetime" or \
-                self.clock() - state.get("last_verify", 0) < VERIFY_EVERY_SECONDS:
-            return None
-        try:
-            # Ask about the machine ID the key is bound to; a legacy v1 binding would
-            # otherwise look "moved" to the server and cancel a valid license.
-            bound = self._bound_hwid or self.hwid()
-            answer = self._client().verify(status.license_id, bound)
-        except LicenseServerError:
-            return None
-        verdict = answer.get("status")
-        state["last_verify"] = int(self.clock())
-        if verdict in {"revoked", "moved"}:
-            state["revoked_reason"] = ("This license was cancelled. Contact the seller if this is a mistake."
-                                       if verdict == "revoked" else
-                                       "This license key was moved to another computer.")
-            with self._lock:
-                stamp = int(self.clock())
-                os.replace(self.cert_file, self.cert_file.with_name(f"license.cert.{verdict}-{stamp}"))
-                self._cached = None
-        elif verdict == "valid" and answer.get("certificate") and bound == self.hwid():
-            # A legacy-bound certificate is kept as is: a reissued one would carry a new
-            # issued_at and no longer qualify for the legacy machine ID.
-            try:
-                fresh = certificate.parse_bundle(answer["certificate"])
-                if certificate.verify_bundle(fresh, self.keys).get("hwid") == self.hwid():
-                    self._write(self.cert_file, json.dumps(fresh, indent=2))
-            except CertificateError:
-                pass
-        self._write(self.state_file, json.dumps(state))
-        return verdict
-
-    def start_background_verify(self):
-        if self.enforce:
-            threading.Thread(target=self._safe_verify, name="license-verify", daemon=True).start()
-
-    def _safe_verify(self):
-        try:
-            self.verify_online_if_due()
-        except Exception:
-            logger.exception("Background license check failed")

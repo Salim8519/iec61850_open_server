@@ -7,6 +7,9 @@
     python studio/tools/license_admin.py remove                 take the license off this PC
     python studio/tools/license_admin.py remove --free-key --reset-trial   ...and make key + trial reusable
     python studio/tools/license_admin.py reset-trial            let this PC start a free trial again
+    python studio/tools/license_admin.py reset-trial --machine-id 64HEX   ...a customer's PC (its Machine ID)
+    python studio/tools/license_admin.py reset-trial-ip --ip 203.0.113.7  stop asking that network for an email
+    python studio/tools/license_admin.py allow-email --email name@company.com   one more trial for that address
     python studio/tools/license_admin.py delete-key --key SUBS-...   |   list
 
 Server: the local sandbox by default (start it with license_sandbox.py);
@@ -27,10 +30,12 @@ import time
 STUDIO = Path(__file__).resolve().parents[1]
 SANDBOX = STUDIO / "build/license-sandbox"
 sys.path.insert(0, str(STUDIO / "backend"))
-from studio_app.licensing import hwid  # noqa: E402
+from studio_app.licensing import hwid, trial_parts  # noqa: E402
+from studio_app.licensing.clock_store import REGISTRY_KEY, REGISTRY_NAMES  # noqa: E402
 from studio_app.licensing.service import default_home  # noqa: E402
 
-LICENSE_FILES = ("license.cert", "license_state.json", ".time_anchor")
+OWNER_EMAIL = "owner@example.com"
+LICENSE_FILES = ("license.cert", "license_state.json", ".time_anchor", ".server_time", ".grace_start")
 
 
 DEPLOY_STATE = Path(os.environ.get("LOCALAPPDATA", "")) / "ScadaBench-deploy"
@@ -82,7 +87,7 @@ def status(args):
 
 
 def make_key(args):
-    command = ["issue", "--email", args.email]
+    command = ["issue", "--email", args.email or OWNER_EMAIL]
     if args.trial_days:
         command += ["--type", "trial", "--days", str(args.trial_days)]
     license = server(args, *command)["license"]
@@ -91,13 +96,31 @@ def make_key(args):
 
 def activate_here(args):
     folder = home(args)
-    result = server(args, "issue", "--email", args.email, "--hwid", hwid.machine_id())
+    result = server(args, "issue", "--email", args.email or OWNER_EMAIL, "--hwid", hwid.machine_id())
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "license.cert").write_text(json.dumps(result["certificate"], indent=2), encoding="utf-8")
     state = folder / "license_state.json"
     if state.exists():
         state.unlink()
     print(f"This PC is licensed with {result['license']['key']}. Reopen Studio (or refresh the page).")
+
+
+def move_registry_aside(target):
+    """Save the HKCU clock copies into the removed-<time> folder, then clear them."""
+    import winreg
+    saved = {}
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, REGISTRY_KEY, 0, winreg.KEY_ALL_ACCESS) as key:
+            for name in REGISTRY_NAMES.values():
+                try:
+                    saved[name] = winreg.QueryValueEx(key, name)[0]
+                    winreg.DeleteValue(key, name)
+                except OSError:
+                    continue
+    except OSError:
+        return
+    if saved:
+        (target / "registry.json").write_text(json.dumps(saved, indent=2), encoding="utf-8")
 
 
 def remove(args):
@@ -109,6 +132,8 @@ def remove(args):
         target.mkdir()
         for name in present:
             shutil.move(str(folder / name), str(target / name))
+        if not args.sandbox:
+            move_registry_aside(target)
         print(f"License removed from this PC (kept in {target}). Reopen Studio to see the activation screen.")
     else:
         print("No license on this PC.")
@@ -121,18 +146,45 @@ def remove(args):
 
 
 def reset_trial(args):
-    result = server(args, "reset-trial", "--hwid", hwid.machine_id())
-    print("Trial reset: this PC can start a new free trial." if result.get("had_trial")
-          else "This PC had no trial on the server; it can start one.")
+    """Owner override: forget a trial and its hardware parts (this PC, or --machine-id)."""
+    machine = getattr(args, "machine_id", None)
+    command = ["reset-trial", "--hwid", machine or hwid.machine_id()]
+    if not machine:
+        parts = trial_parts.machine_parts()
+        for kind in ("guid", "volume", "firmware"):
+            if parts.get(kind):
+                command += [f"--{kind}-hash", parts[kind]]
+    result = server(args, *command)
+    who = "That computer" if machine else "This PC"
+    print(f"Trial reset: {who.lower()} can start a new free trial." if result.get("had_trial")
+          else f"{who} had no trial on the server; it can start one.")
+
+
+def reset_trial_ip(args):
+    if not args.ip:
+        raise SystemExit("--ip is required, for example --ip 203.0.113.7")
+    result = server(args, "reset-trial-ip", "--ip", args.ip)
+    print(f"Network {args.ip} starts new free trials without an email step again." if result.get("had_count")
+          else f"Network {args.ip} had no recent trials.")
+
+
+def allow_email(args):
+    if not args.email or "@" not in args.email:
+        raise SystemExit("--email is required, for example --email name@company.com")
+    result = server(args, "allow-email", "--trial-email", args.email)
+    print("That address can confirm one more free trial." if result.get("email_had_trial")
+          else "That address had no trial; nothing to change.")
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", choices=["status", "key", "activate-here", "remove", "reset-trial",
-                                            "delete-key", "list"])
-    parser.add_argument("--email", default="owner@example.com")
+                                            "reset-trial-ip", "allow-email", "delete-key", "list"])
+    parser.add_argument("--email", default=None, help="key/activate-here: buyer email; allow-email: the address")
     parser.add_argument("--trial-days", type=int, default=0)
     parser.add_argument("--key")
+    parser.add_argument("--machine-id", help="reset-trial: a customer's 64-character Machine ID")
+    parser.add_argument("--ip", help="reset-trial-ip: the network address to clear")
     parser.add_argument("--free-key", action="store_true", help="remove: also unlock the key on the server")
     parser.add_argument("--reset-trial", action="store_true", help="remove: also reset this PC's trial")
     parser.add_argument("--ssh", help="use a server by address, e.g. scadabench@203.0.113.10")
@@ -151,6 +203,10 @@ def main(argv=None):
         remove(args)
     elif args.command == "reset-trial":
         reset_trial(args)
+    elif args.command == "reset-trial-ip":
+        reset_trial_ip(args)
+    elif args.command == "allow-email":
+        allow_email(args)
     elif args.command == "delete-key":
         if not args.key:
             raise SystemExit("--key is required")
@@ -161,6 +217,8 @@ def main(argv=None):
             state = "revoked" if item["revoked"] else ("on a PC" if item["hwid"] else "unused")
             print(f"{item['key']}  {item['type']:<8} {state:<8} {item['email']}")
         print(f"Trial machines: {result['trial_machines']}")
+        if result.get("busy_networks"):
+            print(f"Networks with many recent trials (they get an email step): {result['busy_networks']}")
     return 0
 
 

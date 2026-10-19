@@ -19,6 +19,7 @@ from studio_app.api import gateway, gateway_master
 from studio_app.gateway.converter import ConverterSource
 from studio_app.gateway.manager import GatewayManager
 from studio_app.gateway.master_manager import MasterManager
+from studio_app.licensing.clock_store import WindowsRegistry
 from studio_app.licensing.service import LicenseService, default_home
 from studio_app.networking.gateway_firewall import GatewayFirewall
 from studio_app.networking.service import NetworkService
@@ -33,7 +34,7 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
     settings = settings or Settings.defaults()
     license_service = license_service or LicenseService(
         default_home(), settings.directory, enforce=bool(getattr(sys, "frozen", False)),
-        native_folder=settings.native_executable.parent)
+        native_folder=settings.native_executable.parent, registry=WindowsRegistry())
     app = Flask(__name__, static_folder=None)
     app.config.update(SECRET_KEY=secret_key or secrets.token_hex(32), LAUNCH_TOKEN=token or secrets.token_urlsafe(32),
                       MAX_CONTENT_LENGTH=100 * 1024 * 1024, SESSION_COOKIE_HTTPONLY=True,

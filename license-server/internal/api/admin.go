@@ -8,6 +8,7 @@ import (
 
 	"substation-license-server/internal/certs"
 	"substation-license-server/internal/store"
+	"substation-license-server/internal/trialemail"
 )
 
 // AdminRequest is shared by the HTTP admin API and the CLI fallback.
@@ -18,6 +19,11 @@ type AdminRequest struct {
 	HWID   string `json:"hwid"`
 	Key    string `json:"key"`
 	Reason string `json:"reason"`
+	// IP, Parts and Email serve the trial overrides (reset-trial-ip, reset-trial-parts,
+	// allow-email). The email is only hashed, never stored or logged in clear.
+	IP         string           `json:"ip"`
+	Parts      store.TrialParts `json:"parts"`
+	TrialEmail string           `json:"trial_email"`
 }
 
 // adminAllowed requires the bearer token AND a direct local connection: anything
@@ -82,7 +88,36 @@ func (s *Server) RunAdmin(action string, request AdminRequest) (any, error) {
 			return nil, badRequest("--hwid must be the 64-character Machine ID")
 		}
 		found, err := s.Store.ResetTrial(hwid)
-		return map[string]any{"hwid": hwid, "had_trial": found}, err
+		if err != nil {
+			return nil, err
+		}
+		// Parts given too (license_admin.py sends them): also forget this hardware.
+		known, err := s.Store.ResetTrialParts(request.Parts)
+		s.Log.Event("admin_reset_trial", map[string]any{"hwid": hwid[:12], "parts": known})
+		return map[string]any{"hwid": hwid, "had_trial": found, "parts_cleared": known}, err
+	case "reset-trial-parts":
+		if request.Parts.Clean().Count() == 0 {
+			return nil, badRequest("give at least one part hash (--guid-hash, --volume-hash, --firmware-hash)")
+		}
+		known, err := s.Store.ResetTrialParts(request.Parts)
+		s.Log.Event("admin_reset_trial_parts", map[string]any{"parts": known})
+		return map[string]any{"parts_cleared": known}, err
+	case "reset-trial-ip":
+		ip := strings.TrimSpace(request.IP)
+		if net.ParseIP(ip) == nil {
+			return nil, badRequest("--ip must be an IP address, for example 203.0.113.7")
+		}
+		found, err := s.Store.ResetTrialIP(ip)
+		s.Log.Event("admin_reset_trial_ip", map[string]any{"ip": ip})
+		return map[string]any{"ip": ip, "had_count": found}, err
+	case "allow-email":
+		normalized, err := trialemail.Normalize(request.TrialEmail)
+		if err != nil {
+			return nil, badRequest(err.Error())
+		}
+		found, err := s.Store.AllowEmail(trialemail.Hash(normalized))
+		s.Log.Event("admin_allow_email", map[string]any{"had_trial": found})
+		return map[string]any{"email_had_trial": found}, err
 	case "delete":
 		if err := s.Store.DeleteLicense(key); err != nil {
 			return nil, err
@@ -90,7 +125,11 @@ func (s *Server) RunAdmin(action string, request AdminRequest) (any, error) {
 		return map[string]any{"deleted": key}, nil
 	case "list":
 		licenses, err := s.Store.ListLicenses()
-		return map[string]any{"licenses": licenses, "trial_machines": s.Store.TrialCount()}, err
+		if err != nil {
+			return nil, err
+		}
+		busy, err := s.Store.BusyNetworks(s.Config.TrialIPEmailAfter, s.Config.TrialIPWindow(), s.Now())
+		return map[string]any{"licenses": licenses, "trial_machines": s.Store.TrialCount(), "busy_networks": busy}, err
 	case "certificate":
 		license, err := s.Store.GetLicense(key)
 		if err != nil {

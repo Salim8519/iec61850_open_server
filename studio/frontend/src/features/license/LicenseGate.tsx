@@ -1,12 +1,13 @@
-import { ShieldCheck, ShoppingCart, Sparkles } from 'lucide-react';
-import { buyUrl, startTrial, type LicenseStatus } from '../../api/license';
+import { RefreshCw, ShieldCheck, ShoppingCart } from 'lucide-react';
+import { buyUrl, checkOnline, type LicenseStatus } from '../../api/license';
 import { LICENSE_COPY as COPY } from '../../copy/license';
 import { KeyActivation, ServerOptions, useLicenseTask } from './LicenseActions';
+import { TrialStart } from './TrialStart';
 import './license-gate.css';
 
 /** Full-screen activation shown only by packaged builds that have no valid license. */
 export function LicenseGate({ status, changed }: { status: LicenseStatus; changed: (status: LicenseStatus) => void }) {
-  const trial = useLicenseTask();
+  const online = useLicenseTask();
   const purchase = buyUrl(status);
   // An expired trial certificate for this machine: a second trial would be refused anyway.
   const trialEnded = status.plan === 'trial' && !status.transfer_available;
@@ -17,14 +18,16 @@ export function LicenseGate({ status, changed }: { status: LicenseStatus; change
         <div><h1>{COPY.title}</h1><p className="muted">{COPY.intro}</p></div>
       </div>
       {status.reason && <div className="license-message warning" role="status">{status.reason}</div>}
+      {status.online_check_required && <div className="license-online">
+        <button className="primary large" onClick={() => online.run(checkOnline, changed)} disabled={online.busy}>
+          <RefreshCw size={16} aria-hidden />{online.busy ? 'Checking…' : COPY.checkOnlineButton}</button>
+        <p className="small muted license-hint">{COPY.checkOnlineHint}</p>
+        {online.error && <div className="license-message problem" role="alert">{online.error.message}</div>}
+      </div>}
       <div className="license-grid">
         <section className="license-choice">
           <h2>New here?</h2>
-          <button className="large" onClick={() => trial.run(startTrial, changed)}
-            disabled={trial.busy || trialEnded}>
-            <Sparkles size={16} aria-hidden />{trial.busy ? 'Starting trial…' : COPY.trialButton}</button>
-          <p className="small muted license-hint">{COPY.trialHint}</p>
-          {trial.error && <div className="license-message problem" role="alert">{trial.error.message}</div>}
+          <TrialStart disabled={trialEnded} changed={changed} />
           {purchase && <>
             <a className="button large" href={purchase} target="_blank" rel="noreferrer">
               <ShoppingCart size={16} aria-hidden />{COPY.buyButton}</a>
