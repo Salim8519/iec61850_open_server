@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}LN': No match found for key-sequence ['StudioLPHD', 'LGOS'] of keyref '{http://www.iec.ch/61850/2003/SCL}ref2LNodeTypeDomain2'.", "code": "validation", "details": []}

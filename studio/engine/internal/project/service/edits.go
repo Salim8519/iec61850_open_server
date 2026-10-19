@@ -1,0 +1,166 @@
+package service
+
+import (
+	"studio-engine/internal/apperr"
+	"studio-engine/internal/project"
+	"studio-engine/internal/pyjson"
+)
+
+// Diagram is ProjectService.diagram(value, expected_revision, change_source); a nil
+// expectedRevision skips the check (internal callers).
+func (s *Service) Diagram(value any, expectedRevision *int64, changeSource any) error {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	st := s.current.Load()
+	if expectedRevision != nil && *expectedRevision != st.revision {
+		return apperr.Coded("Another tab changed this project. This tab must synchronize before saving.", "conflict")
+	}
+	diagram, err := project.ValidateDiagram(value, iedList(st.project))
+	if err != nil {
+		return err
+	}
+	next := shallow(st.project)
+	next.Set("diagram", diagram)
+	return s.commit(next, st.notice, true, changeSource)
+}
+
+// FindNode is ProjectService.find_node: StudioError "Unknown equipment" (not_found).
+func (s *Service) FindNode(key string) (*pyjson.Object, error) {
+	for _, node := range diagramNodes(s.current.Load().project) {
+		if id, _ := node.Get("id"); id == key {
+			return node, nil
+		}
+	}
+	return nil, apperr.Coded("Unknown equipment", "not_found")
+}
+
+func diagramNodes(p *pyjson.Object) []*pyjson.Object {
+	raw, _ := p.Get("diagram")
+	diagram, _ := raw.(*pyjson.Object)
+	if diagram == nil {
+		return nil
+	}
+	list, _ := diagram.Get("nodes")
+	items, _ := list.([]any)
+	out := []*pyjson.Object{}
+	for _, item := range items {
+		if node, ok := item.(*pyjson.Object); ok {
+			out = append(out, node)
+		}
+	}
+	return out
+}
+
+// NodeData is ProjectService.node_data: node data merged, diagram re-validated, saved
+// without a revision change (runtime switch positions).
+func (s *Service) NodeData(nodeID string, changes *pyjson.Object) error {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	if _, err := s.FindNode(nodeID); err != nil {
+		return err
+	}
+	st := s.current.Load()
+	nodes := []any{}
+	for _, node := range diagramNodes(st.project) {
+		if id, _ := node.Get("id"); id == nodeID {
+			updated := shallow(node)
+			raw, _ := node.Get("data")
+			data := shallow(raw.(*pyjson.Object))
+			for _, key := range changes.Keys() {
+				value, _ := changes.Get(key)
+				data.Set(key, value)
+			}
+			updated.Set("data", data)
+			node = updated
+		}
+		nodes = append(nodes, node)
+	}
+	rawDiagram, _ := st.project.Get("diagram")
+	edges, _ := rawDiagram.(*pyjson.Object).Get("edges")
+	diagram, err := project.ValidateDiagram(pyjson.NewObject().Set("nodes", nodes).Set("edges", edges), iedList(st.project))
+	if err != nil {
+		return err
+	}
+	next := shallow(st.project)
+	next.Set("diagram", diagram)
+	return s.commit(next, st.notice, false, nil)
+}
+
+// Source is ProjectService.source: replace one signal source and re-validate all.
+func (s *Service) Source(iedID, reference string, spec any) error {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	st := s.current.Load()
+	raw, _ := st.project.Get("sources")
+	list, _ := raw.([]any)
+	sources := []any{}
+	for _, item := range list {
+		entry := item.(*pyjson.Object)
+		id, _ := entry.Get("ied_id")
+		ref, _ := entry.Get("ref")
+		if id == iedID && ref == reference {
+			continue
+		}
+		sources = append(sources, entry)
+	}
+	sources = append(sources, pyjson.NewObject().Set("ied_id", iedID).Set("ref", reference).Set("spec", spec))
+	checked, err := project.ValidateSources(sources, iedList(st.project))
+	if err != nil {
+		return err
+	}
+	return s.replace("sources", checked, nil)
+}
+
+// Scenarios is ProjectService.scenarios.
+func (s *Service) Scenarios(value any) error {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	checked, err := project.ValidateScenarios(value, iedList(s.current.Load().project))
+	if err != nil {
+		return err
+	}
+	return s.replace("scenarios", checked, nil)
+}
+
+// TestPanel is ProjectService.test_panel (unchanged project when saving fails).
+func (s *Service) TestPanel(entries any) error {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	checked, err := project.ValidatePanel(entries, iedList(s.current.Load().project))
+	if err != nil {
+		return err
+	}
+	return s.replace("test_panel", checked, nil)
+}
+
+// Gateway is ProjectService.gateway(config): stored as given, change source "gateway".
+func (s *Service) Gateway(config any) error {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	return s.replace("gateway", config, "gateway")
+}
+
+// replace sets one top-level key and commits with a revision change. mutate is held.
+func (s *Service) replace(key string, value any, source any) error {
+	st := s.current.Load()
+	next := shallow(st.project)
+	next.Set(key, value)
+	return s.commit(next, st.notice, true, source)
+}
+
+// Update runs a project-rule mutation (project.UpdateIED, UpdateNetwork, SaveReach, ...)
+// on a draft copy and commits it with a revision change when it succeeds.
+func (s *Service) Update(change func(draft *pyjson.Object) (*pyjson.Object, error)) (*pyjson.Object, error) {
+	s.mutate.Lock()
+	defer s.mutate.Unlock()
+	st := s.current.Load()
+	next := draft(st.project)
+	result, err := change(next)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.commit(next, st.notice, true, nil); err != nil {
+		return nil, err
+	}
+	return result, nil
+}

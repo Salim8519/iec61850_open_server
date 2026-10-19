@@ -1,0 +1,4899 @@
+[
+ {
+  "name": "empty gateway",
+  "fn": "empty_gateway",
+  "args": {},
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 0",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": null
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 1",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {}
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 2",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The gateway section must be an object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 3",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The gateway section must be an object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 4",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": 5
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The gateway section must be an object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 5",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "protocol": "modbus"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"modbus\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 6",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "protocol": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown gateway protocol 'x'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 7",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "protocol": 1.5
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown gateway protocol '1.5'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 8",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "protocol": null
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown gateway protocol 'None'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 9",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "listen": "network"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"network\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 10",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "listen": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Choose 'This PC only' or 'All network adapters'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 11",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "listen": [
+     "network"
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 12",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "role": "master"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"master\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 13",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "role": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Choose Station gateway (gateway), SCADA master (master) or Protocol converter (converter)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 14",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "real_commands": false,
+    "auto_start": true
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": false, \"auto_start\": true, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 15",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "real_commands": 1,
+    "auto_start": "yes"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 16",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 17",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": []
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 18",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 19",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": null
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 20",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": [
+      1
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'items'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 21",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "port": 2405,
+      "t1": 20,
+      "t2": 19
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2405, \"common_address\": 1, \"t1\": 20, \"t2\": 19, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 22",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "t1": 10
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "t2 must be shorter than t1 (IEC 60870-5-104)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 23",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "w": 13
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "w must not be larger than k (IEC 60870-5-104)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 24",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "x": 1
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown iec104 setting 'x'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 25",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "common_address": 0
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Common address must be a whole number from 1 to 65534",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 26",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "k": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "K must be a whole number from 1 to 32767",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 27",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "t3": 3600.0
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "T3 must be a whole number from 1 to 3600",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 28",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "modbus": {
+      "unit_id": 256
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unit id must be a whole number from 0 to 255",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 29",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "dnp3": {
+      "unsolicited": 1
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unsolicited reporting is on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 30",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "dnp3": {
+      "unsolicited": false,
+      "master_address": 65519
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 65519, \"unsolicited\": false}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 31",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "settings": {
+     "dnp3": {
+      "outstation_address": 100000000000000000000
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Outstation address must be a whole number from 0 to 65519",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 32",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 33",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 34",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": null
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The iec104 point list must be a list of at most 5000 points",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 35",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The iec104 point list must be a list of at most 5000 points",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 36",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": [
+      {
+       "kind": "single",
+       "address": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [{\"kind\": \"single\", \"address\": 1, \"id\": \"::single\"}], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 37",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": [
+      {
+       "kind": "single",
+       "address": true,
+       "ied": 5,
+       "ref": null
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [{\"kind\": \"single\", \"address\": true, \"ied\": 5, \"ref\": null, \"id\": \"5:None:single\"}], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 38",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": [
+      {
+       "kind": "single",
+       "address": 1.0
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "A stored iec104 gateway point has no valid type or address",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 39",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": [
+      {
+       "kind": "x",
+       "address": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "A stored iec104 gateway point has no valid type or address",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 40",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "iec104": [
+      5
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "A stored iec104 gateway point has no valid type or address",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 41",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "modbus": [
+      {
+       "kind": "command_double",
+       "address": 4,
+       "id": "keep"
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [{\"kind\": \"command_double\", \"address\": 4, \"id\": \"keep\"}], \"dnp3\": []}}"
+ },
+ {
+  "name": "gateway 42",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "dnp3": {
+      "@repeat": {
+       "kind": "float",
+       "address": 1
+      },
+      "count": 5001
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The dnp3 point list must be a list of at most 5000 points",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 43",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "points": {
+     "dnp3": {
+      "@repeat": {
+       "kind": "float",
+       "address": 1
+      },
+      "count": 5000
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out_sha256": "1e13b6523a30f4f05c27e8c5bf494be99eeb9af506d4f9ee5e4cd1fd01a6dd53",
+  "out_head": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 2000"
+ },
+ {
+  "name": "gateway 44",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The master section must be an object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 45",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "protocol": "x"
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Choose IEC 104 (iec104), DNP3 (dnp3) or Modbus TCP (modbus)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway 46",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "protocol": "x",
+    "master": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown gateway protocol 'x'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 0",
+  "fn": "normalize_master",
+  "args": {
+   "raw": null
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 0",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 1",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {}
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 1",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {}
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 2",
+  "fn": "normalize_master",
+  "args": {
+   "raw": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The master section must be an object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 2",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "The master section must be an object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 3",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "protocol": "dnp3"
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"dnp3\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 3",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "protocol": "dnp3"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"dnp3\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 4",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "protocol": "modbus",
+    "host": " rtu1.station.local "
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"modbus\", \"host\": \"rtu1.station.local\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 4",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "protocol": "modbus",
+     "host": " rtu1.station.local "
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"modbus\", \"host\": \"rtu1.station.local\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 5",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "host": "-bad"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Type the device address, for example 192.168.1.20 or rtu1.station.local",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 5",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "host": "-bad"
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Type the device address, for example 192.168.1.20 or rtu1.station.local",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 6",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "host": 5
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Type the device address, for example 192.168.1.20 or rtu1.station.local",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 6",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "host": 5
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Type the device address, for example 192.168.1.20 or rtu1.station.local",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 7",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "host": ""
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 7",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "host": ""
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 8",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "host": "a"
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"a\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 8",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "host": "a"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"a\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 9",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Type the device address, for example 192.168.1.20 or rtu1.station.local",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 9",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Type the device address, for example 192.168.1.20 or rtu1.station.local",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 10",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 10",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "host": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 11",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "auto_connect": true
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": true, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 11",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "auto_connect": true
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": true, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 12",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "auto_connect": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 12",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "auto_connect": 1
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 13",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "time_tagged_commands": 1
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Time tagged commands is on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 13",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "settings": {
+      "iec104": {
+       "time_tagged_commands": 1
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Time tagged commands is on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 14",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "settings": {
+     "iec104": {
+      "time_tagged_commands": true,
+      "gi_minutes": 0,
+      "t0": 256
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "T0 must be a whole number from 1 to 255",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 14",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "settings": {
+      "iec104": {
+       "time_tagged_commands": true,
+       "gi_minutes": 0,
+       "t0": 256
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "T0 must be a whole number from 1 to 255",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 15",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "settings": {
+     "dnp3": {
+      "integrity_minutes": 1441
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Integrity minutes must be a whole number from 0 to 1440",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 15",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "settings": {
+      "dnp3": {
+       "integrity_minutes": 1441
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Integrity minutes must be a whole number from 0 to 1440",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 16",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "settings": {
+     "modbus": {
+      "poll_ms": 199
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Poll ms must be a whole number from 200 to 60000",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 16",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "settings": {
+      "modbus": {
+       "poll_ms": 199
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Poll ms must be a whole number from 200 to 60000",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 17",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "settings": {
+     "modbus": {
+      "poll_ms": 200
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 200}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 17",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "settings": {
+      "modbus": {
+       "poll_ms": 200
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 200}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 18",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "settings": {
+     "dnp3": {
+      "unsolicited": "x"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unsolicited is on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 18",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "settings": {
+      "dnp3": {
+       "unsolicited": "x"
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unsolicited is on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 19",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 19",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": null
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 20",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": []
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 20",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": []
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 21",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": {
+     "iec104": [
+      "a",
+      1,
+      null,
+      "b"
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [\"a\", \"b\"], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 21",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": {
+      "iec104": [
+       "a",
+       1,
+       null,
+       "b"
+      ]
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [\"a\", \"b\"], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 22",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": {
+     "iec104": "abc"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [\"a\", \"b\", \"c\"], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 22",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": {
+      "iec104": "abc"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [\"a\", \"b\", \"c\"], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 23",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": {
+     "iec104": {
+      "k": 1
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [\"k\"], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 23",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": {
+      "iec104": {
+       "k": 1
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [\"k\"], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 24",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": {
+     "iec104": 5
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'int' object is not iterable",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 24",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": {
+      "iec104": 5
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'int' object is not iterable",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 25",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "unticked": {
+     "iec104": null
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'NoneType' object is not iterable",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 25",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "unticked": {
+      "iec104": null
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'NoneType' object is not iterable",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 26",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "labels": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 26",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "labels": [
+      1
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 27",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "labels": {
+     "iec104": [
+      1
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 27",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "labels": {
+      "iec104": [
+       1
+      ]
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 28",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "labels": {
+     "iec104": {
+      "a": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "b": " ",
+      "c": 5,
+      "ddddddddddddddddddddddddddddddddddddddddd": "y",
+      "e": "ok"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {\"a\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"e\": \"ok\"}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 28",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "labels": {
+      "iec104": {
+       "a": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "b": " ",
+       "c": 5,
+       "ddddddddddddddddddddddddddddddddddddddddd": "y",
+       "e": "ok"
+      }
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {\"a\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"e\": \"ok\"}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 29",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": null
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Send at most 20 Modbus ranges",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 29",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": null
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Send at most 20 Modbus ranges",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 30",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: choose coils, discrete inputs, holding registers or input registers",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 30",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      1
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: choose coils, discrete inputs, holding registers or input registers",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 31",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Send at most 20 Modbus ranges",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 31",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Send at most 20 Modbus ranges",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 32",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "coils",
+      "start": 0,
+      "count": 2000
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [{\"table\": \"coils\", \"start\": 0, \"count\": 2000, \"data_type\": \"bool\", \"word_order\": \"big\"}], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 32",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "coils",
+       "start": 0,
+       "count": 2000
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [{\"table\": \"coils\", \"start\": 0, \"count\": 2000, \"data_type\": \"bool\", \"word_order\": \"big\"}], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 33",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "coils",
+      "start": 0,
+      "count": 2001
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: read 1 to 2000 values of this type in one range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 33",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "coils",
+       "start": 0,
+       "count": 2001
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: read 1 to 2000 values of this type in one range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 34",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "coils",
+      "data_type": "uint16",
+      "start": 0,
+      "count": 1
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: coils and inputs are read as bool, registers as uint16, int16, uint32, int32 or float32",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 34",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "coils",
+       "data_type": "uint16",
+       "start": 0,
+       "count": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: coils and inputs are read as bool, registers as uint16, int16, uint32, int32 or float32",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 35",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "holding_registers",
+      "data_type": "float32",
+      "start": 65500,
+      "count": 18
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [{\"table\": \"holding_registers\", \"start\": 65500, \"count\": 18, \"data_type\": \"float32\", \"word_order\": \"big\"}], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 35",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "holding_registers",
+       "data_type": "float32",
+       "start": 65500,
+       "count": 18
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [{\"table\": \"holding_registers\", \"start\": 65500, \"count\": 18, \"data_type\": \"float32\", \"word_order\": \"big\"}], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 36",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "holding_registers",
+      "data_type": "float32",
+      "start": 65500,
+      "count": 19
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: the range runs past address 65535",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 36",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "holding_registers",
+       "data_type": "float32",
+       "start": 65500,
+       "count": 19
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: the range runs past address 65535",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 37",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "input_registers",
+      "start": -1,
+      "count": 1
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: the start address is a whole number from 0 to 65535",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 37",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "input_registers",
+       "start": -1,
+       "count": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: the start address is a whole number from 0 to 65535",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 38",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "input_registers",
+      "start": 0,
+      "count": 126
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: read 1 to 125 values of this type in one range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 38",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "input_registers",
+       "start": 0,
+       "count": 126
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: read 1 to 125 values of this type in one range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 39",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "input_registers",
+      "start": 0,
+      "count": 1,
+      "word_order": "little"
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [{\"table\": \"input_registers\", \"start\": 0, \"count\": 1, \"data_type\": \"uint16\", \"word_order\": \"little\"}], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 39",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "input_registers",
+       "start": 0,
+       "count": 1,
+       "word_order": "little"
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [{\"table\": \"input_registers\", \"start\": 0, \"count\": 1, \"data_type\": \"uint16\", \"word_order\": \"little\"}], \"routes\": [], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 40",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "input_registers",
+      "start": 0,
+      "count": 1,
+      "word_order": "x"
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: the word order is big (high word first) or little",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 40",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "input_registers",
+       "start": 0,
+       "count": 1,
+       "word_order": "x"
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Range 1: the word order is big (high word first) or little",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 41",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": [
+       "coils"
+      ],
+      "start": 0,
+      "count": 1
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 41",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": [
+        "coils"
+       ],
+       "start": 0,
+       "count": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 42",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "modbus_ranges": [
+     {
+      "table": "coils",
+      "data_type": [
+       "bool"
+      ],
+      "start": 0,
+      "count": 1
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 42",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "modbus_ranges": [
+      {
+       "table": "coils",
+       "data_type": [
+        "bool"
+       ],
+       "start": 0,
+       "count": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 43",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": null
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Send at most 500 command routes as a list",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 43",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": null
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Send at most 500 command routes as a list",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 44",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: the device command is single, double, binary_output or coil",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 44",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      1
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: the device command is single, double, binary_output or coil",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 45",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     {
+      "kind": [
+       "coil"
+      ]
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 45",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      {
+       "kind": [
+        "coil"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 46",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     {
+      "kind": "coil"
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: the upstream command is a single or double command",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 46",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      {
+       "kind": "coil"
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: the upstream command is a single or double command",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 47",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     {
+      "kind": "coil",
+      "upstream_kind": "command_single",
+      "upstream": 1,
+      "address": 2
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [{\"upstream\": 1, \"upstream_kind\": \"command_single\", \"kind\": \"coil\", \"address\": 2, \"select\": true}], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 47",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      {
+       "kind": "coil",
+       "upstream_kind": "command_single",
+       "upstream": 1,
+       "address": 2
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [{\"upstream\": 1, \"upstream_kind\": \"command_single\", \"kind\": \"coil\", \"address\": 2, \"select\": true}], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "master 48",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     {
+      "kind": "double",
+      "upstream_kind": "command_double",
+      "upstream": 1,
+      "address": true
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: address must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 48",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      {
+       "kind": "double",
+       "upstream_kind": "command_double",
+       "upstream": 1,
+       "address": true
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: address must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 49",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     {
+      "kind": "double",
+      "upstream_kind": "command_double",
+      "upstream": 16777216,
+      "address": 1
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: upstream must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "gateway master 49",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      {
+       "kind": "double",
+       "upstream_kind": "command_double",
+       "upstream": 16777216,
+       "address": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Route 1: upstream must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "master 50",
+  "fn": "normalize_master",
+  "args": {
+   "raw": {
+    "routes": [
+     {
+      "kind": "single",
+      "upstream_kind": "command_single",
+      "upstream": 0,
+      "address": 0,
+      "select": false,
+      "x": 1
+     }
+    ]
+   }
+  },
+  "ieds": [],
+  "out": "{\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [{\"upstream\": 0, \"upstream_kind\": \"command_single\", \"kind\": \"single\", \"address\": 0, \"select\": false}], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}"
+ },
+ {
+  "name": "gateway master 50",
+  "fn": "normalize_gateway",
+  "args": {
+   "raw": {
+    "master": {
+     "routes": [
+      {
+       "kind": "single",
+       "upstream_kind": "command_single",
+       "upstream": 0,
+       "address": 0,
+       "select": false,
+       "x": 1
+      }
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"gateway\", \"master\": {\"protocol\": \"iec104\", \"host\": \"\", \"auto_connect\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"originator_address\": 0, \"t0\": 10, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8, \"time_tagged_commands\": false, \"gi_minutes\": 15}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"integrity_minutes\": 15, \"event_seconds\": 5, \"unsolicited\": true}, \"modbus\": {\"port\": 502, \"unit_id\": 1, \"poll_ms\": 1000}}, \"modbus_ranges\": [], \"routes\": [{\"upstream\": 0, \"upstream_kind\": \"command_single\", \"kind\": \"single\", \"address\": 0, \"select\": false}], \"unticked\": {\"iec104\": [], \"dnp3\": [], \"modbus\": []}, \"labels\": {\"iec104\": {}, \"dnp3\": {}, \"modbus\": {}}}, \"protocol\": \"iec104\", \"listen\": \"this_pc\", \"real_commands\": true, \"auto_start\": false, \"settings\": {\"iec104\": {\"port\": 2404, \"common_address\": 1, \"t1\": 15, \"t2\": 10, \"t3\": 20, \"k\": 12, \"w\": 8}, \"modbus\": {\"port\": 502, \"unit_id\": 1}, \"dnp3\": {\"port\": 20000, \"outstation_address\": 10, \"master_address\": 1, \"unsolicited\": true}}, \"points\": {\"iec104\": [], \"modbus\": [], \"dnp3\": []}}"
+ },
+ {
+  "name": "preferences get 0",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": null
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 0 0",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": null
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 1",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 2",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 3",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {}
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 0 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 0 5",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "tour_seen_version": 1001
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 6",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "tour_seen_version": -1
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 7",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "tour_seen_version": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 8",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "tour_seen_version": 1.0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 9",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "sld_goose_layer": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 1, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 1,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 0 10",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "sld_goose_layer": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference sld_goose_layer is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 11",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "zeta": 1,
+    "alpha": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown preference: alpha, zeta",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 0 13",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "list_filters must be an object of lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 14",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "Bad": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown list name: 'Bad'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 15",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k": 5
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 16",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "ok": []
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 17",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k0": true,
+      "k1": true,
+      "k2": true,
+      "k3": true,
+      "k4": true,
+      "k5": true,
+      "k6": true,
+      "k7": true,
+      "k8": true,
+      "k9": true,
+      "k10": true,
+      "k11": true,
+      "k12": true,
+      "k13": true,
+      "k14": true,
+      "k15": true,
+      "k16": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 18",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "l0": {},
+     "l1": {},
+     "l2": {},
+     "l3": {},
+     "l4": {},
+     "l5": {},
+     "l6": {},
+     "l7": {},
+     "l8": {},
+     "l9": {},
+     "l10": {},
+     "l11": {},
+     "l12": {},
+     "l13": {},
+     "l14": {},
+     "l15": {},
+     "l16": {},
+     "l17": {},
+     "l18": {},
+     "l19": {},
+     "l20": {},
+     "l21": {},
+     "l22": {},
+     "l23": {},
+     "l24": {},
+     "l25": {},
+     "l26": {},
+     "l27": {},
+     "l28": {},
+     "l29": {},
+     "l30": {},
+     "l31": {},
+     "l32": {},
+     "l33": {},
+     "l34": {},
+     "l35": {},
+     "l36": {},
+     "l37": {},
+     "l38": {},
+     "l39": {},
+     "l40": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Too many remembered lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 0 19",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "list_filters": {
+     "ok\n": {
+      "k\n": "\u00e9"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ok\\n\": {\"k\\n\": \"\\u00e9\"}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ok\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"\\\\u00e9\\\"\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 0 20",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": null,
+   "changes": {
+    "sld_readers_layer": 1,
+    "list_filters": {
+     "a": {}
+    },
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 1, \"list_filters\": {\"a\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 1,\\n  \\\"list_filters\\\": {\\n    \\\"a\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 1",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": ""
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 1 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 1 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 2",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 2 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 2 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 3",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "[]"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 3 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "[]",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 3 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "[]",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 4",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "5"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 4 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "5",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 4 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "5",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 5",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{}"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 5 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{}",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 5 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{}",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 6",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 3, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 6 0",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": null
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 1",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 2",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 3",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {}
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 3, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 3,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 6 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 6 5",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "tour_seen_version": 1001
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 6",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "tour_seen_version": -1
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 7",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "tour_seen_version": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 8",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "tour_seen_version": 1.0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 9",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "sld_goose_layer": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 3, \"sld_goose_layer\": 1, \"sld_readers_layer\": 0, \"list_filters\": {}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 3,\\n  \\\"sld_goose_layer\\\": 1,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {}\\n}\"}"
+ },
+ {
+  "name": "preferences update 6 10",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "sld_goose_layer": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference sld_goose_layer is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 11",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "zeta": 1,
+    "alpha": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown preference: alpha, zeta",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 3, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 3,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 6 13",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "list_filters must be an object of lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 14",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "Bad": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown list name: 'Bad'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 15",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k": 5
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 16",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "ok": []
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 17",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k0": true,
+      "k1": true,
+      "k2": true,
+      "k3": true,
+      "k4": true,
+      "k5": true,
+      "k6": true,
+      "k7": true,
+      "k8": true,
+      "k9": true,
+      "k10": true,
+      "k11": true,
+      "k12": true,
+      "k13": true,
+      "k14": true,
+      "k15": true,
+      "k16": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 18",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "l0": {},
+     "l1": {},
+     "l2": {},
+     "l3": {},
+     "l4": {},
+     "l5": {},
+     "l6": {},
+     "l7": {},
+     "l8": {},
+     "l9": {},
+     "l10": {},
+     "l11": {},
+     "l12": {},
+     "l13": {},
+     "l14": {},
+     "l15": {},
+     "l16": {},
+     "l17": {},
+     "l18": {},
+     "l19": {},
+     "l20": {},
+     "l21": {},
+     "l22": {},
+     "l23": {},
+     "l24": {},
+     "l25": {},
+     "l26": {},
+     "l27": {},
+     "l28": {},
+     "l29": {},
+     "l30": {},
+     "l31": {},
+     "l32": {},
+     "l33": {},
+     "l34": {},
+     "l35": {},
+     "l36": {},
+     "l37": {},
+     "l38": {},
+     "l39": {},
+     "l40": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Too many remembered lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 6 19",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "list_filters": {
+     "ok\n": {
+      "k\n": "\u00e9"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 3, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ok\\n\": {\"k\\n\": \"\\u00e9\"}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 3,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ok\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"\\\\u00e9\\\"\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 6 20",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 3, \"sld_goose_layer\": true, \"sld_readers_layer\": 1.0}",
+   "changes": {
+    "sld_readers_layer": 1,
+    "list_filters": {
+     "a": {}
+    },
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 1, \"list_filters\": {\"a\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 1,\\n  \\\"list_filters\\\": {\\n    \\\"a\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 7",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 99999999999999999999999, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"on\": true}}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 7 0",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": null
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 1",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 2",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 3",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {}
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 99999999999999999999999, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"on\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 99999999999999999999999,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"q\\\": \\\"x\\\",\\n      \\\"on\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 7 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"on\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"q\\\": \\\"x\\\",\\n      \\\"on\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 7 5",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "tour_seen_version": 1001
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 6",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "tour_seen_version": -1
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 7",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "tour_seen_version": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 8",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "tour_seen_version": 1.0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 9",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "sld_goose_layer": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 99999999999999999999999, \"sld_goose_layer\": 1, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"on\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 99999999999999999999999,\\n  \\\"sld_goose_layer\\\": 1,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"q\\\": \\\"x\\\",\\n      \\\"on\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 7 10",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "sld_goose_layer": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference sld_goose_layer is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 11",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "zeta": 1,
+    "alpha": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown preference: alpha, zeta",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 99999999999999999999999, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 99999999999999999999999,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 7 13",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "list_filters must be an object of lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 14",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "Bad": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown list name: 'Bad'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 15",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k": 5
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 16",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "ok": []
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 17",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k0": true,
+      "k1": true,
+      "k2": true,
+      "k3": true,
+      "k4": true,
+      "k5": true,
+      "k6": true,
+      "k7": true,
+      "k8": true,
+      "k9": true,
+      "k10": true,
+      "k11": true,
+      "k12": true,
+      "k13": true,
+      "k14": true,
+      "k15": true,
+      "k16": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 18",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "l0": {},
+     "l1": {},
+     "l2": {},
+     "l3": {},
+     "l4": {},
+     "l5": {},
+     "l6": {},
+     "l7": {},
+     "l8": {},
+     "l9": {},
+     "l10": {},
+     "l11": {},
+     "l12": {},
+     "l13": {},
+     "l14": {},
+     "l15": {},
+     "l16": {},
+     "l17": {},
+     "l18": {},
+     "l19": {},
+     "l20": {},
+     "l21": {},
+     "l22": {},
+     "l23": {},
+     "l24": {},
+     "l25": {},
+     "l26": {},
+     "l27": {},
+     "l28": {},
+     "l29": {},
+     "l30": {},
+     "l31": {},
+     "l32": {},
+     "l33": {},
+     "l34": {},
+     "l35": {},
+     "l36": {},
+     "l37": {},
+     "l38": {},
+     "l39": {},
+     "l40": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Too many remembered lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 7 19",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "list_filters": {
+     "ok\n": {
+      "k\n": "\u00e9"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 99999999999999999999999, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"on\": true}, \"ok\\n\": {\"k\\n\": \"\\u00e9\"}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 99999999999999999999999,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"q\\\": \\\"x\\\",\\n      \\\"on\\\": true\\n    },\\n    \\\"ok\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"\\\\u00e9\\\"\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 7 20",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"tour_seen_version\": 99999999999999999999999, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"Bad\": 1, \"on\": true}}}",
+   "changes": {
+    "sld_readers_layer": 1,
+    "list_filters": {
+     "a": {}
+    },
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 1, \"list_filters\": {\"ieds\": {\"q\": \"x\", \"on\": true}, \"a\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 1,\\n  \\\"list_filters\\\": {\\n    \\\"ieds\\\": {\\n      \\\"q\\\": \\\"x\\\",\\n      \\\"on\\\": true\\n    },\\n    \\\"a\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 8",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 8 0",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": null
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 1",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 2",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preferences must be a JSON object",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 3",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {}
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"a-b\\\": {\\n      \\\"k\\\": \\\"v\\\"\\n    },\\n    \\\"x\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"v\\\"\\n    },\\n    \\\"z\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 8 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"a-b\\\": {\\n      \\\"k\\\": \\\"v\\\"\\n    },\\n    \\\"x\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"v\\\"\\n    },\\n    \\\"z\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 8 5",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "tour_seen_version": 1001
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 6",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "tour_seen_version": -1
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 7",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "tour_seen_version": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 8",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "tour_seen_version": 1.0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference tour_seen_version must be a whole number",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 9",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "sld_goose_layer": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 1, \"sld_readers_layer\": 0, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 1,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"a-b\\\": {\\n      \\\"k\\\": \\\"v\\\"\\n    },\\n    \\\"x\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"v\\\"\\n    },\\n    \\\"z\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 8 10",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "sld_goose_layer": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Preference sld_goose_layer is out of range",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 11",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "zeta": 1,
+    "alpha": 2
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown preference: alpha, zeta",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}, \"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"a-b\\\": {\\n      \\\"k\\\": \\\"v\\\"\\n    },\\n    \\\"x\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"v\\\"\\n    },\\n    \\\"z\\\": {},\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 8 13",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": []
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "list_filters must be an object of lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 14",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "Bad": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown list name: 'Bad'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 15",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k": 5
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 16",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "ok": []
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 17",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "ok": {
+      "k0": true,
+      "k1": true,
+      "k2": true,
+      "k3": true,
+      "k4": true,
+      "k5": true,
+      "k6": true,
+      "k7": true,
+      "k8": true,
+      "k9": true,
+      "k10": true,
+      "k11": true,
+      "k12": true,
+      "k13": true,
+      "k14": true,
+      "k15": true,
+      "k16": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of ok must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 18",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "l0": {},
+     "l1": {},
+     "l2": {},
+     "l3": {},
+     "l4": {},
+     "l5": {},
+     "l6": {},
+     "l7": {},
+     "l8": {},
+     "l9": {},
+     "l10": {},
+     "l11": {},
+     "l12": {},
+     "l13": {},
+     "l14": {},
+     "l15": {},
+     "l16": {},
+     "l17": {},
+     "l18": {},
+     "l19": {},
+     "l20": {},
+     "l21": {},
+     "l22": {},
+     "l23": {},
+     "l24": {},
+     "l25": {},
+     "l26": {},
+     "l27": {},
+     "l28": {},
+     "l29": {},
+     "l30": {},
+     "l31": {},
+     "l32": {},
+     "l33": {},
+     "l34": {},
+     "l35": {},
+     "l36": {},
+     "l37": {},
+     "l38": {},
+     "l39": {},
+     "l40": {}
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Too many remembered lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences update 8 19",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "list_filters": {
+     "ok\n": {
+      "k\n": "\u00e9"
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}, \"ok\\n\": {\"k\\n\": \"\\u00e9\"}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"a-b\\\": {\\n      \\\"k\\\": \\\"v\\\"\\n    },\\n    \\\"x\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"v\\\"\\n    },\\n    \\\"z\\\": {},\\n    \\\"ok\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"\\\\u00e9\\\"\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 8 20",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"Bad\": {}, \"x\\n\": {\"k\\n\": \"v\"}, \"y\": [], \"z\": {\"t\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}}",
+   "changes": {
+    "sld_readers_layer": 1,
+    "list_filters": {
+     "a": {}
+    },
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 1, \"list_filters\": {\"a-b\": {\"k\": \"v\"}, \"x\\n\": {\"k\\n\": \"v\"}, \"z\": {}, \"a\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 1,\\n  \\\"list_filters\\\": {\\n    \\\"a-b\\\": {\\n      \\\"k\\\": \\\"v\\\"\\n    },\\n    \\\"x\\\\n\\\": {\\n      \\\"k\\\\n\\\": \\\"v\\\"\\n    },\\n    \\\"z\\\": {},\\n    \\\"a\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences get 9",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"l0\": {}, \"l1\": {}, \"l2\": {}, \"l3\": {}, \"l4\": {}, \"l5\": {}, \"l6\": {}, \"l7\": {}, \"l8\": {}, \"l9\": {}, \"l10\": {}, \"l11\": {}, \"l12\": {}, \"l13\": {}, \"l14\": {}, \"l15\": {}, \"l16\": {}, \"l17\": {}, \"l18\": {}, \"l19\": {}, \"l20\": {}, \"l21\": {}, \"l22\": {}, \"l23\": {}, \"l24\": {}, \"l25\": {}, \"l26\": {}, \"l27\": {}, \"l28\": {}, \"l29\": {}, \"l30\": {}, \"l31\": {}, \"l32\": {}, \"l33\": {}, \"l34\": {}, \"l35\": {}, \"l36\": {}, \"l37\": {}, \"l38\": {}, \"l39\": {}, \"l40\": {}, \"l41\": {}, \"l42\": {}, \"l43\": {}, \"l44\": {}}}"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"l0\": {}, \"l1\": {}, \"l2\": {}, \"l3\": {}, \"l4\": {}, \"l5\": {}, \"l6\": {}, \"l7\": {}, \"l8\": {}, \"l9\": {}, \"l10\": {}, \"l11\": {}, \"l12\": {}, \"l13\": {}, \"l14\": {}, \"l15\": {}, \"l16\": {}, \"l17\": {}, \"l18\": {}, \"l19\": {}, \"l20\": {}, \"l21\": {}, \"l22\": {}, \"l23\": {}, \"l24\": {}, \"l25\": {}, \"l26\": {}, \"l27\": {}, \"l28\": {}, \"l29\": {}, \"l30\": {}, \"l31\": {}, \"l32\": {}, \"l33\": {}, \"l34\": {}, \"l35\": {}, \"l36\": {}, \"l37\": {}, \"l38\": {}, \"l39\": {}}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 9 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"l0\": {}, \"l1\": {}, \"l2\": {}, \"l3\": {}, \"l4\": {}, \"l5\": {}, \"l6\": {}, \"l7\": {}, \"l8\": {}, \"l9\": {}, \"l10\": {}, \"l11\": {}, \"l12\": {}, \"l13\": {}, \"l14\": {}, \"l15\": {}, \"l16\": {}, \"l17\": {}, \"l18\": {}, \"l19\": {}, \"l20\": {}, \"l21\": {}, \"l22\": {}, \"l23\": {}, \"l24\": {}, \"l25\": {}, \"l26\": {}, \"l27\": {}, \"l28\": {}, \"l29\": {}, \"l30\": {}, \"l31\": {}, \"l32\": {}, \"l33\": {}, \"l34\": {}, \"l35\": {}, \"l36\": {}, \"l37\": {}, \"l38\": {}, \"l39\": {}, \"l40\": {}, \"l41\": {}, \"l42\": {}, \"l43\": {}, \"l44\": {}}}",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"l0\": {}, \"l1\": {}, \"l2\": {}, \"l3\": {}, \"l4\": {}, \"l5\": {}, \"l6\": {}, \"l7\": {}, \"l8\": {}, \"l9\": {}, \"l10\": {}, \"l11\": {}, \"l12\": {}, \"l13\": {}, \"l14\": {}, \"l15\": {}, \"l16\": {}, \"l17\": {}, \"l18\": {}, \"l19\": {}, \"l20\": {}, \"l21\": {}, \"l22\": {}, \"l23\": {}, \"l24\": {}, \"l25\": {}, \"l26\": {}, \"l27\": {}, \"l28\": {}, \"l29\": {}, \"l30\": {}, \"l31\": {}, \"l32\": {}, \"l33\": {}, \"l34\": {}, \"l35\": {}, \"l36\": {}, \"l37\": {}, \"l38\": {}, \"l39\": {}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"l0\\\": {},\\n    \\\"l1\\\": {},\\n    \\\"l2\\\": {},\\n    \\\"l3\\\": {},\\n    \\\"l4\\\": {},\\n    \\\"l5\\\": {},\\n    \\\"l6\\\": {},\\n    \\\"l7\\\": {},\\n    \\\"l8\\\": {},\\n    \\\"l9\\\": {},\\n    \\\"l10\\\": {},\\n    \\\"l11\\\": {},\\n    \\\"l12\\\": {},\\n    \\\"l13\\\": {},\\n    \\\"l14\\\": {},\\n    \\\"l15\\\": {},\\n    \\\"l16\\\": {},\\n    \\\"l17\\\": {},\\n    \\\"l18\\\": {},\\n    \\\"l19\\\": {},\\n    \\\"l20\\\": {},\\n    \\\"l21\\\": {},\\n    \\\"l22\\\": {},\\n    \\\"l23\\\": {},\\n    \\\"l24\\\": {},\\n    \\\"l25\\\": {},\\n    \\\"l26\\\": {},\\n    \\\"l27\\\": {},\\n    \\\"l28\\\": {},\\n    \\\"l29\\\": {},\\n    \\\"l30\\\": {},\\n    \\\"l31\\\": {},\\n    \\\"l32\\\": {},\\n    \\\"l33\\\": {},\\n    \\\"l34\\\": {},\\n    \\\"l35\\\": {},\\n    \\\"l36\\\": {},\\n    \\\"l37\\\": {},\\n    \\\"l38\\\": {},\\n    \\\"l39\\\": {}\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 9 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"l0\": {}, \"l1\": {}, \"l2\": {}, \"l3\": {}, \"l4\": {}, \"l5\": {}, \"l6\": {}, \"l7\": {}, \"l8\": {}, \"l9\": {}, \"l10\": {}, \"l11\": {}, \"l12\": {}, \"l13\": {}, \"l14\": {}, \"l15\": {}, \"l16\": {}, \"l17\": {}, \"l18\": {}, \"l19\": {}, \"l20\": {}, \"l21\": {}, \"l22\": {}, \"l23\": {}, \"l24\": {}, \"l25\": {}, \"l26\": {}, \"l27\": {}, \"l28\": {}, \"l29\": {}, \"l30\": {}, \"l31\": {}, \"l32\": {}, \"l33\": {}, \"l34\": {}, \"l35\": {}, \"l36\": {}, \"l37\": {}, \"l38\": {}, \"l39\": {}, \"l40\": {}, \"l41\": {}, \"l42\": {}, \"l43\": {}, \"l44\": {}}}",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Too many remembered lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "preferences get 10",
+  "fn": "preferences_get",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"l\": {\"k0\": true, \"k1\": true, \"k2\": true, \"k3\": true, \"k4\": true, \"k5\": true, \"k6\": true, \"k7\": true, \"k8\": true, \"k9\": true, \"k10\": true, \"k11\": true, \"k12\": true, \"k13\": true, \"k14\": true, \"k15\": true, \"k16\": true, \"k17\": true, \"k18\": true, \"k19\": true}}}"
+  },
+  "ieds": [],
+  "out": "{\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"l\": {\"k0\": true, \"k1\": true, \"k2\": true, \"k3\": true, \"k4\": true, \"k5\": true, \"k6\": true, \"k7\": true, \"k8\": true, \"k9\": true, \"k10\": true, \"k11\": true, \"k12\": true, \"k13\": true, \"k14\": true, \"k15\": true}}, \"tour_version\": 1}"
+ },
+ {
+  "name": "preferences update 10 4",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"l\": {\"k0\": true, \"k1\": true, \"k2\": true, \"k3\": true, \"k4\": true, \"k5\": true, \"k6\": true, \"k7\": true, \"k8\": true, \"k9\": true, \"k10\": true, \"k11\": true, \"k12\": true, \"k13\": true, \"k14\": true, \"k15\": true, \"k16\": true, \"k17\": true, \"k18\": true, \"k19\": true}}}",
+   "changes": {
+    "tour_seen_version": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 1, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"l\": {\"k0\": true, \"k1\": true, \"k2\": true, \"k3\": true, \"k4\": true, \"k5\": true, \"k6\": true, \"k7\": true, \"k8\": true, \"k9\": true, \"k10\": true, \"k11\": true, \"k12\": true, \"k13\": true, \"k14\": true, \"k15\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 1,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"l\\\": {\\n      \\\"k0\\\": true,\\n      \\\"k1\\\": true,\\n      \\\"k2\\\": true,\\n      \\\"k3\\\": true,\\n      \\\"k4\\\": true,\\n      \\\"k5\\\": true,\\n      \\\"k6\\\": true,\\n      \\\"k7\\\": true,\\n      \\\"k8\\\": true,\\n      \\\"k9\\\": true,\\n      \\\"k10\\\": true,\\n      \\\"k11\\\": true,\\n      \\\"k12\\\": true,\\n      \\\"k13\\\": true,\\n      \\\"k14\\\": true,\\n      \\\"k15\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "preferences update 10 12",
+  "fn": "preferences_update",
+  "args": {
+   "stored_text": "{\"list_filters\": {\"l\": {\"k0\": true, \"k1\": true, \"k2\": true, \"k3\": true, \"k4\": true, \"k5\": true, \"k6\": true, \"k7\": true, \"k8\": true, \"k9\": true, \"k10\": true, \"k11\": true, \"k12\": true, \"k13\": true, \"k14\": true, \"k15\": true, \"k16\": true, \"k17\": true, \"k18\": true, \"k19\": true}}}",
+   "changes": {
+    "list_filters": {
+     "ieds": {
+      "kind": "relay",
+      "live": true
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"tour_seen_version\": 0, \"sld_goose_layer\": 0, \"sld_readers_layer\": 0, \"list_filters\": {\"l\": {\"k0\": true, \"k1\": true, \"k2\": true, \"k3\": true, \"k4\": true, \"k5\": true, \"k6\": true, \"k7\": true, \"k8\": true, \"k9\": true, \"k10\": true, \"k11\": true, \"k12\": true, \"k13\": true, \"k14\": true, \"k15\": true}, \"ieds\": {\"kind\": \"relay\", \"live\": true}}, \"tour_version\": 1}, \"file\": \"{\\n  \\\"tour_seen_version\\\": 0,\\n  \\\"sld_goose_layer\\\": 0,\\n  \\\"sld_readers_layer\\\": 0,\\n  \\\"list_filters\\\": {\\n    \\\"l\\\": {\\n      \\\"k0\\\": true,\\n      \\\"k1\\\": true,\\n      \\\"k2\\\": true,\\n      \\\"k3\\\": true,\\n      \\\"k4\\\": true,\\n      \\\"k5\\\": true,\\n      \\\"k6\\\": true,\\n      \\\"k7\\\": true,\\n      \\\"k8\\\": true,\\n      \\\"k9\\\": true,\\n      \\\"k10\\\": true,\\n      \\\"k11\\\": true,\\n      \\\"k12\\\": true,\\n      \\\"k13\\\": true,\\n      \\\"k14\\\": true,\\n      \\\"k15\\\": true\\n    },\\n    \\\"ieds\\\": {\\n      \\\"kind\\\": \\\"relay\\\",\\n      \\\"live\\\": true\\n    }\\n  }\\n}\"}"
+ },
+ {
+  "name": "list filters clean 0",
+  "fn": "list_filters_clean",
+  "args": {
+   "stored": null
+  },
+  "ieds": [],
+  "out": "{}"
+ },
+ {
+  "name": "list filters clean 1",
+  "fn": "list_filters_clean",
+  "args": {
+   "stored": []
+  },
+  "ieds": [],
+  "out": "{}"
+ },
+ {
+  "name": "list filters clean 2",
+  "fn": "list_filters_clean",
+  "args": {
+   "stored": {
+    "a": {
+     "k": "v"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"a\": {\"k\": \"v\"}}"
+ },
+ {
+  "name": "list filters clean 3",
+  "fn": "list_filters_clean",
+  "args": {
+   "stored": {
+    "a": [],
+    "b": {
+     "k": 1
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"b\": {}}"
+ },
+ {
+  "name": "list filters clean 4",
+  "fn": "list_filters_clean",
+  "args": {
+   "stored": {
+    "l0": {
+     "k": true
+    },
+    "l1": {
+     "k": true
+    },
+    "l2": {
+     "k": true
+    },
+    "l3": {
+     "k": true
+    },
+    "l4": {
+     "k": true
+    },
+    "l5": {
+     "k": true
+    },
+    "l6": {
+     "k": true
+    },
+    "l7": {
+     "k": true
+    },
+    "l8": {
+     "k": true
+    },
+    "l9": {
+     "k": true
+    },
+    "l10": {
+     "k": true
+    },
+    "l11": {
+     "k": true
+    },
+    "l12": {
+     "k": true
+    },
+    "l13": {
+     "k": true
+    },
+    "l14": {
+     "k": true
+    },
+    "l15": {
+     "k": true
+    },
+    "l16": {
+     "k": true
+    },
+    "l17": {
+     "k": true
+    },
+    "l18": {
+     "k": true
+    },
+    "l19": {
+     "k": true
+    },
+    "l20": {
+     "k": true
+    },
+    "l21": {
+     "k": true
+    },
+    "l22": {
+     "k": true
+    },
+    "l23": {
+     "k": true
+    },
+    "l24": {
+     "k": true
+    },
+    "l25": {
+     "k": true
+    },
+    "l26": {
+     "k": true
+    },
+    "l27": {
+     "k": true
+    },
+    "l28": {
+     "k": true
+    },
+    "l29": {
+     "k": true
+    },
+    "l30": {
+     "k": true
+    },
+    "l31": {
+     "k": true
+    },
+    "l32": {
+     "k": true
+    },
+    "l33": {
+     "k": true
+    },
+    "l34": {
+     "k": true
+    },
+    "l35": {
+     "k": true
+    },
+    "l36": {
+     "k": true
+    },
+    "l37": {
+     "k": true
+    },
+    "l38": {
+     "k": true
+    },
+    "l39": {
+     "k": true
+    },
+    "l40": {
+     "k": true
+    },
+    "l41": {
+     "k": true
+    },
+    "l42": {
+     "k": true
+    },
+    "l43": {
+     "k": true
+    },
+    "l44": {
+     "k": true
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"l0\": {\"k\": true}, \"l1\": {\"k\": true}, \"l2\": {\"k\": true}, \"l3\": {\"k\": true}, \"l4\": {\"k\": true}, \"l5\": {\"k\": true}, \"l6\": {\"k\": true}, \"l7\": {\"k\": true}, \"l8\": {\"k\": true}, \"l9\": {\"k\": true}, \"l10\": {\"k\": true}, \"l11\": {\"k\": true}, \"l12\": {\"k\": true}, \"l13\": {\"k\": true}, \"l14\": {\"k\": true}, \"l15\": {\"k\": true}, \"l16\": {\"k\": true}, \"l17\": {\"k\": true}, \"l18\": {\"k\": true}, \"l19\": {\"k\": true}, \"l20\": {\"k\": true}, \"l21\": {\"k\": true}, \"l22\": {\"k\": true}, \"l23\": {\"k\": true}, \"l24\": {\"k\": true}, \"l25\": {\"k\": true}, \"l26\": {\"k\": true}, \"l27\": {\"k\": true}, \"l28\": {\"k\": true}, \"l29\": {\"k\": true}, \"l30\": {\"k\": true}, \"l31\": {\"k\": true}, \"l32\": {\"k\": true}, \"l33\": {\"k\": true}, \"l34\": {\"k\": true}, \"l35\": {\"k\": true}, \"l36\": {\"k\": true}, \"l37\": {\"k\": true}, \"l38\": {\"k\": true}, \"l39\": {\"k\": true}}"
+ },
+ {
+  "name": "list filters merge 0",
+  "fn": "list_filters_merge",
+  "args": {
+   "current": {
+    "a": {
+     "k": "v"
+    }
+   },
+   "changes": {}
+  },
+  "ieds": [],
+  "out": "{\"a\": {\"k\": \"v\"}}"
+ },
+ {
+  "name": "list filters merge 1",
+  "fn": "list_filters_merge",
+  "args": {
+   "current": {
+    "a": {
+     "k": "v"
+    }
+   },
+   "changes": null
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "list_filters must be an object of lists",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "list filters merge 2",
+  "fn": "list_filters_merge",
+  "args": {
+   "current": {
+    "a": {
+     "k": "v"
+    }
+   },
+   "changes": {
+    "Bad": {}
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Unknown list name: 'Bad'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "list filters merge 3",
+  "fn": "list_filters_merge",
+  "args": {
+   "current": {
+    "a": {
+     "k": "v"
+    }
+   },
+   "changes": {
+    "b": {
+     "k": "v"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"a\": {\"k\": \"v\"}, \"b\": {\"k\": \"v\"}}"
+ },
+ {
+  "name": "list filters merge 4",
+  "fn": "list_filters_merge",
+  "args": {
+   "current": {
+    "a": {
+     "k": "v"
+    }
+   },
+   "changes": {
+    "a": {
+     "x": null
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Filters of a must be short text or true/false values",
+   "code": null,
+   "details": null
+  }
+ }
+]

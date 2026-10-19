@@ -1,0 +1,2 @@
+# Byte-exact corpus inputs and Python goldens: never convert line endings (core.autocrlf).
+* -text

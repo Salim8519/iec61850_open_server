@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Invalid IED name: 'a\\'b\"c'", "code": "validation", "details": []}

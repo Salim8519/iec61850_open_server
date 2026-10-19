@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}EnumType': Missing child element(s). Expected is one of ( ##other{http://www.iec.ch/61850/2003/SCL}*, {http://www.iec.ch/61850/2003/SCL}Text, {http://www.iec.ch/61850/2003/SCL}Private, {http://www.iec.ch/61850/2003/SCL}EnumVal )."}]}

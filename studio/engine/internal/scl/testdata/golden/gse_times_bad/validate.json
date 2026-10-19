@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}MaxTime': 'abc' is not a valid value of the atomic type 'xs:decimal'."}]}
