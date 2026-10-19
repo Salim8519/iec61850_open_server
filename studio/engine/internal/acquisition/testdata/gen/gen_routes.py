@@ -7,6 +7,7 @@ testdata/generated/routes_scenario.json: the steps, each answer and the events i
 """
 import copy
 import json
+import os
 import tempfile
 import time
 from pathlib import Path
@@ -152,9 +153,26 @@ def running_scenario(script):
     http("POST", "/api/v1/health/refresh")
     http("POST", "/api/v1/goose/conflicts", {"choice": "stop", "ied_id": bus})
     http("GET", "/api/v1/goose/share")
+    if os.environ.get("STUDIO_BENCH"):
+        bench(feed)
     del captured[:]
     live.stop()
     steps.append({"step": "stop", "events": list(captured)})
+
+
+def bench(feed):
+    """STUDIO_BENCH=1: median time of each GET route in the running state (Flask test client)."""
+    for path in BENCH_PATHS + [f"/live/{feed}/comparison", f"/ieds/{feed}/signals?limit=100&q=stval"]:
+        samples = []
+        for _ in range(200):
+            began = time.perf_counter()
+            client.get("/api/v1" + path)
+            samples.append(time.perf_counter() - began)
+        print(f"python {path.split('?')[0]:<45} median {sorted(samples)[100] * 1e6:9.1f} us")
+
+
+BENCH_PATHS = ["/live", "/goose", "/goose/links", "/mms/access", "/sv", "/health", "/health.csv",
+               "/health/report.html", "/goose/share"]
 
 
 def scenario_events(feed, bus):
