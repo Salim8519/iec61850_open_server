@@ -7,6 +7,7 @@ Nothing here needs a running IED, a device or the network.
 import io
 import json
 import os
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -50,3 +51,5 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # -I leaves the 
 for name in sys.argv[1:]:
     __import__(name).run(send, projects)
 app.extensions["runtime"].close()
+app.extensions["explorer"].close()
+shutil.rmtree(folder, ignore_errors=True)
