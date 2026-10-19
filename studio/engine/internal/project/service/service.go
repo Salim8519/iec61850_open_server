@@ -84,6 +84,9 @@ func (s *Service) Revision() int64 { return s.current.Load().revision }
 // SessionID is the per-process session id of the snapshot API.
 func (s *Service) SessionID() string { return s.sessionID }
 
+// Importer is the SCL importer (schema validator and id source) the service imports with.
+func (s *Service) Importer() *scl.Importer { return s.config.Importer }
+
 // Project returns the current project tree (immutable; do not modify).
 func (s *Service) Project() *pyjson.Object { return s.current.Load().project }
 
