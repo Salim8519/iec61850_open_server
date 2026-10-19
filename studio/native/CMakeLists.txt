@@ -57,7 +57,7 @@ add_executable(studio_probe probe/main.cpp probe/reports.cpp common/browse.cpp
 target_include_directories(studio_probe PRIVATE ${STUDIO_HEADERS})
 # Control client of the Tools place (ADR-0057): the only tools program that operates IEDs.
 add_executable(studio_control control/main.cpp control/control_session.cpp control/control_texts.cpp
-    worker/ipc/framing.cpp)
+    control/canvas_mux.cpp control/canvas_command.cpp worker/ipc/framing.cpp)
 target_include_directories(studio_control PRIVATE ${STUDIO_HEADERS} worker control)
 # Test-only Sampled Values publisher (never packaged): the only target with SV publishing code.
 add_executable(studio_sv_test_publisher testtools/sv_test_publisher.cpp worker/ipc/framing.cpp
