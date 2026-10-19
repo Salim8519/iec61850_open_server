@@ -36,7 +36,8 @@ func Coded(message, code string) *Error { return &Error{Kind: Studio, Message: m
 // ValueError returns a ValueError with message.
 func ValueError(message string) *Error { return &Error{Kind: Value, Message: message} }
 
-// KeyError returns a KeyError for key; its text is Python's repr, e.g. 'ied_id'.
+// KeyError returns a KeyError for a plain ASCII key such as 'ied_id'. For any key that may
+// hold quotes or non-ASCII text use pycompat.KeyError, which applies Python's full repr.
 func KeyError(key string) *Error { return &Error{Kind: Key, Message: "'" + key + "'"} }
 
 // RuntimeError returns a RuntimeError with message.
