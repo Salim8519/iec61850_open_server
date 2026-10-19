@@ -1,0 +1,21 @@
+{
+  "explorer": {
+    "host": "10.0.0.5",
+    "port": 102,
+    "interval_ms": 2000,
+    "watch_by_host": {
+      "10.0.0.5": [
+        {
+          "ref": "LD0/LLN0.Mod.stVal",
+          "fc": "ST",
+          "type": "Enum"
+        }
+      ]
+    }
+  },
+  "find": {
+    "range": "10.0.0.0/24",
+    "port": true,
+    "choice": "\u00e9"
+  }
+}
