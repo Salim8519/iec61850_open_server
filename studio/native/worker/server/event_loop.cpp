@@ -42,18 +42,16 @@ void EventLoop::poll_for(uint32_t milliseconds) {
 }
 
 // libiec61850 schedules the next frame of a GOOSE control block at send time + MinTime
-// or + MaxTime (mms_goose.c), measured just before this observer runs. Waking one
-// millisecond either side of each candidate keeps retransmissions on time.
+// or + MaxTime (mms_goose.c), measured with the same precise clock just before this
+// observer runs, so `now` is never earlier than the vendor's send time and the loop wakes
+// exactly when checkAndPublish's `currentTime >= nextPublishTime` first holds.
 void EventLoop::frame_sent() {
     uint32_t intervals[16];
     int count = studio_goose_intervals(server, intervals, 16);
     uint64_t now = Hal_getTimeInMs();
     {
         std::lock_guard<std::mutex> guard(lock);
-        for (int i = 0; i < count; ++i) {
-            for (uint64_t offset = 0; offset < 3; ++offset)
-                goose_due.insert(now + intervals[i] + offset - 1);
-        }
+        for (int i = 0; i < count; ++i) goose_due.insert(now + intervals[i]);
     }
     kick();
 }
@@ -67,6 +65,9 @@ uint64_t EventLoop::local_deadline(uint64_t now) {
     return next;
 }
 
+// Wall-clock nanoseconds (Hal_getTimeInNs) at which Hal_getTimeInMs() first returns `ms`.
+static uint64_t ms_boundary(uint64_t ms) { return ms * 1000000ULL; }
+
 void EventLoop::run() {
     loop_thread.store(std::this_thread::get_id());
     uint64_t left_by_periodic = STUDIO_NO_DEADLINE;
@@ -75,14 +76,17 @@ void EventLoop::run() {
         uint64_t server_next = studio_server_deadline(server, now);
         uint64_t local_next = local_deadline(now);
         uint64_t next = std::min(server_next, local_next);
-        unsigned int timeout = static_cast<unsigned int>(
-            next <= now ? 0 : std::min<uint64_t>(next - now, LONGEST_SLEEP_MS));
+        uint64_t now_ns = Hal_getTimeInNs();
+        uint64_t deadline = next < now + LONGEST_SLEEP_MS ? ms_boundary(next)
+                                                          : now_ns + LONGEST_SLEEP_MS * 1000000ULL;
         // A deadline the last periodic run left unchanged is one the vendor waits out itself
-        // (strict select timeout, model locked by an update): retry each millisecond like its
-        // own loop instead of spinning.
-        if (timeout == 0 && server_next <= now && server_next == left_by_periodic && local_next > now)
-            timeout = 1;
-        StudioSocket_beginWait(wake);
+        // (strict `>` timeout, model locked by an update): retry on the next millisecond like
+        // its own loop instead of spinning.
+        if (next <= now && server_next <= now && server_next == left_by_periodic && local_next > now)
+            deadline = ms_boundary(now + 1);
+        unsigned int timeout = static_cast<unsigned int>(
+            deadline <= now_ns ? 0 : (deadline - now_ns + 999999) / 1000000);
+        StudioSocket_beginWait(wake, deadline);
         int ready = IedServer_waitReady(server, timeout);
         StudioSocket_beginPoll();
         {

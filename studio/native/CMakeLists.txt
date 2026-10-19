@@ -40,10 +40,11 @@ target_link_libraries(studio_license_check PRIVATE studio_license)
 add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/server/server.cpp worker/updates/values.cpp worker/controls/controls.cpp
     worker/goose/publishing.cpp worker/server/access_log.cpp worker/server/read_hook.c
-    worker/server/event_loop.cpp worker/server/schedule.c)
+    worker/server/event_loop.cpp worker/server/schedule.c worker/server/timer_policy.cpp)
 target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker worker/server hal)
 if(WIN32)
-    target_link_libraries(studio_ied PRIVATE winmm)  # 1 ms timer for GOOSE retransmission (change 0102)
+    # 1 ms timer only where Windows has no high-resolution timers (worker/server/timer_policy.cpp)
+    target_link_libraries(studio_ied PRIVATE winmm)
 endif()
 # The read hook (ADR-0066) and the event-loop schedule need private libiec61850 layouts.
 set_source_files_properties(worker/server/read_hook.c worker/server/schedule.c PROPERTIES INCLUDE_DIRECTORIES

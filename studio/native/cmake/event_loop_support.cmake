@@ -1,11 +1,13 @@
 # Event-driven simulated IED server (workstream G; proposed ADR in
 # docs/architecture/go-engine/streams/g-native.md). The MMS server stays single-threaded
 # (CONFIG_MMS_SINGLE_THREADED, vendor default); studio_ied drives it with its own loop.
-# The vendor tree stays untouched (ADR-0006): socket_studio.c compiles the vendor socket HAL
-# under renamed symbols, and the worker reads private scheduling fields of the pinned commit.
+# The vendor tree stays untouched (ADR-0006): socket_studio.c and time_studio.c compile the
+# vendor socket and time HALs under renamed symbols (precise clock, high-resolution loop wait:
+# speed lane N1), and the worker reads private scheduling fields of the pinned commit.
 # Any change in these files must be reviewed against the loop before the hashes are updated.
 set(event_loop_pins
     "hal/socket/win32/socket_win32.c=de8f63edc9e377f6ce6116edf373ecc5300bf3368b6cb2d23358b1bb4b472ea4"
+    "hal/time/win32/time.c=0c728c736d4a2d3c5e6df96d16b7f8c118b1a2f6fa159379a043e6e07705c1e8"
     "src/iec61850/inc_private/reporting.h=edf71ab5a36e36d7175961921b5b428ac201329c324f40a50a2c5a20718c77bd"
     "src/iec61850/inc_private/mms_mapping_internal.h=b30bcce2838dbda7c80bafc942c1a0071d9d38011576041f9f96f9f6027ef51d"
     "src/iec61850/inc_private/ied_server_private.h=c597e620b6ced018e9eb3817b12710d47bc2cb6244203142354e6a823d76e3a2")
@@ -23,8 +25,10 @@ if(NOT CONFIG_MMS_SINGLE_THREADED OR CONFIG_MMS_THREADLESS_STACK)
 endif()
 foreach(hal_target hal hal-shared)
     get_target_property(hal_sources ${hal_target} SOURCES)
-    list(FILTER hal_sources EXCLUDE REGEX "socket_win32\\.c$")
-    list(APPEND hal_sources "${CMAKE_CURRENT_SOURCE_DIR}/hal/socket_studio.c")
+    list(FILTER hal_sources EXCLUDE REGEX "(socket/win32/socket_win32|time/win32/time)\\.c$")
+    list(APPEND hal_sources "${CMAKE_CURRENT_SOURCE_DIR}/hal/socket_studio.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/hal/studio_wake.c" "${CMAKE_CURRENT_SOURCE_DIR}/hal/time_studio.c")
     set_property(TARGET ${hal_target} PROPERTY SOURCES "${hal_sources}")
-    target_include_directories(${hal_target} PRIVATE "${IEC_SOURCE}/hal/socket/win32")
+    target_include_directories(${hal_target} PRIVATE "${IEC_SOURCE}/hal/socket/win32"
+        "${IEC_SOURCE}/hal/time/win32" "${CMAKE_CURRENT_SOURCE_DIR}/hal")
 endforeach()
