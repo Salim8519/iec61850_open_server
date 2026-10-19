@@ -106,6 +106,13 @@ func (s *Service) Importer() *scl.Importer { return s.config.Importer }
 // Project returns the current project tree (immutable; do not modify).
 func (s *Service) Project() *pyjson.Object { return s.current.Load().project }
 
+// State is the project tree and its revision, read together (what Python read under
+// service.lock).
+func (s *Service) State() (*pyjson.Object, int64) {
+	st := s.current.Load()
+	return st.project, st.revision
+}
+
 // Snapshot is ProjectService.snapshot().
 func (s *Service) Snapshot() *pyjson.Object {
 	st := s.current.Load()

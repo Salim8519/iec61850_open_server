@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"studio-engine/internal/testutil"
 	"sync"
 	"testing"
@@ -35,10 +36,12 @@ func loadSeed(t *testing.T) seedValidator {
 	}
 	decoded, _ := pyjson.Decode(data)
 	entries := decoded.([]any)
-	if golden, err := os.ReadFile("testdata/generated/http_golden.json"); err == nil {
-		recorded, _ := pyjson.Decode(golden)
-		more, _ := get(object(recorded), "xsd").([]any)
-		entries = append(entries, more...)
+	for _, name := range []string{"http_golden.json", "http_routes_golden.json"} {
+		if golden, err := os.ReadFile("testdata/generated/" + name); err == nil {
+			recorded, _ := pyjson.Decode(golden)
+			more, _ := get(object(recorded), "xsd").([]any)
+			entries = append(entries, more...)
+		}
 	}
 	seed := seedValidator{}
 	for _, raw := range entries {
@@ -107,7 +110,29 @@ func newArea(t *testing.T) (http.Handler, *fakeRuntime) {
 		Preferences: settings.NewPreferences(dir)})
 	mux := http.NewServeMux()
 	for _, route := range area.Routes() {
-		mux.Handle(route.Method+" "+route.Pattern, route.Handler)
+		mux.Handle(route.Method+" "+muxPattern(route.Pattern), suffixed(route.Pattern, route.Handler))
 	}
 	return mux, runtime
+}
+
+// muxPattern and suffixed let http.ServeMux serve Werkzeug's "{edge_id}.csv" segment
+// (httpapi's router matches it natively): the mux matches "{edge_id}" and the wrapper
+// requires and strips the ".csv" suffix.
+func muxPattern(pattern string) string { return strings.Replace(pattern, "}.csv", "}", 1) }
+
+func suffixed(pattern string, handler http.Handler) http.Handler {
+	if !strings.HasSuffix(pattern, "}.csv") {
+		return handler
+	}
+	start := strings.LastIndex(pattern, "{")
+	name := pattern[start+1 : len(pattern)-len("}.csv")]
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		value := r.PathValue(name)
+		if !strings.HasSuffix(value, ".csv") || value == ".csv" {
+			http.NotFound(w, r)
+			return
+		}
+		r.SetPathValue(name, strings.TrimSuffix(value, ".csv"))
+		handler.ServeHTTP(w, r)
+	})
 }
