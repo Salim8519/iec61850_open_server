@@ -1,0 +1,670 @@
+{
+"times": [
+"2026-10-20T08:15:30.123456+00:00",
+"2026-10-20T08:15:31+00:00",
+"2026-01-02T03:04:05.000006+00:00",
+"2026-12-31T23:59:59.999999+00:00"
+],
+"scenarios": [
+{
+"name": "append_only",
+"steps": [
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"f1",
+""
+],
+[
+"append",
+"removed",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"f2",
+"done"
+],
+[
+"outstanding"
+]
+],
+"results": [
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"applied\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:31+00:00\", \"event\": \"removed\", \"fingerprint\": \"f2\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"done\"}"
+},
+{
+"ok": "[]"
+}
+],
+"file": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImYxIiwgIml0ZW0iOiB7ImFkYXB0ZXJfZ3VpZCI6ICJ7MX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgImtpbmQiOiAiYWxpYXMiLCAib3duZWQiOiB0cnVlLCAicHJlZml4IjogMjR9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMTAtMjBUMDg6MTU6MzErMDA6MDAiLCAiZXZlbnQiOiAicmVtb3ZlZCIsICJmaW5nZXJwcmludCI6ICJmMiIsICJpdGVtIjogeyJhZGFwdGVyX2d1aWQiOiAiezF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogdHJ1ZSwgInByZWZpeCI6IDI0fSwgInJlc3VsdCI6ICJkb25lIn0NCg=="
+},
+{
+"name": "owned_only",
+"steps": [
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"f1",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.10",
+"prefix": 24,
+"owned": false
+},
+"f1",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "firewall",
+"name": "SubstationStudio-MMS-0123456789ab",
+"owned": true
+},
+"f1",
+""
+],
+[
+"append",
+"failed",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.22",
+"prefix": 24,
+"owned": true
+},
+"f1",
+"x"
+],
+[
+"outstanding"
+]
+],
+"results": [
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"applied\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:31+00:00\", \"event\": \"applied\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.10\", \"prefix\": 24, \"owned\": false}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-01-02T03:04:05.000006+00:00\", \"event\": \"applied\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-12-31T23:59:59.999999+00:00\", \"event\": \"failed\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.22\", \"prefix\": 24, \"owned\": true}, \"result\": \"x\"}"
+},
+{
+"ok": "[{\"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"kind\": \"alias\", \"owned\": true, \"prefix\": 24}, {\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"owned\": true}]"
+}
+],
+"file": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImYxIiwgIml0ZW0iOiB7ImFkYXB0ZXJfZ3VpZCI6ICJ7MX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgImtpbmQiOiAiYWxpYXMiLCAib3duZWQiOiB0cnVlLCAicHJlZml4IjogMjR9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMTAtMjBUMDg6MTU6MzErMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICJmMSIsICJpdGVtIjogeyJhZGFwdGVyX2d1aWQiOiAiezF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4xMCIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogZmFsc2UsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0wMS0wMlQwMzowNDowNS4wMDAwMDYrMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICJmMSIsICJpdGVtIjogeyJraW5kIjogImZpcmV3YWxsIiwgIm5hbWUiOiAiU3Vic3RhdGlvblN0dWRpby1NTVMtMDEyMzQ1Njc4OWFiIiwgIm93bmVkIjogdHJ1ZX0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMi0zMVQyMzo1OTo1OS45OTk5OTkrMDA6MDAiLCAiZXZlbnQiOiAiZmFpbGVkIiwgImZpbmdlcnByaW50IjogImYxIiwgIml0ZW0iOiB7ImFkYXB0ZXJfZ3VpZCI6ICJ7MX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIyIiwgImtpbmQiOiAiYWxpYXMiLCAib3duZWQiOiB0cnVlLCAicHJlZml4IjogMjR9LCAicmVzdWx0IjogIngifQ0K"
+},
+{
+"name": "leftovers",
+"steps": [
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"f1",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "firewall",
+"name": "SubstationStudio-MMS-0123456789ab",
+"owned": true
+},
+"f1",
+""
+],
+[
+"leftovers",
+[
+"alias"
+]
+],
+[
+"leftovers",
+[]
+]
+],
+"results": [
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"applied\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:31+00:00\", \"event\": \"applied\", \"fingerprint\": \"f1\", \"item\": {\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "[{\"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"kind\": \"alias\", \"owned\": true, \"prefix\": 24}]"
+},
+{
+"ok": "[]"
+}
+],
+"file": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImYxIiwgIml0ZW0iOiB7ImFkYXB0ZXJfZ3VpZCI6ICJ7MX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgImtpbmQiOiAiYWxpYXMiLCAib3duZWQiOiB0cnVlLCAicHJlZml4IjogMjR9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMTAtMjBUMDg6MTU6MzErMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICJmMSIsICJpdGVtIjogeyJraW5kIjogImZpcmV3YWxsIiwgIm5hbWUiOiAiU3Vic3RhdGlvblN0dWRpby1NTVMtMDEyMzQ1Njc4OWFiIiwgIm93bmVkIjogdHJ1ZX0sICJyZXN1bHQiOiAiIn0NCg=="
+},
+{
+"name": "gateway",
+"steps": [
+[
+"append",
+"applied",
+{
+"kind": "gateway_firewall",
+"name": "ScadaBench-Gateway-7f166b55503f",
+"group": "ScadaBench",
+"program": "C:\\Studio\\native\\studio_gateway.exe",
+"owned": true,
+"action": "add"
+},
+"",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "unblock",
+"name": "TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe",
+"display": "studio_gateway.exe",
+"program": "C:\\Studio\\native\\studio_gateway.exe",
+"owned": true,
+"action": "add"
+},
+"",
+""
+],
+[
+"outstanding"
+],
+[
+"append",
+"removed",
+{
+"kind": "unblock",
+"name": "TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe",
+"display": "studio_gateway.exe",
+"program": "C:\\Studio\\native\\studio_gateway.exe",
+"owned": true,
+"action": "add"
+},
+"",
+""
+],
+[
+"leftovers",
+[
+"gateway_firewall",
+"unblock"
+]
+]
+],
+"results": [
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"applied\", \"fingerprint\": \"\", \"item\": {\"kind\": \"gateway_firewall\", \"name\": \"ScadaBench-Gateway-7f166b55503f\", \"group\": \"ScadaBench\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:31+00:00\", \"event\": \"applied\", \"fingerprint\": \"\", \"item\": {\"kind\": \"unblock\", \"name\": \"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}, \"result\": \"\"}"
+},
+{
+"ok": "[{\"action\": \"add\", \"group\": \"ScadaBench\", \"kind\": \"gateway_firewall\", \"name\": \"ScadaBench-Gateway-7f166b55503f\", \"owned\": true, \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}, {\"action\": \"add\", \"display\": \"studio_gateway.exe\", \"kind\": \"unblock\", \"name\": \"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}]"
+},
+{
+"ok": "{\"at\": \"2026-01-02T03:04:05.000006+00:00\", \"event\": \"removed\", \"fingerprint\": \"\", \"item\": {\"kind\": \"unblock\", \"name\": \"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}, \"result\": \"\"}"
+},
+{
+"ok": "[{\"action\": \"add\", \"group\": \"ScadaBench\", \"kind\": \"gateway_firewall\", \"name\": \"ScadaBench-Gateway-7f166b55503f\", \"owned\": true, \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}]"
+}
+],
+"file": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIiIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImdyb3VwIjogIlNjYWRhQmVuY2giLCAia2luZCI6ICJnYXRld2F5X2ZpcmV3YWxsIiwgIm5hbWUiOiAiU2NhZGFCZW5jaC1HYXRld2F5LTdmMTY2YjU1NTAzZiIsICJvd25lZCI6IHRydWUsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIn0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMSswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIiIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImRpc3BsYXkiOiAic3R1ZGlvX2dhdGV3YXkuZXhlIiwgImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIn0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0wMS0wMlQwMzowNDowNS4wMDAwMDYrMDA6MDAiLCAiZXZlbnQiOiAicmVtb3ZlZCIsICJmaW5nZXJwcmludCI6ICIiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJraW5kIjogInVuYmxvY2siLCAibmFtZSI6ICJUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQo="
+},
+{
+"name": "reorder",
+"steps": [
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"a",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "firewall",
+"name": "SubstationStudio-MMS-0123456789ab",
+"owned": true
+},
+"a",
+""
+],
+[
+"append",
+"removed",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"b",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"c",
+""
+],
+[
+"append",
+"applied",
+{
+"kind": "firewall",
+"name": "SubstationStudio-MMS-0123456789ab",
+"owned": true
+},
+"d",
+"again"
+],
+[
+"outstanding"
+]
+],
+"results": [
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"applied\", \"fingerprint\": \"a\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:31+00:00\", \"event\": \"applied\", \"fingerprint\": \"a\", \"item\": {\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-01-02T03:04:05.000006+00:00\", \"event\": \"removed\", \"fingerprint\": \"b\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-12-31T23:59:59.999999+00:00\", \"event\": \"applied\", \"fingerprint\": \"c\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true}, \"result\": \"\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"applied\", \"fingerprint\": \"d\", \"item\": {\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"owned\": true}, \"result\": \"again\"}"
+},
+{
+"ok": "[{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"owned\": true}, {\"adapter_guid\": \"{1}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"kind\": \"alias\", \"owned\": true, \"prefix\": 24}]"
+}
+],
+"file": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImEiLCAiaXRlbSI6IHsiYWRhcHRlcl9ndWlkIjogInsxfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMSswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImEiLCAiaXRlbSI6IHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTAxMjM0NTY3ODlhYiIsICJvd25lZCI6IHRydWV9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMDEtMDJUMDM6MDQ6MDUuMDAwMDA2KzAwOjAwIiwgImV2ZW50IjogInJlbW92ZWQiLCAiZmluZ2VycHJpbnQiOiAiYiIsICJpdGVtIjogeyJhZGFwdGVyX2d1aWQiOiAiezF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogdHJ1ZSwgInByZWZpeCI6IDI0fSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OSswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImMiLCAiaXRlbSI6IHsiYWRhcHRlcl9ndWlkIjogInsxfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMC4xMjM0NTYrMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICJkIiwgIml0ZW0iOiB7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAib3duZWQiOiB0cnVlfSwgInJlc3VsdCI6ICJhZ2FpbiJ9DQo="
+},
+{
+"name": "results",
+"steps": [
+[
+"append",
+"skipped",
+{
+"kind": "alias",
+"adapter_guid": "{2}",
+"ip": "10.0.0.5",
+"owned": 1,
+"adapter_name": "Str\u00f6m \"Lab\" <&>",
+"zeta": [
+1.5,
+null,
+{
+"b": 2,
+"a": 1
+}
+],
+"prefix": null
+},
+"f",
+"\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+],
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{2}",
+"ip": "10.0.0.5",
+"owned": 1,
+"adapter_name": "Str\u00f6m \"Lab\" <&>",
+"zeta": [
+1.5,
+null,
+{
+"b": 2,
+"a": 1
+}
+],
+"prefix": null
+},
+"f",
+5
+],
+[
+"append",
+"applied",
+{
+"kind": "alias",
+"adapter_guid": "{2}",
+"ip": "10.0.0.5",
+"owned": 1,
+"adapter_name": "Str\u00f6m \"Lab\" <&>",
+"zeta": [
+1.5,
+null,
+{
+"b": 2,
+"a": 1
+}
+],
+"prefix": null
+},
+"f",
+null
+],
+[
+"append",
+"failed",
+{
+"kind": "alias",
+"adapter_guid": "{2}",
+"ip": "10.0.0.5",
+"owned": 1,
+"adapter_name": "Str\u00f6m \"Lab\" <&>",
+"zeta": [
+1.5,
+null,
+{
+"b": 2,
+"a": 1
+}
+],
+"prefix": null
+},
+"f",
+{
+"x": [
+1,
+"y'z"
+]
+}
+],
+[
+"append",
+"bogus",
+{
+"kind": "alias",
+"adapter_guid": "{2}",
+"ip": "10.0.0.5",
+"owned": 1,
+"adapter_name": "Str\u00f6m \"Lab\" <&>",
+"zeta": [
+1.5,
+null,
+{
+"b": 2,
+"a": 1
+}
+],
+"prefix": null
+},
+"f",
+""
+],
+[
+"outstanding"
+]
+],
+"results": [
+{
+"ok": "{\"at\": \"2026-10-20T08:15:30.123456+00:00\", \"event\": \"skipped\", \"fingerprint\": \"f\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{2}\", \"ip\": \"10.0.0.5\", \"owned\": 1, \"adapter_name\": \"Str\\u00f6m \\\"Lab\\\" <&>\", \"zeta\": [1.5, null, {\"b\": 2, \"a\": 1}], \"prefix\": null}, \"result\": \"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\"}"
+},
+{
+"ok": "{\"at\": \"2026-10-20T08:15:31+00:00\", \"event\": \"applied\", \"fingerprint\": \"f\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{2}\", \"ip\": \"10.0.0.5\", \"owned\": 1, \"adapter_name\": \"Str\\u00f6m \\\"Lab\\\" <&>\", \"zeta\": [1.5, null, {\"b\": 2, \"a\": 1}], \"prefix\": null}, \"result\": \"5\"}"
+},
+{
+"ok": "{\"at\": \"2026-01-02T03:04:05.000006+00:00\", \"event\": \"applied\", \"fingerprint\": \"f\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{2}\", \"ip\": \"10.0.0.5\", \"owned\": 1, \"adapter_name\": \"Str\\u00f6m \\\"Lab\\\" <&>\", \"zeta\": [1.5, null, {\"b\": 2, \"a\": 1}], \"prefix\": null}, \"result\": \"None\"}"
+},
+{
+"ok": "{\"at\": \"2026-12-31T23:59:59.999999+00:00\", \"event\": \"failed\", \"fingerprint\": \"f\", \"item\": {\"kind\": \"alias\", \"adapter_guid\": \"{2}\", \"ip\": \"10.0.0.5\", \"owned\": 1, \"adapter_name\": \"Str\\u00f6m \\\"Lab\\\" <&>\", \"zeta\": [1.5, null, {\"b\": 2, \"a\": 1}], \"prefix\": null}, \"result\": \"{'x': [1, \\\"y'z\\\"]}\"}"
+},
+{
+"error": "ValueError",
+"message": "Unknown journal event",
+"code": null,
+"details": null
+},
+{
+"ok": "[{\"adapter_guid\": \"{2}\", \"adapter_name\": \"Str\\u00f6m \\\"Lab\\\" <&>\", \"ip\": \"10.0.0.5\", \"kind\": \"alias\", \"owned\": 1, \"prefix\": null, \"zeta\": [1.5, null, {\"a\": 1, \"b\": 2}]}]"
+}
+],
+"file": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJza2lwcGVkIiwgImZpbmdlcnByaW50IjogImYiLCAiaXRlbSI6IHsiYWRhcHRlcl9ndWlkIjogInsyfSIsICJhZGFwdGVyX25hbWUiOiAiU3RyXHUwMGY2bSBcIkxhYlwiIDwmPiIsICJpcCI6ICIxMC4wLjAuNSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogMSwgInByZWZpeCI6IG51bGwsICJ6ZXRhIjogWzEuNSwgbnVsbCwgeyJhIjogMSwgImIiOiAyfV19LCAicmVzdWx0IjogIlx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOVx1MDBlOSJ9DQp7ImF0IjogIjIwMjYtMTAtMjBUMDg6MTU6MzErMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICJmIiwgIml0ZW0iOiB7ImFkYXB0ZXJfZ3VpZCI6ICJ7Mn0iLCAiYWRhcHRlcl9uYW1lIjogIlN0clx1MDBmNm0gXCJMYWJcIiA8Jj4iLCAiaXAiOiAiMTAuMC4wLjUiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IDEsICJwcmVmaXgiOiBudWxsLCAiemV0YSI6IFsxLjUsIG51bGwsIHsiYSI6IDEsICJiIjogMn1dfSwgInJlc3VsdCI6ICI1In0NCnsiYXQiOiAiMjAyNi0wMS0wMlQwMzowNDowNS4wMDAwMDYrMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICJmIiwgIml0ZW0iOiB7ImFkYXB0ZXJfZ3VpZCI6ICJ7Mn0iLCAiYWRhcHRlcl9uYW1lIjogIlN0clx1MDBmNm0gXCJMYWJcIiA8Jj4iLCAiaXAiOiAiMTAuMC4wLjUiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IDEsICJwcmVmaXgiOiBudWxsLCAiemV0YSI6IFsxLjUsIG51bGwsIHsiYSI6IDEsICJiIjogMn1dfSwgInJlc3VsdCI6ICJOb25lIn0NCnsiYXQiOiAiMjAyNi0xMi0zMVQyMzo1OTo1OS45OTk5OTkrMDA6MDAiLCAiZXZlbnQiOiAiZmFpbGVkIiwgImZpbmdlcnByaW50IjogImYiLCAiaXRlbSI6IHsiYWRhcHRlcl9ndWlkIjogInsyfSIsICJhZGFwdGVyX25hbWUiOiAiU3RyXHUwMGY2bSBcIkxhYlwiIDwmPiIsICJpcCI6ICIxMC4wLjAuNSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogMSwgInByZWZpeCI6IG51bGwsICJ6ZXRhIjogWzEuNSwgbnVsbCwgeyJhIjogMSwgImIiOiAyfV19LCAicmVzdWx0IjogInsneCc6IFsxLCBcInknelwiXX0ifQ0K"
+}
+],
+"raw": [
+{
+"name": "blank_lines",
+"file": "DQp7ImV2ZW50IjogImFwcGxpZWQiLCAiaXRlbSI6IHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezF9IiwgImlwIjogIjEuMi4zLjQiLCAib3duZWQiOiB0cnVlfX0NCiAgIAoNeyJldmVudCI6ICJhcHBsaWVkIiwgIml0ZW0iOiB7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIm4iLCAib3duZWQiOiB0cnVlfX0=",
+"outstanding": {
+"ok": "[{\"kind\": \"alias\", \"adapter_guid\": \"{1}\", \"ip\": \"1.2.3.4\", \"owned\": true}, {\"kind\": \"unblock\", \"name\": \"n\", \"owned\": true}]"
+}
+},
+{
+"name": "corrupt",
+"file": "eyJldmVudCI6ICJhcHBsaWVkIiwgIml0ZW0iOiB7fX0Ke25vdCBqc29uCg==",
+"outstanding": {
+"error": "JSONDecodeError",
+"message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+"code": null,
+"details": null
+}
+},
+{
+"name": "missing_item",
+"file": "eyJldmVudCI6ICJhcHBsaWVkIn0K",
+"outstanding": {
+"error": "KeyError",
+"message": "'item'",
+"code": null,
+"details": null
+}
+},
+{
+"name": "not_owned",
+"file": "eyJpdGVtIjogeyJvd25lZCI6IGZhbHNlfX0K",
+"outstanding": {
+"ok": "[]"
+}
+},
+{
+"name": "missing_event",
+"file": "eyJpdGVtIjogeyJvd25lZCI6IHRydWUsICJraW5kIjogImZpcmV3YWxsIiwgIm5hbWUiOiAiciJ9fQo=",
+"outstanding": {
+"error": "KeyError",
+"message": "'event'",
+"code": null,
+"details": null
+}
+}
+],
+"keys": [
+{
+"item": {
+"kind": "alias",
+"adapter_guid": "{1}",
+"adapter_index": 7,
+"adapter_name": "Lab NIC",
+"ip": "192.168.50.21",
+"prefix": 24,
+"owned": true
+},
+"key": {
+"ok": "alias:{1}:192.168.50.21"
+}
+},
+{
+"item": {
+"kind": "firewall",
+"name": "SubstationStudio-MMS-0123456789ab",
+"owned": true
+},
+"key": {
+"ok": "firewall:SubstationStudio-MMS-0123456789ab"
+}
+},
+{
+"item": {
+"kind": "gateway_firewall",
+"name": "ScadaBench-Gateway-7f166b55503f",
+"group": "ScadaBench",
+"program": "C:\\Studio\\native\\studio_gateway.exe",
+"owned": true,
+"action": "add"
+},
+"key": {
+"ok": "firewall:ScadaBench-Gateway-7f166b55503f"
+}
+},
+{
+"item": {
+"kind": "unblock",
+"name": "TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe",
+"display": "studio_gateway.exe",
+"program": "C:\\Studio\\native\\studio_gateway.exe",
+"owned": true,
+"action": "add"
+},
+"key": {
+"ok": "unblock:TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe"
+}
+},
+{
+"item": {
+"kind": "alias",
+"adapter_guid": "{2}",
+"ip": "10.0.0.5",
+"owned": 1,
+"adapter_name": "Str\u00f6m \"Lab\" <&>",
+"zeta": [
+1.5,
+null,
+{
+"b": 2,
+"a": 1
+}
+],
+"prefix": null
+},
+"key": {
+"ok": "alias:{2}:10.0.0.5"
+}
+},
+{
+"item": {
+"kind": "x"
+},
+"key": {
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null
+}
+},
+{
+"item": {
+"name": "n"
+},
+"key": {
+"error": "KeyError",
+"message": "'kind'",
+"code": null,
+"details": null
+}
+},
+{
+"item": {
+"kind": "alias",
+"ip": 1
+},
+"key": {
+"error": "KeyError",
+"message": "'adapter_guid'",
+"code": null,
+"details": null
+}
+}
+],
+"dumps_check": "{\"a\": 1}"
+}
