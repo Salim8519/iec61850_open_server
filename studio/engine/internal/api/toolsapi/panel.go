@@ -13,34 +13,10 @@ import (
 
 func (a *Area) panelRoutes() []api.Route {
 	return []api.Route{
-		route("GET", "/project/test-panel", true, a.panel),
+		// GET /project/test-panel is runtimeapi's (same Python handler, real coordinator).
 		route("PUT", "/project/test-panel", false, a.savePanel),
 		route("POST", "/traces/preview", false, previewTrace),
 	}
-}
-
-// panel lists the saved controls with each signal's current record and source state.
-func (a *Area) panel(*http.Request) (any, error) {
-	d := a.deps
-	items := []any{}
-	for _, raw := range d.Projects.TestPanel() {
-		entry := raw.(*pyjson.Object)
-		iedID, ref := value(entry, "ied_id", nil), value(entry, "ref", nil)
-		signal, err := d.Runtime.Signal(iedID, ref)
-		if err != nil {
-			return nil, err
-		}
-		source := d.Runtime.Source(iedID, ref)
-		overridden := any(false)
-		automatic := false
-		if source != nil {
-			overridden = value(source, "overridden", false)
-			automatic = source.Len() > 0 && value(source, "mode", nil) != "manual"
-		}
-		items = append(items, copyWith(copyWith(copyWith(entry, "signal", signal), "overridden", overridden),
-			"automatic", automatic))
-	}
-	return pyjson.NewObject().Set("items", items), nil
 }
 
 // savePanel stores the saved controls; only while the simulation is stopped.

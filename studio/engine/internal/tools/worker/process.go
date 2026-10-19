@@ -73,6 +73,7 @@ func Spawn(executable string, onEvent func(*pyjson.Object)) (Process, error) {
 		parentErr.Close()
 		return nil, startErr
 	}
+	_ = adopt(command.Process.Pid)
 	p := &process{command: command, stdin: parentIn, onEvent: onEvent, pending: map[string]chan *pyjson.Object{},
 		exited: make(chan struct{}), readDone: make(chan struct{}), errDone: make(chan struct{})}
 	go func() { command.Wait(); close(p.exited) }()

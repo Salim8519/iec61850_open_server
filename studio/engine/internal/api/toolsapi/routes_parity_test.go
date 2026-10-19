@@ -32,15 +32,9 @@ func TestRoutesAgainstFlask(t *testing.T) {
 		"scenario_gateway", "scenario_master", "scenario_tools")
 	list, _ := documents[0].(*pyjson.Object).Get("ieds")
 	projects := &fakeProjects{}
-	runtime := &fakeRuntime{state: "stopped", signals: map[string]*pyjson.Object{}}
+	runtime := &fakeRuntime{state: "stopped"}
 	for _, raw := range list.([]any) {
-		ied := raw.(*pyjson.Object)
-		projects.ieds = append(projects.ieds, ied)
-		signals, _ := ied.Get("signals")
-		for _, signal := range signals.([]any) {
-			ref, _ := signal.(*pyjson.Object).Get("ref")
-			runtime.signals[ref.(string)] = signal.(*pyjson.Object)
-		}
+		projects.ieds = append(projects.ieds, raw.(*pyjson.Object))
 	}
 	bin := nativetest.Dir()
 	deps := newDeps(projects, runtime, map[string]string{"gateway": filepath.Join(bin, "studio_gateway.exe"),
@@ -54,6 +48,10 @@ func TestRoutesAgainstFlask(t *testing.T) {
 	for number, document := range documents[1:] {
 		spec := document.(*pyjson.Object)
 		method, path := value(spec, "method", nil).(string), value(spec, "path", nil).(string)
+		if method == "GET" && path == "/project/test-panel" {
+			checkStoredPanel(t, number, projects, value(spec, "response", "").(string))
+			continue
+		}
 		var payload io.Reader
 		contentType := ""
 		if file, ok := value(spec, "file", nil).(string); ok {
@@ -91,6 +89,23 @@ func TestRoutesAgainstFlask(t *testing.T) {
 		}
 	}
 	deps.Explorer.Close()
+}
+
+// checkStoredPanel: GET /project/test-panel is runtimeapi's route, so the replay checks what
+// this area's PUT stored against the entries in Flask's answer (minus the runtime's fields).
+func checkStoredPanel(t *testing.T, number int, projects *fakeProjects, flask string) {
+	t.Helper()
+	items, _ := decode(t, flask).Get("items")
+	for _, item := range items.([]any) {
+		for _, key := range []string{"signal", "overridden", "automatic"} {
+			item.(*pyjson.Object).Delete(key)
+		}
+	}
+	want, _ := pyjson.Flask(items)
+	got, err := pyjson.Flask(projects.TestPanel())
+	if err != nil || string(got) != string(want) {
+		t.Errorf("request %d stored test panel\n got %s %v\nwant %s", number, got, err, want)
+	}
 }
 
 // isBodyNull: the scenario sent JSON null (body None with no raw/file means "no body").
