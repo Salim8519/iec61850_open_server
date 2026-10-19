@@ -8,7 +8,7 @@ import (
 
 // validateSignalBinding checks one state binding: optional expected kind, then a
 // runtime-editable (writable, not CF) signal.
-func validateSignalBinding(binding *pyjson.Object, ieds []*pyjson.Object, expected string) (*pyjson.Object, error) {
+func validateSignalBinding(binding *pyjson.Object, ieds *Lookup, expected string) (*pyjson.Object, error) {
 	signal, err := bindingSignal(binding, ieds)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func validateSignalBinding(binding *pyjson.Object, ieds []*pyjson.Object, expect
 	return signal, nil
 }
 
-func validateState(data *pyjson.Object, kind string, ieds []*pyjson.Object) error {
+func validateState(data *pyjson.Object, kind string, ieds *Lookup) error {
 	raw := pyval.Lookup(data, "state_mapping", nil)
 	if !pyval.Truthy(raw) {
 		return nil
@@ -83,7 +83,7 @@ func validateState(data *pyjson.Object, kind string, ieds []*pyjson.Object) erro
 	return err
 }
 
-func validateControl(data *pyjson.Object, kind string, ieds []*pyjson.Object) error {
+func validateControl(data *pyjson.Object, kind string, ieds *Lookup) error {
 	raw := pyval.Lookup(data, "control_binding", nil)
 	if !pyval.Truthy(raw) {
 		return nil
@@ -99,8 +99,8 @@ func validateControl(data *pyjson.Object, kind string, ieds []*pyjson.Object) er
 		return apperr.New("Only a momentary command push button accepts a command binding")
 	}
 	var control *pyjson.Object
-	if ied := findByID(ieds, text(binding, "ied_id")); ied != nil {
-		control = findByRef(pyval.Lookup(ied, "controls", nil), text(binding, "ref"))
+	if ied := ieds.IED(text(binding, "ied_id")); ied != nil {
+		control = ieds.Entry(pyval.Lookup(ied, "controls", nil), text(binding, "ref"))
 	}
 	if control == nil {
 		return apperr.New("Equipment references an unknown control")

@@ -41,10 +41,24 @@ func items(value any) []any {
 // ValidateDiagram is validate_diagram: the browser diagram checked against the pydantic
 // contract and the project IEDs; it returns the normalised diagram.
 func ValidateDiagram(value any, ieds []*pyjson.Object) (*pyjson.Object, error) {
+	return ValidateDiagramWith(value, LinearLookup(ieds))
+}
+
+// ValidateDiagramWith is ValidateDiagram answering IED/signal/control questions from ieds
+// (an Index lookup makes it independent of the number of points).
+func ValidateDiagramWith(value any, ieds *Lookup) (*pyjson.Object, error) {
 	diagram, err := contract.ValidateDiagram(value)
 	if err != nil {
 		return nil, err
 	}
+	return crossCheck(diagram, ieds, nil, false)
+}
+
+// crossCheck is the part of validate_diagram after the contract. fresh says which nodes
+// came out of the contract in this call (nil: all); the others are earlier validated
+// output, whose infeed fields are already settled and which must not be written to.
+// onlyFresh skips the per-node checks of the others (they passed against the same IEDs).
+func crossCheck(diagram *pyjson.Object, ieds *Lookup, fresh map[int]bool, onlyFresh bool) (*pyjson.Object, error) {
 	nodes, edges := items(pyval.Lookup(diagram, "nodes", nil)), items(pyval.Lookup(diagram, "edges", nil))
 	ids := map[string]bool{}
 	for _, node := range nodes {
@@ -65,7 +79,11 @@ func ValidateDiagram(value any, ieds []*pyjson.Object) (*pyjson.Object, error) {
 			return nil, apperr.New("A wire references missing equipment")
 		}
 	}
-	for _, node := range nodes {
+	for index, node := range nodes {
+		isFresh := fresh == nil || fresh[index]
+		if onlyFresh && !isFresh {
+			continue
+		}
 		data := object(pyval.Lookup(object(node), "data", nil))
 		kind := text(data, "kind")
 		if kind != "RELAY" && pyval.Truthy(pyval.Lookup(data, "relay_statuses", nil)) {
@@ -76,8 +94,10 @@ func ValidateDiagram(value any, ieds []*pyjson.Object) (*pyjson.Object, error) {
 				return nil, err
 			}
 		}
-		if err := settleInfeed(data, kind); err != nil {
-			return nil, err
+		if isFresh {
+			if err := settleInfeed(data, kind); err != nil {
+				return nil, err
+			}
 		}
 		if err := validateState(data, kind, ieds); err != nil {
 			return nil, err
@@ -104,7 +124,7 @@ func settleInfeed(data *pyjson.Object, kind string) error {
 	return nil
 }
 
-func validateRelay(data *pyjson.Object, ieds []*pyjson.Object) error {
+func validateRelay(data *pyjson.Object, ieds *Lookup) error {
 	seen := map[string]bool{}
 	for _, item := range items(pyval.Or(pyval.Lookup(data, "relay_statuses", nil), []any{})) {
 		entry := object(item)
@@ -120,15 +140,6 @@ func validateRelay(data *pyjson.Object, ieds []*pyjson.Object) error {
 	return nil
 }
 
-func findByID(ieds []*pyjson.Object, id string) *pyjson.Object {
-	for _, ied := range ieds {
-		if text(ied, "id") == id {
-			return ied
-		}
-	}
-	return nil
-}
-
 func findByRef(list any, ref string) *pyjson.Object {
 	for _, item := range items(list) {
 		if entry := object(item); text(entry, "ref") == ref {
@@ -138,12 +149,12 @@ func findByRef(list any, ref string) *pyjson.Object {
 	return nil
 }
 
-func bindingSignal(binding *pyjson.Object, ieds []*pyjson.Object) (*pyjson.Object, error) {
-	ied := findByID(ieds, text(binding, "ied_id"))
+func bindingSignal(binding *pyjson.Object, ieds *Lookup) (*pyjson.Object, error) {
+	ied := ieds.IED(text(binding, "ied_id"))
 	if ied == nil {
 		return nil, apperr.New("A signal binding references an unknown IED")
 	}
-	signal := findByRef(pyval.Lookup(ied, "signals", nil), text(binding, "ref"))
+	signal := ieds.Entry(pyval.Lookup(ied, "signals", nil), text(binding, "ref"))
 	if signal == nil {
 		return nil, apperr.New("A signal binding references an unknown signal")
 	}

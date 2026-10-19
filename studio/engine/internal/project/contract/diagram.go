@@ -55,3 +55,16 @@ func ValidateDiagram(value any) (*pyjson.Object, error) {
 	}
 	return result.(*pyjson.Object), nil
 }
+
+// ValidateNodeAt validates one equipment node as item index of a diagram's "nodes": the
+// node ValidateDiagram would produce there, or the *ContractError it would raise when
+// that node is the only invalid part (the model dump is a fixed point of the contract, so
+// a diagram whose other parts are validated output only fails on this node).
+func ValidateNodeAt(value any, index int) (*pyjson.Object, error) {
+	c := &collector{}
+	result, ok := equipmentNode(c, loc{"nodes", index}, value)
+	if !ok {
+		return nil, &ContractError{Details: c.details}
+	}
+	return result.(*pyjson.Object), nil
+}

@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/store/archive"
@@ -27,6 +28,11 @@ type SnapshotWriter struct {
 	lastErr   error  // result of the attempt that set finished
 	closed    bool
 	stopped   chan struct{}
+
+	interval  time.Duration // minimum time between snapshot starts (SetInterval)
+	lastStart time.Time
+	urgent    int  // Flush callers waiting: write at once
+	armed     bool // a wake-up timer is pending
 }
 
 type snapshotRequest struct {
@@ -62,12 +68,25 @@ func (w *SnapshotWriter) Request(rev uint64, compactDoc *pyjson.Object) {
 	w.changed.Broadcast()
 }
 
+// SetInterval sets the minimum time between the starts of two snapshots (0: none). A
+// burst of edits then costs one snapshot per interval; every edit is already durable in
+// the journal, and Flush and Close never wait for the interval.
+func (w *SnapshotWriter) SetInterval(interval time.Duration) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	w.interval = interval
+	w.changed.Broadcast()
+}
+
 // Flush waits until the latest request made before the call was written and returns the
 // error of that attempt (nil when it succeeded).
 func (w *SnapshotWriter) Flush() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	target := w.requested
+	w.urgent++
+	defer func() { w.urgent-- }()
+	w.changed.Broadcast()
 	for w.finished < target {
 		w.changed.Wait()
 	}
@@ -98,11 +117,10 @@ func (w *SnapshotWriter) run() {
 	defer close(w.stopped)
 	for {
 		w.mu.Lock()
-		for w.pending == nil && !w.closed {
-			w.changed.Wait()
-		}
+		w.awaitTurn()
 		request := w.pending
 		w.pending = nil
+		w.lastStart = time.Now()
 		w.mu.Unlock()
 		if request == nil {
 			return
@@ -115,6 +133,30 @@ func (w *SnapshotWriter) run() {
 		if err != nil && w.onError != nil {
 			w.onError(request.rev, err)
 		}
+	}
+}
+
+// awaitTurn waits (w.mu held) for a request, then until the interval since the last
+// snapshot has passed unless a Flush or Close is waiting.
+func (w *SnapshotWriter) awaitTurn() {
+	for {
+		for w.pending == nil && !w.closed {
+			w.changed.Wait()
+		}
+		wait := w.interval - time.Since(w.lastStart)
+		if w.pending == nil || w.closed || w.urgent > 0 || wait <= 0 {
+			return
+		}
+		if !w.armed {
+			w.armed = true
+			time.AfterFunc(wait, func() {
+				w.mu.Lock()
+				w.armed = false
+				w.changed.Broadcast()
+				w.mu.Unlock()
+			})
+		}
+		w.changed.Wait()
 	}
 }
 

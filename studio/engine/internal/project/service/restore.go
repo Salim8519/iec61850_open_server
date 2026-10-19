@@ -65,7 +65,7 @@ func (s *Service) Restore(payload []byte, persist bool) error {
 // nothing is written, the revision moves as changed() does.
 func (s *Service) adopt(next, notice *pyjson.Object) error {
 	prev := s.current.Load()
-	compactNext := project.Compact(next)
+	compactNext := s.compactor.Compact(next)
 	if err := s.encoder.Warm(compactNext); err != nil {
 		return err
 	}

@@ -64,9 +64,6 @@ func OpenJournal(dataDir string, enc *archive.Encoder) (*Journal, error) {
 // one; nil makes the record a full document. Non-finite floats are refused with the
 // ValueError json.dumps(allow_nan=False) raises, as a save would.
 func (j *Journal) Commit(rev uint64, prev, next *pyjson.Object) error {
-	if err := archive.CheckFinite(next); err != nil {
-		return err
-	}
 	j.mu.Lock()
 	defer j.mu.Unlock()
 	if rev <= j.lastRev {
@@ -85,11 +82,10 @@ func (j *Journal) Commit(rev uint64, prev, next *pyjson.Object) error {
 		j.records = nil
 		lines = append(lines, encodeLine(headerRecord(base)))
 	}
-	record := fullRecord(rev, next)
-	if prev != nil {
-		record = changeRecord(rev, prev, next)
+	data, err := j.recordLine(rev, prev, next)
+	if err != nil {
+		return err
 	}
-	data := encodeLine(record)
 	if err := j.append(append(lines, data)...); err != nil {
 		return err
 	}
@@ -112,6 +108,19 @@ func (j *Journal) matches(payload []byte, prev *pyjson.Object) bool {
 	return err == nil && entry.CRC32 == crc && entry.UncompressedSize64 == uint64(size)
 }
 
+// recordLine is a full record (prev nil) or a change record. Non-finite floats are refused
+// with the ValueError json.dumps(allow_nan=False) raises: the whole document for a full
+// record, the changed values for a change (unchanged ones were checked when committed).
+func (j *Journal) recordLine(rev uint64, prev, next *pyjson.Object) ([]byte, error) {
+	if prev != nil {
+		return changeLine(j.enc, rev, prev, next)
+	}
+	if err := archive.CheckFinite(next); err != nil {
+		return nil, err
+	}
+	return encodeLine(fullRecord(rev, next)), nil
+}
+
 func encodeLine(record *pyjson.Object) []byte {
 	data, _ := pyjson.Compact(record) // records hold only pyjson values
 	return append(data, '\n')
@@ -127,7 +136,10 @@ func (j *Journal) append(lines ...[]byte) error {
 		}
 		j.file, j.size = file, 0
 	}
-	data := bytes.Join(lines, nil)
+	data := lines[0]
+	if len(lines) > 1 {
+		data = bytes.Join(lines, nil)
+	}
 	_, err := j.file.Write(data)
 	if err == nil {
 		err = j.file.Sync()

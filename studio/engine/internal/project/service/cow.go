@@ -51,3 +51,16 @@ func objects(items []*pyjson.Object) []any {
 	}
 	return out
 }
+
+// rawIEDs is the project's "ieds" list itself (its identity tells whether IEDs changed).
+func rawIEDs(project *pyjson.Object) []any {
+	raw, _ := project.Get("ieds")
+	list, _ := raw.([]any)
+	return list
+}
+
+// sameList reports whether a and b are the same immutable list (same backing array and
+// length); two empty lists are the same.
+func sameList(a, b []any) bool {
+	return len(a) == len(b) && (len(a) == 0 || &a[0] == &b[0])
+}

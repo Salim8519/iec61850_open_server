@@ -9,6 +9,7 @@ package service
 import (
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/project"
@@ -18,6 +19,11 @@ import (
 	"studio-engine/internal/store/autosave"
 	"studio-engine/internal/store/modelcache"
 )
+
+// SnapshotInterval is the minimum time between two background autosave snapshots: every
+// edit is durable in the journal at once; a burst of canvas edits costs one snapshot per
+// interval instead of one per edit. Save, Close and Flush never wait for it.
+const SnapshotInterval = time.Second
 
 // Config wires the service to its data folder and collaborators.
 type Config struct {
@@ -51,6 +57,11 @@ type Service struct {
 	mutate    sync.Mutex
 	seq       uint64 // journal and snapshot sequence (Python's revision does not move on every save)
 	current   atomic.Pointer[state]
+	compactor *project.Compactor // compact documents with cached SCL digests (save path)
+	index     *project.Index     // ref maps of the IED lists for diagram re-validation
+	validated *pyjson.Object     // the last diagram this service validated (mutate held)
+	// validatedIEDs is the IED list validated was checked against.
+	validatedIEDs []any
 }
 
 // New creates the service with a new empty project. Fold the journal of an earlier run
@@ -62,7 +73,8 @@ func New(config Config) (*Service, error) {
 	if config.OnChange == nil {
 		config.OnChange = func(int64, any) {}
 	}
-	s := &Service{config: config, sessionID: config.NewID(), encoder: archive.NewEncoder()}
+	s := &Service{config: config, sessionID: config.NewID(), encoder: archive.NewEncoder(),
+		compactor: project.NewCompactor(), index: project.NewIndex()}
 	journal, err := autosave.OpenJournal(config.DataDir, s.encoder)
 	if err != nil {
 		return nil, err
@@ -73,6 +85,7 @@ func New(config Config) (*Service, error) {
 		onError = func(_ uint64, err error) { config.OnSnapshotError(err) }
 	}
 	s.snapshots = autosave.NewSnapshotWriter(config.DataDir, s.encoder, journal, onError)
+	s.snapshots.SetInterval(SnapshotInterval)
 	fresh := project.NewProject(config.NewID())
 	s.current.Store(&state{project: fresh, compact: project.Compact(fresh)})
 	return s, nil
@@ -121,7 +134,7 @@ func (s *Service) Save() error {
 // whether ProjectService.changed() runs (revision + on_change). Called with mutate held.
 func (s *Service) commit(next *pyjson.Object, notice *pyjson.Object, bump bool, source any) error {
 	prev := s.current.Load()
-	compactNext := project.Compact(next)
+	compactNext := s.compactor.Compact(next)
 	_, size, err := s.encoder.Checksum(compactNext)
 	if err != nil {
 		return err

@@ -38,6 +38,8 @@ type Encoder struct {
 	mu       sync.Mutex
 	sources  map[string]*sourceEntry
 	literals map[string]*segment
+	memo     map[identity]*memoEntry // see memo.go
+	gen      uint64
 }
 
 type sourceEntry struct {
@@ -49,7 +51,8 @@ const maxCachedSources = 40 // two projects of 20 sources
 
 // NewEncoder returns an Encoder with an empty segment cache.
 func NewEncoder() *Encoder {
-	return &Encoder{sources: map[string]*sourceEntry{}, literals: map[string]*segment{}}
+	return &Encoder{sources: map[string]*sourceEntry{}, literals: map[string]*segment{},
+		memo: map[identity]*memoEntry{}}
 }
 
 // Encode is encode(project) for an already compacted document, without a cache.
@@ -105,6 +108,8 @@ func (e *Encoder) prepare(doc *pyjson.Object) ([]*segment, uint32, int64, error)
 func (e *Encoder) plan(doc *pyjson.Object) ([]*segment, error) {
 	var segments []*segment
 	used := map[string]bool{}
+	gen := e.nextGeneration()
+	defer e.sweep(gen)
 	pending := []byte{'{'}
 	flush := func(slot string) {
 		segments = append(segments, e.literal(slot, pending))
@@ -131,14 +136,10 @@ func (e *Encoder) plan(doc *pyjson.Object) ([]*segment, error) {
 			pending = append(pending, '}')
 			continue
 		}
-		if err := checkFinite(value); err != nil {
+		var err error
+		if pending, err = e.appendMemo(pending, value, 0, gen); err != nil {
 			return nil, err
 		}
-		encoded, err := pyjson.Dumps(value)
-		if err != nil {
-			return nil, err
-		}
-		pending = append(pending, encoded...)
 		flush(key)
 	}
 	pending = append(pending, '}')
