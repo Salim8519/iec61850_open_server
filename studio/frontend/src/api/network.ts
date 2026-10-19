@@ -5,7 +5,9 @@ export type Adapter = { guid: string; name: string; description: string; status:
 export type PlanRow = { ied_id: string; name: string; scd_ip: string; proposed: string; prefix: number | null;
   status: string; hint: string; alternative?: { ip: string; prefix: number } };
 export type PlanItem = { kind: 'alias' | 'firewall' | 'gateway_firewall' | 'unblock'; action: 'add' | 'keep' | 'remove'; owned: boolean;
-  description: string; ip?: string; name?: string };
+  description: string; ip?: string; name?: string;
+  /** Firewall rule for the simulated IEDs: the TCP ports it opens (the IEDs' MMS ports, normally 102). */
+  ports?: number[] };
 export type PlanPreview = { adapter: Adapter; rows: PlanRow[]; items: PlanItem[]; fingerprint: string;
   ready: boolean; needs_admin: boolean };
 export type ApplyResult = { applied?: boolean; message: string;

@@ -1,6 +1,7 @@
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../../api/client';
+import { countOf } from '../../copy/count';
 import type { LiveSession } from '../../api/network';
 import type { Ied, Project } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
@@ -49,7 +50,7 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
     <GoosePartners ied={ied} project={project} open={iedId => selectDevice?.(iedId)} />
     <ReadByClients ied={ied} running={project.runtime !== 'stopped'} />
     {(!!ied.warnings.length || !!ied.goose?.diagnostics?.length || ied.validation) && <Disclosure title={
-      `File check details${ied.warnings.length + (ied.goose?.diagnostics?.length || 0) ? ` · ${ied.warnings.length + (ied.goose?.diagnostics?.length || 0)} notes` : ''}`}>
+      `File check details${ied.warnings.length + (ied.goose?.diagnostics?.length || 0) ? ` · ${countOf(ied.warnings.length + (ied.goose?.diagnostics?.length || 0), 'note')}` : ''}`}>
       {ied.validation && <p className="small" style={{ margin: 0 }}>File structure: <strong>{ied.validation.status}</strong>
         {ied.validation.schema ? ` (${ied.validation.schema})` : ''}</p>}
       {[...ied.warnings, ...(ied.goose?.diagnostics || [])].map(note => <p key={note} className="small" style={{ margin: 0 }}>• {note}</p>)}

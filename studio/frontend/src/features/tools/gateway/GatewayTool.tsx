@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { createActionQueue } from './actionQueue';
 import { gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 import { TabBar } from '../../../ui/TabBar';
@@ -28,12 +29,15 @@ export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: 
     const timer = setInterval(refresh, 1500);
     return () => clearInterval(timer);
   }, [refresh]);
-  const act = (task: () => Promise<unknown>) => {
-    setBusy(true); setError('');
-    task().catch(reason => setError(reason.message)).finally(() => { setBusy(false); refresh(); });
+  const [queue] = useState(createActionQueue);
+  // Saves run quietly so a Start pressed right after typing a setting is not lost (they share the queue).
+  const act = (task: () => Promise<unknown>, quiet = false) => {
+    if (!quiet) setBusy(true);
+    setError('');
+    queue(task).catch(reason => setError(reason.message)).finally(() => { if (!quiet) setBusy(false); refresh(); });
   };
   const save = (protocol: Protocol, listen: Listen, settings: Record<string, number | boolean>, realCommands: boolean) =>
-    act(() => gatewayApi.saveConfig(protocol, listen, settings, realCommands).then(setConfig));
+    act(() => gatewayApi.saveConfig(protocol, listen, settings, realCommands).then(setConfig), true);
   if (!config || !status) return <div className="card fill-body"><div className="guide-empty"><p>Loading the gateway…</p>
     {error && <p className="explorer-error">{error}</p>}</div></div>;
   const running = status.state === 'running';

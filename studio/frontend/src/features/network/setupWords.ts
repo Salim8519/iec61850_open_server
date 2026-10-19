@@ -20,8 +20,17 @@ export function changeSentence(preview: PlanPreview) {
   const aliases = adds.filter(item => item.kind === 'alias').length;
   const rules = adds.length - aliases;
   if (!adds.length) return `Nothing changes in Windows: these addresses are already on “${preview.adapter.name}”.`;
+  // The rule opens the IEDs' own MMS ports (a project may use other ports than 102), as the exact list says.
+  const ports = adds.find(item => item.kind === 'firewall')?.ports ?? [102];
+  const portWords = `${ports.length === 1 ? 'port' : 'ports'} ${ports.join(', ')}`;
   const parts = [aliases ? `add ${aliases} ${aliases === 1 ? 'address' : 'addresses'} to “${preview.adapter.name}”` : '',
-    rules ? 'allow port 102 for them in Windows Firewall' : ''].filter(Boolean).join(' and ');
+    rules ? `allow ${portWords} for them in Windows Firewall` : ''].filter(Boolean).join(' and ');
   return `ScadaBench will ${parts}. Windows asks once. The addresses disappear when Windows restarts, `
     + 'or remove them earlier with Clean up.';
+}
+
+/** The one button of the page: "Put 4 IEDs on “Ethernet 2”", or "Put IEDs on this card" before a card is checked. */
+export function putLabel(count: number, adapterName?: string) {
+  const what = count ? `${count} ${count === 1 ? 'IED' : 'IEDs'}` : 'IEDs';
+  return `Put ${what} on ${adapterName ? `“${adapterName}”` : 'this card'}`;
 }

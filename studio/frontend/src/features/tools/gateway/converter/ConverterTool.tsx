@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { createActionQueue } from '../actionQueue';
 import { gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../../api/gateway';
 import { masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
 import { CONVERTER_COPY } from '../../../../copy/converter';
@@ -32,9 +33,12 @@ export function ConverterTool() {
     .then(([mc, ms, gc, gs]) => { setMaster({ config: mc, status: ms }); setGateway({ config: gc, status: gs }); })
     .catch(reason => setError({ side: 'device', text: reason.message })), []);
   useEffect(() => { refresh(); const timer = setInterval(refresh, 1500); return () => clearInterval(timer); }, [refresh]);
-  const act = (side: 'device' | 'scada', task: () => Promise<unknown>) => {
-    setBusy(true); setError(null);
-    task().catch(reason => setError({ side, text: reason.message })).finally(() => { setBusy(false); refresh(); });
+  const [queue] = useState(createActionQueue);
+  // Saves run quietly so Connect or Start pressed right after typing a setting is not lost (one queue).
+  const act = (side: 'device' | 'scada', task: () => Promise<unknown>, quiet = false) => {
+    if (!quiet) setBusy(true);
+    setError(null);
+    queue(task).catch(reason => setError({ side, text: reason.message })).finally(() => { if (!quiet) setBusy(false); refresh(); });
   };
   const fail = (text: string) => setError({ side: 'device', text });
   if (!master || !gateway) return <div className="card fill-body"><div className="guide-empty"><p>Loading the protocol converter…</p>
@@ -45,11 +49,11 @@ export function ConverterTool() {
     <aside className="card side-pane" aria-label={CONVERTER_COPY.columnTitle}>
       <MasterConnect config={master.config} status={master.status} busy={busy} title={CONVERTER_COPY.deviceStep}
         help={`${CONVERTER_COPY.intro} ${MASTER_COPY.intro(master.config.protocol)}`}
-        save={(protocol: MasterProtocol, host, settings) => act('device', () => masterApi.saveConfig(protocol, host, settings))}
+        save={(protocol: MasterProtocol, host, settings) => act('device', () => masterApi.saveConfig(protocol, host, settings), true)}
         connect={() => act('device', masterApi.connect)} disconnect={() => act('device', masterApi.disconnect)}
         interrogate={() => act('device', masterApi.interrogate)} error={error?.side === 'device' ? error.text : ''} />
       <GatewaySettings config={gateway.config} status={gateway.status} busy={busy} words={WORDS} title={CONVERTER_COPY.scadaStep}
-        save={(protocol: Protocol, listen: Listen, settings, real) => act('scada', () => gatewayApi.saveConfig(protocol, listen, settings, real))}
+        save={(protocol: Protocol, listen: Listen, settings, real) => act('scada', () => gatewayApi.saveConfig(protocol, listen, settings, real), true)}
         start={() => act('scada', gatewayApi.start)} stop={() => act('scada', gatewayApi.stop)}
         error={error?.side === 'scada' ? error.text : ''} />
     </aside>

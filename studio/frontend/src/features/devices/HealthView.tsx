@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { HEALTH, polls } from '../../api/polls';
 import { areaInfo, verdictStatus } from '../../copy/health';
+import { countOf } from '../../copy/count';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
 import { Spinner } from '../../ui/Spinner';
@@ -53,7 +54,7 @@ export function HealthView({ running }: { running: boolean }) {
       <button type="button" className={`list-row${open === ied.id ? ' active' : ''}`} aria-expanded={open === ied.id}
         onClick={() => setOpen(open === ied.id ? '' : ied.id)}>
         <span className="list-text"><strong>{ied.name}</strong><small>{ied.role === 'real' ? 'Reads real IED' :
-          ied.role === 'simulated' ? 'Simulated by ScadaBench' : 'Off'} · {ied.checks.length} checks</small></span>
+          ied.role === 'simulated' ? 'Simulated by ScadaBench' : 'Off'} · {countOf(ied.checks.length, 'check')}</small></span>
         <StatusPill status={verdictStatus(ied.verdict)} /></button>
       {open === ied.id && <div className="table-scroll"><table><thead><tr><th>Area</th><th>What</th><th>Result</th>
         <th>Why / what to do</th><th>Seen</th></tr></thead><tbody>

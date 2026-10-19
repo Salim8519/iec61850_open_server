@@ -11,6 +11,7 @@ import { Spinner } from '../../ui/Spinner';
 import { ValueControl } from './ValueControl';
 
 type Item = TestControl & { signal: Signal; automatic: boolean; overridden: boolean };
+const STOP_TO_ADD = 'Stop the run to add test points';
 
 export function TestPoints({ project, values, perform, prepare }: {
   project: Project; values: Record<string, unknown>;
@@ -36,8 +37,10 @@ export function TestPoints({ project, values, perform, prepare }: {
   const edit = (entry: TestControl) => save(entries.map(item => item.id === entry.id ? entry : item));
   return <div className="stack">
     <div className="row" style={{ justifyContent: 'space-between' }}>
-      <p className="muted" style={{ margin: 0 }}>Your saved alarms, statuses and measurements. Press Run, then change them here.</p>
-      {(adding || !!items.length) && <button className={adding ? '' : 'primary'} disabled={running} onClick={() => setAdding(!adding)}>
+      <p className="muted" style={{ margin: 0 }}>{running ? 'Your saved alarms, statuses and measurements. Change them here while the IEDs run; stop the run to add or remove test points.'
+        : 'Your saved alarms, statuses and measurements. Press Run, then change them here.'}</p>
+      {(adding || !!items.length) && <button className={adding ? '' : 'primary'} disabled={running} title={running ? STOP_TO_ADD : undefined}
+        onClick={() => setAdding(!adding)}>
         {adding ? <><X size={16} />Close</> : <><Plus size={16} />Add test point</>}</button>}
     </div>
     {adding && <div className="card"><div className="card-body"><SignalSearchPicker ieds={project.ieds} writableOnly chooseLabel="Add" memoryKey="test-points"
@@ -46,7 +49,8 @@ export function TestPoints({ project, values, perform, prepare }: {
         ...binding, duration_ms: 1000, active_value: true }])} /></div></div>}
     {!loaded && !items.length && <div className="card"><div className="card-body"><Spinner label="Loading your test points…" /></div></div>}
     {loaded && !items.length && !adding && <div className="card"><EmptyState icon={<ListChecks size={24} />} title="No test points yet"
-      hintId="test.points.empty" action={<button className="primary" disabled={running} onClick={() => setAdding(true)}>
+      hintId="test.points.empty" action={<button className="primary" disabled={running} title={running ? STOP_TO_ADD : undefined}
+        onClick={() => setAdding(true)}>
         <Plus size={16} />Add test point</button>} /></div>}
     {!!items.length && <div className="card"><table><thead><tr><th>Name</th><th>Value</th><th style={{ width: 120 }} /></tr></thead>
       <tbody>{items.map((item, index) => {

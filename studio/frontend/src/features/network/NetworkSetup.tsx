@@ -8,7 +8,7 @@ import { Hint } from '../../ui/Hint';
 import { SpinIcon, Spinner } from '../../ui/Spinner';
 import { AddressTable, type Manual } from './AddressTable';
 import { ResultStep, ReviewStep } from './ReviewStep';
-import { adapterLabel, changeSentence, usableAdapters } from './setupWords';
+import { adapterLabel, changeSentence, putLabel, usableAdapters } from './setupWords';
 
 /** One page, one button (change 0098): pick the network card, check one address per published IED, apply.
  *  Safety is unchanged: the exact Windows changes are listed, Windows asks once, and Undo/restart removes them. */
@@ -92,7 +92,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     <div className="row">
       <button className="primary" disabled={!preview?.ready || checking || applying} onClick={apply}>
         {applying ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
-          : `Put ${count || ''} ${count === 1 ? 'IED' : 'IEDs'} on ${preview ? `“${preview.adapter.name}”` : 'this card'}`}</button>
+          : putLabel(count, preview?.adapter.name)}</button>
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>
     </div>
     {applying && <p className="small muted" style={{ margin: 0 }}>{hint('network.approving')}</p>}

@@ -1,6 +1,7 @@
 import { Download, Search, Share2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
+import { countOf } from '../../copy/count';
 import { HEALTH, polls } from '../../api/polls';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
@@ -96,7 +97,7 @@ export function SignalFlowView({ iedName, running }: { iedName?: string; running
         <td><strong>{block.ied}</strong>{names[block.ied] && !names[block.ied].loaded && <div className="small muted">in SCD only</div>}</td>
         <td><span className={`badge flow-type line-${LINK_STYLE[block.type].line}`} title={LINK_STYLE[block.type].hint}>
           {LINK_STYLE[block.type].label}</span> <code title={block.ref}>{block.name}</code>
-          <div className="small muted">Dataset {block.dataset || '—'} · {block.members.length} values</div></td>
+          <div className="small muted">Dataset {block.dataset || '—'} · {countOf(block.members.length, 'value')}</div></td>
         <td><div className="flow-chips">{edges.length ? edges.map(receiver) :
           <span className="small muted">No receiver in this file</span>}</div></td></tr>)}</tbody></table>
       {!rows.length && <EmptyState icon={<Share2 size={20} />} title="No links to show" hintId="flow.empty" />}

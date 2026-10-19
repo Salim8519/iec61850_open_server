@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { countOf } from '../../copy/count';
 import './import-selection.css';
 
 export type ImportPreview = {
@@ -38,7 +39,7 @@ export function ImportSelection({ preview, busy, error, confirm, cancel }: {
             (!selected.includes(ied.name) && selected.length >= preview.available_slots)}
           onChange={event => setSelected(names => event.target.checked ? [...names, ied.name] : names.filter(name => name !== ied.name))} />
         <span><strong>{ied.name}</strong><small>{[ied.manufacturer, ied.type].filter(Boolean).join(' · ') || 'Manufacturer not specified'}
-          {' · '}{ied.logical_devices} logical devices</small>
+          {' · '}{countOf(ied.logical_devices, 'logical device')}</small>
           {ied.description && <small>{ied.description}</small>}
           {ied.unavailable_reason && <small className="import-unavailable">{ied.unavailable_reason}</small>}
         </span>

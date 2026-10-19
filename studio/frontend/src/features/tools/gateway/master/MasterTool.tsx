@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { createActionQueue } from '../actionQueue';
 import { masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
 import { MASTER_COPY, RANGES_COPY, TRAFFIC_WORDS } from '../../../../copy/master';
 import { GATEWAY_COPY } from '../../../../copy/gateway';
@@ -29,12 +30,15 @@ export function MasterTool() {
     const timer = setInterval(refresh, 1500);
     return () => clearInterval(timer);
   }, [refresh]);
-  const act = (task: () => Promise<unknown>) => {
-    setBusy(true); setError('');
-    task().catch(reason => setError(reason.message)).finally(() => { setBusy(false); refresh(); });
+  const [queue] = useState(createActionQueue);
+  // Saves run quietly so a Connect pressed right after typing the address is not lost (they share the queue).
+  const act = (task: () => Promise<unknown>, quiet = false) => {
+    if (!quiet) setBusy(true);
+    setError('');
+    queue(task).catch(reason => setError(reason.message)).finally(() => { if (!quiet) setBusy(false); refresh(); });
   };
   const save = (protocol: MasterProtocol, host: string, settings: Record<string, number | boolean>) =>
-    act(() => masterApi.saveConfig(protocol, host, settings).then(setConfig));
+    act(() => masterApi.saveConfig(protocol, host, settings).then(setConfig), true);
   if (!config || !status) return <div className="card fill-body"><div className="guide-empty"><p>Loading the SCADA master…</p>
     {error && <p className="explorer-error">{error}</p>}</div></div>;
   const connected = status.state !== 'disconnected' && status.state !== 'failed';

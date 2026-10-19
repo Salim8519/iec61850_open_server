@@ -15,6 +15,13 @@ import { RUN_SHAPE_COPY } from '../copy/runShape';
 import { modeStatus } from '../copy/testMode';
 import { confirmedChange } from './readability';
 
+/** One terminal = a target and a source handle on the same spot, so a wire may start and end on any
+ *  side (interaction contract). With target-only north/west, a north-to-north wire was saved but React
+ *  Flow could not draw it: an edge's source end must be a source handle. Existing wires keep their ids. */
+function Terminal({ id, position }: { id: string; position: Position }) {
+  return <><Handle id={id} type="target" position={position} /><Handle id={id} type="source" position={position} /></>;
+}
+
 function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const store = useContext(LiveValues);
   const iedNames = useContext(IedNames);
@@ -58,8 +65,8 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   return <div className={`equipment-node cat-${category} ${junction ? 'draw' : ''} ${selected ? 'selected' : ''} ${fill === 'intermediate' || fill === 'invalid' ? `fill-${fill}` : ''}${idle ? ' ied-stopped' : ''}`}
     title={idle ? RUN_SHAPE_COPY.equipmentStoppedHint(sources.map(iedId => iedNames[iedId] || iedId).join(', ')) : undefined}
     data-pulse={changes ? changes % 2 ? 'a' : 'b' : undefined}>
-    {!terminalLess && <Handle id="north" type="target" position={Position.Top} />}
-    {!terminalLess && <Handle id="west" type="target" position={Position.Left} />}
+    {!terminalLess && <Terminal id="north" position={Position.Top} />}
+    {!terminalLess && <Terminal id="west" position={Position.Left} />}
     {junction ? <div className="equipment-symbol" title="Drag to move · drag a terminal to wire"><JunctionBody nodeId={id} /></div> :
     <div className="equipment-symbol" style={{ transform: `rotate(${data.rotation || 0}deg)` }}>
       <EquipmentSymbol kind={data.kind} position={position} animate={animate} paint={paint} infeed={data.infeed_type}
@@ -78,8 +85,8 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
           value ? pushLatching ? 'Latched' : 'Pressed' : 'Released' : 'Awaiting state' : data.control_binding ? 'Ready' : 'Not mapped' :
         linked ? (switching ? position : (value === undefined ? 'Awaiting value' : String(value))) : 'Not mapped'}
     </div>}
-    {!terminalLess && <Handle id="east" type="source" position={Position.Right} />}
-    {!terminalLess && <Handle id="south" type="source" position={Position.Bottom} />}
+    {!terminalLess && <Terminal id="east" position={Position.Right} />}
+    {!terminalLess && <Terminal id="south" position={Position.Bottom} />}
   </div>;
 }
 

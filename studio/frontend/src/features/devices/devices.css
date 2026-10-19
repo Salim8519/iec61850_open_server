@@ -3,6 +3,8 @@
 .devices-list .list { gap: 6px; }
 .list-row.compact { min-height: 52px; padding: 6px 10px; gap: 10px; }
 .list-row.compact strong { font-size: 14px; }
+/* Full IED names and row hints wrap instead of being cut at 1366x768 (owner rule: no truncated UI text). */
+.list-row.compact strong, .list-row.compact small { white-space: normal; overflow-wrap: anywhere; }
 .list-pills { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
 .list-pills .status-pill { white-space: nowrap; }
 .list-hints { display: flex; flex-wrap: wrap; gap: 4px; }

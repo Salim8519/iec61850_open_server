@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import type { Ied, Scenario, ScenarioStep, Signal } from '../../api/types';
+import { runWords, stepAction, stepCount } from './sequenceWords';
 
 export function SequenceEditor({ ieds, scenarios, running, perform }: {
   ieds: Ied[]; scenarios: Scenario[]; running: boolean;
@@ -56,8 +57,10 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
       <p className="muted" style={{ margin: 0 }}>A sequence sets or checks values at set times after you press Run.
         A failed check stops the sequence.</p>
       {scenarios.map(scenario => <div className="row" key={scenario.id}>
-        <strong>{scenario.name}</strong><span className="muted small">{scenario.steps.length} steps ·
-          {' '}{status.find(item => item.id === scenario.id)?.state || 'Ready'}</span>
+        <strong>{scenario.name}</strong><span className="muted small">{stepCount(scenario.steps.length)} · {(() => {
+          const run = status.find(item => item.id === scenario.id);
+          return runWords(run?.state, run?.completed_steps, scenario.steps.length);
+        })()}</span>
         <button disabled={running} onClick={() => { setDraft(structuredClone(scenario)); setError(''); }}>Edit</button>
         <button disabled={!running} onClick={() => perform(() => api(`/scenarios/${scenario.id}/start`, 'POST'))}>Run sequence</button>
         <button disabled={running} onClick={() => perform(() => api('/scenarios', 'PUT', scenarios.filter(item => item.id !== scenario.id)))}>Delete</button>
@@ -81,7 +84,7 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
         }}><option value="">Choose signal</option>{signals.map(signal => <option key={signal.ref} value={signal.ref}>{signal.ref} [{signal.fc}]</option>)}</select></label>
           <label>Value<input value={value} onChange={e => setValue(e.target.value)} /></label><button disabled={!ref} onClick={addStep}>Add step</button></div>
         <div className="table-scroll"><table><thead><tr><th>Seconds</th><th>Action</th><th>Reference</th><th>Value</th><th /></tr></thead>
-          <tbody>{draft.steps.map(step => <tr key={step.id}><td>{step.at}</td><td>{step.action}</td><td><code>{step.ref}</code></td>
+          <tbody>{draft.steps.map(step => <tr key={step.id}><td>{step.at}</td><td>{stepAction(step.action)}</td><td><code>{step.ref}</code></td>
             <td>{String(step.value)}</td><td><button onClick={() => setDraft({ ...draft, steps: draft.steps.filter(item => item.id !== step.id) })}>Remove</button></td></tr>)}</tbody></table></div>
         {error && <p role="alert" style={{ color: 'var(--error)' }}>{error}</p>}
         <button className="primary" disabled={!draft.steps.length} onClick={() => perform(() => api('/scenarios', 'PUT',

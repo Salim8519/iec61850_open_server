@@ -89,6 +89,8 @@ export const MASTER_COPY = {
     modbus: 'ScadaBench reads every range in What to read at this interval.',
   } as Record<MasterProtocol, string>,
   connect: 'Connect', disconnect: 'Disconnect', settingsTitle: 'Device connection',
+  connecting: (host: string, port: unknown) => `Connecting to ${host}:${port}…`,
+  connectingSlow: 'Still trying. The device has until the connect timeout (t0) to answer.',
   notBuilt: 'The master program is not built in this copy of ScadaBench.',
   emptyNotConnected: 'Points appear here by themselves after Connect.',
   states: { disconnected: 'Not connected', connected: 'Connected', lost: 'Link lost, trying again', failed: 'Stopped with a problem' },
