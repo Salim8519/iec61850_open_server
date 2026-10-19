@@ -8,12 +8,13 @@ import (
 	"testing"
 
 	"studio-engine/internal/runtime/pyval"
+	"studio-engine/internal/testutil"
 )
 
 // TestRunLogFormat checks the bytes log_writer.RunLog writes: runs.jsonl and manifest.jsonl
 // lifecycle lines, and compact event records prefixed with run_id.
 func TestRunLogFormat(t *testing.T) {
-	root := t.TempDir()
+	root := testutil.TempDir(t)
 	log, err := OpenRunLog(root)
 	if err != nil {
 		t.Fatal(err)

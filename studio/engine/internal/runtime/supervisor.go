@@ -120,6 +120,8 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 	}
 	c.mu.Lock()
 	c.gooseStates[id] = goose
+	c.endpoints[id] = endpoint{item.host, item.port}
+	c.hub.notify(Change{IEDID: id})
 	c.mu.Unlock()
 	for i, entry := range item.model.signals {
 		if !startKinds[entry.Kind] {
@@ -133,7 +135,7 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 		}
 	}
 	c.mu.Lock()
-	c.iedStates[id] = "running"
+	c.setIedStateLocked(id, "running")
 	c.mu.Unlock()
 	return nil
 }
@@ -166,7 +168,8 @@ func (c *Coordinator) stopWorkers(batch []*running) {
 
 func (c *Coordinator) markStopped(id string) {
 	c.mu.Lock()
-	c.iedStates[id] = "stopped"
+	c.setIedStateLocked(id, "stopped")
+	delete(c.endpoints, id)
 	delete(c.gooseStates, id)
 	c.mu.Unlock()
 }

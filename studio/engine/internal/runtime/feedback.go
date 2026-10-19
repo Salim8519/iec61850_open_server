@@ -3,19 +3,23 @@ package runtime
 import (
 	"sync"
 
+	"studio-engine/internal/native"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/plant"
 	"studio-engine/internal/runtime/pyval"
 )
 
 // feedback is NativeControlFeedback: an MMS control applied by a worker (from any client)
-// drives the explicitly mapped equipment state, on its own goroutine, in arrival order.
+// drives the explicitly mapped equipment state, on its own goroutine, in arrival order. The
+// queue is unbounded like Python's queue.Queue: enqueue runs on a worker's dispatcher, and a
+// bounded queue could stall that pipe while a canvas command holding commandMu waits for a
+// reply on it.
 type feedback struct {
 	c          *Coordinator
 	mu         sync.Mutex
 	generation int
 	byControl  map[bindingKey][]*pyjson.Object
-	queue      chan feedbackItem
+	queue      *native.Fifo[feedbackItem]
 	done       chan struct{}
 }
 
@@ -26,7 +30,7 @@ type feedbackItem struct {
 }
 
 func newFeedback(c *Coordinator) *feedback {
-	f := &feedback{c: c, byControl: map[bindingKey][]*pyjson.Object{}, queue: make(chan feedbackItem, 1024),
+	f := &feedback{c: c, byControl: map[bindingKey][]*pyjson.Object{}, queue: native.NewFifo[feedbackItem](),
 		done: make(chan struct{})}
 	go f.run()
 	return f
@@ -63,12 +67,16 @@ func (f *feedback) enqueue(iedID string, event *pyjson.Object) {
 	f.mu.Lock()
 	generation := f.generation
 	f.mu.Unlock()
-	f.queue <- feedbackItem{generation, iedID, pyval.Copy(event).(*pyjson.Object)}
+	f.queue.Push(feedbackItem{generation, iedID, pyval.Copy(event).(*pyjson.Object)})
 }
 
 func (f *feedback) run() {
 	defer close(f.done)
-	for entry := range f.queue {
+	for {
+		entry, ok := f.queue.Pop()
+		if !ok {
+			return
+		}
 		f.process(entry)
 	}
 }
@@ -177,6 +185,6 @@ func (c *Coordinator) indexed(key plant.Binding) bool {
 
 func (f *feedback) close() {
 	f.clear()
-	close(f.queue)
+	f.queue.Close()
 	<-f.done
 }

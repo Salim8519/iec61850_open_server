@@ -8,6 +8,7 @@ import (
 
 	"studio-engine/internal/native"
 	"studio-engine/internal/runtime/pyval"
+	"studio-engine/internal/testutil"
 )
 
 func percentile(values []float64, p float64) float64 {
@@ -28,7 +29,7 @@ func TestOperateTiming(t *testing.T) {
 		project := NewMemoryProject(loadProject(t, 21500+int64(keep/time.Second)*10))
 		project.Current().Set("sources", []any{})
 		bus := &MemoryBus{}
-		c := New(Options{NativeDir: nativeDir(t), DataDir: t.TempDir(), Bus: bus, Project: project, CommandKeep: keep})
+		c := New(Options{NativeDir: nativeDir(t), DataDir: testutil.TempDir(t), Bus: bus, Project: project, CommandKeep: keep})
 		if err := c.Start(nil); err != nil {
 			t.Fatal(err)
 		}

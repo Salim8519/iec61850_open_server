@@ -21,7 +21,7 @@ func StartGoose(executable string, onEvent EventFunc) (*Goose, error) {
 		return nil, err
 	}
 	client := &Goose{worker}
-	hello, err := objectResult(client.Request("hello", nil, DefaultTimeout))
+	hello, err := objectResult(client.call("hello", nil, DefaultTimeout))
 	if err != nil {
 		return nil, err
 	}
@@ -34,27 +34,27 @@ func StartGoose(executable string, onEvent EventFunc) (*Goose, error) {
 
 // Open registers publishing IEDs [{id, gocb_refs}]: {port, sources:{id: MAC}}.
 func (c *Goose) Open(ieds []any) (*pyjson.Object, error) {
-	return objectResult(c.Request("open", pyjson.NewObject().Set("ieds", ieds), DefaultTimeout))
+	return objectResult(c.call("open", pyjson.NewObject().Set("ieds", ieds), DefaultTimeout))
 }
 
 // Deliver points the engine at studio_live's GOOSE inbox port.
 func (c *Goose) Deliver(port int64) error {
-	_, err := c.Request("deliver", pyjson.NewObject().Set("port", port), DefaultTimeout)
+	_, err := c.call("deliver", pyjson.NewObject().Set("port", port), DefaultTimeout)
 	return err
 }
 
 // Uplink listens on an adapter ("" = none) and shares outside only when share is true.
 func (c *Goose) Uplink(adapterGUID string, share bool) (*pyjson.Object, error) {
-	return objectResult(c.Request("uplink", pyjson.NewObject().Set("adapter_guid", adapterGUID).
+	return objectResult(c.call("uplink", pyjson.NewObject().Set("adapter_guid", adapterGUID).
 		Set("share", share), DefaultTimeout))
 }
 
 // Gate answers a GOOSE conflict hold for one IED (stop or continue).
 func (c *Goose) Gate(iedID, choice string) (*pyjson.Object, error) {
-	return objectResult(c.Request("gate", pyjson.NewObject().Set("ied_id", iedID).Set("choice", choice), DefaultTimeout))
+	return objectResult(c.call("gate", pyjson.NewObject().Set("ied_id", iedID).Set("choice", choice), DefaultTimeout))
 }
 
 // Stats returns the engine counters.
 func (c *Goose) Stats() (*pyjson.Object, error) {
-	return objectResult(c.Request("stats", nil, DefaultTimeout))
+	return objectResult(c.call("stats", nil, DefaultTimeout))
 }

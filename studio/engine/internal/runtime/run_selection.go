@@ -48,6 +48,7 @@ func (c *Coordinator) addIeds(ids []string) error {
 		ids2[item.model.id] = true
 		c.runs[item.model.id] = item
 		c.active[item.model.id] = true
+		c.indexLocked(item)
 		if item.simulated() {
 			simIDs[item.model.id] = true
 		} else if item.model.role == "real" {
@@ -132,6 +133,7 @@ func (c *Coordinator) forget(items []*running) {
 	for id := range ids {
 		delete(c.active, id)
 		delete(c.runs, id)
+		c.unindexLocked(id)
 	}
 	c.dropSources(ids)
 	c.mu.Unlock()

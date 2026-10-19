@@ -25,7 +25,7 @@ func (c *Coordinator) Stop(ids []string) error {
 	}
 	c.pulses.cancel("", "", false, "Simulation stopped")
 	c.mu.Lock()
-	c.state = "stopping"
+	c.setStateLocked("stopping")
 	items := make([]*running, 0, len(c.runs))
 	for _, id := range sortedKeys(c.runs) {
 		items = append(items, c.runs[id])
@@ -37,7 +37,8 @@ func (c *Coordinator) Stop(ids []string) error {
 	c.stopWorkers(simulatedOf(items))
 	c.markAllStopped(c.opt.Project.Current())
 	c.mu.Lock()
-	c.state, c.active, c.runs = "stopped", map[string]bool{}, map[string]*running{}
+	c.setStateLocked("stopped")
+	c.active, c.runs = map[string]bool{}, map[string]*running{}
 	c.mu.Unlock()
 	c.emit("runtime", pyval.Obj("state", "stopped"))
 	if log := c.setLog(nil); log != nil {
@@ -62,9 +63,9 @@ func (c *Coordinator) Pause() error {
 	c.lastAutomation = now
 	c.cadence.reset(now)
 	if c.state == "running" {
-		c.state = "paused"
+		c.setStateLocked("paused")
 	} else {
-		c.state = "running"
+		c.setStateLocked("running")
 	}
 	state := c.state
 	c.mu.Unlock()

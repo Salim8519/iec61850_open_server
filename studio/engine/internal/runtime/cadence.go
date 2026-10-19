@@ -87,7 +87,7 @@ func (c *Coordinator) cycle() {
 	}
 	if err := c.advance(elapsed); err != nil {
 		c.mu.Lock()
-		c.state = "paused"
+		c.setStateLocked("paused")
 		c.mu.Unlock()
 		c.emit("automation_failed", pyval.Obj("message", errorText(err)))
 		c.emit("runtime", pyval.Obj("state", "paused", "message", "Automation failed; MMS remains active"))

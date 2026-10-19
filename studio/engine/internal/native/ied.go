@@ -28,7 +28,7 @@ func StartIed(executable string, onEvent EventFunc) (*Ied, error) {
 // StartModel sends "start"; fields are in supervisor/worker_settings order
 // (cfg, ip, port, controls, edition, goose). The reply's capabilities are checked.
 func (c *Ied) StartModel(fields *pyjson.Object) (*pyjson.Object, error) {
-	result, err := c.Request("start", fields, DefaultTimeout)
+	result, err := c.call("start", fields, DefaultTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -44,29 +44,29 @@ func (c *Ied) StartModel(fields *pyjson.Object) (*pyjson.Object, error) {
 
 // Update writes one attribute and returns the value read back.
 func (c *Ied) Update(ref string, value any) (any, error) {
-	return c.Request("update", pyjson.NewObject().Set("ref", ref).Set("value", value), DefaultTimeout)
+	return c.call("update", pyjson.NewObject().Set("ref", ref).Set("value", value), DefaultTimeout)
 }
 
 // UpdateBatch writes up to 256 {ref, value} items and returns {ref: value read back}.
 func (c *Ied) UpdateBatch(updates []any) (*pyjson.Object, error) {
-	result, err := c.Request("update_batch", pyjson.NewObject().Set("updates", updates), DefaultTimeout)
+	result, err := c.call("update_batch", pyjson.NewObject().Set("updates", updates), DefaultTimeout)
 	return objectResult(result, err)
 }
 
 // UpdateGuarded writes when the guard's revision still holds: {values, revision}.
 func (c *Ied) UpdateGuarded(updates []any, guard *pyjson.Object) (*pyjson.Object, error) {
-	result, err := c.Request("update_guarded", pyjson.NewObject().Set("updates", updates).Set("guard", guard), DefaultTimeout)
+	result, err := c.call("update_guarded", pyjson.NewObject().Set("updates", updates).Set("guard", guard), DefaultTimeout)
 	return objectResult(result, err)
 }
 
 // Read returns one attribute's value.
 func (c *Ied) Read(ref string) (any, error) {
-	return c.Request("read", pyjson.NewObject().Set("ref", ref), DefaultTimeout)
+	return c.call("read", pyjson.NewObject().Set("ref", ref), DefaultTimeout)
 }
 
 // ReadVersioned returns {value, revision}.
 func (c *Ied) ReadVersioned(ref string) (*pyjson.Object, error) {
-	result, err := c.Request("read_versioned", pyjson.NewObject().Set("ref", ref), DefaultTimeout)
+	result, err := c.call("read_versioned", pyjson.NewObject().Set("ref", ref), DefaultTimeout)
 	return objectResult(result, err)
 }
 

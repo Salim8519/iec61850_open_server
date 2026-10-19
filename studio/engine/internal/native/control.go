@@ -29,13 +29,13 @@ func StartControl(executable string) (*Control, error) {
 
 // Hello returns {capabilities}.
 func (c *Control) Hello() (*pyjson.Object, error) {
-	return objectResult(c.Request("hello", nil, DefaultTimeout))
+	return objectResult(c.call("hello", nil, DefaultTimeout))
 }
 
 // Operate is the Tools command (IED Explorer, gateway): fields in control_client.py order
 // (ip, port, ref, value, or_ident, or_cat, interlock_check, synchro_check, test); 30 s.
 func (c *Control) Operate(fields *pyjson.Object) (*pyjson.Object, error) {
-	return objectResult(c.Request("operate", fields, 30*time.Second))
+	return objectResult(c.call("operate", fields, 30*time.Second))
 }
 
 // CanvasOperate sends one canvas command with exactly what `studio_probe IP PORT control
@@ -47,5 +47,5 @@ func (c *Control) CanvasOperate(ip string, port int64, ref string, value bool, k
 	timeout time.Duration) (*pyjson.Object, error) {
 	fields := pyjson.NewObject().Set("ip", ip).Set("port", port).Set("ref", ref).Set("value", value).
 		Set("keep_ms", int64(keep/time.Millisecond))
-	return objectResult(c.Request("canvas_operate", fields, timeout))
+	return objectResult(c.call("canvas_operate", fields, timeout))
 }

@@ -119,8 +119,11 @@ func TestKilledWorkerReportsFailureAndFailsPending(t *testing.T) {
 
 func TestRequestTimeoutText(t *testing.T) {
 	client, _ := startTemplate(t, nil, "127.63.0.13", 21013)
-	_, err := client.Request("read", pyjson.NewObject().Set("ref", "BayACTRL/XCBR1.Pos.stVal"), time.Nanosecond)
+	_, err := client.Request("read", time.Nanosecond, pyjson.NewObject().Set("ref", "BayACTRL/XCBR1.Pos.stVal"))
 	if err != nil && err.Error() != "Native read request timed out" {
 		t.Fatalf("timeout text %v", err)
+	}
+	if err != nil && !IsTimeout(err) {
+		t.Fatalf("timeout not recognised: %T", err)
 	}
 }

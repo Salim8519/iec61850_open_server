@@ -134,8 +134,9 @@ func (c *Coordinator) start(ids []string) error {
 	simulated := simulatedOf(items)
 	diagram := pyval.Map(project, "diagram")
 	c.mu.Lock()
-	c.state = "starting"
+	c.setStateLocked("starting")
 	c.active, c.runs = map[string]bool{}, map[string]*running{}
+	c.reindexLocked(items)
 	simIDs := map[string]bool{}
 	for _, item := range items {
 		c.active[item.model.id] = true
@@ -158,7 +159,8 @@ func (c *Coordinator) start(ids []string) error {
 		c.stopWorkers(simulated)
 		c.markAllStopped(project)
 		c.mu.Lock()
-		c.state, c.active, c.runs = "stopped", map[string]bool{}, map[string]*running{}
+		c.setStateLocked("stopped")
+		c.active, c.runs = map[string]bool{}, map[string]*running{}
 		c.mu.Unlock()
 		c.emit("runtime", pyval.Obj("state", "stopped", "message", errorText(err)))
 		if log := c.setLog(nil); log != nil {
@@ -182,7 +184,7 @@ func (c *Coordinator) startRun(project *pyjson.Object, items, simulated []*runni
 	}
 	c.scenarios.reset(pyval.List(project, "scenarios"))
 	c.mu.Lock()
-	c.state = "running"
+	c.setStateLocked("running")
 	c.lastAutomation = c.now()
 	active := c.sortedActive()
 	c.mu.Unlock()

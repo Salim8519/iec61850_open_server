@@ -1,7 +1,6 @@
 package native
 
 import (
-	"fmt"
 	"time"
 
 	"studio-engine/internal/apperr"
@@ -9,10 +8,16 @@ import (
 )
 
 // Request sends {"version":1,"id","op",...fields} and returns the reply's result (nil for a
-// reply without one), with WorkerProcess.request's errors: a dead worker, an ok:false reply
-// and a timeout are RuntimeError/TimeoutError (HTTP 503); a frame that cannot be written is
-// a ValueError (400).
-func (w *Worker) Request(op string, fields *pyjson.Object, timeout time.Duration) (any, error) {
+// reply without one), with WorkerProcess.request's errors: a dead worker and an ok:false
+// reply are RuntimeErrors (HTTP 503), a timeout is a *TimeoutError (also 503; Timeout()
+// reports true), a frame that cannot be written is a ValueError (400). The argument order is
+// the one acquisition.Worker and tools/worker.Process declare.
+func (w *Worker) Request(op string, timeout time.Duration, fields *pyjson.Object) (any, error) {
+	return w.call(op, fields, timeout)
+}
+
+// call is Request with the typed clients' argument order.
+func (w *Worker) call(op string, fields *pyjson.Object, timeout time.Duration) (any, error) {
 	id := newRequestID()
 	message := pyjson.NewObject().Set("version", int64(1)).Set("id", id).Set("op", op)
 	if fields != nil {
@@ -57,7 +62,7 @@ func (w *Worker) Request(op string, fields *pyjson.Object, timeout time.Duration
 	case reply := <-response:
 		return replyResult(reply)
 	case <-timer.C:
-		return nil, apperr.RuntimeError(fmt.Sprintf("Native %s request timed out", op))
+		return nil, newTimeout(op)
 	}
 }
 
@@ -81,7 +86,7 @@ func (w *Worker) Close() {
 	exited := w.exited
 	w.mu.Unlock()
 	if !exited {
-		_, _ = w.Request("stop", nil, 3*time.Second)
+		_, _ = w.call("stop", nil, 3*time.Second)
 		select {
 		case <-w.done:
 		case <-time.After(3 * time.Second):
