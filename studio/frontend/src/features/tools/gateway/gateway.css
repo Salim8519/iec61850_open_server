@@ -4,12 +4,15 @@
 .gateway-warning { color: var(--warning); margin: 0; }
 .gateway-problems { margin: 0; padding: 10px 14px 10px 30px; border-radius: var(--radius-small); background: var(--warning-soft);
   color: #92400e; font-size: 14px; display: grid; gap: 4px; }
-.gateway-points td { vertical-align: middle; padding-top: 6px; padding-bottom: 6px; }
-.gateway-points select { min-width: 160px; }
-.type-cell { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
-.gateway-number { width: 84px; }
+.gateway-points td { vertical-align: middle; padding: 6px 8px; }
+.gateway-points th { padding-left: 8px; padding-right: 8px; }
+/* The whole table fits 1366x768 without sideways scrolling: the protocol tag sits under the type. */
+.gateway-points select { min-width: 0; width: 150px; }
+.type-cell { display: grid; gap: 2px; white-space: nowrap; }
+.gateway-number { width: 72px; }
+.gateway-points td.reference-cell { max-width: 200px; overflow-wrap: anywhere; }
 .gateway-points td.value-cell { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gateway-points td:nth-child(6) input { width: 150px; }
+.gateway-points td:nth-child(6) input { width: 140px; }
 .gateway-traffic { overflow: auto; padding: 8px 20px 16px; min-height: 200px;
   font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; background: var(--surface-2); }
 .traffic-line { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed var(--border); }
@@ -46,7 +49,7 @@
 .own-form-fields { gap: 12px; align-items: flex-end; flex-wrap: wrap; }
 .own-form-fields label, .own-field { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
 .own-form-fields input:not(.gateway-number) { width: 200px; }
-.gateway-points select.own-status, .gateway-points select.own-target { min-width: 0; width: 180px; }
+.gateway-points select.own-status, .gateway-points select.own-target { min-width: 0; width: 140px; }
 .gateway-points .segmented-control button { min-height: 30px; padding: 0 12px; }
 .own-command { display: grid; gap: 2px; }
 .own-hint { margin: 0; max-width: 900px; }

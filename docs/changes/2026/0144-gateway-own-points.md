@@ -28,5 +28,7 @@ Lane G (merged 9ff3397), log [lane-g-own-points](../../architecture/go-engine/st
 
 - Own points are always good quality (no invalid/questionable yet); commands are always accepted
   (no select-before-operate model); one command drives at most one status.
-- The point table still scrolls sideways at 1366x768, as before.
+- (Fixed after the merge, `gateway.css`: the point table fits 1366x768 without sideways scrolling;
+  the protocol tag sits under the type, narrower number boxes, tighter cells; measured in the built
+  app: table scroll width 832 = visible width 832.)
 - Python engine: no own points (see ADR-0091).
