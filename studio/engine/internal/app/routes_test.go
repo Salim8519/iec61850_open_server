@@ -68,8 +68,9 @@ func flaskRoutes(t *testing.T) map[string]bool {
 	return routes
 }
 
-// TestEveryPythonRouteServed: the composed engine serves exactly Flask's routes, none of
-// them is a 501 placeholder, and every GET route answers something other than 501.
+// TestEveryPythonRouteServed: the composed engine serves exactly Flask's routes (plus the
+// Go-only push routes), none of them is a 501 placeholder, and every GET route answers
+// something other than 501.
 func TestEveryPythonRouteServed(t *testing.T) {
 	want := flaskRoutes(t)
 	engine := composeForTest(t)
@@ -89,7 +90,7 @@ func TestEveryPythonRouteServed(t *testing.T) {
 		}
 	}
 	for key := range served {
-		if !want[key] {
+		if !want[key] && !PushOnlyRoutes[key] {
 			extra = append(extra, key)
 		}
 	}

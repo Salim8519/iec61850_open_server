@@ -15,6 +15,7 @@ import (
 	"studio-engine/internal/httpapi"
 	"studio-engine/internal/licensing"
 	projects "studio-engine/internal/project/service"
+	"studio-engine/internal/push"
 	"studio-engine/internal/runtime"
 	"studio-engine/internal/store/recovery"
 	"studio-engine/internal/store/xsd"
@@ -53,8 +54,8 @@ type Options struct {
 	LicenseService *licensing.Service
 	UpdateService  *updates.Service
 	License        httpapi.LicenseGate // tests: replaces the license service's gate
-	Startup      httpapi.StartupGate // tests: replaces the startup recovery gate
-	NoBackground bool                // tests: no update/license loops, no gateway resume
+	Startup        httpapi.StartupGate // tests: replaces the startup recovery gate
+	NoBackground   bool                // tests: no update/license loops, no gateway resume
 }
 
 // Engine is the composed Go server: every service of create_app and its HTTP handler.
@@ -71,7 +72,10 @@ type Engine struct {
 	License  *licensing.Service
 	Updates  *updates.Service
 	Recovery *recovery.Background
-	Routes   []api.Route // every route the engine serves (TestEveryPythonRouteServed)
+	Push     *push.Area
+	// PushMissing lists push topics whose GET route no area serves (empty when wired).
+	PushMissing []string
+	Routes      []api.Route // every route the engine serves (TestEveryPythonRouteServed)
 
 	options   Options
 	bus       *events.Bus
@@ -106,17 +110,18 @@ func Compose(options Options) (*Engine, error) {
 		e.closeValidator()
 		return nil, err
 	}
-	live := e.wireRuntime(e.bus)
-	routes := e.wireLive(live)
-	routes = append(routes, e.wireTools()...)
+	liveAdapter := e.wireRuntime(e.bus)
+	live, tools, runtimeRoutes := e.wireLive(liveAdapter), e.wireTools(), e.runtimeRoutes()
 	platform, err := e.wirePlatform()
 	if err != nil {
 		e.Close()
 		return nil, err
 	}
-	routes = append(routes, platform...)
-	routes = append(routes, e.runtimeRoutes()...)
-	routes = append(routes, e.projectRoutes()...)
+	var routes []api.Route
+	for _, group := range [][]api.Route{live, tools, platform, runtimeRoutes, e.projectRoutes(),
+		e.wirePush(live, runtimeRoutes, tools)} {
+		routes = append(routes, group...)
+	}
 	license, startup := e.gates()
 	composed, err := New(Config{DataDir: options.DataDir, FrontendDir: options.FrontendDir, Token: options.Token,
 		SecretKey: options.SecretKey, AdminOrigin: options.AdminOrigin, License: license, Startup: startup,

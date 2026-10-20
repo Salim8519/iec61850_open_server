@@ -6,7 +6,7 @@ import "time"
 const resumeWait = 15 * time.Second
 
 // Close stops the engine after the HTTP server stopped, in the order that keeps every
-// consumer ahead of what it consumes: background loops, gateway and master (their
+// consumer ahead of what it consumes: background loops, the push stream, gateway and master (their
 // auto-start choice is kept, as when Python's process ended), live acquisition, the
 // coordinator (Stop, then its own goroutines), Explorer and Find IEDs, the command client
 // and the XSD helper, and last the project service (final snapshot, journal removed). The
@@ -23,6 +23,9 @@ func (e *Engine) Close() error {
 			case <-time.After(resumeWait):
 				e.options.Logf("Gateway resume did not finish within %s; stopping anyway", resumeWait)
 			}
+		}
+		if e.Push != nil {
+			e.Push.Close() // no topic build or ProjectChanged call into a stopping service
 		}
 		if e.Gateway != nil {
 			_, _ = e.Gateway.Stop(false)

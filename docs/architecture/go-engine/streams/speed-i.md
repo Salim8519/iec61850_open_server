@@ -3,6 +3,7 @@
 Branch `speed-i` from master 2030e69 ([speed plan](../speed-plan.md), phase 1). Owns
 `internal/app/**`, `cmd/studio_server/**` and `studio/tools/run_dev_engine.py`. No other
 package was changed. Python stays frozen and the default engine. No EXE was built.
+Master (lane F frontend 26b2b22, lane G push 8e24b7a) was merged in at 847c9a4.
 
 ## What is wired (`internal/app`)
 
@@ -19,7 +20,8 @@ package was changed. Python stays frozen and the default engine. No EXE was buil
 | `wire_platform.go` | one `*licensing.Service` for the 402 gate and `/license/*`; updates asks `License.ServerURL`; network service + gateway firewall; platformapi |
 | `project_view.go` | projectapi routes; `GET /project` overlays `IedStates()` (`state` when set, `goose_state` only while `HasGoose`); `POST /project/open` resets the runtime values of every IED, IED removal those of the removed IEDs |
 | `startup.go` | gates (`licenseGate` panics on an `is_licensed` error → Flask 500; `startupGate` = Background), license verify + update loops, `_resume_gateway`: `Master.Autoconnect()` then `Gateway.Autostart()` only after recovery succeeded |
-| `shutdown.go` | Close: loops → gateway (`Stop(false)`, auto-start kept) / master → Live → Coordinator → Explorer/scan → control client, XSD helper → wait for recovery → `Service.Close` (final snapshot, journal removed); the caller then releases the lease |
+| `wire_push.go` | lane G push stream per [speed-g](speed-g.md) "Wiring notes": `push.Catalog(push.IndexRoutes(live, runtime, tools), {Running: State() != "stopped", Scanning: Scanner.Scanning})`, `push.New{Bus, Topics, Values: coordinator.Subscribe, Listen: project_changed → Gateway.ProjectChanged()}`, `OnChange(area.Changed)` on gateway, master, Explorer and scan; routes `GET /capabilities`, `GET /push`, `PUT /push/topics` mounted in the same area list (same 403/401/402/startup pipeline as `/events`, no server write timeout); `missing` logged and kept in `Engine.PushMissing` (empty) |
+| `shutdown.go` | Close: loops → push area → gateway (`Stop(false)`, auto-start kept) / master → Live → Coordinator → Explorer/scan → control client, XSD helper → wait for recovery → `Service.Close` (final snapshot, journal removed); the caller then releases the lease |
 
 `GET /mms/access` is served from `coordinator.MmsAccess()`: the runtime is the one owner of MMS
 access (it receives the worker summaries); acquisition's copy is never fed. Test modes: the
@@ -54,6 +56,8 @@ rebuilt from master into `studio/native/build/speed-i` (`-DSTUDIO_GATEWAY=OFF`, 
 | `TestEveryPythonRouteServed` (Flask url_map via STUDIO_PYTHON) | 127/127 routes served, none extra, no GET answers 501 |
 | `TestComposedClickPath` (template → diagram → Run → 3 CB operates → Stop → Close → restart) | pass; operated position restored after restart, journal folded on Close |
 | `TestComposedEventsMatchPython` (runtime lane's script over HTTP vs `record_python.py`, `compare_events.py`) | identical: global 60, IED A 26, IED B 9 events |
+| `TestComposedPushWiring` | `PushMissing` empty, `/capabilities` push 1 with topics, `/push` and `/capabilities` answer an anonymous request like `/events`; a template add (`project_changed`) reaches `Gateway.ProjectChanged` (`gateway.points` hook) |
+| `TestEveryPythonRouteServed` after the push merge | 127/127 Flask routes; only the 3 push routes extra (`PushOnlyRoutes`) |
 | `TestStartupGateHoldsUntilRecovery` | GET held while recovery runs, preferences not held, 503 `startup_recovery_failed` with the recovery text |
 | `TestFoldBeforePython` (built binary hard-killed, `--fold-journal`, frozen Python `recover_startup`) | Python restores exactly the snapshot Go served |
 | `TestComposedLockOrderStress` (STUDIO_STRESS=1, 60 s) | no stall, no 500: lifecycle 140, operate 126,778, gateway saves 65,134, edits 68,953, readers 53,423, SSE frames 71,415 |
@@ -102,6 +106,13 @@ association like `studio_probe`.
 9. `studio/engine/build/` is not git-ignored (the parity binary lands there; not committed).
 10. Two engines on one host share the `studio_session` cookie name (cookies ignore ports): a
     tab of the other engine signs the first one out. Same in Python; only seen when both run.
+11. `TestComposedEventsMatchPython` failed once in a combined run after the push merge (output
+    not captured); 5 reruns and a full `internal/app` run passed. Fixed port base 21300 is a suspect.
+12. The push stream was not exercised in the live UI by this lane (lane F4 owns the client);
+    only the composed route/hook wiring is tested here.
+13. `go test ./...` without `STUDIO_PYTHON` in a worktree: `launcher.TestLeaseSharedWithPython`
+    skips while holding its lease, so `t.TempDir` cleanup fails (lane A test, not changed here);
+    with `STUDIO_PYTHON` set it passes.
 
 ## How to reproduce
 
