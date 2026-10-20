@@ -50,6 +50,7 @@ type Service struct {
 	found      []*pyjson.Object
 	stop       chan struct{}
 	done       chan struct{}
+	changes    // OnChange: the push stream's "scan" topic
 }
 
 // NewService returns an idle scanner for studio_live at executable.
@@ -94,6 +95,7 @@ func (s *Service) Preview(text, port any) (*pyjson.Object, error) {
 
 // Start validates, remembers the range and port, and starts probing in the background.
 func (s *Service) Start(text, port any) (*pyjson.Object, error) {
+	defer s.changed()
 	plan, err := PlanRange(text, "")
 	if err != nil {
 		return nil, err
@@ -141,6 +143,7 @@ func (s *Service) running() bool {
 
 // Stop asks the scan to end and waits up to 15 s for it.
 func (s *Service) Stop() *pyjson.Object {
+	defer s.changed()
 	s.mu.Lock()
 	stop, done := s.stop, s.done
 	s.mu.Unlock()
@@ -189,6 +192,14 @@ func (s *Service) Status() *pyjson.Object {
 		state.Set("seconds", round1(numlog.Now()-started.(float64)))
 	}
 	return state
+}
+
+// Scanning reports a running scan (its "seconds" counter moves without other changes).
+func (s *Service) Scanning() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	state, _ := s.state.Get("state")
+	return state == "scanning"
 }
 
 // Snapshot returns state, probed and total for the activity dots.

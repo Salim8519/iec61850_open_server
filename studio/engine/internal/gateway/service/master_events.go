@@ -10,6 +10,7 @@ import (
 
 // event handles studio_master's unsolicited frames (values, link, probe, traffic).
 func (m *Master) event(event *pyjson.Object) {
+	defer m.changed(ChangeMasterStatus)
 	switch get(event, "event") {
 	case "master_values":
 		values, _ := get(event, "values").([]any)
@@ -19,6 +20,7 @@ func (m *Master) event(event *pyjson.Object) {
 		if m.OnValues != nil {
 			m.OnValues()
 		}
+		m.changed(ChangeMasterPoints)
 	case "master_link":
 		m.mu.Lock()
 		state := get(event, "state")
@@ -33,6 +35,7 @@ func (m *Master) event(event *pyjson.Object) {
 			m.message = pytext.Str(reason) + ". Trying again every " + strconv.Itoa(RetrySeconds) + " s."
 		}
 		m.mu.Unlock()
+		m.changed(ChangeMasterPoints) // rows show whether the link is open
 	case "master_probe":
 		m.Probe.progress(event)
 	case "master_interrogation":

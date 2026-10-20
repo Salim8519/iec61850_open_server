@@ -26,6 +26,7 @@ func (m *Manager) event(event *pyjson.Object) {
 			delete(m.clients, peer)
 		}
 		m.mu.Unlock()
+		m.changed(ChangeGatewayStatus)
 	case "gw_command":
 		m.mu.Lock()
 		process := m.process
@@ -39,6 +40,7 @@ func (m *Manager) event(event *pyjson.Object) {
 		if sync != nil {
 			sync.halt()
 		}
+		m.changed(ChangeGatewayStatus)
 	}
 }
 
@@ -52,6 +54,7 @@ func orEmpty(event *pyjson.Object, key string) any {
 
 // Stop halts the gateway; remember=false keeps auto_start for a stop caused by the app closing.
 func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
+	defer m.changed(ChangeGatewayStatus)
 	if config := m.Config(); remember && pytext.Truthy(get(config, "auto_start")) {
 		if err := m.projects.SaveGateway(with(config, "auto_start", false)); err != nil {
 			return nil, err
@@ -88,6 +91,20 @@ func (m *Manager) Send(pointID string, value bool) *pyjson.Object {
 	return pyjson.NewObject().Set("ok", ok).Set("reason", reason)
 }
 
+// ProjectChanged re-checks every point after a project edit the value hub does not report
+// (an IED's role or name, a re-imported IED). The composition calls it on every
+// project_changed event; it replaced the 10 s safety sweep (Python diffed every point
+// every 100 ms, so an edit now reaches SCADA as fast as it did there).
+func (m *Manager) ProjectChanged() {
+	m.mu.Lock()
+	sync := m.sync
+	m.mu.Unlock()
+	if sync != nil {
+		sync.markAll()
+	}
+	m.changed(ChangeGatewayPoints)
+}
+
 // MarkRemote tells a running converter that the master's device values changed.
 func (m *Manager) MarkRemote() {
 	m.mu.Lock()
@@ -96,4 +113,5 @@ func (m *Manager) MarkRemote() {
 	if sync != nil {
 		sync.markRemote()
 	}
+	m.changed(ChangeGatewayPoints)
 }

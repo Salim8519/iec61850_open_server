@@ -13,13 +13,11 @@ import (
 	"studio-engine/internal/tools/worker"
 )
 
-// SweepInterval is the safety re-check of every point (0 disables it); see FullSweep.
-var SweepInterval = FullSweep
-
 func (m *Manager) setMessage(message string) {
 	m.mu.Lock()
 	m.message = message
 	m.mu.Unlock()
+	m.changed(ChangeGatewayStatus)
 }
 
 // prepare proposes points when the list is empty (Run stays the user's choice).
@@ -54,12 +52,14 @@ func (m *Manager) Autostart() {
 			m.mu.Lock()
 			m.state, m.message = "failed", "Automatic start failed: "+err.Error()
 			m.mu.Unlock()
+			m.changed(ChangeGatewayStatus)
 		}
 	}
 }
 
 // Start validates the point list, starts studio_gateway and the value push.
 func (m *Manager) Start() (*pyjson.Object, error) {
+	defer m.changed(ChangeGatewayStatus)
 	m.lifecycle.Lock()
 	m.mu.Lock()
 	running := m.process != nil
@@ -150,7 +150,7 @@ func (m *Manager) launch() (*pyjson.Object, string, int, error) {
 		problemList[index] = problem
 	}
 	endpoint := pytext.Str(get(opened, "bind")) + ":" + pytext.Str(get(opened, "port"))
-	sync := newSyncer(m, process, typed, SweepInterval)
+	sync := newSyncer(m, process, typed)
 	m.mu.Lock()
 	m.process, m.opened, m.problems, m.clients = process, opened, problemList, map[string]bool{}
 	m.points, m.order = map[string]*pyjson.Object{}, nil

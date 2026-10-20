@@ -16,6 +16,7 @@ func (s *Service) Connect(host, port any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer s.changed()
 	s.connectMu.Lock()
 	defer s.connectMu.Unlock()
 	s.mu.Lock()
@@ -36,6 +37,7 @@ func (s *Service) connect(host string, port any) (*pyjson.Object, error) {
 	s.mu.Lock()
 	s.state, s.message, s.host, s.port = "connecting", "Connecting to "+endpoint, host, port
 	s.mu.Unlock()
+	s.changed()
 	process, err := s.worker()
 	if err == nil {
 		fields := pyjson.NewObject().Set("ip", host).Set("port", port).Set("timeout_ms", int64(5000))
@@ -64,6 +66,7 @@ func (s *Service) connect(host string, port any) (*pyjson.Object, error) {
 
 // Disconnect ends the association; the worker stays warm for the next Connect.
 func (s *Service) Disconnect() *pyjson.Object {
+	defer s.changed()
 	s.StopPolling()
 	s.mu.Lock()
 	s.cache, s.values = map[string]any{}, map[string]*pyjson.Object{}

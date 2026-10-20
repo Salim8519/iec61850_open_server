@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -38,6 +39,12 @@ func TestScanFindsAndIdentifiesInAddressOrder(t *testing.T) {
 	spawn := func(string, func(*pyjson.Object)) (worker.Process, error) { return live, nil }
 	store := memory.New(folder)
 	service := NewService(exe, store, probe, spawn)
+	var reported atomic.Int64
+	service.OnChange(func(name string) {
+		if name == Change {
+			reported.Add(1)
+		}
+	})
 	if status := service.Status(); mustGet(status, "state") != "idle" || mustGet(status, "port") != int64(102) {
 		t.Fatalf("idle status %v", status)
 	}
@@ -49,6 +56,10 @@ func TestScanFindsAndIdentifiesInAddressOrder(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 	}
 	status := service.Status()
+	// start, 4 probes, the identify message, 2 identities, the end (the push "scan" topic)
+	if count := reported.Load(); count < 9 || service.Scanning() {
+		t.Fatalf("OnChange reported %d changes; scanning %v", count, service.Scanning())
+	}
 	encoded, _ := pyjson.Flask(status.Set("started", nil).Set("seconds", nil))
 	want := `{"found":[{"connect_ms":2.5,"devices":["LD0"],"identified":true,"ip":"127.65.0.2","model":"M",` +
 		`"port":20102,"reason":"note","revision":"1","tcp_ms":1.5,"vendor":"V"},{"devices":[],"identified":false,` +

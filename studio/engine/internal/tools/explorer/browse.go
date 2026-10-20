@@ -131,6 +131,7 @@ func (s *Service) Read(items []*pyjson.Object) (*pyjson.Object, error) {
 		s.values[ref] = get(results, ref).(*pyjson.Object)
 	}
 	s.mu.Unlock()
+	s.changed() // watch values and the read counter
 	return results, nil
 }
 

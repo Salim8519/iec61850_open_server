@@ -31,6 +31,7 @@ type Master struct {
 	Probe      *Probe
 	// OnValues runs after device values were merged (the converter pushes them upstream).
 	OnValues func()
+	changes  // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // connect/disconnect
 	mu        sync.Mutex // the fields below; never held across a worker request
@@ -55,9 +56,12 @@ func NewMaster(projects Projects, emit func(string, *pyjson.Object), executable 
 	if emit == nil {
 		emit = func(string, *pyjson.Object) {}
 	}
-	return &Master{projects: projects, emit: emit, Executable: executable, spawn: spawn, state: "disconnected",
+	m := &Master{projects: projects, emit: emit, Executable: executable, spawn: spawn, state: "disconnected",
 		Traffic: numlog.New(numlog.TrafficLines), Commands: numlog.New(numlog.CommandLines), Probe: &Probe{},
 		failures: []any{}, table: pyjson.NewObject(), stopping: make(chan struct{})}
+	m.Traffic.Watch(func() { m.changed(ChangeMasterTraffic); m.changed(ChangeMasterStatus) }) // traffic_last
+	m.Commands.Watch(func() { m.changed(ChangeMasterCommands) })
+	return m
 }
 
 func (m *Master) gatewaySection() *pyjson.Object {
@@ -155,6 +159,7 @@ func (m *Master) setMessage(message string) {
 	m.mu.Lock()
 	m.message = message
 	m.mu.Unlock()
+	m.changed(ChangeMasterStatus)
 }
 
 // activeProcess is _process: the worker while the link is open.

@@ -45,6 +45,7 @@ func TestRoutesAgainstFlask(t *testing.T) {
 	deps.Explorer = explorer.NewService(live, nil, nil, deps.Memory, control.NewClient(filepath.Join(bin, "studio_control.exe"), nil))
 	deps.Scanner = scan.NewService(live, deps.Memory, nil, nil)
 	srv := server(t, deps)
+	pushed := newPushCheck(deps)
 	for number, document := range documents[1:] {
 		spec := document.(*pyjson.Object)
 		method, path := value(spec, "method", nil).(string), value(spec, "path", nil).(string)
@@ -87,7 +88,9 @@ func TestRoutesAgainstFlask(t *testing.T) {
 				pyoracle.Dumps(t, value(spec, "body", nil)), response.StatusCode, response.Header.Get("Content-Type"),
 				got, wantStatus, value(headers, "Content-Type", nil), want)
 		}
+		pushed.compare(t, number, method, path, wantStatus, want)
 	}
+	pushed.report(t)
 	deps.Explorer.Close()
 }
 
