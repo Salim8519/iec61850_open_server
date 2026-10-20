@@ -94,6 +94,12 @@ func (r *recorder) Publish(kind string, payload *pyjson.Object) {
 	r.mu.Unlock()
 }
 
+func (r *recorder) count() int {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return len(r.events)
+}
+
 func (r *recorder) take() [][2]string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
