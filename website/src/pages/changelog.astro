@@ -7,7 +7,14 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · SNMP devices: simulate switches and GPS clocks, read any SNMP device</h2>
+    <h2>{SITE.version} · SNMP devices on your network, delete many points at once</h2>
+    <ul>
+      <li>SNMP devices now go on the network together with your IEDs. In Settings › Network, pick the network card once: each simulated switch or GPS clock gets its own address on that card, so a SCADA or network monitor on another PC can read it.</li>
+      <li>ScadaBench checks that nobody else uses an address before giving it to a device, keeps the address the device had last time when it is still free, and lets you type your own. Windows asks once; Clean up removes everything again.</li>
+      <li>Select several points and delete them together, in the SNMP values and in the gateway point list. Use the search and filters, press "All shown", then Delete. In the gateway, Discard changes still brings them back.</li>
+      <li>Menus such as Add device are never cut off any more, even in narrow panels or with a zoomed window.</li>
+    </ul>
+    <h2>0.1.17 · SNMP devices: simulate switches and GPS clocks, read any SNMP device</h2>
     <ul>
       <li>New tool in Tools: SNMP devices. Simulate devices plays a managed network switch (8 ports) or a GPS time server, so your SCADA or network monitor can read them and receive their traps. You can also start from an empty device or from a file (snmpwalk output or CSV).</li>
       <li>SNMP v1, v2c and v3 are all supported, including v3 users with a password and encryption (MD5, SHA-1, SHA-2; DES and AES-128/192/256).</li>

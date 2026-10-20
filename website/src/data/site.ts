@@ -1,5 +1,5 @@
 // One place for names, prices and addresses used across the site.
-const VERSION = '0.1.17';
+const VERSION = '0.1.18';
 export const SITE = {
   name: 'ScadaBench',
   tagline: 'IEC 61850 IED simulator & SCADA test bench',
