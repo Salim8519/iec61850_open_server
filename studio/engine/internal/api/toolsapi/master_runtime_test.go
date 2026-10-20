@@ -1,11 +1,13 @@
 package toolsapi
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 	"time"
 
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/testutil"
 	"studio-engine/internal/tools/nativetest"
 	"studio-engine/internal/tools/worker"
 )
@@ -57,7 +59,8 @@ func waitFor(check func() bool) bool {
 // TestMasterRoleDiscoversNamesAndCommandsADevice is test_master_runtime.py through the Go routes.
 func TestMasterRoleDiscoversNamesAndCommandsADevice(t *testing.T) {
 	var commands []string
-	device(t, 20411, &commands)
+	port := int64(testutil.FreePort(t, "127.0.0.1"))
+	device(t, port, &commands)
 	executables := map[string]string{"gateway": nativetest.Program(t, "studio_gateway.exe"),
 		"master": nativetest.Program(t, "studio_master.exe")}
 	deps := newDeps(&fakeProjects{}, &fakeRuntime{state: "stopped"}, executables)
@@ -77,7 +80,7 @@ func TestMasterRoleDiscoversNamesAndCommandsADevice(t *testing.T) {
 		!strings.Contains(text, "device address") {
 		t.Fatalf("%d %s", status, text)
 	}
-	_, text = call(t, srv, "PUT", "/tools/master/config", `{"protocol":"iec104","host":"127.0.0.1","settings":{"port":20411}}`)
+	_, text = call(t, srv, "PUT", "/tools/master/config", `{"protocol":"iec104","host":"127.0.0.1","settings":{"port":`+strconv.FormatInt(port, 10)+`}}`)
 	saved := decode(t, text)
 	if host, _ := saved.Get("host"); host != "127.0.0.1" || !strings.Contains(text, `"gi_minutes":15`) {
 		t.Fatal(text)

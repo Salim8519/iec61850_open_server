@@ -10,6 +10,7 @@ import (
 
 	"studio-engine/internal/gateway"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/testutil"
 	"studio-engine/internal/tools/nativetest"
 )
 
@@ -70,18 +71,19 @@ func setup(t *testing.T, port int64) (*Manager, *fakeHub, *fakeProjects) {
 }
 
 func TestGatewayServesValuesAndCommandsOverIEC104(t *testing.T) {
-	manager, hub, projects := setup(t, 20404)
+	port := int64(testutil.FreePort(t, "127.0.0.1"))
+	manager, hub, projects := setup(t, port)
 	status, err := manager.Start()
 	if err != nil {
 		t.Fatal(err)
 	}
 	if get(status, "state") != "running" || get(status, "auto_start") != true ||
-		get(get(status, "opened").(*pyjson.Object), "port") != int64(20404) {
+		get(get(status, "opened").(*pyjson.Object), "port") != int64(port) {
 		t.Fatalf("status %v", status)
 	}
 	time.Sleep(300 * time.Millisecond) // the first batch leaves after 100 ms
 	objects := map[float64]map[string]any{}
-	for _, frame := range master104(t, 20404, "gi") {
+	for _, frame := range master104(t, int(port), "gi") {
 		if frame["cot"] == 20.0 {
 			for _, raw := range frame["objects"].([]any) {
 				object := raw.(map[string]any)
@@ -92,7 +94,7 @@ func TestGatewayServesValuesAndCommandsOverIEC104(t *testing.T) {
 	if objects[20001]["value"] != 1.0 || objects[30001]["value"] != 230.5 {
 		t.Fatalf("interrogation %v", objects)
 	}
-	frames := master104(t, 20404, "dc:50001:2:select", "dc:50001:2", "wait:1500")
+	frames := master104(t, int(port), "dc:50001:2:select", "dc:50001:2", "wait:1500")
 	var answers []string
 	spontaneous := false
 	for _, frame := range frames {
