@@ -9,7 +9,7 @@ import { Hint } from '../../ui/Hint';
 import { SpinIcon, Spinner } from '../../ui/Spinner';
 import { AddressTable, type Manual } from './AddressTable';
 import { ResultStep, ReviewStep } from './ReviewStep';
-import { adapterLabel, changeSentence, putLabel, usableAdapters } from './setupWords';
+import { adapterLabel, changeSentence, LOOPBACK_CHOICE, putLabel, usableAdapters } from './setupWords';
 
 /** One page, one button (change 0098): pick the network card, check one address per published IED, apply.
  *  Safety is unchanged: the exact Windows changes are listed, Windows asks once, and Undo/restart removes them. */
@@ -24,6 +24,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   const [error, setError] = useState('');
   // Only a Refresh the user pressed shows a turning icon; the quiet 3 s re-check does not.
   const [refreshing, setRefreshing] = useState(false);
+  const loopback = guid === LOOPBACK_CHOICE;
   const load = useCallback((refresh: boolean, pressed = false) => {
     if (pressed) setRefreshing(true);
     api<{ adapters: Adapter[] }>(`/network/adapters${refresh ? '?refresh=1' : ''}`)
@@ -45,7 +46,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   }, [guid, result]);
   // Check the addresses again by itself shortly after the card or a typed address changes.
   useEffect(() => {
-    if (!guid || result) return;
+    if (!guid || loopback || result) return;
     const timer = window.setTimeout(() => {
       setChecking(true); setError('');
       api<PlanPreview>('/network/plan/preview', 'POST', { adapter_guid: guid, strategy: 'scd', manual })
@@ -53,7 +54,14 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
         .finally(() => setChecking(false));
     }, 500);
     return () => window.clearTimeout(timer);
-  }, [guid, manual, result]);
+  }, [guid, loopback, manual, result]);
+  // "This PC only": the private loopback addresses; no network card and no Windows change.
+  const useLoopback = async () => {
+    setApplying(true); setError('');
+    try { await api('/network', 'PUT', { mode: 'loopback' }); finished(); } catch (reason) {
+      setError(reason instanceof Error ? reason.message : String(reason));
+    } finally { setApplying(false); }
+  };
   const apply = async () => {
     if (!preview) return;
     setApplying(true); setError('');
@@ -76,6 +84,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
         <select value={guid} disabled={!adapters} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); }}
           aria-label="Network card">
           <option value="">{adapters ? 'Choose the card plugged into the IED or SCADA switch…' : 'Looking for network cards…'}</option>
+          <option value={LOOPBACK_CHOICE}>This PC only (loopback): IEDs talk to each other on this PC</option>
           {usable.map(adapter => <option key={adapter.guid} value={adapter.guid}>{adapterLabel(adapter)}</option>)}
         </select></label>
       <button onClick={() => load(true, true)} disabled={refreshing} aria-label="Refresh the network cards">
@@ -85,6 +94,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
       slowHint="Still working. Windows can take a few seconds to list its network cards." />}
     {!guid && <Hint id="network.adapter.pick" compact />}
     {!guid && <Hint id="network.adapter.virtual" compact />}
+    {loopback && <Hint id="network.adapter.loopback" compact />}
     {usable.find(item => item.guid === guid)?.default_route && <Hint id="network.adapter.default_route" compact />}
     {adapters && !usable.length && <p className="muted small">No suitable network card found. Plug in a USB
       Ethernet adapter or enable a virtual adapter; this list updates by itself.</p>}
@@ -97,11 +107,13 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     {preview && <p className="small" style={{ margin: 0 }}>{changeSentence(preview)}</p>}
     {preview && <Disclosure title="Show the exact Windows changes"><ReviewStep preview={preview} /></Disclosure>}
     <div className="row">
-      <button className="primary" disabled={!preview?.ready || checking || applying} onClick={apply}>
+      {loopback ? <button className="primary" disabled={applying} onClick={useLoopback}>
+        {applying ? <SpinIcon /> : <Check size={16} />}Use this PC only</button>
+      : <button className="primary" disabled={!preview?.ready || checking || applying} onClick={apply}>
         {applying ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
-          : putLabel(count, preview?.adapter.name)}</button>
+          : putLabel(count, preview?.adapter.name)}</button>}
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>
     </div>
-    {applying && <p className="small muted" style={{ margin: 0 }}>{hint('network.approving')}</p>}
+    {applying && !loopback && <p className="small muted" style={{ margin: 0 }}>{hint('network.approving')}</p>}
   </div></div>;
 }

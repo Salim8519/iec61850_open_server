@@ -6,16 +6,16 @@ import (
 	"strings"
 )
 
-// Engine names (ADR-0074): Python stays the default until the final gate.
+// Engine names (ADR-0074). Go is the default since the 0.1.15 release (ADR-0083).
 const (
 	EnginePython  = "python"
 	EngineGo      = "go"
-	DefaultEngine = EnginePython
+	DefaultEngine = EngineGo
 	// EngineVariable selects the engine when no --engine flag is given.
 	EngineVariable = "SCADABENCH_ENGINE"
 )
 
-// ResolveEngine picks the engine: the --engine flag, else SCADABENCH_ENGINE, else Python.
+// ResolveEngine picks the engine: the --engine flag, else SCADABENCH_ENGINE, else Go.
 // An unknown name is an error, never a silent fallback.
 func ResolveEngine(flag string) (string, error) {
 	choice, source := flag, "--engine"

@@ -7,6 +7,7 @@ export const HINTS: Record<string, string> = {
   'network.endpoints': 'Give these addresses to your SCADA, gateway or test tool. Each simulated IED answers on its own address and port 102.',
   'network.adapter.pick': 'Pick the network card plugged into the switch of the SCADA, gateway or IEDs. A spare USB Ethernet adapter is the safest choice.',
   'network.adapter.default_route': 'This adapter carries your internet connection. Using it works, but a spare adapter keeps the lab separate.',
+  'network.adapter.loopback': 'The IEDs talk to each other and to ScadaBench on this PC, each on its own private 127.x address. Nothing is changed in Windows and nothing outside this PC can reach them.',
   'network.adapter.virtual': 'No spare adapter? A virtual adapter (VMware, Hyper-V or the Windows loopback adapter) is fine for trying things on one PC.',
   'network.address.fix': 'Some addresses need attention. Use the suggested address or type another one; ScadaBench checks it again by itself.',
   'network.review': 'The complete list of Windows changes. Nothing has changed yet.',

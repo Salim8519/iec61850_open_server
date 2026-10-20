@@ -111,14 +111,14 @@ func TestOptionsLikeArgparse(t *testing.T) {
 
 func TestEngineChoice(t *testing.T) {
 	t.Setenv(EngineVariable, "")
-	if engine, _ := ResolveEngine(""); engine != EnginePython {
+	if engine, _ := ResolveEngine(""); engine != EngineGo {
 		t.Errorf("default engine %q", engine)
 	}
-	t.Setenv(EngineVariable, "Go")
-	if engine, _ := ResolveEngine(""); engine != EngineGo {
+	t.Setenv(EngineVariable, "Python")
+	if engine, _ := ResolveEngine(""); engine != EnginePython {
 		t.Errorf("environment engine %q", engine)
 	}
-	if engine, _ := ResolveEngine("python"); engine != EnginePython {
+	if engine, _ := ResolveEngine("go"); engine != EngineGo {
 		t.Errorf("flag beats environment: %q", engine)
 	}
 	if _, err := ResolveEngine("rust"); err == nil {

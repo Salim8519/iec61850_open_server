@@ -1,7 +1,8 @@
-"""Development launcher with the engine switch (ADR-0074): Python (default) or the Go engine.
+"""Development launcher with the engine switch (ADR-0074, ADR-0083): Go (default) or Python.
 
 Usage: python studio/tools/run_dev_engine.py [--engine python|go] [--no-browser] [--print-command]
-Without --engine the SCADABENCH_ENGINE environment variable decides; unset means Python.
+Without --engine the SCADABENCH_ENGINE environment variable decides; unset means Go, the
+engine the released app ships (0.1.15), so development behaves like the product.
 Python runs exactly studio/tools/run_dev.py. Go first rebuilds studio_server.exe from
 studio/engine (go build is incremental, so dev never runs an older engine than its source),
 then starts Vite and the Go server with the same arguments, port, data folder, dev token and
@@ -25,7 +26,7 @@ from build_goose_engine import go_command  # noqa: E402
 
 
 def choose_engine(arguments):
-    """--engine wins over SCADABENCH_ENGINE; Python is the default; unknown names stop."""
+    """--engine wins over SCADABENCH_ENGINE; Go is the default (ADR-0083); unknown names stop."""
     remaining, choice, source = [], None, "--engine"
     iterator = iter(arguments)
     for argument in iterator:
@@ -37,7 +38,7 @@ def choose_engine(arguments):
             remaining.append(argument)
     if choice is None:
         choice, source = os.environ.get("SCADABENCH_ENGINE", ""), "SCADABENCH_ENGINE"
-    engine = choice.strip().lower() or "python"
+    engine = choice.strip().lower() or "go"
     if engine not in ENGINES:
         raise SystemExit(f'{source} must be "python" or "go", not "{choice}".')
     return engine, remaining
@@ -84,7 +85,8 @@ def main_go(arguments, print_only):
     build_server()
     frontend_port = run_dev.available_port(5173, 5199)
     frontend_url = f"http://127.0.0.1:{frontend_port}"
-    print("Starting ScadaBench development mode with the Go engine (preview).", flush=True)
+    print("Starting ScadaBench development mode with the Go engine (as released). Frontend changes "
+          "reload by themselves; restart this window after Go changes.", flush=True)
     ui = run_dev.start([str(node), str(vite), "--host", "127.0.0.1", "--port", str(frontend_port),
                         "--logLevel", "warn"], cwd=STUDIO / "frontend", env=os.environ.copy())
     api = run_dev.start(server_command(native, frontend_url, arguments), cwd=STUDIO.parent, env=os.environ.copy())

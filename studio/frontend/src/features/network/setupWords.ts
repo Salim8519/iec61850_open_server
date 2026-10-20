@@ -4,6 +4,9 @@ const KIND_WORD: Record<string, string> = { ethernet: 'Ethernet', wifi: 'Wi-Fi',
   virtual_lab: 'Windows loopback adapter' };
 
 /** Network cards worth offering: never VPN or Bluetooth. */
+/** The picker's first choice: keep the IEDs on their private loopback addresses (this PC only). */
+export const LOOPBACK_CHOICE = 'loopback';
+
 export const usableAdapters = (adapters: Adapter[] | null) =>
   (adapters || []).filter(item => !['vpn', 'bluetooth'].includes(item.kind));
 
