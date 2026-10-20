@@ -7,10 +7,11 @@ import { ValueControl } from './ValueControl';
 import { configureSource, type Point } from './signalActions';
 import { MODES, NUMERIC } from './sourceModes';
 import { shortRef } from '../../equipment/relayDisplay';
+import { useSignalValue } from '../../state/useLive';
 
 /** The one generator editor (UI-06): SOURCE symbols and the Test > Generators list use it. */
-export function SourceEditor({ point: fixed, project, values, perform, done }: {
-  point?: Point | null; project: Project; values: Record<string, unknown>;
+export function SourceEditor({ point: fixed, project, perform, done }: {
+  point?: Point | null; project: Project;
   perform: (task: () => Promise<unknown>) => Promise<void>; done?: () => void;
 }) {
   const [iedId, setIedId] = useState(fixed?.ied_id || project.ieds[0]?.id || '');
@@ -19,6 +20,7 @@ export function SourceEditor({ point: fixed, project, values, perform, done }: {
   const [choices, setChoices] = useState<Signal[]>([]);
   const [signal, setSignal] = useState<Signal | null>(null);
   const point = fixed || (iedId && ref ? { ied_id: iedId, ref } : null);
+  const live = useSignalValue(point ? `${point.ied_id}:${point.ref}` : null);
   const configured = point ? project.sources.find(item => item.ied_id === point.ied_id && item.ref === point.ref)?.spec : undefined;
   const [mode, setMode] = useState(configured?.mode || 'sine');
   const [offset, setOffset] = useState(configured?.offset ?? 100);
@@ -76,7 +78,7 @@ export function SourceEditor({ point: fixed, project, values, perform, done }: {
         })}><Play size={15} />Save generator</button><span className="small muted" role="status">{message}</span></div>
       </>}
       {running && signal && <label>Value now<ValueControl point={point} signal={signal} running={running}
-        value={values[`${point.ied_id}:${point.ref}`] ?? signal.value} perform={perform}
+        value={live ?? signal.value} perform={perform}
         generator={!!configured && configured.mode !== 'manual'} /></label>}
     </>}
   </div>;

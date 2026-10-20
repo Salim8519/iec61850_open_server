@@ -13,6 +13,7 @@ import (
 // ThreadPoolExecutor loop), then asks every open port who it is.
 func (s *Service) run(hosts []string, port int64, portValue any, stop, done chan struct{}) {
 	defer close(done)
+	defer s.changed() // done, stopped or failed
 	defer func() {
 		if failure := recover(); failure != nil {
 			s.mu.Lock()
@@ -47,6 +48,7 @@ func (s *Service) run(hosts []string, port int64, portValue any, stop, done chan
 				Set("revision", "").Set("devices", []any{}).Set("reason", "Identifying\xe2\x80\xa6"))
 		}
 		s.mu.Unlock()
+		s.changed() // probed and found
 		if result.open {
 			open = append(open, host)
 		}
@@ -66,6 +68,7 @@ func (s *Service) identify(hosts []string, port any, stop chan struct{}) {
 	s.mu.Lock()
 	s.state.Set("message", "Asking "+strconv.Itoa(len(hosts))+" device(s) who they are")
 	s.mu.Unlock()
+	s.changed()
 	process, err := s.spawn(s.executable, nil)
 	if err != nil {
 		panic(err.Error())
@@ -88,6 +91,7 @@ func (s *Service) identify(hosts []string, port any, stop chan struct{}) {
 }
 
 func (s *Service) update(host string, answer *pyjson.Object) {
+	defer s.changed()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	for _, entry := range s.found {

@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, ListChecks, Plus, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { api } from '../../api/client';
 import type { Project, Signal, TestControl } from '../../api/types';
 import { SignalSearchPicker } from '../../components/SignalSearchPicker';
@@ -9,27 +9,32 @@ import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
 import { Spinner } from '../../ui/Spinner';
 import { ValueControl } from './ValueControl';
+import { useLiveFeed } from '../../api/useLiveFeed';
+import { useSignalValue } from '../../state/useLive';
 
 type Item = TestControl & { signal: Signal; automatic: boolean; overridden: boolean };
 const STOP_TO_ADD = 'Stop the run to add test points';
 
-export function TestPoints({ project, values, perform, prepare }: {
-  project: Project; values: Record<string, unknown>;
-  perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>;
+type Perform = (task: () => Promise<unknown>) => Promise<void>;
+
+/** One test point's control; only this cell re-renders when the point's live value changes. */
+function PointControl({ item, running, perform }: { item: Item; running: boolean; perform: Perform }) {
+  const live = useSignalValue(`${item.ied_id}:${item.ref}`);
+  return <ValueControl point={item} signal={item.signal} running={running} perform={perform}
+    value={live ?? item.signal.value} segmented
+    pulse={{ active: item.active_value, durationMs: item.duration_ms }} generator={item.automatic} />;
+}
+
+export function TestPoints({ project, perform, prepare }: {
+  project: Project; perform: Perform; prepare: () => Promise<void>;
 }) {
-  const [items, setItems] = useState<Item[]>([]);
   const [adding, setAdding] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const running = project.runtime !== 'stopped';
   const entries = project.test_panel || [];
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => api<{ items: Item[] }>('/project/test-panel')
-      .then(result => { if (!cancelled) { setItems(result.items); setLoaded(true); } });
-    load();
-    const timer = running ? setInterval(load, 1000) : undefined;
-    return () => { cancelled = true; clearInterval(timer); };
-  }, [project.test_panel, running]);
+  // Shared live feed: every second while running, once otherwise; unchanged answers do nothing.
+  const panel = useLiveFeed<{ items: Item[] }>('/project/test-panel', running ? 1000 : null, project.test_panel).value;
+  const items = panel?.items ?? [];
+  const loaded = !!panel;
   const save = (next: TestControl[]) => perform(async () => { await prepare(); await api('/project/test-panel', 'PUT', next); });
   const move = (index: number, direction: number) => {
     const next = [...entries]; [next[index], next[index + direction]] = [next[index + direction], next[index]]; save(next);
@@ -65,9 +70,7 @@ export function TestPoints({ project, values, perform, prepare }: {
               <label>Pulse length (ms)<input type="number" min={100} max={60000} step={100} defaultValue={item.duration_ms}
                 onBlur={event => Number(event.target.value) !== item.duration_ms && edit({ ...item, duration_ms: Number(event.target.value) })} /></label>
             </div>}</Disclosure>}</td>
-          <td><ValueControl point={item} signal={item.signal} running={running} perform={perform}
-            value={values[`${item.ied_id}:${item.ref}`] ?? item.signal.value} segmented
-            pulse={{ active: item.active_value, durationMs: item.duration_ms }} generator={item.automatic} /></td>
+          <td><PointControl item={item} running={running} perform={perform} /></td>
           <td><div className="row" style={{ justifyContent: 'flex-end', gap: 2 }}>
             <button className="icon ghost" aria-label={`Move ${item.label} up`} disabled={running || index === 0} onClick={() => move(index, -1)}><ArrowUp size={16} /></button>
             <button className="icon ghost" aria-label={`Move ${item.label} down`} disabled={running || index === items.length - 1} onClick={() => move(index, 1)}><ArrowDown size={16} /></button>

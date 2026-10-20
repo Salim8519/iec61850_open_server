@@ -1,15 +1,17 @@
 import { Radio, Share2, X } from 'lucide-react';
+import { useSyncExternalStore } from 'react';
 import type { GooseLink } from '../../../api/signalLayers';
 import { clientLine, externalClients, linkLine, linkStatus, outsideNames } from '../../../copy/signalLayers';
-import type { SignalLayerState } from '../../../equipment/signalLayerStore';
+import type { SignalLayerStore } from '../../../equipment/signalLayerStore';
 import { StatusPill } from '../../../ui/StatusPill';
 import type { SignalSelection } from './SignalOverlay';
 
 /** Side sheet for a clicked GOOSE link or IED tag: the declared signal-flow details plus the live verdict. */
-export function SignalSheet({ state, selection, select, showFlow }: {
-  state: SignalLayerState; selection: NonNullable<SignalSelection>;
+export function SignalSheet({ store, selection, select, showFlow }: {
+  store: SignalLayerStore; selection: NonNullable<SignalSelection>;
   select: (selection: SignalSelection) => void; showFlow: (iedId?: string) => void;
 }) {
+  const state = useSyncExternalStore(store.subscribe, store.get, store.get);
   const running = state.map.running;
   const link = selection.kind === 'link' ? state.map.links.find(item => item.id === selection.id) : undefined;
   const name = selection.kind === 'ied' ? selection.name : link?.subscriber || '';

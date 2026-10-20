@@ -56,7 +56,7 @@ Unused native ops (Python never sends; Go must not need them): studio_ied `block
 | `LOCALAPPDATA`, `SystemDrive`, `SystemRoot` | read by workers (license_guard.cpp:147,258; go main.go timer) | |
 | creation flags | `CREATE_NO_WINDOW` on nt (worker_process.py:17) | |
 | pipes | stdin/stdout/stderr all PIPE, `bufsize=0` (worker_process.py:18-20) | |
-| ms timer | studio_ied `timeBeginPeriod(1)` (cc worker/main.cpp:15-19); go `timeBeginPeriod(1)` via winmm (go cmd/studio_goose/timer_windows.go) | not backend's job |
+| ms timer | studio_ied `timeBeginPeriod(1)` (cc worker/main.cpp:15-19); studio_goose no longer raises it (event-driven uplink, change 0129) | not backend's job |
 
 License gate: ops `start` (ied), `goose_start`/`sv_start`/`connect`/`identify` (live), `operate`
 (control), `start` (gateway), `connect` (master), whole process (probe) call

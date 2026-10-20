@@ -8,6 +8,7 @@ import { IedNames, LiveValues, ModeBadges, StoppedIeds } from '../../equipment/l
 import { stableFlowNodes, type FlowNodeCache } from '../../equipment/flowNodes';
 import { rememberMeasured, type MeasuredStore } from '../../equipment/measured';
 import type { EquipmentValueStore } from '../../equipment/liveValues';
+import type { KeyedStore } from '../../equipment/keyedStore';
 import { energizedEdges, type EdgeCache, type EnergizationStore } from '../../equipment/energization';
 import { EnergizationLegend } from './EnergizationLegend';
 import { useZoomTier } from './useZoomTier';
@@ -27,7 +28,7 @@ const NONE_STOPPED: ReadonlySet<string> = new Set();
 type Props = {
   diagram: Diagram; locked: boolean; valueStore: EquipmentValueStore; iedNames: Record<string, string>;
   energization: EnergizationStore;
-  modeBadges?: Record<string, string>;
+  modeBadges: KeyedStore<string>;
   selection: string[]; setSelection: (ids: string[]) => void; operate: (nodeId: string, action: string) => void;
   change: (diagram: Diagram, group?: string) => void; toolbar?: ReactNode;
   /** View-only layers drawn in flow coordinates (spec signal-layers); never part of the diagram. */
@@ -38,7 +39,7 @@ type Props = {
   lockNote?: ReactNode; stoppedIeds?: ReadonlySet<string>;
 };
 
-function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges = {}, selection, setSelection, operate, change, toolbar, overlay, nodeMenu,
+function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeBadges, selection, setSelection, operate, change, toolbar, overlay, nodeMenu,
   lockNote, stoppedIeds = NONE_STOPPED }: Props) {
   const flow = useReactFlow<NodeType>();
   const zoomTier = useZoomTier();

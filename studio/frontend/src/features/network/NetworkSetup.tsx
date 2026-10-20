@@ -1,6 +1,7 @@
 import { Check, RefreshCw, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../api/client';
+import { liveFeed } from '../../api/polls';
 import type { Adapter, ApplyResult, PlanPreview } from '../../api/network';
 import { hint } from '../../copy/hints';
 import { Disclosure } from '../../ui/Disclosure';
@@ -32,10 +33,16 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   useEffect(() => load(false), [load]);
   // A plugged or unplugged cable shows up by itself until a network card is chosen.
   useEffect(() => {
-    if (guid || result) return;
-    const timer = window.setInterval(() => load(true), 3000);
-    return () => window.clearInterval(timer);
-  }, [guid, result, load]);
+    if (guid || result) return undefined;
+    // Shared live feed (speed lane F): starts after the first 3 s, as before; no overlap, no
+    // re-render while the adapters stay the same, paused while the window is hidden.
+    let stop = () => {};
+    const start = window.setTimeout(() => {
+      stop = liveFeed.subscribe<{ adapters: Adapter[] }>('/network/adapters?refresh=1', 3000,
+        answer => setAdapters(answer.adapters), reason => setError(reason.message));
+    }, 3000);
+    return () => { window.clearTimeout(start); stop(); };
+  }, [guid, result]);
   // Check the addresses again by itself shortly after the card or a typed address changes.
   useEffect(() => {
     if (!guid || result) return;

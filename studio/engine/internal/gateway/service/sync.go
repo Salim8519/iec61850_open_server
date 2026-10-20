@@ -13,11 +13,11 @@ import (
 // Timing of the value push. Python diffed every point every 0.1 s; here a point is
 // recomputed only after the hub reports a change of its value, quality, timestamp, IED or
 // run state, and batches still leave at most every 100 ms (the same coalescing, so SCADA
-// sees the same spontaneous events). FullSweep re-checks every point as a safety net for
-// state changes the hub might not report (project edits of an IED's role).
+// sees the same spontaneous events). Project edits the hub does not report (an IED's role
+// or name) re-check every point through Manager.ProjectChanged; there is no periodic
+// sweep, so an idle gateway runs no timer.
 const (
 	MinGap    = 100 * time.Millisecond
-	FullSweep = 10 * time.Second
 	batchSize = 500
 )
 
@@ -46,13 +46,12 @@ type syncer struct {
 	done    chan struct{}
 	cancel  func()
 	closing sync.Once
-	sweep   time.Duration
 }
 
-func newSyncer(manager *Manager, process worker.Process, points []*pyjson.Object, sweep time.Duration) *syncer {
+func newSyncer(manager *Manager, process worker.Process, points []*pyjson.Object) *syncer {
 	s := &syncer{manager: manager, process: process, sent: map[string]Sample{}, byIED: map[string][]int{},
 		deps: map[[2]string][]int{}, dirty: map[int]bool{}, all: true, rebuild: true, wake: make(chan struct{}, 1),
-		stop: make(chan struct{}), done: make(chan struct{}), sweep: sweep}
+		stop: make(chan struct{}), done: make(chan struct{})}
 	for _, point := range points {
 		if kind, _ := get(point, "kind").(string); strings.HasPrefix(kind, "command_") {
 			continue
@@ -98,6 +97,14 @@ func (s *syncer) notify(change Change) {
 	}
 }
 
+// markAll re-checks every point and its quality/timestamp references (a project edit).
+func (s *syncer) markAll() {
+	s.mu.Lock()
+	s.all, s.rebuild = true, true
+	s.mu.Unlock()
+	s.signal()
+}
+
 // MarkRemote marks the converter's points after the master merged new device values.
 func (s *syncer) markRemote() {
 	if len(s.remote) == 0 {
@@ -120,22 +127,12 @@ func (s *syncer) signal() {
 
 func (s *syncer) run() {
 	defer close(s.done)
-	var sweep <-chan time.Time
-	if s.sweep > 0 {
-		ticker := time.NewTicker(s.sweep)
-		defer ticker.Stop()
-		sweep = ticker.C
-	}
 	last := time.Now()
 	for {
 		select {
 		case <-s.stop:
 			return
 		case <-s.wake:
-		case <-sweep:
-			s.mu.Lock()
-			s.all = true
-			s.mu.Unlock()
 		}
 		if wait := time.Until(last.Add(MinGap)); wait > 0 {
 			select {

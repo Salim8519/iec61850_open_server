@@ -24,6 +24,12 @@ export type MasterCommandEntry = { seq: number; at: number; who: string; kind: C
   value: number | null; select: boolean; state: 'sent' | 'confirmed' | 'refused'; text: string };
 type Page<T> = { entries: T[]; last: number; dropped: number };
 
+/** Paths the pages poll through the shared live feed (speed lane F). */
+export const MASTER_STATUS = '/tools/master';
+export const MASTER_CONFIG = '/tools/master/config';
+export const MASTER_POINTS = '/tools/master/points';
+export const MASTER_COMMANDS = '/tools/master/commands';
+
 export const masterApi = {
   setRole: (role: Role) => api<{ role: Role }>('/tools/gateway/role', 'POST', { role }),
   status: () => api<MasterStatus>('/tools/master'),

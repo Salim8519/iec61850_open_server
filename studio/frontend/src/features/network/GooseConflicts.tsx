@@ -2,16 +2,17 @@ import { TriangleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import type { GooseConflict, GooseShare } from '../../api/network';
-import type { Project, StudioEvent } from '../../api/types';
+import type { Project } from '../../api/types';
+import { useEventCount } from '../../state/useLive';
 import { CONFLICT_COPY } from '../../copy/gooseReach';
 import './goose.css';
 
 /** Asks once per conflict: a real device sends the same GOOSE as a simulated IED (GOOSE-21).
  * The engine already holds that IED's outward copy; the answer lasts for the current Run. */
-export function GooseConflicts({ project, events }: { project: Project; events: StudioEvent[] }) {
+export function GooseConflicts({ project }: { project: Project }) {
   const [open, setOpen] = useState<GooseConflict[]>([]);
   const [sure, setSure] = useState('');
-  const latest = events.filter(event => event.kind === 'goose_conflict').length;
+  const latest = useEventCount('goose_conflict');
   const running = project.runtime !== 'stopped';
   useEffect(() => {
     if (!running) { setOpen([]); return; }

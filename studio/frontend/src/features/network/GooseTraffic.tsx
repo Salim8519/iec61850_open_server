@@ -1,6 +1,5 @@
 import { Radio } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { api } from '../../api/client';
+import { useLiveFeed } from '../../api/useLiveFeed';
 import type { GooseOverview } from '../../api/network';
 import { EmptyState } from '../../ui/EmptyState';
 import { Hint } from '../../ui/Hint';
@@ -12,16 +11,7 @@ import { shortBlock } from './endpoints';
 
 /** Every GOOSE block of the project and what really arrives; GOOSE runs in every network mode (ADR-0073). */
 export function GooseTraffic({ running, revision }: { running: boolean; revision: number }) {
-  const [overview, setOverview] = useState<GooseOverview | null>(null);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => api<GooseOverview>('/goose').then(value => { if (!cancelled) { setOverview(value); setError(''); } })
-      .catch(reason => { if (!cancelled) setError(reason.message); });
-    load();
-    const timer = running ? setInterval(load, 2000) : undefined;
-    return () => { cancelled = true; if (timer) clearInterval(timer); };
-  }, [running, revision]);
+  const { value: overview, error } = useLiveFeed<GooseOverview>('/goose', running ? 2000 : null, revision);
   return <div className="card">
     <div className="card-heading"><h2><InfoTip term="goose" label="GOOSE traffic" /></h2>
       {overview && <StatusPill status={reachStatus(overview.state)} />}</div>

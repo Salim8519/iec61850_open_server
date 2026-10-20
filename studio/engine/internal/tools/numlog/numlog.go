@@ -4,6 +4,7 @@ package numlog
 
 import (
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"studio-engine/internal/pyjson"
@@ -21,13 +22,31 @@ type Log struct {
 	capacity int
 	entries  []*pyjson.Object
 	sequence int64
+	watch    atomic.Pointer[func()]
 }
 
 // New returns an empty log.
 func New(capacity int) *Log { return &Log{capacity: capacity} }
 
+// Watch sets fn to run after every Add, Update and Clear, outside the log's lock (the push
+// stream's change hook); nil removes it. fn must not block.
+func (l *Log) Watch(fn func()) {
+	if fn == nil {
+		l.watch.Store(nil)
+		return
+	}
+	l.watch.Store(&fn)
+}
+
+func (l *Log) notify() {
+	if fn := l.watch.Load(); fn != nil {
+		(*fn)()
+	}
+}
+
 // Add appends entry (its keys in call order) plus "seq" and "at" (time.time()).
 func (l *Log) Add(entry *pyjson.Object) *pyjson.Object {
+	defer l.notify()
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.sequence++
@@ -66,6 +85,7 @@ func (l *Log) After(seq int64, limit int) *pyjson.Object {
 
 // Update merges changes into the entry with seq (dict.update keeps existing key places).
 func (l *Log) Update(seq int64, changes *pyjson.Object) {
+	defer l.notify()
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	for _, entry := range l.entries {
@@ -81,6 +101,7 @@ func (l *Log) Update(seq int64, changes *pyjson.Object) {
 
 // Clear removes every entry; the sequence keeps counting.
 func (l *Log) Clear() {
+	defer l.notify()
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.entries = nil

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
+import { liveFeed } from '../../api/polls';
 import type { Ied, Scenario, ScenarioStep, Signal } from '../../api/types';
 import { runWords, stepAction, stepCount } from './sequenceWords';
 
@@ -30,14 +31,8 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
     }, 200);
     return () => { active = false; clearTimeout(timer); };
   }, [iedId, query]);
-  useEffect(() => {
-    let active = true;
-    const refresh = () => api<typeof status>('/scenarios/runs')
-      .then(result => { if (active) setStatus(result); }).catch(reason => { if (active) setError(reason.message); });
-    refresh();
-    const timer = setInterval(refresh, 1000);
-    return () => { active = false; clearInterval(timer); };
-  }, []);
+  useEffect(() => liveFeed.subscribe<typeof status>('/scenarios/runs', 1000, setStatus,
+    reason => setError(reason.message)), []);
   const addStep = () => {
     const signal = signals.find(item => item.ref === ref);
     if (!signal) { setError('Choose a signal from the search results.'); return; }

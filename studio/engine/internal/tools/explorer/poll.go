@@ -10,6 +10,7 @@ import (
 
 // SetWatch replaces the watch list (deduplicated by ref and fc) and the poll interval.
 func (s *Service) SetWatch(items []*pyjson.Object, intervalMS any) (*pyjson.Object, error) {
+	defer s.changed()
 	var clean []*pyjson.Object
 	seen := map[[2]string]bool{}
 	for _, item := range items {
@@ -49,6 +50,7 @@ func (s *Service) SetWatch(items []*pyjson.Object, intervalMS any) (*pyjson.Obje
 
 // StartPolling reads the watch list every interval in the background.
 func (s *Service) StartPolling() (*pyjson.Object, error) {
+	defer s.changed()
 	s.mu.Lock()
 	empty := len(s.watch) == 0
 	s.mu.Unlock()
@@ -93,6 +95,7 @@ func (s *Service) poll(stop, done chan struct{}) {
 	s.mu.Lock()
 	s.polling = false
 	s.mu.Unlock()
+	s.changed()
 }
 
 func stopped(stop chan struct{}) bool {
@@ -106,6 +109,7 @@ func stopped(stop chan struct{}) bool {
 
 // StopPolling ends the poll loop and waits up to 10 s for it.
 func (s *Service) StopPolling() *pyjson.Object {
+	defer s.changed()
 	s.mu.Lock()
 	stop, done := s.pollStop, s.pollDone
 	s.pollDone = nil
