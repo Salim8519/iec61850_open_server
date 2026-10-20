@@ -11,28 +11,50 @@ import { createPoller, type PollOptions } from './sharedPoll.ts';
  *   timer: `setPush` with an object that says which paths it covers and sends their JSON text.
  *   Views keep the same `subscribe` call either way. */
 export type TextFetcher = (path: string) => Promise<string>;
+/** What a push source can tell the feed about one path (speed lane F4). */
+export type PushWatch = {
+  /** The full JSON text of GET /api/v1{path}. */
+  text: (text: string) => void;
+  /** The route answered an error: ask once over HTTP, so the view shows it as polling would. */
+  ask?: () => void;
+  /** The source no longer sends this path (another path of its topic won): poll it again. */
+  release?: () => void;
+};
 export type PushSource = {
   /** True when this source sends the answer of `path` (same JSON as GET /api/v1{path}). */
   covers: (path: string) => boolean;
   /** Start sending `path`; every frame is the full JSON text. Returns stop. */
-  watch: (path: string, onText: (text: string) => void) => () => void;
+  watch: (path: string, onText: (text: string) => void, more?: Omit<PushWatch, 'text'>) => () => void;
 };
+
+/** Flask ends an answer with a newline that the push stream's text leaves out; compare without it. */
+const bare = (text: string) => text.endsWith('\n') ? text.slice(0, -1) : text;
 
 export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}) {
   const cache = new Map<string, { text: string; value: unknown }>();
-  const decode = (path: string, text: string) => {
+  const decode = (path: string, raw: string) => {
+    const text = bare(raw);
     const known = cache.get(path);
     if (known && known.text === text) return known.value;
     const value: unknown = JSON.parse(text);
     cache.set(path, { text, value });
     return value;
   };
+  // Pushed frames per path: a request that was answered while a frame arrived may be older than
+  // that frame, so the frame's answer is kept (the stream sends every later change anyway).
+  const frames = new Map<string, number>();
   // Incremental feeds (traffic logs ask "after N") register a task under a key instead of a path.
   const tasks = new Map<string, () => Promise<unknown>>();
   const nothing = new Map<string, unknown>();
   const fetch = (path: string) => {
     const task = tasks.get(path);
-    if (!task) return fetchText(path).then(text => decode(path, text));
+    if (!task) {
+      const seen = frames.get(path);
+      return fetchText(path).then(text => {
+        const pushed = frames.get(path) !== seen ? cache.get(path) : undefined;
+        return pushed ? pushed.value : decode(path, text);
+      });
+    }
     // A task answers null when nothing is new: hand back the last answer, so no view is called.
     return task().then(value => value === null ? nothing.get(path) ?? null : (nothing.set(path, value), value));
   };
@@ -43,11 +65,17 @@ export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}
   const attach = (path: string) => {
     if (!push || pushed.has(path) || !push.covers(path)) return;
     poller.hold(path, true);
-    pushed.set(path, push.watch(path, text => poller.offer(path, decode(path, text))));
+    const onText = (text: string) => {
+      frames.set(path, (frames.get(path) ?? 0) + 1);
+      poller.offer(path, decode(path, text));
+    };
+    pushed.set(path, push.watch(path, onText, { ask: () => poller.refresh(path),
+      release: () => { detach(path); poller.hold(path, false); } }));
   };
   const detach = (path: string) => {
     pushed.get(path)?.();
     pushed.delete(path);
+    frames.delete(path);
   };
 
   /** Show `path` now and then every `every` ms (null: once). Unchanged answers are not delivered. */
