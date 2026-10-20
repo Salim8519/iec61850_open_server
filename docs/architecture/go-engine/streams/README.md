@@ -11,4 +11,4 @@ One log per [workstream](../workstreams.md): decisions, evidence, open questions
 ## Speed plan lanes ([speed plan](../speed-plan.md))
 
 - [L platform routes](speed-l.md), [R runtime and hub](speed-r.md), [T tools](speed-t.md),
-  [P project](speed-p.md), [N2 GOOSE uplink](speed-n2.md), [F frontend](speed-f.md), [G push](speed-g.md)
+  [P project](speed-p.md), [N2 GOOSE uplink](speed-n2.md), [F frontend](speed-f.md), [G push](speed-g.md), [I composed server](speed-i.md)
