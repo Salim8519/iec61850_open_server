@@ -94,10 +94,14 @@ func crossCheck(diagram *pyjson.Object, ieds *Lookup, fresh map[int]bool, onlyFr
 				return nil, err
 			}
 		}
+		if err := checkMeasurements(data, kind, ieds); err != nil {
+			return nil, err
+		}
 		if isFresh {
 			if err := settleInfeed(data, kind); err != nil {
 				return nil, err
 			}
+			settleMeasurements(data, kind)
 		}
 		if err := validateState(data, kind, ieds); err != nil {
 			return nil, err

@@ -31,7 +31,7 @@ func BindingKeys(mapping *pyjson.Object) []PointKey {
 //
 // Python collects the keys in a set, so its order (and which 500 survive a larger set)
 // depends on string hashing per process; Go uses the deterministic first-seen order:
-// diagram state mappings, relay statuses, then the test panel.
+// diagram state mappings, relay statuses, measurement list rows, then the test panel.
 func WatchedPoints(project, ied *pyjson.Object) []any {
 	var keys []PointKey
 	seen := map[PointKey]bool{}
@@ -49,6 +49,11 @@ func WatchedPoints(project, ied *pyjson.Object) []any {
 	}
 	for _, node := range nodes {
 		for _, entry := range pyv.Objects(pyv.GetList(pyv.GetObj(node, "data"), "relay_statuses")) {
+			add(BindingKeys(pyv.O("mode", "direct", "source", pyv.Get(entry, "source"))))
+		}
+	}
+	for _, node := range nodes { // measurement list rows (ADR-0090)
+		for _, entry := range pyv.Objects(pyv.GetList(pyv.GetObj(node, "data"), "measurements")) {
 			add(BindingKeys(pyv.O("mode", "direct", "source", pyv.Get(entry, "source"))))
 		}
 	}

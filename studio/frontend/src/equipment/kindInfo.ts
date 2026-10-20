@@ -17,10 +17,16 @@ const INFO: Record<EquipmentKind, KindInfo> = {
   PUSH_BUTTON: { name: 'Push button', code: 'Boolean / SPC', category: 'control', state: 'Button state' },
   JUNCTION: { name: 'Junction', code: 'Drawing point', category: 'drawing', state: '' },
   INFEED: { name: 'Infeed', code: 'Where power enters', category: 'source', state: '' },
+  MEASUREMENT_LIST: { name: 'Measurement list', code: 'Values panel', category: 'instrument', state: 'Measurements' },
 };
 
 export function kindInfo(kind: EquipmentKind): KindInfo {
   return INFO[kind];
+}
+
+/** Name of the n-th new item of a kind, e.g. "CB-2" or "Measurements-1". */
+export function defaultLabel(kind: EquipmentKind, count: number): string {
+  return `${kind === 'MEASUREMENT_LIST' ? 'Measurements' : kind}-${count}`;
 }
 
 /** `optional`: a command link only adds SCADA-like operation; test buttons work without it (change 0097). */
@@ -35,6 +41,7 @@ export function setupItems(data: EquipmentData): SetupItem[] {
     case 'CT': case 'VT': case 'SOURCE': return [state];
     case 'PUSH_BUTTON': return data.push_mode === 'spc_momentary' ? [command] : [state];
     case 'RELAY': return [{ label: 'At least one signal', done: !!data.relay_statuses?.length }];
+    case 'MEASUREMENT_LIST': return [{ label: 'At least one measurement', done: !!data.measurements?.length }];
     default: return [];
   }
 }

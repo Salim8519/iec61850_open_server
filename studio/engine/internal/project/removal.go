@@ -35,6 +35,9 @@ func usesIED(data *pyjson.Object, ids map[string]bool) bool {
 			return true
 		}
 	}
+	if measurementUsesIED(data, ids) {
+		return true
+	}
 	control := pyval.Lookup(data, "control_binding", nil)
 	return pyval.Truthy(control) && ids[text(object(control), "ied_id")]
 }
@@ -115,6 +118,7 @@ func WithoutIEDs(project *pyjson.Object, ids map[string]bool) *pyjson.Object {
 			}
 			data.Set("relay_statuses", kept)
 		}
+		dropMeasurementsOf(data, ids)
 		if control := pyval.Lookup(data, "control_binding", nil); pyval.Truthy(control) && ids[text(object(control), "ied_id")] {
 			data.Set("control_binding", nil)
 		}

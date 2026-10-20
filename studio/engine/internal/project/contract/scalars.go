@@ -136,7 +136,15 @@ func integer(limited bool, ge, le int64) Validator {
 }
 
 // coordinate validates a finite float in [-100000, 100000].
-func coordinate(c *collector, at loc, input any) (any, bool) {
+var coordinate = bounded(100000)
+
+// bounded validates a finite float in [-limit, limit] (limit a whole number).
+func bounded(limit float64) Validator {
+	text := strconv.FormatFloat(limit, 'f', -1, 64)
+	return func(c *collector, at loc, input any) (any, bool) { return finite(c, at, input, limit, text) }
+}
+
+func finite(c *collector, at loc, input any, limit float64, limitText string) (any, bool) {
 	var value float64
 	switch x := input.(type) {
 	case float64:
@@ -163,10 +171,10 @@ func coordinate(c *collector, at loc, input any) (any, bool) {
 	switch {
 	case math.IsInf(value, 0) || math.IsNaN(value):
 		c.add("finite_number", at, "Input should be a finite number")
-	case value > 100000:
-		c.add("less_than_equal", at, "Input should be less than or equal to 100000")
-	case value < -100000:
-		c.add("greater_than_equal", at, "Input should be greater than or equal to -100000")
+	case value > limit:
+		c.add("less_than_equal", at, "Input should be less than or equal to "+limitText)
+	case value < -limit:
+		c.add("greater_than_equal", at, "Input should be greater than or equal to -"+limitText)
 	default:
 		return value, true
 	}

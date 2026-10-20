@@ -4,10 +4,13 @@ import "studio-engine/internal/pyjson"
 
 const hexColor = `^#[0-9a-fA-F]{6}$`
 
-// Equipment kinds; TRANSFORMER/LOAD/BUSBAR were retired in format 12 (ADR-0033) and
-// INFEED is drawing-only (ADR-0041).
+// Equipment kinds; TRANSFORMER/LOAD/BUSBAR were retired in format 12 (ADR-0033),
+// INFEED is drawing-only (ADR-0041) and MEASUREMENT_LIST is a Go-only panel (ADR-0090).
 var equipmentKinds = []string{"CB", "DS", "ES", "CT", "VT", "SOURCE", "RELAY", "TRIP_RELAY",
-	"PUSH_BUTTON", "JUNCTION", "INFEED"}
+	"PUSH_BUTTON", "JUNCTION", "INFEED", "MEASUREMENT_LIST"}
+
+// MeasurementLimit caps the rows of one measurement list (like the relay's 50 statuses).
+const MeasurementLimit = 50
 
 var equipmentData = model("EquipmentData", true,
 	required("label", text(1, 100, "")),
@@ -16,6 +19,7 @@ var equipmentData = model("EquipmentData", true,
 	defaulted("state_mapping", optional(stateMapping), nil),
 	defaulted("control_binding", optional(controlBinding), nil),
 	field{name: "relay_statuses", check: list(50, relayStatus), fallback: func() any { return []any{} }},
+	omittable("measurements", list(MeasurementLimit, measurement)),
 	defaulted("trip_command_polarity", literal("operate_false", "operate_true"), "operate_false"),
 	defaulted("trip_state_polarity", literal("operated_false", "operated_true"), "operated_true"),
 	defaulted("push_mode", literal("spc_momentary", "latching_status", "self_resetting"), "spc_momentary"),

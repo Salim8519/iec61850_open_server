@@ -1,0 +1,30 @@
+/* Canvas measurement list (ADR-0090): instrument accent, calm rows, right-aligned scaled values. */
+.equipment-node.measure { width: 248px; padding: 0; text-align: left; overflow: hidden;
+  border-color: #9d86d6; border-radius: 8px; background: white; }
+.equipment-node.measure.selected { border-color: var(--primary); background: white; }
+.measure-panel-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: var(--violet-soft); border-bottom: 1px solid #c9b8ef; }
+.measure-panel-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px;
+  background: white; color: var(--violet); flex-shrink: 0; }
+.measure-panel-title { display: grid; min-width: 0; }
+.measure-panel-title strong { font-size: 12px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.measure-panel-title small { font-size: 10px; color: var(--muted); }
+.measure-panel-rows { list-style: none; margin: 0; padding: 4px 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.measure-panel-row { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 4px 10px; min-height: 24px; }
+.measure-panel-row + .measure-panel-row { border-top: 1px solid #dfe4ec; }
+.measure-panel-name { flex: 1; display: grid; font-size: 11px; color: var(--text); min-width: 0;
+  overflow-wrap: anywhere; line-height: 1.3; }
+.measure-panel-flag { font-size: 10px; font-weight: 600; color: var(--warning); }
+.measure-panel-empty { margin: 0; padding: 10px; font-size: 11px; color: var(--muted); }
+
+/* Value chip shared by canvas and sheet: solid = value, dashed = no value or stopped, double = bad quality. */
+.measure-chip { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+  padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border-strong); background: #f4f6f9;
+  font-family: 'Cascadia Code', Consolas, monospace; font-size: 11px; font-weight: 600;
+  color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.measure-chip.none, .measure-chip.stopped { border-style: dashed; color: var(--muted); background: transparent;
+  font-weight: 500; }
+.measure-chip.bad { border: 3px double var(--warning); background: var(--warning-soft); color: var(--text);
+  padding: 0 6px; }
+.measure-chip.bad svg { color: var(--warning); flex-shrink: 0; }

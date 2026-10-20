@@ -28,3 +28,5 @@
 /* The point chosen now stays visible in the list, so a wrong pick is fixed with one click. */
 .signal-search-row.chosen { border-color: var(--primary); background: var(--primary-soft); }
 .signal-pick-actions { display: flex; gap: 4px; flex-shrink: 0; }
+/* One click adds every listed signal that is not added yet (measurement lists). */
+.signal-search-all { justify-self: start; }

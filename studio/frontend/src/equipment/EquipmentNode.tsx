@@ -5,6 +5,7 @@ import type { EquipmentNode as NodeType } from '../api/types';
 import { EquipmentSymbol } from './symbols/EquipmentSymbol';
 import { switchPosition, tripRelayState } from './position';
 import { RelayPanel } from './RelayPanel';
+import { MeasurementPanel } from './MeasurementPanel';
 import { JunctionBody } from './JunctionBody';
 import { kindInfo, stateTone } from './kindInfo';
 import { colorScheme, paintFor, stateFill } from './stateColors';
@@ -60,6 +61,8 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const idle = sources.length > 0 && sources.every(iedId => stoppedIeds.has(iedId));
   if (relay) return <div className={`equipment-node relay ${selected ? 'selected' : ''}`}>
     <RelayPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
+  if (data.kind === 'MEASUREMENT_LIST') return <div className={`equipment-node measure ${selected ? 'selected' : ''}`}>
+    <MeasurementPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
   const scheme = colorScheme(data);
   const fill = stateFill(data, position, value, linked);
   const fillColor = scheme && (fill === 'active' ? scheme.active : fill === 'inactive' ? scheme.inactive : null);

@@ -13,6 +13,7 @@ import { energizedEdges, type EdgeCache, type EnergizationStore } from '../../eq
 import { EnergizationLegend } from './EnergizationLegend';
 import { useZoomTier } from './useZoomTier';
 import { addBay, BAYS, type BayKind } from '../../equipment/bayTemplates';
+import { defaultLabel } from '../../equipment/kindInfo';
 import './energization.css';
 
 const nodeTypes: NodeTypes = { equipment: EquipmentNode };
@@ -105,8 +106,9 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
       change(result.diagram); setSelection(result.ids); return;
     }
     const node: NodeType = { id: crypto.randomUUID(), type: 'equipment', position,
-      data: { kind, label: `${kind}-${diagram.nodes.filter(n => n.data.kind === kind).length + 1}`, rotation: 0,
+      data: { kind, label: defaultLabel(kind, diagram.nodes.filter(n => n.data.kind === kind).length + 1), rotation: 0,
         ...(kind === 'PUSH_BUTTON' ? { push_mode: 'latching_status' as const } : {}),
+        ...(kind === 'MEASUREMENT_LIST' ? { measurements: [] } : {}),
         ...(kind === 'INFEED' ? { infeed_type: 'line' as const, infeed_state: 'live' as const } : {}) } };
     change({ ...diagram, nodes: [...diagram.nodes, node] }); setSelection([node.id]);
   }, [change, diagram, flow, locked, setSelection]);
