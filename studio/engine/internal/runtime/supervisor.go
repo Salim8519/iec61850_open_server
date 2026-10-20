@@ -55,7 +55,11 @@ func (c *Coordinator) addWorkers(batch []*running, network *pyjson.Object, curre
 	}
 	var allowed []string
 	if pyval.Str(network, "mode") == "lab" {
-		allowed = c.opt.LabAddresses(pyval.Str(network, "adapter_guid"))
+		addresses, err := c.opt.LabAddresses(pyval.Str(network, "adapter_guid"))
+		if err != nil {
+			return err // not an apperr: Flask's generic 500, its text in the runtime event
+		}
+		allowed = addresses
 	}
 	if err := preflight(ieds, network, allowed); err != nil {
 		return err

@@ -120,20 +120,31 @@ func savedIEDKeys(t *testing.T, path string) []any {
 // sortedJSON is json.dumps(value, sort_keys=True) for the comparison.
 func sortedJSON(t *testing.T, value any) string {
 	t.Helper()
-	object, ok := value.(*pyjson.Object)
-	if !ok {
-		t.Fatalf("not an object: %v", value)
-	}
-	sorted := pyjson.NewObject()
-	keys := append([]string(nil), object.Keys()...)
-	sort.Strings(keys)
-	for _, key := range keys {
-		item, _ := object.Get(key)
-		sorted.Set(key, item)
-	}
-	text, err := pyjson.Dumps(sorted)
+	text, err := pyjson.Dumps(sortKeys(value))
 	if err != nil {
 		t.Fatal(err)
 	}
 	return string(text)
+}
+
+// sortKeys copies value with every object's keys in sorted order.
+func sortKeys(value any) any {
+	switch typed := value.(type) {
+	case *pyjson.Object:
+		sorted := pyjson.NewObject()
+		keys := append([]string(nil), typed.Keys()...)
+		sort.Strings(keys)
+		for _, key := range keys {
+			item, _ := typed.Get(key)
+			sorted.Set(key, sortKeys(item))
+		}
+		return sorted
+	case []any:
+		items := make([]any, len(typed))
+		for i, item := range typed {
+			items[i] = sortKeys(item)
+		}
+		return items
+	}
+	return value
 }
