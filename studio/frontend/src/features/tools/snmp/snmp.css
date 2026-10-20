@@ -60,3 +60,4 @@
 .snmp-side .side-section { grid-template-columns: minmax(0, 1fr); }
 .snmp-connect { flex-wrap: nowrap; gap: 6px; }
 .snmp-connect > button { flex: 1; min-width: 0; width: auto; }
+.snmp-live .live-dot { margin-left: 0; }

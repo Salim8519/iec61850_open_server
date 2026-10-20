@@ -5,4 +5,4 @@ exactly as in the packaged app; a test keeps it equal to website/src/data/site.t
 The protected build overwrites this file in its sealed source copy
 (studio/tools/protected_source.py) with the real version passed to compile_protected.py.
 """
-__version__ = "0.1.16+dev"
+__version__ = "0.1.17+dev"
