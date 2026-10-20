@@ -19,10 +19,15 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	if home == "" {
 		home = licensing.DefaultHome()
 	}
-	e.License = licensing.New(licensing.Options{Home: home, DataDir: o.DataDir, Enforce: o.Enforce,
-		NativeFolder: o.NativeDir, Logf: o.Logf})
-	e.Updates = updates.New(updates.Options{Directory: o.DataDir, ServerURL: e.License.ServerURL,
-		Current: o.Version, Logf: o.Logf})
+	e.License, e.Updates = o.LicenseService, o.UpdateService
+	if e.License == nil {
+		e.License = licensing.New(licensing.Options{Home: home, DataDir: o.DataDir, Enforce: o.Enforce,
+			NativeFolder: o.NativeDir, Logf: o.Logf})
+	}
+	if e.Updates == nil {
+		e.Updates = updates.New(updates.Options{Directory: o.DataDir, ServerURL: e.License.ServerURL,
+			Current: o.Version, Logf: o.Logf})
+	}
 	executable := o.AppExecutable
 	if executable == "" {
 		found, err := os.Executable()

@@ -48,7 +48,11 @@ type Options struct {
 	AppExecutable string
 	Logf          func(format string, args ...any) // nil means log.Printf
 
-	License      httpapi.LicenseGate // tests: replaces the license service's gate
+	// LicenseService and UpdateService replace the default services (the parity build's
+	// data seams, create_app's license_service/update_service arguments).
+	LicenseService *licensing.Service
+	UpdateService  *updates.Service
+	License        httpapi.LicenseGate // tests: replaces the license service's gate
 	Startup      httpapi.StartupGate // tests: replaces the startup recovery gate
 	NoBackground bool                // tests: no update/license loops, no gateway resume
 }

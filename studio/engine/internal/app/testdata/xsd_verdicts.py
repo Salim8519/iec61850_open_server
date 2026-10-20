@@ -1,8 +1,8 @@
 """Write Python's (lxml 6.0.2) XSD verdicts as a seed for the Go engine's verdict cache.
 
 Usage: python -I xsd_verdicts.py --backend <studio/backend> --out SEED.json INPUT...
-An INPUT ending in .json is a project tree (every ieds[].source text is validated); any
-other INPUT is an SCL file validated as its bytes. studio_xsd.exe is not built yet, so the
+An INPUT ending in .json is a project tree (every ieds[].source text is validated);
+"template:NAME" is make_template(NAME); any other INPUT is an SCL file validated as its bytes. studio_xsd.exe is not built yet, so the
 composed engine's tests and the dev run import these verdicts (STUDIO_XSD_SEED).
 """
 import argparse
@@ -13,6 +13,10 @@ from pathlib import Path
 
 
 def sources(path):
+    if str(path).startswith("template:"):
+        from studio_app.scl.templates import make_template
+        source = make_template(str(path)[len("template:"):])
+        return [source.encode("utf-8") if isinstance(source, str) else source]
     if path.suffix == ".json":
         project = json.loads(path.read_text(encoding="utf-8"))
         return [ied["source"].encode("utf-8") for ied in project["ieds"] if ied.get("source")]

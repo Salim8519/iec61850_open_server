@@ -27,7 +27,16 @@ var packaged = ""
 
 func main() { os.Exit(run(os.Args[1:])) }
 
+// parityRun is set only in the parity test build (-tags parity, parity.go): it serves the
+// harness CLI (--parity-seams) and answers handled=false for every other command line.
+var parityRun func(args []string) (code int, handled bool)
+
 func run(args []string) int {
+	if parityRun != nil {
+		if code, handled := parityRun(args); handled {
+			return code
+		}
+	}
 	if len(args) > 0 && args[0] == "--network-helper" {
 		return networkHelper(args[1:])
 	}
