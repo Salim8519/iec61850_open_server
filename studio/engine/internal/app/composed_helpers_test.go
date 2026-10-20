@@ -41,7 +41,8 @@ func muxNative(t testing.TB) string {
 func composeAt(t testing.TB, dataDir, nativeDir string, seeds ...string) *Engine {
 	t.Helper()
 	schemas, _ := filepath.Abs(filepath.Join("..", "..", "..", "schemas"))
-	// studio_xsd.exe is not built yet: Python's verdicts for the template and corpus files.
+	// Python's verdicts for the template and corpus files prefill the cache (scratch native
+	// folders may lack studio_xsd.exe); a miss goes to <nativeDir>/studio_xsd.exe.
 	seed, _ := filepath.Abs(filepath.Join("..", "scl", "testdata", "golden", "xsd_seed.json"))
 	engine, err := Compose(Options{DataDir: dataDir, NativeDir: nativeDir, LicenseHome: testutil.TempDir(t),
 		SchemasDir: schemas, XSDSeed: append([]string{seed}, seeds...), Token: "token", SecretKey: "secret",

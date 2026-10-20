@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"studio-engine/internal/testutil"
 	"sync"
@@ -16,6 +17,7 @@ import (
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/scl"
 	"studio-engine/internal/store/settings"
+	"studio-engine/internal/store/xsd"
 )
 
 // seedValidator answers with the XSD verdicts CPython recorded for the public corpus.
@@ -27,6 +29,22 @@ func (v seedValidator) Validate(source []byte, schema string) (scl.SchemaVerdict
 		return verdict, nil
 	}
 	return scl.SchemaVerdict{}, apperr.RuntimeError("no recorded XSD verdict")
+}
+
+// testValidator is the real studio_xsd.exe behind the Go client when STUDIO_XSD_HELPER
+// names it (empty verdict cache), else the recorded Python verdicts.
+func testValidator(t *testing.T) scl.SchemaValidator {
+	helper := os.Getenv("STUDIO_XSD_HELPER")
+	if helper == "" {
+		return loadSeed(t)
+	}
+	validator := xsd.New(xsd.Config{HelperPath: helper, SchemasDir: filepath.Join("..", "..", "..", "..", "schemas"),
+		DataDir: testutil.TempDir(t)})
+	t.Cleanup(func() {
+		t.Logf("studio_xsd helper starts: %d", validator.HelperStarts())
+		validator.Close()
+	})
+	return validator
 }
 
 func loadSeed(t *testing.T) seedValidator {
@@ -99,7 +117,7 @@ func newArea(t *testing.T) (http.Handler, *fakeRuntime) {
 	dir := testutil.TempDir(t)
 	ids := counterIDs()
 	projects, err := service.New(service.Config{DataDir: dir, NewID: ids,
-		Importer: &scl.Importer{Validator: loadSeed(t), NewID: ids}})
+		Importer: &scl.Importer{Validator: testValidator(t), NewID: ids}})
 	if err != nil {
 		t.Fatal(err)
 	}
