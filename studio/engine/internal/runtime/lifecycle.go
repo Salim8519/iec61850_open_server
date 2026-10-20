@@ -26,7 +26,7 @@ func runnable(project *pyjson.Object, selection map[string]bool, order []string)
 			return nil, apperr.ValueError("Unknown IED")
 		}
 		if roleOf(ied) == "off" {
-			return nil, apperr.ValueError(fmt.Sprintf("%s is left out. Choose 'Be this IED' or 'Read real IED' first.",
+			return nil, apperr.ValueError(fmt.Sprintf("%s is skipped. Choose 'Simulate' or 'Monitor real device' first.",
 				pyval.Str(ied, "name")))
 		}
 	}
@@ -124,7 +124,7 @@ func (c *Coordinator) start(ids []string) error {
 		return apperr.ValueError("Import or create an IED before Run")
 	}
 	if len(chosen) == 0 {
-		return apperr.ValueError("Set at least one IED to 'Be this IED' or 'Read real IED' before Run")
+		return apperr.ValueError("Set at least one IED to 'Simulate' or 'Monitor real device' before Run")
 	}
 	network := pyval.Map(project, "network")
 	if conflicts := endpointConflicts(chosen, network); len(conflicts) > 0 {

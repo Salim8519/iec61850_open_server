@@ -72,8 +72,8 @@ export const UI_STATUS: Record<string, Status> = {
   goose_off: { label: 'GOOSE off', tone: 'off', hint: 'This IED does not send GOOSE.' },
   sv_needs_lab: { label: 'Lab network only', tone: 'off', hint: 'Sampled Values are received only after you set up the lab network.' },
   goose_none: { label: 'No GOOSE in SCD', tone: 'off', hint: 'The SCD defines no publishable GOOSE block for this IED.' },
-  role_real: { label: 'Reads real IED', tone: 'info', hint: 'The real IED publishes; ScadaBench connects to it and reads it.' },
-  role_off: { label: 'Left out', tone: 'off', hint: 'Not part of Run.' },
+  role_real: { label: 'Monitors real device', tone: 'info', hint: 'ScadaBench reads the real IED on your network and shows its live values.' },
+  role_off: { label: 'Skipped', tone: 'off', hint: 'Kept in the project, but not started when you press Run.' },
   stale: { label: 'Old value', tone: 'warning', hint: 'The connection was lost; this value may have changed since.' },
 };
 
@@ -87,7 +87,7 @@ export function roleStatus(role: string, state: string): Status {
   }
   if (state === 'running') return { label: 'Publishing', tone: 'good', hint: 'ScadaBench is this IED now: it answers on its address and sends its reports and GOOSE.' };
   if (state === 'failed') return { label: 'Stopped by error', tone: 'problem', hint: 'See Activity for the reason.' };
-  return { label: 'Be this IED · stopped', tone: 'off', hint: 'ScadaBench publishes as this IED once it runs: press Run, or "Run this IED" on its page.' };
+  return { label: 'Simulate · stopped', tone: 'off', hint: 'ScadaBench publishes as this IED once it runs: press Run, or "Run this IED" on its page.' };
 }
 
 export const needsStatus = (missing: string[]): Status => ({ label: `Needs: ${missing.join(', ').toLowerCase()}`,

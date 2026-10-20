@@ -53,8 +53,8 @@ export function HealthView({ running }: { running: boolean }) {
     <div className="list" role="list" style={{ padding: '0 20px 20px' }}>{ieds.map(ied => <div key={ied.id} role="listitem">
       <button type="button" className={`list-row${open === ied.id ? ' active' : ''}`} aria-expanded={open === ied.id}
         onClick={() => setOpen(open === ied.id ? '' : ied.id)}>
-        <span className="list-text"><strong>{ied.name}</strong><small>{ied.role === 'real' ? 'Reads real IED' :
-          ied.role === 'simulated' ? 'Simulated by ScadaBench' : 'Off'} · {countOf(ied.checks.length, 'check')}</small></span>
+        <span className="list-text"><strong>{ied.name}</strong><small>{ied.role === 'real' ? 'Monitors real device' :
+          ied.role === 'simulated' ? 'Simulated by ScadaBench' : 'Skipped'} · {countOf(ied.checks.length, 'check')}</small></span>
         <StatusPill status={verdictStatus(ied.verdict)} /></button>
       {open === ied.id && <div className="table-scroll"><table><thead><tr><th>Area</th><th>What</th><th>Result</th>
         <th>Why / what to do</th><th>Seen</th></tr></thead><tbody>

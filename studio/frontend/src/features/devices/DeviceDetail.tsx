@@ -3,7 +3,7 @@ import { api } from '../../api/client';
 import { useLiveFeed } from '../../api/useLiveFeed';
 import type { LiveSession } from '../../api/network';
 import type { Ied, IedRole, Project } from '../../api/types';
-import { hint } from '../../copy/hints';
+import { ROLE_COPY, ROLE_HELP, ROLE_ORDER } from '../../copy/roles';
 import { HelpTip } from '../../ui/HelpTip';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { TabBar } from '../../ui/TabBar';
@@ -42,12 +42,12 @@ export function DeviceDetail({ ied, project, locked, busy = false, perform, prep
     <div className="detail-head compact">
       <h2>{ied.name}</h2>
       <span className="small muted detail-facts">{facts}</span>
-      <HelpTip text={hint(`live.role.${ied.role}`)} label="What does this mode mean?" />
+      <HelpTip text={ROLE_HELP} label="Which one should I choose?" />
       <span className="gateway-spacer" />
       <RunThisIed ied={ied} project={project} busy={busy} perform={perform} />
       <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
-          { value: 'simulated', label: 'Be this IED' }, { value: 'real', label: 'Read real IED' }, { value: 'off', label: 'Leave out' }]} />
+          ...ROLE_ORDER.map(role => ({ value: role, label: ROLE_COPY[role].label }))]} />
       <DeleteIed compact iedId={ied.id} iedName={ied.name} disabled={locked} perform={perform} prepare={prepare} />
     </div>
     <RoleLine ied={ied} network={project.network} openNetwork={openNetwork} />

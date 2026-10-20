@@ -268,7 +268,7 @@
    "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\"}",
    "content_type": "application/json",
    "status": 400,
-   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"No IED is set to 'Be this IED', so there is nothing to put on the network. Set an IED to 'Be this IED' in Devices first.\"}\n",
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"No IED is set to 'Simulate', so there is nothing to put on the network. Set an IED to 'Simulate' in Devices first.\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }

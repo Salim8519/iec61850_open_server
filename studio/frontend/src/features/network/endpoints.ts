@@ -15,3 +15,9 @@ export function endpointOf(ied: Pick<Ied, 'ip' | 'port' | 'lab_ip'>, network: Ne
 export function shortBlock(reference: string) {
   return reference.split('$').pop() || reference;
 }
+
+/** Where ScadaBench reaches a real device (netset.RealEndpoint): the address typed under
+ *  "Monitor real device", else the address in the SCD; "" when neither exists. */
+export function realEndpointOf(ied: Pick<Ied, 'live' | 'scl_address'>) {
+  return { host: ied.live?.ip || ied.scl_address?.ip || '', port: ied.live?.port || 102 };
+}

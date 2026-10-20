@@ -166,7 +166,7 @@ func commandRefusal(ied *pyjson.Object) string {
 		return name + " is a real device, so nothing was sent from here. Real equipment is " +
 			"operated only from Tools (IED Explorer or the gateway), after a confirmation."
 	case "off":
-		return name + " is left out of this project's run. Set it to 'Be this IED' to operate it."
+		return name + " is skipped in this project's run. Set it to 'Simulate' to operate it."
 	}
 	return ""
 }

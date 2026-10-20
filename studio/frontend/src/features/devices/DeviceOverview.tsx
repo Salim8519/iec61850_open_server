@@ -41,7 +41,7 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
         {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? 'Copied' : 'Copy address'}</button>
     </div>}
     {ied.role === 'real' && <DeviceConnection ied={ied} session={session} locked={locked} perform={perform} />}
-    {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>This device is switched off. It is ignored when you press Run.</p>}
+    {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>Skipped: it stays in the project, but is not started when you press Run. Choose Simulate or Monitor real device to use it.</p>}
     <TestModeCard ied={ied} summary={mode} perform={perform} />
     {ied.role === 'simulated' && publishes > 0 && <label className="row" style={{ fontWeight: 500, color: 'var(--text)' }}>
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}

@@ -14,7 +14,7 @@ export function DeviceRunSummary({ project, perform }: {
     <span className="run-mark" aria-hidden>{RUN_MARK.partial}</span>
     <span className="device-run-words">{RUN_SHAPE_COPY.devices(summary)}</span>
     <button onClick={() => perform(() => api('/runtime/start', 'POST'))}
-      title="Start every stopped IED that is not left out; running IEDs keep going">
+      title="Start every stopped IED that is not skipped; running IEDs keep going">
       <Play size={15} />{RUN_SHAPE_COPY.runRest(summary.stopped.length)}</button>
   </div>;
 }

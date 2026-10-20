@@ -38,8 +38,8 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 		return nil, previewState{}, err
 	}
 	if len(ieds) == 0 {
-		return nil, previewState{}, apperr.New("No IED is set to 'Be this IED', so there is nothing to put on " +
-			"the network. Set an IED to 'Be this IED' in Devices first.")
+		return nil, previewState{}, apperr.New("No IED is set to 'Simulate', so there is nothing to put on " +
+			"the network. Set an IED to 'Simulate' in Devices first.")
 	}
 	picked, err := s.pick(ieds, adapter, strategy, manual)
 	if err != nil {

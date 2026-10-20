@@ -1,7 +1,7 @@
 // One-sentence hints shown under fields and cards of the guided screens.
 export const HINTS: Record<string, string> = {
   'network.intro': 'Choose who can reach your simulated IEDs: only this PC, or real devices and other PCs on a network cable.',
-  'network.mode.loopback': 'The IEDs ScadaBench publishes (set to "Be this IED") can only be reached from this PC. Nothing is changed in Windows.',
+  'network.mode.loopback': 'The IEDs ScadaBench publishes (set to "Simulate") can only be reached from this PC. Nothing is changed in Windows.',
   'network.mode.lab': 'The IEDs ScadaBench publishes are on this network card: SCADA, gateways, real IEDs and other PCs can connect to them. Their GOOSE stays inside ScadaBench unless you share it under Where GOOSE goes.',
   'network.setup': 'A short guided setup picks an adapter, plans one address per IED and shows every Windows change before it happens.',
   'network.endpoints': 'Give these addresses to your SCADA, gateway or test tool. Each simulated IED answers on its own address and port 102.',
@@ -30,9 +30,9 @@ export const HINTS: Record<string, string> = {
   'test.points.empty': 'Add the alarms, statuses and measurements you want to change during a test. They are saved with the project.',
   'test.generators.empty': 'A generator moves a measurement by itself, for example a current that swings up and down.',
   'live.intro': 'Connect to real IEDs to watch their live values and compare their configuration with the SCD file.',
-  'live.role.simulated': 'Be this IED: ScadaBench publishes as this IED. It answers IEC 61850, sends its reports and its GOOSE. Keep the real IED unplugged or on another network.',
-  'live.role.real': 'Read real IED: the real IED publishes. ScadaBench connects to it as a client and reads it; it sends nothing unless you operate a command.',
-  'live.role.off': 'Leave out: this IED is not part of Run.',
+  'live.role.simulated': 'Simulate: ScadaBench plays this IED; SCADA and other IEDs connect to it. It answers IEC 61850, sends its reports and its GOOSE. Keep the real IED unplugged or on another network.',
+  'live.role.real': 'Monitor real device: ScadaBench reads the real IED on your network and shows its live values on the SLD and through the gateway; it sends nothing unless you operate a command.',
+  'live.role.off': 'Skip: kept in the project (drawing and GOOSE stay), but not started when you press Run.',
   'live.endpoint': 'The address of the real IED. It comes from the SCD file; type another one only if the device uses a different address.',
   'live.access.auto_reports': 'Recommended. ScadaBench uses a report block only if the IED shows it as free, tells you which one, and gives it back on Stop. If none is free it polls instead.',
   'live.access.polling': 'Safest. ScadaBench only asks for values and never touches the IED report blocks. Updates are slower.',

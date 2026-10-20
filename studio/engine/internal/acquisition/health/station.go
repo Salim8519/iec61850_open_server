@@ -85,7 +85,7 @@ func IEDRows(ied *pyjson.Object, running bool, session, goose *pyjson.Object) []
 	role := pyv.GetOr(ied, "role", "simulated")
 	switch {
 	case pyv.Equal(role, "off"):
-		return []any{notChecked("role", "IED", "This IED is left out.")}
+		return []any{notChecked("role", "IED", "This IED is skipped.")}
 	case !running:
 		return []any{notChecked("connection", "Run", "Press Run to check the station.")}
 	case pyv.Equal(role, "simulated"):

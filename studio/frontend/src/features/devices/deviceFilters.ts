@@ -6,7 +6,7 @@ import { textMatch, type FilterSpec, type FilterValues } from '../../ui/filterSt
 export const DEVICE_FILTER: FilterSpec = {
   search: 'Search IEDs',
   groups: [{ key: 'role', label: 'What ScadaBench does with it', initial: 'all', options: [
-    { value: 'all', label: 'All' }, { value: 'simulated', label: 'Be this IED' }, { value: 'real', label: 'Read real' }, { value: 'off', label: 'Left out' }] }],
+    { value: 'all', label: 'All' }, { value: 'simulated', label: 'Simulate' }, { value: 'real', label: 'Monitor real' }, { value: 'off', label: 'Skip' }] }],
   toggles: [{ key: 'problems', label: 'Has problems', hint: 'IEDs stopped by an error, with file check notes or GOOSE notes.' }],
 };
 
@@ -20,7 +20,7 @@ export function deviceMatches(ied: Ied, values: FilterValues): boolean {
   return textMatch(values.text, ied.name, ied.scl_address?.ip, ied.live?.ip);
 }
 
-/** How many IEDs each role chip would show (the chip says "Read real 2"). */
+/** How many IEDs each role chip would show (the chip says "Monitor real 2"). */
 export function roleCounts(ieds: Ied[]): Record<string, number> {
   const counts: Record<string, number> = { all: ieds.length, real: 0, simulated: 0, off: 0 };
   for (const ied of ieds) counts[ied.role] = (counts[ied.role] ?? 0) + 1;

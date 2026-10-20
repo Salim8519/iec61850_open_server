@@ -53,8 +53,8 @@ class NetworkService:
         adapter = self.adapter(guid)
         ieds = [ied for ied in self.projects.project["ieds"] if ied.get("role", "simulated") == "simulated"]
         if not ieds:
-            raise StudioError("No IED is set to 'Be this IED', so there is nothing to put on the network. "
-                              "Set an IED to 'Be this IED' in Devices first.")
+            raise StudioError("No IED is set to 'Simulate', so there is nothing to put on the network. "
+                              "Set an IED to 'Simulate' in Devices first.")
         own = {item["ip"] for item in adapter["addresses"]}
         avoid = set()
         # A picked free address may answer on the network (another PC's lab IEDs): pick again

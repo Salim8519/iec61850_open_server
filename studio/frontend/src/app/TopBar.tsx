@@ -57,7 +57,7 @@ export function TopBar({ title, subtitle, project, busy, working = '', saveState
       ? <button className={`run-pill ${shape === 'all' ? 'running' : 'partial'}`} data-tour="run" disabled={busy}
         title="Stop every running IED" onClick={() => run('stop')}>{slow ? <SpinIcon size={15} /> : <Square size={15} />}
         {shape === 'partial' ? 'Stop all' : 'Stop'}</button>
-      : <button className="run-pill primary" data-tour="run" disabled={busy || !active} title={active ? 'Start every IED that is not left out' : 'Add an IED first'}
+      : <button className="run-pill primary" data-tour="run" disabled={busy || !active} title={active ? 'Start every IED that is not skipped' : 'Add an IED first'}
         onClick={() => run('start')}>{slow ? <SpinIcon size={16} /> : <Play size={16} />}Run</button>}
   </header>;
 }

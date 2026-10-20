@@ -37,7 +37,7 @@ def test_nothing_to_publish_says_which_mode_to_choose(setup):
     client.put(f"/api/v1/ieds/{ied['id']}/settings", json={"role": "real"})
     answer = client.post("/api/v1/network/plan/preview", json={"adapter_guid": GUID, "strategy": "scd"})
     assert answer.status_code == 400
-    assert "Be this IED" in json.dumps(answer.json)
+    assert "Simulate" in json.dumps(answer.json)
 
 
 def test_unusable_scd_address_offers_one_free_address(setup):

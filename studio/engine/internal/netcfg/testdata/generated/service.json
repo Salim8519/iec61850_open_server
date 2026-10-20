@@ -719,7 +719,7 @@ null
 "results": [
 {
 "error": "StudioError",
-"message": "No IED is set to 'Be this IED', so there is nothing to put on the network. Set an IED to 'Be this IED' in Devices first.",
+"message": "No IED is set to 'Simulate', so there is nothing to put on the network. Set an IED to 'Simulate' in Devices first.",
 "code": "validation",
 "details": []
 }
