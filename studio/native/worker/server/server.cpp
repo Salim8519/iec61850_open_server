@@ -79,12 +79,18 @@ Json Server::start(const Json& config) {
     return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
 }
 
+// The model tree walk costs microseconds per reference; update_batch and reads resolve the
+// same references again and again, so each one is walked once per start (speed lane N1).
 DataAttribute* Server::attribute(const std::string& reference) {
     if (!handle) throw std::runtime_error("IED is not running");
+    auto known = attributes.find(reference);
+    if (known != attributes.end()) return known->second;
     auto node = IedModel_getModelNodeByObjectReference(model, reference.c_str());
     if (!node || node->modelType != DataAttributeModelType)
         throw std::runtime_error("Unknown data attribute: " + reference);
-    return reinterpret_cast<DataAttribute*>(node);
+    auto attribute = reinterpret_cast<DataAttribute*>(node);
+    attributes.emplace(reference, attribute);
+    return attribute;
 }
 
 void Server::stop() {
@@ -95,5 +101,6 @@ void Server::stop() {
     if (handle) { studio_server_stop(handle); IedServer_destroy(handle); handle = nullptr; }
     controls.clear();
     revisions.clear();
+    attributes.clear();
     if (model) { IedModel_destroy(model); model = nullptr; }
 }

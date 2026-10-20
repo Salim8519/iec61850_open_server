@@ -1,4 +1,5 @@
 #include "framing.hpp"
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
 #include <mutex>
@@ -7,6 +8,7 @@
 #ifdef _WIN32
 #include <fcntl.h>
 #include <io.h>
+#include <windows.h>
 #endif
 
 namespace {
@@ -33,15 +35,36 @@ void protect_frame_output() {
     if (!frame_output) throw std::runtime_error("Unable to open the frame output");
 }
 
+#ifdef _WIN32
+// Reads exactly `size` bytes of the stdin pipe; false at end of input (the parent closed it).
+static bool read_input(char* target, size_t size) {
+    static HANDLE input = GetStdHandle(STD_INPUT_HANDLE);
+    size_t done = 0;
+    while (done < size) {
+        DWORD got = 0;
+        DWORD wanted = static_cast<DWORD>(std::min<size_t>(size - done, 1u << 30));
+        if (!ReadFile(input, target + done, wanted, &got, nullptr) || got == 0) return false;
+        done += got;
+    }
+    return true;
+}
+#else
+static bool read_input(char* target, size_t size) {
+    return static_cast<bool>(std::cin.read(target, static_cast<std::streamsize>(size)));
+}
+#endif
+
+// Same frames and errors as before; the payload buffer is reused between requests.
 bool read_frame(Json& message) {
+    static std::vector<char> payload;
     unsigned char header[4];
-    if (!std::cin.read(reinterpret_cast<char*>(header), 4)) return false;
+    if (!read_input(reinterpret_cast<char*>(header), 4)) return false;
     uint32_t size = header[0] | (uint32_t(header[1]) << 8) |
         (uint32_t(header[2]) << 16) | (uint32_t(header[3]) << 24);
     if (!size || size > 16 * 1024 * 1024) throw std::runtime_error("Invalid frame length");
-    std::string payload(size, '\0');
-    if (!std::cin.read(payload.data(), size)) throw std::runtime_error("Truncated frame");
-    message = Json::parse(payload);
+    if (payload.size() < size) payload.resize(size);
+    if (!read_input(payload.data(), size)) throw std::runtime_error("Truncated frame");
+    message = Json::parse(payload.data(), payload.data() + size);
     return true;
 }
 

@@ -7,72 +7,23 @@
 #undef Handleset_waitReady
 #undef Socket_write
 
-#include <stdlib.h>
-#include <string.h>
-#include "studio_hal.h"
+#include "loop_wait.h"
 
 enum { STUDIO_VENDOR = 0, STUDIO_WAIT = 1, STUDIO_POLL = 2 };
 
-struct sStudioWake {
-    SOCKET socket; /* UDP on 127.0.0.1, connected to itself */
-};
-
 static __declspec(thread) int loopMode = STUDIO_VENDOR;
 static __declspec(thread) StudioWake loopWake = NULL;
+static __declspec(thread) uint64_t loopDeadline = 0;
 static volatile LONG backpressure = 0;
 
-StudioWake
-StudioWake_create(void)
-{
-    WSADATA data;
-    if (WSAStartup(MAKEWORD(2, 2), &data) != 0)
-        return NULL;
-    StudioWake self = (StudioWake) calloc(1, sizeof(struct sStudioWake));
-    SOCKET s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    struct sockaddr_in local;
-    int length = sizeof(local);
-    memset(&local, 0, sizeof(local));
-    local.sin_family = AF_INET;
-    local.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    u_long nonBlocking = 1;
-    if (self == NULL || s == INVALID_SOCKET || bind(s, (struct sockaddr*) &local, sizeof(local)) != 0
-            || getsockname(s, (struct sockaddr*) &local, &length) != 0
-            || connect(s, (struct sockaddr*) &local, sizeof(local)) != 0
-            || ioctlsocket(s, FIONBIO, &nonBlocking) != 0) {
-        if (s != INVALID_SOCKET) closesocket(s);
-        free(self);
-        WSACleanup();
-        return NULL;
-    }
-    self->socket = s;
-    return self;
-}
-
 void
-StudioWake_signal(StudioWake self)
+StudioSocket_beginWait(StudioWake wake, uint64_t deadlineNs)
 {
-    char token = 1;
-    if (self) send(self->socket, &token, 1, 0);
+    loopMode = STUDIO_WAIT;
+    loopWake = wake;
+    loopDeadline = deadlineNs;
 }
 
-void
-StudioWake_destroy(StudioWake self)
-{
-    if (self == NULL) return;
-    closesocket(self->socket);
-    free(self);
-    WSACleanup();
-}
-
-static void
-drainWake(StudioWake self)
-{
-    char buffer[64];
-    while (recv(self->socket, buffer, sizeof(buffer), 0) > 0) {
-    }
-}
-
-void StudioSocket_beginWait(StudioWake wake) { loopMode = STUDIO_WAIT; loopWake = wake; }
 void StudioSocket_beginPoll(void) { loopMode = STUDIO_POLL; }
 void StudioSocket_endLoopMode(void) { loopMode = STUDIO_VENDOR; loopWake = NULL; }
 
@@ -82,31 +33,59 @@ StudioSocket_takeBackpressure(void)
     return InterlockedExchange(&backpressure, 0) != 0;
 }
 
-/* Same contract as the vendor function: -1 for an empty set, else select()'s result. */
-static int
-waitWithWake(HandleSet self, unsigned int timeoutMs, StudioWake wake)
+int
+StudioHandleset_poll(HandleSet self)
+{
+    return Vendor_Handleset_waitReady(self, 0);
+}
+
+/* Sockets of the loop thread's handle set already associated with its event. Sockets the
+ * server accepts inherit the listening socket's association (documented accept() behaviour),
+ * so a reused handle value is associated too; only sockets not seen before need the call. */
+static __declspec(thread) SOCKET watched[FD_SETSIZE];
+static __declspec(thread) u_int watchedCount = 0;
+static __declspec(thread) void* watchedEvent = NULL;
+
+static bool
+isWatched(SOCKET candidate)
+{
+    for (u_int index = 0; index < watchedCount; ++index) {
+        if (watched[index] == candidate)
+            return true;
+    }
+    return false;
+}
+
+int
+StudioHandleset_watch(HandleSet self, void* event)
 {
     if (self == NULL || self->maxHandle == INVALID_SOCKET)
         return -1;
-    fd_set handles;
-    memcpy((void*) &handles, &(self->handles), sizeof(fd_set));
-    FD_SET(wake->socket, &handles);
-    struct timeval timeout;
-    timeout.tv_sec = timeoutMs / 1000;
-    timeout.tv_usec = (timeoutMs % 1000) * 1000;
-    int result = select(0, &handles, NULL, NULL, &timeout);
-    if (result > 0 && FD_ISSET(wake->socket, &handles))
-        drainWake(wake);
-    return result;
+    if (event != watchedEvent) {
+        watchedCount = 0;
+        watchedEvent = event;
+    }
+    /* A new association also records events already pending (WSAEventSelect), and the poll
+     * below reports anything that was ready before; the caller reset the event first. */
+    for (u_int index = 0; index < self->handles.fd_count; ++index) {
+        SOCKET handle = self->handles.fd_array[index];
+        if (!isWatched(handle))
+            WSAEventSelect(handle, (WSAEVENT) event, FD_ACCEPT | FD_READ | FD_CLOSE);
+    }
+    memcpy(watched, self->handles.fd_array, self->handles.fd_count * sizeof(SOCKET));
+    watchedCount = self->handles.fd_count;
+    return Vendor_Handleset_waitReady(self, 0);
 }
 
+/* The server's sockets are non-blocking already (setSocketNonBlocking), so the event
+ * association does not change how the vendor reads, accepts or writes. */
 int
 Handleset_waitReady(HandleSet self, unsigned int timeoutMs)
 {
     if (loopMode == STUDIO_POLL)
         return Vendor_Handleset_waitReady(self, 0);
     if (loopMode == STUDIO_WAIT && loopWake != NULL)
-        return waitWithWake(self, timeoutMs, loopWake);
+        return StudioWake_wait(loopWake, self, loopDeadline);
     return Vendor_Handleset_waitReady(self, timeoutMs);
 }
 

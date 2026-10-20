@@ -1,4 +1,5 @@
 #include "server/server.hpp"
+#include "server/timer_policy.hpp"
 #include "updates/values.hpp"
 #include "controls/controls.hpp"
 #include "license_guard.hpp"
@@ -7,24 +8,17 @@
 #ifdef _WIN32
 #include <fcntl.h>
 #include <io.h>
-#include <windows.h>
-#include <timeapi.h>
-
-/* libiec61850 retransmits GOOSE every MinTime from a 1 ms server loop. Windows' default 15.6 ms
- * timer stretched a 4 ms MinTime to 15 ms, past the 12 ms TAL of those frames (change 0102). */
-struct MillisecondTimer {
-    MillisecondTimer() { timeBeginPeriod(1); }
-    ~MillisecondTimer() { timeEndPeriod(1); }
-};
 #endif
 
 int main() {
 #ifdef _WIN32
     _setmode(_fileno(stdin), _O_BINARY);
     _setmode(_fileno(stdout), _O_BINARY);
-    MillisecondTimer timer;
 #endif
     protect_frame_output();
+    // GOOSE MinTime and control/report timers on time without raising the system timer
+    // resolution; the 1 ms timer only where Windows has no high-resolution timers (ADR-0070).
+    TimerPolicy timers;
     Server server;
     Json message;
     try {

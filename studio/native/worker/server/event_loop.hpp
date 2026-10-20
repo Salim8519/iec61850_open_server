@@ -1,8 +1,10 @@
-// Event-driven server loop of a simulated IED (workstream G). It replaces libiec61850's
+// Event-driven server loop of a simulated IED (ADR-0079). It replaces libiec61850's
 // single-threaded server thread, which polled every 1 ms and blocked 10 ms on every idle
 // MMS client per request. One thread still runs all MMS handling, connection ticks and
 // periodic tasks, as before; it now sleeps until a socket is ready, a deadline of the
 // vendor's own control/report/GOOSE schedule is due, or another thread signals it.
+// Deadlines are millisecond boundaries of the precise clock, waited for with a
+// high-resolution timer (speed lane N1), so the machine-wide timer resolution stays default.
 #pragma once
 extern "C" {
 #include "iec61850_server.h"
@@ -35,7 +37,7 @@ private:
     std::atomic<std::thread::id> loop_thread{};
     std::atomic<bool> running{false};
     std::mutex lock;                  // guards the members below
-    std::multiset<uint64_t> goose_due;  // GOOSE retransmission candidates (Hal_getTimeInMs)
+    std::multiset<uint64_t> goose_due;  // GOOSE retransmission times (Hal_getTimeInMs)
     uint64_t poll_until = 0;
     uint64_t last_run = 0;
 };
