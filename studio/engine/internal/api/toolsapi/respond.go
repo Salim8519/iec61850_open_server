@@ -11,6 +11,7 @@ import (
 	"net/http"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/httpapi"
 	"studio-engine/internal/pyjson"
 )
 
@@ -50,10 +51,8 @@ func handle(fn func(*http.Request) (any, error)) http.Handler {
 		}
 		switch v := value.(type) {
 		case *download:
-			w.Header().Set("Content-Type", v.contentType)
 			w.Header().Set("Content-Disposition", v.disposition)
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(v.body))
+			httpapi.WriteBody(w, http.StatusOK, v.contentType, []byte(v.body))
 		case *answer:
 			writeJSON(w, v.status, v.body)
 		default:
@@ -109,13 +108,4 @@ func isEmpty(value any) bool {
 	return false
 }
 
-func writeJSON(w http.ResponseWriter, status int, value any) {
-	body, err := pyjson.Flask(value)
-	if err != nil {
-		status = http.StatusInternalServerError
-		body, _ = pyjson.Flask(pyjson.NewObject().Set("error", internalError))
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write(body)
-}
+func writeJSON(w http.ResponseWriter, status int, value any) { httpapi.WriteJSON(w, status, value) }

@@ -10,6 +10,15 @@ func (c *Coordinator) setStateLocked(state string) {
 	c.hub.notify(Change{})
 }
 
+// ForceState sets the run state without starting or stopping anything: the parity build's
+// write-through of the `runtime.state = ...` assignments Python tests make. The product
+// never calls it.
+func (c *Coordinator) ForceState(state string) {
+	c.mu.Lock()
+	c.setStateLocked(state)
+	c.mu.Unlock()
+}
+
 // setIedStateLocked changes an IED's runtime-only "state" and notifies the hub. Needs c.mu.
 func (c *Coordinator) setIedStateLocked(iedID, state string) {
 	c.iedStates[iedID] = state

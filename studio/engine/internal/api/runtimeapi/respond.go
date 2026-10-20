@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/httpapi"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/pyval"
 )
@@ -41,14 +42,7 @@ func serve(next handler) http.Handler {
 		if err != nil {
 			body, status = errorBody(err)
 		}
-		encoded, encodeErr := pyjson.Flask(body)
-		if encodeErr != nil {
-			encoded, _ = pyjson.Flask(pyjson.NewObject().Set("error", internalText))
-			status = http.StatusInternalServerError
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(status)
-		_, _ = w.Write(encoded)
+		httpapi.WriteJSON(w, status, body)
 	})
 }
 

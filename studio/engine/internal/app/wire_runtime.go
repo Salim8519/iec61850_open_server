@@ -1,7 +1,9 @@
 package app
 
 import (
+	"errors"
 	"sort"
+	"strings"
 
 	"studio-engine/internal/api"
 	"studio-engine/internal/api/runtimeapi"
@@ -28,18 +30,30 @@ func (e *Engine) runtimeRoutes() []api.Route {
 	return runtimeapi.Area{Runtime: e.Runtime, Project: e.Projects}.Routes()
 }
 
-// labAddresses is ip_helper.addresses_on for the lab-mode preflight. Python raised the
-// OSError of a failed IP Helper call; here a failure lists no address, so the preflight
-// refuses with its "not set up on the adapter" text.
-func labAddresses(guid string) []string {
-	found, err := netcfg.AddressesOn(guid)
+// addressesOn is the IP Helper lookup (a variable so a test can make it fail).
+var addressesOn = netcfg.AddressesOn
+
+// labAddresses is ip_helper.addresses_on for the lab-mode preflight. A failed IP Helper
+// call fails the Run as Python's OSError did: the error is no apperr (Flask's generic 500
+// for the request) and its text is str(OSError(code, message)), "[Errno N] ...", in the
+// runtime event.
+func labAddresses(guid string) ([]string, error) {
+	found, err := addressesOn(guid)
 	if err != nil {
-		return nil
+		return nil, osError(err)
 	}
 	addresses := make([]string, 0, len(found))
 	for address := range found {
 		addresses = append(addresses, address)
 	}
 	sort.Strings(addresses)
-	return addresses
+	return addresses, nil
+}
+
+// osError rewrites netcfg's "[WinError N] text" as Python's str(OSError(N, text)).
+func osError(err error) error {
+	if rest, found := strings.CutPrefix(err.Error(), "[WinError "); found {
+		return errors.New("[Errno " + rest)
+	}
+	return err
 }

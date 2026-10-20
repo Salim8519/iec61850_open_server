@@ -14,6 +14,7 @@ import (
 	"studio-engine/internal/acquisition/goldentest"
 	"studio-engine/internal/acquisition/goosedom"
 	"studio-engine/internal/acquisition/pyv"
+	"studio-engine/internal/httpapi"
 	"studio-engine/internal/pyjson"
 )
 
@@ -27,6 +28,8 @@ type env struct {
 	script   *scriptedWorkers
 	service  *Service
 	mux      *http.ServeMux
+	handler  http.Handler // mux, or the composed server pipeline around the same routes
+	composed bool
 	decls    goosedom.Declarations
 }
 
@@ -64,12 +67,28 @@ func newEnv(t *testing.T, doc *pyjson.Object) *env {
 	for _, route := range e.service.Routes() {
 		e.mux.Handle(route.Method+" "+route.Pattern, route.Handler)
 	}
+	e.handler = e.mux
 	return e
 }
 
-func TestRoutesMatchPython(t *testing.T) {
+// TestRoutesMatchPython replays the recorded Flask answers against the bare routes.
+func TestRoutesMatchPython(t *testing.T) { replayRoutes(t, false) }
+
+// TestComposedRoutesMatchPython (gap 6) replays them through the composed server's HTTP
+// pipeline (httpapi.New with the session token, as app.Compose mounts these routes), with
+// the same fakes: the session check, security and gates must not change a recorded answer.
+func TestComposedRoutesMatchPython(t *testing.T) { replayRoutes(t, true) }
+
+func replayRoutes(t *testing.T, composed bool) {
 	doc := loadScenario(t)
 	e := newEnv(t, doc)
+	if composed {
+		server, err := httpapi.New(httpapi.Config{Token: "token", SecretKey: "secret", Routes: e.service.Routes()})
+		if err != nil {
+			t.Fatal(err)
+		}
+		e.handler, e.composed = server, true
+	}
 	defer e.service.Live.Stop()
 	counts := map[string]int{}
 	defer func() { t.Logf("replayed steps %v", counts) }()
@@ -107,9 +126,13 @@ func (e *env) http(index int, step *pyjson.Object) {
 	if ctype := pyv.GetStr(step, "ctype"); ctype != "" {
 		request.Header.Set("Content-Type", ctype)
 	}
+	if e.composed {
+		request.RemoteAddr, request.Host = "127.0.0.1:50000", "127.0.0.1:8765"
+		request.Header.Set("Authorization", "Bearer token")
+	}
 	e.events.take()
 	recorder := httptest.NewRecorder()
-	e.mux.ServeHTTP(recorder, request)
+	e.handler.ServeHTTP(recorder, request)
 	name := pyv.GetStr(step, "method") + " " + pyv.GetStr(step, "path")
 	wantStatus, _ := pyv.Int64(pyv.Get(step, "status"))
 	if int64(recorder.Code) != wantStatus || recorder.Body.String() != pyv.GetStr(step, "response") {
@@ -141,6 +164,13 @@ func (e *env) start(index int, step *pyjson.Object) {
 		}
 		time.Sleep(5 * time.Millisecond)
 	}
+	// The session's first live poll emits its `signal` asynchronously: under load it could
+	// land after the step ended and be counted in the next one. Wait (bounded) until the
+	// step's recorded number of events arrived; the comparison itself is unchanged.
+	want, settle := len(expectedEvents(step)), time.Now().Add(10*time.Second)
+	for time.Now().Before(settle) && e.events.count() < want {
+		time.Sleep(5 * time.Millisecond)
+	}
 	e.compareEvents(index, "start", step, true)
 }
 
@@ -167,13 +197,7 @@ func (e *env) inject(index int, step *pyjson.Object) {
 // compareEvents checks the events since the step began; project_changed belongs to the
 // project actor (stream B) and is not produced by these fakes.
 func (e *env) compareEvents(index int, name string, step *pyjson.Object, sorted bool) {
-	var want []string
-	for _, item := range pyv.GetList(step, "events") {
-		pair := pyv.List(item)
-		if pyv.Str(pair[0]) != "project_changed" {
-			want = append(want, pyv.Str(pair[0])+" "+pyv.Str(pair[1]))
-		}
-	}
+	want := expectedEvents(step)
 	var got []string
 	for _, pair := range e.events.take() {
 		got = append(got, pair[0]+" "+pair[1])
@@ -186,6 +210,18 @@ func (e *env) compareEvents(index int, name string, step *pyjson.Object, sorted 
 		e.t.Errorf("step %d %s events differ\n got: %s\nwant: %s", index, name,
 			clip(strings.Join(got, "\n")), clip(strings.Join(want, "\n")))
 	}
+}
+
+// expectedEvents are the step's recorded events as "kind payload" lines.
+func expectedEvents(step *pyjson.Object) []string {
+	var want []string
+	for _, item := range pyv.GetList(step, "events") {
+		pair := pyv.List(item)
+		if pyv.Str(pair[0]) != "project_changed" {
+			want = append(want, pyv.Str(pair[0])+" "+pyv.Str(pair[1]))
+		}
+	}
+	return want
 }
 
 func clip(text string) string {

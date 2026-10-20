@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/httpapi"
 	"studio-engine/internal/project"
 	"studio-engine/internal/pyjson"
 )
@@ -29,16 +30,7 @@ type httpError struct {
 func (e *httpError) Error() string { return e.description }
 
 // writeJSON answers like flask.jsonify (sorted keys, compact, trailing newline).
-func writeJSON(w http.ResponseWriter, status int, value any) {
-	body, err := pyjson.Flask(value)
-	if err != nil {
-		status, body = 500, []byte(`{"error":"`+internalErrText+`"}`+"\n")
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
-	w.WriteHeader(status)
-	_, _ = w.Write(body)
-}
+func writeJSON(w http.ResponseWriter, status int, value any) { httpapi.WriteJSON(w, status, value) }
 
 // writeError answers with app_factory.py's error handlers. httpapi (stream A) owns the
 // shared version; this mirror keeps the routes testable on their own.

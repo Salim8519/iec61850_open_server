@@ -97,12 +97,13 @@ var parityOps = map[string]parityOp{
 	},
 }
 
-func field(body *pyjson.Object, key string) any {
-	if body == nil {
+func field(value any, key string) any {
+	object, ok := value.(*pyjson.Object)
+	if !ok || object == nil {
 		return nil
 	}
-	value, _ := body.Get(key)
-	return value
+	item, _ := object.Get(key)
+	return item
 }
 
 func argList(body *pyjson.Object) []any { args, _ := field(body, "args").([]any); return args }
@@ -124,33 +125,12 @@ func toFloat(value any) (float64, bool) {
 	return 0, false
 }
 
-// decodeWire turns wire tags into Go values (only bytes are needed by the operations).
-func decodeWire(value any) any {
-	switch v := value.(type) {
-	case []any:
-		for i, item := range v {
-			v[i] = decodeWire(item)
-		}
-	case *pyjson.Object:
-		if raw, tagged := v.Get("__bytes__"); tagged && v.Len() == 1 {
-			text, _ := raw.(string)
-			data, _ := base64.StdEncoding.DecodeString(text)
-			return wireBytes(data)
-		}
-		for _, key := range v.Keys() {
-			item, _ := v.Get(key)
-			v.Set(key, decodeWire(item))
-		}
-	}
-	return value
-}
-
 // runParityOp answers one operation: {"value": ...} or {"raise": encoded exception} (500).
 func runParityOp(w http.ResponseWriter, e *app.Engine, op parityOp, body []byte, r *http.Request) {
 	parsed := pyjson.NewObject()
 	if len(body) > 0 {
 		decoded, err := pyjson.Decode(body)
-		if object, ok := decodeWire(decoded).(*pyjson.Object); err == nil && ok {
+		if object, ok := wireDecode(decoded).(*pyjson.Object); err == nil && ok {
 			parsed = object
 		}
 	}

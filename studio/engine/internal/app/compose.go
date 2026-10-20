@@ -14,7 +14,9 @@ import (
 	"studio-engine/internal/gateway/service"
 	"studio-engine/internal/httpapi"
 	"studio-engine/internal/licensing"
+	"studio-engine/internal/netcfg"
 	projects "studio-engine/internal/project/service"
+	"studio-engine/internal/pyjson"
 	"studio-engine/internal/push"
 	"studio-engine/internal/runtime"
 	"studio-engine/internal/store/recovery"
@@ -56,6 +58,9 @@ type Options struct {
 	License        httpapi.LicenseGate // tests: replaces the license service's gate
 	Startup        httpapi.StartupGate // tests: replaces the startup recovery gate
 	NoBackground   bool                // tests: no update/license loops, no gateway resume
+	// RecoverStartup wraps startup recovery (the parity build's fault seam on
+	// background_recovery.recover_startup); nil runs the project service's own.
+	RecoverStartup func(original func() (*pyjson.Object, error)) (*pyjson.Object, error)
 }
 
 // Engine is the composed Go server: every service of create_app and its HTTP handler.
@@ -70,6 +75,7 @@ type Engine struct {
 	Scanner  *scan.Service
 	Control  *control.Client
 	License  *licensing.Service
+	Network  *netcfg.NetworkService
 	Updates  *updates.Service
 	Recovery *recovery.Background
 	Push     *push.Area

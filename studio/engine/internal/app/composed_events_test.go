@@ -13,13 +13,11 @@ import (
 	"studio-engine/internal/testutil"
 )
 
-const eventsPortBase = 21300
-
 // runtimeTestdata is the runtime lane's parity scenario folder.
 var runtimeTestdata = filepath.Join("..", "runtime", "testdata")
 
-// openScenarioProject restores the runtime parity project (IEDs at eventsPortBase+1, +2).
-func openScenarioProject(t *testing.T, engine *Engine) []string {
+// openScenarioProject restores the runtime parity project (IEDs at portBase+1, +2).
+func openScenarioProject(t *testing.T, engine *Engine, portBase int) []string {
 	t.Helper()
 	raw, err := os.ReadFile(filepath.Join(runtimeTestdata, "project.json"))
 	if err != nil {
@@ -32,7 +30,7 @@ func openScenarioProject(t *testing.T, engine *Engine) []string {
 	tree := decoded.(*pyjson.Object)
 	var ids []string
 	for index, item := range field(tree, "ieds").([]any) {
-		item.(*pyjson.Object).Set("port", int64(eventsPortBase+index+1))
+		item.(*pyjson.Object).Set("port", int64(portBase+index+1))
 		ids = append(ids, field(item, "id").(string))
 	}
 	payload, err := archive.NewEncoder().Encode(project.Compact(tree))
@@ -55,13 +53,14 @@ func TestComposedEventsMatchPython(t *testing.T) {
 	}
 	folder := testutil.TempDir(t)
 	pythonOut, goOut := filepath.Join(folder, "python.json"), filepath.Join(folder, "go.json")
+	portBase := freePortBase(t, 2, scenarioHosts...)
 	record := exec.Command(python, "-I", filepath.Join(runtimeTestdata, "record_python.py"), nativeDir,
-		itoa(eventsPortBase), pythonOut)
+		itoa(portBase), pythonOut)
 	if output, err := record.CombinedOutput(); err != nil {
 		t.Fatalf("record_python.py: %v %s", err, output)
 	}
 	engine := composeAt(t, testutil.TempDir(t), nativeDir, pythonVerdicts(t, filepath.Join(runtimeTestdata, "project.json")))
-	ids := openScenarioProject(t, engine)
+	ids := openScenarioProject(t, engine, portBase)
 	cursor := engine.Bus.Sequence()
 	wait := func(seconds float64) { time.Sleep(time.Duration(seconds * float64(time.Second))) }
 	post := func(path string, body any) { mustCall(t, engine, "POST", path, body) }

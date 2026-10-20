@@ -157,17 +157,32 @@ func (m *Manager) Disconnect(iedID string) {
 	}
 }
 
-// Stop stops the GOOSE monitor, the engine, SV and then every session (manager.py:79-85).
+// Stop stops the GOOSE monitor, the engine, SV and every session (manager.py:79-85). Python
+// closed these processes one after another; here they close at the same time (their Stop
+// emits no event), and the sessions' "stopped" live_status events follow in connection
+// order once all are closed, as Python emitted them.
 func (m *Manager) Stop() {
-	m.Goose.Stop()
-	m.Engine.Stop()
-	m.SV.Stop()
 	m.mu.Lock()
 	sessions := m.sessions
 	m.sessions = nil
 	m.mu.Unlock()
+	var group sync.WaitGroup
+	parallel := func(stop func()) {
+		group.Add(1)
+		go func() {
+			defer group.Done()
+			stop()
+		}()
+	}
+	parallel(m.Goose.Stop)
+	parallel(m.Engine.Stop)
+	parallel(m.SV.Stop)
 	for _, session := range sessions {
-		session.Stop()
+		parallel(session.halt)
+	}
+	group.Wait()
+	for _, session := range sessions {
+		session.stopped()
 	}
 }
 

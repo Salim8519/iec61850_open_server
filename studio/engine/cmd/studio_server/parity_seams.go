@@ -20,7 +20,7 @@ type paritySeams struct {
 	ParityKey   string                     `json:"parity_key"`
 	License     map[string]json.RawMessage `json:"license"`
 	Updates     map[string]json.RawMessage `json:"updates"`
-	Faults      map[string]json.RawMessage `json:"faults"`
+	Faults      map[string]callback        `json:"faults"`
 }
 
 type licenseSeam struct {
@@ -40,7 +40,7 @@ type updateSeam struct {
 	Current   string            `json:"current"`
 	Keys      map[string]string `json:"keys"`
 	Clock     *float64          `json:"clock"`
-	Opener    json.RawMessage   `json:"opener"`
+	Opener    *callback         `json:"opener"`
 }
 
 func readSeams(path string) (paritySeams, error) {
@@ -49,20 +49,22 @@ func readSeams(path string) (paritySeams, error) {
 	if err == nil {
 		err = json.Unmarshal(data, &seams)
 	}
-	if err == nil && len(seams.Faults) > 0 {
-		err = fmt.Errorf("the Go parity build does not implement fault seams (%d given)", len(seams.Faults))
+	for target := range seams.Faults {
+		if err == nil && target != recoverFault {
+			err = fmt.Errorf("the Go parity build has no fault seam for %s", target)
+		}
 	}
 	return seams, err
 }
 
-// decodeSeam re-reads a seam object into its typed form; callback ("object") seams are
-// not implemented in Go yet.
+// decodeSeam re-reads a seam object into its typed form; an object seam is handled by the
+// caller (only the license gate has one in Go).
 func decodeSeam(raw map[string]json.RawMessage, into any) (bool, error) {
 	if raw == nil {
 		return false, nil
 	}
 	if _, isObject := raw["object"]; isObject {
-		return false, fmt.Errorf("the Go parity build does not implement object seams")
+		return false, fmt.Errorf("the Go parity build has no object seam here")
 	}
 	data, _ := json.Marshal(raw)
 	return true, json.Unmarshal(data, into)
@@ -113,9 +115,6 @@ func updatesFromSeam(raw map[string]json.RawMessage) (*updates.Service, error) {
 	if present, err := decodeSeam(raw, &seam); !present || err != nil {
 		return nil, err
 	}
-	if len(seam.Opener) > 0 && string(seam.Opener) != "null" {
-		return nil, fmt.Errorf("the Go parity build does not implement the update opener callback")
-	}
 	keys, err := hexKeys(seam.Keys)
 	if err != nil {
 		return nil, err
@@ -126,6 +125,9 @@ func updatesFromSeam(raw map[string]json.RawMessage) (*updates.Service, error) {
 	}
 	options := updates.Options{Directory: seam.Directory, Current: seam.Current, Keys: keys,
 		ServerURL: func() (string, error) { return server, nil }}
+	if seam.Opener != nil && seam.Opener.valid() {
+		options.Opener = callbackOpener{*seam.Opener}
+	}
 	if seam.Clock != nil {
 		clock := *seam.Clock
 		options.Clock = func() float64 { return clock }

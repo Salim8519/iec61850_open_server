@@ -28,6 +28,7 @@ type commandClient struct {
 	keep       time.Duration
 	mu         sync.Mutex
 	process    *native.Control
+	warming    sync.WaitGroup // a warm-up start close waits for
 }
 
 func newCommandClient(executable string, keep time.Duration) *commandClient {
@@ -57,6 +58,17 @@ func (m *commandClient) client() (*native.Control, error) {
 	}
 	m.process = process
 	return process, nil
+}
+
+// warm starts the studio_control process in the background (Run start), so the first
+// canvas command does not pay its start (~0.1-0.5 s). Nothing is shown or emitted: a start
+// that fails here fails again, with its message, on the command that needs the process.
+func (m *commandClient) warm() {
+	m.warming.Add(1)
+	go func() {
+		defer m.warming.Done()
+		_, _ = m.client()
+	}()
 }
 
 // operate is runtime/mms_client.operate with Python's checks and texts; the result is the
@@ -96,6 +108,7 @@ func (m *commandClient) operate(ied *pyjson.Object, state string, ref string, va
 }
 
 func (m *commandClient) close() {
+	m.warming.Wait()
 	m.mu.Lock()
 	process := m.process
 	m.process = nil
