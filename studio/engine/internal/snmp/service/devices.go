@@ -91,13 +91,18 @@ func (s *Service) saveAndRestart(config Config) error {
 func (s *Service) Start() (*Status, error) {
 	config := s.Config()
 	valid := []model.Device{}
-	states := map[string]deviceState{}
+	states, bound, lab := map[string]deviceState{}, map[string]string{}, s.onLab()
 	for _, device := range config.Devices {
 		if err := CheckDevice(device, config.Devices); err != nil {
 			states[device.ID] = deviceState{State: "failed", Error: err.Error()}
 			continue
 		}
-		valid = append(valid, device)
+		placed, err := place(device, lab)
+		if err != nil {
+			states[device.ID] = deviceState{State: "failed", Error: err.Error()}
+			continue
+		}
+		valid, bound[device.ID] = append(valid, placed), placed.IP
 	}
 	if len(config.Devices) == 0 {
 		return nil, apperr.ValueError("Add a device first: press Add device")
@@ -123,7 +128,7 @@ func (s *Service) Start() (*Status, error) {
 		}
 	}
 	s.mu.Lock()
-	s.devices = states
+	s.devices, s.bound = states, bound
 	s.mu.Unlock()
 	if !config.AutoStart {
 		config.AutoStart = true

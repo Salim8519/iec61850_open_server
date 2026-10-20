@@ -9,26 +9,30 @@ import { CleanupCard } from '../network/CleanupCard';
 import { GooseReach } from '../network/GooseReach';
 import { NetworkSetup } from '../network/NetworkSetup';
 import { NoPublishers } from '../network/NoPublishers';
+import { snmpFollowLine } from '../network/setupWords';
+import { useSnmpCount } from '../network/useSnmpCount';
 
 export function NetworkSettings({ project, locked, perform, openTraffic }: {
   project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>; openTraffic: () => void;
 }) {
   const [wizard, setWizard] = useState(false);
   const lab = project.network.mode === 'lab';
-  const publishing = project.ieds.some(ied => ied.role === 'simulated');
+  const snmp = useSnmpCount(project.revision);
+  const publishing = project.ieds.some(ied => ied.role === 'simulated') || snmp > 0;
   if (wizard) return <NetworkSetup close={() => setWizard(false)} finished={() => { setWizard(false); perform(async () => {}); }} />;
   return <>
     <div className="mode-banner">
       <div className="row" style={{ alignItems: 'flex-start', gap: 14 }}>
         <span className="guide-empty-icon" style={{ margin: 0, width: 44, height: 44 }}>{lab ? <Network size={22} /> : <Laptop size={22} />}</span>
         <div><h2>{lab ? <>Your published IEDs are on “{project.network.adapter_label}”</> : <>Your published IEDs are reachable from <InfoTip term="loopback" label="this PC only" /></>}</h2>
-          <p className="muted" style={{ margin: 0, maxWidth: 620 }}>{hint(lab ? 'network.mode.lab' : 'network.mode.loopback')}</p></div>
+          <p className="muted" style={{ margin: 0, maxWidth: 620 }}>{hint(lab ? 'network.mode.lab' : 'network.mode.loopback')}</p>
+          {snmp > 0 && <p className="muted small" style={{ margin: '6px 0 0' }}>{snmpFollowLine(snmp, lab)}</p>}</div>
       </div>
       <div className="row">
         {lab && <button disabled={locked} onClick={() => perform(() => api('/network', 'PUT', { mode: 'loopback' }))}>
           <Undo2 size={16} />Back to this PC only</button>}
         <button className="primary" disabled={locked || !publishing} onClick={() => setWizard(true)}>
-          <Network size={16} />{lab ? 'Change network card or addresses' : 'Put my IEDs on a network'}</button>
+          <Network size={16} />{lab ? 'Change network card or addresses' : snmp ? 'Put my devices on a network' : 'Put my IEDs on a network'}</button>
       </div>
     </div>
     {!publishing && <div className="card"><div className="guide-section">

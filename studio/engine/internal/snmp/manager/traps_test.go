@@ -16,7 +16,7 @@ func TestTrapsAndInformsInEveryVersion(t *testing.T) {
 	user := model.User{Name: "trapper", Level: model.LevelPrivacy, Auth: "sha256", AuthPassword: "authpassword",
 		Priv: "aes128", PrivPassword: "privpassword"}
 	events := make(chan map[string]any, 20)
-	port := testutil.FreePort(t, receiverIP)
+	port := testutil.FreeUDPPort(t, receiverIP)
 	engine, _ := hex.DecodeString("8000000005aabbccdd")
 	receiver, err := Listen(receiverIP, port, []model.User{user}, engine, func(event map[string]any) { events <- event })
 	if err != nil {
@@ -30,7 +30,7 @@ func TestTrapsAndInformsInEveryVersion(t *testing.T) {
 		{Host: receiverIP, Port: port, Version: "v3", User: "trapper"},
 		{Host: receiverIP, Port: port, Version: "v3", User: "trapper", Inform: true},
 	}
-	cfg := model.Device{ID: "d1", Name: "GPS", IP: deviceIP, Port: testutil.FreePort(t, deviceIP), V2c: true, V3: true,
+	cfg := model.Device{ID: "d1", Name: "GPS", IP: deviceIP, Port: testutil.FreeUDPPort(t, deviceIP), V2c: true, V3: true,
 		ReadCommunity: "public", EngineID: "800000000511223344", Users: []model.User{user}, Traps: targets,
 		Points: []model.Point{{OID: "1.3.6.1.2.1.1.2.0", Type: model.TypeOID, Value: "1.3.6.1.4.1.99999.2"}}}
 	device, err := agent.Start(cfg, 9, nil, nil)
@@ -80,14 +80,14 @@ func TestTrapsAndInformsInEveryVersion(t *testing.T) {
 
 func TestTrapFromUnknownUserIsReported(t *testing.T) {
 	events := make(chan map[string]any, 5)
-	port := testutil.FreePort(t, receiverIP)
+	port := testutil.FreeUDPPort(t, receiverIP)
 	receiver, err := Listen(receiverIP, port, nil, []byte{0x80, 0, 0, 0, 5, 1}, func(e map[string]any) { events <- e })
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer receiver.Close()
 	user := model.User{Name: "nobody", Level: model.LevelAuth, Auth: "sha", AuthPassword: "authpassword"}
-	cfg := model.Device{ID: "d2", Name: "X", IP: deviceIP, Port: testutil.FreePort(t, deviceIP), V3: true,
+	cfg := model.Device{ID: "d2", Name: "X", IP: deviceIP, Port: testutil.FreeUDPPort(t, deviceIP), V3: true,
 		EngineID: "800000000599", Users: []model.User{user},
 		Traps: []model.TrapTarget{{Host: receiverIP, Port: port, Version: "v3", User: "nobody"}}}
 	device, err := agent.Start(cfg, 1, nil, nil)

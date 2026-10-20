@@ -1,7 +1,7 @@
 import { CircleStop, Network, Play, Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { snmpApi, type SnmpConfig, type SnmpStatus } from '../../../../api/snmp';
-import { SNMP_COPY } from '../../../../copy/snmp';
+import { SETTINGS_COPY, SNMP_COPY } from '../../../../copy/snmp';
 import { HelpTip } from '../../../../ui/HelpTip';
 import { Menu } from '../../../../ui/Menu';
 import { DevicePanel } from './DevicePanel';
@@ -58,6 +58,7 @@ export function SimulateView({ status, config, refresh, fail }: {
             onClick={() => setSelected(item.id)}>
             <strong>{item.name}</strong>
             <span className="small muted">{item.kind || item.profile} · {item.address}</span>
+            {item.network && <span className="small muted">{SETTINGS_COPY.onNetworkLine}</span>}
             <span className={`small snmp-state state-${item.state}`}>
               {item.state === 'running' ? '● ' : item.state === 'failed' ? '⚠ ' : '○ '}{SNMP_COPY.states[item.state]}</span>
             {item.error && <span className="small explorer-error">{item.error}</span>}

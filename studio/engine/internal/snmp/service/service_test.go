@@ -72,8 +72,8 @@ func TestSimulateReadAndTrapThroughTheEngine(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	trapPort := testutil.FreePort(t, receiverIP)
-	device.IP, device.Port = deviceIP, testutil.FreePort(t, deviceIP)
+	trapPort := testutil.FreeUDPPort(t, receiverIP)
+	device.IP, device.Port = deviceIP, testutil.FreeUDPPort(t, deviceIP)
 	device.Traps = []model.TrapTarget{{Host: receiverIP, Port: trapPort, Version: "v3", User: defaultUser, Inform: true}}
 	if _, err := s.UpdateDevice(device, false); err != nil {
 		t.Fatal(err)

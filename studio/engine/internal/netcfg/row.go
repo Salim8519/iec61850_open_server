@@ -27,6 +27,8 @@ type Row struct {
 	Status      string
 	Hint        string
 	Alternative *Alternative
+	Kind        string // "snmp" for an SNMP device row; "" for an IED (Python's rows)
+	Saved       bool   // an SNMP row showing the device's saved address
 }
 
 func intPointer(value int) *int { return &value }
@@ -50,6 +52,9 @@ func (r Row) Object() *pyjson.Object {
 	if r.Alternative != nil {
 		object.Set("alternative", pyjson.NewObject().Set("ip", r.Alternative.IP).
 			Set("prefix", optionalInt(r.Alternative.Prefix)))
+	}
+	if r.Kind != "" {
+		object.Set("kind", r.Kind).Set("saved", r.Saved)
 	}
 	return object
 }

@@ -87,13 +87,32 @@ func uniqueSortedPorts(ports []int) []int {
 // BuildPlan is change_plan.build_plan: one alias per usable row and one narrow MMS firewall
 // rule; things already present are listed but not owned.
 func BuildPlan(adapter Adapter, rows []Row, ports []int, program string, existingRules []string) (Plan, error) {
+	return BuildPlanWithSNMP(adapter, rows, ports, program, existingRules, SNMPRule{})
+}
+
+// SNMPRule is the SNMP side of a plan: the devices' UDP ports, the SNMP worker and the SNMP
+// firewall rules already present.
+type SNMPRule struct {
+	Ports    []int
+	Program  string
+	Existing []string
+}
+
+// BuildPlanWithSNMP is BuildPlan where SNMP device rows also get their aliases and one narrow
+// UDP rule of their own instead of joining the IEDs' MMS rule.
+func BuildPlanWithSNMP(adapter Adapter, rows []Row, ports []int, program string, existingRules []string,
+	snmp SNMPRule) (Plan, error) {
 	own := adapter.ips()
-	items, addresses := []*pyjson.Object{}, []string{}
+	items, addresses, snmpAddresses := []*pyjson.Object{}, []string{}, []string{}
 	for _, row := range rows {
 		if row.Proposed == "" || (row.Status != "ok" && row.Status != "already_on_adapter") {
 			continue
 		}
-		addresses = append(addresses, row.Proposed)
+		if isSNMPRow(row) {
+			snmpAddresses = append(snmpAddresses, row.Proposed)
+		} else {
+			addresses = append(addresses, row.Proposed)
+		}
 		present := own[row.Proposed]
 		items = append(items, pyjson.NewObject().Set("kind", "alias").Set("adapter_guid", adapter.GUID).
 			Set("adapter_index", adapter.indexValue()).Set("adapter_name", adapter.Name).Set("ip", row.Proposed).
@@ -112,6 +131,13 @@ func BuildPlan(adapter Adapter, rows []Row, ports []int, program string, existin
 		items = append(items, pyjson.NewObject().Set("kind", "firewall").Set("name", name).Set("group", Group).
 			Set("addresses", stringsAny(sorted)).Set("ports", intsAny(sortedPorts)).Set("program", program).
 			Set("owned", !present).Set("action", keepOrAdd(present)))
+	}
+	if len(snmpAddresses) > 0 {
+		item, err := snmpFirewall(snmpAddresses, snmp.Ports, snmp.Program, snmp.Existing)
+		if err != nil {
+			return Plan{}, err
+		}
+		items = append(items, item)
 	}
 	fingerprint, err := sortedFingerprint(pyjson.NewObject().Set("adapter", adapter.GUID).Set("items", itemsAny(items)))
 	return Plan{Items: items, Fingerprint: fingerprint}, err

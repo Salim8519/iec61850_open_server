@@ -142,7 +142,7 @@ func (d *Device) fire(name string, packet []byte, err error, peer netip.AddrPort
 	if err != nil {
 		return Result{Target: name, Text: err.Error()}
 	}
-	if _, err := d.conn.WriteToUDPAddrPort(packet, peer); err != nil {
+	if _, err := d.connFor(peer).WriteToUDPAddrPort(packet, peer); err != nil {
 		return Result{Target: name, Text: "not sent: " + err.Error()}
 	}
 	return Result{Target: name, OK: true, Text: "sent"}
@@ -176,7 +176,7 @@ func (d *Device) exchange(peer netip.AddrPort, key int32, build func() ([]byte, 
 		if err != nil {
 			return nil, err
 		}
-		if _, err := d.conn.WriteToUDPAddrPort(packet, peer); err != nil {
+		if _, err := d.connFor(peer).WriteToUDPAddrPort(packet, peer); err != nil {
 			return nil, fmt.Errorf("not sent: %v", err)
 		}
 		select {

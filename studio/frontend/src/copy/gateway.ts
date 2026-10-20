@@ -71,7 +71,8 @@ export const GATEWAY_COPY = {
   trafficHint: 'Decoded messages between SCADA and the gateway, newest at the bottom.',
   commandsHint: 'Every command, from SCADA or from this page, in three steps: what was asked, what the IED did, and what ScadaBench saw afterwards.',
   pause: 'Pause', resume: 'Resume', clear: 'Clear view',
-  removeAll: 'Remove all points',
+  removeAll: 'Remove all points', select: 'Select', selectHint: 'Choose several points to remove',
+  removedNote: (count: number) => `${count} ${count === 1 ? 'point' : 'points'} removed. Press Save point list to keep this, or Discard changes to undo.`,
   emptyFilter: 'No row matches the filter. Press Clear to see every row.',
 };
 

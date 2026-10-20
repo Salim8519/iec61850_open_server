@@ -15,6 +15,8 @@ type presence struct {
 	gateway  map[string]bool
 	disabled map[string]bool
 	read     map[string]bool
+	// snmpRules: the SNMP device rules present (ADR-0092 amendment)
+	snmpRules map[string]bool
 }
 
 func (p *presence) firewall() error {
@@ -53,6 +55,18 @@ func (p *presence) present(item *pyjson.Object) (bool, error) {
 	case "unblock":
 		err := p.firewall()
 		return err == nil && p.disabled[f.text("name")], firstError(err, f.err())
+	case "snmp_firewall":
+		if !p.read["snmp_rules"] {
+			names, err := p.service.SNMPRules()
+			if err != nil {
+				return false, err
+			}
+			p.snmpRules, p.read["snmp_rules"] = map[string]bool{}, true
+			for _, name := range names {
+				p.snmpRules[name] = true
+			}
+		}
+		return p.snmpRules[f.text("name")], f.err()
 	}
 	if !p.read["rules"] {
 		names, err := p.service.Rules()

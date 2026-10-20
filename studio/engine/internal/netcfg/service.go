@@ -43,6 +43,8 @@ type NetworkService struct {
 	Firewall   func(unblock []string) (gateway, disabled map[string]bool, err error) // gateway_state
 	Clock      func() time.Time                                                      // monotonic clock for the cache
 	NewID      func() string                                                         // uuid4().hex for request files
+	SNMP       SNMPProjects                                                          // nil: no SNMP devices (Python)
+	SNMPRules  func() ([]string, error)                                              // SNMP rule names present
 
 	mu       sync.Mutex
 	stamp    time.Time
@@ -55,8 +57,9 @@ func NewNetworkService(projects Projects, directory, program, executable string)
 	shell := SystemExecutor{}
 	return &NetworkService{Projects: projects, Directory: directory, Program: program, Executable: executable,
 		Journal: NewJournal(directory), Source: SystemAdapters{Shell: shell},
-		Rules:    func() ([]string, error) { return ListStudioRules(shell) },
-		Elevator: UACElevator{}, Probe: ARPProber{},
+		Rules:     func() ([]string, error) { return ListStudioRules(shell) },
+		SNMPRules: func() ([]string, error) { return ListSNMPRules(shell) },
+		Elevator:  UACElevator{}, Probe: ARPProber{},
 		Firewall: func(names []string) (map[string]bool, map[string]bool, error) { return GatewayState(names, shell) },
 		Clock:    time.Now, NewID: randomHex}
 }

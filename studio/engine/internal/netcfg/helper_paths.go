@@ -50,6 +50,11 @@ func gatewayWorker(program string) string {
 	return filepath.Join(filepath.Dir(program), "studio_gateway.exe")
 }
 
+// snmpWorker is the SNMP engine beside the IED worker (ADR-0092).
+func snmpWorker(program string) string {
+	return filepath.Join(filepath.Dir(program), "studio_snmp.exe")
+}
+
 // withSuffix is Path.with_suffix(suffix): the last ".ext" of the name is replaced.
 func withSuffix(path, suffix string) string {
 	name := filepath.Base(path)

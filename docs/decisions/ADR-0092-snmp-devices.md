@@ -65,5 +65,27 @@ traps (`POST /tools/snmp/traps/listen|stop`, `GET /tools/snmp/traps`), MIBs
 - The release ships `studio_snmp.exe` beside the other workers (like the Go `studio_goose.exe`
   and `studio_xsd.exe` it is not in the sealed native list) and the MIB licence notice
   `licenses/snmp-mibs/snmp-mibs-NOTICE.txt`.
-- Lab-network addresses for simulated SNMP devices (network helper aliases, firewall rule) are a
-  later step; until then a device binds to an address that already exists on the PC.
+- Lab-network addresses: see the amendment below (change 0148).
+
+## Amendment 2026-10-21: SNMP devices follow the IEDs onto the network
+
+Owner decisions (questions asked 2026-10-21): the same network card as the IEDs, always following
+the project's one network choice, free addresses found automatically (or typed), checked so no
+device gets an address another device answers on, and the address saved with the device.
+
+- Network setup (Settings › Network) plans one row per SNMP device next to the IED rows
+  (`ied_id` `snmp:<id>`, extra keys `kind: "snmp"`, `saved`). A device keeps its saved `lab_ip`
+  while it is on the card's network and free; otherwise the IED planner picks a free address
+  (never an IED's), with the same ARP check and typed addresses. Rows without SNMP devices and
+  plans of projects without SNMP devices are unchanged (Python parity).
+- The plan adds the aliases and one narrow rule `ScadaBench-SNMP-<hash>` (group Substation Studio,
+  inbound UDP, the devices' ports and lab addresses, program `studio_snmp.exe` beside the IED
+  worker). The helper validates the new kind `snmp_firewall`; Clean up removes it from the
+  journal like the other items.
+- Apply saves the SNMP addresses first, then switches the project to lab mode. While the project is
+  in lab mode a device answers at its `lab_ip` and also at its own 127.x address (Windows refuses
+  to send from a lab address to 127.0.0.1, so traps to this PC leave from the 127.x twin);
+  a device without a lab address does not start and says how to get one. Leaving lab mode (or
+  any project change that moves them) restarts running devices on their new addresses.
+- The trap receiver's own firewall rule is not part of this step (Windows may ask once when it
+  listens on all network cards).

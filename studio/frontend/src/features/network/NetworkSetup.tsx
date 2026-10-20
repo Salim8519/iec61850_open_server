@@ -9,7 +9,7 @@ import { Hint } from '../../ui/Hint';
 import { SpinIcon, Spinner } from '../../ui/Spinner';
 import { AddressTable, type Manual } from './AddressTable';
 import { ResultStep, ReviewStep } from './ReviewStep';
-import { adapterLabel, changeSentence, LOOPBACK_CHOICE, putLabel, usableAdapters } from './setupWords';
+import { adapterLabel, changeSentence, LOOPBACK_CHOICE, putLabel, setupTitle, usableAdapters } from './setupWords';
 
 /** One page, one button (change 0098): pick the network card, check one address per published IED, apply.
  *  Safety is unchanged: the exact Windows changes are listed, Windows asks once, and Undo/restart removes them. */
@@ -72,13 +72,14 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     } finally { setApplying(false); }
   };
   const usable = usableAdapters(adapters);
-  const count = preview?.rows.length ?? 0;
+  const snmp = preview?.rows.filter(row => row.kind === 'snmp').length ?? 0;
+  const count = (preview?.rows.length ?? 0) - snmp;
   if (result) return <div className="card"><div className="guide-section">
     <ResultStep result={result} />
     <div className="row"><button className="primary" onClick={finished}>Done</button></div>
   </div></div>;
   return <div className="card"><div className="guide-section">
-    <h2 style={{ margin: 0 }}>Put your published IEDs on a network</h2>
+    <h2 style={{ margin: 0 }}>{setupTitle(preview)}</h2>
     <div className="row" style={{ alignItems: 'center' }}>
       <label className="row" style={{ gap: 8 }}><strong style={{ whiteSpace: 'nowrap' }}>Network card</strong>
         <select value={guid} disabled={!adapters} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); }}
@@ -111,7 +112,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
         {applying ? <SpinIcon /> : <Check size={16} />}Use this PC only</button>
       : <button className="primary" disabled={!preview?.ready || checking || applying} onClick={apply}>
         {applying ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
-          : putLabel(count, preview?.adapter.name)}</button>}
+          : putLabel(count, preview?.adapter.name, snmp)}</button>}
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>
     </div>
     {applying && !loopback && <p className="small muted" style={{ margin: 0 }}>{hint('network.approving')}</p>}

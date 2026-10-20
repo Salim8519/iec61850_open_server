@@ -22,3 +22,18 @@ func FreePort(t testing.TB, host string) int {
 	t.Fatalf("no free port >= 20000 on %s", host)
 	return 0
 }
+
+// FreeUDPPort is FreePort for UDP: Windows reserves UDP port ranges that a TCP check misses.
+func FreeUDPPort(t testing.TB, host string) int {
+	t.Helper()
+	for attempt := 0; attempt < 200; attempt++ {
+		port := 20000 + rand.Intn(40000)
+		conn, err := net.ListenPacket("udp4", net.JoinHostPort(host, strconv.Itoa(port)))
+		if err == nil {
+			_ = conn.Close()
+			return port
+		}
+	}
+	t.Fatalf("no free UDP port >= 20000 on %s", host)
+	return 0
+}

@@ -92,6 +92,10 @@ type Device struct {
 	EngineID       string       `json:"engine_id"` // hex
 	Traps          []TrapTarget `json:"traps"`
 	Points         []Point      `json:"points"`
+	LabIP          string       `json:"lab_ip,omitempty"` // its address on the lab network (Network setup)
+	// LocalIP is set only in the worker request while the device runs on its lab address: the
+	// device also answers on this 127.x address, so this PC reaches it and gets its traps.
+	LocalIP string `json:"local_ip,omitempty"`
 }
 
 // Target is the device the reader talks to.

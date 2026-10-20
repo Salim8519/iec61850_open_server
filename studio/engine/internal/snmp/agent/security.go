@@ -3,6 +3,7 @@ package agent
 import (
 	"bytes"
 	"errors"
+	"net"
 	"net/netip"
 
 	"studio-engine/internal/snmp/model"
@@ -12,7 +13,7 @@ import (
 var levelRank = map[string]int{model.LevelNoAuth: 0, model.LevelAuth: 1, model.LevelPrivacy: 2}
 
 // handleV3 is the USM receive path of an authoritative engine (RFC 3414 3.2), then the request.
-func (d *Device) handleV3(m *proto.Message, peer netip.AddrPort) {
+func (d *Device) handleV3(m *proto.Message, peer netip.AddrPort, conn *net.UDPConn) {
 	h := m.Header
 	op := proto.PDUName(m.PDU.Type)
 	if h.SecurityModel != proto.SecurityModelUSM {
@@ -21,7 +22,7 @@ func (d *Device) handleV3(m *proto.Message, peer netip.AddrPort) {
 	}
 	if !bytes.Equal(h.EngineID, d.engineID) {
 		// Discovery: an empty or foreign engine ID learns ours from the report.
-		d.report(m, peer, proto.StatsUnknownEngineIDs, nil, "engine ID discovery from "+peer.Addr().String())
+		d.report(m, peer, conn, proto.StatsUnknownEngineIDs, nil, "engine ID discovery from "+peer.Addr().String())
 		return
 	}
 	d.mu.Lock()
@@ -29,26 +30,26 @@ func (d *Device) handleV3(m *proto.Message, peer netip.AddrPort) {
 	keys := d.keys[h.UserName]
 	d.mu.Unlock()
 	if !known {
-		d.report(m, peer, proto.StatsUnknownUserNames, nil, "unknown user "+quote(h.UserName))
+		d.report(m, peer, conn, proto.StatsUnknownUserNames, nil, "unknown user "+quote(h.UserName))
 		return
 	}
 	asked := levelRank[h.Level()]
 	if asked > levelRank[user.Level] {
-		d.report(m, peer, proto.StatsUnsupportedSecLevels, nil, "user "+user.Name+" does not allow "+h.Level())
+		d.report(m, peer, conn, proto.StatsUnsupportedSecLevels, nil, "user "+user.Name+" does not allow "+h.Level())
 		return
 	}
 	if err := proto.Unprotect(m, keys); err != nil {
 		if errors.Is(err, proto.ErrWrongDigest) {
-			d.report(m, peer, proto.StatsWrongDigests, nil, "wrong authentication password for user "+user.Name)
+			d.report(m, peer, conn, proto.StatsWrongDigests, nil, "wrong authentication password for user "+user.Name)
 		} else {
-			d.report(m, peer, proto.StatsDecryptionErrors, nil, "wrong privacy password for user "+user.Name)
+			d.report(m, peer, conn, proto.StatsDecryptionErrors, nil, "wrong privacy password for user "+user.Name)
 		}
 		return
 	}
 	op = proto.PDUName(m.PDU.Type) // known only now when the request was encrypted
 	boots, clock := d.clock()
 	if h.Flags&proto.FlagAuth != 0 && (h.Boots != boots || abs(h.Time-clock) > proto.TimeWindow) {
-		d.report(m, peer, proto.StatsNotInTimeWindows, keys, "time window sync with "+peer.Addr().String())
+		d.report(m, peer, conn, proto.StatsNotInTimeWindows, keys, "time window sync with "+peer.Addr().String())
 		return
 	}
 	if !isRequest(m.PDU.Type) {
@@ -70,7 +71,7 @@ func (d *Device) handleV3(m *proto.Message, peer netip.AddrPort) {
 		d.request(peer, "v3", op, len(m.PDU.VarBinds), first(m.PDU), "answer not built: "+err.Error())
 		return
 	}
-	d.send(packet, peer)
+	d.send(packet, peer, conn)
 	d.request(peer, "v3 "+user.Name, op, len(m.PDU.VarBinds), first(m.PDU), resultText(response))
 	d.wrote(peer, written)
 }
@@ -107,7 +108,7 @@ func (d *Device) encodeV3(request *proto.Header, response proto.PDU, keys *proto
 
 // report answers a failed v3 message with the usmStats counter (RFC 3414 3.2), when the
 // sender asked for reports. keys sign the report (only for the time window report).
-func (d *Device) report(m *proto.Message, peer netip.AddrPort, stat proto.OID, keys *proto.Keys, why string) {
+func (d *Device) report(m *proto.Message, peer netip.AddrPort, conn *net.UDPConn, stat proto.OID, keys *proto.Keys, why string) {
 	d.mu.Lock()
 	d.stats[stat.String()]++
 	count := d.stats[stat.String()]
@@ -124,7 +125,7 @@ func (d *Device) report(m *proto.Message, peer netip.AddrPort, stat proto.OID, k
 	}
 	packet, err := d.encodeV3(m.Header, pdu, keys, flags, proto.PDU{})
 	if err == nil {
-		d.send(packet, peer)
+		d.send(packet, peer, conn)
 	}
 }
 

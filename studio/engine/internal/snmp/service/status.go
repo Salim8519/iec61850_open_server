@@ -26,7 +26,9 @@ type DeviceStatus struct {
 	Profile string `json:"profile"`
 	Kind    string `json:"kind"`
 	Address string `json:"address"`
-	State   string `json:"state"` // running, stopped or failed
+	Network bool   `json:"network"` // answers on the lab network (Network setup), not this PC only
+	Local   string `json:"local"`   // its 127.x address on this PC
+	State   string `json:"state"`   // running, stopped or failed
 	Error   string `json:"error"`
 	Points  int    `json:"points"`
 }
@@ -55,6 +57,7 @@ type TrapStatus struct {
 // Status reads the current state.
 func (s *Service) Status() Status {
 	config := s.Config()
+	lab := s.onLab()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	status := Status{Role: config.Role, Engine: "off", Devices: []DeviceStatus{},
@@ -68,8 +71,12 @@ func (s *Service) Status() Status {
 	for _, device := range config.Devices {
 		state := s.devices[device.ID]
 		item := DeviceStatus{ID: device.ID, Name: device.Name, Profile: device.Profile, Kind: profiles.Names[device.Profile],
-			Address: device.IP + ":" + strconv.Itoa(device.Port), State: "stopped", Error: state.Error,
+			Address: answersAt(device, lab), Network: lab && device.LabIP != "",
+			Local: device.IP + ":" + strconv.Itoa(device.Port), State: "stopped", Error: state.Error,
 			Points: len(device.Points)}
+		if lab && device.LabIP == "" && state.State == "" {
+			item.Error = NoLabAddress(device.Name)
+		}
 		if state.State != "" {
 			item.State = state.State
 		}

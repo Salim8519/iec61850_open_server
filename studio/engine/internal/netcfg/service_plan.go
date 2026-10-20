@@ -37,7 +37,11 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 	if err != nil {
 		return nil, previewState{}, err
 	}
-	if len(ieds) == 0 {
+	devices, err := s.snmpDevices()
+	if err != nil {
+		return nil, previewState{}, err
+	}
+	if len(ieds) == 0 && len(devices) == 0 {
 		return nil, previewState{}, apperr.New("No IED is set to 'Simulate', so there is nothing to put on " +
 			"the network. Set an IED to 'Simulate' in Devices first.")
 	}
@@ -50,6 +54,20 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 	if err := s.addAlternatives(rows, ieds, adapter, strategy, picked.inUse); err != nil {
 		return nil, previewState{}, err
 	}
+	snmp := SNMPRule{Program: snmpWorker(s.Program)}
+	if len(devices) > 0 {
+		snmpRows, err := s.snmpRows(devices, adapter, manual, rows)
+		if err != nil {
+			return nil, previewState{}, err
+		}
+		rows = append(rows, snmpRows...)
+		for _, device := range devices {
+			snmp.Ports = append(snmp.Ports, device.Port)
+		}
+		if snmp.Existing, err = s.SNMPRules(); err != nil {
+			return nil, previewState{}, err
+		}
+	}
 	ports := make([]int, len(ieds))
 	for index, ied := range ieds {
 		ports[index] = ied.Port
@@ -58,7 +76,7 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 	if err != nil {
 		return nil, previewState{}, err
 	}
-	plan, err := BuildPlan(adapter, rows, ports, s.Program, existing)
+	plan, err := BuildPlanWithSNMP(adapter, rows, ports, s.Program, existing, snmp)
 	if err != nil {
 		return nil, previewState{}, err
 	}

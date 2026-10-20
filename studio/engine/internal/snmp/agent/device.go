@@ -20,6 +20,7 @@ type Emit func(event map[string]any)
 type Device struct {
 	cfg      model.Device
 	conn     *net.UDPConn
+	local    *net.UDPConn // the 127.x twin while on a lab address (Windows sends to 127.x only from 127.x)
 	engineID []byte
 	boots    int32
 	now      func() time.Time
@@ -62,16 +63,39 @@ func Start(cfg model.Device, boots int32, now func() time.Time, emit Emit) (*Dev
 		}
 		d.keys[user.Name], d.users[user.Name] = keys, user
 	}
-	address, err := netip.ParseAddr(cfg.IP)
-	if err != nil || !address.Is4() {
-		return nil, fmt.Errorf("%s: %q is not an IPv4 address", cfg.Name, cfg.IP)
+	if d.conn, err = listen(cfg.Name, cfg.IP, cfg.Port); err != nil {
+		return nil, err
 	}
-	d.conn, err = net.ListenUDP("udp4", net.UDPAddrFromAddrPort(netip.AddrPortFrom(address, uint16(cfg.Port))))
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", cfg.Name, BindProblem(cfg.IP, cfg.Port, err))
+	if cfg.LocalIP != "" && cfg.LocalIP != cfg.IP {
+		if d.local, err = listen(cfg.Name, cfg.LocalIP, cfg.Port); err != nil {
+			d.conn.Close()
+			return nil, err
+		}
+		go d.serve(d.local)
 	}
-	go d.serve()
+	go d.serve(d.conn)
 	return d, nil
+}
+
+func listen(name, ip string, port int) (*net.UDPConn, error) {
+	address, err := netip.ParseAddr(ip)
+	if err != nil || !address.Is4() {
+		return nil, fmt.Errorf("%s: %q is not an IPv4 address", name, ip)
+	}
+	conn, err := net.ListenUDP("udp4", net.UDPAddrFromAddrPort(netip.AddrPortFrom(address, uint16(port))))
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", name, BindProblem(ip, port, err))
+	}
+	return conn, nil
+}
+
+// connFor is the socket a trap or inform to peer leaves from: the 127.x twin for this PC
+// (Windows sends to 127.x only from 127.x), else the main one.
+func (d *Device) connFor(peer netip.AddrPort) *net.UDPConn {
+	if d.local != nil && peer.Addr().IsLoopback() {
+		return d.local
+	}
+	return d.conn
 }
 
 // Close stops answering and releases the address.
@@ -80,6 +104,9 @@ func (d *Device) Close() {
 	d.closed = true
 	d.mu.Unlock()
 	d.conn.Close()
+	if d.local != nil {
+		d.local.Close()
+	}
 }
 
 // clock is the engine boots and the seconds since this start.
@@ -87,27 +114,28 @@ func (d *Device) clock() (int32, int32) {
 	return d.boots, int32(d.now().Sub(d.store.started) / time.Second)
 }
 
-func (d *Device) serve() {
+func (d *Device) serve(conn *net.UDPConn) {
 	buffer := make([]byte, 65535)
 	for {
-		n, peer, err := d.conn.ReadFromUDPAddrPort(buffer)
+		n, peer, err := conn.ReadFromUDPAddrPort(buffer)
 		if err != nil {
 			if errors.Is(err, net.ErrClosed) {
 				return
 			}
 			continue // Windows reports ICMP port unreachable of an earlier send here
 		}
-		d.handle(append([]byte(nil), buffer[:n]...), peer)
+		d.handle(append([]byte(nil), buffer[:n]...), peer, conn)
 	}
 }
 
-func (d *Device) send(packet []byte, peer netip.AddrPort) {
-	if _, err := d.conn.WriteToUDPAddrPort(packet, peer); err != nil {
+// send answers peer from the socket its request came in on.
+func (d *Device) send(packet []byte, peer netip.AddrPort, conn *net.UDPConn) {
+	if _, err := conn.WriteToUDPAddrPort(packet, peer); err != nil {
 		d.request(peer, "", "", 0, "", "answer not sent: "+err.Error())
 	}
 }
 
-func (d *Device) handle(packet []byte, peer netip.AddrPort) {
+func (d *Device) handle(packet []byte, peer netip.AddrPort, conn *net.UDPConn) {
 	m, err := proto.Decode(packet)
 	if err != nil {
 		d.request(peer, "", "", 0, "", "not a valid SNMP message")
@@ -120,17 +148,17 @@ func (d *Device) handle(packet []byte, peer netip.AddrPort) {
 	}
 	switch m.Version {
 	case proto.Version1, proto.Version2c:
-		d.handleCommunity(m, peer)
+		d.handleCommunity(m, peer, conn)
 	case proto.Version3:
 		if !d.cfg.V3 {
 			d.request(peer, "v3", proto.PDUName(m.PDU.Type), 0, "", "ignored: SNMPv3 is off for this device")
 			return
 		}
-		d.handleV3(m, peer)
+		d.handleV3(m, peer, conn)
 	}
 }
 
-func (d *Device) handleCommunity(m *proto.Message, peer netip.AddrPort) {
+func (d *Device) handleCommunity(m *proto.Message, peer netip.AddrPort, conn *net.UDPConn) {
 	version := map[int]string{proto.Version1: "v1", proto.Version2c: "v2c"}[m.Version]
 	op := proto.PDUName(m.PDU.Type)
 	if (m.Version == proto.Version1 && !d.cfg.V1) || (m.Version == proto.Version2c && !d.cfg.V2c) {
@@ -157,7 +185,7 @@ func (d *Device) handleCommunity(m *proto.Message, peer netip.AddrPort) {
 		d.request(peer, version, op, len(m.PDU.VarBinds), first(m.PDU), "answer not built: "+err.Error())
 		return
 	}
-	d.send(packet, peer)
+	d.send(packet, peer, conn)
 	d.request(peer, version, op, len(m.PDU.VarBinds), first(m.PDU), resultText(response))
 	d.wrote(peer, written)
 }

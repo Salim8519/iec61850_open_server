@@ -1,7 +1,7 @@
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { snmpApi, type DeviceStatus, type SnmpDevice } from '../../../../api/snmp';
-import { SNMP_COPY } from '../../../../copy/snmp';
+import { SETTINGS_COPY, SNMP_COPY } from '../../../../copy/snmp';
 import { TabBar } from '../../../../ui/TabBar';
 import { DeviceSettings } from './DeviceSettings';
 import { PointsTable } from './PointsTable';
@@ -24,7 +24,8 @@ export function DevicePanel({ device, state, refresh, fail }: {
   return <div className={`card fill-panel gateway-panel${running ? ' running' : ''}`}>
     <div className="panel-head">
       <h3>{device.name}</h3>
-      <span className="small muted">{state?.kind} · {device.ip}:{device.port}</span>
+      <span className="small muted">{state?.kind} · {state?.address ?? `${device.ip}:${device.port}`}
+        {state?.network && ` · ${SETTINGS_COPY.onNetwork}`}</span>
       <span className="gateway-spacer" />
       <button className="ghost" onClick={remove}><Trash2 size={16} />{SNMP_COPY.remove}</button>
     </div>
@@ -32,7 +33,7 @@ export function DevicePanel({ device, state, refresh, fail }: {
       tabs={(Object.keys(SNMP_COPY.tabs) as Tab[]).map(key => [key, SNMP_COPY.tabs[key]])} />
     <div className="panel-body">
       {tab === 'values' && <PointsTable device={device} running={running} refresh={refresh} fail={fail} />}
-      {tab === 'settings' && <DeviceSettings device={device} running={running} save={save} fail={fail} />}
+      {tab === 'settings' && <DeviceSettings device={device} state={state} running={running} save={save} fail={fail} />}
       {tab === 'traps' && <TrapPanel device={device} running={running} save={save} fail={fail} />}
       {tab === 'log' && <RequestLog device={device.id} />}
     </div>

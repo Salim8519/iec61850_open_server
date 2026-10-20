@@ -1,15 +1,17 @@
 import { Save } from 'lucide-react';
 import { useState } from 'react';
-import type { SnmpDevice } from '../../../../api/snmp';
+import type { DeviceStatus, SnmpDevice } from '../../../../api/snmp';
 import { SETTINGS_COPY, SNMP_COPY } from '../../../../copy/snmp';
 import { Disclosure } from '../../../../ui/Disclosure';
 import { HelpTip } from '../../../../ui/HelpTip';
 import { UsersEditor } from './UsersEditor';
 
 /** A device's address, versions, communities, v3 users and engine ID; saved together with Save settings. */
-export function DeviceSettings({ device, running, save, fail }: {
-  device: SnmpDevice; running: boolean; save: (device: SnmpDevice) => Promise<unknown>; fail: (message: string) => void;
+export function DeviceSettings({ device, state, running, save, fail }: {
+  device: SnmpDevice; state?: DeviceStatus; running: boolean; save: (device: SnmpDevice) => Promise<unknown>;
+  fail: (message: string) => void;
 }) {
+  const address = state?.network ? SETTINGS_COPY.localAddress : SETTINGS_COPY.address;
   const [draft, setDraft] = useState(device);
   const [saved, setSaved] = useState(false);
   const set = (change: Partial<SnmpDevice>) => { setDraft(current => ({ ...current, ...change })); setSaved(false); };
@@ -20,11 +22,12 @@ export function DeviceSettings({ device, running, save, fail }: {
   return <form className="fill-scroll snmp-settings" onSubmit={event => { event.preventDefault(); submit(); }}>
     <div className="form-grid">
       <label>{SETTINGS_COPY.name}<input value={draft.name} onChange={event => set({ name: event.target.value })} /></label>
-      <label><span className="label-row">{SETTINGS_COPY.address}<HelpTip text={SETTINGS_COPY.addressHint} /></span>
-        <input aria-label={SETTINGS_COPY.address} value={draft.ip} onChange={event => set({ ip: event.target.value.trim() })} spellCheck={false} /></label>
+      <label><span className="label-row">{address}<HelpTip text={SETTINGS_COPY.addressHint} /></span>
+        <input aria-label={address} value={draft.ip} onChange={event => set({ ip: event.target.value.trim() })} spellCheck={false} /></label>
       <label><span className="label-row">{SETTINGS_COPY.port}<HelpTip text={SETTINGS_COPY.portHint} /></span>
         <input aria-label={SETTINGS_COPY.port} inputMode="numeric" value={draft.port} onChange={event => set({ port: Number(event.target.value) || 0 })} /></label>
     </div>
+    {state?.network && <p className="small snmp-network-note">{SETTINGS_COPY.networkNote(state.address)}</p>}
     <fieldset className="snmp-fieldset"><legend><span className="label-row">{SETTINGS_COPY.versions}
       <HelpTip text={SETTINGS_COPY.versionsHint} /></span></legend>
       <div className="row">{(['v1', 'v2c', 'v3'] as const).map(version => <label key={version} className="row gateway-check">

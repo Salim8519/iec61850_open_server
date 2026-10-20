@@ -15,7 +15,7 @@ const deviceIP = "127.66.20.1"
 
 func testDevice(t *testing.T, users ...model.User) (model.Device, *agent.Device) {
 	t.Helper()
-	cfg := model.Device{ID: "d1", Name: "Test switch", IP: deviceIP, Port: testutil.FreePort(t, deviceIP),
+	cfg := model.Device{ID: "d1", Name: "Test switch", IP: deviceIP, Port: testutil.FreeUDPPort(t, deviceIP),
 		V1: true, V2c: true, V3: true, ReadCommunity: "public", WriteCommunity: "private", Users: users,
 		EngineID: "800000000501020304050607",
 		Points: []model.Point{

@@ -1,4 +1,4 @@
-import { Download, Lock, Plus, Save, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
+import { Download, ListChecks, Lock, Plus, Save, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { gatewayApi, gatewayPointsPath, problemsOf, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
 import { liveFeed } from '../../../api/polls';
@@ -7,6 +7,8 @@ import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
 import { choicesOf, effective } from '../../../ui/filterState';
 import { HelpTip } from '../../../ui/HelpTip';
+import { stillThere, toggleShown, togglePick } from '../../../ui/pickRows';
+import { SelectBar } from '../../../ui/SelectBar';
 import { AddOwnPoint } from './AddOwnPoint';
 import { CommandButtons, CommandWarning, type PendingCommand } from './CommandSend';
 import { blockedReason } from './gatewayCommands';
@@ -29,6 +31,7 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const [pending, setPending] = useState<PendingCommand | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState<{ ok: boolean; text: string } | null>(null);
+  const [picked, setPicked] = useState<Set<string> | null>(null);
   const filter = useListFilter('scada-points', GATEWAY_POINT_FILTER);
   const file = useRef<HTMLInputElement>(null);
   const dirtyRef = useRef(false);
@@ -37,7 +40,7 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const load = () => liveFeed.refresh(path);
   // Shared live feed every second: an unchanged list re-renders nothing (speed lane F).
   useEffect(() => {
-    setRows(null); setDirty(false); setProblems([]); setNotes([]); setAdding(false);
+    setRows(null); setDirty(false); setProblems([]); setNotes([]); setAdding(false); setPicked(null);
     return liveFeed.subscribe<{ points: GatewayPoint[] }>(path, 1000, value => {
       setRows(current => dirtyRef.current && current ? mergeValues(current, value.points) : value.points);
     }, error => fail(error.message));
@@ -73,6 +76,16 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const shown = useMemo(() => (rows ?? []).map((row, index) => ({ row, index }))
     .filter(({ row }) => gatewayPointMatches(row, values)), [rows, values]);
   const first = Math.min(page, Math.max(0, Math.ceil(shown.length / PAGE) - 1)) * PAGE;
+  const picking = !!picked && !locked; // while choosing rows the description column steps aside
+  const shownKeys = shown.map(({ row, index }) => pointKey(row, index));
+  const chosen = picked && rows ? stillThere(picked, rows.map(pointKey)) : [];
+  const removeChosen = () => {
+    if (!rows) return;
+    const gone = new Set(chosen);
+    edit(rows.filter((row, index) => !gone.has(pointKey(row, index))));
+    setNotes([GATEWAY_COPY.removedNote(gone.size)]);
+    setPicked(null);
+  };
   return <>
     <div className="panel-toolbar">
       <button onClick={propose} disabled={locked}><Sparkles size={16} />{GATEWAY_COPY.propose}</button>
@@ -87,12 +100,17 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
         <button className="ghost" onClick={() => { setDirty(false); load(); }}><Undo2 size={16} />{GATEWAY_COPY.discard}</button>
         <button className="primary" onClick={save}><Save size={16} />{GATEWAY_COPY.save}</button></>}
       {locked && <span className="small muted row"><Lock size={14} />{GATEWAY_COPY.lockedPoints}</span>}
+      {!locked && !!rows?.length && <button className={picked ? 'active-toggle' : ''} aria-pressed={!!picked}
+        title={GATEWAY_COPY.selectHint} onClick={() => setPicked(picked ? null : new Set())}>
+        <ListChecks size={16} />{GATEWAY_COPY.select}</button>}
       {!locked && !!rows?.length && <button className="ghost" onClick={() => edit([])}><Trash2 size={16} />{GATEWAY_COPY.removeAll}</button>}
     </div>
     {adding && rows && <AddOwnPoint protocol={protocol} rows={rows} fail={fail} close={() => setAdding(false)}
       add={point => { edit([...rows, point]); setAdding(false); setNotes([OWN_COPY.saveFirst]); }} />}
     <FilterBar label="Filter points" spec={GATEWAY_POINT_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
       shown={shown.length} total={rows?.length ?? 0} options={options} />
+    {picked && !locked && <SelectBar count={chosen.length} shown={shown.length} noun="point" cancel={() => setPicked(null)}
+      selectShown={() => setPicked(toggleShown(new Set(), shownKeys))} remove={removeChosen} />}
     {(pending || sent || notes.length > 0 || problems.length > 0) && <div className="guide-section panel-messages">
       {pending && <CommandWarning pending={pending} real={pending.row.ied_role === 'real'} own={isOwn(pending.row)} busy={sending}
         cancel={() => setPending(null)} send={() => send(pending)} />}
@@ -102,12 +120,18 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
         <li key={problem}>{problem}</li>)}{problems.length > 20 && <li>…and {problems.length - 20} more</li>}</ul>}
     </div>}
     {rows && rows.length === 0 ? <p className="muted watch-empty">{GATEWAY_COPY.emptyPoints}</p> :
-      <div className="table-scroll"><table className="gateway-points"><thead><tr><th>Type</th><th>{ADDRESS_LABEL[protocol]}</th>
-        <th>IED · reference</th><th>Scale</th><th>Value now</th><th>Description</th><th aria-label="Remove" /></tr></thead>
+      <div className="table-scroll"><table className={`gateway-points${picking ? ' picking' : ''}`}><thead><tr>
+        {picked && !locked && <th className="pick-col"><input type="checkbox" aria-label="Tick all points shown"
+          checked={shownKeys.length > 0 && shownKeys.every(key => picked.has(key))}
+          onChange={() => setPicked(toggleShown(picked, shownKeys))} /></th>}<th>Type</th><th>{ADDRESS_LABEL[protocol]}</th>
+        <th>IED · reference</th><th>Scale</th><th>Value now</th>{!picking && <th>Description</th>}<th aria-label="Remove" /></tr></thead>
         <tbody>{shown.slice(first, first + PAGE).map(({ row, index }) => {
           const own = isOwn(row);
           const command = row.kind.startsWith('command');
-          return <tr key={pointKey(row, index)}>
+          const key = pointKey(row, index);
+          return <tr key={key} className={picked?.has(key) ? 'picked' : undefined}>
+            {picked && !locked && <td><input type="checkbox" checked={picked.has(key)}
+              aria-label={`Tick ${own ? ownName(row) : row.ref}`} onChange={() => setPicked(togglePick(picked, key))} /></td>}
             <td><span className="type-cell"><select value={row.kind} disabled={locked} aria-label="Point type"
               onChange={event => update(index, own ? { kind: event.target.value as PointKind, value: undefined, target: undefined }
                 : { kind: event.target.value as PointKind })}>
@@ -127,8 +151,8 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
                 {own && <span className="small muted">{row.value_text ?? 'No command yet'}</span>}</div>
               : own ? <OwnValue row={row} set={value => setOwn(index, row, value)} fail={fail} />
                 : <span className={row.online ? '' : 'muted'}>{row.online === false && '⚠ '}{row.value_text ?? '—'}</span>}</td>
-            <td><input value={row.description} disabled={locked} aria-label="Description" placeholder={own ? OWN_COPY.namePlaceholder : 'optional'}
-              onChange={event => update(index, { description: event.target.value })} /></td>
+            {!picking && <td><input value={row.description} disabled={locked} aria-label="Description" placeholder={own ? OWN_COPY.namePlaceholder : 'optional'}
+              onChange={event => update(index, { description: event.target.value })} /></td>}
             <td><button className="ghost icon-button" disabled={locked} aria-label={`Remove ${own ? ownName(row) : row.ref}`} title="Remove"
               onClick={() => rows && edit(rows.filter((_, at) => at !== index))}><X size={15} /></button></td>
           </tr>;

@@ -40,6 +40,8 @@ func ApplyCommand(item *pyjson.Object) (string, error) {
 			"-Action Allow -Protocol TCP -Program " + psString(f.text("program")) + " -Profile Any"
 	case "unblock":
 		command = blockingCheck(f) + "Disable-NetFirewallRule -Name " + psString(f.text("name"))
+	case "snmp_firewall":
+		command = snmpFirewallCommand(f)
 	case "alias":
 		command = "New-NetIPAddress -InterfaceIndex " + f.integer("adapter_index") + " -IPAddress " + f.text("ip") +
 			" -PrefixLength " + f.integer("prefix") + " -AddressFamily IPv4 -SkipAsSource $true " +

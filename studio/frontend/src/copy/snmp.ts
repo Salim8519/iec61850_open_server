@@ -33,7 +33,10 @@ export const SNMP_COPY = {
 
 export const SETTINGS_COPY = {
   name: 'Name', address: 'Address (IP)', port: 'Port',
-  addressHint: '127.x.x.x addresses work on this PC only, with no cable. To reach the device from another PC, use an address of one of this PC\'s network cards.',
+  addressHint: 'Each device has its own 127.x.x.x address that works on this PC only. To reach the devices from other PCs, put the project on a network in Settings › Network: each SNMP device gets its own free address on the same card as the IEDs.',
+  localAddress: 'Address on this PC',
+  networkNote: (address: string) => `On the network it answers at ${address}, the address Settings › Network gave it. It also keeps answering at its address on this PC.`,
+  onNetwork: 'on the network', onNetworkLine: 'On the network',
   portHint: 'SNMP uses port 161. If Windows\' own SNMP service holds it, ScadaBench tells you; then pick 1161.',
   versions: 'SNMP versions it answers', versionsHint: 'v1 and v2c use a community name like a shared password. v3 uses a user name with real passwords and encryption.',
   readCommunity: 'Read community', writeCommunity: 'Write community',
@@ -72,6 +75,8 @@ export const POINTS_COPY = {
   writableHint: 'Writable values can be changed by managers that use the write community or a v3 user.',
   editHint: 'Click a value to change it. Managers see the new value at their next read.',
   none: 'No values match the filter.',
+  select: 'Select', selectHint: 'Choose several values to delete',
+  removeMany: (count: number) => `Delete ${count} values from this device? Managers no longer see them.`,
 };
 
 export const TRAPS_COPY = {

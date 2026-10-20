@@ -13,6 +13,13 @@ func Describe(item *pyjson.Object) (string, error) {
 		} else {
 			text = "Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall"
 		}
+	case "snmp_firewall":
+		if f.text("action") == "keep" {
+			text = "The Windows Firewall rule for the simulated SNMP devices already exists"
+		} else {
+			text = "Allow other devices to reach the simulated SNMP devices on UDP port " + f.joined("ports", ", ") +
+				" through Windows Firewall"
+		}
 	case "unblock":
 		text = "Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its " +
 			"'allow access?' question was closed); clean-up switches it on again"
@@ -41,6 +48,8 @@ func DescribeRemoval(item *pyjson.Object) (string, error) {
 	switch f.text("kind") {
 	case "gateway_firewall":
 		text = "Remove the Windows Firewall rule that ScadaBench added for its gateway"
+	case "snmp_firewall":
+		text = "Remove the Windows Firewall rule that ScadaBench added for the simulated SNMP devices"
 	case "unblock":
 		text = "Switch the Windows Firewall rule that blocked the gateway on again, as it was before"
 	case "alias":

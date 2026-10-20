@@ -64,7 +64,13 @@ type pickResult struct {
 
 // pick runs the planner up to five times, avoiding picked free addresses that answered.
 func (s *NetworkService) pick(ieds []PlanIED, adapter Adapter, strategy string, manual any) (pickResult, error) {
-	own, avoid := adapter.ips(), map[string]bool{}
+	return s.pickAvoiding(ieds, adapter, strategy, manual, map[string]bool{})
+}
+
+// pickAvoiding is pick that never proposes the addresses in avoid (SNMP rows avoid the IEDs').
+func (s *NetworkService) pickAvoiding(ieds []PlanIED, adapter Adapter, strategy string, manual any,
+	avoid map[string]bool) (pickResult, error) {
+	own := adapter.ips()
 	var result pickResult
 	for round := 0; round < pickRounds; round++ {
 		rows, err := s.rows(ieds, adapter, strategy, manual, avoid)

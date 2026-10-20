@@ -15,13 +15,17 @@ export type TrapTarget = { host: string; port: number; version: SnmpVersion; com
   inform?: boolean };
 export type SnmpDevice = { id: string; name: string; profile: string; ip: string; port: number; v1: boolean;
   v2c: boolean; v3: boolean; read_community: string; write_community: string; users: SnmpUser[]; engine_id: string;
-  traps: TrapTarget[]; points: SnmpPoint[] };
+  traps: TrapTarget[]; points: SnmpPoint[];
+  /** Its address on the lab network, given by Settings › Network (ADR-0092). */
+  lab_ip?: string };
 export type SnmpTarget = { host: string; port: number; version: SnmpVersion; community?: string; user: SnmpUser;
   timeout_ms?: number; retries?: number };
 export type SnmpConfig = { role: SnmpRole; auto_start: boolean; devices: SnmpDevice[]; reader: {
   target: SnmpTarget; every_ms: number; watched: string[]; trap_ip: string; trap_port: number;
   trap_users: SnmpUser[]; traps_on: boolean; engine_id: string } };
 export type DeviceStatus = { id: string; name: string; profile: string; kind: string; address: string;
+  /** It answers on the lab network (address) and on this PC (local). */
+  network: boolean; local: string;
   state: 'running' | 'stopped' | 'failed'; error: string; points: number };
 export type ReaderState = 'disconnected' | 'connecting' | 'walking' | 'connected' | 'failed';
 export type SnmpStatus = { role: SnmpRole; engine: 'off' | 'running' | 'failed'; message: string;

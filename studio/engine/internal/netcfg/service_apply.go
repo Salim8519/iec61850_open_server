@@ -67,7 +67,16 @@ func (s *NetworkService) Apply(fingerprint, confirm any) (*pyjson.Object, error)
 		failed = failed || !truthy(ok)
 	}
 	if !failed {
-		if err := s.Projects.EnterLabMode(fresh.rows, fresh.adapter); err != nil {
+		ieds, snmp := splitRows(fresh.rows)
+		if s.SNMP != nil && len(snmp) > 0 { // saved first: the devices move when lab mode starts
+			if err := s.SNMP.SetSNMPLabIPs(snmp); err != nil {
+				return nil, err
+			}
+		}
+		if ieds == nil {
+			ieds = []Row{}
+		}
+		if err := s.Projects.EnterLabMode(ieds, fresh.adapter); err != nil {
 			return nil, err
 		}
 	}

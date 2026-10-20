@@ -1,4 +1,4 @@
-import { Download, Plus, Trash2 } from 'lucide-react';
+import { Download, ListChecks, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { snmpApi, snmpPointsPath, type Behaviour, type SnmpDevice, type SnmpPoint, type ValueRow } from '../../../../api/snmp';
 import { useLiveFeed } from '../../../../api/useLiveFeed';
@@ -7,6 +7,8 @@ import { useListFilter } from '../../../../state/useListFilter';
 import { FilterBar } from '../../../../ui/FilterBar';
 import type { FilterSpec } from '../../../../ui/filterState';
 import { HelpTip } from '../../../../ui/HelpTip';
+import { stillThere, toggleShown, togglePick } from '../../../../ui/pickRows';
+import { SelectBar } from '../../../../ui/SelectBar';
 import { Pager } from '../../gateway/Pager';
 import { rowMatches } from '../rowMatch';
 import { AddPoint } from './AddPoint';
@@ -22,6 +24,7 @@ export function PointsTable({ device, running, refresh, fail }: {
   const [again, setAgain] = useState(0);
   const [adding, setAdding] = useState(false);
   const [page, setPage] = useState(0);
+  const [picked, setPicked] = useState<Set<string> | null>(null);
   const feed = useLiveFeed<{ points: ValueRow[]; live: boolean }>(snmpPointsPath(device.id), running ? 1000 : null, again);
   const filter = useListFilter('snmp-points', FILTER);
   const rows = useMemo(() => feed.value?.points ?? [], [feed.value]);
@@ -33,12 +36,21 @@ export function PointsTable({ device, running, refresh, fail }: {
     .then(() => { refresh(); reread(); }).catch(reason => fail(reason.message));
   const change = (oid: string, update: Partial<SnmpPoint>) =>
     savePoints(device.points.map(point => point.oid === oid ? { ...point, ...update } : point));
+  const shownKeys = shown.map(row => row.oid);
+  const chosen = picked ? stillThere(picked, rows.map(row => row.oid)) : [];
+  const removeChosen = () => {
+    if (chosen.length > 1 && !window.confirm(POINTS_COPY.removeMany(chosen.length))) return;
+    const gone = new Set(chosen);
+    savePoints(device.points.filter(point => !gone.has(point.oid))).then(() => setPicked(null));
+  };
   const setValue = (row: ValueRow, value: string) => snmpApi.setValue(device.id, row.oid, value, row.hex)
     .then(reread).catch(reason => fail(reason.message));
   return <>
     <div className="panel-toolbar">
       <button onClick={() => setAdding(!adding)}><Plus size={16} />{POINTS_COPY.add}</button>
       <a className="button" href={snmpApi.csvUrl(device.id)} download><Download size={16} />{POINTS_COPY.exportCsv}</a>
+      <button className={picked ? 'active-toggle' : ''} aria-pressed={!!picked} title={POINTS_COPY.selectHint}
+        onClick={() => setPicked(picked ? null : new Set())}><ListChecks size={16} />{POINTS_COPY.select}</button>
       <HelpTip text={`${POINTS_COPY.editHint} ${POINTS_COPY.writableHint}`} label="How do I change values?" />
       <span className="gateway-spacer" />
       <span className="small muted">{feed.value?.live ? POINTS_COPY.live : POINTS_COPY.stored}</span>
@@ -47,11 +59,18 @@ export function PointsTable({ device, running, refresh, fail }: {
       close={() => setAdding(false)} fail={fail} />}
     <FilterBar label="Filter values" spec={FILTER} values={filter.values} set={filter.set} clear={filter.clear}
       shown={shown.length} total={rows.length} />
-    <div className="table-scroll"><table className="gateway-points snmp-values"><thead><tr>
+    {picked && <SelectBar count={chosen.length} shown={shown.length} noun="value" cancel={() => setPicked(null)}
+      selectShown={() => setPicked(toggleShown(new Set(), shownKeys))} remove={removeChosen} />}
+    <div className="table-scroll"><table className={`gateway-points snmp-values${picked ? ' picking' : ''}`}><thead><tr>
+      {picked && <th className="pick-col"><input type="checkbox" aria-label="Tick all values shown"
+        checked={shownKeys.length > 0 && shownKeys.every(key => picked.has(key))}
+        onChange={() => setPicked(toggleShown(picked, shownKeys))} /></th>}
       <th>{POINTS_COPY.name}</th><th>{POINTS_COPY.value}</th><th className="col-type">{POINTS_COPY.type}</th>
       <th className="col-changes">{POINTS_COPY.behaviour}</th><th className="col-writable">{POINTS_COPY.writable}</th>
       <th className="col-remove" aria-label={POINTS_COPY.remove} /></tr></thead>
-      <tbody>{shown.slice(first, first + PAGE).map(row => <tr key={row.oid}>
+      <tbody>{shown.slice(first, first + PAGE).map(row => <tr key={row.oid} className={picked?.has(row.oid) ? 'picked' : undefined}>
+        {picked && <td><input type="checkbox" checked={picked.has(row.oid)} aria-label={`Tick ${row.name}`}
+          onChange={() => setPicked(togglePick(picked, row.oid))} /></td>}
         <td><div className="snmp-name"><span>{row.name}</span><span className="small muted mono">{row.oid}</span></div></td>
         <td className="snmp-value"><ValueEditor row={row} commit={value => setValue(row, value)} /></td>
         <td className="small">{TYPE_NAMES[row.type] ?? row.type}</td>

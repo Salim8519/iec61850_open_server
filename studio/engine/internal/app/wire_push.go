@@ -33,6 +33,7 @@ func (e *Engine) wirePush(live, runtimeRoutes, tools []api.Route) []api.Route {
 		Listen: func(event *events.Event) {
 			if event.Kind == "project_changed" {
 				e.Gateway.ProjectChanged()
+				e.SNMP.NetworkChanged() // devices follow the IEDs between this PC and the lab network
 			}
 		},
 	})
