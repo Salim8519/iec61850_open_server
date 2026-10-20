@@ -197,12 +197,22 @@ func (s *RealSession) RefreshHealth() (*pyjson.Object, error) {
 
 // Stop disconnects (giving back every report block) and waits up to 20 s for the goroutine.
 func (s *RealSession) Stop() {
+	s.halt()
+	s.stopped()
+}
+
+// halt is Stop without its live_status event: disconnect, close and wait for the goroutine.
+func (s *RealSession) halt() {
 	s.stopOnce.Do(func() { close(s.stopping) })
 	s.closeProcess()
 	select {
 	case <-s.done:
 	case <-time.After(20 * time.Second):
 	}
+}
+
+// stopped publishes the end of a halted session (state "stopped" and its live_status event).
+func (s *RealSession) stopped() {
 	s.set("stopped", "Disconnected; every report block ScadaBench used was given back")
 }
 
