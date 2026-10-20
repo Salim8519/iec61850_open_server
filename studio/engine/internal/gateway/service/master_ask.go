@@ -27,6 +27,7 @@ func (m *Master) askAll() *pyjson.Object {
 
 // Interrogate asks the device for every value (Modbus: reads the user's ranges).
 func (m *Master) Interrogate() (*pyjson.Object, error) {
+	defer m.changed(ChangeMasterStatus) // last_interrogation, poll_failures, message
 	process, err := m.activeProcess()
 	if err != nil {
 		return nil, err
@@ -129,6 +130,7 @@ func (m *Master) Command(request *pyjson.Object, who string) (*pyjson.Object, er
 
 // FindRegisters starts the bounded Modbus probe in the background.
 func (m *Master) FindRegisters(table string, start, end int64) (*pyjson.Object, error) {
+	defer m.changed(ChangeMasterStatus) // the probe state
 	process, err := m.activeProcess()
 	if err != nil {
 		return nil, err

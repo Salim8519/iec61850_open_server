@@ -27,6 +27,7 @@ type Manager struct {
 	Traffic    *numlog.Log
 	Commands   *numlog.Log
 	Converter  *Converter // protocol converter role; set by the composition
+	changes               // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // Start/Stop one at a time (Python's RLock around them)
 	mu        sync.Mutex // the fields below; never held across a worker request
@@ -52,6 +53,8 @@ func NewManager(projects Projects, runtime Runtime, operator control.Operator, e
 		Traffic: numlog.New(numlog.TrafficLines), Commands: numlog.New(numlog.CommandLines), state: "stopped",
 		points: map[string]*pyjson.Object{}, clients: map[string]bool{}, problems: []any{}}
 	m.executor = newExecutor(m)
+	m.Traffic.Watch(func() { m.changed(ChangeGatewayTraffic); m.changed(ChangeGatewayStatus) }) // traffic_last
+	m.Commands.Watch(func() { m.changed(ChangeGatewayCommands) })
 	return m
 }
 

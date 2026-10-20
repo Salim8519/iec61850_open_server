@@ -25,6 +25,8 @@ func connectTimeout(settings *pyjson.Object) time.Duration {
 
 // Connect starts studio_master toward the configured device and asks for every value.
 func (m *Master) Connect() (*pyjson.Object, error) {
+	defer m.changed(ChangeMasterPoints)
+	defer m.changed(ChangeMasterStatus)
 	m.lifecycle.Lock()
 	config, protocol, host, port, err := m.open()
 	m.lifecycle.Unlock()
@@ -110,6 +112,7 @@ func (m *Master) Autoconnect() {
 			m.mu.Lock()
 			m.state, m.message = "failed", "Automatic connect failed: "+err.Error()
 			m.mu.Unlock()
+			m.changed(ChangeMasterStatus)
 		}
 	}
 }
@@ -164,6 +167,8 @@ func sleep(stopping chan struct{}, d time.Duration) bool {
 }
 
 func (m *Master) reconnect(config *pyjson.Object) {
+	defer m.changed(ChangeMasterPoints)
+	defer m.changed(ChangeMasterStatus)
 	m.mu.Lock()
 	process := m.process
 	m.mu.Unlock()
@@ -191,6 +196,8 @@ func (m *Master) reconnect(config *pyjson.Object) {
 
 // Disconnect stops the worker; remember=false keeps auto_connect for an app shutdown.
 func (m *Master) Disconnect(remember bool) (*pyjson.Object, error) {
+	defer m.changed(ChangeMasterPoints)
+	defer m.changed(ChangeMasterStatus)
 	if config := m.Config(); remember && pytext.Truthy(get(config, "auto_connect")) {
 		if err := m.Save(with(config, "auto_connect", false)); err != nil {
 			return nil, err

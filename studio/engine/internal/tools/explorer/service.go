@@ -33,6 +33,7 @@ type Service struct {
 	emit       Emitter
 	memory     *memory.Store
 	control    control.Operator
+	changes    // OnChange: the push stream's "explorer" topic
 
 	spawnMu   sync.Mutex // one worker start at a time
 	connectMu sync.Mutex // one connect at a time
@@ -114,6 +115,7 @@ func (s *Service) setMessage(text string) {
 	s.mu.Lock()
 	s.message = text
 	s.mu.Unlock()
+	s.changed()
 }
 
 func (s *Service) worker() (worker.Process, error) {
@@ -156,6 +158,7 @@ func (s *Service) event(event *pyjson.Object) {
 	if kind != "live_connection" || state != "closed" {
 		return
 	}
+	defer s.changed()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.state == "connected" {
