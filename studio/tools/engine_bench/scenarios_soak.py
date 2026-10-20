@@ -51,7 +51,7 @@ def _calls(results, origin):
 
 
 def soak(make_engine, ieds=20, points=2000, sources=100, seconds=7200, interval=10, operate_every=5,
-         health_every=2, stream=None, min_free_mb=2048):
+         health_every=2, stream=None, min_free_mb=2048, push_topics=()):
     engine = make_engine()
     feeds, rows, operates, health, ended = [], [], [], [], "completed"
     out = Path(stream).open("a", encoding="utf-8") if stream else None
@@ -63,7 +63,7 @@ def soak(make_engine, ieds=20, points=2000, sources=100, seconds=7200, interval=
         engine.json("POST", "/api/v1/runtime/start")
         bench_project.wait_state(engine, "running", timeout=300)
         origin_wall, origin = time.time(), time.monotonic()
-        sse = SoakSse(engine).start()
+        sse = SoakSse(engine, push_topics).start()
         feeds = [sse, Periodic(health_every, health_poll(engine), "soak-health").start(),
                  Periodic(operate_every, breaker_rounds(engine, nodes), "soak-operate").start()]
         previous, cpu_before = None, {}
@@ -120,7 +120,8 @@ def soak(make_engine, ieds=20, points=2000, sources=100, seconds=7200, interval=
                 "ied_pids_new_total": sum(len(row["ied_pids_new"]) for row in rows),
                 "sse_disconnects": rows[-1]["sse_disconnects"] if rows else None,
                 "sse_id_jumps": rows[-1]["sse_id_jumps"] if rows else None,
-                "runtime_states_seen": sorted({row["runtime"] for row in rows}), "rows": light}
+                "runtime_states_seen": sorted({row["runtime"] for row in rows}), "rows": light,
+                "push_topics": {"asked": list(push_topics), "answer": sse.topic_answer} if push_topics else None}
     finally:
         for feed in feeds:
             feed.close()

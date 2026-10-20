@@ -20,7 +20,7 @@ import time
 from parity.jobobject import Job
 
 STUDIO = Path(__file__).resolve().parents[2]
-DEFAULT_GO = STUDIO / "engine/build/studio_server.exe"
+DEFAULT_GO = STUDIO / "build/engine/studio_server.exe"  # where run_dev_engine.py --engine go builds it
 
 
 def command(engine, python):
@@ -58,13 +58,18 @@ class Engine:
         threading.Thread(target=self._read, daemon=True).start()
         if not self._ready.wait(timeout) or not self.token:
             self.stop()
-            raise RuntimeError("engine did not start:\n" + "".join(self.lines[-30:]))
+            raise RuntimeError("engine did not start:\n" + "".join(self.output(30)))
         self.ready_seconds = time.perf_counter() - started
         status, _, headers = self.request("POST", "/api/v1/session", {"token": self.token})
         if status != 200:
             raise RuntimeError(f"session refused: {status}")
         self.cookie = headers.get("Set-Cookie", "").split(";", 1)[0]
         return self
+
+    def output(self, count):
+        """The launcher's last `count` lines with the session token hidden (safe for logs)."""
+        return [line.split("#session=", 1)[0] + "#session=<hidden>\n" if "#session=" in line else line
+                for line in self.lines[-count:]]
 
     def _read(self):
         for line in self.process.stdout:

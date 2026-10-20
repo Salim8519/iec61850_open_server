@@ -15,8 +15,11 @@ from engine_bench import canvas
 class SoakSse:
     """EventSource-like client: reconnects with the last id, counts kinds, id jumps and lag."""
 
-    def __init__(self, engine):
+    def __init__(self, engine, push_topics=()):
+        """push_topics: names subscribed on the Go push stream (/api/v1/push) like a UI tab;
+        empty means the plain /api/v1/events stream. Push frames count as kind "push:<topic>"."""
         self.engine, self.last_id, self.disconnects, self.id_jumps = engine, 0, 0, 0
+        self.push_topics, self.topic_answer = list(push_topics), None
         self.kinds, self.lags, self._stop, self._lock = collections.Counter(), [], threading.Event(), threading.Lock()
         self._connection = None
 
@@ -36,9 +39,15 @@ class SoakSse:
 
     def _stream(self):
         self._connection = http.client.HTTPConnection("127.0.0.1", self.engine.port, timeout=60)
-        self._connection.request("GET", f"/api/v1/events?after={self.last_id}", headers={
+        path = (f"/api/v1/push?client=benchsoak&after={self.last_id}" if self.push_topics
+                else f"/api/v1/events?after={self.last_id}")
+        self._connection.request("GET", path, headers={
             "Host": f"127.0.0.1:{self.engine.port}", "Cookie": self.engine.cookie})
         response, buffer = self._connection.getresponse(), b""
+        if self.push_topics:  # the tab's watched list, sent once its stream is attached
+            self.topic_answer = self.engine.json("PUT", "/api/v1/push/topics", {
+                "client": "benchsoak", "topics": [{"t": name, "params": {}} for name in self.push_topics],
+                "resync": []}, timeout=30)
         while not self._stop.is_set():
             chunk = response.read1(65536)
             if not chunk:
@@ -49,6 +58,12 @@ class SoakSse:
                 self._frame(frame)
 
     def _frame(self, frame):
+        if frame.startswith(b"event: push\n"):
+            for line in frame.split(b"\n"):
+                if line.startswith(b"data: "):
+                    with self._lock:
+                        self.kinds["push:" + str(json.loads(line[6:]).get("t"))] += 1
+            return
         for line in frame.split(b"\n"):
             if line.startswith(b"id: "):
                 number = int(line[4:])

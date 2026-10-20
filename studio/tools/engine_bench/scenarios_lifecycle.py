@@ -116,10 +116,10 @@ def app_cycles(make_engine, new_engine, ieds=10, points=2000, cycles=10, hold=5)
                 row["natives_exit_s"] = None if gone is None else round(time.perf_counter() - started, 3)
                 row["natives_left"] = sorted(set(shutdown.native_pids(engine).values()))
                 row["ports_still_open"] = sum(listening(ip, port) for ip, port in addresses)
-                row["log_tail"] = [line.rstrip() for line in engine.lines[-3:]]
+                row["log_tail"] = [line.rstrip() for line in engine.output(3)]
             except Exception as error:
                 row["error"] = f"{type(error).__name__}: {error}"[:300]
-                row["log_tail"] = [line.rstrip() for line in engine.lines[-8:]]
+                row["log_tail"] = [line.rstrip() for line in engine.output(8)]
             finally:
                 engine.stop()
             time.sleep(3)

@@ -8,6 +8,7 @@ from xml.etree import ElementTree as ET
 
 NS = "{http://www.iec.ch/61850/2003/SCL}"
 PER_LN = 50
+CTL_MODEL = None  # --ctl-model: Pos ctlModel ordinal (3 direct-enhanced = template default, 4 sbo-enhanced)
 
 
 def make_scl(name, points):
@@ -16,6 +17,9 @@ def make_scl(name, points):
     root = ET.fromstring(make_template(name))
     types = root.find(NS + "DataTypeTemplates")
     device = root.find(f".//{NS}LDevice")
+    if CTL_MODEL is not None:
+        for value in root.findall(f".//{NS}DOType[@id='StudioDPC']/{NS}DA[@name='ctlModel']/{NS}Val"):
+            value.text = str(CTL_MODEL)
     values = max(1, points // 3)
     lns = (values + PER_LN - 1) // PER_LN
     for ln_index in range(lns):
