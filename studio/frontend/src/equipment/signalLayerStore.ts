@@ -31,23 +31,32 @@ export class SignalLayerStore {
     return () => { this.listeners.delete(listener); };
   };
 
-  private update(next: Partial<SignalLayerState>) {
+  /** `quiet`: keep the data current without telling anyone (its layer is off, nothing shows it). */
+  private update(next: Partial<SignalLayerState>, quiet = false) {
     this.value = { ...this.value, ...next };
-    this.listeners.forEach(listener => listener());
+    if (!quiet) this.listeners.forEach(listener => listener());
   }
 
-  setLayers(layers: Layers) { this.update({ layers }); }
+  /** The two switches only; the same object until they change, so the toolbar is not re-rendered. */
+  layers = () => this.value.layers;
+
+  setLayers(layers: Layers) {
+    const now = this.value.layers;
+    if (now.goose === layers.goose && now.readers === layers.readers) return;
+    this.update({ layers });
+  }
 
   setMap(map: GooseLinkMap) {
+    if (map === this.value.map) return;
     const goose = { ...this.value.goose };
     for (const link of map.links) {
       if (link.gocb_ref && link.live && link.live.state !== 'stopped' && !goose[link.gocb_ref]) goose[link.gocb_ref] = link.live;
     }
     const listening = map.running && (this.value.listening || map.links.some(link => link.live && link.live.state !== 'stopped'));
-    this.update({ map, goose, listening });
+    this.update({ map, goose, listening }, !this.value.layers.goose && !this.value.layers.readers);
   }
 
-  setClients(clients: Record<string, MmsClient[]>) { this.update({ clients }); }
+  setClients(clients: Record<string, MmsClient[]>) { this.update({ clients }, !this.value.layers.readers); }
 
   /** Stop clears everything live; the declared map stays. */
   stopped() {
@@ -62,7 +71,8 @@ export class SignalLayerStore {
       key: ++this.counter, linkId: link.id, kind, start: now,
       label: pulseLabel(link.publisher, link.subscriber, change, kind),
       short: receivedLabel(link.publisher, change, kind) }));
-    if (fresh.length) this.update({ pulses: [...this.value.pulses.filter(item => now - item.start < LINK_FADE_MS), ...fresh] });
+    if (fresh.length) this.update({ pulses: [...this.value.pulses.filter(item => now - item.start < LINK_FADE_MS), ...fresh] },
+      !this.value.layers.goose);
   }
 
   handle(event: Event, now: number, describe?: (iedId: string, ref: string, value: unknown) => string) {
@@ -70,7 +80,7 @@ export class SignalLayerStore {
       const previous = this.value.goose[event.gocb_ref];
       const state = { state: String(event.state), problem: String(event.problem || ''),
         st_num: typeof event.st_num === 'number' ? event.st_num : undefined };
-      this.update({ goose: { ...this.value.goose, [event.gocb_ref]: state }, listening: true });
+      this.update({ goose: { ...this.value.goose, [event.gocb_ref]: state }, listening: true }, !this.value.layers.goose);
       const recent = this.recent.get(event.gocb_ref);
       const change = recent && now - recent.at < 3000 ? recent.text : state.st_num !== undefined ? `stNum ${state.st_num}` : '';
       this.pulse(observedLinks(this.value.map, event.gocb_ref, previous?.st_num, state.st_num), 'observed', change, now);
@@ -85,7 +95,7 @@ export class SignalLayerStore {
       for (const link of links) if (link.gocb_ref) this.recent.set(link.gocb_ref, { text, at: now });
       if (!this.value.listening) this.pulse(links, 'expected', text, now);
     } else if (event.kind === 'mms_access' && event.ied_id && Array.isArray(event.clients)) {
-      this.update({ clients: { ...this.value.clients, [event.ied_id]: event.clients as MmsClient[] } });
+      this.update({ clients: { ...this.value.clients, [event.ied_id]: event.clients as MmsClient[] } }, !this.value.layers.readers);
     } else if (event.kind === 'control_applied' && event.external === true && event.ied_id) {
       const name = this.value.map.ieds.find(ied => ied.ied_id === event.ied_id)?.name || '';
       const peer = String(event.peer || '');

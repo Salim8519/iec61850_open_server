@@ -2,7 +2,8 @@ import { Radar, Square } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../api/client';
 import type { Adapter } from '../../../api/network';
-import { memoryApi, scanApi, type ScanPreview, type ScanStatus } from '../../../api/tools';
+import { memoryApi, SCAN_STATUS, scanApi, type ScanPreview, type ScanStatus } from '../../../api/tools';
+import { liveFeed } from '../../../api/polls';
 import { FIND_COPY } from '../../../copy/tools';
 import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
@@ -41,9 +42,8 @@ export function FindTool({ openExplorer, known }: { openExplorer: (host: string,
   }, [range, port]);
   const scanning = scan?.state === 'scanning';
   useEffect(() => {
-    if (!scanning) return;
-    const timer = setInterval(() => scanApi.status().then(setScan).catch(() => {}), 300);
-    return () => clearInterval(timer);
+    if (!scanning) return undefined;
+    return liveFeed.subscribe<ScanStatus>(SCAN_STATUS, 300, setScan);
   }, [scanning]);
   const start = () => scanApi.start(range, Number(port)).then(setScan).catch(reason => setError(reason.message));
   const pick = (key: string) => {

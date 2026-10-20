@@ -6,8 +6,8 @@ import { EmptyState } from '../../ui/EmptyState';
 import { SourceEditor } from './SourceEditor';
 import { modeLabel } from './sourceModes';
 
-export function Generators({ project, values, perform }: {
-  project: Project; values: Record<string, unknown>; perform: (task: () => Promise<unknown>) => Promise<void>;
+export function Generators({ project, perform }: {
+  project: Project; perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
   const [editing, setEditing] = useState<string | null>(null);
   const sources = project.sources.filter(item => item.spec.mode !== 'manual');
@@ -19,7 +19,7 @@ export function Generators({ project, values, perform }: {
         onClick={() => setEditing(editing === 'new' ? null : 'new')}>{editing === 'new' ? <><X size={16} />Cancel</> : <><Plus size={16} />New generator</>}</button>}
     </div>
     {editing === 'new' && <div className="card"><div className="card-heading"><h2>New generator</h2></div>
-      <div className="card-body"><SourceEditor project={project} values={values} perform={perform} done={() => setEditing(null)} /></div></div>}
+      <div className="card-body"><SourceEditor project={project} perform={perform} done={() => setEditing(null)} /></div></div>}
     {!sources.length && editing !== 'new' && <div className="card"><EmptyState icon={<Waves size={24} />} title="No generators yet"
       hintId="test.generators.empty" action={<button className="primary" onClick={() => setEditing('new')}><Plus size={16} />New generator</button>} /></div>}
     {!!sources.length && <div className="card"><table><thead><tr><th>Measurement</th><th>Behaviour</th><th style={{ width: 90 }} /></tr></thead>
@@ -30,7 +30,7 @@ export function Generators({ project, values, perform }: {
             <span className="small muted"> · {item.spec.offset} ± {item.spec.amplitude}, every {item.spec.period}s</span>}</td>
           <td><button className="ghost" onClick={() => setEditing(editing === key(item) ? null : key(item))}><Pencil size={15} />Edit</button></td></tr>,
           editing === key(item) && <tr key={`${key(item)}-edit`}><td colSpan={3} style={{ background: 'var(--surface-2)' }}>
-            <SourceEditor point={item} project={project} values={values} perform={perform} done={() => setEditing(null)} /></td></tr>];
+            <SourceEditor point={item} project={project} perform={perform} done={() => setEditing(null)} /></td></tr>];
       })}</tbody></table></div>}
   </div>;
 }

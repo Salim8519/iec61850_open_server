@@ -46,14 +46,16 @@ export function App() {
   const fileInput = useRef<HTMLInputElement>(null);
   const project = studio.project;
   const locked = project?.runtime !== 'stopped';
-  const openFile = () => fileInput.current?.click();
+  // Stable callbacks keep the memoised diagram toolbar from being rebuilt on every app render.
+  const openFile = useCallback(() => fileInput.current?.click(), []);
+  const openDevices = useCallback((iedId?: string) => { setFlowIed(iedId); setCurrent('devices'); }, []);
   const info = place(current);
   const running = useActivity(!!project);
   const update = useUpdateStatus();
   return <div className="app">
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} />}
-    <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project} eventCount={studio.events.length}
+    <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project}
       openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)}
       update={update.status} dismissUpdate={version => { update.change({ dismissed: version }).catch(() => {}); }} />
     <div className="main">
@@ -72,21 +74,21 @@ export function App() {
         {!project && !studio.error && <div className="empty" role="status">
           Opening your last project… Large stations can take a few seconds.</div>}
         {project && current === 'diagram' && <DiagramPage studio={studio} project={project} locked={locked}
-          openDevices={iedId => { setFlowIed(iedId); setCurrent('devices'); }} openFile={openFile} />}
-        {project && current === 'devices' && <DevicesPage project={project} locked={locked} values={studio.values}
+          openDevices={openDevices} openFile={openFile} />}
+        {project && current === 'devices' && <DevicesPage project={project} locked={locked}
           perform={studio.perform} prepare={studio.prepare} importFile={openFile} addTemplate={studio.addTemplate}
           flowIed={flowIed} openNetwork={() => setCurrent('settings')} />}
-        {project && current === 'test' && <TestPage project={project} locked={locked} values={studio.values}
-          events={studio.events} perform={studio.perform} prepare={studio.prepare} />}
+        {project && current === 'test' && <TestPage project={project} locked={locked}
+          perform={studio.perform} prepare={studio.prepare} />}
         {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}
           tool={tool} openTool={setTool} running={toolActivity(running)} activity={running} runIeds={() => studio.runtime('start')} />}
         {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform}
           openTraffic={() => { setTool('traffic'); setCurrent('tools'); }} update={update} />}
       </main>
     </div>
-    {project && <GooseConflicts project={project} events={studio.events} />}
+    {project && <GooseConflicts project={project} />}
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}
-    {activity && <EventLog events={studio.events} close={() => setActivity(false)}
+    {activity && <EventLog close={() => setActivity(false)}
       session={project ? `${project.session_id.slice(0, 8)} · revision ${project.revision}` : undefined} />}
   </div>;
 }

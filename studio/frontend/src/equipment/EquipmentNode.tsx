@@ -9,11 +9,12 @@ import { JunctionBody } from './JunctionBody';
 import { kindInfo, stateTone } from './kindInfo';
 import { colorScheme, paintFor, stateFill } from './stateColors';
 import './equipment-node.css';
-import { IedNames, LiveValues, ModeBadges, StoppedIeds } from './liveContext';
+import { IedNames, LiveValues, StoppedIeds, useModeBadge } from './liveContext';
 import { stateBindings } from './stateBindings';
 import { RUN_SHAPE_COPY } from '../copy/runShape';
 import { modeStatus } from '../copy/testMode';
 import { confirmedChange } from './readability';
+import { markPaint } from '../app/perf';
 
 /** One terminal = a target and a source handle on the same spot, so a wire may start and end on any
  *  side (interaction contract). With target-only north/west, a north-to-north wire was saved but React
@@ -25,7 +26,7 @@ function Terminal({ id, position }: { id: string; position: Position }) {
 function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const store = useContext(LiveValues);
   const iedNames = useContext(IedNames);
-  const badge = useContext(ModeBadges)[id];
+  const badge = useModeBadge(id);
   const stoppedIeds = useContext(StoppedIeds);
   const subscribe = useCallback((listener: () => void) => store.subscribe(id, listener), [id, store]);
   const snapshot = useCallback(() => store.get(id), [id, store]);
@@ -43,8 +44,9 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
   const [changes, setChanges] = useState(0);
   useEffect(() => {
     if (switching && confirmedChange(previous.current, position)) setChanges(count => count + 1);
+    if (previous.current !== position) markPaint(id);
     previous.current = position;
-  }, [position, switching]);
+  }, [id, position, switching]);
   const junction = data.kind === 'JUNCTION';
   const relay = data.kind === 'RELAY';
   const terminalLess = data.kind === 'PUSH_BUTTON';

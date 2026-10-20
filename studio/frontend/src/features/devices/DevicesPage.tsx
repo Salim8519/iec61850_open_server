@@ -24,8 +24,8 @@ const HEALTH = 'station-health';
 
 /** Devices: the IED list in its own scrolling column, the chosen IED (or whole-station view) beside it,
  *  both filling the window (ADR-0064). */
-export function DevicesPage({ project, locked, values, perform, prepare, importFile, addTemplate, flowIed, openNetwork }: {
-  project: Project; locked: boolean; values: Record<string, unknown>;
+export function DevicesPage({ project, locked, perform, prepare, importFile, addTemplate, flowIed, openNetwork }: {
+  project: Project; locked: boolean;
   perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>;
   importFile: () => void; addTemplate: (name: string) => void; flowIed?: string; openNetwork?: () => void;
 }) {
@@ -85,7 +85,7 @@ export function DevicesPage({ project, locked, values, perform, prepare, importF
       </aside>
       {selected === FLOW && <div className="fill-scroll"><SignalFlowView running={project.runtime !== 'stopped'} /></div>}
       {selected === HEALTH && <div className="fill-scroll"><HealthView running={project.runtime !== 'stopped'} /></div>}
-      {ied && <DeviceDetail ied={ied} project={project} locked={locked} values={values} perform={perform} prepare={prepare}
+      {ied && <DeviceDetail ied={ied} project={project} locked={locked} perform={perform} prepare={prepare}
         initialTab={ied.id === flowIed ? 'flow' : undefined} mode={modes.ieds[ied.id]} selectDevice={setSelected}
         openNetwork={openNetwork} />}
     </div>

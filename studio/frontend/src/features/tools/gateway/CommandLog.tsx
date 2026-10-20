@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { gatewayApi, type CommandEntry } from '../../../api/gateway';
+import { GATEWAY_COMMANDS, type CommandEntry } from '../../../api/gateway';
+import { liveFeed } from '../../../api/polls';
 import { GATEWAY_COPY, PROTOCOL_NAMES } from '../../../copy/gateway';
 import type { Protocol } from '../../../api/gateway';
 import { useListFilter } from '../../../state/useListFilter';
@@ -16,12 +17,8 @@ const status = (text: string) => !text ? 'pending' as const
 export function CommandLog() {
   const [entries, setEntries] = useState<CommandEntry[]>([]);
   const filter = useListFilter('commands', COMMAND_FILTER);
-  useEffect(() => {
-    const load = () => gatewayApi.commands().then(page => setEntries(page.entries)).catch(() => {});
-    load();
-    const timer = setInterval(load, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  useEffect(() => liveFeed.subscribe<{ entries: CommandEntry[] }>(GATEWAY_COMMANDS, 1000,
+    page => setEntries(page.entries)), []);
   const shown = [...entries].reverse().filter(entry => gatewayCommandMatches(entry, filter.values));
   return <>
     <FilterBar label="Filter commands" spec={COMMAND_FILTER} values={filter.values} set={filter.set} clear={filter.clear}

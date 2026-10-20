@@ -21,6 +21,10 @@ export const memoryApi = {
   rememberFind: (choice: string) => api('/tools/memory/find', 'PUT', { choice }),
 };
 
+/** Paths the pages poll through the shared live feed (speed lane F). */
+export const EXPLORER_STATUS = '/tools/explorer';
+export const SCAN_STATUS = '/tools/scan';
+
 export const explorerApi = {
   status: () => api<ExplorerStatus>('/tools/explorer'),
   connect: (host: string, port: number) => api<ExplorerStatus>('/tools/explorer/connect', 'POST', { host, port }),

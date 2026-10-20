@@ -1,18 +1,11 @@
-import { useEffect, useState } from 'react';
-import { activityApi, type Activity } from '../api/activity';
+import { ACTIVITY } from '../api/polls';
+import type { Activity } from '../api/activity';
+import { useLiveFeed } from '../api/useLiveFeed';
 
 const EVERY_MS = 2000;
 
-/** Polls what runs in the tools so every place can show its own running dot. */
+/** Polls what runs in the tools so every place can show its own running dot. Through the shared
+ * live feed: an unchanged answer re-renders nothing, and a hidden window does not poll. */
 export function useActivity(enabled: boolean) {
-  const [activity, setActivity] = useState<Activity | null>(null);
-  useEffect(() => {
-    if (!enabled) return;
-    let alive = true;
-    const load = () => activityApi.get().then(value => { if (alive) setActivity(value); }).catch(() => {});
-    load();
-    const timer = setInterval(load, EVERY_MS);
-    return () => { alive = false; clearInterval(timer); };
-  }, [enabled]);
-  return activity;
+  return useLiveFeed<Activity>(enabled ? ACTIVITY : null, EVERY_MS).value;
 }

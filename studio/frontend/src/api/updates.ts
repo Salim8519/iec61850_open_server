@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from './client';
+import { liveFeed } from './polls';
 
 /** The quiet daily update check (ADR-0071). The backend asks the server; the browser only shows it. */
 export type UpdateStatus = {
@@ -14,12 +15,7 @@ const REFRESH_MS = 30 * 60 * 1000;
 
 export function useUpdateStatus() {
   const [status, setStatus] = useState<UpdateStatus | null>(null);
-  const load = useCallback(() => api<UpdateStatus>('/app/update').then(setStatus).catch(() => {}), []);
-  useEffect(() => {
-    load();
-    const timer = window.setInterval(load, REFRESH_MS);
-    return () => window.clearInterval(timer);
-  }, [load]);
+  useEffect(() => liveFeed.subscribe<UpdateStatus>('/app/update', REFRESH_MS, setStatus), []);
   const change = useCallback((changes: { auto?: boolean; dismissed?: string | null }) =>
     api<UpdateStatus>('/app/update', 'PUT', changes).then(setStatus), []);
   const checkNow = useCallback(() => api<UpdateStatus>('/app/update/check', 'POST').then(setStatus), []);

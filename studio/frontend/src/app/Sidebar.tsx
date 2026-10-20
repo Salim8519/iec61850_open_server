@@ -5,12 +5,18 @@ import { PLACES, type PlaceId } from './places';
 import type { Running } from './running';
 import type { UpdateStatus } from '../api/updates';
 import { UpdateNote } from './UpdateNote';
+import { useEventCount } from '../state/useLive';
+
+/** Only this number re-renders when events arrive, not the sidebar or the app. */
+function ActivityCount() {
+  return <>{useEventCount()}</>;
+}
 
 const ICONS: Record<PlaceId, typeof Workflow> = { diagram: Workflow, devices: Cpu, test: FlaskConical, tools: Wrench,
   settings: Settings };
 
-export function Sidebar({ current, go, connected, eventCount, openActivity, openTour, live, update, dismissUpdate }: {
-  current: PlaceId; go: (id: PlaceId) => void; connected: boolean; eventCount: number; openActivity: () => void;
+export function Sidebar({ current, go, connected, openActivity, openTour, live, update, dismissUpdate }: {
+  current: PlaceId; go: (id: PlaceId) => void; connected: boolean; openActivity: () => void;
   openTour: () => void; live: Partial<Record<PlaceId, Running>>;
   update?: UpdateStatus | null; dismissUpdate?: (version: string) => void;
 }) {
@@ -40,7 +46,7 @@ export function Sidebar({ current, go, connected, eventCount, openActivity, open
             onSelect: () => { window.open(TUTORIALS_URL, '_blank', 'noopener'); } },
         ]} />
       <button className="nav-item" onClick={openActivity} title="Activity">
-        <Activity size={19} /><span>Activity ({eventCount})</span></button>
+        <Activity size={19} /><span>Activity (<ActivityCount />)</span></button>
       <span className="small muted" style={{ padding: '4px 12px' }} title={connected ? 'Engine connected' : 'Connecting'}>
         <span className="dot" style={{ display: 'inline-block', marginRight: 8, color: connected ? 'var(--success)' : 'var(--warning)' }} />
         <span>{connected ? 'Engine connected' : 'Connecting…'}</span></span>

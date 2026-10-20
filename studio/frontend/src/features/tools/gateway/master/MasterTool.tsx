@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createActionQueue } from '../actionQueue';
-import { masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
+import { MASTER_STATUS, masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
+import { liveFeed } from '../../../../api/polls';
 import { MASTER_COPY, RANGES_COPY, TRAFFIC_WORDS } from '../../../../copy/master';
 import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { TabBar } from '../../../../ui/TabBar';
@@ -23,13 +24,11 @@ export function MasterTool() {
   const [tab, setTab] = useState<Tab>('points');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const refresh = useCallback(() => masterApi.status().then(setStatus).catch(reason => setError(reason.message)), []);
+  const refresh = useCallback(() => liveFeed.refresh(MASTER_STATUS), []);
   useEffect(() => {
     masterApi.config().then(setConfig).catch(reason => setError(reason.message));
-    refresh();
-    const timer = setInterval(refresh, 1500);
-    return () => clearInterval(timer);
-  }, [refresh]);
+    return liveFeed.subscribe<MasterStatus>(MASTER_STATUS, 1500, setStatus, reason => setError(reason.message));
+  }, []);
   const [queue] = useState(createActionQueue);
   // Saves run quietly so a Connect pressed right after typing the address is not lost (they share the queue).
   const act = (task: () => Promise<unknown>, quiet = false) => {
@@ -56,7 +55,7 @@ export function MasterTool() {
       <div className="panel-body">
         {tab === 'points' && <MasterPointTable status={status} fail={setError} />}
         {tab === 'ranges' && modbus && <ModbusRanges status={status} fail={setError} />}
-        {tab === 'traffic' && <TrafficLog running={connected} load={masterApi.traffic} words={TRAFFIC_WORDS}
+        {tab === 'traffic' && <TrafficLog running={connected} load={masterApi.traffic} feedKey="master-traffic" words={TRAFFIC_WORDS}
           hint={MASTER_COPY.trafficHint} />}
         {tab === 'commands' && <MasterCommandLog />}
       </div>
