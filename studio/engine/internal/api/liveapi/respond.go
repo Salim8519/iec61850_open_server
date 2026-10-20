@@ -9,6 +9,7 @@ import (
 
 	"studio-engine/internal/acquisition/pyv"
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/httpapi"
 	"studio-engine/internal/pyjson"
 )
 
@@ -20,24 +21,13 @@ const internalError = "The server encountered an internal error and was unable t
 // and the handler calls .get on it (500).
 var errNotObject = errors.New("'list' object has no attribute 'get'")
 
-// writeJSON answers like Flask's jsonify.
-func writeJSON(w http.ResponseWriter, status int, value any) {
-	body, err := pyjson.Flask(value)
-	if err != nil {
-		writeError(w, err)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	_, _ = w.Write(body)
-}
+// writeJSON answers like Flask's jsonify (httpapi's shared writer).
+func writeJSON(w http.ResponseWriter, status int, value any) { httpapi.WriteJSON(w, status, value) }
 
 // writeDownload answers a text attachment (Response(text, mimetype=...) with the header).
 func writeDownload(w http.ResponseWriter, mimetype, disposition, text string) {
-	w.Header().Set("Content-Type", mimetype+"; charset=utf-8")
 	w.Header().Set("Content-Disposition", disposition)
-	w.WriteHeader(http.StatusOK)
-	_, _ = io.WriteString(w, text)
+	httpapi.WriteBody(w, http.StatusOK, mimetype+"; charset=utf-8", []byte(text))
 }
 
 // writeError maps a Python-class error to Flask's status and body (app_factory.py:76-97).
