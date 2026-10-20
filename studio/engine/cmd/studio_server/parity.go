@@ -98,6 +98,9 @@ func composeParity(seams paritySeams, dataDir, nativeExe, frontend string) (*app
 	if fake, found := seams.Faults[recoverFault]; found {
 		options.RecoverStartup = recoverWithFault(fake)
 	}
+	if fake, found := seams.Faults[copyFault]; found {
+		copyWithFault(fake)
+	}
 	if _, err := os.Stat(frontend); err != nil {
 		options.FrontendDir = "" // Settings.frontend may point at a missing build
 	}

@@ -76,7 +76,13 @@ func (a *Area) stream(w http.ResponseWriter, r *http.Request) error {
 				}
 			}
 		}
-		items := a.bus.After(cursor, a.beat-time.Since(lastWrite), wake)
+		items := a.bus.After(cursor, 0, nil)
+		if len(items) == 0 { // quiet: wait for events, a topic frame or the heartbeat
+			if items = a.bus.After(cursor, a.beat-time.Since(lastWrite), wake); len(items) > 0 {
+				time.Sleep(a.settle) // the first events of a burst: let it finish, so it leaves in this write
+				items = a.bus.After(cursor, 0, nil)
+			}
+		}
 		if ctx.Err() != nil {
 			return nil
 		}

@@ -11,4 +11,4 @@ One log per [workstream](../workstreams.md): decisions, evidence, open questions
 ## Speed plan lanes ([speed plan](../speed-plan.md))
 
 - [L platform routes](speed-l.md), [R runtime and hub](speed-r.md), [T tools](speed-t.md),
-  [P project](speed-p.md), [N2 GOOSE uplink](speed-n2.md), [F frontend](speed-f.md), [G push](speed-g.md), [I composed server](speed-i.md), [N1 IED timers](speed-n1.md), [F4 push client](speed-f4.md), [I2 gap closure](speed-i2.md), [N3 native waits](speed-n3.md)
+  [P project](speed-p.md), [N2 GOOSE uplink](speed-n2.md), [F frontend](speed-f.md), [G push](speed-g.md), [I composed server](speed-i.md), [N1 IED timers](speed-n1.md), [F4 push client](speed-f4.md), [I2 gap closure](speed-i2.md), [N3 native waits](speed-n3.md), [Q2 bug hunt Go vs Python](speed-q2.md)

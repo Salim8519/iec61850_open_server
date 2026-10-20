@@ -67,7 +67,9 @@ func TestComposedEventsMatchPython(t *testing.T) {
 	post("/api/v1/runtime/start", nil)
 	wait(0.5)
 	post("/api/v1/equipment/cb1/operate", obj("value", true))
+	wait(0.3) // the IED reports the new position at the worker's pace: let it arrive first
 	post("/api/v1/equipment/ds1/operate", obj("action", "open"))
+	wait(0.3)
 	post("/api/v1/signals/update", obj("ied_id", ids[0], "ref", "BayACTRL/GGIO1.AnIn2.mag.f", "value", 42.5))
 	post("/api/v1/signals/pulse", obj("ied_id", ids[0], "ref", "BayACTRL/XCBR1.Loc.stVal", "active_value", true,
 		"duration_ms", int64(300)))

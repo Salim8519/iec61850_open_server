@@ -40,23 +40,8 @@ func (e *Engine) getProject(w http.ResponseWriter, r *http.Request) {
 	if raw, found := body.Get("ieds"); found && len(overlay) > 0 {
 		list, _ := raw.([]any)
 		for _, item := range list {
-			ied, _ := item.(*pyjson.Object)
-			if ied == nil {
-				continue
-			}
-			id, _ := ied.Get("id")
-			text, _ := id.(string)
-			state, known := overlay[text]
-			if !known {
-				continue
-			}
-			if state.State != "" {
-				ied.Set("state", state.State)
-			}
-			if state.HasGoose {
-				ied.Set("goose_state", state.GooseState)
-			} else {
-				ied.Delete("goose_state")
+			if ied, _ := item.(*pyjson.Object); ied != nil {
+				applyOverlay(ied, overlay)
 			}
 		}
 	}
