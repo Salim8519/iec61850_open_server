@@ -84,6 +84,7 @@ endforeach()
 option(STUDIO_GATEWAY "Build the IEC 104 / Modbus TCP / DNP3 gateway simulator worker" ON)
 if(STUDIO_GATEWAY)
     include(cmake/gateway_support.cmake)
+    include(cmake/master_socket_support.cmake)
     add_executable(studio_gateway gateway/main.cpp gateway/point_table.cpp gateway/command_bridge.cpp
         gateway/traffic.cpp gateway/iec104_objects.cpp gateway/iec104_commands.cpp gateway/server_104.cpp
         gateway/modbus_pdu.cpp gateway/modbus_server.cpp gateway/dnp3_outstation.cpp worker/ipc/framing.cpp)

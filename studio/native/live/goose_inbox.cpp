@@ -36,6 +36,16 @@ int GooseInbox::open(Handler on_frame) {
     WSAIoctl(s, SIO_UDP_CONNRESET, &off, sizeof(off), nullptr, 0, &returned, nullptr, nullptr);
     int buffer = 4 << 20;
     setsockopt(s, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<const char*>(&buffer), sizeof(buffer));
+    readable = WSACreateEvent();
+    closing = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    if (readable == WSA_INVALID_EVENT || !closing || WSAEventSelect(s, readable, FD_READ) != 0) {
+        if (readable != WSA_INVALID_EVENT) WSACloseEvent(readable);
+        if (closing) CloseHandle(closing);
+        readable = closing = nullptr;
+        closesocket(s);
+        WSACleanup();
+        throw std::runtime_error("Could not open the GOOSE inbox on 127.0.0.1");
+    }
     socket_handle = static_cast<std::uintptr_t>(s);
     handler = std::move(on_frame);
     running = true;
@@ -46,23 +56,30 @@ int GooseInbox::open(Handler on_frame) {
 void GooseInbox::run() {
     auto s = static_cast<SOCKET>(socket_handle);
     std::vector<uint8_t> buffer(65536);
+    HANDLE events[2] = {readable, closing};
     while (running) {
-        fd_set ready;
-        FD_ZERO(&ready);
-        FD_SET(s, &ready);
-        timeval wait{0, 50000};  // wake every 50 ms so close() never waits long
-        if (select(0, &ready, nullptr, nullptr, &wait) <= 0) continue;
-        int received = recvfrom(s, reinterpret_cast<char*>(buffer.data()), int(buffer.size()), 0, nullptr, nullptr);
-        if (received < 2) continue;
-        handler(buffer.data() + 1, received - 1, buffer[0] == 1);
+        // Reset first, then read every waiting datagram (the socket is non-blocking): a datagram
+        // that arrives after the last read sets the event again, so none is left waiting.
+        WSAResetEvent(readable);
+        for (;;) {
+            int received = recvfrom(s, reinterpret_cast<char*>(buffer.data()), int(buffer.size()), 0, nullptr, nullptr);
+            if (received == SOCKET_ERROR) break;
+            if (received < 2) continue;
+            handler(buffer.data() + 1, received - 1, buffer[0] == 1);
+        }
+        if (WaitForMultipleObjects(2, events, FALSE, INFINITE) != WAIT_OBJECT_0) break;
     }
 }
 
 void GooseInbox::close() {
     if (!running) return;
     running = false;
+    SetEvent(closing);
     if (thread.joinable()) thread.join();
     closesocket(static_cast<SOCKET>(socket_handle));
     socket_handle = ~std::uintptr_t(0);
+    WSACloseEvent(readable);
+    CloseHandle(closing);
+    readable = closing = nullptr;
     WSACleanup();
 }

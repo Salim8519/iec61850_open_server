@@ -1,23 +1,29 @@
 // One control action: select (when the model needs it), operate, then wait for the
 // command termination of enhanced-security controls.
 #include "control_session.hpp"
-#include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
-#include <thread>
 
 namespace {
+// Filled by the client's receive thread when the CommandTermination arrives; the waiting
+// command wakes at once (it used to poll every 10 ms, ~15.6 ms with the default Windows timer).
 struct Termination {
-    std::atomic<int> state{0};  // 0 waiting, 1 success, -1 failed
-    std::atomic<int> cause{0};
+    std::mutex lock;
+    std::condition_variable arrived;
+    int state = 0;  // 0 waiting, 1 success, -1 failed
+    int cause = 0;
 };
 
 void terminated(void* parameter, ControlObjectClient control) {
-    auto& done = *static_cast<Termination*>(parameter);
     auto error = ControlObjectClient_getLastApplError(control);
+    auto& done = *static_cast<Termination*>(parameter);
+    std::lock_guard<std::mutex> guard(done.lock);
     done.cause = int(error.addCause);
     done.state = error.error == CONTROL_ERROR_NO_ERROR ? 1 : -1;
+    done.arrived.notify_all();
 }
 
 MmsValue* control_value(ControlObjectClient control, const Json& value) {
@@ -73,6 +79,9 @@ Json ControlSession::operate(const Json& request) {
     int port = request.value("port", 102);
     auto reference = request.at("ref").get<std::string>();
     auto handle = connection(ip, port);
+    // Declared before the control object so it outlives it: ControlObjectClient_destroy unlinks
+    // the object under the lock the receive thread holds while it calls the handler.
+    Termination done;
     std::unique_ptr<sControlObjectClient, decltype(&ControlObjectClient_destroy)> control(
         ControlObjectClient_create(reference.c_str(), handle), ControlObjectClient_destroy);
     if (!control) {
@@ -93,7 +102,6 @@ Json ControlSession::operate(const Json& request) {
     ControlObjectClient_setInterlockCheck(control.get(), request.value("interlock_check", true));
     ControlObjectClient_setSynchroCheck(control.get(), request.value("synchro_check", false));
     ControlObjectClient_setTestMode(control.get(), request.value("test", false));
-    Termination done;
     ControlObjectClient_setCommandTerminationHandler(control.get(), terminated, &done);
     auto failed = [&](const char* step) {
         auto error = ControlObjectClient_getLastApplError(control.get());
@@ -113,17 +121,22 @@ Json ControlSession::operate(const Json& request) {
     result["operated"] = true;
     bool enhanced = model == CONTROL_MODEL_DIRECT_ENHANCED || model == CONTROL_MODEL_SBO_ENHANCED;
     if (enhanced) {
-        auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(request.value("termination_ms", 5000));
-        while (done.state == 0 && std::chrono::steady_clock::now() < deadline)
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        result["terminated"] = done.state == 1;
-        if (done.state == -1) {
-            result["add_cause"] = int(done.cause);
-            result["add_cause_text"] = add_cause_text(done.cause);
+        int state = 0, cause = 0;
+        {
+            std::unique_lock<std::mutex> guard(done.lock);
+            done.arrived.wait_for(guard, std::chrono::milliseconds(request.value("termination_ms", 5000)),
+                                  [&] { return done.state != 0; });
+            state = done.state;
+            cause = done.cause;
+        }
+        result["terminated"] = state == 1;
+        if (state == -1) {
+            result["add_cause"] = cause;
+            result["add_cause_text"] = add_cause_text(cause);
             result["error"] = "The device ended the command with a negative termination";
             return result;
         }
-        if (done.state == 0) {
+        if (state == 0) {
             result["error"] = "No command termination arrived in time; check the position on the device";
             return result;
         }

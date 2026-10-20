@@ -156,7 +156,10 @@ void GooseTraffic::on_observed(GooseSubscriber subscriber) {
 
 void GooseTraffic::supervise() {
     while (running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        {
+            std::unique_lock<std::mutex> waiting(wake_lock);
+            if (wake.wait_for(waiting, std::chrono::milliseconds(250), [this] { return !running; })) break;
+        }
         std::lock_guard<std::mutex> guard(lock);
         auto now = Hal_getTimeInMs();
         Json summary = Json::array();
@@ -177,7 +180,11 @@ void GooseTraffic::supervise() {
 }
 
 void GooseTraffic::stop() {
-    running = false;
+    {
+        std::lock_guard<std::mutex> waiting(wake_lock);
+        running = false;
+    }
+    wake.notify_all();
     if (supervisor.joinable()) supervisor.join();
     inbox.close();
     if (receiver) {
