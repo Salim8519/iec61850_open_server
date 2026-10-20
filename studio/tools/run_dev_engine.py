@@ -111,11 +111,27 @@ def run_dev_wait(api, ui):
         run_dev.time.sleep(0.25)
 
 
+def fold_before_python(data, print_only):
+    """A Go run that ended without its final snapshot leaves autosave.journal; fold it into
+    autosave.subsim (studio_server --fold-journal) so Python opens exactly what Go saved."""
+    if not (data / "autosave.journal").exists():
+        return
+    if print_only:
+        print(SERVER, "--fold-journal", data)
+        return
+    build_server()
+    completed = subprocess.run([str(SERVER), "--fold-journal", str(data)])
+    if completed.returncode:
+        raise SystemExit("The Go engine's saved changes could not be handed to the Python engine; "
+                         "both files were kept. Start with --engine go, or inspect the data folder.")
+
+
 def main(arguments):
     print_only = "--print-command" in arguments
     arguments = [argument for argument in arguments if argument != "--print-command"]
     engine, remaining = choose_engine(arguments)
     if engine == "python":
+        fold_before_python(STUDIO / "data", print_only)
         if print_only:
             print("python studio/tools/run_dev.py", *remaining)
             return 0
