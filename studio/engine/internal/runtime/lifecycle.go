@@ -178,6 +178,7 @@ func (c *Coordinator) startRun(project *pyjson.Object, items, simulated []*runni
 	}
 	c.setLog(log)
 	if len(simulated) > 0 {
+		c.commands.warm() // the first canvas command must not wait for studio_control
 		if err := c.addWorkers(simulated, pyval.Map(project, "network"), nil); err != nil {
 			return err
 		}
