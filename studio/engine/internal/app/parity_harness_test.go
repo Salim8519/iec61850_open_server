@@ -17,6 +17,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"studio-engine/internal/testutil"
 )
 
 // variant is one way the Python app was created (dev or packaged security, license and
@@ -96,12 +98,14 @@ func startGo(t *testing.T, v variant, frontend string) string {
 	if v.startup == "error" {
 		startupErr = errors.New("the autosave is a link")
 	}
-	engine, err := New(Config{DataDir: t.TempDir(), FrontendDir: frontend, Token: parityToken,
-		SecretKey: paritySecret, AdminOrigin: v.origin, License: fakeLicense{v.license == "unlicensed"},
-		Startup: fakeStartup{ready: v.startup != "timeout", err: startupErr}})
+	engine, err := Compose(Options{DataDir: testutil.TempDir(t), NativeDir: testutil.TempDir(t),
+		LicenseHome: testutil.TempDir(t), FrontendDir: frontend, Token: parityToken, SecretKey: paritySecret,
+		AdminOrigin: v.origin, Version: "0.0.0+dev", License: fakeLicense{v.license == "unlicensed"},
+		Startup: fakeStartup{ready: v.startup != "timeout", err: startupErr}, NoBackground: true})
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { _ = engine.Close() })
 	listener, err := net.Listen("tcp4", "127.0.0.1:"+strconv.Itoa(freePort(t)))
 	if err != nil {
 		t.Fatal(err)
