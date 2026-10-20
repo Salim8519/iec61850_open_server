@@ -81,6 +81,7 @@ func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
 	m.mu.Lock()
 	m.state, m.message, m.clients = "stopped", "", map[string]bool{}
 	m.mu.Unlock()
+	m.own.reset(nil)
 	return m.Status(), nil
 }
 

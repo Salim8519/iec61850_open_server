@@ -150,6 +150,7 @@ func (m *Manager) launch() (*pyjson.Object, string, int, error) {
 		problemList[index] = problem
 	}
 	endpoint := pytext.Str(get(opened, "bind")) + ":" + pytext.Str(get(opened, "port"))
+	m.own.reset(typed)
 	sync := newSyncer(m, process, typed)
 	m.mu.Lock()
 	m.process, m.opened, m.problems, m.clients = process, opened, problemList, map[string]bool{}

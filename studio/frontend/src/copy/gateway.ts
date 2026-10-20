@@ -64,8 +64,8 @@ export const GATEWAY_COPY = {
   none: 'No SCADA connected yet',
   tabs: { points: 'Points', traffic: 'Traffic', commands: 'Commands' },
   propose: 'Propose from IEDs', importCsv: 'Import CSV', exportCsv: 'Export CSV', save: 'Save point list', discard: 'Discard changes',
-  pointsHint: 'Each row is one SCADA point. ScadaBench proposes only what SCADA usually needs: positions, alarms and trips, measurements, device health and commands. Change any address so it matches your SCADA point list.',
-  emptyPoints: 'No points yet. Start the gateway and ScadaBench proposes them, or press Propose from IEDs, or import your SCADA point list as CSV (type,address,ied,reference,scale,description).',
+  pointsHint: 'Each row is one SCADA point. ScadaBench proposes only what SCADA usually needs: positions, alarms and trips, measurements, device health and commands. Change any address so it matches your SCADA point list. Add point makes up your own point with a value you control.',
+  emptyPoints: 'No points yet. Start the gateway and ScadaBench proposes them, or press Propose from IEDs, or Add point to make up your own, or import your SCADA point list as CSV (type,address,ied,reference,scale,description).',
   lockedPoints: 'Stop the gateway to change the point list.',
   unsaved: 'You have unsaved changes.',
   trafficHint: 'Decoded messages between SCADA and the gateway, newest at the bottom.',
@@ -73,6 +73,28 @@ export const GATEWAY_COPY = {
   pause: 'Pause', resume: 'Resume', clear: 'Clear view',
   removeAll: 'Remove all points',
   emptyFilter: 'No row matches the filter. Press Clear to see every row.',
+};
+
+// Own points (lane G): values the user makes up, served next to the IED points.
+export const OWN_KIND_LABELS: Record<PointKind, string> = {
+  single: 'Status (ON / OFF)', double: 'Position (open / closed)', float: 'Measured value', integer: 'Whole number',
+  command_single: 'Command (ON / OFF)', command_double: 'Command (open / close)',
+};
+export const OWN_COPY = {
+  add: 'Add point', title: 'Add your own point', name: 'Name', namePlaceholder: 'e.g. Pump running', type: 'Type',
+  value: 'Value', scale: 'Scale', drives: 'Changes this status', drivesNone: 'Nothing (only logged)',
+  confirm: 'Add to the list', cancel: 'Cancel', ownPoint: 'Own point', newPoint: 'New own point',
+  hint: 'An own point is a made-up value you control. SCADA sees it like any other point, with good quality. Change its value here at any time, also while the gateway runs: SCADA gets the change at once.',
+  commandHint: 'SCADA can send this command. ScadaBench accepts it, writes it in the Commands tab and sets the status you pick here, so SCADA sees the result. No device is operated.',
+  scaleHint: 'SCADA receives the value × scale.',
+  addHint: 'Add a made-up point for simulation. The IED points stay as they are.',
+  filter: 'Own points', filterHint: 'Only the points you made up yourself.',
+  madeUp: 'you set the value', driving: (name: string) => `drives ${name}`,
+  saveFirst: 'Save the point list to send the value to SCADA.',
+  badNumber: 'Type a number, for example 12.5.', badWhole: 'Type a whole number, for example 42.',
+  commandWarning: 'This is your own point: no device is operated. ScadaBench logs the command and sets the status it drives.',
+  sentResult: (label: string, name: string, ok: boolean, reason: string) =>
+    ok ? `"${label}" sent to ${name}. The Commands tab shows it.` : `"${label}" was not carried out: ${reason}`,
 };
 
 // Windows Firewall for the gateway on "All network adapters" (ADR-0062).

@@ -40,6 +40,19 @@
 .gateway-confirm .row { gap: 8px; }
 .gateway-sent { margin: 0; padding: 6px 12px; border-radius: var(--radius-small); background: var(--warning-soft); }
 .gateway-sent.ok { background: var(--success-soft); color: var(--success); }
+/* Own points (lane G): the Add point form and the value controls in the table. */
+.own-form { display: grid; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--accent-soft); }
+.own-form .gateway-toolbar { gap: 10px; flex-wrap: wrap; }
+.own-form-fields { gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.own-form-fields label, .own-field { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
+.own-form-fields input:not(.gateway-number) { width: 200px; }
+.gateway-points select.own-status, .gateway-points select.own-target { min-width: 0; width: 180px; }
+.gateway-points .segmented-control button { min-height: 30px; padding: 0 12px; }
+.own-command { display: grid; gap: 2px; }
+.own-hint { margin: 0; max-width: 900px; }
+.own-note { white-space: nowrap; }
+/* Room for the whole "Search name or address" hint; the bar wraps instead of clipping it. */
+.gateway-panel .filter-bar .filter-search { flex-basis: 220px; }
 /* The SCADA views keep a slightly narrower settings column so the tables get the width. */
 .scada-split { --side-width: 240px; }
 /* "Act as" sits in the tool's header row with a one-line "which side am I?" caption. */
