@@ -17,6 +17,8 @@
 .explorer-watch .panel-head { gap: 8px; padding: 8px 12px; }
 .explorer-watch .panel-head button, .explorer-watch .panel-head .button { min-height: 32px; padding: 0 10px; }
 .tree ul { list-style: none; margin: 0; padding: 0 0 0 22px; }
+/* Flat virtual tree (speed lane F): a logical node row keeps the indent of the old nested list. */
+.tree > .tree-child { padding-left: 22px; }
 .tree-row { width: 100%; justify-content: flex-start; gap: 8px; border: 0; background: transparent; min-height: 36px;
   padding: 0 8px; font-weight: 500; }
 .tree-row.device { font-weight: 650; }

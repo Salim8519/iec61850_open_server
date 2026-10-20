@@ -1,6 +1,7 @@
 import { Radio } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
+import { liveFeed } from '../../api/polls';
 import type { GooseShare } from '../../api/network';
 import { REACH_COPY, REACH_STATES, reachStatus } from '../../copy/gooseReach';
 import { Disclosure } from '../../ui/Disclosure';
@@ -10,6 +11,7 @@ import { StatusPill } from '../../ui/StatusPill';
 import { GooseShareWarning } from './GooseShareWarning';
 import './goose.css';
 
+const SHARE = '/goose/share';
 const NPCAP_URL = 'https://npcap.com/#download';
 
 /** "Where GOOSE goes": inside ScadaBench (default) or also shared with the network (ADR-0073).
@@ -18,18 +20,14 @@ export function GooseReach({ revision, perform }: { revision: number; perform: (
   const [share, setShare] = useState<GooseShare | null>(null);
   const [asking, setAsking] = useState(false);
   const [busy, setBusy] = useState(false);
-  const load = useCallback(() => api<GooseShare>('/goose/share').then(setShare).catch(() => {}), []);
-  useEffect(() => { load(); }, [load, revision]);
-  useEffect(() => {
-    if (!share?.running) return undefined;
-    const timer = setInterval(load, 2000);
-    return () => clearInterval(timer);
-  }, [share?.running, load]);
+  const live = !!share?.running;
+  // Shared live feed: on open and each revision, then every 2 s while GOOSE runs.
+  useEffect(() => liveFeed.subscribe<GooseShare>(SHARE, live ? 2000 : null, setShare), [revision, live]);
   if (!share) return null;
   const send = (body: Record<string, unknown>) => {
     setBusy(true);
-    return perform(() => api<GooseShare>('/goose/share', 'PUT', body).then(setShare))
-      .finally(() => { setBusy(false); setAsking(false); });
+    return perform(() => api<GooseShare>(SHARE, 'PUT', body).then(setShare))
+      .finally(() => { setBusy(false); setAsking(false); liveFeed.refresh(SHARE); });
   };
   const outside = share.reach === 'outside';
   const adapter = share.uplink.guid ? share.uplink.label : '';

@@ -20,6 +20,12 @@ type Page<T> = { entries: T[]; last: number; dropped: number };
 export const problemsOf = (error: unknown): string[] =>
   ((error as { data?: { problems?: string[] } }).data?.problems) ?? [];
 
+/** Paths the pages poll through the shared live feed (speed lane F). */
+export const GATEWAY_STATUS = '/tools/gateway';
+export const GATEWAY_CONFIG = '/tools/gateway/config';
+export const GATEWAY_COMMANDS = '/tools/gateway/commands';
+export const gatewayPointsPath = (protocol: Protocol) => `/tools/gateway/points?protocol=${protocol}`;
+
 export const gatewayApi = {
   status: () => api<GatewayStatus>('/tools/gateway'),
   config: () => api<GatewayConfig>('/tools/gateway/config'),

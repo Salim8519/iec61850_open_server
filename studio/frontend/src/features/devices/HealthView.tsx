@@ -1,7 +1,7 @@
 import { Download, FileText, HeartPulse, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
-import { HEALTH, polls } from '../../api/polls';
+import { HEALTH, liveFeed } from '../../api/polls';
 import { areaInfo, verdictStatus } from '../../copy/health';
 import { countOf } from '../../copy/count';
 import { Disclosure } from '../../ui/Disclosure';
@@ -25,7 +25,7 @@ export function HealthView({ running }: { running: boolean }) {
   const [open, setOpen] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  useEffect(() => polls.subscribe<Health>(HEALTH, running ? 3000 : null, setHealth,
+  useEffect(() => liveFeed.subscribe<Health>(HEALTH, running ? 3000 : null, setHealth,
     reason => setError(reason.message)), [running]);
   if (!health) return <div className="card"><EmptyState icon={<HeartPulse size={22} />} title="Health check"
     hintId="health.intro" action={error ? undefined : <Spinner label="Checking the station…" />} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;

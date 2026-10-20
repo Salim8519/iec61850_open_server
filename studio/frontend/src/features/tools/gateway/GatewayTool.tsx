@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createActionQueue } from './actionQueue';
-import { gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
+import { GATEWAY_STATUS, gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
+import { liveFeed } from '../../../api/polls';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 import { TabBar } from '../../../ui/TabBar';
 import { CommandLog } from './CommandLog';
@@ -22,13 +23,11 @@ export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: 
   const [tab, setTab] = useState<Tab>('points');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const refresh = useCallback(() => gatewayApi.status().then(setStatus).catch(reason => setError(reason.message)), []);
+  const refresh = useCallback(() => liveFeed.refresh(GATEWAY_STATUS), []);
   useEffect(() => {
     gatewayApi.config().then(setConfig).catch(reason => setError(reason.message));
-    refresh();
-    const timer = setInterval(refresh, 1500);
-    return () => clearInterval(timer);
-  }, [refresh]);
+    return liveFeed.subscribe<GatewayStatus>(GATEWAY_STATUS, 1500, setStatus, reason => setError(reason.message));
+  }, []);
   const [queue] = useState(createActionQueue);
   // Saves run quietly so a Start pressed right after typing a setting is not lost (they share the queue).
   const act = (task: () => Promise<unknown>, quiet = false) => {

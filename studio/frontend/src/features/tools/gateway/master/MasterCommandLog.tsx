@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { masterApi, type MasterCommandEntry } from '../../../../api/master';
+import { MASTER_COMMANDS, type MasterCommandEntry } from '../../../../api/master';
+import { liveFeed } from '../../../../api/polls';
 import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { COMMAND_NAMES, MASTER_COPY } from '../../../../copy/master';
 import { useListFilter } from '../../../../state/useListFilter';
@@ -14,12 +15,8 @@ const TONE = { sent: 'pending', confirmed: 'ok', refused: 'warning' } as const;
 export function MasterCommandLog() {
   const [entries, setEntries] = useState<MasterCommandEntry[]>([]);
   const filter = useListFilter('master-commands', COMMAND_FILTER);
-  useEffect(() => {
-    const load = () => masterApi.commands().then(page => setEntries(page.entries)).catch(() => {});
-    load();
-    const timer = setInterval(load, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  useEffect(() => liveFeed.subscribe<{ entries: MasterCommandEntry[] }>(MASTER_COMMANDS, 1000,
+    page => setEntries(page.entries)), []);
   const shown = [...entries].reverse().filter(entry => masterCommandMatches(entry, filter.values));
   return <>
     <FilterBar label="Filter commands" spec={COMMAND_FILTER} values={filter.values} set={filter.set} clear={filter.clear}

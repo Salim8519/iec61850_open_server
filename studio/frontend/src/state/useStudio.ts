@@ -6,6 +6,12 @@ import { createHistory, recordDiagram, sameEngineering, undoDiagram, redoDiagram
 import { EquipmentValueStore } from '../equipment/liveValues';
 import { EnergizationStore, type Energization } from '../equipment/energization';
 import { SignalLayerStore } from '../equipment/signalLayerStore';
+import { coalesce } from './coalesce';
+import { deliverLive, openEventStream, RELOADS, type StudioStream } from './eventStream';
+import { liveData } from './liveData';
+
+/** Events this much older than a project read are certainly in it (same PC clock; generous margin). */
+const READ_MARGIN_MS = 250;
 
 export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
@@ -13,9 +19,7 @@ export function useStudio() {
   const [busy, setBusy] = useState(false);
   // What the running task is doing, in words, so a slow action never looks frozen (change 0105).
   const [working, setWorking] = useState('');
-  const [events, setEvents] = useState<StudioEvent[]>([]);
   const [saveState, setSaveState] = useState('All changes saved');
-  const [values, setValues] = useState<Record<string, unknown>>({});
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const [history, setHistory] = useState<DiagramHistory | null>(null);
   const equipmentValues = useMemo(() => new EquipmentValueStore(), []);
@@ -36,7 +40,10 @@ export function useStudio() {
     }
     current.current = value; setProject(value);
   }, []);
-  const refresh = useCallback(async () => { apply(await api<Project>('/project')); }, [apply]);
+  // One GET /project in flight and one waiting at most, however many events ask (speed lane F).
+  // When the last project read started (browser clock = the backend's clock: both run on this PC).
+  const readAt = useRef(0);
+  const refresh = useMemo(() => coalesce(async () => { readAt.current = Date.now(); apply(await api<Project>('/project')); }), [apply]);
   const hydrateEquipment = useCallback(async () => {
     const result = await api<{ states: { node_id: string; value: unknown }[]; energization: Energization }>('/equipment/states');
     equipmentValues.replace(result.states); energization.set(result.energization);
@@ -72,31 +79,28 @@ export function useStudio() {
 
   useEffect(() => {
     let disposed = false;
-    let stream: EventSource | null = null;
-    connectSession().then(refresh).then(() => {
+    let stream: StudioStream | null = null;
+    const fail = (reason: { message?: string }) => setError(String(reason.message));
+    const live = liveData();
+    const targets = { values: live.values, log: live.log, layers: signalLayers, equipment: equipmentValues,
+      energize: (event: StudioEvent) => energization.set({ nodes: event.nodes as Energization['nodes'],
+        edges: event.edges as Energization['edges'], hints: event.hints as Energization['hints'] }) };
+    // Startup reads the project once, at once (the stream's first bytes can take a second). The bus
+    // replays its events on connect, so changes made meanwhile still ask again (coalesced to one).
+    // A reconnect may have missed events, so every later open reads the project again.
+    let opened = 0;
+    // An event published well before the last project read started is already in that answer
+    // (the backend publishes after applying a change), so replayed history asks for nothing.
+    const seen = (event: StudioEvent) => event.timestamp * 1000 < readAt.current - READ_MARGIN_MS;
+    connectSession().then(() => {
       if (disposed) return;
-      stream = new EventSource('/api/v1/events');
-      stream.onopen = () => {
-        Promise.all([refresh(), hydrateEquipment()]).catch(reason => setError(String(reason.message)));
-      };
-      stream.onmessage = message => {
-        const event = JSON.parse(message.data) as StudioEvent;
-        // Per-second MMS client summaries feed the SLD layer only, not Activity (spec signal-layers).
-        if (event.kind !== 'mms_access') setEvents(items => [...items.slice(-499), event]);
-        signalLayers.handle(event, performance.now());
-        if (event.kind === 'signal' || event.kind === 'control_applied') {
-          const ref = event.status_ref || event.ref;
-          setValues(items => ({ ...items, [`${event.ied_id}:${ref}`]: event.value,
-            ...Object.fromEntries(Object.entries((event.updates || {}) as Record<string, unknown>)
-              .map(([reference, value]) => [`${event.ied_id}:${reference}`, value])) }));
-        }
-        if (event.kind === 'equipment_state' && event.node_id) {
-          equipmentValues.set(event.node_id, event.value);
-        }
-        if (event.kind === 'energization') {
-          energization.set({ nodes: event.nodes as Energization['nodes'], edges: event.edges as Energization['edges'],
-            hints: event.hints as Energization['hints'] });
-        }
+      refresh().catch(fail);
+      stream = openEventStream({ open: () => {
+        opened += 1;
+        Promise.all([opened > 1 ? refresh() : null, hydrateEquipment()]).catch(fail);
+      }, event: event => {
+        // Values, Activity, layers and equipment go to stores outside React; App state is untouched.
+        deliverLive(event, targets, performance.now());
         if (event.kind === 'project_changed') {
           if (event.source === tabId.current && current.current) {
             const updated = { ...current.current, revision: Number(event.revision) };
@@ -107,20 +111,18 @@ export function useStudio() {
             timer.current = null;
             historyIdentity.current = '';
             setSaveState('All changes saved');
-            refresh().catch(reason => setError(String(reason.message)));
+            if (!seen(event)) refresh().catch(fail);
           }
         }
-        if (event.kind === 'runtime' || event.kind === 'resync' || event.kind === 'worker_failed' || event.kind === 'live_status') {
+        if (RELOADS.has(event.kind)) {
           if (event.kind === 'runtime' && event.state === 'stopped') {
-            setValues({}); equipmentValues.clear(); energization.clear(); signalLayers.stopped();
+            live.values.clear(); equipmentValues.clear(); energization.clear(); signalLayers.stopped();
           }
-          refresh().catch(reason => setError(String(reason.message)));
-          if (event.kind === 'resync') {
-            hydrateEquipment().catch(reason => setError(String(reason.message)));
-          }
+          if (!seen(event)) refresh().catch(fail);
+          if (event.kind === 'resync') hydrateEquipment().catch(fail);
         }
-      };
-    }).catch(reason => setError(reason.message));
+      } });
+    }).catch(fail);
     return () => { disposed = true; stream?.close(); if (timer.current) clearTimeout(timer.current); };
   }, [equipmentValues, energization, signalLayers, hydrateEquipment, refresh]);
 
@@ -165,7 +167,7 @@ export function useStudio() {
   const importFile = (file: File) => perform(async () => {
     await saveDiagram();
     if (file.name.toLowerCase().endsWith('.subsim')) {
-      await upload('/project/open', file); setValues({}); equipmentValues.clear(); energization.clear();
+      await upload('/project/open', file); liveData().values.clear(); equipmentValues.clear(); energization.clear();
       historyIdentity.current = '';
     } else {
       const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
@@ -178,9 +180,9 @@ export function useStudio() {
     form.append('file', importPreview.file);
     form.append('selected_names', JSON.stringify(names));
     await api('/scl/import', 'POST', form);
-    setImportPreview(null); setValues({});
+    setImportPreview(null); liveData().values.clear();
   }, 'Importing the IEDs…');
-  return { project, error, setError, busy, working, events, values, equipmentValues, energization, signalLayers, saveState, updateDiagram,
+  return { project, error, setError, busy, working, equipmentValues, energization, signalLayers, saveState, updateDiagram,
     canUndo: !!history?.past.length, canRedo: !!history?.future.length,
     undo, redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },

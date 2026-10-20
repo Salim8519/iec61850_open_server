@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { gatewayApi, type GatewayPoint, type Protocol } from '../../../../api/gateway';
+import { gatewayPointsPath, type GatewayPoint, type Protocol } from '../../../../api/gateway';
+import { liveFeed } from '../../../../api/polls';
 import { ADDRESS_LABEL, KIND_LABELS, KIND_WHERE } from '../../../../copy/gateway';
 import { CONVERTER_COPY } from '../../../../copy/converter';
 import { HelpTip } from '../../../../ui/HelpTip';
@@ -7,12 +8,8 @@ import { HelpTip } from '../../../../ui/HelpTip';
 /** What SCADA sees: the device points with their upstream addresses (read only; tick in Device points). */
 export function ServedPoints({ protocol, fail }: { protocol: Protocol; fail: (message: string) => void }) {
   const [rows, setRows] = useState<GatewayPoint[]>([]);
-  useEffect(() => {
-    const load = () => gatewayApi.points(protocol).then(value => setRows(value.points)).catch(error => fail(error.message));
-    load();
-    const timer = setInterval(load, 1000);
-    return () => clearInterval(timer);
-  }, [protocol]);
+  useEffect(() => liveFeed.subscribe<{ points: GatewayPoint[] }>(gatewayPointsPath(protocol), 1000,
+    value => setRows(value.points), error => fail(error.message)), [protocol]);
   return <>
     <div className="panel-toolbar"><span className="small">{rows.length > 500 ? `First 500 of ${rows.length} points`
       : `${rows.length} points`}</span><HelpTip text={CONVERTER_COPY.servedHint} label="What is this?" /></div>

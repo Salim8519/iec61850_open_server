@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ChevronDown, FileUp } from 'lucide-react';
 import { OUTSIDE_COPY } from '../../../copy/signalLayers';
-import type { SignalLayerState } from '../../../equipment/signalLayerStore';
+import type { SignalLayerStore } from '../../../equipment/signalLayerStore';
 
 /** Toolbar control next to the GOOSE switch: "N senders outside project ▾" opens a small list.
  * Senders outside the project never get a tag on the canvas (change 0097, SLD stays clean). */
-export function OutsideSenders({ state, importFile }: { state: SignalLayerState; importFile: () => void }) {
+export function OutsideSenders({ store, importFile }: { store: SignalLayerStore; importFile: () => void }) {
+  const state = useSyncExternalStore(store.subscribe, store.get, store.get);
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLSpanElement>(null);
   useEffect(() => {

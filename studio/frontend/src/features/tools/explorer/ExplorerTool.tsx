@@ -1,6 +1,7 @@
 import { Loader2, Plug, Telescope, Unplug } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { explorerApi, type Attribute, type ExplorerStatus } from '../../../api/tools';
+import { EXPLORER_STATUS, explorerApi, type Attribute, type ExplorerStatus } from '../../../api/tools';
+import { liveFeed } from '../../../api/polls';
 import { EXPLORER_COPY } from '../../../copy/tools';
 import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
@@ -50,12 +51,12 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
     }).catch(reason => setError(reason.message));
   }, [target, connect]);
   const connected = status?.state === 'connected';
+  // Shared live feed (speed lane F): same intervals as before, no overlap, unchanged answers ignored.
+  const every = status?.polling ? Math.max(500, Math.min(status.interval_ms, 2000)) : 4000;
   useEffect(() => {
-    if (!connected) return;
-    const timer = setInterval(() => explorerApi.status().then(setStatus).catch(() => {}),
-      status?.polling ? Math.max(500, Math.min(status.interval_ms, 2000)) : 4000);
-    return () => clearInterval(timer);
-  }, [connected, status?.polling, status?.interval_ms]);
+    if (!connected) return undefined;
+    return liveFeed.subscribe<ExplorerStatus>(EXPLORER_STATUS, every, setStatus);
+  }, [connected, every]);
   const watched = new Set((status?.watch ?? []).map(item => `${item.ref}|${item.fc}`));
   const addWatch = (items: Attribute[]) => status && run(() =>
     explorerApi.watch([...status.watch, ...items.map(({ ref, fc, type }) => ({ ref, fc, type }))]));

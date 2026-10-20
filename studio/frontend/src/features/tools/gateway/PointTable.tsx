@@ -1,6 +1,7 @@
 import { Download, Lock, Save, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { gatewayApi, problemsOf, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
+import { gatewayApi, gatewayPointsPath, problemsOf, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
+import { liveFeed } from '../../../api/polls';
 import { ADDRESS_LABEL, GATEWAY_COPY, KIND_LABELS, KIND_WHERE } from '../../../copy/gateway';
 import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
@@ -28,11 +29,15 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const file = useRef<HTMLInputElement>(null);
   const dirtyRef = useRef(false);
   dirtyRef.current = dirty;
-  const load = () => gatewayApi.points(protocol).then(value => {
-    setRows(current => dirtyRef.current && current ? mergeValues(current, value.points) : value.points);
-  }).catch(error => fail(error.message));
-  useEffect(() => { setRows(null); setDirty(false); setProblems([]); setNotes([]); load(); }, [protocol]);
-  useEffect(() => { const timer = setInterval(load, 1000); return () => clearInterval(timer); }, [protocol]);
+  const path = gatewayPointsPath(protocol);
+  const load = () => liveFeed.refresh(path);
+  // Shared live feed every second: an unchanged list re-renders nothing (speed lane F).
+  useEffect(() => {
+    setRows(null); setDirty(false); setProblems([]); setNotes([]);
+    return liveFeed.subscribe<{ points: GatewayPoint[] }>(path, 1000, value => {
+      setRows(current => dirtyRef.current && current ? mergeValues(current, value.points) : value.points);
+    }, error => fail(error.message));
+  }, [path]);
   useEffect(() => setPage(0), [filter.values]);
   const edit = (next: GatewayPoint[]) => { setRows(next); setDirty(true); setProblems([]); };
   const update = (index: number, change: Partial<GatewayPoint>) => rows && edit(rows.map((row, at) => at === index ? { ...row, ...change } : row));
