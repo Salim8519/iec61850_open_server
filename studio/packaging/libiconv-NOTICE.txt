@@ -1,0 +1,13 @@
+GNU libiconv 1.17 in ScadaBench
+
+_internal\native\libiconv-2.dll is GNU libiconv 1.17, built unmodified from
+libiconv-1.17.tar.gz (SHA-256 8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313).
+It is licensed under the GNU Lesser General Public License version 2.1 (COPYING.LIB in
+this folder). Only studio_xsd.exe (the SCL schema checker) uses it.
+
+Source code:
+  https://download.scadabench.com/source/libiconv-1.17.tar.gz
+  https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
+
+You may replace libiconv-2.dll with your own build of GNU libiconv (64-bit Windows, same
+exported functions). ScadaBench then uses your build for schema checks.

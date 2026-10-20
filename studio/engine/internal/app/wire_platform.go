@@ -22,7 +22,7 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	e.License, e.Updates = o.LicenseService, o.UpdateService
 	if e.License == nil {
 		e.License = licensing.New(licensing.Options{Home: home, DataDir: o.DataDir, Enforce: o.Enforce,
-			NativeFolder: o.NativeDir, Logf: o.Logf})
+			NativeFolder: o.NativeDir, ExpectedFiles: o.NativeSeal, Logf: o.Logf})
 	}
 	if e.Updates == nil {
 		e.Updates = updates.New(updates.Options{Directory: o.DataDir, ServerURL: e.License.ServerURL,

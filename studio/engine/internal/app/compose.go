@@ -44,6 +44,9 @@ type Options struct {
 	AdminOrigin string
 	Version     string // studio_app.version.__version__
 	Enforce     bool   // license enforcement: only the packaged app (sys.frozen in Python)
+	// NativeSeal maps shipped native file names to SHA-256 hex (integrity.EXPECTED of the
+	// sealed Python copy); empty in development, where nothing is checked.
+	NativeSeal  map[string]string
 	LicenseHome string // "" means licensing.DefaultHome()
 	// CommandKeep keeps a canvas command's MMS association open (0: like studio_probe).
 	CommandKeep time.Duration

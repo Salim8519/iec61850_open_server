@@ -7,6 +7,9 @@ studio/frontend/dist/
 studio/dist/
 studio/build/
 studio/engine/build/
+studio/engine/cmd/scadabench_portable/payload/
+studio/engine/cmd/*/zz_release_windows_amd64.syso
+studio/dist-go/
 __pycache__/
 *.pyc
 .pytest_cache/

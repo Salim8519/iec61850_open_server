@@ -1,10 +1,13 @@
-# Static zlib 1.3.1 and GNU libiconv 1.17 for studio_xsd.exe (MSVC x64), built out of tree
+# Static zlib 1.3.1 and the GNU libiconv 1.17 DLL for studio_xsd.exe (MSVC x64), built out of tree
 # from the unmodified source trees in .local/native. Neither upstream build fits:
 # - zlib's own CMakeLists renames zconf.h inside the source tree on out-of-tree builds;
 # - GNU libiconv has no MSVC project (configure + make only).
 # So both are compiled here from their library sources. `cmake --install` puts
-#   include/zlib.h, include/zconf.h, include/iconv.h, lib/zlib.lib, lib/libiconv.lib
+#   include/zlib.h, include/zconf.h, include/iconv.h, lib/zlib.lib, lib/libiconv.lib (import
+#   library), bin/libiconv-2.dll
 # under CMAKE_INSTALL_PREFIX, the folder studio_xsd's ZLIB_*/Iconv_* variables point to.
+# libiconv is LGPL-2.1: it ships as its own replaceable DLL beside studio_xsd.exe, under its
+# upstream name, so users can swap in a modified libiconv (ADR-0083).
 # Steps and licence notes: studio/native/xsd/README.md.
 cmake_minimum_required(VERSION 3.18)
 project(StudioXsdDeps LANGUAGES C)
@@ -43,8 +46,9 @@ add_library(zlib STATIC
     "${ZLIB_SOURCE}/trees.c" "${ZLIB_SOURCE}/uncompr.c" "${ZLIB_SOURCE}/zutil.c")
 target_include_directories(zlib PUBLIC "${ZLIB_SOURCE}")
 
-# libiconv: the public headers come from the *.build.in templates, filled the way
-# configure fills them for a static Windows build (no visibility, no dllimport).
+# libiconv: the public headers come from the *.build.in templates, filled the way configure
+# fills them for a Windows DLL: functions are dllexport while building (BUILDING_LIBICONV),
+# plain declarations for users; the _libiconv_version variable is not used by libxml2.
 set(HAVE_VISIBILITY 0)
 set(DLL_VARIABLE "")
 set(EILSEQ "")          # <errno.h> defines EILSEQ; the fallback is never used
@@ -58,17 +62,18 @@ configure_file("${LIBICONV_SOURCE}/libcharset/include/localcharset.h.build.in"
     "${_generated}/localcharset.h" @ONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/libiconv_config.h" "${_generated}/config.h" COPYONLY)
 
-add_library(libiconv STATIC
+add_library(libiconv SHARED
     "${LIBICONV_SOURCE}/lib/iconv.c"
     "${LIBICONV_SOURCE}/libcharset/lib/localcharset.c")
 target_include_directories(libiconv
     PRIVATE "${_generated}" "${LIBICONV_SOURCE}/lib"
     INTERFACE "${_generated}")
-# DEFS of lib/Makefile.in that still apply to a static library (no BUILDING_LIBICONV:
-# that would mark every function dllexport; no ENABLE_RELOCATABLE: DLL-only).
-target_compile_definitions(libiconv PRIVATE IN_LIBRARY NO_XMALLOC)
-set_target_properties(libiconv PROPERTIES OUTPUT_NAME libiconv)
+# DEFS of lib/Makefile.in for the DLL, except ENABLE_RELOCATABLE (installation-prefix
+# relocation, unused here: no charset.alias or locale files are read).
+target_compile_definitions(libiconv PRIVATE IN_LIBRARY NO_XMALLOC BUILDING_LIBICONV BUILDING_LIBCHARSET
+    BUILDING_DLL)
+set_target_properties(libiconv PROPERTIES RUNTIME_OUTPUT_NAME libiconv-2 ARCHIVE_OUTPUT_NAME libiconv)
 
-install(TARGETS zlib libiconv ARCHIVE DESTINATION lib)
+install(TARGETS zlib libiconv ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 install(FILES "${ZLIB_SOURCE}/zlib.h" "${ZLIB_SOURCE}/zconf.h" "${_generated}/iconv.h"
     DESTINATION include)

@@ -41,7 +41,7 @@ The helper also reports the DOCTYPE as a second check.
     windows-1252, Shift_JIS, GB18030, BIG5-HKSCS, EUC-TW, JOHAB, UTF-7
   - refused with "Unsupported encoding": WINDOWS-31J, IBM037, CP65001
 
-  The helper links GNU libiconv 1.17 (static, no extra encodings, DOS code pages on as
+  The helper loads GNU libiconv 1.17 as `libiconv-2.dll` (no extra encodings, DOS code pages on as
   `iconv.c` does for MSVC). The wheel's release is not documented; its binary has the DOS
   aliases (CP1125, CP1131) and none of the extra ones (TDS565, ATARIST, EUC-JISX0213), and
   82 declared names plus their converted text give the same verdicts (lane X, speed-x.md).
@@ -164,12 +164,13 @@ in `.local/native/` (`libxml2-2.11.9`, `libiconv-1.17`, `zlib-1.3.1`). The Visua
 generator finds the compiler itself; pass the SDK explicitly (quoted in PowerShell): the
 10.0.26100 SDK on this machine has no UCRT headers.
 
-1. Static zlib and GNU libiconv (`cmake/deps`): zlib's own CMakeLists renames `zconf.h`
+1. Static zlib and the GNU libiconv DLL (`cmake/deps`): zlib's own CMakeLists renames `zconf.h`
    inside the source tree and libiconv has no MSVC project, so `cmake/deps/CMakeLists.txt`
    compiles their library sources (zlib's `zlib_SRCS`; libiconv's `lib/iconv.c` and
-   `libcharset/lib/localcharset.c`, the objects of `lib/Makefile.in` minus the DLL-only
-   `relocatable.c`). `iconv.h`/`localcharset.h` come from the `*.build.in` templates filled
-   as configure does for a static build; `cmake/deps/libiconv_config.h` replaces configure's
+   `libcharset/lib/localcharset.c`, the objects of `lib/Makefile.in` minus `relocatable.c`,
+   only used for installation-prefix relocation) into `libiconv-2.dll` (import library
+   `libiconv.lib`). `iconv.h`/`localcharset.h` come from the `*.build.in` templates filled as
+   configure does for a Windows DLL; `cmake/deps/libiconv_config.h` replaces configure's
    `config.h` with the macros those two files read.
 
    ```
@@ -196,7 +197,8 @@ generator finds the compiler itself; pass the SDK explicitly (quoted in PowerShe
    The configure step prints `studio_xsd: libxml2 2.11.9 with lxml 6.0.2 feature set`
    (`LIBXML_EXPR_ENABLED` is `#if 0` in 2.11.9's own template, as in the wheel). The result
    is `studio/native/build/xsd/Release/studio_xsd.exe` (about 1.7 MB, `/MD`: needs
-   `VCRUNTIME140.dll` and the UCRT like the other workers; no libxml2/iconv/zlib DLLs).
+   `VCRUNTIME140.dll`, the UCRT and `libiconv-2.dll` beside it; no libxml2/zlib DLLs).
+   `tools/build_xsd_helper.py` runs steps 1-2, checks hello and copies both files.
 3. Smoke test: hello reports `2.11.9` and `parse_options` 4278272; then the parity test.
 
 The Go engine starts `<native folder>/studio_xsd.exe` (`app.Options.XSDHelper`), the folder of
@@ -204,11 +206,11 @@ The Go engine starts `<native folder>/studio_xsd.exe` (`app.Options.XSDHelper`),
 parity build (`-tags parity`) also reads `STUDIO_XSD_HELPER` because tests pass a scratch
 `--native-exe`.
 
-**Licences of what is linked statically.** libxml2: MIT (`Copyright` in its tree). zlib:
-zlib licence (`LICENSE`). GNU libiconv: LGPL 2.1 or later for the library (`COPYING.LIB`;
-the `iconv` program, not built, is GPL). The LGPL lets a statically linked program ship if
-users can relink it with a modified libiconv (object files or source of the helper plus the
-build recipe) and the licence text ships with it; the owner decides how (see speed-x log).
+**Licences.** libxml2 (static): MIT (`Copyright` in its tree). zlib (static): zlib licence
+(`LICENSE`). GNU libiconv: LGPL 2.1 or later (`COPYING.LIB`; the `iconv` program, not built,
+is GPL). It ships as the replaceable `libiconv-2.dll` with its licence, a notice
+(`studio/packaging/libiconv-NOTICE.txt`) and its source on download.scadabench.com
+(ADR-0083; uploaded by `website/deploy.cmd`).
 
 ## Parity test plan
 

@@ -25,15 +25,16 @@ var version = ""
 
 // resolvePaths mirrors Settings.defaults: --data-dir wins; otherwise a "data" folder beside
 // the executable, else %LOCALAPPDATA%\ScadaBench\data. The frontend is frontend.pak or the
-// frontend folder beside the executable, else the source tree's studio/frontend/dist. The
-// native folder is --native-exe's folder, else "native" beside the executable, else the
-// source tree's studio/native/build/Release.
+// frontend folder in the resource folder, else the source tree's studio/frontend/dist. The
+// native folder is --native-exe's folder, else "native" in the resource folder, else the
+// source tree's studio/native/build/Release. The resource folder is "_internal" beside the
+// executable in the packaged layout (ADR-0083, as PyInstaller's), else the executable's own.
 func resolvePaths(options launcher.Options) paths {
 	executable, _ := os.Executable()
-	folder := filepath.Dir(executable)
+	folder := resourceFolder(filepath.Dir(executable))
 	result := paths{data: options.DataDir}
 	if result.data == "" {
-		result.data = filepath.Join(folder, "data")
+		result.data = filepath.Join(filepath.Dir(executable), "data")
 		if info, err := os.Stat(result.data); (err != nil || !info.IsDir()) && os.Getenv("LOCALAPPDATA") != "" {
 			result.data = filepath.Join(os.Getenv("LOCALAPPDATA"), "ScadaBench", "data")
 		}
@@ -61,6 +62,15 @@ func resolvePaths(options launcher.Options) paths {
 		result.version = sourceVersion(folder)
 	}
 	return result
+}
+
+// resourceFolder is folder/_internal when it holds the packaged resources, else folder.
+func resourceFolder(folder string) string {
+	internal := filepath.Join(folder, "_internal")
+	if info, err := os.Stat(filepath.Join(internal, "native")); err == nil && info.IsDir() {
+		return internal
+	}
+	return folder
 }
 
 // upward lists folder/relative for folder and each of its parents.

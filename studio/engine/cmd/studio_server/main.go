@@ -1,6 +1,7 @@
 // Command studio_server is the Go engine's backend, started like the Python server mode
 // (launcher/entrypoint.py): same arguments, data-folder lease, launcher.json and printed
-// lines, beginning with the readiness line "ScadaBench: http://127.0.0.1:<port>".
+// lines, beginning with the readiness line "ScadaBench: http://127.0.0.1:<port>". The
+// release build is ScadaBench.exe (ADR-0083) and adds the packaged app window.
 package main
 
 import (
@@ -18,6 +19,7 @@ import (
 	"time"
 
 	"studio-engine/internal/app"
+	"studio-engine/internal/desktop"
 	"studio-engine/internal/launcher"
 )
 
@@ -43,6 +45,7 @@ func run(args []string) int {
 	if len(args) > 0 && args[0] == "--fold-journal" {
 		return foldJournal(args[1:])
 	}
+	desktop.AttachParentTerminal()
 	options, err := launcher.ParseOptions(args)
 	var usage *launcher.UsageError
 	if errors.As(err, &usage) {
@@ -53,31 +56,45 @@ func run(args []string) int {
 		fmt.Fprintf(os.Stderr, "studio_server: error: %s\n", usage.Message)
 		return 2
 	}
-	if options.SelfTest {
-		fmt.Fprintln(os.Stderr, "--self-test is not part of the Go engine yet; use the Python engine.")
+	if options.Dev && packaged == "1" {
+		// Developer mode uses a fixed session secret and token; the installed app never runs it.
+		fmt.Fprintln(os.Stderr, "Developer mode (--dev) is not available in the installed ScadaBench. "+
+			"Run it from source with studio/tools/run_dev.py instead.")
 		return 1
 	}
+	if packaged == "1" {
+		desktop.MigrateLegacyFolder(os.Getenv("LOCALAPPDATA"))
+		announceSignedModule()
+	}
 	paths := resolvePaths(options)
+	if options.SelfTest {
+		return selfTest(paths)
+	}
 	lease, err := launcher.AcquireLease(paths.data)
+	if err != nil && !options.Dev {
+		// Another ScadaBench owns this data folder: bring its window forward instead.
+		return desktop.ShowRunningInstance(paths.data, err)
+	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return 1
 	}
 	defer lease.Release()
-	return serve(options, paths)
+	log := desktop.OpenLog(paths.data)
+	defer log.Close()
+	return serve(options, paths, log)
 }
 
-func serve(options launcher.Options, paths paths) int {
+func serve(options launcher.Options, paths paths, log *desktop.Logger) int {
 	token, secret, origin := launcher.LaunchToken(), launcher.SecretKey(), ""
 	if options.Dev {
 		token, secret, origin = options.DevToken, launcher.DevSecret, trimSlash(options.FrontendURL)
 	}
 	engine, err := app.Compose(app.Options{DataDir: paths.data, NativeDir: paths.native, FrontendDir: paths.frontend,
 		SchemasDir: paths.schemas, XSDSeed: seedFiles(), Token: token, SecretKey: secret, AdminOrigin: origin,
-		Version: paths.version, Enforce: packaged == "1"})
+		Version: paths.version, Enforce: packaged == "1", NativeSeal: parseSeal(nativeSeal), Logf: engineLog(log)})
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
+		return startFailed(log, paths.data, err)
 	}
 	defer engine.Close()
 	listener, err := net.Listen("tcp4", "127.0.0.1:"+strconv.Itoa(options.Port))
@@ -87,8 +104,7 @@ func serve(options launcher.Options, paths paths) int {
 	}
 	if err != nil {
 		if listener, err = net.Listen("tcp4", "127.0.0.1:0"); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return 1
+			return startFailed(log, paths.data, err)
 		}
 	}
 	url := "http://127.0.0.1:" + strconv.Itoa(listener.Addr().(*net.TCPAddr).Port)
@@ -100,22 +116,30 @@ func serve(options launcher.Options, paths paths) int {
 		}
 		fmt.Printf("Vite frontend: %s/#session=%s\n", options.FrontendURL, token)
 		fmt.Println("Open the address above in your browser (ScadaBench never opens tabs automatically).")
-	} else {
-		fmt.Printf("Open in your browser: %s#session=%s\n", url, token)
+		return listen(engine, listener, nil)
 	}
-	return listen(engine, listener)
+	target := url + "#session=" + token
+	fmt.Println("Open in your browser: " + target)
+	closed := make(chan struct{})
+	stopShow := startWindow(options, paths.data, url, target, log, closed)
+	defer stopShow()
+	return listen(engine, listener, closed)
 }
 
-// listen serves until Ctrl+C (or a termination signal), then stops accepting requests,
-// ends open event streams and lets the caller close the engine and release the lease.
-func listen(engine *app.Engine, listener net.Listener) int {
+// listen serves until Ctrl+C (or a termination signal) or until the app window closes, then
+// stops accepting requests, ends open event streams and lets the caller close the engine
+// and release the lease. windowClosed is nil when there is no window to watch.
+func listen(engine *app.Engine, listener net.Listener, windowClosed <-chan struct{}) int {
 	server := &http.Server{Handler: engine.Handler, ReadHeaderTimeout: 30 * time.Second}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	stopped := make(chan struct{})
 	go func() {
 		defer close(stopped)
-		<-stop
+		select {
+		case <-stop:
+		case <-windowClosed:
+		}
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
 		if server.Shutdown(ctx) != nil {

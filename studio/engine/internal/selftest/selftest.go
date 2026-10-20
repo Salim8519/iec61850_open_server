@@ -28,8 +28,9 @@ type Options struct {
 	XSDHelper   string // studio_xsd.exe; empty means <NativeDir>/studio_xsd.exe
 	XSDSeed     []string
 	Version     string
-	Enforce     bool   // license enforcement (the packaged app)
-	LicenseHome string // "" means licensing.DefaultHome()
+	Enforce     bool              // license enforcement (the packaged app)
+	NativeSeal  map[string]string // shipped native digests (app.Options.NativeSeal)
+	LicenseHome string            // "" means licensing.DefaultHome()
 	Logf        func(format string, args ...any)
 }
 
@@ -101,7 +102,7 @@ func (r *run) compose(token string) (*app.Engine, error) {
 	o := r.options
 	return app.Compose(app.Options{DataDir: r.directory, NativeDir: o.NativeDir, FrontendDir: o.FrontendDir,
 		SchemasDir: o.SchemasDir, XSDHelper: o.XSDHelper, XSDSeed: o.XSDSeed, Token: token,
-		SecretKey: launcher.SecretKey(), Version: o.Version, Enforce: o.Enforce, LicenseHome: o.LicenseHome,
+		SecretKey: launcher.SecretKey(), Version: o.Version, Enforce: o.Enforce, NativeSeal: o.NativeSeal, LicenseHome: o.LicenseHome,
 		Logf: o.Logf})
 }
 
