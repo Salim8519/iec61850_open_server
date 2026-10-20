@@ -42,7 +42,7 @@ something is selected: status pill, Operate (while running), name and start posi
 Devices: 280 px list column with its own scroll (Import with *Select* beside it, filter bar, compact rows: name, data
 points, then the role/status pills on their own line so they are never cut, change 0097) beside one
 detail card: a one-line header (name, "N points · N controls · N notes", ?, *Run this IED* or
-*Connect*, *Be this IED* / *Read real IED* / *Leave out*, ADR-0068), one role line (who publishes,
+*Connect*, *Simulate* / *Monitor real device* / *Skip*, ADR-0068, names change 0142), one role line (who publishes,
 address, "reachable from this PC only" or the network card) and tabs Overview (thin stats line), Data points (table
 fills the height), Compare with SCD (real devices), Signal flow and Files. Test and Settings switch
 sections with a segmented control.
