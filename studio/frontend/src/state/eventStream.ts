@@ -4,9 +4,10 @@ import { eventValues, type ValueStore } from './valueStore.ts';
 
 /** The page's one live event stream (speed lane F).
  *
- * Today it is the SSE bus `GET /api/v1/events`. The Go engine's push stream (a later lane) carries
- * the same bus events plus topic frames; it plugs in with `setStreamFactory` and the rest of the
- * app does not change: `open` fires when the stream is (re)connected, `event` for every bus event. */
+ * With the Python engine it is the SSE bus `GET /api/v1/events`. The Go engine's push stream carries
+ * the same bus events plus topic frames; `api/pushClient.ts` plugs it in with `setStreamFactory` at
+ * start-up (it falls back to `sseStream` when the backend has no push) and the rest of the app does
+ * not change: `open` fires when the stream is (re)connected, `event` for every bus event. */
 export type StreamHandlers = { open: () => void; event: (event: StudioEvent) => void };
 export type StudioStream = { close: () => void };
 export type StreamFactory = (handlers: StreamHandlers) => StudioStream;

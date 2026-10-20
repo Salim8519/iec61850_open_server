@@ -1,0 +1,130 @@
+// Generator of push-frames.json (speed lane F4). Not compiled here: to regenerate, copy it to
+// studio/engine/internal/push/zz_frames_gen_test.go and run, from studio/engine,
+//   STUDIO_PUSH_FIXTURE=<abs path>/push-frames.json go test -run TestWriteFrontendFixture ./internal/push
+// then delete the copy. It records real frames of the Go push hub (full, keyed deltas, status,
+// hello) with the exact GET text each must rebuild, for studio/tests/frontend/pushStream.test.ts.
+package push
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"math/rand/v2"
+	"os"
+	"strings"
+	"testing"
+	"time"
+)
+
+type fixtureStep struct {
+	Frame string `json:"frame"`
+	Text  string `json:"sha256,omitempty"` // of the exact GET text the frame must rebuild
+}
+
+func digest(text string) string {
+	sum := sha256.Sum256([]byte(text))
+	return hex.EncodeToString(sum[:])
+}
+
+func TestWriteFrontendFixture(t *testing.T) {
+	path := os.Getenv("STUDIO_PUSH_FIXTURE")
+	if path == "" {
+		t.Skip("set STUDIO_PUSH_FIXTURE")
+	}
+	clock := newFakeClock()
+	random := rand.New(rand.NewPCG(4, 61850))
+	logRoute := newBody(`{"entries":[],"last":0}`)
+	pointsRoute := newBody(`{"points":[],"protocol":"iec104"}`)
+	health := newBody(`{"checked_at":"t0","ieds":[]}`)
+	failing := newBody(`{"ok":true}`)
+	area, _ := testArea(t, clock,
+		&Topic{Name: "log", Get: logRoute.get, Kind: Keyed, List: "entries", Key: "seq", Triggers: []string{"log"}},
+		&Topic{Name: "pts", Get: pointsRoute.get, Kind: Keyed, List: "points", Key: "id", Triggers: []string{"pts"}},
+		&Topic{Name: "health", Get: health.get, Triggers: []string{"health"}},
+		&Topic{Name: "err", Get: failing.get, Triggers: []string{"err"}})
+	tab := attachTab(t, area, "tab1")
+	tab.subscribe("log", "pts", "health", "err")
+	hello := string(area.hello(nil, "tab1"))
+	steps := []fixtureStep{{Frame: hello[len("event: push\ndata: ") : len(hello)-2]}}
+	routes := map[string]*body{"log": logRoute, "pts": pointsRoute, "health": health, "err": failing}
+	record := func(n int) {
+		for _, frame := range tab.frames(n) {
+			_, want := routes[frame["t"].(string)].get("")
+			steps = append(steps, fixtureStep{Frame: frame["_raw"].(string), Text: digest(strings.TrimSuffix(string(want), "\n"))})
+		}
+	}
+	record(4)
+	change := func(name, text string) { // unchanged bytes send nothing, so only real changes
+		if _, now := routes[name].get(""); string(now) == text+"\n" {
+			return
+		}
+		routes[name].set(text)
+		clock.advance(time.Second)
+		area.Changed(name)
+		record(1)
+	}
+	var seqs []int
+	texts := map[int]string{}
+	var ids []string
+	values := map[string]string{}
+	next := 1
+	for round := 0; round < 300; round++ {
+		for count := random.IntN(3); count > 0; count-- {
+			seqs = append(seqs, next)
+			// Flask escapes non-ASCII (even seq); odd seq carries a raw "e-acute" to check byte offsets.
+			accent := "\\" + "u00e9"
+			if next%2 == 1 {
+				accent = string(rune(0xe9))
+			}
+			texts[next] = fmt.Sprintf(`line %d %s \"q\" \\ </x>`, next, accent)
+			next++
+		}
+		if len(seqs) > 0 && random.IntN(3) == 0 {
+			texts[seqs[random.IntN(len(seqs))]] += " applied"
+		}
+		if len(seqs) > 3 && random.IntN(5) == 0 { // a removal in the middle
+			at := random.IntN(len(seqs))
+			seqs = append(seqs[:at:at], seqs[at+1:]...)
+		}
+		if len(seqs) > 20 {
+			seqs = seqs[len(seqs)-20:]
+		}
+		rows := make([]string, len(seqs))
+		for index, seq := range seqs {
+			rows[index] = fmt.Sprintf(`{"seq":%d,"text":"%s","value":1.0}`, seq, texts[seq])
+		}
+		change("log", `{"entries":[`+strings.Join(rows, ",")+`],"last":`+fmt.Sprint(next-1)+`}`)
+		if random.IntN(2) == 0 {
+			id := fmt.Sprintf("p%d", random.IntN(40))
+			if _, found := values[id]; !found {
+				ids = append(ids, id)
+			}
+			values[id] = fmt.Sprintf("%d.0", random.IntN(5))
+			if random.IntN(15) == 0 && len(ids) > 2 { // a reorder: only a full frame can say it
+				ids[0], ids[1] = ids[1], ids[0]
+			}
+			points := make([]string, len(ids))
+			for index, key := range ids {
+				points[index] = fmt.Sprintf(`{"id":"%s","quality":"good","value":%s}`, key, values[key])
+			}
+			change("pts", `{"points":[`+strings.Join(points, ",")+`],"protocol":"iec104"}`)
+		}
+		if round%50 == 7 {
+			change("health", fmt.Sprintf(`{"checked_at":"t%d","ieds":[{"id":"IED%d","mode":"on"}]}`, round, round))
+		}
+		if round == 100 {
+			failing.mu.Lock()
+			failing.status = 500
+			failing.mu.Unlock()
+			change("err", `{"error":"Gateway worker stopped"}`)
+		}
+	}
+	encoded, err := json.MarshalIndent(steps, "", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, append(encoded, '\n'), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
