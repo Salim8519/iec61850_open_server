@@ -34,7 +34,10 @@ def main():
             ("start", lambda: c.start()),
             ("wait", lambda: time.sleep(0.5)),
             ("operate cb1 close", lambda: c.equipment_control.operate("cb1", value=True)),
+            # the IED reports the new position at the worker's pace: let it arrive first
+            ("wait", lambda: time.sleep(0.3)),
             ("operate ds1 open", lambda: c.equipment_control.operate("ds1", action="open")),
+            ("wait", lambda: time.sleep(0.3)),
             ("manual AnIn2", lambda: c.update(ids[0], "BayACTRL/GGIO1.AnIn2.mag.f", 42.5)),
             ("pulse Loc", lambda: c.pulses.start(ids[0], "BayACTRL/XCBR1.Loc.stVal", True, 300)),
             ("wait", lambda: time.sleep(0.6)),

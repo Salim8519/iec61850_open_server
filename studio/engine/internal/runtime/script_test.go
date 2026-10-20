@@ -61,7 +61,9 @@ var parityScript = []scriptStep{
 	{"start", func(c *Coordinator, _ []string) error { return c.Start(nil) }},
 	{"wait", waitFor(0.5)},
 	{"operate cb1 close", func(c *Coordinator, _ []string) error { _, err := c.Operate("cb1", true, ""); return err }},
+	{"wait", waitFor(0.3)}, // the IED reports the new position at the worker's pace: let it arrive first
 	{"operate ds1 open", func(c *Coordinator, _ []string) error { _, err := c.Operate("ds1", nil, "open"); return err }},
+	{"wait", waitFor(0.3)},
 	{"manual AnIn2", func(c *Coordinator, ids []string) error {
 		_, err := c.Update(ids[0], "BayACTRL/GGIO1.AnIn2.mag.f", 42.5, nil, "manual")
 		return err
