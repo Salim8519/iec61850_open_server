@@ -131,6 +131,20 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 | `PUT /tools/master/ranges`, `/routes`; `POST /tools/master/probe`, `/probe/ranges` | `modbus_ranges`, `routes`, `table`, `start`, `end`, `data_type` | Modbus ranges, converter command routes, Find registers (<= 10,000 addresses) and adding what it found |
 | `GET /tools/master/traffic?after=`, `/commands` | - | Decoded device traffic, master command log |
 
+SNMP devices (ADR-0092), Go engine only, under `/tools/snmp` (the Python engine answers 404):
+
+| Method/path | Input | Result / invariant |
+| --- | --- | --- |
+| `GET /tools/snmp`, `/config`; `POST /role` | `role` (`simulate`, `read`) | Status (devices, reader, receiver) and the saved `snmp` section |
+| `POST /devices`, `/import`; `PUT/DELETE /devices/{id}` | `profile` (`switch`, `gps`, `empty`); `kind` (`walk`, `csv`), `name`, `text`; `device` | Add from a profile or a file (line diagnostics), change, delete |
+| `POST /start`, `/stop` | - | Start/stop all simulated devices; a port clash is explained with a free port |
+| `GET/PUT /devices/{id}/points`, `PUT /devices/{id}/value`, `GET /devices/{id}/points.csv` | `points`; `oid`, `value`, `hex` | Values with names; live change while running; CSV export |
+| `GET /devices/{id}/actions`, `POST /devices/{id}/trap` | `action` | Events (link down, sync lost...) that change values and send traps/informs |
+| `GET /requests` | - | Request log of the simulated devices |
+| `POST /read/connect`, `/disconnect`, `/walk`, `/set`, `/save`; `PUT /read/poll`, `/watch`; `GET /read/values` | `target`; `root`; `point`, `confirm`; `name`; `every_ms` (>= 200); `oids` | Read a device: walk all, re-read, write, save as simulated device |
+| `POST /traps/listen`, `/traps/stop`; `GET /traps` | `ip`, `port`, `users` | Trap/inform receiver (v1/v2c/v3) and received traps with names |
+| `GET/POST /mibs`, `DELETE /mibs/{module}`, `POST /mibs/restore`, `GET /mibs/resolve?name=` | `name`, `text` (MIB file) | MIB library: built-in and added modules, remove, bring back, name to OID |
+
 Packaged builds answer 402 `license_required` on every other `/api/v1` call until licensed
 (ADR-0046); development never does. License endpoints return `{error, code}` on failure.
 

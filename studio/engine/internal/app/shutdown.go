@@ -33,6 +33,9 @@ func (e *Engine) Close() error {
 		if e.Master != nil {
 			_, _ = e.Master.Disconnect(false)
 		}
+		if e.SNMP != nil {
+			e.SNMP.Close() // devices and the trap receiver keep their auto-start choice
+		}
 		if e.Live != nil {
 			e.Live.Stop()
 		}

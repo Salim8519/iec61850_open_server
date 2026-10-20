@@ -52,6 +52,10 @@ func (e *Engine) resumeGateway(ctx context.Context) {
 	if ctx.Err() == nil {
 		e.Gateway.Autostart()
 	}
+	if ctx.Err() == nil {
+		e.SNMP.Autostart()
+		e.SNMP.AutoListen()
+	}
 }
 
 // licenseGate is licensing.Service as httpapi.LicenseGate. Python's before_request let an

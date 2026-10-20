@@ -124,9 +124,14 @@ func restoredProject(raw *pyjson.Object, migrated any, imported []*pyjson.Object
 		ieds[index] = model
 	}
 	name := pyval.Prefix(pyval.Str(pyval.Lookup(raw, "name", "Imported substation")), 100)
-	return pyjson.NewObject().Set("id", id).Set("name", name).Set("ieds", ieds).Set("diagram", diagram).
+	restored := pyjson.NewObject().Set("id", id).Set("name", name).Set("ieds", ieds).Set("diagram", diagram).
 		Set("sources", sources).Set("scenarios", scenarios).Set("test_panel", panel).
-		Set("network", network).Set("gateway", gatewaySection), nil
+		Set("network", network).Set("gateway", gatewaySection)
+	// The Go-only SNMP devices section (ADR-0092) is kept as stored; the SNMP service checks it.
+	if section, isObject := pyval.Lookup(raw, "snmp", nil).(*pyjson.Object); isObject {
+		restored.Set("snmp", pyval.DeepCopy(section))
+	}
+	return restored, nil
 }
 
 func wrapStored(prefix string, err error) error {

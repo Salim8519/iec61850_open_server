@@ -16,6 +16,9 @@ export const RUNNING_COPY = {
   explorer: (host: string, watched: number, polling: boolean) =>
     `IED Explorer: connected to ${host}${polling ? ` · watching ${watched}` : ''}`,
   scan: (probed: number, total: number) => `Find IEDs: scanning ${probed} of ${total}`,
+  snmpDevices: (count: number) => `SNMP: ${plural(count, 'simulated device')} answering`,
+  snmpReading: (target: string) => `SNMP: reading ${target.split(' ')[0]}`,
+  snmpTraps: 'SNMP: receiving traps',
   running: 'Running',
 };
 

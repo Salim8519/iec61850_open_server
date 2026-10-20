@@ -21,7 +21,7 @@ func NewProject(id string) *pyjson.Object {
 func Snapshot(project, notice *pyjson.Object, sessionID string, revision int64) *pyjson.Object {
 	result := pyjson.NewObject()
 	for _, key := range project.Keys() {
-		if key == "ieds" || key == "sources" || key == "gateway" {
+		if key == "ieds" || key == "sources" || key == "gateway" || key == "snmp" {
 			continue
 		}
 		value, _ := project.Get(key)

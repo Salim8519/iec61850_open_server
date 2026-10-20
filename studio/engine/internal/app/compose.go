@@ -21,6 +21,7 @@ import (
 	"studio-engine/internal/runtime"
 	"studio-engine/internal/store/recovery"
 	"studio-engine/internal/store/xsd"
+	snmpservice "studio-engine/internal/snmp/service"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/explorer"
 	"studio-engine/internal/tools/scan"
@@ -76,6 +77,7 @@ type Engine struct {
 	Master   *service.Master
 	Explorer *explorer.Service
 	Scanner  *scan.Service
+	SNMP     *snmpservice.Service
 	Control  *control.Client
 	License  *licensing.Service
 	Network  *netcfg.NetworkService

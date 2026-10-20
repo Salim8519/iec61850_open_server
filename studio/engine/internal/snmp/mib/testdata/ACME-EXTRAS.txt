@@ -1,0 +1,73 @@
+-- Two fictional modules in one file: an SMIv2 extension of ACME-SUBSTATION-MIB and an
+-- SMIv1 trap module. The extension also holds one broken and one unknown definition.
+ACME-EXT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE, Integer32
+        FROM SNMPv2-SMI
+    acmeObjects
+        FROM ACME-SUBSTATION-MIB;
+
+acmeExt OBJECT IDENTIFIER ::= { acmeObjects 9 }
+
+acmeExtVoltage OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "V"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Busbar voltage."
+    ::= { acmeExt 1 }
+
+acmeExtBroken OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This definition has no OID value."
+
+acmeExtFancy VENDOR-MACRO
+    COLOUR      blue
+    ::= { acmeExt 3 }
+
+acmeExtCurrent OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "A"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Feeder current."
+    ::= { acmeExt 4 }
+
+END
+
+ACME-V1-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    enterprises, Counter, IpAddress
+        FROM RFC1155-SMI
+    OBJECT-TYPE
+        FROM RFC-1212
+    TRAP-TYPE
+        FROM RFC-1215;
+
+acmeV1      OBJECT IDENTIFIER ::= { iso org(3) dod(6) internet(1) private(4) enterprises(1) 99999 50 }
+
+acmeV1Alarms OBJECT-TYPE
+    SYNTAX  Counter
+    ACCESS  read-only
+    STATUS  mandatory
+    DESCRIPTION
+            "Alarms raised since start."
+    ::= { acmeV1 1 }
+
+acmeV1Peer OBJECT-TYPE
+    SYNTAX  IpAddress
+    ACCESS  read-write
+    STATUS  mandatory
+    ::= { acmeV1 2 }
+
+acmeV1Alarm TRAP-TYPE
+    ENTERPRISE  acmeV1
+    VARIABLES   { acmeV1Alarms }
+    DESCRIPTION "An alarm was raised."
+    ::= 7
+
+END

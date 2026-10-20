@@ -75,7 +75,7 @@ func Specs(o CatalogOptions) []Spec {
 	activity := whole("activity", "/activity", ChangeGatewayStatus, ChangeMasterStatus, ChangeExplorer, ChangeScan,
 		"scenario_*", "gateway_*", "master_*", "explorer_*")
 	activity.Topic.Gap = 250 * time.Millisecond
-	return []Spec{
+	return append([]Spec{
 		health,
 		ticking(whole("goose.links", "/goose/links", "goose_*"), running),
 		ticking(whole("goose.overview", "/goose", "goose_*"), running),
@@ -98,7 +98,7 @@ func Specs(o CatalogOptions) []Spec {
 		keyed(whole("master.traffic", "/tools/master/traffic", ChangeMasterTraffic), Keyed, "entries", "seq"),
 		whole("explorer", "/tools/explorer", ChangeExplorer, "explorer_*"),
 		ticking(whole("scan", "/tools/scan", ChangeScan), scanning),
-	}
+	}, snmpSpecs()...)
 }
 
 // Catalog binds the specs to the composed routes; missing lists the patterns no area

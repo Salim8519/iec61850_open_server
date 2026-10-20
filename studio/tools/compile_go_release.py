@@ -52,6 +52,16 @@ def build_xsd(mode):
         build_xsd_helper.build(output=target, build_id=f"scadabench-{mode.version}")
 
 
+def build_snmp(mode):
+    """studio_snmp.exe (ADR-0092) beside the workers, built from the engine module."""
+    mode.step("SNMP engine -> studio_snmp.exe")
+    import build_snmp_engine
+    target = mode.native_bin / "studio_snmp.exe"
+    print(f"  $ go build ./cmd/studio_snmp -> {target}", flush=True)
+    if not mode.dry_run:
+        build_snmp_engine.build(output=target)
+
+
 def preflight(mode):
     release = compile_protected.preflight(mode)
     if not mode.version or not all(part.isdigit() for part in mode.version.split(".")):
@@ -75,6 +85,7 @@ def main(argv=None):
     compile_protected.build_frontend(mode)
     compile_protected.build_native(mode, release)
     build_xsd(mode)
+    build_snmp(mode)
     folder = steps.fresh_folder(mode)
     steps.build_engine(mode, folder, SEALED)
     steps.lay_out(mode, folder, mode.build / "frontend.pak")

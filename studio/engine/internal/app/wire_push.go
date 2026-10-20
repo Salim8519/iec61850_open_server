@@ -40,5 +40,6 @@ func (e *Engine) wirePush(live, runtimeRoutes, tools []api.Route) []api.Route {
 	e.Master.OnChange(e.Push.Changed)
 	e.Explorer.OnChange(e.Push.Changed)
 	e.Scanner.OnChange(e.Push.Changed)
+	e.SNMP.OnChange(e.Push.Changed)
 	return e.Push.Routes()
 }

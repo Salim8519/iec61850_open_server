@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	"studio-engine/internal/api/snmpapi"
 	"studio-engine/internal/api/toolsapi"
 	"studio-engine/internal/testutil"
 )
@@ -91,7 +92,7 @@ func TestEveryPythonRouteServed(t *testing.T) {
 		}
 	}
 	for key := range served {
-		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] {
+		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] && !snmpapi.GoOnly(key) {
 			extra = append(extra, key)
 		}
 	}

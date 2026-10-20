@@ -15,7 +15,7 @@ ROOT = STUDIO.parent
 ENGINE = STUDIO / "engine"
 ICON = STUDIO / "branding/icon.ico"
 WORKERS = ("studio_ied.exe", "studio_live.exe", "studio_goose.exe", "studio_probe.exe", "studio_gateway.exe",
-           "studio_control.exe", "studio_master.exe", "studio_xsd.exe")
+           "studio_control.exe", "studio_master.exe", "studio_xsd.exe", "studio_snmp.exe")
 LICENSES = {
     ".local/native/libiec61850/COPYING": "licenses/libiec61850",
     ".local/native/json/LICENSE.MIT": "licenses/nlohmann-json",
@@ -27,6 +27,7 @@ LICENSES = {
     ".local/native/zlib-1.3.1/LICENSE": "licenses/zlib",
     ".local/native/libiconv-1.17/COPYING.LIB": "licenses/libiconv",
     "studio/packaging/libiconv-NOTICE.txt": "licenses/libiconv",
+    "studio/packaging/snmp-mibs-NOTICE.txt": "licenses/snmp-mibs",
 }
 PORTABLE_PAYLOAD = ENGINE / "cmd/scadabench_portable/payload"
 # The workers' VC++ runtime (MSVCP140, VCRUNTIME140, VCRUNTIME140_1), shipped app-locally

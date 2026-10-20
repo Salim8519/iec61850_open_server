@@ -1,6 +1,6 @@
 // Wording for the Tools place. Each tool card lists only a tool that is built and usable;
 // planned tools are specified in docs/specs/proposed/ and appear here once delivered.
-export type ToolId = 'explorer' | 'find' | 'gateway' | 'traffic';
+export type ToolId = 'explorer' | 'find' | 'gateway' | 'snmp' | 'traffic';
 
 export type ToolCard = { id: ToolId; name: string; line: string; hint: string };
 
@@ -14,6 +14,9 @@ export const TOOLS: ToolCard[] = [
   { id: 'gateway', name: 'SCADA gateway & master',
     line: 'Be the station gateway for your SCADA, or be the SCADA master for your gateway or RTU.',
     hint: 'Station gateway: ScadaBench serves your IEDs to SCADA over IEC 104, Modbus TCP or DNP3. SCADA master: it connects to a gateway or RTU, finds every point by itself and sends commands after a confirmation.' },
+  { id: 'snmp', name: 'SNMP devices',
+    line: 'Simulate network devices such as switches and GPS clocks, or read any SNMP device.',
+    hint: 'SNMP is how switches, GPS clocks and UPS units report their health. Simulate devices plays them in v1, v2c and v3 and sends their traps. Read devices reads any device, names its values from MIBs and receives traps.' },
   { id: 'traffic', name: 'GOOSE & Sampled Values traffic',
     line: 'See which GOOSE and Sampled Values messages are really on the network.',
     hint: 'Checks every GOOSE block and Sampled Values stream of your project against what really arrives. GOOSE needs nothing extra; Sampled Values need the free Npcap driver and a lab network.' },

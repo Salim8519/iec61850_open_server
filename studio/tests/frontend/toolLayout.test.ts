@@ -46,7 +46,8 @@ test('the SCADA tool keeps settings in a column and status with Start at its bot
 test('every list uses the one FilterBar with its own remembered list name', () => {
   const lists = files('features').flatMap(path => [...read(path).matchAll(/useListFilter\('([a-z-]+)'/g)].map(match => ({ path, id: match[1] })));
   const expected = ['scada-points', 'master-points', 'traffic', 'commands', 'master-commands', 'find-results',
-    'explorer-tree', 'explorer-watch', 'devices-list', 'data-points', 'live-points', 'compare'];
+    'explorer-tree', 'explorer-watch', 'devices-list', 'data-points', 'live-points', 'compare', 'snmp-points',
+    'snmp-read-values'];
   assert.deepEqual([...new Set(lists.map(list => list.id))].sort(), [...expected].sort());
   assert.equal(new Set(lists.map(list => list.id)).size, lists.length, 'one list name per list');
   for (const { path } of lists) assert.match(read(path), /<FilterBar /, path);

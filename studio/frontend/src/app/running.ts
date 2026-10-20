@@ -20,6 +20,11 @@ export function toolActivity(activity: Activity | null): Partial<Record<ToolId, 
   if (labels.length) result.gateway = labels.join(' · ');
   if (explorer.state === 'connected') result.explorer = RUNNING_COPY.explorer(explorer.host, explorer.watched, explorer.polling);
   if (scan.state === 'scanning') result.find = RUNNING_COPY.scan(scan.probed, scan.total);
+  const snmp = activity.snmp;
+  const snmpLabels = snmp ? [snmp.running > 0 && RUNNING_COPY.snmpDevices(snmp.running),
+    (snmp.reader === 'connected' || snmp.reader === 'walking') && RUNNING_COPY.snmpReading(snmp.target),
+    snmp.listening && RUNNING_COPY.snmpTraps].filter(Boolean) : [];
+  if (snmpLabels.length) result.snmp = snmpLabels.join(' · ');
   return result;
 }
 
