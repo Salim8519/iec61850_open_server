@@ -39,15 +39,41 @@ StudioHandleset_poll(HandleSet self)
     return Vendor_Handleset_waitReady(self, 0);
 }
 
+/* Sockets of the loop thread's handle set already associated with its event. Sockets the
+ * server accepts inherit the listening socket's association (documented accept() behaviour),
+ * so a reused handle value is associated too; only sockets not seen before need the call. */
+static __declspec(thread) SOCKET watched[FD_SETSIZE];
+static __declspec(thread) u_int watchedCount = 0;
+static __declspec(thread) void* watchedEvent = NULL;
+
+static bool
+isWatched(SOCKET candidate)
+{
+    for (u_int index = 0; index < watchedCount; ++index) {
+        if (watched[index] == candidate)
+            return true;
+    }
+    return false;
+}
+
 int
 StudioHandleset_watch(HandleSet self, void* event)
 {
     if (self == NULL || self->maxHandle == INVALID_SOCKET)
         return -1;
-    /* Re-associating also records events that are already pending (WSAEventSelect), and
-     * the poll below reports anything that was ready before the association. */
-    for (u_int index = 0; index < self->handles.fd_count; ++index)
-        WSAEventSelect(self->handles.fd_array[index], (WSAEVENT) event, FD_ACCEPT | FD_READ | FD_CLOSE);
+    if (event != watchedEvent) {
+        watchedCount = 0;
+        watchedEvent = event;
+    }
+    /* A new association also records events already pending (WSAEventSelect), and the poll
+     * below reports anything that was ready before; the caller reset the event first. */
+    for (u_int index = 0; index < self->handles.fd_count; ++index) {
+        SOCKET handle = self->handles.fd_array[index];
+        if (!isWatched(handle))
+            WSAEventSelect(handle, (WSAEVENT) event, FD_ACCEPT | FD_READ | FD_CLOSE);
+    }
+    memcpy(watched, self->handles.fd_array, self->handles.fd_count * sizeof(SOCKET));
+    watchedCount = self->handles.fd_count;
     return Vendor_Handleset_waitReady(self, 0);
 }
 
