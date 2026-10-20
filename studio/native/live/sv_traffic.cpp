@@ -55,13 +55,19 @@ Json SvTraffic::start(const Json& request) {
         SVReceiver_addSubscriber(receiver, watch->subscriber);
         watches[watch->key] = std::move(watch);
     }
-    SVReceiver_start(receiver);
-    if (!SVReceiver_isRunning(receiver)) {
+    // The header capture's event-driven loop also drives the receiver (no polling thread). If
+    // that capture cannot open, the receiver keeps libiec61850's own thread as before.
+    bool opened = SVReceiver_startThreadless(receiver);
+    if (opened && !headers.start(interface_id, receiver)) {
+        SVReceiver_stopThreadless(receiver);
+        SVReceiver_start(receiver);
+        opened = SVReceiver_isRunning(receiver);
+    }
+    if (!opened) {
         SVReceiver_destroy(receiver);
         receiver = nullptr;
         throw std::runtime_error("Could not open the network adapter for Sampled Values");
     }
-    headers.start(interface_id);
     running = true;
     supervisor = std::thread([this] { supervise(); });
     return {{"listening", true}, {"streams", watches.size()}};
@@ -134,7 +140,10 @@ void SvTraffic::supervise() {
         }
     }
     while (running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        {
+            std::unique_lock<std::mutex> waiting(wake_lock);
+            if (wake.wait_for(waiting, std::chrono::milliseconds(500), [this] { return !running; })) break;
+        }
         auto seen = headers.snapshot();
         std::lock_guard<std::mutex> guard(lock);
         auto now = Hal_getTimeInMs();
@@ -160,7 +169,11 @@ void SvTraffic::supervise() {
 }
 
 void SvTraffic::stop() {
-    running = false;
+    {
+        std::lock_guard<std::mutex> waiting(wake_lock);
+        running = false;
+    }
+    wake.notify_all();
     if (supervisor.joinable()) supervisor.join();
     headers.stop();
     if (receiver) {

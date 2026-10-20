@@ -17,6 +17,8 @@ public:
 private:
     void run();
     std::uintptr_t socket_handle = ~std::uintptr_t(0);
+    void* readable = nullptr;  // socket event (FD_READ): the thread sleeps until a datagram
+    void* closing = nullptr;   // or close() wakes it; no periodic wakes
     Handler handler;
     std::thread thread;
     std::atomic<bool> running{false};
