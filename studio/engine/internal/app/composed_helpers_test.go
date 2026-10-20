@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 	"time"
@@ -37,13 +38,14 @@ func muxNative(t testing.TB) string {
 }
 
 // composeAt builds the engine on dataDir with the given native folder.
-func composeAt(t testing.TB, dataDir, nativeDir string) *Engine {
+func composeAt(t testing.TB, dataDir, nativeDir string, seeds ...string) *Engine {
 	t.Helper()
 	schemas, _ := filepath.Abs(filepath.Join("..", "..", "..", "schemas"))
 	// studio_xsd.exe is not built yet: Python's verdicts for the template and corpus files.
 	seed, _ := filepath.Abs(filepath.Join("..", "scl", "testdata", "golden", "xsd_seed.json"))
 	engine, err := Compose(Options{DataDir: dataDir, NativeDir: nativeDir, LicenseHome: testutil.TempDir(t),
-		SchemasDir: schemas, XSDSeed: []string{seed}, Token: "token", SecretKey: "secret", Version: "0.0.0+dev",
+		SchemasDir: schemas, XSDSeed: append([]string{seed}, seeds...), Token: "token", SecretKey: "secret",
+		Version: "0.0.0+dev",
 		NoBackground: true, Logf: t.Logf})
 	if err != nil {
 		t.Fatal(err)
@@ -52,6 +54,22 @@ func composeAt(t testing.TB, dataDir, nativeDir string) *Engine {
 		t.Fatal("startup recovery did not finish")
 	}
 	return engine
+}
+
+// pythonVerdicts writes Python's XSD verdicts for inputs (SCL files or project trees).
+func pythonVerdicts(t testing.TB, inputs ...string) string {
+	t.Helper()
+	python := os.Getenv("STUDIO_PYTHON")
+	if python == "" {
+		t.Skip("set STUDIO_PYTHON to compute XSD verdicts")
+	}
+	backend, _ := filepath.Abs(filepath.Join("..", "..", "..", "backend"))
+	out := filepath.Join(testutil.TempDir(t), "seed.json")
+	args := append([]string{"-I", filepath.Join("testdata", "xsd_verdicts.py"), "--backend", backend, "--out", out}, inputs...)
+	if output, err := exec.Command(python, args...).CombinedOutput(); err != nil {
+		t.Fatalf("xsd_verdicts.py: %v %s", err, output)
+	}
+	return out
 }
 
 // call sends one authenticated loopback request through the composed handler and decodes
