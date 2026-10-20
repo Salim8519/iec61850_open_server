@@ -73,6 +73,14 @@ func runParity(args []string) (int, bool) {
 
 func composeParity(seams paritySeams, dataDir, nativeExe, frontend string) (*app.Engine, error) {
 	paths := resolvePaths(launcher.Options{DataDir: dataDir, NativeExe: nativeExe})
+	var gate *objectLicense
+	if object, isObject := seams.License["object"]; isObject {
+		found, err := newObjectLicense(object)
+		if err != nil {
+			return nil, err
+		}
+		gate, seams.License = found, nil
+	}
 	license, err := licenseFromSeam(seams.License)
 	if err != nil {
 		return nil, err
@@ -84,6 +92,12 @@ func composeParity(seams paritySeams, dataDir, nativeExe, frontend string) (*app
 	options := app.Options{DataDir: dataDir, NativeDir: paths.native, FrontendDir: frontend, SchemasDir: paths.schemas,
 		XSDSeed: seedFiles(), Token: launcher.LaunchToken(), SecretKey: launcher.SecretKey(), Version: paths.version,
 		LicenseService: license, UpdateService: updateService}
+	if gate != nil {
+		options.License = gate // the duck-typed service's is_licensed() is the 402 gate
+	}
+	if fake, found := seams.Faults[recoverFault]; found {
+		options.RecoverStartup = recoverWithFault(fake)
+	}
 	if _, err := os.Stat(frontend); err != nil {
 		options.FrontendDir = "" // Settings.frontend may point at a missing build
 	}

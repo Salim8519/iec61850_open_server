@@ -38,6 +38,7 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	}
 	projectNetwork := platformapi.ProjectNetwork{Service: e.Projects}
 	network := netcfg.NewNetworkService(projectNetwork, o.DataDir, o.native("studio_ied.exe"), executable)
+	e.Network = network
 	firewall := netcfg.NewGatewayFirewall(network, e.Gateway.Executable, netcfg.SystemExecutor{})
 	return platformapi.New(platformapi.Deps{License: e.License, Updates: e.Updates, Network: network,
 		Firewall: firewall, Projects: projectNetwork, Runtime: e.Runtime, AppVersion: o.Version}).Routes(), nil

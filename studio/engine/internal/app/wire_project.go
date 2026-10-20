@@ -47,7 +47,11 @@ func (e *Engine) wireProject() error {
 		return err
 	}
 	e.Projects = service
-	e.Recovery = recovery.StartBackground(service.RecoverStartup,
+	recover := service.RecoverStartup
+	if o.RecoverStartup != nil {
+		recover = func() (*pyjson.Object, error) { return o.RecoverStartup(service.RecoverStartup) }
+	}
+	e.Recovery = recovery.StartBackground(recover,
 		func(err error) { o.Logf("Startup recovery stopped: %v", err) })
 	return nil
 }
