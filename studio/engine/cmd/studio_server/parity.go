@@ -20,8 +20,9 @@ import (
 // The parity build (go build -tags parity -o studio/engine/build/studio_server_parity.exe)
 // serves tests/parity's engine CLI: --port --no-browser --data-dir --native-exe --frontend
 // --parity-seams. Like parity/server.py it takes no lease and writes no launcher.json.
-// /api/v1/_parity/* answers only "POST shutdown" so far; the inspect operations the 28
-// create_app test files use (project views, supervisor, events) are not ported.
+// /api/v1/_parity/* answers shutdown and the operations in parity_ops.go; write-through
+// project views (project/set, project/update), runtime/state writes, supervisor reads,
+// network/fault seams and service stops are not ported.
 
 func init() { parityRun = runParity }
 
@@ -112,13 +113,16 @@ func (h parityHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.Header.Del("X-Parity-Key")
 	r.Header.Del("X-Parity-Remote-Addr")
 	if operation, inspect := strings.CutPrefix(r.URL.Path, parityPrefix); inspect {
-		_, _ = io.Copy(io.Discard, r.Body)
+		body, _ := io.ReadAll(r.Body)
+		op, known := parityOps[r.Method+" "+operation]
 		switch {
 		case !trusted:
 			reply(w, http.StatusForbidden, map[string]any{"error": "parity key required"})
 		case r.Method == "POST" && operation == "shutdown":
 			reply(w, http.StatusOK, map[string]any{"value": nil})
 			go func() { close(h.stop) }()
+		case known:
+			runParityOp(w, h.engine, op, body, r)
 		default:
 			reply(w, http.StatusNotFound, map[string]any{"error": "unknown parity operation " + r.Method + " " + operation})
 		}
