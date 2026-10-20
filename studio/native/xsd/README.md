@@ -41,12 +41,19 @@ The helper also reports the DOCTYPE as a second check.
     windows-1252, Shift_JIS, GB18030, BIG5-HKSCS, EUC-TW, JOHAB, UTF-7
   - refused with "Unsupported encoding": WINDOWS-31J, IBM037, CP65001
 
-  The helper must link GNU libiconv, preferably the same release that lxml's Windows
-  libxml2 build uses. That release is not confirmed offline; 1.17 or 1.18 is expected.
+  The helper links GNU libiconv 1.17 (static, no extra encodings, DOS code pages on as
+  `iconv.c` does for MSVC). The wheel's release is not documented; its binary has the DOS
+  aliases (CP1125, CP1131) and none of the extra ones (TDS565, ATARIST, EUC-JISX0213), and
+  82 declared names plus their converted text give the same verdicts (lane X, speed-x.md).
 - **zlib does not change results** (memory parsing never decompresses). It stays on so the
-  build is identical.
-- Record the SHA-256 of `libxml2-2.11.9.tar.xz` (from the GNOME `.sha256sum` file) when the
-  tree is fetched, and keep the tree unmodified.
+  build is identical; 1.3.1 is the release in the wheel (`lxml/includes/extlibs/zlib.h`).
+- Source archives (SHA-256, trees kept unmodified, built out of tree):
+  - `libxml2-2.11.9.tar.xz` (download.gnome.org; matches GNOME's `.sha256sum`):
+    `780157a1efdb57188ec474dca87acaee67a3a839c2525b2214d318228451809f`
+  - `libiconv-1.17.tar.gz` (ftp.gnu.org):
+    `8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313`
+  - `zlib-1.3.1.tar.gz` (github.com/madler/zlib release v1.3.1):
+    `9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23`
 
 ## Behaviour reproduced (lxml 6.0.2 source, `parser.pxi`, `xmlerror.pxi`, `xmlschema.pxi`)
 
@@ -152,37 +159,56 @@ by a crashed engine are removed after one hour.
 
 ## Build on Windows (VS2019 BuildTools, SDK 10.0.19041)
 
-This machine has no libxml2 or GNU libiconv sources, so the helper has not been built
-yet. Nothing is downloaded by the build. The C sources compile with no warnings at /W4
-against the libxml2 2.11.9 headers shipped in the lxml wheel; only that compile check
-has been run.
+Nothing is downloaded by the build. The three source trees above are unpacked unmodified
+in `.local/native/` (`libxml2-2.11.9`, `libiconv-1.17`, `zlib-1.3.1`). The Visual Studio
+generator finds the compiler itself; pass the SDK explicitly (quoted in PowerShell): the
+10.0.26100 SDK on this machine has no UCRT headers.
 
-1. Put the unmodified sources in `.local/native/`:
-   - `libxml2-2.11.9` (from `libxml2-2.11.9.tar.xz`, checksum recorded);
-   - a static GNU libiconv (headers and `.lib`);
-   - zlib (headers and static `.lib`).
+1. Static zlib and GNU libiconv (`cmake/deps`): zlib's own CMakeLists renames `zconf.h`
+   inside the source tree and libiconv has no MSVC project, so `cmake/deps/CMakeLists.txt`
+   compiles their library sources (zlib's `zlib_SRCS`; libiconv's `lib/iconv.c` and
+   `libcharset/lib/localcharset.c`, the objects of `lib/Makefile.in` minus the DLL-only
+   `relocatable.c`). `iconv.h`/`localcharset.h` come from the `*.build.in` templates filled
+   as configure does for a static build; `cmake/deps/libiconv_config.h` replaces configure's
+   `config.h` with the macros those two files read.
 
-   The `.local/native` folder is the convention for the other pinned native trees.
-2. Open "x64 Native Tools Command Prompt for VS 2019". If vswhere is not found, use
-   `vcvars64.bat 10.0.19041.0`: the 10.0.26100 SDK on this machine has no UCRT headers.
-3. Configure and build:
+   ```
+   cmake -S studio/native/xsd/cmake/deps -B studio/native/build/xsd-deps -G "Visual Studio 16 2019" -A x64 ^
+     "-DCMAKE_SYSTEM_VERSION=10.0.19041.0" -DZLIB_SOURCE=%CD%/.local/native/zlib-1.3.1 ^
+     -DLIBICONV_SOURCE=%CD%/.local/native/libiconv-1.17 ^
+     -DCMAKE_INSTALL_PREFIX=%CD%/studio/native/build/xsd-deps/install
+   cmake --build studio/native/build/xsd-deps --config Release --parallel 4
+   cmake --install studio/native/build/xsd-deps --config Release
+   ```
+
+   Expected warnings come from the libiconv sources only (C4311 in gperf tables, one
+   C4273 for its own `mbrtowc` declaration, one C4090 in `iconvlist`).
+2. The helper (`D` = `studio/native/build/xsd-deps/install`):
 
    ```
    cmake -S studio/native/xsd -B studio/native/build/xsd -G "Visual Studio 16 2019" -A x64 ^
-     -DCMAKE_SYSTEM_VERSION=10.0.19041.0 ^
-     -DLIBXML2_SOURCE=%CD%/.local/native/libxml2-2.11.9 ^
-     -DIconv_INCLUDE_DIR=<libiconv>/include -DIconv_LIBRARY=<libiconv>/lib/libiconv.lib ^
-     -DZLIB_INCLUDE_DIR=<zlib>/include -DZLIB_LIBRARY=<zlib>/lib/zlib.lib ^
-     -DSTUDIO_XSD_BUILD=<release id>
-   cmake --build studio/native/build/xsd --config Release --target studio_xsd
+     "-DCMAKE_SYSTEM_VERSION=10.0.19041.0" -DLIBXML2_SOURCE=%CD%/.local/native/libxml2-2.11.9 ^
+     -DIconv_INCLUDE_DIR=%D%/include -DIconv_LIBRARY=%D%/lib/libiconv.lib ^
+     -DZLIB_INCLUDE_DIR=%D%/include -DZLIB_LIBRARY=%D%/lib/zlib.lib -DSTUDIO_XSD_BUILD=<release id>
+   cmake --build studio/native/build/xsd --config Release --parallel 4 --target studio_xsd
    ```
 
-   If the libiconv header expects a static-library macro, add it through
-   `CMAKE_C_FLAGS`.
-4. The configure step must print
-   `studio_xsd: libxml2 2.11.9 with lxml 6.0.2 feature set`.
-5. Smoke test: run the parity check below. Hello must report `2.11.9` and
-   `parse_options` 4278272.
+   The configure step prints `studio_xsd: libxml2 2.11.9 with lxml 6.0.2 feature set`
+   (`LIBXML_EXPR_ENABLED` is `#if 0` in 2.11.9's own template, as in the wheel). The result
+   is `studio/native/build/xsd/Release/studio_xsd.exe` (about 1.7 MB, `/MD`: needs
+   `VCRUNTIME140.dll` and the UCRT like the other workers; no libxml2/iconv/zlib DLLs).
+3. Smoke test: hello reports `2.11.9` and `parse_options` 4278272; then the parity test.
+
+The Go engine starts `<native folder>/studio_xsd.exe` (`app.Options.XSDHelper`), the folder of
+`--native-exe`. Development uses `studio/native/build/Release`, so copy the helper there; the
+parity build (`-tags parity`) also reads `STUDIO_XSD_HELPER` because tests pass a scratch
+`--native-exe`.
+
+**Licences of what is linked statically.** libxml2: MIT (`Copyright` in its tree). zlib:
+zlib licence (`LICENSE`). GNU libiconv: LGPL 2.1 or later for the library (`COPYING.LIB`;
+the `iconv` program, not built, is GPL). The LGPL lets a statically linked program ship if
+users can relink it with a modified libiconv (object files or source of the helper plus the
+build recipe) and the licence text ships with it; the owner decides how (see speed-x log).
 
 ## Parity test plan
 
@@ -190,11 +216,16 @@ has been run.
    verdicts from `studio/engine/internal/scl/testdata/golden/xsd_seed.json` (60 invalid),
    which Python produced with lxml 6.0.2. It then reads each one back through a fresh
    validator whose helper path does not exist, so any cache miss would fail.
-2. **Helper against Python (needs the built helper).** For every corpus document behind
-   that seed, run the real `studio_xsd.exe` with an empty cache and compare `status` and
-   every `{line, message}` with the seed, byte for byte. Any difference blocks release.
-3. **Malformed and edge inputs** (Python results recorded with the venv's lxml, compared
-   byte for byte):
+2. **Helper against Python** (`TestHelperMatchesPython`, opt-in: `STUDIO_XSD_HELPER` =
+   the built exe, `STUDIO_XSD_PARITY` = dump folders). `internal/store/xsd/testdata/
+   parity_dump.py` (studio/.venv) records Python's verdicts *with the validated bytes*:
+   `corpus` (every validate_schema call of golden_gen.py, checked against the committed
+   seed), `edge` (items 3-4), `seed` (a recorded seed plus its files) and, as a pytest
+   plugin, the whole Python suite. The test sends every document through the Go client to
+   the real helper with an empty cache and compares `status` and every `{line, message}`
+   byte for byte. Any difference blocks release. Lane X: 907 / 907 identical.
+3. **Malformed and edge inputs** (`testdata/parity_edge.py`; Python results recorded with
+   the venv's lxml, compared byte for byte):
    - unclosed tags, an empty document and leading junk;
    - an undefined entity and an undefined namespace prefix;
    - Latin-1 bytes without a declaration, and invalid UTF-8 in attribute values;

@@ -89,9 +89,11 @@ func composeParity(seams paritySeams, dataDir, nativeExe, frontend string) (*app
 	if err != nil {
 		return nil, err
 	}
+	// Tests pass a scratch --native-exe; STUDIO_XSD_HELPER points the harness at a built
+	// studio_xsd.exe (empty: <native folder>/studio_xsd.exe, as in the product).
 	options := app.Options{DataDir: dataDir, NativeDir: paths.native, FrontendDir: frontend, SchemasDir: paths.schemas,
-		XSDSeed: seedFiles(), Token: launcher.LaunchToken(), SecretKey: launcher.SecretKey(), Version: paths.version,
-		LicenseService: license, UpdateService: updateService}
+		XSDHelper: os.Getenv("STUDIO_XSD_HELPER"), XSDSeed: seedFiles(), Token: launcher.LaunchToken(),
+		SecretKey: launcher.SecretKey(), Version: paths.version, LicenseService: license, UpdateService: updateService}
 	if gate != nil {
 		options.License = gate // the duck-typed service's is_licensed() is the 402 gate
 	}
