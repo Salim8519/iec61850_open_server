@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"studio-engine/internal/gateway"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/worker"
 )
@@ -23,7 +24,7 @@ const (
 
 type monitored struct {
 	id, ied, ref string
-	remote       bool
+	remote, own  bool
 	raw          *pyjson.Object
 }
 
@@ -34,6 +35,7 @@ type syncer struct {
 	sent    map[string]Sample
 	byIED   map[string][]int
 	remote  []int
+	ownAt   map[string]int // own point id -> index (lane G)
 
 	mu      sync.Mutex
 	deps    map[[2]string][]int // (ied, ref) of a value, its quality and its timestamp -> points
@@ -51,17 +53,19 @@ type syncer struct {
 func newSyncer(manager *Manager, process worker.Process, points []*pyjson.Object) *syncer {
 	s := &syncer{manager: manager, process: process, sent: map[string]Sample{}, byIED: map[string][]int{},
 		deps: map[[2]string][]int{}, dirty: map[int]bool{}, all: true, rebuild: true, wake: make(chan struct{}, 1),
-		stop: make(chan struct{}), done: make(chan struct{})}
+		stop: make(chan struct{}), done: make(chan struct{}), ownAt: map[string]int{}}
 	for _, point := range points {
 		if kind, _ := get(point, "kind").(string); strings.HasPrefix(kind, "command_") {
 			continue
 		}
 		item := monitored{id: text(point, "id"), ied: text(point, "ied"), ref: text(point, "ref"),
-			remote: get(point, "source") == "remote", raw: point}
+			remote: get(point, "source") == "remote", own: gateway.IsOwn(point), raw: point}
 		index := len(s.points)
 		s.points = append(s.points, item)
 		if item.remote {
 			s.remote = append(s.remote, index)
+		} else if item.own {
+			s.ownAt[item.id] = index
 		} else {
 			s.byIED[item.ied] = append(s.byIED[item.ied], index)
 		}
@@ -178,7 +182,9 @@ func (s *syncer) flush() (int, error) {
 	for _, index := range indexes {
 		point := s.points[index]
 		var current Sample
-		if point.remote && s.manager.Converter != nil {
+		if point.own {
+			current = s.manager.own.sample(point.id)
+		} else if point.remote && s.manager.Converter != nil {
 			var err error
 			if current, err = s.manager.Converter.Sample(point.raw); err != nil {
 				return 0, err
@@ -205,7 +211,7 @@ func (s *syncer) flush() (int, error) {
 func (s *syncer) rebuildDeps() {
 	deps := map[[2]string][]int{}
 	for index, point := range s.points {
-		if point.remote {
+		if point.remote || point.own {
 			continue
 		}
 		deps[[2]string{point.ied, point.ref}] = append(deps[[2]string{point.ied, point.ref}], index)

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"studio-engine/internal/gateway"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/pytext"
@@ -62,7 +63,7 @@ func (e *executor) execute(event *pyjson.Object) (bool, string, error) {
 	point := m.Point(pointID)
 	value := pytext.Truthy(get(event, "value"))
 	var name any
-	if point != nil && get(point, "source") == "remote" {
+	if point != nil && (get(point, "source") == "remote" || gateway.IsOwn(point)) {
 		name = get(point, "description")
 	} else if point != nil {
 		name = get(point, "ref")
@@ -77,6 +78,9 @@ func (e *executor) execute(event *pyjson.Object) (bool, string, error) {
 	seq := get(entry, "seq").(int64)
 	config := m.Config()
 	allowed := realCommands(config)
+	if gateway.IsOwn(point) {
+		return e.ownCommand(point, value, seq, label)
+	}
 	if point != nil && get(point, "source") == "remote" {
 		ok, answer := m.Converter.Relay(point, value, allowed)
 		verb := "refused"

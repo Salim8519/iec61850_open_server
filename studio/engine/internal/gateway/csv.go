@@ -64,7 +64,12 @@ func ExportCSV(points []any, ieds []*pyjson.Object) (string, error) {
 		return cmpInt(rows[i].address, rows[j].address) < 0
 	})
 	writer := pycsv.NewWriter()
-	writer.Row(anyStrings(csvColumns)...)
+	own := hasOwn(points)
+	if own {
+		writer.Row(append(anyStrings(csvColumns), anyStrings(ownColumns)...)...)
+	} else {
+		writer.Row(anyStrings(csvColumns)...)
+	}
 	for _, row := range rows {
 		ied, err := subscript(row.point, "ied")
 		if err != nil {
@@ -87,7 +92,11 @@ func ExportCSV(points []any, ieds []*pyjson.Object) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		writer.Row(row.kind, row.address, name, ref, scale, getOr(row.point, "description", ""))
+		cells := []any{row.kind, row.address, name, ref, scale, getOr(row.point, "description", "")}
+		if own {
+			cells = append(cells, ownCells(row.point)...)
+		}
+		writer.Row(cells...)
 	}
 	return writer.String(), nil
 }
@@ -142,7 +151,7 @@ func ImportCSV(text string, ieds []*pyjson.Object) ([]any, []string, error) {
 			byName[text] = id
 		}
 	}
-	points, problems := []any{}, []string{}
+	points, problems, extra := []any{}, []string{}, ownColumnsAt(rows[0])
 	for index, row := range rows[1:] {
 		line := "Line " + itoa(index+2)
 		cells := make([]string, len(csvColumns))
@@ -160,6 +169,15 @@ func ImportCSV(text string, ieds []*pyjson.Object) ([]any, []string, error) {
 		kind, address, iedName, reference, scale, description := cells[0], cells[1], cells[2], cells[3], cells[4], cells[5]
 		if !contains(Kinds, kind) {
 			problems = append(problems, line+": unknown type '"+kind+"'. Use one of: "+strings.Join(Kinds, ", "))
+			continue
+		}
+		if isOwnRow(row, extra) { // Go-only: an own point names no IED
+			point, ok := ownRow(kind, address, scale, description, row, extra)
+			if !ok {
+				problems = append(problems, line+": address must be a whole number, scale and value numbers")
+				continue
+			}
+			points = append(points, point)
 			continue
 		}
 		id, known := byName[iedName]

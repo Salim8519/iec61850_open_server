@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	"studio-engine/internal/api/toolsapi"
 	"studio-engine/internal/testutil"
 )
 
@@ -69,7 +70,7 @@ func flaskRoutes(t *testing.T) map[string]bool {
 }
 
 // TestEveryPythonRouteServed: the composed engine serves exactly Flask's routes (plus the
-// Go-only push routes), none of them is a 501 placeholder, and every GET route answers
+// Go-only push and own-point routes), none of them is a 501 placeholder, and every GET route answers
 // something other than 501.
 func TestEveryPythonRouteServed(t *testing.T) {
 	want := flaskRoutes(t)
@@ -90,7 +91,7 @@ func TestEveryPythonRouteServed(t *testing.T) {
 		}
 	}
 	for key := range served {
-		if !want[key] && !PushOnlyRoutes[key] {
+		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] {
 			extra = append(extra, key)
 		}
 	}

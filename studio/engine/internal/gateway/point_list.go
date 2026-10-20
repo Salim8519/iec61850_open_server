@@ -28,6 +28,7 @@ func ValidatePoints(protocol string, points any, ieds []*pyjson.Object) ([]any, 
 	}
 	low, high := bounds[0], bounds[1]
 	clean, problems, used := []any{}, []string{}, map[Cell]int{}
+	ids, owned := newOwnIDs(list), []ownEntry{}
 	for index, value := range list {
 		number := index + 1
 		label := "Point " + itoa(number)
@@ -53,24 +54,23 @@ func ValidatePoints(protocol string, points any, ieds []*pyjson.Object) ([]any, 
 		}
 		at, _ := pytext.Int64(address)
 		factor, _ := pyFloat(scale)
-		point := pyjson.NewObject().Set("kind", kind).
-			Set("ied", pytext.Str(getOr(raw, "ied", ""))).Set("ref", pytext.Str(getOr(raw, "ref", ""))).
-			Set("address", at).Set("scale", factor).
-			Set("description", pytext.Head(pytext.Str(getOr(raw, "description", "")), 120))
-		iedID, ref := get(point, "ied").(string), get(point, "ref").(string)
-		ied, reason, err := lookup.target(kind, iedID, ref)
-		if err != nil {
-			return nil, nil, err
-		}
-		name := "?"
-		if ied != nil {
-			value, err := subscript(ied, "name")
-			if err != nil {
+		var point *pyjson.Object
+		var reason string
+		own := IsOwn(raw)
+		if own { // Go-only: an own point has no IED to look up
+			point, reason = ownPoint(raw, kind, at, factor)
+			label += ownLabel(raw)
+		} else {
+			point = pyjson.NewObject().Set("kind", kind).
+				Set("ied", pytext.Str(getOr(raw, "ied", ""))).Set("ref", pytext.Str(getOr(raw, "ref", ""))).
+				Set("address", at).Set("scale", factor).
+				Set("description", pytext.Head(pytext.Str(getOr(raw, "description", "")), 120))
+			var named string
+			if named, reason, err = iedLabel(lookup, point, kind); err != nil {
 				return nil, nil, err
 			}
-			name = pytext.Str(value)
+			label += named
 		}
-		label += " (" + name + " " + ref + ")"
 		if reason != "" {
 			problems = append(problems, label+": "+reason)
 			continue
@@ -84,10 +84,33 @@ func ValidatePoints(protocol string, points any, ieds []*pyjson.Object) ([]any, 
 		for _, cell := range taken {
 			used[cell] = number
 		}
-		point.Set("id", PointID(iedID, ref, kind))
+		if own {
+			point.Set("id", ids.assign(raw))
+			owned = append(owned, ownEntry{label: label, point: point})
+		} else {
+			point.Set("id", PointID(get(point, "ied").(string), get(point, "ref").(string), kind))
+		}
 		clean = append(clean, point)
 	}
-	return clean, problems, nil
+	return clean, append(problems, checkTargets(owned)...), nil
+}
+
+// iedLabel looks up the point's IED: " (<IED name> <ref>)" and why the point is unusable.
+func iedLabel(lookup *pointLookup, point *pyjson.Object, kind string) (string, string, error) {
+	iedID, ref := get(point, "ied").(string), get(point, "ref").(string)
+	ied, reason, err := lookup.target(kind, iedID, ref)
+	if err != nil {
+		return "", "", err
+	}
+	name := "?"
+	if ied != nil {
+		value, err := subscript(ied, "name")
+		if err != nil {
+			return "", "", err
+		}
+		name = pytext.Str(value)
+	}
+	return " (" + name + " " + ref + ")", reason, nil
 }
 
 func firstClash(used map[Cell]int, taken []Cell) int {

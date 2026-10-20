@@ -36,6 +36,10 @@ func (a *Area) named(points []any) []any {
 	result := make([]any, 0, len(points))
 	for _, raw := range points {
 		point := raw.(*pyjson.Object)
+		if gateway.IsOwn(point) { // Go-only: an own point has no IED and always takes commands
+			result = append(result, copyWith(copyWith(point, "ied_name", gateway.OwnName), "monitor_only", false))
+			continue
+		}
 		key := pytext.Str(value(point, "ied", nil))
 		name, found := names[key]
 		if !found {
@@ -69,6 +73,11 @@ func (a *Area) pointRoutes() []api.Route {
 			proposal, notes, err := gateway.Propose(d.Projects.IEDs(), protocol)
 			if err != nil {
 				return nil, err
+			}
+			if keep, found := data.Get("keep"); found { // Go-only: the page's own points stay
+				var moved []string
+				proposal, moved = gateway.KeepOwn(protocol, proposal, keep)
+				notes = append(notes, moved...)
 			}
 			return pyjson.NewObject().Set("points", a.named(proposal)).Set("notes", toStrings(notes)), nil
 		}),

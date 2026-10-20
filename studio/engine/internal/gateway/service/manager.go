@@ -41,6 +41,7 @@ type Manager struct {
 	clients   map[string]bool
 	sync      *syncer
 	executor  *executor
+	own       ownStore // values of the own points the running gateway serves (lane G)
 }
 
 // NewManager returns a stopped gateway for studio_gateway at executable.
@@ -124,6 +125,9 @@ func (m *Manager) MonitorOnly(point, config *pyjson.Object, ied *pyjson.Object) 
 	if get(point, "source") == "remote" {
 		return !realCommands(config)
 	}
+	if gateway.IsOwn(point) { // an own point is a simulation: its commands are always taken
+		return false
+	}
 	role := roleOf(ied)
 	return role == "off" || (role == "real" && !realCommands(config))
 }
@@ -195,6 +199,10 @@ func (m *Manager) Table(protocol string) ([]any, error) {
 	rows := []any{}
 	for _, raw := range pointsOf(config, protocol) {
 		point := raw.(*pyjson.Object)
+		if gateway.IsOwn(point) {
+			rows = append(rows, m.ownRow(point))
+			continue
+		}
 		iedID, _ := get(point, "ied").(string)
 		ied := ieds[iedID]
 		name := any("?")
