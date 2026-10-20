@@ -23,7 +23,10 @@ phase 2 (F4). Branch `speed-f4` (7fe0226, 256ccc7) merged into `master` (7294f81
   exact text after every applied frame; 9 of 10 mutations caught (the 10th is a redundant guard).
 - Python unchanged (same launcher, `dist` swapped): idle running 82 requests/min and idle stopped
   30/min identical per path; one extra `capabilities` request (404) at load; one `/api/v1/events`.
-- Integrator on `master`: frontend tests 227/227, `npm run build` clean; `verify.py`: ledger line.
+- Integrator on `master`: frontend tests 227/227, `npm run build` clean. `verify.py` on 7294f81:
+  6/7 PASS; the Go suite failed once in `liveapi TestRoutesMatchPython` (not frontend code): under
+  load the initial live-poll `signal` arrived after its step closed and was counted in the next
+  step (same events, same order). It passes 30/30 alone; harness fix assigned to lane I2.
 
 ## Limitations
 
