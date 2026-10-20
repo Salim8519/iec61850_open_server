@@ -37,6 +37,8 @@ func validateState(data *pyjson.Object, kind string, ieds *Lookup) error {
 	switch {
 	case kind == "RELAY":
 		return apperr.New("A relay uses named status entries instead of a single state mapping")
+	case kind == MeasurementKind:
+		return apperr.New("A measurement list uses its own measurement rows instead of a single state mapping")
 	case isSwitch(kind):
 		switch mode {
 		case "direct":

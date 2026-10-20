@@ -7,6 +7,7 @@ import { sectionSentence } from '../../equipment/energization';
 import type { useStudio } from '../../state/useStudio';
 import { AddMenu } from './AddMenu';
 import { addBay as placeBay, type BayKind } from '../../equipment/bayTemplates';
+import { defaultLabel } from '../../equipment/kindInfo';
 import { Canvas } from './Canvas';
 import { EquipmentSheet } from './EquipmentSheet';
 import { SldImport } from './SldImport';
@@ -64,10 +65,11 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
     undo: studio.undo, redo: studio.redo });
   const add = useCallback((kind: EquipmentKind) => {
     const count = diagram.nodes.filter(node => node.data.kind === kind).length + 1;
-    const base = { kind, label: `${kind}-${count}`, rotation: 0 };
+    const base = { kind, label: defaultLabel(kind, count), rotation: 0 };
     const item: EquipmentNode = { id: crypto.randomUUID(), type: 'equipment',
       position: { x: 200 + (diagram.nodes.length % 4) * 140, y: 100 + Math.floor(diagram.nodes.length / 4) * 160 },
       data: kind === 'INFEED' ? { ...base, infeed_type: 'line', infeed_state: 'live' } :
+        kind === 'MEASUREMENT_LIST' ? { ...base, measurements: [] } :
         kind === 'JUNCTION' || kind === 'RELAY' ? base : { ...base, trip_command_polarity: 'operate_false',
         trip_state_polarity: 'operated_true', push_mode: 'latching_status', push_value: true, initial_position: 'open' } };
     edit({ ...diagram, nodes: [...diagram.nodes, item] }); setSelection([item.id]);

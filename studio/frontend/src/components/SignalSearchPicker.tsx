@@ -16,11 +16,13 @@ type Props = {
   /** The point chosen now ("iedId:ref"): its row says Chosen, the others offer to replace it. */
   chosen?: SignalBinding;
   choose: (binding: SignalBinding, signal: Signal) => void;
+  /** Adds every not-yet-added signal of the page in one click (measurement lists, ADR-0090). */
+  chooseAll?: (items: { binding: SignalBinding; signal: Signal }[]) => void;
 };
 
 /** Search-first signal chooser: pick an IED once, then search and one-click add. */
 export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
-  writableOnly, exclude, disabled, chooseLabel = 'Choose', memoryKey, chosen, choose }: Props) {
+  writableOnly, exclude, disabled, chooseLabel = 'Choose', memoryKey, chosen, choose, chooseAll }: Props) {
   const onlyIed = ieds.length === 1 ? ieds[0].id : '';
   const [view, setView] = useState<PickerView>(() =>
     initialView(memoryKey, fixedIedId || chosen?.ied_id, onlyIed));
@@ -49,6 +51,9 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
     return () => { cancelled = true; clearTimeout(timer); };
   }, [iedId, query, reportRef, offset, allowedKinds?.join(','), allowedFc, writableOnly]);
   const chosenKey = chosen ? signalKey(chosen.ied_id, chosen.ref) : '';
+  const binding = (signal: Signal): SignalBinding => ({ ied_id: iedId,
+    report_ref: reportRef === '__all__' ? null : reportRef, ref: signal.ref });
+  const open = items.filter(signal => !exclude?.has(signalKey(iedId, signal.ref)));
   return <div className="signal-search-picker">
     {!fixedIedId && <label>IED<select value={iedId} disabled={disabled}
       onChange={e => change({ iedId: e.target.value, query: '', reportRef: '__all__' })}>
@@ -81,13 +86,16 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
             taken ? <span className="badge live">Added ✓</span> :
             <button className={triggerable && !chosenKey ? 'primary' : ''} disabled={disabled || loading}
               title={chosenKey ? 'Use this point instead' : triggerable ? 'Choose this signal' : 'Choose as display-only'}
-              onClick={() => choose({ ied_id: iedId,
-                report_ref: reportRef === '__all__' ? null : reportRef, ref: signal.ref }, signal)}>
+              onClick={() => choose(binding(signal), signal)}>
               {chosenKey ? 'Use this' : chooseLabel}</button>}
         </div>;
       })}
       {!loading && !items.length && <p className="small muted">No signals match.</p>}
     </div>
+    {chooseAll && open.length > 1 && <button type="button" className="signal-search-all" disabled={disabled || loading}
+      title="Adds every signal listed above that is not added yet"
+      onClick={() => chooseAll(open.map(signal => ({ binding: binding(signal), signal })))}>
+      {`${chooseLabel} all ${open.length} shown`}</button>}
     <div className="row small muted signal-search-pages">
       <span>{total ? offset + 1 : 0}–{Math.min(offset + 50, total)} of {total}</span>
       {loading && !!items.length && <Spinner inline size={14} label="Loading…" />}

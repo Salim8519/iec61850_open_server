@@ -53,10 +53,15 @@ func (p *plantStates) reset(diagram *pyjson.Object) {
 	for _, item := range nodes {
 		node := item.(*pyjson.Object)
 		data := pyval.Map(node, "data")
-		if pyval.Str(data, "kind") != "RELAY" {
+		rows := "relay_statuses"
+		switch pyval.Str(data, "kind") {
+		case "RELAY":
+		case "MEASUREMENT_LIST": // raw values; the panel scales them (ADR-0090)
+			rows = "measurements"
+		default:
 			continue
 		}
-		for _, entry := range pyval.List(data, "relay_statuses") {
+		for _, entry := range pyval.List(data, rows) {
 			status := entry.(*pyjson.Object)
 			add(pyval.Str(node, "id")+":"+pyval.Str(status, "id"), pyval.Obj("mode", "direct", "source", pyval.Get(status, "source")))
 		}

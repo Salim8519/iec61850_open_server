@@ -23,7 +23,9 @@ export function EquipmentSymbol({ kind, closed = false, size = 54, position, ani
     {kind === 'VT' && <><path d="M30 0V12M30 48V60" /><circle cx="30" cy="24" r="12" /><circle cx="30" cy="36" r="12" /></>}
     {kind === 'SOURCE' && <><path d="M30 0V12M30 48V60" /><circle cx="30" cy="30" r="18" /><path d="M18 30C21 17 26 17 30 30S39 43 42 30" /></>}
     {kind === 'RELAY' && <><rect x="11" y="12" width="38" height="36" rx="3" /><path d="M19 23H41M19 30H32M19 37H36" /></>}
-    {kind === 'TRIP_RELAY' && <><path d="M30 0V10M30 50V60" />
+    {kind === 'MEASUREMENT_LIST' && <><rect x="11" y="9" width="38" height="42" rx="3" />
+      <path d="M19 27A11 11 0 0 1 41 27M30 27L36 20" /><path d="M18 35H27M33 35H42M18 43H27M33 43H42" /></>}
+    {kind === 'TRIP_RELAY' &&<><path d="M30 0V10M30 50V60" />
       <rect x="12" y="10" width="36" height="40" rx="4" fill={paint?.fill || 'none'}
         stroke={paint?.outline || 'currentColor'} />
       <g stroke={paint?.ink || 'currentColor'}>

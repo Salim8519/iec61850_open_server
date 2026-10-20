@@ -148,7 +148,7 @@ func checkVector(t *testing.T, fx *vectorFixtures, vector *pyjson.Object) {
 		if err == nil {
 			t.Fatalf("expected error %s, got result", dumps(t, expected))
 		}
-		if got, want := dumps(t, errorObject(err)), dumps(t, expected); got != want {
+		if got, want := pythonRecorded(dumps(t, errorObject(err))), dumps(t, expected); got != want {
 			t.Fatalf("error mismatch\n got: %s\nwant: %s", got, want)
 		}
 		return

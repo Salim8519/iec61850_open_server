@@ -1,5 +1,5 @@
 import type { EquipmentNode } from '../api/types';
-import { relayBindings, stateBindings } from './stateBindings.ts';
+import { measurementBindings, relayBindings, stateBindings } from './stateBindings.ts';
 
 /** Where the small IED tags of the SLD signal layers sit (spec signal-layers, LAYER-10).
  * Tags are a view only: they are placed from the drawing every time and never saved. */
@@ -20,7 +20,8 @@ export function equipmentByIed(nodes: EquipmentNode[]): Map<string, string[]> {
   const result = new Map<string, string[]>();
   for (const node of nodes) {
     const data = node.data;
-    const ids = [...stateBindings(data.state_mapping), ...relayBindings(data)].map(item => item.ied_id);
+    const ids = [...stateBindings(data.state_mapping), ...relayBindings(data), ...measurementBindings(data)]
+      .map(item => item.ied_id);
     if (data.control_binding) ids.push(data.control_binding.ied_id);
     for (const id of new Set(ids)) result.set(id, [...(result.get(id) || []), node.id]);
   }

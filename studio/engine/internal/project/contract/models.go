@@ -7,7 +7,8 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// field is one model field: a required field has no fallback.
+// field is one model field: a required field has no fallback; an optional field without
+// a fallback stays absent from the output when the input lacks it (see omittable).
 type field struct {
 	name     string
 	check    Validator
@@ -21,6 +22,12 @@ func required(name string, check Validator) field {
 
 func defaulted(name string, check Validator, fallback any) field {
 	return field{name: name, check: check, fallback: func() any { return fallback }}
+}
+
+// omittable is dumped only when the input has it, so documents without it keep their exact
+// bytes (measurements, ADR-0090).
+func omittable(name string, check Validator) field {
+	return field{name: name, check: check}
 }
 
 // model validates a pydantic BaseModel: fields in declaration order, then (extra="forbid")
@@ -47,7 +54,7 @@ func fieldsOf(c *collector, at loc, object *pyjson.Object, forbid bool, fields [
 			if f.required {
 				c.add("missing", at.with(f.name), "Field required")
 				ok = false
-			} else {
+			} else if f.fallback != nil {
 				result.Set(f.name, f.fallback())
 			}
 			continue
@@ -106,6 +113,17 @@ var relayStatus = model("RelayStatus", true,
 	required("id", text(0, 0, identifier)),
 	required("label", text(1, 100, "")),
 	required("source", signalBinding))
+
+// measurement is one row of a measurement list (ADR-0090): shown = raw * scale + offset,
+// rounded to decimals and followed by unit.
+var measurement = model("Measurement", true,
+	required("id", text(0, 0, identifier)),
+	required("label", text(1, 100, "")),
+	required("source", signalBinding),
+	defaulted("scale", bounded(1e9), 1.0),
+	defaulted("offset", bounded(1e9), 0.0),
+	defaulted("unit", text(0, 16, ""), ""),
+	defaulted("decimals", integer(true, 0, 6), int64(2)))
 
 var position = model("Position", false,
 	required("x", coordinate),
