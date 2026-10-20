@@ -28,6 +28,11 @@ type Options struct {
 	// Gather is how long bus events are collected after a write that carried events, so a
 	// burst leaves in few writes; the first event after a quiet period leaves at once.
 	Gather time.Duration
+	// Settle is how long the first events after a quiet period wait for the rest of their
+	// burst before they are written: one request publishes its events microseconds apart
+	// (a test press: signal, equipment_state, energization), and without it only the first
+	// leaves at once while the others wait out Gather.
+	Settle time.Duration
 	// Grace keeps a tab's subscriptions after its stream closed, for a reconnect.
 	Grace      time.Duration
 	MaxClients int
@@ -37,6 +42,7 @@ type Options struct {
 // Defaults of Options.
 const (
 	DefaultGather     = 16 * time.Millisecond
+	DefaultSettle     = time.Millisecond
 	DefaultGrace      = 30 * time.Second
 	DefaultMaxClients = 32
 	forever           = 24 * time.Hour
@@ -54,6 +60,7 @@ type Area struct {
 	epoch   string
 	beat    time.Duration
 	gather  time.Duration
+	settle  time.Duration
 	grace   time.Duration
 	clients int
 
@@ -75,7 +82,7 @@ type Area struct {
 // on channels while nothing happens.
 func New(o Options) *Area {
 	a := &Area{bus: o.Bus, values: o.Values, listen: o.Listen, clock: o.Clock, topics: map[string]*Topic{}, names: Names(o.Topics),
-		epoch: o.Epoch, beat: o.Heartbeat, gather: o.Gather, grace: o.Grace, clients: o.MaxClients,
+		epoch: o.Epoch, beat: o.Heartbeat, gather: o.Gather, settle: o.Settle, grace: o.Grace, clients: o.MaxClients,
 		byID: map[string]*client{}, instances: map[string]*instance{}, buildWake: make(chan struct{}, 1),
 		stop: make(chan struct{})}
 	for _, topic := range o.Topics {
@@ -94,6 +101,9 @@ func New(o Options) *Area {
 	}
 	if a.gather <= 0 {
 		a.gather = DefaultGather
+	}
+	if a.settle <= 0 {
+		a.settle = DefaultSettle
 	}
 	if a.grace <= 0 {
 		a.grace = DefaultGrace

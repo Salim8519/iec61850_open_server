@@ -24,7 +24,9 @@ func (e *Engine) wireTools() []api.Route {
 		publish(bus, o.Logf, kind, payload)
 	}, store, e.Control)
 	e.Scanner = scan.NewService(o.native("studio_live.exe"), store, nil, nil)
-	e.Gateway = service.NewManager(e.Projects, ports.Gateway(e.Runtime), e.Control, o.native("studio_gateway.exe"), nil)
+	// The gateway reads ied["state"] (point values, command check): IEDs with the runtime overlay.
+	e.Gateway = service.NewManager(gatewayProjects{e.Projects, e.Runtime}, ports.Gateway(e.Runtime), e.Control,
+		o.native("studio_gateway.exe"), nil)
 	e.Master = service.NewMaster(e.Projects, e.Runtime.Emit, o.native("studio_master.exe"), nil)
 	e.Gateway.Converter = &service.Converter{Master: e.Master}
 	// Python's gateway diffed every point each 100 ms and so saw converter values; the Go

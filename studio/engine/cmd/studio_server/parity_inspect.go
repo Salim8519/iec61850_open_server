@@ -132,11 +132,11 @@ func serviceStop(e *app.Engine, body *pyjson.Object, _ *http.Request) (any, erro
 	return nil, nil
 }
 
-// installFault is a monkeypatch made while the engine runs. Only startup recovery has a Go
-// seam, and it has run by then (like patching the module after create_app in Python).
+// installFault is a monkeypatch made while the engine runs. Only startup recovery has Go
+// seams, and it has run by then (like patching the module after create_app in Python).
 func installFault(_ *app.Engine, body *pyjson.Object, _ *http.Request) (any, error) {
 	target, _ := field(body, "target").(string)
-	if target != recoverFault {
+	if !faultSeams[target] {
 		return nil, fmt.Errorf("the Go parity build has no fault seam for %s", target)
 	}
 	return nil, nil

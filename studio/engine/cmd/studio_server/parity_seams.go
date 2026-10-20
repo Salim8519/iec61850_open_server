@@ -50,7 +50,7 @@ func readSeams(path string) (paritySeams, error) {
 		err = json.Unmarshal(data, &seams)
 	}
 	for target := range seams.Faults {
-		if err == nil && target != recoverFault {
+		if err == nil && !faultSeams[target] {
 			err = fmt.Errorf("the Go parity build has no fault seam for %s", target)
 		}
 	}

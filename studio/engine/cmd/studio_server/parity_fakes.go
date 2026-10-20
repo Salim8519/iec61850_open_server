@@ -12,6 +12,7 @@ import (
 	"sort"
 
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/store/recovery"
 	"studio-engine/internal/updates"
 )
 
@@ -22,6 +23,13 @@ import (
 // recoverFault is the fault target the Go engine can wrap (create_app's background
 // recovery calls it with the project service, which crosses as a handle).
 const recoverFault = "studio_app.projects.background_recovery.recover_startup"
+
+// copyFault is shutil.copyfile inside startup_recovery: the copy of an unreadable autosave
+// (internal/store/recovery's parity copy seam). The fake gets (source, backup) as paths.
+const copyFault = "studio_app.projects.startup_recovery.shutil.copyfile"
+
+// faultSeams are the fault targets the Go parity build can carry.
+var faultSeams = map[string]bool{recoverFault: true, copyFault: true}
 
 // objectSeam is {"object": {"attrs": {...}, "methods": {name: <callback>}}}.
 type objectSeam struct {
@@ -128,4 +136,16 @@ func recoverWithFault(fake callback) func(func() (*pyjson.Object, error)) (*pyjs
 		status, _ := value.(*pyjson.Object)
 		return status, nil
 	}
+}
+
+// copyWithFault installs the fake standing in for shutil.copyfile(source, backup): an
+// exception it raises fails the copy (Python's OSError), "original" copies for real.
+func copyWithFault(fake callback) {
+	recovery.SetCopySeam(func(source, destination string, original func(string, string) error) error {
+		_, err := fake.call(wirePath(source), wirePath(destination))
+		if errors.Is(err, errOriginal) {
+			return original(source, destination)
+		}
+		return err
+	})
 }

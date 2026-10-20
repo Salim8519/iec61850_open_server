@@ -51,7 +51,7 @@ func RecoverStartup(dataDir string, restore Restore) (*pyjson.Object, error) {
 		return nil, err
 	}
 	backup := pytext.Path(folder, uniqueName("unreadable-autosave-"))
-	if err := copyFile(source, backup); err != nil {
+	if err := copyUnreadable(source, backup); err != nil {
 		return nil, runtimeError("Cannot preserve unreadable autosave; startup stopped to protect it")
 	}
 	return pyjson.NewObject().Set("status", "unreadable").Set("message", unreadableMessage).
@@ -87,6 +87,10 @@ func missing(err error) bool {
 	}
 	return errors.Is(err, fs.ErrNotExist)
 }
+
+// copyUnreadable copies the unreadable autosave. It is copyFile; only the parity test build
+// (copy_seam_parity.go) can replace it, for the shutil.copyfile fault of tests/parity.
+var copyUnreadable = copyFile
 
 // copyFile is shutil.copyfile: create or truncate the destination and copy the bytes.
 func copyFile(source, destination string) error {
