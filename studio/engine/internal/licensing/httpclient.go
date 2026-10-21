@@ -20,14 +20,25 @@ type Doer interface {
 
 // HTTPClient is client.LicenseClient over net/http. Go's TLS on Windows verifies the
 // server with the system certificate verifier, as truststore does for Python (ADR-0056).
+// It only talks to the built-in server unless TestServer is set (the test-only seam).
 type HTTPClient struct {
-	ServerURL string
-	Doer      Doer
+	ServerURL  string
+	Doer       Doer
+	TestServer bool
 }
 
-// NewHTTPClient returns a client for serverURL (a trailing "/" is dropped).
+// NewHTTPClient returns a client for serverURL (a trailing "/" is dropped) that talks only
+// to the built-in server.
 func NewHTTPClient(serverURL string, doer Doer) *HTTPClient {
 	return &HTTPClient{ServerURL: strings.TrimRight(serverURL, "/"), Doer: doer}
+}
+
+// NewTestHTTPClient is NewHTTPClient for tests and the sandbox: https anywhere, or http on
+// this PC. Only the test-only seam (Options.AllowTestServer) hands it out.
+func NewTestHTTPClient(serverURL string, doer Doer) *HTTPClient {
+	client := NewHTTPClient(serverURL, doer)
+	client.TestServer = true
+	return client
 }
 
 // DefaultClientFactory is LicenseClient(server_url) with the 20 s timeout.
@@ -35,11 +46,16 @@ func DefaultClientFactory(serverURL string) Client {
 	return NewHTTPClient(serverURL, &http.Client{Timeout: ClientTimeoutSeconds * time.Second})
 }
 
+// TestClientFactory is DefaultClientFactory for the test-only seam.
+func TestClientFactory(serverURL string) Client {
+	return NewTestHTTPClient(serverURL, &http.Client{Timeout: ClientTimeoutSeconds * time.Second})
+}
+
 func offline() error { return &ServerError{Message: OfflineText, Code: "offline"} }
 
 // call is LicenseClient._call: JSON in, decoded JSON out, readable ServerErrors.
 func (c *HTTPClient) call(method, path string, body *pyjson.Object) (any, error) {
-	if !allowedServer(c.ServerURL) {
+	if !allowedServer(c.ServerURL, c.TestServer) {
 		return nil, &ServerError{Message: NoServerText, Code: "no_server"}
 	}
 	var reader io.Reader
@@ -207,13 +223,9 @@ func (c *HTTPClient) Activate(licenseKey, hwid string) (any, error) {
 	return c.proofRequest("/api/v1/activate", body)
 }
 
-// Transfer moves licenseKey to hwid.
-func (c *HTTPClient) Transfer(licenseKey, hwid string) (any, error) {
-	body := pyjson.NewObject().Set("license_key", licenseKey).Set("hwid", hwid)
-	return c.proofRequest("/api/v1/transfer", body)
-}
-
-// Verify asks whether the license is still valid on hwid.
-func (c *HTTPClient) Verify(licenseKey any, hwid string) (any, error) {
-	return c.call("POST", "/api/v1/verify", pyjson.NewObject().Set("license_key", licenseKey).Set("hwid", hwid))
+// Verify asks whether the license is still valid on hwid; nonce (32 random hex characters)
+// must come back inside the server's signed answer.
+func (c *HTTPClient) Verify(licenseKey any, hwid, nonce string) (any, error) {
+	body := pyjson.NewObject().Set("license_key", licenseKey).Set("hwid", hwid).Set("nonce", nonce)
+	return c.call("POST", "/api/v1/verify", body)
 }

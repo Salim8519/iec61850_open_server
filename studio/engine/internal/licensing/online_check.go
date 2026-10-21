@@ -73,33 +73,32 @@ func (s *Service) CheckOnlineNow() (*pyjson.Object, error) {
 
 // confirmTrialTime asks the server about the trial and remembers its signed time.
 func (s *Service) confirmTrialTime(status Status) (any, error) {
-	client, err := s.client()
-	if err != nil {
-		return nil, err
-	}
 	s.mu.Lock()
 	bound := s.boundHWID
 	s.mu.Unlock()
+	var err error
 	if bound == "" {
 		if bound, err = s.HWID(); err != nil {
 			return nil, err
 		}
 	}
-	answer, err := client.Verify(status.LicenseID, bound)
+	verdict, answer, err := s.signedVerdict(status.LicenseID, bound)
 	if err != nil {
 		return nil, err
 	}
-	object := answerObject(answer)
-	if object == nil {
-		return nil, uncaught("license server answer is not an object")
-	}
-	stamp, _ := object.Get("server_time")
+	stamp, _ := answer.Get("server_time")
 	remembered, err := s.trialClock.Remember(stamp)
 	if err != nil {
 		return nil, err
 	}
 	if !remembered {
 		return nil, &ServerError{Message: BadTimeText, Code: "bad_time"}
+	}
+	if verdict == "revoked" || verdict == "moved" {
+		reason := s.cancel(status.LicenseID, verdict)
+		if err := s.updateState(pyjson.NewObject().Set("revoked_reason", reason)); err != nil {
+			return nil, err
+		}
 	}
 	s.invalidate()
 	return "confirmed", nil

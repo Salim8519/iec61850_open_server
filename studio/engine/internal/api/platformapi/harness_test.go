@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -96,7 +97,8 @@ func (h *harness) licenseRoot() string {
 	return filepath.Join(h.root, fmt.Sprintf("license%d", h.licenses))
 }
 
-func (h *harness) newLicense(enforce bool) {
+// newLicense builds the license service; testServer is the test-only seam (a server on this PC).
+func (h *harness) newLicense(enforce, testServer bool) {
 	h.licenses++
 	native := filepath.Join(h.licenseRoot(), "native")
 	if err := os.MkdirAll(native, 0o777); err != nil {
@@ -110,8 +112,9 @@ func (h *harness) newLicense(enforce bool) {
 		DataDir: filepath.Join(h.licenseRoot(), "data"), Enforce: enforce,
 		HWID: func() (string, error) { return hwid, nil }, Clock: func() float64 { return h.clock },
 		Keys: h.keys(), NativeFolder: native, Debugger: func() bool { return false }, Logf: h.t.Logf,
-		ClientFactory: func(string) licensing.Client { return h.client },
-		Parts:         func() (*pyjson.Object, error) { return pyjson.NewObject(), nil }})
+		ClientFactory: func(string) licensing.Client { return h.client }, AllowTestServer: testServer,
+		Nonce: func() string { return strings.Repeat("0123456789abcdef", 2) }, // gen_license.NONCE
+		Parts: func() (*pyjson.Object, error) { return pyjson.NewObject(), nil }})
 }
 
 func (h *harness) write(path string, data []byte) {
@@ -129,7 +132,7 @@ func (h *harness) setup(s step) {
 	case "now":
 		h.clock = number(h.t, s.Value)
 	case "license":
-		h.newLicense(s.Enforce)
+		h.newLicense(s.Enforce, s.TestServer)
 	case "license_file":
 		data := []byte(s.Data)
 		if s.Hex != "" {

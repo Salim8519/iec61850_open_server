@@ -1,4 +1,5 @@
-"""Python client against the real Go license server: trial, activate, move, revoke check."""
+"""Python client against the real Go license server: trial, activate, one PC per key, signed revoke check."""
+import inspect
 import json
 import os
 from pathlib import Path
@@ -6,7 +7,7 @@ import shutil
 import socket
 import subprocess
 import time
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 import pytest
 from studio_app.licensing.client import LicenseServerError
 from studio_app.licensing.release_key import key_id
@@ -57,9 +58,18 @@ def server(tmp_path_factory):
 
 def machine(tmp_path, server, name, hwid, parts=None):
     studio = LicenseService(tmp_path / name, tmp_path / (name + "-data"), True, hwid_provider=lambda: hwid,
-                            keys=server["keys"], parts_provider=lambda: parts or {})
+                            keys=server["keys"], parts_provider=lambda: parts or {}, allow_test_server=True)
     studio.set_server_url(server["url"])
     return studio
+
+
+def signs_verify_answers(server):
+    """The license server of this checkout may predate ADR-0097; its tests then wait for it."""
+    request = Request(server["url"] + "/api/v1/verify", method="POST", headers={"Content-Type": "application/json"},
+                      data=json.dumps({"license_key": "SUBS-2345-6789-ABCD-EFGH", "hwid": "aa" * 32,
+                                       "nonce": "0" * 32}).encode())
+    with urlopen(request, timeout=5) as response:
+        return "answer" in json.loads(response.read())
 
 
 def issue_key(server):
@@ -97,10 +107,11 @@ def test_trial_parts_and_signed_time_with_the_real_server(tmp_path, server):
     with pytest.raises(LicenseServerError) as reused:
         again.request_trial_code("Lab.Engineer+2@example.com")
     assert reused.value.code == "email_used"
-    assert first.check_online_now()["licensed"]
+    if signs_verify_answers(server):  # the date check needs the signed answer of ADR-0097 (server side)
+        assert first.check_online_now()["licensed"]
 
 
-def test_lifetime_key_locks_to_one_pc_and_can_move(tmp_path, server):
+def test_lifetime_key_works_on_one_pc_only(tmp_path, server):
     key = issue_key(server)
     first = machine(tmp_path, server, "pcA", "aa" * 32)
     assert first.activate(key.lower())["mode"] == "lifetime"
@@ -108,10 +119,23 @@ def test_lifetime_key_locks_to_one_pc_and_can_move(tmp_path, server):
     with pytest.raises(LicenseServerError) as refused:
         second.activate(key)
     assert refused.value.code == "bound_elsewhere"
-    assert second.activate(key, move=True)["licensed"]
+    assert not hasattr(second, "transfer") and "move" not in inspect.signature(second.activate).parameters
+
+
+def test_verify_answers_are_signed_for_the_request_and_a_revoked_key_stays_dead(tmp_path, server):
+    if not signs_verify_answers(server):
+        pytest.skip("this license-server checkout does not sign verify answers yet (ADR-0097, server side)")
+    key = issue_key(server)
+    first = machine(tmp_path, server, "pcR", "dd" * 32)
+    assert first.activate(key)["mode"] == "lifetime"
     first.state_file.write_text(json.dumps({"last_verify": 0}))
-    assert first.verify_online_if_due() == "moved"
-    assert not first.is_licensed() and "moved" in first.status()["reason"]
+    assert first.verify_online_if_due() == "valid"
+    subprocess.run([str(server["binary"]), "revoke", "--key", key], env=server["env"], check=True, capture_output=True)
+    first.state_file.write_text(json.dumps({"last_verify": 0}))
+    assert first.verify_online_if_due() == "revoked"
+    (aside,) = first.home.glob("license.cert.revoked-*")
+    aside.rename(first.cert_file)  # putting the file back does not help
+    assert not machine(tmp_path, server, "pcR", "dd" * 32).is_licensed()
 
 
 def test_unknown_key_is_refused(tmp_path, server):

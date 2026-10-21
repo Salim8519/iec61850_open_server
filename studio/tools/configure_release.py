@@ -7,6 +7,9 @@ Non-interactive (the license server's `configure` prints this line for you):
 Rewrites, together and always in sync:
     studio/backend/studio_app/licensing/release_key.py   (Python backend)
     studio/native/release/release_key.hpp                 (native workers)
+    studio/engine/internal/licensing/keys.go              (Go engine)
+Only the license server's key belongs here. The retired owner helper key (ADR-0097) must
+never be added back: --add-key is for rotating the server key, not for owner licenses.
 """
 import argparse
 import hashlib
@@ -17,6 +20,7 @@ import sys
 STUDIO = Path(__file__).resolve().parents[1]
 PYTHON_FILE = STUDIO / "backend/studio_app/licensing/release_key.py"
 NATIVE_FILE = STUDIO / "native/release/release_key.hpp"
+GO_FILE = STUDIO / "engine/internal/licensing/keys.go"
 MASK = bytes.fromhex("5d1fa7c3398e04b26af10c947e23d8a1")
 sys.path.insert(0, str(STUDIO / "backend"))
 
@@ -88,6 +92,18 @@ constexpr std::array<std::array<std::uint8_t, 32>, (kKeyCount ? kKeyCount : 1)> 
 """
 
 
+def go_source(url, keys):
+    """keys.go with this URL and these masked keys; the rest of the file is kept as it is."""
+    text = GO_FILE.read_text(encoding="utf-8")
+    rows = "".join(f'\t\t"{mask(bytes.fromhex(key)).hex()}",\n' for key in keys)
+    text, urls = re.subn(r'(const DefaultServerURL = )"[^"]*"', lambda found: f'{found.group(1)}"{url}"', text)
+    pattern = r'(maskedKeys = \[\]string\{\r?\n)(?:\t\t"[0-9a-f]{64}",\r?\n)*'
+    text, lists = re.subn(pattern, lambda found: found.group(1) + rows, text)
+    if urls != 1 or lists != 1:
+        raise SystemExit("keys.go does not look as expected; update it by hand.")
+    return text
+
+
 def ask(question, current):
     answer = input(f"{question} [{current or 'not set'}]: ").strip()
     return answer or current
@@ -125,6 +141,7 @@ def main(argv=None):
         return 0
     PYTHON_FILE.write_text(python_source(url, keys), encoding="utf-8")
     NATIVE_FILE.write_text(native_source(keys), encoding="utf-8")
+    GO_FILE.write_text(go_source(url, keys), encoding="utf-8", newline="\n")
     print(f"Release configured: {url}, {len(keys)} key(s). Rebuild with compile_protected.py when ready.")
     return 0
 

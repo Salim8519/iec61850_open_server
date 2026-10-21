@@ -4,14 +4,16 @@ Places: a dot-file in the license folder, a REG_SZ value under HKCU\\Software\\S
 and a string field of license_state.json. Readers decide on the copies that remain;
 every read or write failure (antivirus, Controlled Folder Access, a locked registry) is
 ignored silently, so a blocked place can never stop ScadaBench. The native guard reads
-the same places (license_clock.cpp). Values: time_anchor, server_time, grace_start.
+the same places (license_clock.cpp). Values: time_anchor, server_time, grace_start and
+revoked_ids (the cancelled license IDs, see revoked_ids.py).
 """
 import json
 import os
 from pathlib import Path
 
 REGISTRY_KEY = r"Software\ScadaBench"
-REGISTRY_NAMES = {"time_anchor": "TimeAnchor", "server_time": "ServerTime", "grace_start": "GraceStart"}
+REGISTRY_NAMES = {"time_anchor": "TimeAnchor", "server_time": "ServerTime", "grace_start": "GraceStart",
+                  "revoked_ids": "RevokedLicenses"}
 
 
 class WindowsRegistry:

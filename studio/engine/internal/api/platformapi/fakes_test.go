@@ -41,9 +41,8 @@ func (c *fakeLicenseClient) StartTrial(string, *pyjson.Object, any, any) (any, e
 func (c *fakeLicenseClient) RequestTrialCode(string, string) (any, error) {
 	return c.answer("email-code")
 }
-func (c *fakeLicenseClient) Activate(string, string) (any, error) { return c.answer("activate") }
-func (c *fakeLicenseClient) Transfer(string, string) (any, error) { return c.answer("transfer") }
-func (c *fakeLicenseClient) Verify(any, string) (any, error)      { return c.answer("verify") }
+func (c *fakeLicenseClient) Activate(string, string) (any, error)    { return c.answer("activate") }
+func (c *fakeLicenseClient) Verify(any, string, string) (any, error) { return c.answer("verify") }
 
 // fakeServer is gen_fakes.UpdateServer: the update check's only HTTP call.
 type fakeServer struct{ queue []any }

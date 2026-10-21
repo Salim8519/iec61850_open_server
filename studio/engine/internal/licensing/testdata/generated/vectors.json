@@ -1,7 +1,6 @@
 {
 "release_keys": {
-"768dc76e": "400c193f3a6e21c6b01f1fe34ad1f1a031848e1d43280fb8922bae316bcfe1fa",
-"16901336": "39213b1afd6cfd50cbc794d1c819903597c6fb497b4207881f9f9034dc7a2900"
+"768dc76e": "400c193f3a6e21c6b01f1fe34ad1f1a031848e1d43280fb8922bae316bcfe1fa"
 },
 "test_key": {
 "kid": "3097e2de",
@@ -1822,7 +1821,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1830,7 +1829,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1838,7 +1837,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1846,7 +1845,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1854,7 +1853,7 @@
 "max_seen": 1760001000,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1862,7 +1861,7 @@
 "max_seen": 1760001000,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1870,7 +1869,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1878,7 +1877,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1902,7 +1901,7 @@
 "max_seen": 1760169200,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1910,7 +1909,7 @@
 "max_seen": 1760169200,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1918,7 +1917,7 @@
 "max_seen": 1760176400,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -1926,7 +1925,7 @@
 "max_seen": 1760176400,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760003600,\"license_id\":\"SUBS-AAAA\"}",
@@ -3526,7 +3525,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3534,7 +3533,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3542,7 +3541,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3550,7 +3549,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3558,7 +3557,7 @@
 "max_seen": 1760001000,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3566,7 +3565,7 @@
 "max_seen": 1760001000,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3574,7 +3573,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3582,7 +3581,7 @@
 "max_seen": 0,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3606,7 +3605,7 @@
 "max_seen": 1760169200,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3614,7 +3613,7 @@
 "max_seen": 1760169200,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3622,7 +3621,7 @@
 "max_seen": 1760176400,
 "dev": false,
 "tolerance": 300,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 },
 {
 "payload": "{\"version\":1,\"type\":\"lifetime\",\"hwid\":[\"abababababababababababababababababababababababababababababababab\"],\"issued_at\":1760000000,\"license_id\":\"SUBS-AAAA\"}",
@@ -3630,7 +3629,7 @@
 "max_seen": 1760176400,
 "dev": false,
 "tolerance": 172800,
-"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
+"ok": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"lifetime\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"license_id\":\"SUBS-AAAA\",\"email\":null,\"online_check_required\":false}"
 }
 ],
 "normalize_key": [

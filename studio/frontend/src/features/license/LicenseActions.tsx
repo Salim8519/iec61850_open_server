@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Copy, KeyRound, Upload } from 'lucide-react';
-import { activateLicense, activateOffline, LicenseError, offlineUrl, updateLicenseServerUrl,
-  type LicenseStatus } from '../../api/license';
+import { activateLicense, activateOffline, LicenseError, offlineUrl, type LicenseStatus } from '../../api/license';
 import { LICENSE_COPY as COPY } from '../../copy/license';
 import { Disclosure } from '../../ui/Disclosure';
 import './license-gate.css';
@@ -22,12 +21,11 @@ export function useLicenseTask() {
   return { busy, error, run, clear: () => setError(null) };
 }
 
-/** License key box with the "move it here" follow-up when the key is bound elsewhere. */
+/** License key box. A key works on one computer only, so a key in use elsewhere is just explained. */
 export function KeyActivation({ changed, compact }: { changed: Changed; compact?: boolean }) {
   const [key, setKey] = useState('');
   const task = useLicenseTask();
-  const activate = (move: boolean) => task.run(() => activateLicense(key, move), changed);
-  return <form className="license-key" onSubmit={event => { event.preventDefault(); activate(false); }}>
+  return <form className="license-key" onSubmit={event => { event.preventDefault(); task.run(() => activateLicense(key), changed); }}>
     <label>{COPY.keyLabel}
       <input value={key} onChange={event => setKey(event.target.value)} placeholder={COPY.keyPlaceholder}
         autoComplete="off" spellCheck={false} className="mono" aria-describedby="license-key-hint" />
@@ -37,16 +35,12 @@ export function KeyActivation({ changed, compact }: { changed: Changed; compact?
       <button className={compact ? '' : 'primary large'} type="submit" disabled={task.busy || key.trim().length < 10}>
         <KeyRound size={16} aria-hidden />{task.busy ? 'Activating…' : COPY.activateButton}</button>
     </div>
-    {task.error?.code === 'bound_elsewhere' ? <div className="license-message warning" role="alert">
-      <strong>{COPY.moveQuestion}</strong><p className="small">{COPY.moveHint}</p>
-      <button type="button" onClick={() => activate(true)} disabled={task.busy}>{COPY.moveButton}</button>
-    </div> : task.error && <div className="license-message problem" role="alert">{task.error.message}</div>}
+    {task.error && <div className="license-message problem" role="alert">{task.error.message}</div>}
   </form>;
 }
 
-/** Machine ID, server address and offline activation; closed by default. */
+/** Machine ID, the (fixed) license server and offline activation; closed by default. */
 export function ServerOptions({ status, changed }: { status: LicenseStatus; changed: Changed }) {
-  const [server, setServer] = useState(status.server_url);
   const [certificate, setCertificate] = useState('');
   const [copied, setCopied] = useState(false);
   const task = useLicenseTask();
@@ -63,10 +57,7 @@ export function ServerOptions({ status, changed }: { status: LicenseStatus; chan
       </label>
       <p className="small muted license-hint">{COPY.machineHint}</p>
       <label>{COPY.serverLabel}
-        <div className="row"><input value={server} onChange={event => setServer(event.target.value)}
-          placeholder="https://license.example.com" />
-          <button type="button" disabled={task.busy || server === status.server_url}
-            onClick={() => task.run(() => updateLicenseServerUrl(server), changed)}>Save</button></div>
+        <input readOnly value={status.server_url} className="mono" />
       </label>
       <p className="small muted license-hint">{COPY.serverHint}</p>
       <h3>{COPY.offlineTitle}</h3>

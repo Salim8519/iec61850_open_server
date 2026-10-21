@@ -103,14 +103,14 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 | `GET /events` | `after` or `Last-Event-ID` | SSE replay, heartbeat and `resync` marker |
 | `GET /license/status` | - | `licensed, mode, plan, days_remaining, expires_at, reason, hwid, server_url, masked_key` |
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
-| `POST /license/activate` | `license_key`, `move` | Activate (or move) a lifetime key online |
+| `POST /license/activate` | `license_key` | Activate a lifetime key online; `move: true` answers 400 `moves_disabled` (licenses never move, ADR-0097) |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
 | `GET /app/update` | - | `current, auto, checked_at, checking, error, available, important, dismissed, latest` (ADR-0071; stored answer, no internet call) |
 | `POST /app/update/check` | - | Ask the license server now (a repeat within 60 s reuses the answer); failures are an `error` code, never a 5xx |
 | `PUT /app/update` | `{auto?: bool, dismissed?: version or null}` | Once-a-day switch; hide the note for one version (not for an important update) |
 | `GET /preferences` | - | `tour_seen_version`, `tour_version`, `list_filters`, `sld_goose_layer`, `sld_readers_layer` |
 | `PUT /preferences` | `{tour_seen_version?, list_filters?: {list: {key: text or bool}}, sld_goose_layer?, sld_readers_layer?}` | Store UI preferences in the data folder; a list's filters replace only that list (change 0093); layers 0 or 1 (change 0094) |
-| `PUT /license/config` | `server_url` (https) | Change the license server address |
+| `PUT /license/config` | `server_url` | Refused with 400 `bad_url` in a packaged build, which always uses its built-in server (ADR-0097); test-only seam otherwise |
 | `GET /tools/explorer`, `POST /tools/explorer/connect` | `host`, `port` | IED Explorer status (warms the worker); connect, then autonomous key-point watch |
 | `GET /tools/explorer/devices`, `/nodes?device=`, `/node?ref=` | - | Lazy data model, one level per call |
 | `POST /tools/explorer/read`, `PUT /tools/explorer/watch`, `POST /tools/explorer/polling` | `items`, `interval_ms`, `on` | Read, set the remembered watch list, start/stop polling; `GET /tools/explorer/watch.csv` |

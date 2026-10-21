@@ -159,8 +159,9 @@ def sign_module(mode):
     if not modules:
         raise SystemExit("No compiled studio_app .pyd found to sign.")
     if not seed_file.exists():
-        print("  module signature SKIPPED (no module_signing.seed; run studio/tools/module_signing_key.py)")
-        return
+        # A packaged app without its .sig refuses to start (ADR-0097), so never ship one.
+        raise SystemExit("Module signature is required: no module_signing.seed; "
+                         "run studio/tools/module_signing_key.py")
     import hashlib
     from studio_app.licensing.ed25519_sign import sign
     seed = bytes.fromhex(seed_file.read_text(encoding="utf-8").strip())

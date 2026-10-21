@@ -32,6 +32,9 @@ type licenseSeam struct {
 	Keys          map[string]string `json:"keys"`
 	NativeFolder  *string           `json:"native_folder"`
 	ExpectedFiles map[string]string `json:"expected_files"`
+	// AllowTestServer is the test-only seam that lets a test's license server live on this PC
+	// (licensing.Options.AllowTestServer). Only this parity build reads it; the release never does.
+	AllowTestServer bool `json:"allow_test_server"`
 }
 
 type updateSeam struct {
@@ -95,7 +98,7 @@ func licenseFromSeam(raw map[string]json.RawMessage) (*licensing.Service, error)
 		return nil, err
 	}
 	options := licensing.Options{Home: seam.Home, DataDir: seam.DataDir, Enforce: seam.Enforce, Keys: keys,
-		ExpectedFiles: seam.ExpectedFiles}
+		ExpectedFiles: seam.ExpectedFiles, AllowTestServer: seam.AllowTestServer}
 	if seam.NativeFolder != nil {
 		options.NativeFolder = *seam.NativeFolder
 	}

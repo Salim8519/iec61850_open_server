@@ -1,12 +1,13 @@
 """License status and activation endpoints; always reachable so users can activate."""
 from flask import Blueprint, current_app, jsonify, request
+from studio_app.domain import license_policy
 from studio_app.licensing.certificate import CertificateError
 from studio_app.licensing.client import LicenseServerError
 from studio_app.licensing.service import LicenseActionError
 from studio_app.version import __version__
 
 blueprint = Blueprint("license", __name__)
-CONFLICTS = {"bound_elsewhere", "transfer_limit", "trial_used", "email_required", "email_used"}
+CONFLICTS = {"bound_elsewhere", "trial_used", "email_required", "email_used"}
 
 
 def _service():
@@ -17,7 +18,7 @@ def _run(action):
     try:
         return jsonify(action())
     except LicenseServerError as error:
-        status = 503 if error.code in {"offline", "no_server", "server_error", "bad_time"} else \
+        status = 503 if error.code in {"offline", "no_server", "server_error", "bad_time", "bad_answer"} else \
             409 if error.code in CONFLICTS else 400
         return jsonify(error=str(error), code=error.code), status
     except (LicenseActionError, CertificateError) as error:
@@ -45,10 +46,16 @@ def trial_email_code():
     return _run(lambda: _service().request_trial_code(_body().get("email", "")))
 
 
+def _activate(body):
+    if body.get("move"):  # licenses never move to another computer (ADR-0097)
+        raise LicenseActionError(license_policy.MOVES_DISABLED, "moves_disabled")
+    return _service().activate(body.get("license_key", ""))
+
+
 @blueprint.post("/license/activate")
 def activate():
     body = _body()
-    return _run(lambda: _service().activate(body.get("license_key", ""), move=bool(body.get("move"))))
+    return _run(lambda: _activate(body))
 
 
 @blueprint.post("/license/activate-offline")

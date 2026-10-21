@@ -35,24 +35,30 @@ type ServerError struct {
 func (e *ServerError) Error() string { return e.Message }
 
 // Client talks to the license server (client.LicenseClient). Results are the server's
-// whole decoded JSON answers: trial, activate and transfer carry the certificate plus the
+// whole decoded JSON answers: trial and activate carry the certificate plus the
 // signed server time ("server_time") that trials anchor their clock to. parts are the
 // trial part hashes; email and code are sent only when email is truthy.
 type Client interface {
 	StartTrial(hwid string, parts *pyjson.Object, email, code any) (any, error)
 	RequestTrialCode(hwid, email string) (any, error)
 	Activate(licenseKey, hwid string) (any, error)
-	Transfer(licenseKey, hwid string) (any, error)
-	Verify(licenseKey any, hwid string) (any, error)
+	// Verify asks whether the license is still valid; the answer counts only when it comes
+	// back signed for nonce (VerifiedStatus).
+	Verify(licenseKey any, hwid, nonce string) (any, error)
 }
 
 // ClientFactory builds a Client for a server URL, as LicenseService.client_factory does.
 type ClientFactory func(serverURL string) Client
 
-// allowedServer is the address rule shared by the client and set_server_url.
-func allowedServer(url string) bool {
-	return strings.HasPrefix(url, "https://") || strings.HasPrefix(url, "http://127.0.0.1") ||
-		strings.HasPrefix(url, "http://localhost")
+// allowedServer is the address rule of the client (client.server_allowed): a packaged build
+// talks only to the address baked into it (ADR-0097). testServer is the explicit test-only
+// seam: https anywhere, or http on this PC. The release composition never sets it.
+func allowedServer(url string, testServer bool) bool {
+	if testServer {
+		return strings.HasPrefix(url, "https://") || strings.HasPrefix(url, "http://127.0.0.1") ||
+			strings.HasPrefix(url, "http://localhost")
+	}
+	return url == DefaultServerURL
 }
 
 // Solve finds the counter where SHA256(nonce + ":" + counter) starts with difficulty zero

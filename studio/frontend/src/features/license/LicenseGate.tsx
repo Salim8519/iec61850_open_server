@@ -1,5 +1,5 @@
 import { RefreshCw, ShieldCheck, ShoppingCart } from 'lucide-react';
-import { buyUrl, checkOnline, type LicenseStatus } from '../../api/license';
+import { buyUrl, checkOnline, isOtherComputer, type LicenseStatus } from '../../api/license';
 import { LICENSE_COPY as COPY } from '../../copy/license';
 import { KeyActivation, ServerOptions, useLicenseTask } from './LicenseActions';
 import { TrialStart } from './TrialStart';
@@ -9,8 +9,9 @@ import './license-gate.css';
 export function LicenseGate({ status, changed }: { status: LicenseStatus; changed: (status: LicenseStatus) => void }) {
   const online = useLicenseTask();
   const purchase = buyUrl(status);
-  // An expired trial certificate for this machine: a second trial would be refused anyway.
-  const trialEnded = status.plan === 'trial' && !status.transfer_available;
+  // An ended or cancelled trial of this machine: a second trial would be refused anyway.
+  // A trial file made for another computer is just a wrong file, so a trial can still start here.
+  const trialEnded = status.plan === 'trial' && !isOtherComputer(status);
   return <div className="license-gate" role="main">
     <div className="license-card card">
       <div className="license-head">

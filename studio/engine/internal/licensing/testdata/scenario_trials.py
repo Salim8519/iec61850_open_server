@@ -7,7 +7,7 @@ HKCU\\Software\\ScadaBench; its values are recorded after every step.
 """
 import json
 
-from scenario_defs import CERT, DAY, NOW, STATE, TRIAL, at, fail, ok, put
+from scenario_defs import CERT, DAY, NOW, STATE, TRIAL, TRIAL_ID, at, fail, ok, put, verdict
 from vector_common import license_signer
 
 ANCHOR, STAMP_FILE = "home/.time_anchor", "home/.server_time"
@@ -17,6 +17,12 @@ def stamp(moment):
     return license_signer.stamp(moment)
 
 
+def trial_verdict(status, moment=None, **extra):
+    """The server's answer to a trial's date check: signed for the trial, with its signed time."""
+    fields = dict(extra, **({"server_time": stamp(moment)} if moment else {}))
+    return ok(verdict(status, license_id=TRIAL_ID, **fields))
+
+
 def trial_answer(moment):
     return ok({"certificate": json.loads(TRIAL), "server_time": stamp(moment)})
 
@@ -24,11 +30,12 @@ def trial_answer(moment):
 TRIAL_SCENARIOS = [
     {"name": "trial keeps the signed time", "registry": True, "client": {
         "trial": [trial_answer(NOW + 60)],
-        "verify": [ok({"status": "valid", "server_time": stamp(NOW + DAY + 120)}), fail("down", "offline"),
-                   ok({"status": "valid"}), ok([1])]}, "steps": [
+        "verify": [trial_verdict("valid", NOW + DAY + 120), fail("down", "offline"),
+                   trial_verdict("valid"), ok([1]), ok({"status": "valid", "server_time": stamp(NOW + DAY)})]}, "steps": [
         at(NOW + 60, "trial"), at(NOW + 120, "verify", trial_only=True), at(NOW + DAY + 120, "verify"),
         at(NOW + DAY + 130, "status"), at(NOW + 3 * DAY, "verify", trial_only=True), at(NOW + 3 * DAY, "check"),
-        at(NOW + 3 * DAY, "check"), at(NOW + 3 * DAY, "status")]},
+        at(NOW + 3 * DAY, "check"), at(NOW + 3 * DAY, "check"), at(NOW + 3 * DAY, "check"),
+        at(NOW + 3 * DAY, "status")]},
     {"name": "rollback after the anchor file is deleted", "registry": True, "steps": [
         put(CERT, TRIAL), at(NOW + 5 * DAY, "status"), {"op": "remove", "path": ANCHOR},
         at(NOW + 2 * DAY, "status"), at(NOW + 5 * DAY - 47 * 3600, "status"), at(NOW + 5 * DAY, "licensed")]},
@@ -40,14 +47,14 @@ TRIAL_SCENARIOS = [
     {"name": "missing anchor asks one online check", "client": {
         "trial": [trial_answer(NOW + DAY)],
         "verify": [fail("down", "offline"), fail("down", "offline"),
-                   ok({"status": "valid", "server_time": stamp(NOW + 4 * DAY + 60)})]}, "steps": [
+                   trial_verdict("valid", NOW + 4 * DAY + 60)]}, "steps": [
         at(NOW + DAY, "trial"), {"op": "remove", "path": ANCHOR}, {"op": "remove", "path": STAMP_FILE},
         put(STATE, '{"last_verify": 1760086400}'), at(NOW + DAY + 61, "licensed"), at(NOW + 4 * DAY - 60, "status"),
         at(NOW + 4 * DAY + 120, "status"), at(NOW + 4 * DAY + 120, "verify", trial_only=True),
         at(NOW + 4 * DAY + 120, "check"), at(NOW + 4 * DAY + 120, "check"), at(NOW + 4 * DAY + 70, "status"),
         at(NOW + 6 * DAY, "licensed")]},
     {"name": "server time past the end ends the trial", "registry": True, "client": {
-        "verify": [ok({"status": "valid", "server_time": stamp(NOW + 7 * DAY + 3600)})]}, "steps": [
+        "verify": [trial_verdict("valid", NOW + 7 * DAY + 3600)]}, "steps": [
         put(CERT, TRIAL), at(NOW + 7 * DAY - 3600, "verify"), at(NOW + 7 * DAY - 3600, "status"),
         at(NOW + 7 * DAY - 3600, "verify")]},
     {"name": "older build trial is never asked", "client": {"verify": [fail("down", "offline")]}, "steps": [

@@ -5,6 +5,7 @@ import ssl
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 from studio_app.domain import trial_policy
+from . import release_key
 
 TIMEOUT_SECONDS = 20
 # Server refusals and extra steps shown in the app's own plain words.
@@ -56,13 +57,25 @@ def solve(nonce, difficulty):
         counter += 1
 
 
+def server_allowed(url, test_server=False):
+    """The only address a packaged build talks to is the one baked into it (ADR-0097).
+
+    test_server is the explicit test-only seam: https anywhere, or http on this PC. The
+    release composition never sets it.
+    """
+    if test_server:
+        return url.startswith(("https://", "http://127.0.0.1", "http://localhost"))
+    return url == release_key.DEFAULT_SERVER_URL.rstrip("/")
+
+
 class LicenseClient:
-    def __init__(self, server_url, opener=open_https):
+    def __init__(self, server_url, opener=open_https, test_server=False):
         self.server_url = (server_url or "").rstrip("/")
         self.opener = opener
+        self.test_server = test_server
 
     def _call(self, method, path, body=None):
-        if not self.server_url.startswith(("https://", "http://127.0.0.1", "http://localhost")):
+        if not server_allowed(self.server_url, self.test_server):
             raise LicenseServerError("No license server address is set. Open 'Server & offline options' "
                                      "and enter the address from your purchase email.", "no_server")
         data = json.dumps(body).encode("utf-8") if body is not None else None
@@ -90,7 +103,7 @@ class LicenseClient:
                 "pow_difficulty": challenge["difficulty"], "pow_mac": challenge["mac"],
                 "pow_counter": counter}
 
-    # Trial, activate and transfer return the whole answer: the certificate plus the
+    # Trial and activate return the whole answer: the certificate plus the
     # signed server time ("server_time") that trials anchor their clock to.
     def start_trial(self, hwid, parts=None, email=None, code=None):
         body = {"hwid": hwid, **self._proof()}
@@ -107,9 +120,6 @@ class LicenseClient:
         body = {"license_key": license_key, "hwid": hwid, **self._proof()}
         return self._call("POST", "/api/v1/activate", body)
 
-    def transfer(self, license_key, hwid):
-        body = {"license_key": license_key, "hwid": hwid, **self._proof()}
-        return self._call("POST", "/api/v1/transfer", body)
-
-    def verify(self, license_key, hwid):
-        return self._call("POST", "/api/v1/verify", {"license_key": license_key, "hwid": hwid})
+    def verify(self, license_key, hwid, nonce):
+        """Ask whether the license is still valid; the answer must come back signed for this nonce."""
+        return self._call("POST", "/api/v1/verify", {"license_key": license_key, "hwid": hwid, "nonce": nonce})

@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vector_common import APP, b64, flask_body, license_signer, write  # noqa: E402
-from scenario_defs import PARTS, SCENARIOS  # noqa: E402
+from scenario_defs import NONCE, PARTS, SCENARIOS  # noqa: E402
 from license_fakes import FakeRegistry  # noqa: E402  (in-memory HKCU\Software\ScadaBench)
 from studio_app.api import license as license_api  # noqa: E402
 from studio_app.licensing import integrity  # noqa: E402
@@ -44,11 +44,8 @@ class FakeClient:
     def activate(self, key, hwid):
         return self._answer("activate", key, hwid)
 
-    def transfer(self, key, hwid):
-        return self._answer("transfer", key, hwid)
-
-    def verify(self, key, hwid):
-        return self._answer("verify", key, hwid)
+    def verify(self, key, hwid, nonce):
+        return self._answer("verify", key, hwid, nonce)
 
 
 def answer(result):
@@ -67,7 +64,7 @@ def run_step(service, step):
     actions = {"trial": lambda: service.start_trial(step.get("email"), step.get("code")),
                "email_code": lambda: service.request_trial_code(step.get("arg", "")),
                "check": lambda: service.check_online_now(),
-               "activate": lambda: service.activate(step.get("arg", ""), move=bool(step.get("move"))),
+               "activate": lambda: service.activate(step.get("arg", "")),
                "offline": lambda: service.activate_offline(step.get("arg", "")),
                "config": lambda: service.set_server_url(step.get("arg", ""))}
     with APP.app_context():
@@ -109,7 +106,8 @@ def run(scenario):
                                  clock=lambda: clock[0], keys=keys, client_factory=factory,
                                  native_folder=native, expected_files=scenario.get("expected"),
                                  legacy_hwid_provider=(lambda: legacy) if legacy else None,
-                                 registry=registry, parts_provider=lambda: dict(PARTS))
+                                 registry=registry, parts_provider=lambda: dict(PARTS),
+                                 allow_test_server=scenario.get("test_server", False), nonce_provider=lambda: NONCE)
         results = []
         for step in scenario["steps"]:
             clock[0] = step.get("now", clock[0])

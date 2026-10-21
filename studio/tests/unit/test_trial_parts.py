@@ -43,7 +43,7 @@ def test_client_sends_only_known_parts():
         seen[request.full_url.rsplit("/", 1)[-1]] = body
         answer = {"nonce": "00", "difficulty": 1, "timestamp": 1, "mac": "m"} if body is None else {"certificate": {}}
         return io.BytesIO(json.dumps(answer).encode())
-    client.LicenseClient("https://license.example.com", opener).start_trial("ab" * 32, {"guid": "g", "firmware": ""})
+    client.LicenseClient("https://license.example.com", opener, test_server=True).start_trial("ab" * 32, {"guid": "g", "firmware": ""})
     assert seen["trial"]["parts"] == {"guid": "g"}
 
 
@@ -55,6 +55,6 @@ def test_trial_refusals_and_steps_are_plain_english_with_a_support_link(code, me
         body = io.BytesIO(json.dumps({"error": "terse server text", "code": code}).encode())
         raise HTTPError(request.full_url, 409, "refused", {}, body)
     with pytest.raises(client.LicenseServerError) as refused:
-        client.LicenseClient("https://license.example.com", opener).verify("TRIAL-x", "ab" * 32)
+        client.LicenseClient("https://license.example.com", opener, test_server=True).verify("TRIAL-x", "ab" * 32, "0" * 32)
     assert str(refused.value) == message and refused.value.code == code
     assert policy.SUPPORT_URL in message

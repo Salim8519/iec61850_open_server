@@ -52,6 +52,19 @@ def test_worker_passes_license_gate_with_valid_certificate(certificate):
     assert "license" not in error.lower() and "License" not in error
 
 
+def test_worker_refuses_a_cancelled_license_whatever_the_certificate_says(certificate):
+    certificate.write_text(bundle(hwid=hwid.machine_id()), encoding="utf-8")
+    assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()
+    revoked = certificate.parent / ".revoked_ids"
+    revoked.write_text("SUBS-OTHR-OTHR-OTHR-OTHR,SUBS-TEST-TEST-TEST-TEST", encoding="utf-8")  # ADR-0097
+    error = start_error(ENFORCED / "studio_ied.exe")
+    assert "License check failed" in error and "cancelled" in error
+    revoked.unlink()
+    state = certificate.parent / "license_state.json"
+    state.write_text('{"revoked_ids": "SUBS-TEST-TEST-TEST-TEST"}', encoding="utf-8")  # one copy is enough
+    assert "cancelled" in start_error(ENFORCED / "studio_ied.exe")
+
+
 def test_worker_accepts_pre_v2_license_only_before_cutoff(certificate):
     certificate.write_text(bundle(hwid=hwid.legacy_machine_id()), encoding="utf-8")
     assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()

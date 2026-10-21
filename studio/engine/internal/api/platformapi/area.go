@@ -25,7 +25,7 @@ type License interface {
 	StartTrial(email, code any) (*pyjson.Object, error)
 	RequestTrialCode(email any) (*pyjson.Object, error)
 	CheckOnlineNow() (*pyjson.Object, error)
-	Activate(licenseKey any, move bool) (*pyjson.Object, error)
+	Activate(licenseKey any) (*pyjson.Object, error)
 	ActivateOffline(certificate any) (*pyjson.Object, error)
 	SetServerURL(url any) (*pyjson.Object, error)
 	// CertFile is the license.cert path; used only to word an unreadable file's error

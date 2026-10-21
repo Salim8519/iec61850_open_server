@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buyUrl, offlineUrl, type LicenseStatus } from '../../frontend/src/api/license.ts';
+import { buyUrl, isOtherComputer, offlineUrl, type LicenseStatus } from '../../frontend/src/api/license.ts';
 import { LICENSE_COPY, licenseState } from '../../frontend/src/copy/license.ts';
 
 const base: LicenseStatus = { licensed: false, mode: 'unlicensed', plan: null, days_remaining: null, expires_at: null,
@@ -11,6 +11,7 @@ const boundary = readFileSync(new URL('../../frontend/src/features/license/Licen
 const main = readFileSync(new URL('../../frontend/src/main.tsx', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../../frontend/src/api/client.ts', import.meta.url), 'utf8');
 const actions = readFileSync(new URL('../../frontend/src/features/license/LicenseActions.tsx', import.meta.url), 'utf8');
+const api = readFileSync(new URL('../../frontend/src/api/license.ts', import.meta.url), 'utf8');
 
 test('license state uses words and tone, never colour alone', () => {
   assert.equal(licenseState({ ...base, licensed: true, mode: 'development' }).label, 'Development mode');
@@ -37,16 +38,34 @@ test('the app is wrapped by the license boundary and reacts to 402', () => {
   assert.match(boundary, /status\?\.licensed\) return <>\{children\}<\/>/);
 });
 
-test('a key bound to another computer offers a move, with plain wording', () => {
-  assert.match(actions, /code === 'bound_elsewhere'/);
-  assert.match(actions, /activate\(true\)/);
+test('a license works on one computer only: no move is offered anywhere', () => {
+  assert.doesNotMatch(actions, /activate\(true\)|bound_elsewhere|moveButton|move: /);
+  assert.doesNotMatch(api, /move\s*[=:,)]|\/transfer/);  // no move argument or call (comments may say "move")
+  assert.match(api, /export const activateLicense = \(licenseKey: string\) =>/);
+  assert.equal('moveButton' in LICENSE_COPY, false);
+  assert.match(LICENSE_COPY.keyHint, /one computer only and cannot be moved/);
   assert.ok(LICENSE_COPY.offlineSteps.length === 3);
   assert.match(LICENSE_COPY.safeData, /projects are safe/);
 });
 
+test('the license server address is shown but cannot be changed', () => {
+  assert.doesNotMatch(api, /updateLicenseServerUrl|\/config/);
+  assert.doesNotMatch(actions, /updateLicenseServerUrl|setServer/);
+  assert.match(actions, /<input readOnly value=\{status\.server_url\}/);
+  assert.match(LICENSE_COPY.serverHint, /cannot be changed/);
+});
+
+test('a license file made for another computer still lets this computer start a trial', () => {
+  const other = { ...base, plan: 'lifetime', reason: 'This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.' };
+  assert.equal(isOtherComputer(other), true);
+  assert.equal(isOtherComputer({ ...base, plan: 'trial', reason: 'Your free trial has ended.' }), false);
+  assert.equal(isOtherComputer(base), false);
+});
+
 test('a new computer can start the trial; only an expired trial disables it', () => {
   const gate = readFileSync(new URL('../../frontend/src/features/license/LicenseGate.tsx', import.meta.url), 'utf8');
-  assert.match(gate, /const trialEnded = status\.plan === 'trial' && !status\.transfer_available;/);
+  assert.match(gate, /const trialEnded = status\.plan === 'trial' && !isOtherComputer\(status\);/);
+  assert.doesNotMatch(gate, /transfer_available/);
   assert.doesNotMatch(gate, /reason\?\.includes\('trial'\)/);
 });
 

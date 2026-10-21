@@ -13,23 +13,24 @@ SPEC.loader.exec_module(admin)
 
 def options(**values):
     defaults = dict(ssh=None, real=False, sandbox=True, email="owner@example.com", trial_days=0, key=None,
-                    free_key=False, reset_trial=False, machine_id=None, ip=None)
+                    reset_trial=False, machine_id=None, ip=None)
     return SimpleNamespace(**{**defaults, **values})
 
 
-def test_remove_moves_license_aside_and_frees_key(tmp_path, monkeypatch):
+def test_remove_moves_license_aside_and_never_frees_the_key(tmp_path, monkeypatch):
     monkeypatch.setattr(admin, "home", lambda args: tmp_path)
     (tmp_path / "license.cert").write_text(bundle(license_id="SUBS-AAAA-BBBB-CCCC-DDDD"))
     (tmp_path / ".time_anchor").write_text("1")
     (tmp_path / ".server_time").write_text("{}")
     calls = []
     monkeypatch.setattr(admin, "server", lambda args, *command: calls.append(command) or {"had_trial": True})
-    admin.remove(options(free_key=True, reset_trial=True))
+    (tmp_path / ".revoked_ids").write_text("SUBS-OLD-OLD-OLD-OLD")  # a cancelled license is never part of "remove"
+    admin.remove(options(reset_trial=True))
     assert not (tmp_path / "license.cert").exists()
     kept = next(tmp_path.glob("removed-*"))
     assert (kept / "license.cert").exists() and (kept / ".time_anchor").exists() and (kept / ".server_time").exists()
-    assert calls[0] == ("reset-hwid", "--key", "SUBS-AAAA-BBBB-CCCC-DDDD")
-    assert calls[1][0] == "reset-trial"
+    assert (tmp_path / ".revoked_ids").read_text() == "SUBS-OLD-OLD-OLD-OLD"
+    assert not any(call[0] == "reset-hwid" for call in calls) and calls[0][0] == "reset-trial"
 
 
 def test_activate_here_writes_certificate_for_this_pc(tmp_path, monkeypatch):

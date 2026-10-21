@@ -43,7 +43,10 @@ def main():
     if getattr(sys, "frozen", False):
         from studio_app.launcher.legacy_folder import migrate
         migrate(os.environ.get("LOCALAPPDATA"))
-        _announce_signed_module()
+        problem = _announce_signed_module()
+        if problem:
+            tell_user(problem, error=True)
+            raise SystemExit(1)
     settings = Settings.defaults()
     if args.data_dir:
         settings.directory = args.data_dir
@@ -71,15 +74,27 @@ def main():
             raise SystemExit(1) from error
 
 
+SIGNATURE_MISSING = ("ScadaBench cannot start because its signature file is missing or unreadable, so this copy "
+                     "may have been changed. Reinstall ScadaBench from the official download at scadabench.com.")
+
+
 def _announce_signed_module():
-    """Point the native workers at this exact compiled module, but only when a signature
-    was shipped beside it. The workers then verify it (integrity.cpp verify_module). An
-    unsigned build sets nothing here, so it can never lock itself out by accident."""
+    """Point the native workers at this exact compiled module, which must ship with its
+    signature. The workers then verify it (integrity.cpp verify_module). A packaged build
+    without a readable signature refuses to start (ADR-0097), so deleting the .sig file
+    cannot switch the self-check off. Returns the message to show, or None when all is well."""
     import studio_app
     module = getattr(studio_app, "__file__", "") or ""
-    if module.endswith(".pyd") and os.path.exists(module + ".sig"):
-        os.environ["STUDIO_MODULE_PATH"] = module
-        os.environ["STUDIO_MODULE_SIG"] = module + ".sig"
+    try:
+        with open(module + ".sig", "rb") as stream:
+            readable = module.endswith(".pyd") and bool(stream.read(1))
+    except OSError:
+        readable = False
+    if not readable:
+        return SIGNATURE_MISSING
+    os.environ["STUDIO_MODULE_PATH"] = module
+    os.environ["STUDIO_MODULE_SIG"] = module + ".sig"
+    return None
 
 
 def frontend_ready(url, timeout=15):

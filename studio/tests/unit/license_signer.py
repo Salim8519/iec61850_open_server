@@ -58,3 +58,16 @@ def stamp(moment, seed=TEST_SEED):
     text = json.dumps(payload, separators=(",", ":"), sort_keys=True)
     signature = base64.urlsafe_b64encode(sign(text.encode("utf-8"), seed)).decode().rstrip("=")
     return {"payload": text, "signature": signature}
+
+
+def verify_answer(nonce, license_id, machine, status="valid", moment=1_760_000_000, seed=TEST_SEED, **payload):
+    """The license server's signed answer to POST /api/v1/verify (the "answer" field).
+
+    Keys are alphabetical like the Go server's; pass extra fields to override or break one.
+    """
+    fields = {"hwid": machine, "kid": key_id(public_key(seed)), "license_id": license_id, "nonce": nonce,
+              "purpose": "verify-answer", "status": status, "time": moment, "version": 1}
+    fields.update(payload)
+    text = json.dumps(fields, separators=(",", ":"), sort_keys=True)
+    signature = base64.urlsafe_b64encode(sign(text.encode("utf-8"), seed)).decode().rstrip("=")
+    return {"payload": text, "signature": signature}

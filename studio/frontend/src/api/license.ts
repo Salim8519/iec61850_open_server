@@ -1,5 +1,5 @@
 // License status and activation calls. Errors keep the server's code so the
-// screen can offer the right next step (for example "move the key here").
+// screen can show the right words. A license works on one computer only: there is no move.
 export type LicenseStatus = {
   licensed: boolean;
   mode: 'development' | 'trial' | 'lifetime' | 'unlicensed';
@@ -13,6 +13,7 @@ export type LicenseStatus = {
   server_url: string;
   masked_key: string | null;
   hwid: string | null;
+  /** Always false: licenses never move to another computer. Kept so older screens still read it. */
   transfer_available: boolean;
   /** A trial that could not confirm the date online for longer than its offline grace. */
   online_check_required?: boolean;
@@ -44,10 +45,12 @@ export const startTrial = (email?: string, code?: string) => call('/trial', 'POS
 export const requestTrialCode = (email: string) =>
   call<{ status: 'sent' | 'no_code_needed' }>('/trial/email-code', 'POST', { email });
 export const checkOnline = () => call('/check-online', 'POST', {});
-export const activateLicense = (licenseKey: string, move = false) =>
-  call('/activate', 'POST', { license_key: licenseKey, move });
+export const activateLicense = (licenseKey: string) => call('/activate', 'POST', { license_key: licenseKey });
 export const activateOffline = (certificate: string) => call('/activate-offline', 'POST', { certificate });
-export const updateLicenseServerUrl = (serverUrl: string) => call('/config', 'PUT', { server_url: serverUrl });
+
+/** The license on this PC was made for a different computer (the server wording starts like this). */
+export const OTHER_COMPUTER_REASON = 'This license belongs to a different computer';
+export const isOtherComputer = (status: LicenseStatus) => (status.reason ?? '').startsWith(OTHER_COMPUTER_REASON);
 
 export function buyUrl(status: LicenseStatus): string | null {
   if (!status.server_url) return null;

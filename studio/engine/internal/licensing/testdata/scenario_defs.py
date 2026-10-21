@@ -11,6 +11,8 @@ TRIAL = signed(type="trial", expires_at=NOW + 7 * DAY, license_id="TRIAL-abababa
 CERT = "home/license.cert"
 STATE = "home/license_state.json"
 WORKER_DIGEST = hashlib.sha256(b"worker").hexdigest()
+NONCE = "0123456789abcdef" * 2  # what every scenario service's nonce provider answers
+LIFETIME_ID, TRIAL_ID = "SUBS-2345-6789-ABCD-EFGH", "TRIAL-abababababab"
 PARTS = {"guid": "1" * 64, "volume": "", "firmware": "f" * 64}  # what parts_provider answers
 
 
@@ -28,6 +30,12 @@ def ok(value):
 
 def fail(message, code="server_error"):
     return {"raise": [message, code]}
+
+
+def verdict(status, license_id=LIFETIME_ID, machine=HWID, nonce=NONCE, seed=license_signer.TEST_SEED, **extra):
+    """A verify answer: the unsigned top-level fields plus the server's signed "answer" (ADR-0097)."""
+    signed_answer = license_signer.verify_answer(nonce, license_id, machine, status, seed=seed)
+    return {"status": status, "answer": signed_answer, **extra}
 
 
 SCENARIOS = [
@@ -57,40 +65,45 @@ SCENARIOS = [
         put(STATE, '{"revoked_reason": "gone", "last_verify": 5}'), at(NOW, "status"),
         put(STATE, '{"revoked_reason": 7}'), at(NOW, "status"), put(STATE, "[1]"), at(NOW, "status"),
         put(STATE, "{bad"), at(NOW, "status")]},
-    {"name": "server address", "steps": [
+    {"name": "server address", "test_server": True, "steps": [
         put("home/client_config.json", '{"theme": "dark", "server_url": "x", "z": [1, {}]}'),
         at(NOW, "config", arg=" https://lic.example.com// "), at(NOW, "config", arg="ftp://x"),
         at(NOW, "config", arg=True), at(NOW, "config", arg={"a": 1}), at(NOW, "config", arg="http://localhost:8080/"),
         at(NOW, "config", arg=""), at(NOW, "config", arg=None), put("home/client_config.json", "[]"),
         at(NOW, "config", arg="https://y"), at(NOW, "status")]},
+    {"name": "built-in server only", "steps": [
+        put("home/client_config.json", '{"theme": "dark", "server_url": "http://127.0.0.1:9"}'), at(NOW, "status"),
+        at(NOW, "config", arg="http://127.0.0.1:9"), at(NOW, "config", arg="https://lic.example.com"),
+        at(NOW, "config", arg=""), at(NOW, "config", arg=None), at(NOW, "config", arg={"a": 1}),
+        at(NOW, "activate", arg="SUBS-2345-6789-ABCD-EFGH"), at(NOW, "verify")]},
     {"name": "online activation", "client": {
         "activate": [ok(LIFETIME), fail("This key is used on another computer.", "bound_elsewhere"),
                      fail("Cannot reach the license server.", "offline"), fail("Odd", "weird"),
-                     fail("Odd", None)],
-        "transfer": [ok(json.loads(LIFETIME))]}, "steps": [
+                     fail("Odd", None)]}, "steps": [
         at(NOW + 60, "activate", arg=" subs-2345-6789-abcd-efgh "), at(NOW + 60, "activate", arg="SUBS-1111"),
         at(NOW + 60, "activate", arg="SUBS-2345-6789-ABCD-EFGH"), at(NOW + 60, "activate", arg="SUBS-2345-6789-ABCD-EFGH"),
-        at(NOW + 60, "activate", arg="SUBS-2345-6789-ABCD-EFGH"), at(NOW + 60, "activate", arg="SUBS-2345-6789-ABCD-EFGH"),
-        at(NOW + 90, "activate", arg="SUBS-2345-6789-ABCD-EFGH", move=True)]},
+        at(NOW + 60, "activate", arg="SUBS-2345-6789-ABCD-EFGH"), at(NOW + 60, "activate", arg="SUBS-2345-6789-ABCD-EFGH")]},
     {"name": "online trial", "client": {
         "trial": [fail("The trial was already used on this computer.", "trial_used"), ok(signed(hwid=OTHER)),
                   ok(json.loads(TRIAL)), ok({"payload": 1})]}, "steps": [
         at(NOW + 60, "trial"), at(NOW + 60, "trial"), at(NOW + 60, "trial"), at(NOW + 60, "trial")]},
-    {"name": "verify revoked", "client": {"verify": [ok({"status": "revoked"})]}, "steps": [
+    {"name": "verify revoked", "client": {"verify": [ok(verdict("revoked"))]}, "steps": [
         put(CERT, LIFETIME), put(STATE, '{"last_verify": 1760000000}'), at(NOW + 8 * DAY, "verify"),
         at(NOW + 8 * DAY, "status")]},
-    {"name": "verify moved", "client": {"verify": [ok({"status": "moved", "extra": 1})]}, "steps": [
+    {"name": "verify moved", "client": {"verify": [ok(verdict("moved", extra=1))]}, "steps": [
         put(CERT, LIFETIME), at(NOW + 8 * DAY, "verify"), at(NOW + 8 * DAY + 1, "status")]},
     {"name": "verify valid refresh", "client": {"verify": [
-        ok({"status": "valid", "certificate": signed(email="new@example.com", issued_at=NOW + DAY)}),
-        ok({"status": "valid", "certificate": "garbage"})]}, "steps": [
+        ok(verdict("valid", certificate=signed(email="new@example.com", issued_at=NOW + DAY))),
+        ok(verdict("valid", certificate="garbage"))]}, "steps": [
         put(CERT, LIFETIME), at(NOW + 8 * DAY, "verify"), at(NOW + 16 * DAY, "verify"), at(NOW + 17 * DAY, "status")]},
+    {"name": "verify unknown key", "client": {"verify": [ok(verdict("unknown"))]}, "steps": [
+        put(CERT, LIFETIME), at(NOW + 8 * DAY, "verify"), at(NOW + 8 * DAY, "status")]},
     {"name": "verify not due or not lifetime", "client": {"verify": [fail("down", "offline")]}, "steps": [
         put(CERT, LIFETIME), put(STATE, '{"last_verify": 1760500000}'), at(NOW + 6 * DAY, "verify"),
         at(NOW + 30 * DAY, "verify"), put(CERT, TRIAL), at(NOW + DAY, "verify"),
         put(STATE, '{"last_verify": "x"}'), put(CERT, LIFETIME), at(NOW + 40 * DAY, "verify")]},
     {"name": "legacy machine", "legacy": OTHER, "client": {"verify": [
-        ok({"status": "valid", "certificate": signed(hwid=OTHER)})]}, "steps": [
+        ok(verdict("valid", machine=OTHER, certificate=signed(hwid=OTHER)))]}, "steps": [
         put(CERT, signed(hwid=OTHER, issued_at=NOW)), at(NOW + 60, "status"), at(NOW + 8 * DAY, "verify"),
         put(CERT, signed(hwid=OTHER, issued_at=1814400001)), at(1814400100, "status")]},
     {"name": "debugger", "debugger": True, "steps": [put(CERT, LIFETIME), at(NOW, "status")]},
@@ -109,5 +122,6 @@ SCENARIOS = [
 ]
 
 from scenario_trials import TRIAL_SCENARIOS  # noqa: E402  (after the shared helpers above)
+from scenario_cancel import CANCELLED_SCENARIOS  # noqa: E402
 
-SCENARIOS += TRIAL_SCENARIOS
+SCENARIOS += TRIAL_SCENARIOS + CANCELLED_SCENARIOS

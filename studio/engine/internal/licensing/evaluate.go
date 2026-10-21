@@ -20,6 +20,7 @@ func (s *Service) evaluate() (Status, error) {
 	if problem := IntegrityProblem(folder, s.options.ExpectedFiles, s.options.Debugger); problem != "" {
 		return Unlicensed(problem, nil, nil, nil), nil
 	}
+	s.revoked.Restore() // a deleted copy of the cancelled IDs comes back from the others
 	state, err := readObject(s.stateFile)
 	if err != nil {
 		return Status{}, err
@@ -42,6 +43,10 @@ func (s *Service) evaluate() (Status, error) {
 	}
 	if err != nil {
 		return Status{}, err
+	}
+	if licenseID, _ := payload.Get("license_id"); s.revoked.Contains(licenseID) {
+		plan, _ := payload.Get("type") // cancelled stays cancelled, whatever the file says
+		return Unlicensed(RevokedText, plan, licenseID, nil), nil
 	}
 	now := s.now()
 	bound, err := s.machineFor(payload)
@@ -140,7 +145,8 @@ func (s *Service) Licensed() (bool, error) {
 }
 
 // Status is LicenseService.status(): the policy fields plus enforced, server_url,
-// masked_key, hwid and transfer_available, in Python's key order.
+// masked_key, hwid and transfer_available (always false: licenses never move, ADR-0097),
+// in Python's key order.
 func (s *Service) Status() (*pyjson.Object, error) {
 	current, err := s.Current(true)
 	if err != nil {
@@ -156,10 +162,9 @@ func (s *Service) Status() (*pyjson.Object, error) {
 			return nil, err
 		}
 	}
-	reason, _ := current.Reason.(string)
 	return result.Set("enforced", s.options.Enforce).Set("server_url", serverURL).
 		Set("masked_key", MaskKey(current.LicenseID)).Set("hwid", hwid).
-		Set("transfer_available", reason == WrongMachine), nil
+		Set("transfer_available", false), nil
 }
 
 // StatusBody is the GET /api/v1/license/status body: Status() plus app_version, as

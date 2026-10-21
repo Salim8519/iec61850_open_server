@@ -41,6 +41,7 @@ type step struct {
 	Value       json.RawMessage   `json:"value"`
 	Key         string            `json:"key"`
 	Enforce     bool              `json:"enforce"`
+	TestServer  bool              `json:"test_server"`
 	Data        string            `json:"data"`
 	Hex         string            `json:"hex"`
 	Answers     json.RawMessage   `json:"answers"`

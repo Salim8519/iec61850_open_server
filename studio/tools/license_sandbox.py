@@ -81,8 +81,9 @@ def studio_app(server_url, public_hex, days_ahead):
     key = bytes.fromhex(public_hex)
     settings = Settings(SANDBOX / "studio-data", STUDIO / "native/build/Release/studio_ied.exe", STUDIO / "frontend/dist")
     offset = days_ahead * 86400
+    # allow_test_server is the explicit test-only seam: the product never talks to a server on this PC.
     service = LicenseService(SANDBOX / "studio-license", settings.directory, enforce=True,
-                             clock=lambda: time.time() + offset, keys={key_id(key): key})
+                             clock=lambda: time.time() + offset, keys={key_id(key): key}, allow_test_server=True)
     service.set_server_url(server_url)
     token = secrets.token_urlsafe(16)
     return create_app(settings, token, license_service=service), token

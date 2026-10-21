@@ -41,7 +41,8 @@ func number(value any) (float64, bool) {
 
 // verifyLifetime is OnlineChecks._verify_lifetime: once every VerifyEverySeconds a
 // lifetime license learns about refunds or key moves; offline PCs simply keep their
-// license. It returns the server's verdict (any decoded JSON value), or nil.
+// license. Only a genuine signed answer counts (signedVerdict); anything else is treated
+// like an unreachable server. It returns the signed verdict, or nil.
 func (s *Service) verifyLifetime(status Status) (any, error) {
 	stateValue, readable := pytext.ReadJSON(s.stateFile)
 	if !status.Licensed || status.Plan != "lifetime" {
@@ -74,11 +75,7 @@ func (s *Service) verifyLifetime(status Status) (any, error) {
 			return nil, err
 		}
 	}
-	client, err := s.client()
-	if err != nil {
-		return nil, err
-	}
-	answer, err := client.Verify(status.LicenseID, bound)
+	verdict, answer, err := s.signedVerdict(status.LicenseID, bound)
 	var server *ServerError
 	if errors.As(err, &server) {
 		return nil, nil
@@ -86,36 +83,54 @@ func (s *Service) verifyLifetime(status Status) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.applyVerdict(answerObject(answer), bound)
+	return s.applyVerdict(status.LicenseID, verdict, answer, bound)
 }
 
-// applyVerdict stores what the server said: a revoked or moved license loses its
-// certificate (renamed, never deleted); a valid one may receive a fresh certificate.
-func (s *Service) applyVerdict(object *pyjson.Object, bound string) (any, error) {
-	if object == nil {
-		return nil, uncaught("license server answer is not an object")
+// signedVerdict is OnlineChecks._signed_verdict: ask the server about a license with a
+// fresh nonce; the verdict and the whole answer come back only for a genuine signed answer,
+// otherwise a "bad_answer" ServerError (which callers treat like an unreachable server).
+func (s *Service) signedVerdict(licenseID any, machine string) (string, *pyjson.Object, error) {
+	nonce := s.options.Nonce()
+	client, err := s.client()
+	if err != nil {
+		return "", nil, err
 	}
-	verdict, _ := object.Get("status")
-	switch verdict.(type) {
-	case []any, *pyjson.Object:
-		return nil, uncaught("unhashable verdict")
+	answer, err := client.Verify(licenseID, machine, nonce)
+	if err != nil {
+		return "", nil, err
 	}
+	verdict, ok := VerifiedStatus(answer, nonce, licenseID, machine, s.options.Keys)
+	if !ok {
+		return "", nil, &ServerError{Message: BadAnswerText, Code: "bad_answer"}
+	}
+	return verdict, answerObject(answer), nil
+}
+
+// cancel is OnlineChecks._cancel: the server cancelled this license, so remember it for
+// good in all three places, then keep the certificate file aside (renamed, never deleted).
+// It returns the reason for license_state.json.
+func (s *Service) cancel(licenseID any, verdict string) string {
+	s.filesMu.Lock()
+	defer s.filesMu.Unlock()
+	s.revoked.Add(licenseID)
+	target := filepath.Join(filepath.Dir(s.certFile), fmt.Sprintf("license.cert.%s-%d", verdict, s.now()))
+	_ = os.Rename(s.certFile, target) // the remembered ID already refuses the certificate
+	s.invalidate()
+	if verdict == "revoked" {
+		return RevokedText
+	}
+	return MovedText
+}
+
+// applyVerdict stores what the server said: a cancelled license is remembered and loses
+// its certificate; a valid one may receive a fresh certificate.
+func (s *Service) applyVerdict(licenseID any, verdict string, answer *pyjson.Object, bound string) (any, error) {
 	update := pyjson.NewObject().Set("last_verify", s.now())
-	text, _ := verdict.(string)
-	switch {
-	case text == "revoked" || text == "moved":
-		reason := MovedText
-		if text == "revoked" {
-			reason = RevokedText
-		}
-		update.Set("revoked_reason", reason)
-		target := filepath.Join(filepath.Dir(s.certFile), fmt.Sprintf("license.cert.%s-%d", text, s.now()))
-		if err := os.Rename(s.certFile, target); err != nil {
-			return nil, err
-		}
-		s.invalidate()
-	case text == "valid":
-		if err := s.refreshCertificate(object, bound); err != nil {
+	switch verdict {
+	case "revoked", "moved":
+		update.Set("revoked_reason", s.cancel(licenseID, verdict))
+	case "valid":
+		if err := s.refreshCertificate(answer, bound); err != nil {
 			return nil, err
 		}
 	}

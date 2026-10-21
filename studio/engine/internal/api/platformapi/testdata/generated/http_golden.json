@@ -1747,7 +1747,8 @@
   },
   {
    "op": "license",
-   "enforce": true
+   "enforce": true,
+   "test_server": true
   },
   {
    "op": "request",
@@ -1875,7 +1876,7 @@
    "method": "POST",
    "path": "/api/v1/license/trial",
    "status": 400,
-   "response": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\"}\n",
+   "response": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2110,6 +2111,32 @@
      {
       "return": {
        "status": "valid",
+       "answer": {
+        "payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+        "signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+       }
+      }
+     },
+     {
+      "return": {
+       "status": "revoked",
+       "answer": {
+        "payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+        "signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+       },
+       "server_time": {
+        "payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760000030,\"version\":1}",
+        "signature": "ysa3vK89HH1D2ixy-MQUPtzU75Oor3G3t2p38CzsUr5YLFdGmdpKDWfAfuBg12cUqQbZirHW1fYE6noxxyUtDg"
+       }
+      }
+     },
+     {
+      "return": {
+       "status": "valid",
+       "answer": {
+        "payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"ffffffffffffffffffffffffffffffff\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+        "signature": "TgjNOz6xdPhFvpC_XARabeQ85pGdjHPcft_TFIVZrWumDT5fmB6tFe3nKMJNqytQpeoz5YMeJP5DJi8tQUl8CA"
+       },
        "server_time": {
         "payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760000030,\"version\":1}",
         "signature": "ysa3vK89HH1D2ixy-MQUPtzU75Oor3G3t2p38CzsUr5YLFdGmdpKDWfAfuBg12cUqQbZirHW1fYE6noxxyUtDg"
@@ -2117,6 +2144,16 @@
       }
      }
     ]
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "status": 503,
+   "response": "{\"code\":\"bad_answer\",\"error\":\"The license server's answer could not be verified, so nothing was changed. Try again later. Help: https://scadabench.com/contact/\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
    }
   },
   {
@@ -2135,6 +2172,16 @@
    "path": "/api/v1/license/check-online",
    "status": 200,
    "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "status": 503,
+   "response": "{\"code\":\"bad_answer\",\"error\":\"The license server's answer could not be verified, so nothing was changed. Try again later. Help: https://scadabench.com/contact/\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2180,20 +2227,6 @@
       "raise": [
        "No such key.",
        "unknown_key"
-      ]
-     }
-    ],
-    "transfer": [
-     {
-      "return": {
-       "payload": "{\"email\":\"buyer@example.com\",\"expires_at\":0,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760000000,\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"max_machines\":1,\"type\":\"lifetime\",\"version\":1}",
-       "signature": "h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA"
-      }
-     },
-     {
-      "raise": [
-       "Too many moves.",
-       "transfer_limit"
       ]
      }
     ]
@@ -2311,8 +2344,8 @@
    "path": "/api/v1/license/activate",
    "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": \"yes\"}",
    "content_type": "application/json",
-   "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "status": 400,
+   "response": "{\"code\":\"moves_disabled\",\"error\":\"Moving a license to another computer is not possible. Each license works on one computer only.\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2335,8 +2368,32 @@
    "path": "/api/v1/license/activate",
    "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": true}",
    "content_type": "application/json",
-   "status": 409,
-   "response": "{\"code\":\"transfer_limit\",\"error\":\"Too many moves.\"}\n",
+   "status": 400,
+   "response": "{\"code\":\"moves_disabled\",\"error\":\"Moving a license to another computer is not possible. Each license works on one computer only.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"move\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"moves_disabled\",\"error\":\"Moving a license to another computer is not possible. Each license works on one computer only.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"bad\", \"move\": 1}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"moves_disabled\",\"error\":\"Moving a license to another computer is not possible. Each license works on one computer only.\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2432,7 +2489,7 @@
    "body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-TEST-TEST-TEST-TEST\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"nO9I_XeFV9n3WCQNAQae4isoFJ-BEuKHnYI_INNs8F7o2exnErhNPh9W6X1fymv2D2ydqr7x7OU2tF4BZnTLBQ\\\"}\"}",
    "content_type": "application/json",
    "status": 400,
-   "response": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\"}\n",
+   "response": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2667,6 +2724,161 @@
    "content_type": "application/json",
    "status": 500,
    "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license",
+   "enforce": true
+  },
+  {
+   "op": "now",
+   "value": 1760086400
+  },
+  {
+   "op": "license_file",
+   "path": "home/client_config.json",
+   "data": "{\"server_url\": \"http://127.0.0.1:9\"}"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"http://127.0.0.1:9\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"https://z\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "x",
+   "content_type": "text/plain",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "client",
+   "answers": {
+    "activate": [
+     {
+      "return": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+     }
+    ]
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"moves_disabled\",\"error\":\"Moving a license to another computer is not possible. Each license works on one computer only.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": false}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license",
+   "enforce": false
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"https://z\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"moves_disabled\",\"error\":\"Moving a license to another computer is not possible. Each license works on one computer only.\"}\n",
    "headers": {
     "Content-Type": "application/json"
    }

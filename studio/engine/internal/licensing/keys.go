@@ -16,7 +16,6 @@ var (
 	keyMask    = mustHex("5d1fa7c3398e04b26af10c947e23d8a1")
 	maskedKeys = []string{
 		"1d13befc03e02574daee137734f229016c9b29de7aa60b0af8daa2a515ec395b",
-		"643e9cd9c4e2f9e2a1369845b63a4894cad95c8a42cc033a756e9ca0a259f1a1",
 	}
 )
 

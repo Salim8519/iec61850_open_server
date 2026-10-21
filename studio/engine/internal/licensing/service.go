@@ -40,6 +40,12 @@ type Options struct {
 	Registry Registry
 	// Parts returns the trial part hashes; nil means this PC (MachineTrialParts).
 	Parts func() (*pyjson.Object, error)
+	// AllowTestServer is the explicit test-only seam: tests and the sandbox may talk to a
+	// server on this PC. The release composition never sets it, so an enforcing build only
+	// ever asks its built-in server and ignores client_config.json (ADR-0097).
+	AllowTestServer bool
+	// Nonce returns the 32 hex characters sent with every verify call; nil means RandomNonce.
+	Nonce func() string
 }
 
 // Service owns this computer's license state (service.LicenseService).
@@ -50,6 +56,7 @@ type Service struct {
 	stateFile  string
 	anchor     TimeAnchor
 	trialClock TrialClock
+	revoked    RevokedIDs
 
 	mu         sync.Mutex // cache, machine IDs and bound ID
 	filesMu    sync.Mutex // serialises read-modify-write of the home files, like Python's RLock
@@ -80,6 +87,12 @@ func New(options Options) *Service {
 	}
 	if options.ClientFactory == nil {
 		options.ClientFactory = DefaultClientFactory
+		if options.AllowTestServer {
+			options.ClientFactory = TestClientFactory
+		}
+	}
+	if options.Nonce == nil {
+		options.Nonce = RandomNonce
 	}
 	if options.Debugger == nil {
 		options.Debugger = DebuggerAttached
@@ -98,7 +111,8 @@ func New(options Options) *Service {
 		stateFile:  filepath.Join(options.Home, "license_state.json"),
 		anchor: TimeAnchor{Value: NewClockValue("time_anchor", options.Home, options.Registry),
 			RunsFile: filepath.Join(options.DataDir, "logs", "runs.jsonl")},
-		trialClock: NewTrialClock(options.Home, options.Registry, options.Keys)}
+		trialClock: NewTrialClock(options.Home, options.Registry, options.Keys),
+		revoked:    NewRevokedIDs(options.Home, options.Registry)}
 	if options.Enforce {
 		os.Setenv("STUDIO_LICENSE_CERT_PATH", s.certFile)
 	}
@@ -169,8 +183,12 @@ func (s *Service) machineFor(payload *pyjson.Object) (string, error) {
 	return bound, nil
 }
 
-// ServerURL is the configured license server, or DefaultServerURL, without a trailing "/".
+// ServerURL is the built-in license server in an enforcing build; client_config.json is
+// read only in development and for the test-only seam. It never ends with "/".
 func (s *Service) ServerURL() (string, error) {
+	if s.options.Enforce && !s.options.AllowTestServer {
+		return DefaultServerURL, nil
+	}
 	config, err := readObject(s.configFile)
 	if err != nil {
 		return "", err

@@ -1,13 +1,16 @@
-"""Background license checks: weekly revocation check for lifetime keys (unchanged) and
-a quiet daily signed-time confirmation for trials. Failures never count against the
-user: an offline PC simply keeps its license, lifetime or trial.
+"""Background license checks: weekly revocation check for lifetime keys and a quiet daily
+signed-time confirmation for trials. Failures never count against the user: an offline
+PC simply keeps its license, lifetime or trial. A server answer counts only when it is
+signed for this very request (verify_answer.py); an unsigned or altered one is treated
+exactly like an unreachable server. A cancelled license is remembered for good
+(revoked_ids.py), so renaming its certificate back does not bring it back.
 """
 import json
 import logging
 import os
 import threading
-from studio_app.domain import trial_policy
-from . import certificate
+from studio_app.domain import license_policy, trial_policy
+from . import certificate, verify_answer
 from .certificate import CertificateError
 from .client import LicenseServerError
 
@@ -44,14 +47,43 @@ class OnlineChecks:
             self._confirm_trial_time(status)
         return self.status()
 
+    def _signed_verdict(self, license_id, machine):
+        """Ask the server about a license; (verdict, answer) only for a genuine signed answer."""
+        nonce = self._nonce_provider()
+        answer = self._client().verify(license_id, machine, nonce)
+        verdict = verify_answer.verified_status(answer, nonce, license_id, machine, self.keys)
+        if verdict is None:
+            raise LicenseServerError(license_policy.BAD_ANSWER, "bad_answer")
+        return verdict, answer
+
+    def _cancel(self, license_id, verdict):
+        """The server cancelled this license: remember it for good, then keep the file aside."""
+        with self._lock:
+            self.revoked.add(license_id)
+            stamp = int(self.clock())
+            try:
+                os.replace(self.cert_file, self.cert_file.with_name(f"license.cert.{verdict}-{stamp}"))
+            except OSError:
+                pass  # the remembered ID already refuses the certificate
+            self._cached = None
+        return license_policy.REVOKED if verdict == "revoked" else license_policy.MOVED
+
     def _confirm_trial_time(self, status):
-        answer = self._client().verify(status.license_id, self._bound_hwid or self.hwid())
+        verdict, answer = self._signed_verdict(status.license_id, self._bound_hwid or self.hwid())
         if not self.trial_clock.remember(answer.get("server_time")):
             raise LicenseServerError("The license server answered without a valid signed time. Try again later. "
                                      f"Help: {trial_policy.SUPPORT_URL}", "bad_time")
+        if verdict in {"revoked", "moved"}:
+            self._merge_state({"revoked_reason": self._cancel(status.license_id, verdict)})
         with self._lock:
             self._cached = None
         return "confirmed"
+
+    def _merge_state(self, update):
+        with self._lock:
+            state = self._read_json(self.state_file, {})
+            state.update(update)
+            self._write(self.state_file, json.dumps(state))
 
     def _verify_lifetime(self, status):
         state = self._read_json(self.state_file, {})
@@ -62,19 +94,12 @@ class OnlineChecks:
             # Ask about the machine ID the key is bound to; a legacy v1 binding would
             # otherwise look "moved" to the server and cancel a valid license.
             bound = self._bound_hwid or self.hwid()
-            answer = self._client().verify(status.license_id, bound)
+            verdict, answer = self._signed_verdict(status.license_id, bound)
         except LicenseServerError:
             return None
-        verdict = answer.get("status")
         update = {"last_verify": int(self.clock())}
         if verdict in {"revoked", "moved"}:
-            update["revoked_reason"] = ("This license was cancelled. Contact the seller if this is a mistake."
-                                        if verdict == "revoked" else
-                                        "This license key was moved to another computer.")
-            with self._lock:
-                stamp = int(self.clock())
-                os.replace(self.cert_file, self.cert_file.with_name(f"license.cert.{verdict}-{stamp}"))
-                self._cached = None
+            update["revoked_reason"] = self._cancel(status.license_id, verdict)
         elif verdict == "valid" and answer.get("certificate") and bound == self.hwid():
             # A legacy-bound certificate is kept as is: a reissued one would carry a new
             # issued_at and no longer qualify for the legacy machine ID.
@@ -84,10 +109,7 @@ class OnlineChecks:
                     self._write(self.cert_file, json.dumps(fresh, indent=2))
             except CertificateError:
                 pass
-        with self._lock:
-            state = self._read_json(self.state_file, {})
-            state.update(update)
-            self._write(self.state_file, json.dumps(state))
+        self._merge_state(update)
         return verdict
 
     def start_background_verify(self):

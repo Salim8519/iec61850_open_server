@@ -10,8 +10,14 @@ CLOCK_TOLERANCE_SECONDS = 300
 SUPPORT_URL = "https://scadabench.com/contact/"
 
 NO_LICENSE = "This computer has no license yet. Start the free trial or enter your license key."
-WRONG_MACHINE = ("This license belongs to a different computer. Enter your license key to move it "
-                 "here, or start a trial.")
+WRONG_MACHINE = ("This license belongs to a different computer. Each license works on one computer only; "
+                 "buy a new license for this computer, or start a trial.")
+REVOKED = "This license was cancelled. Contact the seller if this is a mistake."
+MOVED = "This license key was moved to another computer."
+MOVES_DISABLED = "Moving a license to another computer is not possible. Each license works on one computer only."
+SERVER_FIXED = "This ScadaBench always uses its own license server. The server address cannot be changed."
+BAD_ANSWER = ("The license server's answer could not be verified, so nothing was changed. Try again later. "
+              f"Help: {SUPPORT_URL}")
 TRIAL_ENDED = "Your free trial has ended. Buy a lifetime license to keep using ScadaBench."
 CLOCK_ROLLBACK = ("System clock rollback detected: the date on this computer is earlier than when ScadaBench "
                   "last ran. Correct the date and time in Windows (Settings > Time & language > Set time "

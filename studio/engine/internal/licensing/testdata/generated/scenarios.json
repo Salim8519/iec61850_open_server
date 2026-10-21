@@ -307,7 +307,7 @@
 },
 {
 "http": 400,
-"body": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\"}\n",
+"body": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\"}\n",
 "calls": [],
 "files": {}
 },
@@ -568,6 +568,7 @@
 },
 {
 "name": "server address",
+"test_server": true,
 "steps": [
 {
 "op": "write",
@@ -702,6 +703,132 @@
 ]
 },
 {
+"name": "built-in server only",
+"steps": [
+{
+"op": "write",
+"path": "home/client_config.json",
+"data": "{\"theme\": \"dark\", \"server_url\": \"http://127.0.0.1:9\"}"
+},
+{
+"now": 1760000000,
+"op": "status"
+},
+{
+"now": 1760000000,
+"op": "config",
+"arg": "http://127.0.0.1:9"
+},
+{
+"now": 1760000000,
+"op": "config",
+"arg": "https://lic.example.com"
+},
+{
+"now": 1760000000,
+"op": "config",
+"arg": ""
+},
+{
+"now": 1760000000,
+"op": "config",
+"arg": null
+},
+{
+"now": 1760000000,
+"op": "config",
+"arg": {
+"a": 1
+}
+},
+{
+"now": 1760000000,
+"op": "activate",
+"arg": "SUBS-2345-6789-ABCD-EFGH"
+},
+{
+"now": 1760000000,
+"op": "verify"
+}
+],
+"results": [
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"bad_url\",\"error\":\"This ScadaBench always uses its own license server. The server address cannot be changed.\"}\n",
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"http": 503,
+"body": "{\"code\":\"offline\",\"error\":\"no canned answer\"}\n",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"activate",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab"
+]
+],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+},
+{
+"value": null,
+"calls": [],
+"files": {
+"home/client_config.json": "eyJ0aGVtZSI6ICJkYXJrIiwgInNlcnZlcl91cmwiOiAiaHR0cDovLzEyNy4wLjAuMTo5In0="
+}
+}
+]
+},
+{
 "name": "online activation",
 "client": {
 "activate": [
@@ -731,14 +858,6 @@
 "Odd",
 null
 ]
-}
-],
-"transfer": [
-{
-"return": {
-"payload": "{\"email\":\"buyer@example.com\",\"expires_at\":0,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760000000,\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"max_machines\":1,\"type\":\"lifetime\",\"version\":1}",
-"signature": "h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA"
-}
 }
 ]
 },
@@ -772,12 +891,6 @@ null
 "now": 1760000060,
 "op": "activate",
 "arg": "SUBS-2345-6789-ABCD-EFGH"
-},
-{
-"now": 1760000090,
-"op": "activate",
-"arg": "SUBS-2345-6789-ABCD-EFGH",
-"move": true
 }
 ],
 "results": [
@@ -890,26 +1003,6 @@ null
 "home/license.cert": "ew0KICAicGF5bG9hZCI6ICJ7XCJlbWFpbFwiOlwiYnV5ZXJAZXhhbXBsZS5jb21cIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSFwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLA0KICAic2lnbmF0dXJlIjogImgwVVRuUjdsdko2X3JmSzR1ay1ucFlZZ2VtOE4xb09tSmhpQnliOUpBVkN2T0EwLW4zR29xalp6d0VIVV9iTkdqZkhKN3ZRYVlwUkp0TGRqamV2aERBIg0KfQ==",
 "home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGwsICJsYXN0X3ZlcmlmeSI6IDE3NjAwMDAwNjAsICJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwMDYwIn0="
 }
-},
-{
-"http": 200,
-"body": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
-"calls": [
-[
-"factory",
-"https://license.scadabench.com"
-],
-[
-"transfer",
-"SUBS-2345-6789-ABCD-EFGH",
-"abababababababababababababababababababababababababababababababab"
-]
-],
-"files": {
-"home/.time_anchor": "MTc2MDAwMDA5MA==",
-"home/license.cert": "ew0KICAicGF5bG9hZCI6ICJ7XCJlbWFpbFwiOlwiYnV5ZXJAZXhhbXBsZS5jb21cIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSFwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLA0KICAic2lnbmF0dXJlIjogImgwVVRuUjdsdko2X3JmSzR1ay1ucFlZZ2VtOE4xb09tSmhpQnliOUpBVkN2T0EwLW4zR29xalp6d0VIVV9iTkdqZkhKN3ZRYVlwUkp0TGRqamV2aERBIg0KfQ==",
-"home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGwsICJsYXN0X3ZlcmlmeSI6IDE3NjAwMDAwOTAsICJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwMDkwIn0="
-}
 }
 ]
 },
@@ -982,7 +1075,7 @@ null
 },
 {
 "http": 400,
-"body": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\"}\n",
+"body": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\"}\n",
 "calls": [
 [
 "factory",
@@ -1062,7 +1155,11 @@ null
 "verify": [
 {
 "return": {
-"status": "revoked"
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "9QgHPwu06yaQQHgvgvmYCZLsrcuIxXXRzCu-ZuHWbOd5ugxVZpX6sVV-nnXzaFnoeJCGKLdddB9FPI5BZ-6UBA"
+}
 }
 }
 ]
@@ -1100,13 +1197,15 @@ null
 [
 "verify",
 "SUBS-2345-6789-ABCD-EFGH",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
 "home/.time_anchor": "MTc2MDY5MTIwMA==",
 "home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
-"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfcmVhc29uIjogIlRoaXMgbGljZW5zZSB3YXMgY2FuY2VsbGVkLiBDb250YWN0IHRoZSBzZWxsZXIgaWYgdGhpcyBpcyBhIG1pc3Rha2UuIn0="
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
 }
 },
 {
@@ -1114,9 +1213,10 @@ null
 "body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":null,\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
 "calls": [],
 "files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
 "home/.time_anchor": "MTc2MDY5MTIwMA==",
 "home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
-"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfcmVhc29uIjogIlRoaXMgbGljZW5zZSB3YXMgY2FuY2VsbGVkLiBDb250YWN0IHRoZSBzZWxsZXIgaWYgdGhpcyBpcyBhIG1pc3Rha2UuIn0="
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
 }
 }
 ]
@@ -1128,6 +1228,10 @@ null
 {
 "return": {
 "status": "moved",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"moved\",\"time\":1760000000,\"version\":1}",
+"signature": "6eV4BK0zPjHIW679m5HRkueN8KHJCP0zEsb2pmjfFeYVvQ8R7eAFuMYRxo6_XtNuRhZIM8S4nyfw8PHyEH9aAg"
+},
 "extra": 1
 }
 }
@@ -1160,13 +1264,15 @@ null
 [
 "verify",
 "SUBS-2345-6789-ABCD-EFGH",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
 "home/.time_anchor": "MTc2MDY5MTIwMA==",
 "home/license.cert.moved-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
-"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMCwgInJldm9rZWRfcmVhc29uIjogIlRoaXMgbGljZW5zZSBrZXkgd2FzIG1vdmVkIHRvIGFub3RoZXIgY29tcHV0ZXIuIn0="
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Uga2V5IHdhcyBtb3ZlZCB0byBhbm90aGVyIGNvbXB1dGVyLiJ9"
 }
 },
 {
@@ -1174,9 +1280,10 @@ null
 "body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":null,\"reason\":\"This license key was moved to another computer.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
 "calls": [],
 "files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
 "home/.time_anchor": "MTc2MDY5MTIwMA==",
 "home/license.cert.moved-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
-"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMCwgInJldm9rZWRfcmVhc29uIjogIlRoaXMgbGljZW5zZSBrZXkgd2FzIG1vdmVkIHRvIGFub3RoZXIgY29tcHV0ZXIuIn0="
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Uga2V5IHdhcyBtb3ZlZCB0byBhbm90aGVyIGNvbXB1dGVyLiJ9"
 }
 }
 ]
@@ -1188,12 +1295,20 @@ null
 {
 "return": {
 "status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "e1M3pNzuh-Dwg786KC_-uA_FWN9D0OuNR9t81cP2WWYnVSZZQ6mOaD63iRSzP4fXMKlNJ83c3UpaYWN7nkipBQ"
+},
 "certificate": "{\"payload\": \"{\\\"email\\\":\\\"new@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760086400,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"ArzPUxltqDrvvX6k4NgbqRFWLCSHJpq2Sn3-ydUw2645iJgUIFbr4xoCXzE9ek3WIYDOzqy2L4XBSkhpSvyFAw\"}"
 }
 },
 {
 "return": {
 "status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "e1M3pNzuh-Dwg786KC_-uA_FWN9D0OuNR9t81cP2WWYnVSZZQ6mOaD63iRSzP4fXMKlNJ83c3UpaYWN7nkipBQ"
+},
 "certificate": "garbage"
 }
 }
@@ -1230,7 +1345,8 @@ null
 [
 "verify",
 "SUBS-2345-6789-ABCD-EFGH",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -1240,7 +1356,7 @@ null
 }
 },
 {
-"value": "valid",
+"value": null,
 "calls": [
 [
 "factory",
@@ -1249,13 +1365,14 @@ null
 [
 "verify",
 "SUBS-TEST-TEST-TEST-TEST",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
 "home/.time_anchor": "MTc2MTM4MjQwMA==",
 "home/license.cert": "ew0KICAicGF5bG9hZCI6ICJ7XCJlbWFpbFwiOlwibmV3QGV4YW1wbGUuY29tXCIsXCJleHBpcmVzX2F0XCI6MCxcImh3aWRcIjpcImFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJcIixcImlzc3VlZF9hdFwiOjE3NjAwODY0MDAsXCJraWRcIjpcIjMwOTdlMmRlXCIsXCJsaWNlbnNlX2lkXCI6XCJTVUJTLVRFU1QtVEVTVC1URVNULVRFU1RcIixcIm1heF9tYWNoaW5lc1wiOjEsXCJ0eXBlXCI6XCJsaWZldGltZVwiLFwidmVyc2lvblwiOjF9IiwNCiAgInNpZ25hdHVyZSI6ICJBcnpQVXhsdHFEcnZ2WDZrNE5nYnFSRldMQ1NISnBxMlNuMy15ZFV3MjY0NWlKZ1VJRmJyNHhvQ1h6RTllazNXSVlET3pxeTJMNFhCU2tocFN2eUZBdyINCn0=",
-"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYxMzgyNDAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MTM4MjQwMH0="
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYxMzgyNDAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMH0="
 }
 },
 {
@@ -1265,7 +1382,71 @@ null
 "files": {
 "home/.time_anchor": "MTc2MTQ2ODgwMA==",
 "home/license.cert": "ew0KICAicGF5bG9hZCI6ICJ7XCJlbWFpbFwiOlwibmV3QGV4YW1wbGUuY29tXCIsXCJleHBpcmVzX2F0XCI6MCxcImh3aWRcIjpcImFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJcIixcImlzc3VlZF9hdFwiOjE3NjAwODY0MDAsXCJraWRcIjpcIjMwOTdlMmRlXCIsXCJsaWNlbnNlX2lkXCI6XCJTVUJTLVRFU1QtVEVTVC1URVNULVRFU1RcIixcIm1heF9tYWNoaW5lc1wiOjEsXCJ0eXBlXCI6XCJsaWZldGltZVwiLFwidmVyc2lvblwiOjF9IiwNCiAgInNpZ25hdHVyZSI6ICJBcnpQVXhsdHFEcnZ2WDZrNE5nYnFSRldMQ1NISnBxMlNuMy15ZFV3MjY0NWlKZ1VJRmJyNHhvQ1h6RTllazNXSVlET3pxeTJMNFhCU2tocFN2eUZBdyINCn0=",
-"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYxNDY4ODAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MTM4MjQwMH0="
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYxNDY4ODAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMH0="
+}
+}
+]
+},
+{
+"name": "verify unknown key",
+"client": {
+"verify": [
+{
+"return": {
+"status": "unknown",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"unknown\",\"time\":1760000000,\"version\":1}",
+"signature": "WawepYlRw4_AVoyAx1rW8ekuU4WSV91uhIhjpVBPIxVsW0ku9EDaLTuWkk6Q_2gRp500b9a825zpH9x7UziPDA"
+}
+}
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "status"
+}
+],
+"results": [
+{},
+{
+"value": "unknown",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMH0="
+}
+},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMH0="
 }
 }
 ]
@@ -1347,7 +1528,8 @@ null
 [
 "verify",
 "SUBS-2345-6789-ABCD-EFGH",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -1387,6 +1569,10 @@ null
 {
 "return": {
 "status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "lkStDqfPG3rKgu-Hy6zuen6yR3t1jRIGaqnucMZeWNnxraQ6Gyv7JFOez4RBgfS0yEeNRzodaIFy15twYEILCw"
+},
 "certificate": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"nO9I_XeFV9n3WCQNAQae4isoFJ-BEuKHnYI_INNs8F7o2exnErhNPh9W6X1fymv2D2ydqr7x7OU2tF4BZnTLBQ\"}"
 }
 }
@@ -1429,7 +1615,7 @@ null
 }
 },
 {
-"value": "valid",
+"value": null,
 "calls": [
 [
 "factory",
@@ -1438,24 +1624,25 @@ null
 [
 "verify",
 "SUBS-TEST-TEST-TEST-TEST",
-"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
 "home/.time_anchor": "MTc2MDY5MTIwMA==",
 "home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZFwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtVEVTVC1URVNULVRFU1QtVEVTVFwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIm5POUlfWGVGVjluM1dDUU5BUWFlNGlzb0ZKLUJFdUtIbllJX0lOTnM4RjdvMmV4bkVyaE5QaDlXNlgxZnltdjJEMnlkcXI3eDdPVTJ0RjRCWm5UTEJRIn0=",
-"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMH0="
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
 }
 },
 {},
 {
 "http": 200,
-"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-TEST-TEST-TEST-TEST\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-TEST\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":true}\n",
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-TEST-TEST-TEST-TEST\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-TEST\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
 "calls": [],
 "files": {
 "home/.time_anchor": "MTc2MDY5MTIwMA==",
 "home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZGNkY2RjZFwiLFwiaXNzdWVkX2F0XCI6MTgxNDQwMDAwMSxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtVEVTVC1URVNULVRFU1QtVEVTVFwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogInRHOUlpOFpuNlBXTGQyNXI3SU5RdTJ4MFhLUFdPRUxEbHBoQ0UyV3Q3NGpFX3BzZWx5NUZfTnU1RnBJRFd4ZzFMNjFjcVoybEFvLUlxalc2SWk4X0JnIn0=",
-"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMH0="
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
 }
 }
 ]
@@ -1760,6 +1947,10 @@ null
 {
 "return": {
 "status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+},
 "server_time": {
 "payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760086520,\"version\":1}",
 "signature": "nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw"
@@ -1774,13 +1965,26 @@ null
 },
 {
 "return": {
-"status": "valid"
+"status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+}
 }
 },
 {
 "return": [
 1
 ]
+},
+{
+"return": {
+"status": "valid",
+"server_time": {
+"payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760086400,\"version\":1}",
+"signature": "pS1tHnCHYeYXIduPo_0X0yFgFpJ1lSF_sfLAVuyeK3nWCh3sMIP7UwVbQrIuO3WI89ILBpClidBlhMBewaxyCA"
+}
+}
 }
 ]
 },
@@ -1806,6 +2010,14 @@ null
 "now": 1760259200,
 "op": "verify",
 "trial_only": true
+},
+{
+"now": 1760259200,
+"op": "check"
+},
+{
+"now": 1760259200,
+"op": "check"
 },
 {
 "now": 1760259200,
@@ -1876,7 +2088,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -1915,7 +2128,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -1940,7 +2154,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -1955,7 +2170,8 @@ null
 }
 },
 {
-"crash": "AttributeError",
+"http": 503,
+"body": "{\"code\":\"bad_answer\",\"error\":\"The license server's answer could not be verified, so nothing was changed. Try again later. Help: https://scadabench.com/contact/\"}\n",
 "calls": [
 [
 "factory",
@@ -1964,7 +2180,60 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjUyMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAibldrc2RtQzFFYWxERW9pTGlMWVpxalZNamx6bENUaU01eFV1VEEyTTluUElNdlZyTzJ1SUtybmhHdkhiZGwwci1hS3RTV2hJdVBZVjNLcTB0VG1BQXcifQ==",
+"home/.time_anchor": "MTc2MDI1OTIwMA==",
+"home/license.cert": "ew0KICAicGF5bG9hZCI6ICJ7XCJlbWFpbFwiOlwiXCIsXCJleHBpcmVzX2F0XCI6MTc2MDYwNDgwMCxcImh3aWRcIjpcImFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJcIixcImlzc3VlZF9hdFwiOjE3NjAwMDAwMDAsXCJraWRcIjpcIjMwOTdlMmRlXCIsXCJsaWNlbnNlX2lkXCI6XCJUUklBTC1hYmFiYWJhYmFiYWJcIixcIm1heF9tYWNoaW5lc1wiOjEsXCJ0eXBlXCI6XCJ0cmlhbFwiLFwidmVyc2lvblwiOjF9IiwNCiAgInNpZ25hdHVyZSI6ICI5N3c2YWtLMGdiaGhYNFptdEhBNFV1eE5vSTBzZ2VKMGxRQUc3WTlzZTdBTVRMMk9XVnMtRFE3RlZXWFd5ODhvdlRQTDRoTk50djlJaGRuSXJRckFDQSINCn0=",
+"home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGwsICJsYXN0X3ZlcmlmeSI6IDE3NjAwMDAwNjAsICJ0aW1lX2FuY2hvciI6ICIxNzYwMjU5MjAwIiwgInNlcnZlcl90aW1lIjogIntcInBheWxvYWRcIjogXCJ7XFxcImtpZFxcXCI6XFxcIjMwOTdlMmRlXFxcIixcXFwicHVycG9zZVxcXCI6XFxcInNlcnZlci10aW1lXFxcIixcXFwidGltZVxcXCI6MTc2MDA4NjUyMCxcXFwidmVyc2lvblxcXCI6MX1cIiwgXCJzaWduYXR1cmVcIjogXCJuV2tzZG1DMUVhbERFb2lMaUxZWnFqVk1qbHpsQ1RpTTV4VXVUQTJNOW5QSU12VnJPMnVJS3JuaEd2SGJkbDByLWFLdFNXaEl1UFlWM0txMHRUbUFBd1wifSJ9"
+},
+"registry": {
+"TimeAnchor": "1760259200",
+"ServerTime": "{\"payload\": \"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760086520,\\\"version\\\":1}\", \"signature\": \"nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw\"}"
+}
+},
+{
+"http": 503,
+"body": "{\"code\":\"bad_answer\",\"error\":\"The license server's answer could not be verified, so nothing was changed. Try again later. Help: https://scadabench.com/contact/\"}\n",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjUyMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAibldrc2RtQzFFYWxERW9pTGlMWVpxalZNamx6bENUaU01eFV1VEEyTTluUElNdlZyTzJ1SUtybmhHdkhiZGwwci1hS3RTV2hJdVBZVjNLcTB0VG1BQXcifQ==",
+"home/.time_anchor": "MTc2MDI1OTIwMA==",
+"home/license.cert": "ew0KICAicGF5bG9hZCI6ICJ7XCJlbWFpbFwiOlwiXCIsXCJleHBpcmVzX2F0XCI6MTc2MDYwNDgwMCxcImh3aWRcIjpcImFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJcIixcImlzc3VlZF9hdFwiOjE3NjAwMDAwMDAsXCJraWRcIjpcIjMwOTdlMmRlXCIsXCJsaWNlbnNlX2lkXCI6XCJUUklBTC1hYmFiYWJhYmFiYWJcIixcIm1heF9tYWNoaW5lc1wiOjEsXCJ0eXBlXCI6XCJ0cmlhbFwiLFwidmVyc2lvblwiOjF9IiwNCiAgInNpZ25hdHVyZSI6ICI5N3c2YWtLMGdiaGhYNFptdEhBNFV1eE5vSTBzZ2VKMGxRQUc3WTlzZTdBTVRMMk9XVnMtRFE3RlZXWFd5ODhvdlRQTDRoTk50djlJaGRuSXJRckFDQSINCn0=",
+"home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGwsICJsYXN0X3ZlcmlmeSI6IDE3NjAwMDAwNjAsICJ0aW1lX2FuY2hvciI6ICIxNzYwMjU5MjAwIiwgInNlcnZlcl90aW1lIjogIntcInBheWxvYWRcIjogXCJ7XFxcImtpZFxcXCI6XFxcIjMwOTdlMmRlXFxcIixcXFwicHVycG9zZVxcXCI6XFxcInNlcnZlci10aW1lXFxcIixcXFwidGltZVxcXCI6MTc2MDA4NjUyMCxcXFwidmVyc2lvblxcXCI6MX1cIiwgXCJzaWduYXR1cmVcIjogXCJuV2tzZG1DMUVhbERFb2lMaUxZWnFqVk1qbHpsQ1RpTTV4VXVUQTJNOW5QSU12VnJPMnVJS3JuaEd2SGJkbDByLWFLdFNXaEl1UFlWM0txMHRUbUFBd1wifSJ9"
+},
+"registry": {
+"TimeAnchor": "1760259200",
+"ServerTime": "{\"payload\": \"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760086520,\\\"version\\\":1}\", \"signature\": \"nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw\"}"
+}
+},
+{
+"http": 503,
+"body": "{\"code\":\"offline\",\"error\":\"no canned answer\"}\n",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -2215,6 +2484,10 @@ null
 {
 "return": {
 "status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+},
 "server_time": {
 "payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760345660,\"version\":1}",
 "signature": "o58EmLKvSe6mitU8iOCzup32Pre_EX0G7kNn5Q5crXQZEbj9SscNfzkQiVGU6A5wi-R8JVssu2lOXnMsEIBeCg"
@@ -2348,7 +2621,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -2369,7 +2643,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -2390,7 +2665,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -2434,6 +2710,10 @@ null
 {
 "return": {
 "status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+},
 "server_time": {
 "payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760608400,\"version\":1}",
 "signature": "0vJlKlILp69yqmgHfRqy_bfBYFvE9Bu8xivB2x5BTTB7sbXAjxBXvk4G0vhfZTL-6WR4DRMh2XcIQI61lgUWAg"
@@ -2473,7 +2753,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -2593,7 +2874,8 @@ null
 [
 "verify",
 "TRIAL-abababababab",
-"abababababababababababababababababababababababababababababababab"
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
 ]
 ],
 "files": {
@@ -3036,6 +3318,1376 @@ null
 "home/.time_anchor": "MjA3NTM2MDAwMA==",
 "home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtVEVTVC1URVNULVRFU1QtVEVTVFwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIlRpbk5uckVQd2pja2VaWlZ5OWtadVIteU8xU2Zmc3Z4LURkeGcwMWxrck93dFpzcE84eG1sY0Z5eGVBbkZuMll4U3ZmaktzLU9DVW50UmVZSXJuSEFBIn0=",
 "home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIyMDc1MzYwMDAwIn0="
+}
+}
+]
+},
+{
+"name": "cancelled stays cancelled",
+"registry": true,
+"client": {
+"verify": [
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "9QgHPwu06yaQQHgvgvmYCZLsrcuIxXXRzCu-ZuHWbOd5ugxVZpX6sVV-nnXzaFnoeJCGKLdddB9FPI5BZ-6UBA"
+}
+}
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691200,
+"op": "status"
+},
+{
+"now": 1760691200,
+"op": "licensed"
+},
+{
+"op": "remove",
+"path": "home/.revoked_ids"
+},
+{
+"now": 1760691201,
+"op": "status"
+},
+{
+"op": "write",
+"path": "home/license_state.json",
+"data": "{}"
+},
+{
+"now": 1760691202,
+"op": "status"
+},
+{
+"op": "remove",
+"path": "home/.revoked_ids"
+},
+{
+"op": "write",
+"path": "home/license_state.json",
+"data": "{\"revoked_reason\": null}"
+},
+{
+"now": 1760691203,
+"op": "licensed"
+},
+{
+"now": 1760691204,
+"op": "offline",
+"arg": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691205,
+"op": "status"
+}
+],
+"results": [
+{},
+{
+"value": "revoked",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{
+"value": false,
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJyZXZva2VkX2lkcyI6ICJTVUJTLTIzNDUtNjc4OS1BQkNELUVGR0gifQ=="
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{},
+{},
+{
+"value": false,
+"calls": [],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGx9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"not_valid_here\",\"error\":\"This license was cancelled. Contact the seller if this is a mistake.\"}\n",
+"calls": [],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGx9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJyZXZva2VkX3JlYXNvbiI6IG51bGwsICJyZXZva2VkX2lkcyI6ICJTVUJTLTIzNDUtNjc4OS1BQkNELUVGR0gifQ=="
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+}
+]
+},
+{
+"name": "cancelled stays cancelled without a registry",
+"client": {
+"verify": [
+{
+"return": {
+"status": "moved",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"moved\",\"time\":1760000000,\"version\":1}",
+"signature": "6eV4BK0zPjHIW679m5HRkueN8KHJCP0zEsb2pmjfFeYVvQ8R7eAFuMYRxo6_XtNuRhZIM8S4nyfw8PHyEH9aAg"
+}
+}
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"op": "remove",
+"path": "home/.revoked_ids"
+},
+{
+"now": 1760691201,
+"op": "status"
+},
+{
+"now": 1760691202,
+"op": "licensed"
+}
+],
+"results": [
+{},
+{
+"value": "moved",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert.moved-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Uga2V5IHdhcyBtb3ZlZCB0byBhbm90aGVyIGNvbXB1dGVyLiJ9"
+}
+},
+{},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.moved-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Uga2V5IHdhcyBtb3ZlZCB0byBhbm90aGVyIGNvbXB1dGVyLiJ9"
+}
+},
+{
+"value": false,
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.moved-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Uga2V5IHdhcyBtb3ZlZCB0byBhbm90aGVyIGNvbXB1dGVyLiJ9"
+}
+}
+]
+},
+{
+"name": "other licenses are not cancelled",
+"registry": true,
+"client": {
+"verify": [
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "9QgHPwu06yaQQHgvgvmYCZLsrcuIxXXRzCu-ZuHWbOd5ugxVZpX6sVV-nnXzaFnoeJCGKLdddB9FPI5BZ-6UBA"
+}
+}
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-OTHR-OTHR-OTHR-OTHR\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"gf0Y6DRZ-hml9t9SyjZw6-1s2RRGMojwijrvvPE-rtzxzMvOAHwtFg_kjlYsV28_Gy5a_oJ31h5ZWK3GJP_wBQ\"}"
+},
+{
+"now": 1760691200,
+"op": "status"
+},
+{
+"op": "write",
+"path": "home/.revoked_ids",
+"data": " ,SUBS-OTHR-OTHR-OTHR-OTHR, ,"
+},
+{
+"now": 1760691201,
+"op": "status"
+},
+{
+"op": "write",
+"path": "home/.revoked_ids",
+"data": "x,SUBS-2345-6789-ABCD-EFGH ,y"
+},
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"now": 1760691202,
+"op": "status"
+},
+{
+"now": 1760691203,
+"op": "offline",
+"arg": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+}
+],
+"results": [
+{},
+{
+"value": "revoked",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-OTHR-OTHR-OTHR-OTHR\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-OTHR\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdI",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtT1RIUi1PVEhSLU9USFItT1RIUlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogImdmMFk2RFJaLWhtbDl0OVN5alp3Ni0xczJSUkdNb2p3aWpydnZQRS1ydHp4ek12T0FId3RGZ19ramxZc1YyOF9HeTVhX29KMzFoNVpXSzNHSlBfd0JRIn0=",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCIsICJsYXN0X3ZlcmlmeSI6IDE3NjA2OTEyMDAsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH"
+}
+},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-OTHR-OTHR-OTHR-OTHR\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-OTHR\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdILFNVQlMtT1RIUi1PVEhSLU9USFItT1RIUg==",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjowLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlNVQlMtT1RIUi1PVEhSLU9USFItT1RIUlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcImxpZmV0aW1lXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogImdmMFk2RFJaLWhtbDl0OVN5alp3Ni0xczJSUkdNb2p3aWpydnZQRS1ydHp4ek12T0FId3RGZ19ramxZc1YyOF9HeTVhX29KMzFoNVpXSzNHSlBfd0JRIn0=",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCxTVUJTLU9USFItT1RIUi1PVEhSLU9USFIiLCAibGFzdF92ZXJpZnkiOiAxNzYwNjkxMjAwLCAicmV2b2tlZF9yZWFzb24iOiAiVGhpcyBsaWNlbnNlIHdhcyBjYW5jZWxsZWQuIENvbnRhY3QgdGhlIHNlbGxlciBpZiB0aGlzIGlzIGEgbWlzdGFrZS4ifQ=="
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH,SUBS-OTHR-OTHR-OTHR-OTHR"
+}
+},
+{},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":false,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdILFNVQlMtT1RIUi1PVEhSLU9USFItT1RIUix4LHk=",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCxTVUJTLU9USFItT1RIUi1PVEhSLU9USFIseCx5IiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMCwgInJldm9rZWRfcmVhc29uIjogIlRoaXMgbGljZW5zZSB3YXMgY2FuY2VsbGVkLiBDb250YWN0IHRoZSBzZWxsZXIgaWYgdGhpcyBpcyBhIG1pc3Rha2UuIn0="
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH,SUBS-OTHR-OTHR-OTHR-OTHR,x,y"
+}
+},
+{
+"http": 400,
+"body": "{\"code\":\"not_valid_here\",\"error\":\"This license was cancelled. Contact the seller if this is a mistake.\"}\n",
+"calls": [],
+"files": {
+"home/.revoked_ids": "U1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdILFNVQlMtT1RIUi1PVEhSLU9USFItT1RIUix4LHk=",
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license.cert.revoked-1760691200": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIiwgInJldm9rZWRfaWRzIjogIlNVQlMtMjM0NS02Nzg5LUFCQ0QtRUZHSCxTVUJTLU9USFItT1RIUi1PVEhSLU9USFIseCx5IiwgImxhc3RfdmVyaWZ5IjogMTc2MDY5MTIwMCwgInJldm9rZWRfcmVhc29uIjogIlRoaXMgbGljZW5zZSB3YXMgY2FuY2VsbGVkLiBDb250YWN0IHRoZSBzZWxsZXIgaWYgdGhpcyBpcyBhIG1pc3Rha2UuIn0="
+},
+"registry": {
+"TimeAnchor": "1760691200",
+"RevokedLicenses": "SUBS-2345-6789-ABCD-EFGH,SUBS-OTHR-OTHR-OTHR-OTHR,x,y"
+}
+}
+]
+},
+{
+"name": "cancelled trial stays cancelled",
+"registry": true,
+"client": {
+"verify": [
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "m3ROPFnV322dMsgMnqRkYY2oW577NFIxv9ogQLxIIv4kEBV1qu2f0wugT8ZKPXGn5HAB6wy8rkooI7I63wXZAg"
+},
+"server_time": {
+"payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760086520,\"version\":1}",
+"signature": "nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw"
+}
+}
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":1760604800,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"TRIAL-abababababab\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"trial\\\",\\\"version\\\":1}\", \"signature\": \"97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA\"}"
+},
+{
+"now": 1760086520,
+"op": "verify"
+},
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":1760604800,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"TRIAL-abababababab\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"trial\\\",\\\"version\\\":1}\", \"signature\": \"97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA\"}"
+},
+{
+"now": 1760086530,
+"op": "status"
+},
+{
+"now": 1760086540,
+"op": "check"
+}
+],
+"results": [
+{},
+{
+"value": "confirmed",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.grace_start": "MA==",
+"home/.revoked_ids": "VFJJQUwtYWJhYmFiYWJhYmFi",
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjUyMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAibldrc2RtQzFFYWxERW9pTGlMWVpxalZNamx6bENUaU01eFV1VEEyTTluUElNdlZyTzJ1SUtybmhHdkhiZGwwci1hS3RTV2hJdVBZVjNLcTB0VG1BQXcifQ==",
+"home/.time_anchor": "MTc2MDA4NjUyMA==",
+"home/license.cert.revoked-1760086520": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY1MjAiLCAic2VydmVyX3RpbWUiOiAie1wicGF5bG9hZFwiOiBcIntcXFwia2lkXFxcIjpcXFwiMzA5N2UyZGVcXFwiLFxcXCJwdXJwb3NlXFxcIjpcXFwic2VydmVyLXRpbWVcXFwiLFxcXCJ0aW1lXFxcIjoxNzYwMDg2NTIwLFxcXCJ2ZXJzaW9uXFxcIjoxfVwiLCBcInNpZ25hdHVyZVwiOiBcIm5Xa3NkbUMxRWFsREVvaUxpTFlacWpWTWpsemxDVGlNNXhVdVRBMk05blBJTXZWck8ydUlLcm5oR3ZIYmRsMHItYUt0U1doSXVQWVYzS3EwdFRtQUF3XCJ9IiwgInJldm9rZWRfaWRzIjogIlRSSUFMLWFiYWJhYmFiYWJhYiIsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"GraceStart": "0",
+"TimeAnchor": "1760086520",
+"ServerTime": "{\"payload\": \"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760086520,\\\"version\\\":1}\", \"signature\": \"nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw\"}",
+"RevokedLicenses": "TRIAL-abababababab"
+}
+},
+{},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":\"This license was cancelled. Contact the seller if this is a mistake.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.grace_start": "MA==",
+"home/.revoked_ids": "VFJJQUwtYWJhYmFiYWJhYmFi",
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjUyMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAibldrc2RtQzFFYWxERW9pTGlMWVpxalZNamx6bENUaU01eFV1VEEyTTluUElNdlZyTzJ1SUtybmhHdkhiZGwwci1hS3RTV2hJdVBZVjNLcTB0VG1BQXcifQ==",
+"home/.time_anchor": "MTc2MDA4NjUyMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license.cert.revoked-1760086520": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY1MjAiLCAic2VydmVyX3RpbWUiOiAie1wicGF5bG9hZFwiOiBcIntcXFwia2lkXFxcIjpcXFwiMzA5N2UyZGVcXFwiLFxcXCJwdXJwb3NlXFxcIjpcXFwic2VydmVyLXRpbWVcXFwiLFxcXCJ0aW1lXFxcIjoxNzYwMDg2NTIwLFxcXCJ2ZXJzaW9uXFxcIjoxfVwiLCBcInNpZ25hdHVyZVwiOiBcIm5Xa3NkbUMxRWFsREVvaUxpTFlacWpWTWpsemxDVGlNNXhVdVRBMk05blBJTXZWck8ydUlLcm5oR3ZIYmRsMHItYUt0U1doSXVQWVYzS3EwdFRtQUF3XCJ9IiwgInJldm9rZWRfaWRzIjogIlRSSUFMLWFiYWJhYmFiYWJhYiIsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"GraceStart": "0",
+"TimeAnchor": "1760086520",
+"ServerTime": "{\"payload\": \"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760086520,\\\"version\\\":1}\", \"signature\": \"nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw\"}",
+"RevokedLicenses": "TRIAL-abababababab"
+}
+},
+{
+"http": 503,
+"body": "{\"code\":\"offline\",\"error\":\"no canned answer\"}\n",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.grace_start": "MA==",
+"home/.revoked_ids": "VFJJQUwtYWJhYmFiYWJhYmFi",
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjUyMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAibldrc2RtQzFFYWxERW9pTGlMWVpxalZNamx6bENUaU01eFV1VEEyTTluUElNdlZyTzJ1SUtybmhHdkhiZGwwci1hS3RTV2hJdVBZVjNLcTB0VG1BQXcifQ==",
+"home/.time_anchor": "MTc2MDA4NjUyMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license.cert.revoked-1760086520": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY1MjAiLCAic2VydmVyX3RpbWUiOiAie1wicGF5bG9hZFwiOiBcIntcXFwia2lkXFxcIjpcXFwiMzA5N2UyZGVcXFwiLFxcXCJwdXJwb3NlXFxcIjpcXFwic2VydmVyLXRpbWVcXFwiLFxcXCJ0aW1lXFxcIjoxNzYwMDg2NTIwLFxcXCJ2ZXJzaW9uXFxcIjoxfVwiLCBcInNpZ25hdHVyZVwiOiBcIm5Xa3NkbUMxRWFsREVvaUxpTFlacWpWTWpsemxDVGlNNXhVdVRBMk05blBJTXZWck8ydUlLcm5oR3ZIYmRsMHItYUt0U1doSXVQWVYzS3EwdFRtQUF3XCJ9IiwgInJldm9rZWRfaWRzIjogIlRSSUFMLWFiYWJhYmFiYWJhYiIsICJyZXZva2VkX3JlYXNvbiI6ICJUaGlzIGxpY2Vuc2Ugd2FzIGNhbmNlbGxlZC4gQ29udGFjdCB0aGUgc2VsbGVyIGlmIHRoaXMgaXMgYSBtaXN0YWtlLiJ9"
+},
+"registry": {
+"GraceStart": "0",
+"TimeAnchor": "1760086520",
+"ServerTime": "{\"payload\": \"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760086520,\\\"version\\\":1}\", \"signature\": \"nWksdmC1EalDEoiLiLYZqjVMjlzlCTiM5xUuTA2M9nPIMvVrO2uIKrnhGvHbdl0r-aKtSWhIuPYV3Kq0tTmAAw\"}",
+"RevokedLicenses": "TRIAL-abababababab"
+}
+}
+]
+},
+{
+"name": "forged verify answers change nothing",
+"client": {
+"verify": [
+{
+"return": {
+"status": "revoked"
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": null
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": "x"
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{}"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": 5,
+"signature": "s"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"ffffffffffffffffffffffffffffffff\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "K4EOPgyRBv5qHPu2HViT4xw9dUj2BneeFdxDJRqcrdnCpjwHedXIpn_nzkQEZqr3hcTMFnyXohhI-o10BEr_Bg"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-OTHR-OTHR-OTHR-OTHR\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "WPpN_mHxF5lrUNq4tj37OgwghDMz_3PcgZ2ZQnLl_C7tAbRS0i9vgB13BF7i7V6QdCKIS8hxFz-sJwzJiPRzCw"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "H94BX2NM17wGNGzowEeVZ1gQ76IrFLpglviXJucRKl--_GOEUStxOIdI2jOrTe3-BfVZPeUlKyO3QXGpKi_5BA"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"e37abcd7\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "Q4bX6pRDyKVI53NYE16i7pIUfHDDUF3ES-rgnFbIbnWPKPCCVQOkQxEw09lIGjgoSvLzTwJxAaVADf5JYEJRCQ"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"server-time\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1}",
+"signature": "zSyHDA7EntJj1wu7L4v-lerYPhPa7rkZpjm48gA8eFoNayAqXV5cPuCbxv3jFO5uN4ZG9tIArg_QUF95_IPRCg"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":2}",
+"signature": "qzumV6hYuthyjiqyQaRufhS9c8bUCMpWM1v4wZ7d1uaSoLO1XsitGUmFLHru0FbLFZO0tjQFRQkSe8iwcuVKAg"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":1.0}",
+"signature": "A7_Trx_Ai3UbHQnyNc5V6cReoeTSai8oQ_WK3uBHcMVeFt2-ED72IDuRQOogJnRCoNmq94PAYYdo3aZnDDjiDg"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"revoked\",\"time\":1760000000,\"version\":\"1\"}",
+"signature": "duMK_gk_I03ljFQuJfCTSu6BXXHPF7CD523ubFFqGsIFwIh1QE1Xcw-2lUG0oWbNHNex1yZydtvWeTgI79QzDQ"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"banned\",\"time\":1760000000,\"version\":1}",
+"signature": "vKQ6ryGbI4Awd9CmhDROqLgzpCctJ6T-K_tnwpb_rcyBQxWJIRLPvRGqOeiyR4zadbjuRUfIDLfOo22n3w4DBA"
+}
+}
+},
+{
+"return": {
+"status": "revoked",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":[\"revoked\"],\"time\":1760000000,\"version\":1}",
+"signature": "QlubfxbduAMppZf5VQHqKXnEBcua0Y1ZH9lDfNWUrW_lRuMZ_Yhe5BXrmGlPyKBREKcu_ajlsHpKRyudIGuvCg"
+}
+}
+},
+{
+"return": [
+1
+]
+},
+{
+"return": "revoked"
+},
+{
+"raise": [
+"down",
+"offline"
+]
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+},
+{
+"op": "write",
+"path": "home/license_state.json",
+"data": "{\"last_verify\": 1}"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "verify"
+},
+{
+"now": 1760691200,
+"op": "status"
+},
+{
+"now": 1760691200,
+"op": "licensed"
+}
+],
+"results": [
+{},
+{},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"SUBS-2345-6789-ABCD-EFGH",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+},
+{
+"value": true,
+"calls": [],
+"files": {
+"home/.time_anchor": "MTc2MDY5MTIwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJidXllckBleGFtcGxlLmNvbVwiLFwiZXhwaXJlc19hdFwiOjAsXCJod2lkXCI6XCJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiXCIsXCJpc3N1ZWRfYXRcIjoxNzYwMDAwMDAwLFwia2lkXCI6XCIzMDk3ZTJkZVwiLFwibGljZW5zZV9pZFwiOlwiU1VCUy0yMzQ1LTY3ODktQUJDRC1FRkdIXCIsXCJtYXhfbWFjaGluZXNcIjoxLFwidHlwZVwiOlwibGlmZXRpbWVcIixcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAiaDBVVG5SN2x2SjZfcmZLNHVrLW5wWVlnZW04TjFvT21KaGlCeWI5SkFWQ3ZPQTAtbjNHb3FqWnp3RUhVX2JOR2pmSEo3dlFhWXBSSnRMZGpqZXZoREEifQ==",
+"home/license_state.json": "eyJsYXN0X3ZlcmlmeSI6IDEsICJ0aW1lX2FuY2hvciI6ICIxNzYwNjkxMjAwIn0="
+}
+}
+]
+},
+{
+"name": "a trial needs a signed answer",
+"client": {
+"verify": [
+{
+"return": {
+"status": "valid",
+"server_time": {
+"payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760086400,\"version\":1}",
+"signature": "pS1tHnCHYeYXIduPo_0X0yFgFpJ1lSF_sfLAVuyeK3nWCh3sMIP7UwVbQrIuO3WI89ILBpClidBlhMBewaxyCA"
+}
+}
+},
+{
+"return": {
+"status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"x\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "arOHDKJz1emHkFab-_vb_D-8Jq_Th18rugvajiY_JxIw3OEZazjZB9H2d8pG5rDz7KDjhXBIeGENoGF2hTk_BQ"
+},
+"server_time": {
+"payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760086400,\"version\":1}",
+"signature": "pS1tHnCHYeYXIduPo_0X0yFgFpJ1lSF_sfLAVuyeK3nWCh3sMIP7UwVbQrIuO3WI89ILBpClidBlhMBewaxyCA"
+}
+}
+},
+{
+"return": {
+"status": "valid",
+"answer": {
+"payload": "{\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"nonce\":\"0123456789abcdef0123456789abcdef\",\"purpose\":\"verify-answer\",\"status\":\"valid\",\"time\":1760000000,\"version\":1}",
+"signature": "Lvb2v3Wu-Fa7bglW7T-bi15TX9wc6ZuHFXE-OQcMYrzVIa85z7sKVM_G7ywScZn__qCv8i2fafIzCLNnlcHFDw"
+},
+"server_time": {
+"payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760086400,\"version\":1}",
+"signature": "pS1tHnCHYeYXIduPo_0X0yFgFpJ1lSF_sfLAVuyeK3nWCh3sMIP7UwVbQrIuO3WI89ILBpClidBlhMBewaxyCA"
+}
+}
+}
+]
+},
+"steps": [
+{
+"op": "write",
+"path": "home/license.cert",
+"data": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":1760604800,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"TRIAL-abababababab\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"trial\\\",\\\"version\\\":1}\", \"signature\": \"97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA\"}"
+},
+{
+"now": 1760086400,
+"op": "verify"
+},
+{
+"now": 1760086400,
+"op": "check"
+},
+{
+"now": 1760086400,
+"op": "check"
+},
+{
+"now": 1760086401,
+"op": "status"
+}
+],
+"results": [
+{},
+{
+"value": null,
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.grace_start": "MTc2MDA4NjQwMA==",
+"home/.time_anchor": "MTc2MDA4NjQwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDg2NDAwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY0MDAifQ=="
+}
+},
+{
+"http": 503,
+"body": "{\"code\":\"bad_answer\",\"error\":\"The license server's answer could not be verified, so nothing was changed. Try again later. Help: https://scadabench.com/contact/\"}\n",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.grace_start": "MTc2MDA4NjQwMA==",
+"home/.time_anchor": "MTc2MDA4NjQwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDg2NDAwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY0MDAifQ=="
+}
+},
+{
+"http": 200,
+"body": "{\"days_remaining\":6,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [
+[
+"factory",
+"https://license.scadabench.com"
+],
+[
+"verify",
+"TRIAL-abababababab",
+"abababababababababababababababababababababababababababababababab",
+"0123456789abcdef0123456789abcdef"
+]
+],
+"files": {
+"home/.grace_start": "MA==",
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjQwMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAicFMxdEhuQ0hZZVlYSWR1UG9fMFgweUZnRnBKMWxTRl9zZkxBVnV5ZUszbldDaDNzTUlQN1V3VmJRckl1TzNXSTg5SUxCcENsaWRCbGhNQmV3YXh5Q0EifQ==",
+"home/.time_anchor": "MTc2MDA4NjQwMA==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY0MDAiLCAic2VydmVyX3RpbWUiOiAie1wicGF5bG9hZFwiOiBcIntcXFwia2lkXFxcIjpcXFwiMzA5N2UyZGVcXFwiLFxcXCJwdXJwb3NlXFxcIjpcXFwic2VydmVyLXRpbWVcXFwiLFxcXCJ0aW1lXFxcIjoxNzYwMDg2NDAwLFxcXCJ2ZXJzaW9uXFxcIjoxfVwiLCBcInNpZ25hdHVyZVwiOiBcInBTMXRIbkNIWWVZWElkdVBvXzBYMHlGZ0ZwSjFsU0Zfc2ZMQVZ1eWVLM25XQ2gzc01JUDdVd1ZiUXJJdU8zV0k4OUlMQnBDbGlkQmxoTUJld2F4eUNBXCJ9In0="
+}
+},
+{
+"http": 200,
+"body": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":6,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+"calls": [],
+"files": {
+"home/.grace_start": "MA==",
+"home/.server_time": "eyJwYXlsb2FkIjogIntcImtpZFwiOlwiMzA5N2UyZGVcIixcInB1cnBvc2VcIjpcInNlcnZlci10aW1lXCIsXCJ0aW1lXCI6MTc2MDA4NjQwMCxcInZlcnNpb25cIjoxfSIsICJzaWduYXR1cmUiOiAicFMxdEhuQ0hZZVlYSWR1UG9fMFgweUZnRnBKMWxTRl9zZkxBVnV5ZUszbldDaDNzTUlQN1V3VmJRckl1TzNXSTg5SUxCcENsaWRCbGhNQmV3YXh5Q0EifQ==",
+"home/.time_anchor": "MTc2MDA4NjQwMQ==",
+"home/license.cert": "eyJwYXlsb2FkIjogIntcImVtYWlsXCI6XCJcIixcImV4cGlyZXNfYXRcIjoxNzYwNjA0ODAwLFwiaHdpZFwiOlwiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYmFiYWJhYlwiLFwiaXNzdWVkX2F0XCI6MTc2MDAwMDAwMCxcImtpZFwiOlwiMzA5N2UyZGVcIixcImxpY2Vuc2VfaWRcIjpcIlRSSUFMLWFiYWJhYmFiYWJhYlwiLFwibWF4X21hY2hpbmVzXCI6MSxcInR5cGVcIjpcInRyaWFsXCIsXCJ2ZXJzaW9uXCI6MX0iLCAic2lnbmF0dXJlIjogIjk3dzZha0swZ2JoaFg0Wm10SEE0VXV4Tm9JMHNnZUowbFFBRzdZOXNlN0FNVEwyT1dWcy1EUTdGVldYV3k4OG92VFBMNGhOTnR2OUloZG5JclFyQUNBIn0=",
+"home/license_state.json": "eyJncmFjZV9zdGFydCI6ICIwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwODY0MDEiLCAic2VydmVyX3RpbWUiOiAie1wicGF5bG9hZFwiOiBcIntcXFwia2lkXFxcIjpcXFwiMzA5N2UyZGVcXFwiLFxcXCJwdXJwb3NlXFxcIjpcXFwic2VydmVyLXRpbWVcXFwiLFxcXCJ0aW1lXFxcIjoxNzYwMDg2NDAwLFxcXCJ2ZXJzaW9uXFxcIjoxfVwiLCBcInNpZ25hdHVyZVwiOiBcInBTMXRIbkNIWWVZWElkdVBvXzBYMHlGZ0ZwSjFsU0Zfc2ZMQVZ1eWVLM25XQ2gzc01JUDdVd1ZiUXJJdU8zV0k4OUlMQnBDbGlkQmxoTUJld2F4eUNBXCJ9In0="
 }
 }
 ]

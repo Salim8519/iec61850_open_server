@@ -16,7 +16,7 @@ const SupportURL = "https://scadabench.com/contact/"
 // User-visible reasons, byte-identical to domain/license_policy.py.
 const (
 	NoLicense      = "This computer has no license yet. Start the free trial or enter your license key."
-	WrongMachine   = "This license belongs to a different computer. Enter your license key to move it here, or start a trial."
+	WrongMachine   = "This license belongs to a different computer. Each license works on one computer only; buy a new license for this computer, or start a trial."
 	TrialEnded     = "Your free trial has ended. Buy a lifetime license to keep using ScadaBench."
 	ClockRollback  = "System clock rollback detected: the date on this computer is earlier than when ScadaBench last ran. Correct the date and time in Windows (Settings > Time & language > Set time automatically), then reopen ScadaBench. Help: " + SupportURL
 	Damaged        = "The license file is damaged or was changed. Activate again or load a fresh license file."

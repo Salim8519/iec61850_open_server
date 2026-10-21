@@ -1,6 +1,6 @@
 """Test doubles for the trial clock: an in-memory registry and a scriptable license server."""
 import json
-from license_signer import HWID, bundle, keys, stamp
+from license_signer import HWID, bundle, keys, stamp, verify_answer
 from studio_app.licensing.client import LicenseServerError
 from studio_app.licensing.service import LicenseService
 
@@ -24,8 +24,10 @@ class FakeRegistry:
 class Server:
     """What the fake license server answers: its clock, and whether it can be reached."""
 
-    def __init__(self, time=NOW, online=True, signs=True, needs_email=False, mail_down=False):
+    def __init__(self, time=NOW, online=True, signs=True, needs_email=False, mail_down=False, verdict="valid",
+                 signs_answers=True):
         self.time, self.online, self.signs = time, online, signs
+        self.verdict, self.signs_answers = verdict, signs_answers  # what "verify" says, and whether it signs it
         self.needs_email, self.mail_down = needs_email, mail_down
         self.calls = []
 
@@ -59,8 +61,11 @@ class FakeClient:
     def activate(self, key, machine):
         return self._answer("activate", certificate=json.loads(bundle(license_id=key, hwid=machine)))
 
-    def verify(self, key, machine):
-        return self._answer("verify", status="valid")
+    def verify(self, key, machine, nonce):
+        answer = {"status": self.server.verdict}  # the unsigned copy is never trusted
+        if self.server.signs_answers:
+            answer["answer"] = verify_answer(nonce, key, machine, self.server.verdict, self.server.time)
+        return self._answer("verify", **answer)
 
 
 def studio(tmp_path, at, server=None, registry=None, **options):

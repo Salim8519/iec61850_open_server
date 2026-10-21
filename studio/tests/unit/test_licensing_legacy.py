@@ -1,7 +1,7 @@
 """Licenses bound to the pre-v2 machine ID keep working after an update (ADR-0051)."""
 import hashlib
 import json
-from license_signer import HWID, bundle, keys
+from license_signer import HWID, bundle, keys, verify_answer
 from studio_app.domain import license_policy as policy
 from studio_app.licensing import hwid
 from studio_app.licensing.service import LicenseService
@@ -29,9 +29,10 @@ class RecordingClient:
     def __init__(self, url):
         self.url = url
 
-    def verify(self, key, machine):
+    def verify(self, key, machine, nonce):
         RecordingClient.calls.append(machine)
-        return {"status": "valid", "certificate": json.loads(bundle(hwid=machine, issued_at=NOW + 30 * DAY))}
+        return {"status": "valid", "answer": verify_answer(nonce, key, machine, "valid"),
+                "certificate": json.loads(bundle(hwid=machine, issued_at=NOW + 30 * DAY))}
 
 
 def test_legacy_composition_matches_v1_format():

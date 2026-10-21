@@ -58,8 +58,8 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Guided UI and wording | `frontend/src/ui/`, `frontend/src/copy/`, `features/network/`, `features/settings/` |
 | Feature contracts | `docs/specs/`, `studio/tools/check_specs.py` |
 | Repository verification | `studio/tools/verify.py` and `check_*.py` |
-| Licensing (app) | `domain/license_policy.py`, `licensing/`, `api/license.py`, `api/security.py` gate, `frontend/src/features/license/` |
-| Licensing (native) | `native/common/license_guard.*`, `native/release/release_key.hpp`, `native/third_party/monocypher/` |
+| Licensing (app) | `domain/license_policy.py`, `licensing/` (incl. `revoked_ids.py` cancelled IDs, `verify_answer.py` signed answers; Go twins in `engine/internal/licensing/`), `api/license.py`, `api/security.py` gate, `frontend/src/features/license/` |
+| Licensing (native) | `native/common/license_guard.*`, `native/common/license_clock.*` (clock and cancelled IDs), `native/release/release_key.hpp`, `native/third_party/monocypher/` |
 | License server | `license-server/` (Go): `internal/api`, `store`, `security`, `certs`, `paypal`, `mail`, `sales`, `deploy/` (owner commands: `deploy-server.cmd`, `set-payments.cmd`, `set-price.cmd`, `payments.cmd`) |
 | Owner page (ADR-0072) | `license-server/internal/adminauth/` (password, codes, sessions, lockout), `internal/audit/`, `internal/store/subscribers.go`, `internal/api/owner*.go`, `pages/admin*.{html,css,js}`, `pages/unsubscribe.html`, `cmd/license-server/adminsetup.go`, `gateway/` (Cloudflare Worker), `deploy/admin.ps1`; owner commands `admin-setup.cmd`, `reset-admin.cmd` |
 | Brand and website | `studio/branding/`, `tools/build_icons.py`, `tools/build_installer_art.py` (installer pictures), `website/` (Astro, Cloudflare Pages) |

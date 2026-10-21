@@ -5,7 +5,7 @@
     python studio/tools/license_admin.py key --trial-days 3     make a 3-day evaluation key
     python studio/tools/license_admin.py activate-here          license this PC instantly (no typing)
     python studio/tools/license_admin.py remove                 take the license off this PC
-    python studio/tools/license_admin.py remove --free-key --reset-trial   ...and make key + trial reusable
+    python studio/tools/license_admin.py remove --reset-trial   ...and let this PC start a free trial again
     python studio/tools/license_admin.py reset-trial            let this PC start a free trial again
     python studio/tools/license_admin.py reset-trial --machine-id 64HEX   ...a customer's PC (its Machine ID)
     python studio/tools/license_admin.py reset-trial-ip --ip 203.0.113.7  stop asking that network for an email
@@ -16,7 +16,9 @@ Server: the local sandbox by default (start it with license_sandbox.py);
 --real uses the server saved by deploy-server.cmd (or --ssh user@host) through the deploy key.
 PC: the installed app's folder (%LOCALAPPDATA%\\ScadaBench) by default;
 --sandbox uses the source sandbox (studio/build/license-sandbox/studio-license).
-Removed files are moved to a removed-<time> folder, never deleted.
+Removed files are moved to a removed-<time> folder, never deleted. A license the server cancelled
+stays cancelled on this PC (revoked_ids, ADR-0097): remove never touches that record, and a key
+can no longer be freed for another computer.
 """
 import argparse
 import json
@@ -111,7 +113,7 @@ def move_registry_aside(target):
     saved = {}
     try:
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, REGISTRY_KEY, 0, winreg.KEY_ALL_ACCESS) as key:
-            for name in REGISTRY_NAMES.values():
+            for name in (value for key, value in REGISTRY_NAMES.items() if key != "revoked_ids"):
                 try:
                     saved[name] = winreg.QueryValueEx(key, name)[0]
                     winreg.DeleteValue(key, name)
@@ -125,7 +127,6 @@ def move_registry_aside(target):
 
 def remove(args):
     folder = home(args)
-    payload = read_payload(folder)
     present = [name for name in LICENSE_FILES if (folder / name).exists()]
     if present:
         target = folder / f"removed-{time.strftime('%Y%m%d-%H%M%S')}"
@@ -137,10 +138,6 @@ def remove(args):
         print(f"License removed from this PC (kept in {target}). Reopen Studio to see the activation screen.")
     else:
         print("No license on this PC.")
-    key = (payload or {}).get("license_id", "")
-    if args.free_key and key.startswith("SUBS-"):
-        server(args, "reset-hwid", "--key", key)
-        print(f"Key {key} is free for another activation.")
     if args.reset_trial:
         reset_trial(args)
 
@@ -185,7 +182,6 @@ def main(argv=None):
     parser.add_argument("--key")
     parser.add_argument("--machine-id", help="reset-trial: a customer's 64-character Machine ID")
     parser.add_argument("--ip", help="reset-trial-ip: the network address to clear")
-    parser.add_argument("--free-key", action="store_true", help="remove: also unlock the key on the server")
     parser.add_argument("--reset-trial", action="store_true", help="remove: also reset this PC's trial")
     parser.add_argument("--ssh", help="use a server by address, e.g. scadabench@203.0.113.10")
     parser.add_argument("--real", action="store_true", help="use the deployed server saved by deploy-server.cmd")

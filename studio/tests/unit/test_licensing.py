@@ -3,9 +3,10 @@ import hashlib
 import json
 from pathlib import Path
 import pytest
-from license_signer import HWID, bundle, keys, public_key
+from license_signer import HWID, bundle, keys, public_key, verify_answer
 from studio_app.domain import license_policy as policy
 from studio_app.licensing import certificate, client, hwid
+from studio_app.licensing import release_key
 from studio_app.licensing.release_key import key_id
 from studio_app.licensing.service import LicenseActionError, LicenseService
 
@@ -78,7 +79,8 @@ def test_certificate_for_another_machine_is_rejected(tmp_path):
     install(tmp_path, bundle(hwid="cd" * 32))
     status = service(tmp_path).status()
     assert not status["licensed"] and status["reason"] == policy.WRONG_MACHINE
-    assert status["transfer_available"]
+    assert status["reason"].endswith("buy a new license for this computer, or start a trial.")
+    assert not status["transfer_available"]  # licenses never move (ADR-0097); the field stays for old screens
 
 
 def test_tampered_or_foreign_signature_is_rejected(tmp_path):
@@ -127,10 +129,8 @@ class FakeClient:
     def activate(self, key, machine):
         return json.loads(bundle(license_id=key, hwid=machine))
 
-    transfer = activate
-
-    def verify(self, key, machine):
-        return {"status": "revoked"}
+    def verify(self, key, machine, nonce):
+        return {"status": "revoked", "answer": verify_answer(nonce, key, machine, "revoked")}
 
 
 def test_trial_activation_and_offline_install_save_certificate(tmp_path):
@@ -154,12 +154,11 @@ def test_online_check_removes_refunded_license_but_keeps_file(tmp_path):
     assert list((tmp_path / "home").glob("license.cert.revoked-*"))
 
 
-def test_online_check_keeps_owner_helper_license_the_server_does_not_know(tmp_path):
-    """Owner helper licenses (ADR-0052) are signed offline; the server answers "unknown"."""
+def test_online_check_keeps_a_license_the_server_does_not_know(tmp_path):
     class UnknownToServer(FakeClient):
-        def verify(self, key, machine):
-            return {"status": "unknown"}
-    install(tmp_path, bundle(license_id="OWNER-0123456789ABCDEF", email="owner@scadabench.com"))
+        def verify(self, key, machine, nonce):
+            return {"status": "revoked", "answer": verify_answer(nonce, key, machine, "unknown")}
+    install(tmp_path, bundle())
     studio = service(tmp_path, now=NOW + 30 * DAY, client_factory=UnknownToServer)
     assert studio.verify_online_if_due() == "unknown"
     assert studio.is_licensed() and (tmp_path / "home/license.cert").exists()
@@ -181,7 +180,7 @@ def test_swapped_native_worker_or_debugger_blocks_packaged_mode(tmp_path, monkey
 
 
 def test_server_url_must_be_https(tmp_path):
-    studio = service(tmp_path)
+    studio = service(tmp_path, allow_test_server=True)  # the test-only seam keeps the old address rule
     with pytest.raises(LicenseActionError):
         studio.set_server_url("http://evil.example.com")
     assert studio.set_server_url("https://license.example.com/")["server_url"] == "https://license.example.com"
@@ -210,5 +209,6 @@ def test_license_client_verifies_https_with_the_windows_certificate_check(monkey
         seen.update(url=request.full_url, context=context)
         return Answer()
     monkeypatch.setattr(client, "urlopen", fake_urlopen)
-    assert client.LicenseClient("https://license.example.com")._call("GET", "/api/v1/health") == {"ok": True}
-    assert seen == {"url": "https://license.example.com/api/v1/health", "context": context}
+    built_in = release_key.DEFAULT_SERVER_URL
+    assert client.LicenseClient(built_in)._call("GET", "/api/v1/health") == {"ok": True}
+    assert seen == {"url": built_in + "/api/v1/health", "context": context}

@@ -3,7 +3,9 @@
 Usage (from the worktree root):
   studio/.venv/Scripts/python.exe -I -B studio/engine/internal/licensing/testdata/make_client.py
 No network is used: a fake opener answers. The Go test replays the same answers from an
-httptest server and must send the same request bodies and reach the same outcome.
+httptest server and must send the same request bodies and reach the same outcome. Cases run
+with the test-only seam (any https address, or http on this PC) unless marked strict: a
+strict client talks only to the built-in server (ADR-0097) and refuses every other address.
 """
 import io
 import json
@@ -17,6 +19,7 @@ from studio_app.licensing.client import LicenseClient  # noqa: E402
 
 HWID = "ab" * 32
 KEY = "SUBS-2345-6789-ABCD-EFGH"
+NONCE = "0123456789abcdef" * 2
 LOCAL = "http://127.0.0.1:1"
 CHALLENGE = {"status": 200, "body": '{"nonce": "n-61850", "timestamp": 1760000000, "difficulty": 8, "mac": "m1"}'}
 
@@ -28,9 +31,9 @@ def reply(body, status=200):
 CASES = [
     ("trial", LOCAL, [CHALLENGE, reply({"certificate": signed()})]),
     ("activate", LOCAL + "//", [CHALLENGE, reply({"certificate": json.loads(signed())})]),
-    ("transfer", LOCAL, [CHALLENGE, reply({"certificate": "x", "extra": [1]})]),
     ("verify", LOCAL, [reply({"status": "valid"})]),
     ("verify_number_key", LOCAL, [reply({"status": "revoked"})]),
+    ("verify", LOCAL, [reply({"status": "valid", "answer": {"payload": "p", "signature": "s"}})]),
     ("activate", LOCAL, [CHALLENGE, reply({"error": "Key used elsewhere.", "code": "bound_elsewhere"}, 409)]),
     ("activate", LOCAL, [CHALLENGE, reply("<html>oops</html>", 500)]),
     ("trial", LOCAL, [CHALLENGE, reply({"error": "", "code": "x"}, 400)]),
@@ -65,6 +68,12 @@ CASES = [
     ("trial", LOCAL, [CHALLENGE, reply({"error": "x", "code": [1]}, 400)]),
     ("verify", LOCAL, [reply({"error": "x", "code": "email_used"}, 409)]),
     ("verify", LOCAL, [reply({"error": "x", "code": 5}, 409)]),
+    # The product client: only the built-in server is ever contacted.
+    ("verify", LOCAL, [reply({"status": "valid"})], True),
+    ("trial", "https://license.example.com", [CHALLENGE, reply({"certificate": "c"})], True),
+    ("activate", "https://license.scadabench.com.evil.example", [CHALLENGE], True),
+    ("verify", "http://localhost:1", [reply({"status": "valid"})], True),
+    ("verify", "", [], True),
 ]
 PARTS = {"guid": "g", "volume": "", "firmware": "f"}
 
@@ -89,12 +98,12 @@ def opener_for(answers, requests):
     return opener
 
 
-def run(name, url, answers):
+def run(name, url, answers, strict=False):
     requests = []
-    client = LicenseClient(url, opener=opener_for(list(answers), requests))
+    client = LicenseClient(url, opener=opener_for(list(answers), requests), test_server=not strict)
     calls = {"trial": lambda: client.start_trial(HWID), "activate": lambda: client.activate(KEY, HWID),
-             "transfer": lambda: client.transfer(KEY, HWID), "verify": lambda: client.verify(KEY, HWID),
-             "verify_number_key": lambda: client.verify(5, HWID),
+             "verify": lambda: client.verify(KEY, HWID, NONCE),
+             "verify_number_key": lambda: client.verify(5, HWID, NONCE),
              "trial_parts": lambda: client.start_trial(HWID, PARTS),
              "trial_empty_parts": lambda: client.start_trial(HWID, {"guid": "", "volume": "", "firmware": ""}),
              "trial_email": lambda: client.start_trial(HWID, {}, "me@company.com", " 123456 "),
@@ -105,11 +114,11 @@ def run(name, url, answers):
     result = outcome(calls[name])
     if "ok" in result:
         result["ok"] = json.dumps(result["ok"], separators=(",", ":"))
-    return {"call": name, "url": url, "answers": answers, "requests": requests, **result}
+    return {"call": name, "url": url, "strict": strict, "answers": answers, "requests": requests, **result}
 
 
 def main():
-    write("client.json", {"hwid": HWID, "key": KEY, "cases": [run(*case) for case in CASES]})
+    write("client.json", {"hwid": HWID, "key": KEY, "nonce": NONCE, "cases": [run(*case) for case in CASES]})
 
 
 if __name__ == "__main__":

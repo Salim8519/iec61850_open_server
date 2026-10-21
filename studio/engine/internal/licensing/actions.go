@@ -62,6 +62,9 @@ func (s *Service) install(input any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
+	if licenseID, _ := payload.Get("license_id"); s.revoked.Contains(licenseID) {
+		return nil, &ActionError{Message: RevokedText, Code: "not_valid_here"}
+	}
 	now := s.now()
 	bound, err := s.machineFor(payload)
 	if err != nil {
@@ -144,8 +147,9 @@ func (s *Service) client() (Client, error) {
 	return s.options.ClientFactory(url), nil
 }
 
-// Activate binds licenseKey (any decoded JSON value) to this PC; move transfers it.
-func (s *Service) Activate(licenseKey any, move bool) (*pyjson.Object, error) {
+// Activate binds licenseKey (any decoded JSON value) to this PC. Licenses never move to
+// another computer, so there is no transfer (ADR-0097).
+func (s *Service) Activate(licenseKey any) (*pyjson.Object, error) {
 	if err := s.requireEnforced(); err != nil {
 		return nil, err
 	}
@@ -161,12 +165,7 @@ func (s *Service) Activate(licenseKey any, move bool) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	var bundle any
-	if move {
-		bundle, err = client.Transfer(key, hwid)
-	} else {
-		bundle, err = client.Activate(key, hwid)
-	}
+	bundle, err := client.Activate(key, hwid)
 	if err != nil {
 		return nil, err
 	}
@@ -186,10 +185,14 @@ func (s *Service) ActivateOffline(certificate any) (*pyjson.Object, error) {
 	return status, err
 }
 
-// SetServerURL stores the license server address in client_config.json (indent=2).
+// SetServerURL stores the license server address in client_config.json (indent=2), but only
+// for the test-only seam: an enforcing build always uses its built-in server (ADR-0097).
 func (s *Service) SetServerURL(url any) (*pyjson.Object, error) {
 	if err := s.requireEnforced(); err != nil {
 		return nil, err
+	}
+	if !s.options.AllowTestServer {
+		return nil, &ActionError{Message: ServerFixedText, Code: "bad_url"}
 	}
 	text := ""
 	if truthy(url) {
@@ -199,7 +202,7 @@ func (s *Service) SetServerURL(url any) (*pyjson.Object, error) {
 		}
 	}
 	text = strings.TrimRight(pytext.Strip(text), "/")
-	if text != "" && !allowedServer(text) {
+	if text != "" && !allowedServer(text, true) {
 		return nil, &ActionError{Message: BadURLText, Code: "bad_url"}
 	}
 	s.filesMu.Lock()

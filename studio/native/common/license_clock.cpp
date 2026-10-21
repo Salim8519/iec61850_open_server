@@ -22,6 +22,7 @@ struct Place {
 const Place kAnchor{".time_anchor", "time_anchor", L"TimeAnchor"};
 const Place kServerTime{".server_time", "server_time", L"ServerTime"};
 const Place kGraceStart{".grace_start", "grace_start", L"GraceStart"};
+const Place kRevoked{".revoked_ids", "revoked_ids", L"RevokedLicenses"};
 
 std::string trimmed(std::string text) {
     text.erase(0, text.find_first_not_of(" \t\r\n"));
@@ -68,6 +69,31 @@ bool parse_int(const std::string& text, long long& value) {
 
 Verdict fail(const std::string& reason) { return {false, reason}; }
 
+// The comma-separated IDs of one revoked_ids copy, trimmed, empty parts dropped.
+void add_ids(const std::string& text, std::set<std::string>& ids) {
+    std::size_t start = 0;
+    while (start <= text.size()) {
+        std::size_t end = text.find(',', start);
+        if (end == std::string::npos) end = text.size();
+        const std::string id = trimmed(text.substr(start, end - start));
+        if (!id.empty()) ids.insert(id);
+        start = end + 1;
+    }
+}
+
+// The license_id of a certificate (bare or wrapped), or "" when it has none that is text.
+std::string certificate_license_id(const std::string& text) {
+    try {
+        auto bundle = nlohmann::json::parse(text);
+        if (bundle.contains("certificate")) bundle = bundle.at("certificate");
+        const auto payload = nlohmann::json::parse(bundle.at("payload").get<std::string>());
+        const auto& id = payload.at("license_id");
+        return id.is_string() ? trimmed(id.get<std::string>()) : "";
+    } catch (const std::exception&) {
+        return "";
+    }
+}
+
 }  // namespace
 
 std::string read_text_file(const std::string& path) {
@@ -109,11 +135,14 @@ ClockState read_clock_state(const std::string& directory, const std::vector<Publ
             clock.grace_start = value;
         }
     }
+    for (const auto& text : copies(directory, state, kRevoked, registry)) add_ids(text, clock.revoked);
     return clock;
 }
 
-Verdict verify_license(const std::string& text, const std::vector<PublicKey>& keys, const std::string& hwid,
-                       long long now, const ClockState& clock, long long hwid_issued_before) {
+namespace {
+
+Verdict verify_rules(const std::string& text, const std::vector<PublicKey>& keys, const std::string& hwid,
+                     long long now, const ClockState& clock, long long hwid_issued_before) {
     std::string type;
     long long expires = 0;
     try {  // read before the signature check only to pick the rules; verified just below
@@ -134,6 +163,18 @@ Verdict verify_license(const std::string& text, const std::vector<PublicKey>& ke
     const bool unconfirmed = clock.grace_start > 0 && clock.confirmed_at < clock.grace_start;
     if (unconfirmed && now >= clock.grace_start + kMissingAnchorGrace) {
         return fail("The trial needs one online check: its records on this computer were removed");
+    }
+    return verdict;
+}
+
+}  // namespace
+
+Verdict verify_license(const std::string& text, const std::vector<PublicKey>& keys, const std::string& hwid,
+                       long long now, const ClockState& clock, long long hwid_issued_before) {
+    auto verdict = verify_rules(text, keys, hwid, now, clock, hwid_issued_before);
+    // Cancelled stays cancelled: a genuine certificate renamed back is still refused.
+    if (verdict.ok && clock.revoked.count(certificate_license_id(text))) {
+        return fail("The license was cancelled by the seller");
     }
     return verdict;
 }

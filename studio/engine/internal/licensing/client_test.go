@@ -17,6 +17,7 @@ type clientCase struct {
 	outcome
 	Call    string `json:"call"`
 	URL     string `json:"url"`
+	Strict  bool   `json:"strict"` // the product client: only the built-in server
 	Answers []struct {
 		Status   int    `json:"status"`
 		Body     string `json:"body"`
@@ -53,6 +54,7 @@ func TestHTTPClientMatchesPython(t *testing.T) {
 	var recorded struct {
 		HWID  string       `json:"hwid"`
 		Key   string       `json:"key"`
+		Nonce string       `json:"nonce"`
 		Cases []clientCase `json:"cases"`
 	}
 	readVectors(t, "client.json", &recorded)
@@ -82,7 +84,10 @@ func TestHTTPClientMatchesPython(t *testing.T) {
 		if strings.HasPrefix(url, "http://") {
 			url = server.URL + strings.TrimPrefix(strings.TrimPrefix(url, "http://127.0.0.1:1"), "http://localhost:1")
 		}
-		client := NewHTTPClient(url, doer)
+		client := NewTestHTTPClient(url, doer)
+		if c.Strict {
+			client = NewHTTPClient(url, doer)
+		}
 		var result any
 		var err error
 		switch c.Call {
@@ -104,12 +109,10 @@ func TestHTTPClientMatchesPython(t *testing.T) {
 			result, err = client.RequestTrialCode(recorded.HWID, "me@company.com")
 		case "activate":
 			result, err = client.Activate(recorded.Key, recorded.HWID)
-		case "transfer":
-			result, err = client.Transfer(recorded.Key, recorded.HWID)
 		case "verify":
-			result, err = client.Verify(recorded.Key, recorded.HWID)
+			result, err = client.Verify(recorded.Key, recorded.HWID, recorded.Nonce)
 		case "verify_number_key":
-			result, err = client.Verify(int64(5), recorded.HWID)
+			result, err = client.Verify(int64(5), recorded.HWID, recorded.Nonce)
 		}
 		server.Close()
 		checkClientOutcome(t, index, c, result, err)

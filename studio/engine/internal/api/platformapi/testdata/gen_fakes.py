@@ -17,7 +17,7 @@ ERRORS = {"RuntimeError": RuntimeError, "ValueError": ValueError, "KeyError": Ke
 
 
 class LicenseClient:
-    """Canned license-server answers per call name (trial, email-code, activate, transfer, verify)."""
+    """Canned license-server answers per call name (trial, email-code, activate, verify)."""
 
     def __init__(self):
         self.answers = {}
@@ -38,10 +38,7 @@ class LicenseClient:
     def activate(self, key, hwid):
         return self._answer("activate")
 
-    def transfer(self, key, hwid):
-        return self._answer("transfer")
-
-    def verify(self, key, hwid):
+    def verify(self, key, hwid, nonce):
         return self._answer("verify")
 
 

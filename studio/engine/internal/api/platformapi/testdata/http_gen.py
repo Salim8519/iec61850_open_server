@@ -22,7 +22,7 @@ os.environ["SCADABENCH_UPDATE_CHECK"] = "off"
 
 import license_signer  # noqa: E402  (test-only signer)
 from gen_fakes import LicenseClient, Monotonic, Runtime, UpdateServer, Windows  # noqa: E402
-from gen_license import license_steps, update_steps  # noqa: E402
+from gen_license import NONCE, license_steps, update_steps  # noqa: E402
 from gen_network import DEFAULT_ENV, GATEWAY, PROGRAM, network_steps  # noqa: E402
 from studio_app.api import network as network_api  # noqa: E402
 from studio_app.licensing import integrity  # noqa: E402
@@ -84,7 +84,7 @@ class Session:
     def license_root(self):
         return self.root / f"license{self.licenses}"
 
-    def new_license(self, enforce):
+    def new_license(self, enforce, test_server=False):
         self.licenses += 1
         native = self.license_root() / "native"
         native.mkdir(parents=True)
@@ -92,14 +92,15 @@ class Session:
         self.app.extensions["license"] = LicenseService(
             self.license_root() / "home", self.license_root() / "data", enforce,
             hwid_provider=lambda: license_signer.HWID, clock=lambda: self.clock[0], keys=license_signer.keys(),
-            client_factory=lambda url: self.license_client, native_folder=native, parts_provider=lambda: {})
+            client_factory=lambda url: self.license_client, native_folder=native, parts_provider=lambda: {},
+            allow_test_server=test_server, nonce_provider=lambda: NONCE)
 
     def setup(self, step):
         kind = step["op"]
         if kind == "now":
             self.clock[0] = step["value"]
         elif kind == "license":
-            self.new_license(step["enforce"])
+            self.new_license(step["enforce"], step.get("test_server", False))
         elif kind == "license_file":
             target = self.license_root() / step["path"]
             target.parent.mkdir(parents=True, exist_ok=True)

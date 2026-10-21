@@ -11,6 +11,7 @@ OTHER_HWID = license_signer.bundle(hwid="cd" * 32)
 GOOD = answer().decode()
 IMPORTANT = answer({**RECORD, "min_version": "0.1.14"}).decode()
 NO_BODY = object()
+NONCE = "0123456789abcdef" * 2  # the service's nonce provider: signed canned answers can name it
 
 
 def req(method, path, body=NO_BODY, raw=None, ctype=None):
@@ -43,7 +44,7 @@ def license_steps():
         req("GET", "/license/status"), req("POST", "/license/trial"), req("POST", offline, {"certificate": LIFETIME}),
         req("POST", "/license/check-online"), req("POST", "/license/trial/email-code", {"email": "a@b"}),
         req("PUT", config, {"server_url": "https://x.example"}), req("POST", act, {"license_key": "SUBS-2345"}),
-        op("license", enforce=True),
+        op("license", enforce=True, test_server=True),  # the test-only seam keeps the old address rules
         req("GET", "/license/status"), req("GET", "/license/status?x=1"),
         op("client", answers={"trial": [fail("The trial was already used on this computer.", "trial_used"),
                                         fail("Cannot reach the license server.", "offline"),
@@ -56,7 +57,7 @@ def license_steps():
         op("now", value=NOW + 61), req("GET", "/license/status"),
         op("client", answers={"activate": [ok(LIFETIME), fail("This key is used on another computer.", "bound_elsewhere"),
                                            fail("No such key.", "unknown_key")],
-                              "transfer": [ok(json.loads(LIFETIME)), fail("Too many moves.", "transfer_limit")]}),
+                              }),
         req("POST", act), req("POST", act, [1]), req("POST", act, "SUBS-2345-6789-ABCD-EFGH"),
         req("POST", act, {"license_key": 5}), req("POST", act, {"license_key": None}),
         req("POST", act, {"license_key": "SUBS-1111"}), req("POST", act, raw="{bad", ctype="application/json"),
@@ -65,6 +66,7 @@ def license_steps():
         req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH", "move": "yes"}),
         req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH", "move": []}),
         req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH", "move": True}),
+        req("POST", act, {"move": True}), req("POST", act, {"license_key": "bad", "move": 1}),
         req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH"}),
         op("now", value=NOW + 200), req("GET", "/license/status"),
         req("POST", offline), req("POST", offline, {"certificate": "not json"}), req("POST", offline, {"certificate": 5}),
@@ -84,7 +86,30 @@ def license_steps():
         req("GET", "/license/status"),
         op("license_file", path="home/client_config.json", data="[]"), op("now", value=NOW + 10 * DAY),
         req("GET", "/license/status"), req("PUT", config, {"server_url": "https://z"}),
+        *packaged_steps(),
     ]
+
+
+def packaged_steps():
+    """A packaged service without the test seam: the built-in server only, no moves (ADR-0097)."""
+    act, offline, config = "/license/activate", "/license/activate-offline", "/license/config"
+    return [
+        op("license", enforce=True), op("now", value=NOW + DAY),
+        op("license_file", path="home/client_config.json", data='{"server_url": "http://127.0.0.1:9"}'),
+        req("GET", "/license/status"),
+        req("PUT", config, {"server_url": "http://127.0.0.1:9"}), req("PUT", config, {"server_url": "https://z"}),
+        req("PUT", config, {"server_url": ""}), req("PUT", config, raw="x", ctype="text/plain"), req("PUT", config, [1]),
+        op("client", answers={"activate": [ok(LIFETIME)]}),
+        req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH", "move": True}),
+        req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH", "move": False}), req("GET", "/license/status"),
+        op("license", enforce=False), req("PUT", config, {"server_url": "https://z"}),
+        req("POST", act, {"license_key": "SUBS-2345-6789-ABCD-EFGH", "move": True}),
+    ]
+
+
+def signed_answer(status, nonce=NONCE, license_id="TRIAL-abababababab", hwid=license_signer.HWID):
+    """The server's signed verify answer for the trial the steps install."""
+    return license_signer.verify_answer(nonce, license_id, hwid, status)
 
 
 def trial_email_steps():
@@ -100,9 +125,13 @@ def trial_email_steps():
         req("POST", code, raw="x", ctype="text/plain"), req("POST", code, {"email": "a@b"}),
         req("POST", code, {"email": " a@b "}), req("POST", code, {"email": "a@b"}),
         req("POST", check), req("POST", check, {"ignored": True}),
-        op("client", answers={"verify": [ok({"status": "valid"}),
-                                         ok({"status": "valid", "server_time": license_signer.stamp(NOW + 30)})]}),
-        req("POST", check), req("POST", check), req("GET", "/license/status"),
+        op("client", answers={"verify": [
+            ok({"status": "valid"}),  # unsigned: treated like an unreachable server
+            ok({"status": "valid", "answer": signed_answer("valid")}),  # signed but no server time
+            ok({"status": "revoked", "answer": signed_answer("valid"), "server_time": license_signer.stamp(NOW + 30)}),
+            ok({"status": "valid", "answer": signed_answer("valid", nonce="f" * 32),
+                "server_time": license_signer.stamp(NOW + 30)})]}),
+        req("POST", check), req("POST", check), req("POST", check), req("POST", check), req("GET", "/license/status"),
     ]
 
 

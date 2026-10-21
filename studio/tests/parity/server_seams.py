@@ -2,7 +2,7 @@
 
 {"token", "secret_key", "admin_origin", "parity_key",
  "license": {"home", "data_dir", "enforce", "hwid", "clock", "keys": {kid: hex}, "native_folder",
-             "expected_files"} | {"object": <object seam>} | null,
+             "expected_files", "allow_test_server"} | {"object": <object seam>} | null,
  "updates": {"directory", "server", "current", "keys": {kid: hex}, "clock", "opener": <callback>} | null,
  "faults": {"studio_app.dotted.target": <callback>}}
 <callback> = {"url", "key", "id"} (parity.callbacks); <object seam> = {"attrs": {...}, "methods": {name: <callback>}}.
@@ -60,7 +60,8 @@ def license_service(seam):
         return object_seam(seam["object"])
     from studio_app.licensing.service import LicenseService
     options = {"keys": _keys(seam.get("keys")), "native_folder": _path(seam.get("native_folder")),
-               "expected_files": seam.get("expected_files")}
+               "expected_files": seam.get("expected_files"),
+               "allow_test_server": bool(seam.get("allow_test_server", False))}
     if seam.get("hwid") is not None:
         options["hwid_provider"] = _constant(seam["hwid"])
     if seam.get("clock") is not None:

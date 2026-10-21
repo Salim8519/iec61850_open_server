@@ -45,7 +45,7 @@ def license_seam(service, callbacks):
             "hwid": service._hwid_provider() if service._hwid_provider else None,
             "clock": _frozen_clock(service.clock), "keys": _hex_keys(service.keys),
             "native_folder": str(service.native_folder) if service.native_folder else None,
-            "expected_files": service.expected_files}
+            "expected_files": service.expected_files, "allow_test_server": service.allow_test_server}
 
 
 def update_seam(service, callbacks):

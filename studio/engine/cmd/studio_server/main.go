@@ -64,7 +64,10 @@ func run(args []string) int {
 	}
 	if packaged == "1" {
 		desktop.MigrateLegacyFolder(os.Getenv("LOCALAPPDATA"))
-		announceSignedModule()
+		if err := announceSignedModule(); err != nil {
+			desktop.TellUser(err.Error(), true) // a message box when double-clicked, else stderr
+			return 1
+		}
 	}
 	paths := resolvePaths(options)
 	if options.SelfTest {

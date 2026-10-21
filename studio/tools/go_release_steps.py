@@ -129,8 +129,12 @@ def sign_module(mode, executable):
     """ScadaBench.exe.sig: Ed25519 over the exe's SHA-256 hex, verified by the licensed workers."""
     seed_file = STUDIO / "native/release/module_signing.seed"
     if not seed_file.exists():
-        print("  module signature SKIPPED (no module_signing.seed; run studio/tools/module_signing_key.py)")
-        return
+        message = "no module_signing.seed; run studio/tools/module_signing_key.py"
+        if mode.dry_run:
+            print(f"  module signature would FAIL ({message})")
+            return
+        # A packaged app without its .sig refuses to start (ADR-0097), so never ship one.
+        raise SystemExit(f"Module signature is required: {message}")
     print(f"  signed module: {executable.name}.sig")
     if mode.dry_run:
         return

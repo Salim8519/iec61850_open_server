@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
 import threading
 import time
 from urllib.parse import urlparse
@@ -12,6 +13,7 @@ from .client import LicenseClient
 from .certificate import CertificateError
 from .clock_store import ClockValue
 from .online_check import OnlineChecks
+from .revoked_ids import RevokedIds
 from .time_anchor import TimeAnchor
 from .trial_clock import TrialClock
 
@@ -39,7 +41,8 @@ def mask_key(license_id):
 class LicenseService(OnlineChecks):
     def __init__(self, home, data_dir, enforce, hwid_provider=None, clock=time.time, keys=None,
                  client_factory=LicenseClient, native_folder=None, expected_files=None,
-                 legacy_hwid_provider=None, registry=None, parts_provider=None):
+                 legacy_hwid_provider=None, registry=None, parts_provider=None,
+                 allow_test_server=False, nonce_provider=None):
         self.home = Path(home)
         self.native_folder = native_folder
         self.expected_files = expected_files
@@ -47,12 +50,17 @@ class LicenseService(OnlineChecks):
         self.clock = clock
         self.keys = keys
         self.client_factory = client_factory
+        # Test-only seam: tests and the license sandbox talk to a server on this PC. The packaged
+        # app never sets it, so an enforcing build only ever asks its built-in server (ADR-0097).
+        self.allow_test_server = bool(allow_test_server)
+        self._nonce_provider = nonce_provider or (lambda: secrets.token_hex(16))
         self.cert_file = self.home / "license.cert"
         self.config_file = self.home / "client_config.json"
         self.state_file = self.home / "license_state.json"
         # registry: clock_store.WindowsRegistry() in the app; tests pass a fake or None.
         self.anchor = TimeAnchor(ClockValue("time_anchor", self.home, registry), Path(data_dir) / "logs/runs.jsonl")
         self.trial_clock = TrialClock(self.home, registry, keys)
+        self.revoked = RevokedIds(self.home, registry)
         self._parts_provider = parts_provider
         self._stop = threading.Event()
         self._hwid_provider = hwid_provider
@@ -108,6 +116,9 @@ class LicenseService(OnlineChecks):
             return self.hwid()
 
     def server_url(self):
+        """The built-in server; client_config.json is read only in development and in tests."""
+        if self.enforce and not self.allow_test_server:
+            return (release_key.DEFAULT_SERVER_URL or "").rstrip("/")
         configured = self._read_json(self.config_file, {}).get("server_url")
         return (configured or release_key.DEFAULT_SERVER_URL or "").rstrip("/")
 
@@ -129,6 +140,7 @@ class LicenseService(OnlineChecks):
         tampered = integrity.problem(self.native_folder or ".", self.expected_files)
         if tampered:
             return license_policy.unlicensed(tampered)
+        self.revoked.restore()  # a deleted copy of the cancelled IDs comes back from the others
         revoked = self._read_json(self.state_file, {}).get("revoked_reason")
         try:
             text = self.cert_file.read_text(encoding="utf-8")
@@ -138,6 +150,8 @@ class LicenseService(OnlineChecks):
             payload = certificate.verify_bundle(certificate.parse_bundle(text), self.keys)
         except CertificateError as error:
             return license_policy.unlicensed(str(error))
+        if self.revoked.contains(payload.get("license_id")):  # cancelled stays cancelled, whatever the file says
+            return license_policy.unlicensed(license_policy.REVOKED, payload.get("type"), payload.get("license_id"))
         now = int(self.clock())
         self._bound_hwid = self._machine_for(payload)
         if payload.get("type") != "trial":  # lifetime: exactly the original rule
@@ -173,7 +187,7 @@ class LicenseService(OnlineChecks):
         result.update(enforced=self.enforce, server_url=self.server_url() if self.enforce else "",
                       masked_key=mask_key(current.license_id),
                       hwid=self.hwid() if self.enforce else None,
-                      transfer_available=current.reason == license_policy.WRONG_MACHINE)
+                      transfer_available=False)  # kept for old screens; licenses never move (ADR-0097)
         return result
 
     # ----- actions -----------------------------------------------------
@@ -184,6 +198,8 @@ class LicenseService(OnlineChecks):
     def _install(self, bundle):
         """Install a certificate (bare, or a server answer that may carry a signed time)."""
         payload = certificate.verify_bundle(certificate.parse_bundle(bundle), self.keys)
+        if self.revoked.contains(payload.get("license_id")):
+            raise LicenseActionError(license_policy.REVOKED, "not_valid_here")
         now = int(self.clock())
         status = license_policy.evaluate_certificate(payload, self._machine_for(payload), now,
                                                      self.anchor.max_seen(), False)
@@ -201,7 +217,10 @@ class LicenseService(OnlineChecks):
         return self.status()
 
     def _client(self):
-        return self.client_factory(self.server_url())
+        url = self.server_url()
+        if self.client_factory is LicenseClient:
+            return LicenseClient(url, test_server=self.allow_test_server)
+        return self.client_factory(url)
 
     def start_trial(self, email=None, code=None):
         """Start (or get back) this PC's trial; email/code only when the server asked for them."""
@@ -224,12 +243,10 @@ class LicenseService(OnlineChecks):
                                      "Copy it from your purchase email.", "bad_key")
         return key
 
-    def activate(self, license_key, move=False):
+    def activate(self, license_key):
         self._require_enforced()
         key = self.normalize_key(license_key)
-        client = self._client()
-        bundle = client.transfer(key, self.hwid()) if move else client.activate(key, self.hwid())
-        return self._install(bundle)
+        return self._install(self._client().activate(key, self.hwid()))
 
     def activate_offline(self, certificate_text):
         self._require_enforced()
@@ -240,6 +257,8 @@ class LicenseService(OnlineChecks):
 
     def set_server_url(self, url):
         self._require_enforced()
+        if not self.allow_test_server:
+            raise LicenseActionError(license_policy.SERVER_FIXED, "bad_url")
         url = str(url or "").strip().rstrip("/")
         if url and not url.startswith(("https://", "http://127.0.0.1", "http://localhost")):
             raise LicenseActionError("The server address must start with https://", "bad_url")

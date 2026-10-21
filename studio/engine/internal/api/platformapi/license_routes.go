@@ -1,6 +1,10 @@
 package platformapi
 
-import "net/http"
+import (
+	"net/http"
+
+	"studio-engine/internal/licensing"
+)
 
 // licenseStatus is GET /license/status: the status plus app_version. It is not wrapped in
 // _run, so a failure reaches the app's handlers.
@@ -49,16 +53,19 @@ func (a *Area) licenseCheckOnline(r *http.Request) (any, error) {
 	return a.licenseRun(a.deps.License.CheckOnlineNow())
 }
 
-// licenseActivate is POST /license/activate: {"license_key", "move"}; the body is read
-// before the action runs, as `body = _body()` comes first in Python.
+// licenseActivate is POST /license/activate: {"license_key"}; the body is read before the
+// action runs, as `body = _body()` comes first in Python. A "move" request is refused:
+// licenses never move to another computer (ADR-0097).
 func (a *Area) licenseActivate(r *http.Request) (any, error) {
 	body, err := dictBody(r)
 	if err != nil {
 		return nil, err
 	}
+	if move, _ := get(body, "move", nil); truthy(move) {
+		return a.licenseRun(nil, &licensing.ActionError{Message: licensing.MovesDisabledText, Code: "moves_disabled"})
+	}
 	key, _ := get(body, "license_key", "")
-	move, _ := get(body, "move", nil)
-	return a.licenseRun(a.deps.License.Activate(key, truthy(move)))
+	return a.licenseRun(a.deps.License.Activate(key))
 }
 
 // licenseActivateOffline is POST /license/activate-offline: {"certificate"}; Python reads

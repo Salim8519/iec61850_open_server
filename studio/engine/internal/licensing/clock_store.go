@@ -19,9 +19,10 @@ import (
 // RegistryKey is the per-user key that holds the registry copies.
 const RegistryKey = `Software\ScadaBench`
 
-// registryNames are the value names of time_anchor, server_time and grace_start.
+// registryNames are the value names of time_anchor, server_time, grace_start and
+// revoked_ids (the cancelled license IDs, see revoked_ids.go).
 var registryNames = map[string]string{"time_anchor": "TimeAnchor", "server_time": "ServerTime",
-	"grace_start": "GraceStart"}
+	"grace_start": "GraceStart", "revoked_ids": "RevokedLicenses"}
 
 // Registry is the registry place: string values under one key. Get reports false for a
 // missing, unreadable or non-REG_SZ value; Set ignores every failure.

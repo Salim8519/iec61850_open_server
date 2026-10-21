@@ -21,7 +21,6 @@ type scenarioStep struct {
 	Op   string          `json:"op"`
 	Now  *float64        `json:"now"`
 	Arg  json.RawMessage `json:"arg"`
-	Move bool            `json:"move"`
 	Path string          `json:"path"`
 	Data *string         `json:"data"`
 	Hex  string          `json:"hex"`
@@ -43,17 +42,19 @@ type scenarioResult struct {
 }
 
 type scenario struct {
-	Name     string                    `json:"name"`
-	Enforce  *bool                     `json:"enforce"`
-	HWID     json.RawMessage           `json:"hwid"`
-	Legacy   *string                   `json:"legacy"`
-	Keys     string                    `json:"keys"`
-	Debugger bool                      `json:"debugger"`
-	Registry bool                      `json:"registry"`
-	Expected map[string]string         `json:"expected"`
-	Client   map[string][]cannedAnswer `json:"client"`
-	Steps    []scenarioStep            `json:"steps"`
-	Results  []scenarioResult          `json:"results"`
+	Name     string          `json:"name"`
+	Enforce  *bool           `json:"enforce"`
+	HWID     json.RawMessage `json:"hwid"`
+	Legacy   *string         `json:"legacy"`
+	Keys     string          `json:"keys"`
+	Debugger bool            `json:"debugger"`
+	Registry bool            `json:"registry"`
+	// TestServer is the test-only seam (Options.AllowTestServer): a server on this PC is allowed.
+	TestServer bool                      `json:"test_server"`
+	Expected   map[string]string         `json:"expected"`
+	Client     map[string][]cannedAnswer `json:"client"`
+	Steps      []scenarioStep            `json:"steps"`
+	Results    []scenarioResult          `json:"results"`
 }
 
 // fakeClient replays the canned license-server answers and records every call.
@@ -87,10 +88,9 @@ func (f *fakeClient) RequestTrialCode(hwid, email string) (any, error) {
 func (f *fakeClient) Activate(key, hwid string) (any, error) {
 	return f.answer("activate", key, hwid)
 }
-func (f *fakeClient) Transfer(key, hwid string) (any, error) {
-	return f.answer("transfer", key, hwid)
+func (f *fakeClient) Verify(key any, hwid, nonce string) (any, error) {
+	return f.answer("verify", key, hwid, nonce)
 }
-func (f *fakeClient) Verify(key any, hwid string) (any, error) { return f.answer("verify", key, hwid) }
 
 // plainJSON turns a decoded value into what encoding/json decodes from the recorded call
 // (objects become maps), so fmt.Sprint compares Go and Python calls alike.
@@ -123,6 +123,7 @@ func newScenarioService(t *testing.T, sc scenario, root string, clock *float64, 
 		Enforce: sc.Enforce == nil || *sc.Enforce, Clock: func() float64 { return *clock },
 		Keys: keysNamed(t, sc.Keys), NativeFolder: native, ExpectedFiles: sc.Expected,
 		Debugger: func() bool { return sc.Debugger }, Logf: t.Logf, Registry: registry,
+		AllowTestServer: sc.TestServer, Nonce: func() string { return strings.Repeat("0123456789abcdef", 2) },
 		Parts: func() (*pyjson.Object, error) { return scenarioParts(), nil },
 		ClientFactory: func(url string) Client {
 			*calls = append(*calls, []any{"factory", url})
@@ -178,7 +179,7 @@ func runScenarioStep(t *testing.T, service *Service, step scenarioStep, appVersi
 	case "check":
 		result, err = service.CheckOnlineNow()
 	case "activate":
-		result, err = service.Activate(stepArg(t, step.Arg), step.Move)
+		result, err = service.Activate(stepArg(t, step.Arg))
 	case "offline":
 		result, err = service.ActivateOffline(stepArg(t, step.Arg))
 	case "config":

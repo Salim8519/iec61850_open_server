@@ -8,7 +8,7 @@ import (
 
 // ActionError is service.LicenseActionError: a refused license action with its code
 // ("invalid", "development", "bad_key", "bad_url", "not_valid_here", "bad_certificate",
-// "bad_email").
+// "bad_email", "moves_disabled").
 type ActionError struct {
 	Message string
 	Code    string
@@ -27,13 +27,14 @@ func uncaught(reason string) error { return &UncaughtError{Reason: reason} }
 
 // serverCodes and conflictCodes are api/license.py's status rules.
 var (
-	serverCodes   = map[string]bool{"offline": true, "no_server": true, "server_error": true, "bad_time": true}
-	conflictCodes = map[string]bool{"bound_elsewhere": true, "transfer_limit": true, "trial_used": true,
+	serverCodes = map[string]bool{"offline": true, "no_server": true, "server_error": true, "bad_time": true,
+		"bad_answer": true}
+	conflictCodes = map[string]bool{"bound_elsewhere": true, "trial_used": true,
 		"email_required": true, "email_used": true}
 )
 
 // ErrorResponse maps an action error as api/license.py `_run` does: ServerError 503
-// (offline, no_server, server_error, bad_time), 409 (bound_elsewhere, transfer_limit,
+// (offline, no_server, server_error, bad_time, bad_answer), 409 (bound_elsewhere,
 // trial_used, email_required, email_used) or 400; ActionError and CertificateError 400; body {"error", "code"} for pyjson.Flask.
 // ok is false for any other error (an UncaughtError or I/O failure: HTTP 500).
 func ErrorResponse(err error) (status int, body *pyjson.Object, ok bool) {
