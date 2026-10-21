@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "studio/backend"))
 from studio_app.projects.archive import MAX_UNPACKED, decode
 from studio_app.projects.document import compact
+from studio_app.projects.project_files import EXTENSION
 from studio_app.projects.service import ProjectService
 
 
@@ -49,7 +50,7 @@ def check(source, backup=False):
         if directory.is_symlink():
             raise RuntimeError("Recovery folder must not be a symbolic link")
         directory.mkdir(exist_ok=True)
-        target = directory / ("before-backend-restart-" + uuid4().hex + ".subsim")
+        target = directory / ("before-backend-restart-" + uuid4().hex + EXTENSION)
         with target.open("xb") as stream:
             stream.write(payload)
         if hashlib.sha256(target.read_bytes()).hexdigest() != digest:

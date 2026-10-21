@@ -29,8 +29,9 @@ start the 7-day trial, enter a key, or load a license file (Settings › License
 state). Installed copies keep data in %LOCALAPPDATA%\ScadaBench; a data folder
 beside ScadaBench.exe is used instead when it exists.
 Without Edge or Chrome it opens your default browser instead; closing that tab does
-not stop simulation. Project downloads are .subsim
-archives; Open Project restores them. Current autosave is data/autosave.subsim.
+not stop simulation. Project downloads are .scadabench
+archives; Open Project restores them (an old .subsim file is refused with an explanation).
+Current autosave is data/autosave.scadabench; an older autosave.subsim is renamed at startup.
 Autosave is restored automatically with every IED stopped.
 Unreadable archives are preserved under data/recovery before allowing new work.
 Only one launcher may use a data folder at a time. Logs are under data/logs.

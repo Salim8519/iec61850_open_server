@@ -106,7 +106,7 @@ func newLargeService(t testing.TB) *Service {
 	return s
 }
 
-// checkStoredMatches decodes autosave.subsim and compares it with the in-memory project.
+// checkStoredMatches decodes autosave.scadabench and compares it with the in-memory project.
 func checkStoredMatches(t testing.TB, s *Service) {
 	payload, err := os.ReadFile(filepath.Join(s.config.DataDir, autosave.AutosaveName))
 	if err != nil {

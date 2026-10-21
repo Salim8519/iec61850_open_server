@@ -31,7 +31,7 @@ A **complete Go server behind an engine switch**, not a Python/Go hybrid. A hybr
   `LockFileEx` byte 0); Go starts children in a kill-on-close Job Object.
 - Until P3, Go reads derived per-IED models from the derived-model cache written by Python (or by a
   one-shot `--derive-models`); in P3 the Go builder must reproduce those files exactly.
-- Journal fold: Go keeps a change journal next to `autosave.subsim` and folds it into the file on
+- Journal fold: Go keeps a change journal next to `autosave.scadabench` (`autosave.subsim` before ADR-0096) and folds it into the file on
   exit; the launcher folds before starting Python, so switching never loses an edit.
 - Preview gaps answer 501 in dev only; a shipped build is always one engine.
 

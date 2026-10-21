@@ -14,13 +14,13 @@ import (
 
 func TestPathLikePathlib(t *testing.T) {
 	cases := map[string][]string{
-		`C:\data\recovery\x.subsim`: {`C:/data/`, "recovery", "x.subsim"},
-		`C:\data\recovery`:          {`C:\data\.\`, `recovery\`},
-		`data\recovery`:             {`data`, "recovery"},
-		`..\data\recovery`:          {`..\data`, "recovery"},
-		`\\server\share\d\recovery`: {`\\server\share\d`, "recovery"},
-		`C:x\recovery`:              {`C:x`, "recovery"},
-		`.`:                         {`.`},
+		`C:\data\recovery\x.scadabench`: {`C:/data/`, "recovery", "x.scadabench"},
+		`C:\data\recovery`:              {`C:\data\.\`, `recovery\`},
+		`data\recovery`:                 {`data`, "recovery"},
+		`..\data\recovery`:              {`..\data`, "recovery"},
+		`\\server\share\d\recovery`:     {`\\server\share\d`, "recovery"},
+		`C:x\recovery`:                  {`C:x`, "recovery"},
+		`.`:                             {`.`},
 	}
 	for want, parts := range cases {
 		if got := Path(parts[0], parts[1:]...); got != want {
@@ -59,7 +59,7 @@ func TestReprLikePython(t *testing.T) {
 
 func TestOSErrorText(t *testing.T) {
 	dir := testutil.TempDir(t)
-	missing := filepath.Join(dir, "none", "x.subsim")
+	missing := filepath.Join(dir, "none", "x.scadabench")
 	_, err := os.ReadFile(missing)
 	want := "[Errno 2] No such file or directory: '" + strings.ReplaceAll(missing, `\`, `\\`) + "'"
 	if got := OSError(err, true); got != want {

@@ -1,13 +1,13 @@
-"""Cross-engine .subsim check run by service_roundtrip_test.go (needs STUDIO_PYTHON).
+"""Cross-engine .scadabench check run by service_roundtrip_test.go (needs STUDIO_PYTHON).
 
-  python roundtrip.py make <out.subsim>   build a project with the frozen Python service and
+  python roundtrip.py make <out.scadabench>   build a project with the frozen Python service and
                                           export it; prints the snapshot
-  python roundtrip.py open <in.subsim>    restore an archive (persist=False); prints the
+  python roundtrip.py open <in.scadabench>    restore an archive (persist=False); prints the
                                           snapshot
-  python roundtrip.py time <in.subsim>    median restore time over 5 runs (seconds)
-  python roundtrip.py big <out.subsim>    the timing project: template plus every IED of the
+  python roundtrip.py time <in.scadabench>    median restore time over 5 runs (seconds)
+  python roundtrip.py big <out.scadabench>    the timing project: template plus every IED of the
                                           public SCDs (scd/*.scd, demo station) up to 20
-  python roundtrip.py savetime <in.subsim>  "<median restore> <first save> <median save>"
+  python roundtrip.py savetime <in.scadabench>  "<median restore> <first save> <median save>"
   python roundtrip.py recover <data folder>  startup recovery of the folder; prints the
                                           recovery result, then the snapshot
 
@@ -71,7 +71,7 @@ def save_times(service, payload):
 
 
 def recover(folder):
-    """Open a data folder the way the Python app starts: startup recovery of autosave.subsim."""
+    """Open a data folder the way the Python app starts: startup recovery of autosave.scadabench."""
     from studio_app.projects.startup_recovery import recover_startup
     service = ProjectService(folder)
     result = recover_startup(service)

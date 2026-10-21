@@ -12,7 +12,7 @@ import (
 )
 
 // PreserveMigration is migration_backup.preserve: the exact bytes of a legacy archive go to
-// recovery/before-format-8-migration-<uuid>.subsim (overwrite allowed), are read back and
+// recovery/before-format-8-migration-<uuid>.scadabench (overwrite allowed), are read back and
 // compared, and the archive is tested like ZipFile.testzip(). Errors (StudioError):
 // "Recovery directory must not be a symbolic link", "Project migration recovery
 // verification failed", "Project migration recovery archive is corrupt", "Project
@@ -62,7 +62,7 @@ func testZip(reader *zip.Reader) bool {
 }
 
 // WriteDeleteBackup is the backup step of bulk_removal.remove: payload (service.export(),
-// the current project archive) is written to recovery/before-ied-delete-<uuid>.subsim with
+// the current project archive) is written to recovery/before-ied-delete-<uuid>.scadabench with
 // exclusive create, then verified by SHA-256. Errors (StudioError): "Recovery directory
 // must not be a symbolic link", "Recovery backup verification failed; nothing deleted".
 func WriteDeleteBackup(dataDir string, payload []byte) (string, error) {

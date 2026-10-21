@@ -57,7 +57,7 @@ def test_project_request_waits_for_background_restore(tmp_path, monkeypatch):
 
 
 def test_recovery_that_stopped_to_protect_autosave_refuses_work(tmp_path, monkeypatch):
-    (tmp_path / "autosave.subsim").write_bytes(b"damaged")
+    (tmp_path / "autosave.scadabench").write_bytes(b"damaged")
 
     def fail(*_args):
         raise PermissionError("injected backup failure")
@@ -68,7 +68,7 @@ def test_recovery_that_stopped_to_protect_autosave_refuses_work(tmp_path, monkey
         response = client.post("/api/v1/project/save")
         assert response.status_code == 503
         assert response.get_json()["code"] == "startup_recovery_failed"
-        assert (tmp_path / "autosave.subsim").read_bytes() == b"damaged"
+        assert (tmp_path / "autosave.scadabench").read_bytes() == b"damaged"
     finally:
         app.extensions["runtime"].close()
 

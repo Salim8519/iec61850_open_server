@@ -68,7 +68,7 @@ func TestIndentGoldensFromPython(t *testing.T) {
 
 func TestPythonArchiveDecodesAndReencodesIdentically(t *testing.T) {
 	want := readFixture(t, "python_archive.json")
-	doc, err := archive.Decode(readFixture(t, "python_archive.subsim"))
+	doc, err := archive.Decode(readFixture(t, "python_archive.scadabench"))
 	if err != nil {
 		t.Fatal(err)
 	}

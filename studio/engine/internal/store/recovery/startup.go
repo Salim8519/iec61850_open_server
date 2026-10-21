@@ -9,6 +9,7 @@ import (
 
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/store/archive"
+	"studio-engine/internal/store/projectfile"
 	"studio-engine/internal/store/pytext"
 )
 
@@ -26,13 +27,13 @@ const (
 // RecoverStartup is recover_startup: it returns nil when there is no autosave,
 // {"status": "restored", "message"} after a successful restore, or {"status":
 // "unreadable", "message", "details", "backup"} after copying the unreadable autosave to
-// recovery/unreadable-autosave-<uuid>.subsim. Errors stop startup (RuntimeError texts:
+// recovery/unreadable-autosave-<uuid>.scadabench. Errors stop startup (RuntimeError texts:
 // "Autosave is not a regular local file; inspect it before starting ScadaBench",
 // "Recovery folder is a link; cannot safely preserve unreadable autosave", "Cannot
 // preserve unreadable autosave; startup stopped to protect it"). Fold the autosave journal
 // before calling it.
 func RecoverStartup(dataDir string, restore Restore) (*pyjson.Object, error) {
-	source := pytext.Path(dataDir, "autosave.subsim")
+	source := pytext.Path(dataDir, projectfile.AutosaveName)
 	if _, err := os.Stat(source); err != nil {
 		if missing(err) {
 			return nil, nil

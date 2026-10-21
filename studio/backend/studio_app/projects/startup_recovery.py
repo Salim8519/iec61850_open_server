@@ -2,10 +2,11 @@
 import shutil
 from uuid import uuid4
 from .archive import MAX_UNPACKED
+from .project_files import AUTOSAVE_NAME, EXTENSION
 
 
 def recover_startup(projects):
-    source = projects.directory / "autosave.subsim"
+    source = projects.directory / AUTOSAVE_NAME
     if not source.exists():
         return None
     if source.is_symlink() or not source.is_file():
@@ -20,7 +21,7 @@ def recover_startup(projects):
         if recovery.is_symlink():
             raise RuntimeError("Recovery folder is a link; cannot safely preserve unreadable autosave") from error
         recovery.mkdir(exist_ok=True)
-        backup = recovery / ("unreadable-autosave-" + uuid4().hex + ".subsim")
+        backup = recovery / ("unreadable-autosave-" + uuid4().hex + EXTENSION)
         try:
             shutil.copyfile(source, backup)
         except OSError as backup_error:

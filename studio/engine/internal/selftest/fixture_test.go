@@ -57,7 +57,7 @@ func TestWithinIsLexicalAndCaseInsensitive(t *testing.T) {
 		path, folder string
 		want         bool
 	}{
-		{`C:\Data\studio-check-1\recovery\a.subsim`, `C:\Data\studio-check-1`, true},
+		{`C:\Data\studio-check-1\recovery\a.scadabench`, `C:\Data\studio-check-1`, true},
 		{`c:\data\STUDIO-CHECK-1`, `C:\Data\studio-check-1`, true},
 		{`C:\Data\studio-check-10\a`, `C:\Data\studio-check-1`, false},
 		{`C:\Data\other\..\studio-check-1x`, `C:\Data\studio-check-1`, false},

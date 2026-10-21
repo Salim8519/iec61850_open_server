@@ -14,8 +14,8 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | `GET /project` | - | Project snapshot, session, revision, runtime, `running_ieds`, recovery notice |
 | `PUT /project/diagram` | `{diagram,revision,tab_id}` | Stopped-only revision-checked save |
 | `POST /project/save` | - | Atomic autosave |
-| `GET /project/download` | - | Current `.subsim` ZIP |
-| `POST /project/open` | multipart `file` | Stopped-only validated restore/migration |
+| `GET /project/download` | - | Current `.scadabench` ZIP (`substation.scadabench`) |
+| `POST /project/open` | multipart `file` | Stopped-only validated restore/migration; a `.subsim` file name is refused (400, code `old_project_file`, ADR-0096) |
 | `POST /runtime/start` | - | Start all workers after capability/preflight checks |
 | `POST /runtime/stop` | - | Stop workers and flush append-only run log |
 | `POST /runtime/pause` | - | Toggle automation pause; MMS remains active |

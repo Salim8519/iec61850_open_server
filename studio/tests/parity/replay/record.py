@@ -50,7 +50,7 @@ def body_record(response):
         return {"body_kind": "json", "body": response.data.decode("utf-8")}
     if kind.startswith("text/"):
         return {"body_kind": "text", "body": response.data.decode("utf-8", "replace")}
-    if response.data[:2] == b"PK" or disposition.endswith(".subsim"):
+    if response.data[:2] == b"PK" or disposition.endswith(".scadabench"):
         with zipfile.ZipFile(io.BytesIO(response.data)) as archive:
             entries = [[item.filename, item.compress_type] for item in archive.infolist()]
             project = archive.read("project.json").decode("utf-8") if "project.json" in archive.namelist() else None

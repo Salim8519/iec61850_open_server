@@ -75,7 +75,7 @@ func (s *Service) adopt(next, notice *pyjson.Object) error {
 	return nil
 }
 
-// RecoverStartup folds a leftover journal and restores autosave.subsim like
+// RecoverStartup folds a leftover journal and restores autosave.scadabench like
 // startup_recovery.recover_startup; the result is the GET /project startup_recovery value.
 func (s *Service) RecoverStartup() (*pyjson.Object, error) {
 	return recovery.RecoverStartup(s.config.DataDir, func(payload []byte) error {

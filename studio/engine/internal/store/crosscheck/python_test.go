@@ -61,11 +61,11 @@ func publicTexts(t *testing.T) []string {
 	return texts
 }
 
-// writeGoArchives writes <name>.subsim and the expected <name>.json for the verifier.
+// writeGoArchives writes <name>.scadabench and the expected <name>.json for the verifier.
 func writeGoArchives(t *testing.T, dir string) {
 	write := func(name string, payload []byte, doc *pyjson.Object) {
 		expected, _ := pyjson.Dumps(doc)
-		_ = os.WriteFile(filepath.Join(dir, name+".subsim"), payload, 0o666)
+		_ = os.WriteFile(filepath.Join(dir, name+".scadabench"), payload, 0o666)
 		_ = os.WriteFile(filepath.Join(dir, name+".json"), expected, 0o666)
 	}
 	encoder := archive.NewEncoder()
@@ -132,7 +132,7 @@ func TestPythonCrossCheck(t *testing.T) {
 	generated := testutil.TempDir(t)
 	runPython(t, python, "generate", generated)
 	err := filepath.WalkDir(fixtures, func(path string, entry os.DirEntry, err error) error {
-		if err != nil || entry.IsDir() || entry.Name() == "python_archive.subsim" {
+		if err != nil || entry.IsDir() || entry.Name() == "python_archive.scadabench" {
 			return err
 		}
 		relative, _ := filepath.Rel(fixtures, path)

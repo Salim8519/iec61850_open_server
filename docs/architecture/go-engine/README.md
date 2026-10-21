@@ -23,7 +23,7 @@ speed. Same screens, texts, defaults, API, events, files, limits and protocol be
 1. Python stays the default engine until the final gate; Go is selectable (Settings › Advanced
    and `--engine`) in dev **and** the packaged app; after the switch Python stays as a fallback.
 2. Only one engine runs at a time (shared `studio.lock` byte lock); both read and write project
-   format 15; a Go journal is folded into the `.subsim` before Python starts.
+   format 15; a Go journal is folded into the `.scadabench` before Python starts.
 3. A shipped build is always all-Python or all-Go. Routes not yet ported answer 501 in the Go
    preview, which is dev-only until its phase passes.
 4. Nothing is copied blindly: every Python cost found in 0110/0111 is fixed by design (the ten Go

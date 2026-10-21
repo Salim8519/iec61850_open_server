@@ -25,7 +25,7 @@ func TestOpenSaveTimings(t *testing.T) {
 	if os.Getenv("STUDIO_TIMING") == "" {
 		t.Skip("STUDIO_TIMING not set")
 	}
-	archive := filepath.Join(testutil.TempDir(t), "big.subsim")
+	archive := filepath.Join(testutil.TempDir(t), "big.scadabench")
 	python(t, "big", archive)
 	payload, err := os.ReadFile(archive)
 	if err != nil {

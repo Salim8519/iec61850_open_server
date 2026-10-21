@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { useStudio } from '../state/useStudio';
+import { OPEN_FILE_ACCEPT } from '../state/projectFile';
 import { ImportSelection } from '../features/ieds/ImportSelection';
 import { EventLog } from '../features/event-log/EventLog';
 import { RecoveryNotice } from '../components/RecoveryNotice';
@@ -68,7 +69,7 @@ export function App() {
       <MigrationNotice notice={project?.migration_notice} />
       {studio.error && <div className="error-banner" role="alert"><span>{studio.error}</span>
         <button className="ghost" onClick={() => studio.setError('')} aria-label="Dismiss error"><X size={16} /></button></div>}
-      <input ref={fileInput} type="file" accept=".cid,.icd,.scd,.iid,.subsim" style={{ display: 'none' }}
+      <input ref={fileInput} type="file" accept={OPEN_FILE_ACCEPT} style={{ display: 'none' }}
         aria-label="Open CID, SCD or project file" onChange={event => {
           const file = event.target.files?.[0]; if (file) studio.importFile(file); event.target.value = '';
         }} />

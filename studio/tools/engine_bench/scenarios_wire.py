@@ -118,7 +118,7 @@ def _point_at(reader, archive, sessions):
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as target:
         target.writestr("project.json", json.dumps(document))
-    reader.upload("/api/v1/project/open", "file", "real.subsim", stream.getvalue())
+    reader.upload("/api/v1/project/open", "file", "real.scadabench", stream.getvalue())
 
 
 def needs_rig(scenario, reason):

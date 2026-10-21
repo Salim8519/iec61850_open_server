@@ -56,7 +56,7 @@ def main():
             projects.save()  # POST /project/save (any later edit saves the same way)
         finally:
             c.close()
-        with zipfile.ZipFile(folder / "autosave.subsim") as archive:
+        with zipfile.ZipFile(folder / "autosave.scadabench") as archive:
             saved = json.loads(archive.read("project.json"))
         result["archive_ied_keys"] = sorted({key for ied in saved["ieds"] for key in ied})
         restarted = ProjectService(folder, lambda revision, source: None)

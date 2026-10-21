@@ -3,7 +3,7 @@
 // mutation lock (the project actor) and publish a new immutable state by atomic pointer;
 // readers never wait. Every committed change is journaled and fsynced before the call
 // returns (Python saved synchronously) and a coalesced background snapshot rewrites
-// autosave.subsim. Project trees are copy-on-write: published objects are never mutated.
+// autosave.scadabench. Project trees are copy-on-write: published objects are never mutated.
 package service
 
 import (
@@ -124,7 +124,7 @@ func (s *Service) Export() ([]byte, error) {
 	return s.encoder.Encode(s.current.Load().compact)
 }
 
-// Save is ProjectService.save(): the current project written to autosave.subsim now.
+// Save is ProjectService.save(): the current project written to autosave.scadabench now.
 func (s *Service) Save() error {
 	st := s.current.Load()
 	if _, err := s.encoder.Encode(st.compact); err != nil {

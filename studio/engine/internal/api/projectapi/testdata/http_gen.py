@@ -152,8 +152,10 @@ def scenario(rec, app):
     rec.call("project after import", "GET", "/api/v1/project")
     archive = rec.call("download", "GET", "/api/v1/project/download").data
     rec.call("open no file", "POST", "/api/v1/project/open", form={})
-    rec.call("open corrupt", "POST", "/api/v1/project/open", file=("file", "x.subsim", b"PK\x03\x04junk"))
-    rec.call("open archive", "POST", "/api/v1/project/open", file=("file", "x.subsim", archive))
+    rec.call("open old extension", "POST", "/api/v1/project/open", file=("file", "old.subsim", archive))
+    rec.call("open old extension upper", "POST", "/api/v1/project/open", file=("file", "OLD.SubSim", archive))
+    rec.call("open corrupt", "POST", "/api/v1/project/open", file=("file", "x.scadabench", b"PK\x03\x04junk"))
+    rec.call("open archive", "POST", "/api/v1/project/open", file=("file", "x.scadabench", archive))
     rec.call("preferences", "GET", "/api/v1/preferences")
     rec.call("preferences bad", "PUT", "/api/v1/preferences", json_body={"nope": 1})
     rec.call("preferences none", "PUT", "/api/v1/preferences", raw="x", content_type="text/plain")

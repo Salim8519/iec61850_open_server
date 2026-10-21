@@ -33,6 +33,6 @@ test('every row state has words, so colour is never the only signal', () => {
 });
 
 test('opening a file ticks finished steps with their time and turns the current one', () => {
-  const steps = workSteps({ title: 'Opening a.subsim', labels: ['Save', 'Open', 'Show'], at: 1, times: [12] });
+  const steps = workSteps({ title: 'Opening a.scadabench', labels: ['Save', 'Open', 'Show'], at: 1, times: [12] });
   assert.deepEqual(steps.map(step => [step.state, step.ms]), [['done', 12], ['running', undefined], ['waiting', undefined]]);
 });

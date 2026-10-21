@@ -108,7 +108,7 @@ func TestComposedClickPath(t *testing.T) {
 	}
 	closed = true
 	if _, err := os.Stat(filepath.Join(dataDir, autosave.JournalName)); !os.IsNotExist(err) {
-		t.Fatal("the journal must be folded into autosave.subsim on close")
+		t.Fatal("the journal must be folded into autosave.scadabench on close")
 	}
 	reopened := composeAt(t, dataDir, nativeDir)
 	defer reopened.Close()

@@ -57,7 +57,7 @@ func TestRuntimeValuesAcrossRestartMatchPython(t *testing.T) {
 	if err := engine.Close(); err != nil {
 		t.Fatal(err)
 	}
-	got.Set("archive_ied_keys", savedIEDKeys(t, filepath.Join(dataDir, "autosave.subsim")))
+	got.Set("archive_ied_keys", savedIEDKeys(t, filepath.Join(dataDir, "autosave.scadabench")))
 	reopened := composeAt(t, dataDir, nativeDir, seeds)
 	defer reopened.Close()
 	got.Set("recovery", field(mustCall(t, reopened, "GET", "/api/v1/project", nil), "startup_recovery", "status"))

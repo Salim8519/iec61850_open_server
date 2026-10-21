@@ -2,6 +2,7 @@
 import io
 from flask import Blueprint, current_app, jsonify, request, send_file
 from .context import projects, runtime, require_stopped
+from ..projects.project_files import DOWNLOAD_NAME, refuse_old_project
 
 blueprint = Blueprint("projects", __name__)
 
@@ -35,11 +36,13 @@ def save():
 @blueprint.get("/project/download")
 def download():
     return send_file(io.BytesIO(projects().export()), mimetype="application/zip",
-                     as_attachment=True, download_name="substation.subsim")
+                     as_attachment=True, download_name=DOWNLOAD_NAME)
 
 
 @blueprint.post("/project/open")
 def open_project():
     require_stopped()
-    projects().restore(request.files["file"].read())
+    upload = request.files["file"]
+    refuse_old_project(upload.filename)  # a .subsim file is refused in plain words (ADR-0096)
+    projects().restore(upload.read())
     return jsonify(projects().snapshot())

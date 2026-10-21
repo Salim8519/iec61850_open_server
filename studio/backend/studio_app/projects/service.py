@@ -9,6 +9,8 @@ from .document import CURRENT_FORMAT
 from .validation import validate_diagram, validate_sources
 from .mapping_migration import migrate_diagram
 from .migration_backup import preserve as preserve_migration
+from .extension_migration import migrate as migrate_old_extension
+from .project_files import AUTOSAVE_NAME
 from .removal import impact
 from . import bulk_removal
 from .test_panel import validate_panel
@@ -28,6 +30,7 @@ class ProjectService:
     def __init__(self, data_directory, on_change=None):
         self.directory = data_directory
         self.directory.mkdir(parents=True, exist_ok=True)
+        migrate_old_extension(self.directory)  # app-owned .subsim files become .scadabench (ADR-0096)
         self.lock = threading.RLock()
         self.session_id = uuid4().hex
         self.revision = 0
@@ -167,7 +170,7 @@ class ProjectService:
     def save(self):
         with self.lock:
             payload = self.export()
-            destination = self.directory / "autosave.subsim"
+            destination = self.directory / AUTOSAVE_NAME
             temporary = destination.with_suffix(".tmp")
             temporary.write_bytes(payload)
             os.replace(temporary, destination)

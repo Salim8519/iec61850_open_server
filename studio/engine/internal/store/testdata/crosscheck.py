@@ -1,7 +1,7 @@
 """Cross-check the Go store formats against the frozen Python backend.
 
   crosscheck.py generate <dir>   write Python-made goldens (see GOLDENS below)
-  crosscheck.py verify <dir>     decode every Go-written <name>.subsim like Python does
+  crosscheck.py verify <dir>     decode every Go-written <name>.scadabench like Python does
 
 Run with studio/.venv/Scripts/python.exe; studio/backend is put on sys.path from this
 script's location. Only synthetic or public sample data is used.
@@ -107,7 +107,7 @@ def generate(out):
         (out / "indent" / f"{index:02d}.json").write_bytes(json.dumps(value).encode())
         (out / "indent" / f"{index:02d}.golden").write_text(json.dumps(value, indent=2), encoding="utf-8")
     project = python_project()
-    (out / "python_archive.subsim").write_bytes(archive.encode(project))
+    (out / "python_archive.scadabench").write_bytes(archive.encode(project))
     compact = archive.compact(project)
     (out / "python_archive.json").write_bytes(json.dumps(compact, allow_nan=False).encode())
     vectors = [{"payload": payload.hex(), **failure(payload)} for payload in DECODE_PAYLOADS]
@@ -128,7 +128,7 @@ def generate(out):
 
 def verify(folder):
     errors = []
-    names = sorted(folder.glob("*.subsim"))
+    names = sorted(folder.glob("*.scadabench"))
     for path in names:
         payload = path.read_bytes()
         try:

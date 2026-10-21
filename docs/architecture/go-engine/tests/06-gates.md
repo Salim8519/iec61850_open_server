@@ -58,7 +58,7 @@ Scope: session/security, project CRUD/open/save/download, `scl/*`, `ieds/*` (no 
 | Check | Pass criterion |
 | --- | --- |
 | C4 | all a-pure and a-seam tests pass for `go` |
-| Cross-read | Python-written data folder opened by Go and vice versa: `autosave.subsim`, `preferences.json`, `tool-settings.json`, `update_check.json`, `recovery/`, license home, network journal - byte-identical re-save, no migration prompt |
+| Cross-read | Python-written data folder opened by Go and vice versa: `autosave.scadabench`, `preferences.json`, `tool-settings.json`, `update_check.json`, `recovery/`, license home, network journal - byte-identical re-save, no migration prompt |
 | Cookie | `python-http` cookie accepted by `go` (dev reload switch) |
 | C8 | golden scenarios for these routes: zero diffs |
 | Perf | each route p50/p95 Go <= Python; cold start-to-ready Go <= Python |

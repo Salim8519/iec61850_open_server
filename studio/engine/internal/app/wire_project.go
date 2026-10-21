@@ -10,16 +10,21 @@ import (
 	"studio-engine/internal/scl"
 	"studio-engine/internal/store/autosave"
 	"studio-engine/internal/store/modelcache"
+	"studio-engine/internal/store/projectfile"
 	"studio-engine/internal/store/recovery"
 	"studio-engine/internal/store/xsd"
 )
 
-// wireProject folds a journal left by an earlier Go run, creates the event bus, opens the
+// wireProject renames old-extension project files, folds a journal left by an earlier Go run, creates the event bus, opens the
 // project service (its changes are published as project_changed, like create_app's
 // on_change lambda) and starts startup recovery in the background (BackgroundRecovery).
 func (e *Engine) wireProject() error {
 	o := e.options
 	if err := os.MkdirAll(o.DataDir, 0o755); err != nil {
+		return err
+	}
+	// The app's own .subsim files (autosave, recovery copies) become .scadabench first (ADR-0096).
+	if _, err := projectfile.Migrate(o.DataDir); err != nil {
 		return err
 	}
 	if _, err := autosave.Fold(o.DataDir, nil); err != nil {
