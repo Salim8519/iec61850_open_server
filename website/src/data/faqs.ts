@@ -5,7 +5,9 @@ import { SITE } from './site';
 export interface Faq { q: string; a: string; }
 export interface FaqGroup { id: string; title: string; items: Faq[]; }
 
-export const REFUND_POLICY = `If ScadaBench doesn't work with your files or PC and our support can't fix it, we refund you in full through PayPal within ${SITE.refundDays} days of purchase. Email ${SITE.supportEmail} with your license key; the key is deactivated on refund. Please use the free ${SITE.trialDays}-day trial first to check your own SCD.`;
+export const ONE_COMPUTER_POLICY = `Each license works on one computer only. It cannot be moved to another computer. Reinstalling Windows on the same computer is fine. A new computer, a new motherboard, or a reset of the computer's security chip (TPM) needs a new license.`;
+
+export const REFUND_POLICY = `If you have not activated the license yet, we refund you in full through PayPal within ${SITE.refundDays} days of purchase. Email ${SITE.supportEmail} with your license key; the key is deactivated on refund. No refunds after a license is activated. Use the free ${SITE.trialDays}-day trial to test ScadaBench with your own SCD first.`;
 
 export const FAQ_GROUPS: FaqGroup[] = [
   { id: 'start', title: 'Getting started', items: [
@@ -25,8 +27,9 @@ export const FAQ_GROUPS: FaqGroup[] = [
   { id: 'buying', title: 'Licensing and buying', items: [
     { q: 'Can I try it before buying?', a: `Yes. The free ${SITE.trialDays}-day trial has every feature and needs no card. One trial per computer.` },
     { q: 'Is it a subscription?', a: 'No. You pay once and the license does not expire on that PC.' },
-    { q: 'What if it does not work for me?', a: REFUND_POLICY },
-    { q: 'What does the license cover?', a: `One lifetime license works on one PC. You can move it to a new PC yourself ${SITE.movesPerYear} times a year.` },
+    { q: 'Can I get a refund?', a: REFUND_POLICY },
+    { q: 'What does the license cover?', a: `One lifetime license covers one computer, with no time limit. ${ONE_COMPUTER_POLICY}` },
+    { q: 'Can I move my license to another computer?', a: `No. ${ONE_COMPUTER_POLICY}` },
     { q: 'My substation PC has no internet. Can I still activate?', a: `Yes. Copy the Machine ID from ScadaBench, activate on any other computer at ${SITE.licenseServer.replace('https://', '')}/activate and load the license file on the offline PC.` },
     { q: 'Can my company buy several licenses or get an invoice?', a: `Yes. Write to ${SITE.supportEmail} with the number of licenses and your company details.` },
   ] },

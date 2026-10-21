@@ -120,7 +120,7 @@ func TestTrialNeedsProofOfWorkAndIsOncePerMachine(t *testing.T) {
 	}
 }
 
-func TestActivationTransferVerifyAndBan(t *testing.T) {
+func TestActivationVerifyRevokeAndBan(t *testing.T) {
 	s := newTestServer(t)
 	license, _, _ := s.IssueKey("buyer@example.com", "lifetime", 0, "")
 	a, b := strings.Repeat("a", 64), strings.Repeat("b", 64)
@@ -131,14 +131,14 @@ func TestActivationTransferVerifyAndBan(t *testing.T) {
 	if code, result = call(t, s, "/api/v1/activate", map[string]any{"hwid": b, "license_key": license.Key}, true); result["code"] != "bound_elsewhere" {
 		t.Fatalf("second PC activation: %d %v", code, result)
 	}
-	if code, result = call(t, s, "/api/v1/transfer", map[string]any{"hwid": b, "license_key": license.Key}, true); code != http.StatusOK {
-		t.Fatalf("transfer failed: %d %v", code, result)
+	if _, result = call(t, s, "/api/v1/verify", map[string]any{"hwid": a, "license_key": license.Key}, false); result["status"] != "valid" {
+		t.Fatalf("the first PC lost its license: %v", result)
 	}
-	if _, result = call(t, s, "/api/v1/verify", map[string]any{"hwid": a, "license_key": license.Key}, false); result["status"] != "moved" {
-		t.Fatalf("old PC not told about the move: %v", result)
+	if _, result = call(t, s, "/api/v1/verify", map[string]any{"hwid": b, "license_key": license.Key}, false); result["status"] != "moved" {
+		t.Fatalf("another PC must not be told its license is valid: %v", result)
 	}
 	s.Store.Revoke(license.Key, "refunded")
-	if _, result = call(t, s, "/api/v1/verify", map[string]any{"hwid": b, "license_key": license.Key}, false); result["status"] != "revoked" {
+	if _, result = call(t, s, "/api/v1/verify", map[string]any{"hwid": a, "license_key": license.Key}, false); result["status"] != "revoked" {
 		t.Fatalf("revocation not reported: %v", result)
 	}
 	for i := 0; i < 3; i++ {

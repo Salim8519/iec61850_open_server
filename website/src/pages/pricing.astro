@@ -20,7 +20,7 @@ const included = [
   'Every feature: IED simulation, diagram, GOOSE, Sampled Values, real IEDs, health, test mode',
   'Unlimited projects and IEDs on that PC',
   'Offline activation for PCs without internet',
-  `Move the license to a new PC yourself, ${SITE.movesPerYear} times a year`,
+  'Works on one computer only; reinstalling Windows on the same computer is fine',
 ];
 const after = [
   { title: 'Pay on PayPal', text: 'The Buy button opens a secure PayPal checkout. ScadaBench never sees your card.' },
@@ -29,7 +29,7 @@ const after = [
 ];
 ---
 <Base title="Pricing" schema={schema}
-  description={`ScadaBench costs ${SITE.price} ${SITE.currency} once for a lifetime license on one PC. Try every feature free for ${SITE.trialDays} days. ${SITE.refundDays}-day refund policy.`}>
+  description={`ScadaBench costs ${SITE.price} ${SITE.currency} once for a lifetime license on one PC. Try every feature free for ${SITE.trialDays} days. ${SITE.refundDays}-day refund before activation.`}>
   <PageHeader eyebrow="Pricing" title="Pay once. Use it for good."
     lede="No subscription and no feature tiers. Try everything first, then buy one license per PC." />
   <section class="paper section">

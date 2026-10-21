@@ -43,25 +43,31 @@ func TestOneTrialPerMachineEver(t *testing.T) {
 	}
 }
 
-func TestLifetimeKeyLocksToOnePCUntilAdminReset(t *testing.T) {
+func TestLifetimeKeyStaysOnItsFirstPCForGood(t *testing.T) {
 	db := open(t)
 	now := time.Unix(1_760_000_000, 0)
-	db.CreateLicense(License{Key: "SUBS-AAAA-BBBB-CCCC-DDDD", Type: "lifetime"})
-	if _, err := db.Activate("SUBS-AAAA-BBBB-CCCC-DDDD", machineA, now); err != nil {
+	key := "SUBS-AAAA-BBBB-CCCC-DDDD"
+	db.CreateLicense(License{Key: key, Type: "lifetime"})
+	if _, err := db.Activate(key, machineA, now); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := db.Activate("SUBS-AAAA-BBBB-CCCC-DDDD", machineA, now); err != nil {
+	if _, err := db.Activate(key, machineA, now); err != nil {
 		t.Fatal("same machine must be able to re-activate")
 	}
-	if _, err := db.Activate("SUBS-AAAA-BBBB-CCCC-DDDD", machineB, now); !errors.Is(err, ErrBoundElsewhere) {
-		t.Fatalf("second machine activated: %v", err)
+	for _, other := range []string{machineB, machineC} {
+		_, err := db.Activate(key, other, now.Add(400*24*time.Hour))
+		if !errors.Is(err, ErrBoundElsewhere) {
+			t.Fatalf("another machine activated: %v", err)
+		}
+		if err.Error() != "This license key is already used on another computer. Each license works on one computer only." {
+			t.Fatalf("customer text changed: %q", err)
+		}
 	}
-	db.ResetHWID("SUBS-AAAA-BBBB-CCCC-DDDD")
-	if license, err := db.Activate("SUBS-AAAA-BBBB-CCCC-DDDD", machineB, now); err != nil || license.HWID != machineB {
-		t.Fatal("admin reset did not free the key")
+	if license, _ := db.GetLicense(key); license.HWID != machineA {
+		t.Fatal("the key left its first machine")
 	}
-	db.Revoke("SUBS-AAAA-BBBB-CCCC-DDDD", "refunded")
-	if _, err := db.Activate("SUBS-AAAA-BBBB-CCCC-DDDD", machineB, now); !errors.Is(err, ErrRevoked) {
+	db.Revoke(key, "refunded")
+	if _, err := db.Activate(key, machineA, now); !errors.Is(err, ErrRevoked) {
 		t.Fatal("revoked key activated")
 	}
 	if _, err := db.Activate("SUBS-NOPE-NOPE-NOPE-NOPE", machineA, now); !errors.Is(err, ErrUnknownKey) {
@@ -69,23 +75,20 @@ func TestLifetimeKeyLocksToOnePCUntilAdminReset(t *testing.T) {
 	}
 }
 
-func TestSelfServiceTransferIsLimitedPerYear(t *testing.T) {
+func TestOldRecordsWithMovesStillReadAndStayBound(t *testing.T) {
 	db := open(t)
 	now := time.Unix(1_760_000_000, 0)
 	key := "SUBS-AAAA-BBBB-CCCC-EEEE"
-	db.CreateLicense(License{Key: key, Type: "lifetime"})
-	db.Activate(key, machineA, now)
-	if _, err := db.Transfer(key, machineB, now, 1); err != nil {
-		t.Fatal(err)
+	db.CreateLicense(License{Key: key, Type: "lifetime", HWID: machineA, ActivatedAt: 5, Transfers: []int64{1, 2}})
+	license, err := db.GetLicense(key)
+	if err != nil || len(license.Transfers) != 2 || license.HWID != machineA {
+		t.Fatalf("old record unreadable: %+v %v", license, err)
 	}
-	if _, err := db.Transfer(key, machineC, now.Add(time.Hour), 1); !errors.Is(err, ErrTransferLimit) {
-		t.Fatal("second move within a year allowed")
+	if _, err := db.Activate(key, machineB, now); !errors.Is(err, ErrBoundElsewhere) {
+		t.Fatalf("old moved key bound to another machine: %v", err)
 	}
-	if license, err := db.Transfer(key, machineC, now.Add(366*24*time.Hour), 1); err != nil || license.HWID != machineC {
-		t.Fatal("move after a year refused")
-	}
-	if _, err := db.Transfer(key, machineA, now, 0); !errors.Is(err, ErrTransferLimit) {
-		t.Fatal("moves allowed although disabled")
+	if after, _ := db.GetLicense(key); after.HWID != machineA || len(after.Transfers) != 2 || after.ActivatedAt != 5 {
+		t.Fatalf("record changed: %+v", after)
 	}
 }
 

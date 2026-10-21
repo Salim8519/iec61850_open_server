@@ -29,9 +29,11 @@
       <button id="submit" class="btn btn-dark" type="submit">Get license file</button>
     </form>
     <div id="status" class="message" hidden role="status"></div>
-    <button id="move" type="button" class="btn btn-ghost" hidden>Move the key to this Machine ID</button>
     <p class="hint">Back in ScadaBench: <em>Offline activation</em>, then <em>Load license file</em>
       (or paste the file's text) and press <em>Activate</em>.</p>
+    <p class="hint">Each license works on one computer only. It cannot be moved to another computer. Reinstalling
+      Windows on the same computer is fine. A new computer, a new motherboard, or a reset of the computer's
+      security chip (TPM) needs a new license.</p>
     <p class="hint">No license yet? <a href="/buy">Buy one</a>.</p>
   </section>
 </main>
@@ -40,13 +42,12 @@
 <script>
   const form = document.getElementById("form");
   const submit = document.getElementById("submit");
-  const move = document.getElementById("move");
   function request() {
     return { license_key: document.getElementById("key").value.trim(),
       hwid: document.getElementById("hwid").value.trim().toLowerCase() };
   }
   async function run(path) {
-    submit.disabled = move.disabled = true; move.hidden = true;
+    submit.disabled = true;
     show("status", "Checking (this takes a few seconds)…", "");
     try {
       const body = Object.assign(request(), await solveChallenge());
@@ -55,11 +56,9 @@
       show("status", "Done. license.cert was downloaded. Copy it to the offline PC.", "ok");
     } catch (error) {
       show("status", error.message, "bad");
-      move.hidden = error.code !== "bound_elsewhere";
-    } finally { submit.disabled = move.disabled = false; }
+    } finally { submit.disabled = false; }
   }
   form.onsubmit = (event) => { event.preventDefault(); run("/api/v1/activate"); };
-  move.onclick = () => run("/api/v1/transfer");
 </script>
 </body>
 </html>

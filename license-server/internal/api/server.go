@@ -150,8 +150,6 @@ func (s *Server) writeError(w http.ResponseWriter, r *http.Request, ip string, e
 		known = apiError{http.StatusForbidden, "revoked", err.Error()}
 	case errors.Is(err, store.ErrBoundElsewhere):
 		known = apiError{http.StatusConflict, "bound_elsewhere", err.Error()}
-	case errors.Is(err, store.ErrTransferLimit):
-		known = apiError{http.StatusConflict, "transfer_limit", err.Error()}
 	case errors.Is(err, store.ErrTrialUsed):
 		known = apiError{http.StatusConflict, "trial_used", err.Error()}
 	case errors.Is(err, store.ErrEmailRequired):

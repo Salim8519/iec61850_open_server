@@ -34,7 +34,6 @@ Everyday commands:
   issue --email E [--type lifetime|trial] [--days 7] [--hwid H]
                             create a key; with --hwid also prints an offline license.cert
   revoke --key K [--reason R]
-  reset-hwid --key K        let a key be activated on a new computer
   reset-trial --hwid H [--guid-hash G --volume-hash V --firmware-hash F]
                             let this Machine ID (and hardware) start a free trial again
   reset-trial-parts --guid-hash G --volume-hash V --firmware-hash F
@@ -83,7 +82,7 @@ func main() {
 		err = adminSetup(args)
 	case "admin-status":
 		err = adminStatus(args)
-	case "issue", "revoke", "reset-hwid", "reset-trial", "reset-trial-parts", "reset-trial-ip", "allow-email", "delete",
+	case "issue", "revoke", "reset-trial", "reset-trial-parts", "reset-trial-ip", "allow-email", "delete",
 		"list", "certificate":
 		err = adminCommand(command, args)
 	default:

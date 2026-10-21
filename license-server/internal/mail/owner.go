@@ -39,9 +39,10 @@ func SaleEmail(product string, sale Sale) (string, string) {
 		"License key:    " + sale.LicenseKey,
 		"Machine ID:     " + value(sale.HWID),
 		"",
-		"Keep this email. If the buyer loses the key, send it again from here. To free the key",
-		"for a new computer: license-server-admin reset-hwid --key <key>. A refund in PayPal",
-		"revokes the key automatically. Every sale is also recorded on the server (payments.cmd).",
+		"Keep this email. If the buyer loses the key, send it again from here. A key works on one",
+		"computer only and cannot be moved or freed; a new computer needs a new license. No refunds",
+		"after a license is activated. A refund in PayPal revokes the key automatically. Every sale",
+		"is also recorded on the server (payments.cmd).",
 	}
 	return subject, strings.Join(lines, "\n")
 }

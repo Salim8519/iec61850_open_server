@@ -16,7 +16,7 @@
       <li>Every feature: IED simulation, live diagram, GOOSE, Sampled Values, real IEDs, test mode</li>
       <li>Unlimited projects and IEDs on that PC</li>
       <li>Offline activation for substation PCs without internet</li>
-      <li>Move the license to a new PC yourself, {{.Transfers}} times a year</li>
+      <li>Each license works on one computer only; it cannot be moved to another computer</li>
     </ul>
     <ol class="steps">
       <li><b>Pay</b><span>with your PayPal account or a card.</span></li>
@@ -57,6 +57,11 @@
       </ul>
       {{if .Seller}}<p class="seller">Sold by ScadaBench, a product of {{.Seller}}. PayPal may show
         {{.Seller}} on your receipt and statement.</p>{{end}}
+      <p class="hint"><b>One license, one computer.</b> Each license works on one computer only. It cannot
+        be moved to another computer. Reinstalling Windows on the same computer is fine. A new computer, a new
+        motherboard, or a reset of the computer's security chip (TPM) needs a new license. No refunds after a
+        license is activated.{{if .TrialDays}} Use the free {{.TrialDays}}-day trial to test ScadaBench first.{{end}}
+        <a href="https://scadabench.com/legal/eula/#refunds">Full terms</a>.</p>
       {{if .TrialDays}}<p class="trial">Not sure yet? <a href="https://scadabench.com/download/">Try every
         feature free for {{.TrialDays}} days</a>, no card needed.</p>{{end}}
     </div>
@@ -72,7 +77,7 @@
         <li>Press <em>Activate this computer</em>.</li>
       </ol>
       <p class="hint">No internet on that PC? Use <a href="/activate">offline activation</a>.
-        Keep this key safe; you need it if you reinstall.</p>
+        Keep this key safe; you need it if you reinstall Windows on the same computer.</p>
     </div>
   </section>
 </main>

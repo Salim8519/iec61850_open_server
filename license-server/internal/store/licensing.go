@@ -7,7 +7,9 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-// Activate binds an unbound key to hwid, or confirms the same machine again.
+// Activate binds an unbound key to hwid, or confirms the same machine again. A key that
+// is bound to another machine is never rebound: each license works on one computer only
+// (ADR-0094), so there is no transfer and no reset in the store.
 func (s *Store) Activate(key, hwid string, now time.Time) (License, error) {
 	return s.UpdateLicense(key, func(license *License) error {
 		if license.Revoked {
@@ -24,49 +26,10 @@ func (s *Store) Activate(key, hwid string, now time.Time) (License, error) {
 	})
 }
 
-// Transfer moves a key to a new machine, at most maxPerYear times in 365 days.
-// maxPerYear <= 0 disables self-service moves (admin reset only).
-func (s *Store) Transfer(key, hwid string, now time.Time, maxPerYear int) (License, error) {
-	return s.UpdateLicense(key, func(license *License) error {
-		if license.Revoked {
-			return ErrRevoked
-		}
-		if license.HWID == hwid || license.HWID == "" {
-			license.HWID = hwid
-			if license.ActivatedAt == 0 {
-				license.ActivatedAt = now.Unix()
-			}
-			return nil
-		}
-		yearAgo := now.Add(-365 * 24 * time.Hour).Unix()
-		recent := []int64{}
-		for _, at := range license.Transfers {
-			if at > yearAgo {
-				recent = append(recent, at)
-			}
-		}
-		if maxPerYear <= 0 || len(recent) >= maxPerYear {
-			return ErrTransferLimit
-		}
-		license.Transfers = append(recent, now.Unix())
-		license.HWID = hwid
-		license.ActivatedAt = now.Unix()
-		return nil
-	})
-}
-
 // Revoke cancels a key with a reason (refund, chargeback, admin).
 func (s *Store) Revoke(key, reason string) (License, error) {
 	return s.UpdateLicense(key, func(license *License) error {
 		license.Revoked, license.Reason = true, reason
-		return nil
-	})
-}
-
-// ResetHWID unlocks a key so the next activation binds a new machine.
-func (s *Store) ResetHWID(key string) (License, error) {
-	return s.UpdateLicense(key, func(license *License) error {
-		license.HWID, license.ActivatedAt = "", 0
 		return nil
 	})
 }

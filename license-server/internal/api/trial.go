@@ -59,7 +59,12 @@ func (s *Server) confirmEmail(request machineRequest) (string, error) {
 // withTime adds the signed server time so trial apps can anchor their clock. A
 // signing failure leaves it out; the app then simply keeps its local anchor.
 func (s *Server) withTime(answer map[string]any) map[string]any {
-	now := s.Now().Unix()
+	return s.withTimeAt(answer, s.Now().Unix())
+}
+
+// withTimeAt is withTime for a caller that already read the clock (verify signs the same
+// second into its own answer).
+func (s *Server) withTimeAt(answer map[string]any, now int64) map[string]any {
 	answer["time"] = now
 	stamp, err := s.Signer.SignTime(now)
 	if err != nil {

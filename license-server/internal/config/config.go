@@ -21,16 +21,15 @@ type Config struct {
 	TrustCloudflare bool   `json:"trust_cloudflare"`
 	DataDir         string `json:"data_dir"`
 
-	TrialDays           int    `json:"trial_days"`
-	TrialIPEmailAfter   int    `json:"trial_ip_email_after"`
-	TrialIPWindowDays   int    `json:"trial_ip_window_days"`
-	LicensePrice        string `json:"license_price"`
-	LicenseCurrency     string `json:"license_currency"`
-	ProductName         string `json:"product_name"`
-	MaxTransfersPerYear int    `json:"max_transfers_per_year"`
-	SupportEmail        string `json:"support_email"`
-	NotifyEmail         string `json:"notify_email"`
-	SellerName          string `json:"seller_name"`
+	TrialDays         int    `json:"trial_days"`
+	TrialIPEmailAfter int    `json:"trial_ip_email_after"`
+	TrialIPWindowDays int    `json:"trial_ip_window_days"`
+	LicensePrice      string `json:"license_price"`
+	LicenseCurrency   string `json:"license_currency"`
+	ProductName       string `json:"product_name"`
+	SupportEmail      string `json:"support_email"`
+	NotifyEmail       string `json:"notify_email"`
+	SellerName        string `json:"seller_name"`
 
 	PayPalMode         string `json:"paypal_mode"`
 	PayPalClientID     string `json:"paypal_client_id"`
@@ -67,8 +66,8 @@ func Defaults(dataDir string) Config {
 	return Config{
 		ListenAddr: "127.0.0.1:8090", PublicURL: "http://127.0.0.1:8090", TrustCloudflare: true,
 		DataDir: dataDir, TrialDays: 7, TrialIPEmailAfter: 3, TrialIPWindowDays: 30, LicensePrice: "149.00", LicenseCurrency: "USD",
-		ProductName: "ScadaBench Lifetime License", MaxTransfersPerYear: 2,
-		PayPalMode: "sandbox", MailgunRegion: "us", PowDifficulty: 18, RateGeneral: 10, RateSensitive: 5,
+		ProductName: "ScadaBench Lifetime License", PayPalMode: "sandbox", MailgunRegion: "us",
+		PowDifficulty: 18, RateGeneral: 10, RateSensitive: 5,
 		LogDir: filepath.Join(dataDir, "logs"), LogMaxMegabytes: 5, LogMaxFiles: 3, MaxDataMB: 45,
 		AdminOrigin: "https://scadabench.com",
 	}

@@ -80,8 +80,6 @@ func (s *Server) RunAdmin(action string, request AdminRequest) (any, error) {
 			reason = "admin"
 		}
 		return s.Store.Revoke(key, reason)
-	case "reset-hwid":
-		return s.Store.ResetHWID(key)
 	case "reset-trial":
 		hwid := strings.TrimSpace(request.HWID)
 		if !certs.ValidHWID(hwid) {

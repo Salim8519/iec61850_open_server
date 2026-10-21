@@ -22,7 +22,6 @@ type pageData struct {
 	ClientID      string
 	CheckoutReady bool
 	Support       string
-	Transfers     int
 	TrialDays     int
 	Seller        string
 	Asset         string
@@ -52,8 +51,7 @@ func (s *Server) data() pageData {
 	return pageData{Product: s.Config.ProductName, Price: price,
 		Currency: currency, ClientID: s.Config.PayPalClientID,
 		CheckoutReady: s.Config.PayPalReady() && s.Payments != nil, Support: s.Config.SupportEmail,
-		Transfers: s.Config.MaxTransfersPerYear, TrialDays: s.Config.TrialDays,
-		Seller: s.Config.SellerName, Asset: assetVersion}
+		TrialDays: s.Config.TrialDays, Seller: s.Config.SellerName, Asset: assetVersion}
 }
 
 func (s *Server) render(w http.ResponseWriter, r *http.Request, name string) {

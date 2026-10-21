@@ -2,7 +2,8 @@
 
 Decision: [ADR-0046](../decisions/ADR-0046-licensing-and-protected-release.md).
 Change: [0069](../changes/2026/0069-licensing.md); trial hardening:
-[0152](../changes/2026/0152-trial-hardening.md) (ADR-0046 addendum 2026-10-19).
+[0152](../changes/2026/0152-trial-hardening.md) (ADR-0046 addendum 2026-10-19). One computer
+for good, no backdoors (2026-10-21): `docs/decisions/ADR-0094-license-no-backdoors.md`.
 
 ## Purpose
 
@@ -31,6 +32,27 @@ lifetime key locked to one PC. Development runs exactly as before, with no licen
   time; signed time past `expires_at` ends the trial. Server outages never stop a trial;
   only when every anchor copy and the stamp are gone is one online check asked for within
   3 days. Lifetime licenses keep the 300 s rule and stay offline-friendly.
+- **One computer, for good (server side, ADR-0094):** each license works on one computer only
+  and cannot be moved. `POST /api/v1/transfer` answers 410 `moves_disabled` (old 0.1.x apps
+  still call it) and never reads or changes a key; activating a key that is bound elsewhere
+  answers 409 `bound_elsewhere` with plain text and no hint to move. The owner CLI, admin API
+  and owner page have no action that unbinds, frees or re-binds a key (`reset-hwid` is gone);
+  `certificate` only re-creates the certificate for the machine the key is already bound to.
+  Kept: `issue` (friend keys, optionally pre-bound to a Machine ID for a new key), `revoke`,
+  `list`, `delete`, and the trial resets. Old `transfers` data in stored keys stays readable.
+- **Signed verify answers:** `POST /api/v1/verify` takes an optional `nonce` (32 lowercase hex,
+  else 400 `bad_request`) and still returns `status`, `certificate`, `time` and `server_time`
+  for old apps. It adds `answer` = `{payload, signature}`, signed like certificates and time
+  stamps (Ed25519, unpadded base64url, raw payload string). The payload keys are in this exact
+  order: `hwid, kid, license_id, nonce, purpose ("verify-answer"), status
+  (valid|revoked|moved|unknown), time, version (1)`. `hwid` and `license_id` repeat the request
+  exactly as sent, `nonce` is `""` when none was sent. Empty and `TRIAL-` keys answer `valid`
+  (signed too).
+- **Customer wording (server pages, emails, website):** "Each license works on one computer
+  only. It cannot be moved to another computer." "Reinstalling Windows on the same computer
+  is fine." "A new computer, a new motherboard, or a reset of the computer's security chip
+  (TPM) needs a new license." "No refunds after a license is activated. Use the free 7-day
+  trial to test ScadaBench first." A refund before activation stays as the website states it.
 - **Gate:** while unlicensed, packaged engineering API calls answer 402; the browser shows
   the activation screen (trial, key, buy, offline file). Saved projects are never touched.
 - **Wording:** every state is words plus an icon; the reason says what to do next.
@@ -44,7 +66,7 @@ lifetime key locked to one PC. Development runs exactly as before, with no licen
 | LIC-05 | The machine ID formula is identical in Python and native code. | `studio/tests/unit/test_licensing.py::test_hwid_composition_is_stable_and_matches_native_format`, `studio/tests/unit/test_native_license.py::test_native_machine_id_matches_python` |
 | LIC-06 | A trial lasts 7 days, counts down, then stops; one trial per machine ever. | `studio/tests/unit/test_licensing.py::test_seven_day_trial_counts_down_then_expires`, `studio/tests/integration/test_license_server_e2e.py::test_trial_is_granted_once_per_machine` |
 | LIC-07 | Setting the clock back before the last observed time or issue time is refused. | `studio/tests/unit/test_licensing.py::test_clock_rollback_is_detected_from_anchor_and_issue_time`, `studio/tests/unit/test_licensing.py::test_clock_rollback_uses_latest_run_log_time` |
-| LIC-08 | A lifetime key works on one PC; another PC must move it, which the old PC learns online. | `studio/tests/integration/test_license_server_e2e.py::test_lifetime_key_locks_to_one_pc_and_can_move`, `studio/tests/unit/test_licensing.py::test_certificate_for_another_machine_is_rejected` |
+| LIC-08 | A lifetime key works on one PC for good: another PC is refused (409 `bound_elsewhere`) and the key never leaves its first PC. | `license-server/internal/store/store_test.go::TestLifetimeKeyStaysOnItsFirstPCForGood`, `license-server/internal/api/moves_test.go::TestKeyOnAnotherComputerIsRefusedWithPlainText`, `studio/tests/unit/test_licensing.py::test_certificate_for_another_machine_is_rejected` |
 | LIC-09 | A refunded or revoked key stops working at the next online check; the file is kept aside. | `studio/tests/unit/test_licensing.py::test_online_check_removes_refunded_license_but_keeps_file` |
 | LIC-10 | A license file for this machine activates offline; one for another machine is refused. | `studio/tests/integration/test_license_api.py::test_offline_activation_unlocks_the_api`, `studio/tests/unit/test_licensing.py::test_trial_activation_and_offline_install_save_certificate` |
 | LIC-11 | Native enforcement exists only in builds configured with STUDIO_ENFORCE_LICENSE; such workers refuse MMS/GOOSE/SV without a license. | `studio/tests/unit/test_protected_packaging.py::test_native_enforcement_is_off_unless_release_build_asks`, `studio/tests/unit/test_native_license.py::test_development_build_does_not_enforce`, `studio/tests/unit/test_native_enforcement.py::test_worker_refuses_to_serve_without_license` |
@@ -69,3 +91,7 @@ lifetime key locked to one PC. Development runs exactly as before, with no licen
 | LIC-30 | Lifetime licenses keep the 300 s rollback rule, never need the daily check and stay valid offline. | `studio/tests/unit/test_trial_clock.py::test_lifetime_keeps_its_original_rollback_rule`, `studio/tests/unit/test_trial_clock.py::test_lifetime_license_never_needs_the_daily_check`, `studio/tests/unit/test_trial_clock_native.py::test_lifetime_offline_for_years_is_fine_in_both` |
 | LIC-31 | The native guard reaches the same trial-clock verdicts as Python on the same files. | `studio/tests/unit/test_trial_clock_native.py::test_small_drift_is_allowed_and_big_rollback_is_not_in_either`, `studio/tests/unit/test_trial_clock_native.py::test_missing_anchor_asks_one_online_check_in_both`, `studio/tests/unit/test_trial_clock_native.py::test_forged_stamp_is_ignored_by_both`, `studio/tests/unit/test_native_enforcement.py::test_worker_applies_the_trial_online_rule` |
 | LIC-32 | Owner overrides: reset a trial (this PC's parts or a customer's Machine ID), a network's count, and allow an email again. | `studio/tests/unit/test_license_admin.py::test_owner_trial_overrides_send_this_pcs_parts_or_a_customer_machine_id`, `license-server/internal/store/trials_test.go::TestOwnerOverridesClearHardwareAndAddresses` |
+| LIC-40 | The move route answers 410 `moves_disabled` for every request and changes nothing; old stored moves stay readable and never rebind a key. | `license-server/internal/api/moves_test.go::TestTransferRouteAnswers410MovesDisabledAndChangesNothing`, `license-server/internal/store/store_test.go::TestOldRecordsWithMovesStillReadAndStayBound`, `license-server/internal/config/config_test.go::TestOldConfigWithMoveAllowanceStillLoadsAndIsDroppedOnSave` |
+| LIC-41 | No admin, CLI or owner-page action unbinds, frees or re-binds a key; `certificate` only re-creates the certificate for the machine already bound and never binds. | `license-server/internal/api/moves_test.go::TestNoAdminActionCanUnbindOrRebindAKey`, `license-server/internal/api/moves_test.go::TestCertificateActionNeverBindsOrChangesTheMachine`, `license-server/internal/api/moves_test.go::TestOwnerPageHasNoFreeForNewPCAction` |
+| LIC-42 | Every verify answer (valid, revoked, moved, unknown, empty and trial keys) carries a signed `answer` whose exact payload bytes verify with the server key, echo the nonce, and cannot pass as a certificate or time stamp; old fields stay; a bad nonce is a 400. | `license-server/internal/api/verify_test.go::TestVerifyAnswerIsSignedExactlyForEveryStatus`, `license-server/internal/api/verify_test.go::TestVerifyAnswerKeepsEveryOldFieldForOldApps`, `license-server/internal/api/verify_test.go::TestVerifyNonceMustBe32LowercaseHexWhenPresent`, `license-server/internal/api/verify_test.go::TestVerifyAnswerCannotBeForgedOrReusedAsAnotherSignedThing` |
+| LIC-43 | The buy page, offline activation page and license emails state the one-computer, reinstall, TPM/new-hardware and no-refund-after-activation rules and never offer a move. | `license-server/internal/api/policy_test.go::TestCustomerPagesStateTheOneComputerPolicyAndNeverOfferMoves`, `license-server/internal/mail/mailgun_test.go::TestEmailsStateTheOneComputerPolicyAndNeverMentionMoves` |
