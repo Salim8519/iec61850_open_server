@@ -9,6 +9,7 @@ import { SignalLayerStore } from '../equipment/signalLayerStore';
 import { coalesce } from './coalesce';
 import { deliverLive, openEventStream, RELOADS, type StudioStream } from './eventStream';
 import { liveData } from './liveData';
+import { useWork } from './workSteps';
 
 /** Events this much older than a project read are certainly in it (same PC clock; generous margin). */
 const READ_MARGIN_MS = 250;
@@ -17,6 +18,7 @@ export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const steps = useWork();
   // What the running task is doing, in words, so a slow action never looks frozen (change 0105).
   const [working, setWorking] = useState('');
   const [saveState, setSaveState] = useState('All changes saved');
@@ -164,25 +166,36 @@ export function useStudio() {
   const addTemplate = (name: string) => perform(async () => {
     await saveDiagram(); await api('/ieds/template', 'POST', { name });
   }, 'Adding a sample IED…');
-  const importFile = (file: File) => perform(async () => {
-    await saveDiagram();
-    if (file.name.toLowerCase().endsWith('.subsim')) {
-      await upload('/project/open', file); liveData().values.clear(); equipmentValues.clear(); energization.clear();
-      historyIdentity.current = '';
-    } else {
-      const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
-      setImportPreview({ ...preview, file });
-    }
-  }, file.name.toLowerCase().endsWith('.subsim') ? 'Opening the project…' : 'Reading the file…');
-  const confirmImport = (names: string[]) => perform(async () => {
-    if (!importPreview) return;
-    const form = new FormData();
-    form.append('file', importPreview.file);
-    form.append('selected_names', JSON.stringify(names));
-    await api('/scl/import', 'POST', form);
-    setImportPreview(null); liveData().values.clear();
-  }, 'Importing the IEDs…');
-  return { project, error, setError, busy, working, equipmentValues, energization, signalLayers, saveState, updateDiagram,
+  // Opening and importing show their steps in the middle of the window (change 0150).
+  const importFile = (file: File) => {
+    const project = file.name.toLowerCase().endsWith('.subsim');
+    steps.begin(project ? `Opening ${file.name}` : `Reading ${file.name}`, project
+      ? ['Save your diagram', 'Open the project file', 'Show the project']
+      : ['Save your diagram', 'Read the IEDs in the file']);
+    return perform(async () => {
+      await saveDiagram(); steps.next();
+      if (project) {
+        await upload('/project/open', file); liveData().values.clear(); equipmentValues.clear(); energization.clear();
+        historyIdentity.current = ''; steps.next();
+      } else {
+        const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
+        setImportPreview({ ...preview, file }); steps.end();
+      }
+    }, project ? 'Opening the project…' : 'Reading the file…').finally(steps.end);
+  };
+  const confirmImport = (names: string[]) => {
+    if (!importPreview) return Promise.resolve();
+    steps.begin(`Importing ${names.length === 1 ? '1 IED' : `${names.length} IEDs`}`,
+      ['Read and check the file, then build the IEDs', 'Show the project']);
+    return perform(async () => {
+      const form = new FormData();
+      form.append('file', importPreview.file);
+      form.append('selected_names', JSON.stringify(names));
+      await api('/scl/import', 'POST', form);
+      setImportPreview(null); liveData().values.clear(); steps.next();
+    }, 'Importing the IEDs…').finally(steps.end);
+  };
+  return { project, error, setError, busy, working, work: steps.work, equipmentValues, energization, signalLayers, saveState, updateDiagram,
     canUndo: !!history?.past.length, canRedo: !!history?.future.length,
     undo, redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },

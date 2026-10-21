@@ -64,3 +64,4 @@ tbody tr:hover { background: var(--surface-2); }
 hr { border: 0; border-top: 1px solid var(--border); margin: 20px 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 details > summary { cursor: pointer; }
+.file-address { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin-top: 4px; }

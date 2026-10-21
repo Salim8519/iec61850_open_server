@@ -24,7 +24,9 @@ func TestRoutesMatchFlask(t *testing.T) {
 		if route.Handler == nil || route.Polled {
 			t.Errorf("%s %s: handler %v, polled %v", route.Method, route.Pattern, route.Handler, route.Polled)
 		}
-		served = append(served, route.Method+" "+route.Pattern)
+		if key := route.Method + " " + route.Pattern; !GoOnlyRoutes[key] {
+			served = append(served, key)
+		}
 	}
 	want := append([]string(nil), pythonPlatformRoutes...)
 	sort.Strings(served)

@@ -7,7 +7,9 @@ import { hint } from '../../copy/hints';
 import { Disclosure } from '../../ui/Disclosure';
 import { Hint } from '../../ui/Hint';
 import { SpinIcon, Spinner } from '../../ui/Spinner';
+import { StepList } from '../../ui/StepList';
 import { AddressTable, type Manual } from './AddressTable';
+import { CheckProgressView } from './CheckProgressView';
 import { ResultStep, ReviewStep } from './ReviewStep';
 import { adapterLabel, changeSentence, LOOPBACK_CHOICE, putLabel, setupTitle, usableAdapters } from './setupWords';
 
@@ -91,8 +93,8 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
       <button onClick={() => load(true, true)} disabled={refreshing} aria-label="Refresh the network cards">
         {refreshing ? <SpinIcon size={14} /> : <RefreshCw size={14} />}{refreshing ? 'Refreshing…' : 'Refresh'}</button>
     </div>
-    {!adapters && !error && <Spinner label="Looking for network cards…"
-      slowHint="Still working. Windows can take a few seconds to list its network cards." />}
+    {!adapters && !error && <StepList title="Finding your network cards"
+      steps={[{ key: 'cards', label: 'Ask Windows for the network cards', state: 'running' }]} />}
     {!guid && <Hint id="network.adapter.pick" compact />}
     {!guid && <Hint id="network.adapter.virtual" compact />}
     {loopback && <Hint id="network.adapter.loopback" compact />}
@@ -100,8 +102,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     {adapters && !usable.length && <p className="muted small">No suitable network card found. Plug in a USB
       Ethernet adapter or enable a virtual adapter; this list updates by itself.</p>}
     {error && <div className="error-banner" role="alert" style={{ borderRadius: 6 }}><span>{error}</span></div>}
-    {checking && !preview && <Spinner label="Checking each address, including whether another device already answers on it…"
-      slowHint="Still checking. Addresses nobody answers on take a moment to confirm." />}
+    {checking && !preview && <CheckProgressView />}
     {checking && preview && <Spinner inline size={14} label="Checking again…" />}
     {preview && <AddressTable preview={preview} manual={manual} setManual={setManual} />}
     {preview && !preview.ready && <Hint id="network.address.fix" compact />}

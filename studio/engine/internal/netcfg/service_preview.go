@@ -90,7 +90,8 @@ func (s *NetworkService) pickAvoiding(ieds []PlanIED, adapter Adapter, strategy 
 				reachable, reachableSet[row.Proposed] = append(reachable, row.Proposed), true
 			}
 		}
-		inUse, err := s.Probe.InUse(reachable)
+		s.Progress.plan(rows)
+		inUse, err := reportingProber{inner: s.Probe, progress: &s.Progress}.InUse(reachable)
 		if err != nil {
 			return result, err
 		}

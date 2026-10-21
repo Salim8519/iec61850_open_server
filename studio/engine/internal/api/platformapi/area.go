@@ -45,6 +45,8 @@ type Network interface {
 	Apply(fingerprint, confirm any) (*pyjson.Object, error)
 	CleanupPreview() (*pyjson.Object, error)
 	Cleanup(fingerprint, confirm any) (*pyjson.Object, error)
+	// PreviewProgress is the live state of the running address check (Go only, change 0150).
+	PreviewProgress() *pyjson.Object
 }
 
 // Firewall is GatewayFirewall (*netcfg.GatewayFirewall).
@@ -104,7 +106,10 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, value)
 }
 
-// Routes implements api.Area: 5 license, 3 update and 9 network routes.
+// GoOnlyRoutes are the routes this area adds beyond Flask's.
+var GoOnlyRoutes = map[string]bool{"GET /api/v1/network/plan/progress": true}
+
+// Routes implements api.Area: 5 license, 3 update and 10 network routes (one Go only).
 func (a *Area) Routes() []api.Route {
 	route := func(method, pattern string, h handler) api.Route {
 		return api.Route{Method: method, Pattern: "/api/v1" + pattern, Handler: h}
@@ -123,6 +128,7 @@ func (a *Area) Routes() []api.Route {
 		route("PUT", "/network", a.networkMode),
 		route("POST", "/network/plan/preview", a.planPreview),
 		route("POST", "/network/plan/apply", a.planApply),
+		route("GET", "/network/plan/progress", a.planProgress),
 		route("GET", "/network/cleanup/preview", a.cleanupPreview),
 		route("POST", "/network/cleanup/apply", a.cleanupApply),
 		route("GET", "/network/gateway-firewall", a.firewallPreview),

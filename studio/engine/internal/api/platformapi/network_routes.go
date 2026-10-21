@@ -48,6 +48,12 @@ func (a *Area) networkAdapters(r *http.Request) (any, error) {
 	return pyjson.NewObject().Set("adapters", netcfg.AdaptersObject(adapters)), nil
 }
 
+// planProgress is GET /network/plan/progress: steps, answered addresses and rows of the
+// running (or last) address check, polled by Network setup while its preview runs.
+func (a *Area) planProgress(r *http.Request) (any, error) {
+	return a.deps.Network.PreviewProgress(), nil
+}
+
 // networkMode is PUT /network: update_network(projects, body()) while stopped.
 func (a *Area) networkMode(r *http.Request) (any, error) {
 	return a.locked(func() (any, error) {

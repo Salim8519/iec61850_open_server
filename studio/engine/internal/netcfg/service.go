@@ -45,6 +45,7 @@ type NetworkService struct {
 	NewID      func() string                                                         // uuid4().hex for request files
 	SNMP       SNMPProjects                                                          // nil: no SNMP devices (Python)
 	SNMPRules  func() ([]string, error)                                              // SNMP rule names present
+	Progress   PreviewProgress                                                       // live state of the address check
 
 	mu       sync.Mutex
 	stamp    time.Time
@@ -57,9 +58,13 @@ func NewNetworkService(projects Projects, directory, program, executable string)
 	shell := SystemExecutor{}
 	return &NetworkService{Projects: projects, Directory: directory, Program: program, Executable: executable,
 		Journal: NewJournal(directory), Source: SystemAdapters{Shell: shell},
-		Rules:     func() ([]string, error) { return ListStudioRules(shell) },
-		SNMPRules: func() ([]string, error) { return ListSNMPRules(shell) },
-		Elevator:  UACElevator{}, Probe: ARPProber{},
+		Rules: func() ([]string, error) {
+			return RuleNames(studioRulePrefix, func() ([]string, error) { return ListStudioRules(shell) })
+		},
+		SNMPRules: func() ([]string, error) {
+			return RuleNames(SNMPRulePrefix, func() ([]string, error) { return ListSNMPRules(shell) })
+		},
+		Elevator: UACElevator{}, Probe: ARPProber{},
 		Firewall: func(names []string) (map[string]bool, map[string]bool, error) { return GatewayState(names, shell) },
 		Clock:    time.Now, NewID: randomHex}
 }

@@ -30,7 +30,9 @@ type GatewayFirewall struct {
 // NewGatewayFirewall uses the real read-only firewall queries.
 func NewGatewayFirewall(network HelperRunner, program string, run Executor) *GatewayFirewall {
 	return &GatewayFirewall{Network: network, Program: program,
-		Rules:    func() ([]string, error) { return ListGatewayRules(run) },
+		Rules: func() ([]string, error) {
+			return RuleNames(gatewayRulePrefix, func() ([]string, error) { return ListGatewayRules(run) })
+		},
 		Blocking: func(program string) ([]BlockingRule, error) { return BlockingRules(program, run) }}
 }
 

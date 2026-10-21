@@ -40,3 +40,7 @@ export type CompareRow = { ref: string; fc: string; category: string; scd_type: 
 export type Comparison = { summary: Record<string, number>; signals: CompareRow[];
   datasets: { ref: string; status: string; missing: string[]; extra: string[] }[];
   reports: { ref: string; status: string }[] };
+/** GET /network/plan/progress (Go engine, change 0150): the running address check, step by step. */
+export type CheckProgress = { run: number; running: boolean; asked: number; answered: number;
+  steps: { key: string; label: string; state: 'waiting' | 'running' | 'done'; ms: number }[];
+  rows: { id: string; name: string; address: string; state: 'checking' | 'free' | 'in_use' | 'not_checked' }[] };

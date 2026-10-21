@@ -62,6 +62,7 @@ Press for a Push Button. The server rejects mixed `action` and `value`.
 | `PUT /network` | `{mode,adapter_guid?,adapter_label?}` | Stopped-only; endpoint conflicts refused |
 | `GET /network/adapters` | `refresh=1` | Windows adapters with IPv4 addresses (cached 10 s) |
 | `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints (a row that cannot be used adds `alternative: {ip, prefix}`, change 0098), change items, fingerprint; Go also plans SNMP devices (`ied_id` `snmp:<id>`, `kind`, `saved`, item `snmp_firewall`, change 0148) |
+| `GET /network/plan/progress` | | Go only (ADR-0093): the running address check: `run`, `running`, `steps[{key,label,state,ms}]`, `asked`, `answered`, `rows[{id,name,address,state}]` with state `checking`/`free`/`in_use`/`not_checked` |
 | `POST /network/plan/apply` | `{fingerprint,confirm:true}` | Re-plan; 409 if changed; elevated helper; enters lab mode |
 | `GET /network/cleanup/preview` | - | Outstanding owned items and fingerprint |
 | `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |

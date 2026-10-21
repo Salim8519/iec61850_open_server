@@ -13,6 +13,7 @@ import { ToolsPage } from '../features/tools/ToolsPage';
 import type { ToolId } from '../copy/tools';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
+import { WorkPanel } from './WorkPanel';
 import { TourOverlay } from '../features/tour/TourOverlay';
 import { getPreferences, markTourSeen } from '../api/preferences';
 import { place, type PlaceId } from './places';
@@ -53,8 +54,9 @@ export function App() {
   const running = useActivity(!!project);
   const update = useUpdateStatus();
   return <div className="app">
+    <WorkPanel work={studio.importPreview ? null : studio.work} />
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
-      error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} />}
+      error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} work={studio.work} />}
     <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project}
       openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)}
       update={update.status} dismissUpdate={version => { update.change({ dismissed: version }).catch(() => {}); }} />

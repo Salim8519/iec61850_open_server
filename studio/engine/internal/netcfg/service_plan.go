@@ -29,6 +29,9 @@ func (s *NetworkService) Preview(guid any, strategy string, manual any) (*pyjson
 }
 
 func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson.Object, previewState, error) {
+	s.Progress.begin()
+	defer s.Progress.finish()
+	s.Progress.step("cards")
 	adapter, err := s.Adapter(guid)
 	if err != nil {
 		return nil, previewState{}, err
@@ -45,6 +48,7 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 		return nil, previewState{}, apperr.New("No IED is set to 'Simulate', so there is nothing to put on " +
 			"the network. Set an IED to 'Simulate' in Devices first.")
 	}
+	s.Progress.step("addresses")
 	picked, err := s.pick(ieds, adapter, strategy, manual)
 	if err != nil {
 		return nil, previewState{}, err
@@ -64,6 +68,9 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 		for _, device := range devices {
 			snmp.Ports = append(snmp.Ports, device.Port)
 		}
+	}
+	s.Progress.step("firewall")
+	if len(devices) > 0 {
 		if snmp.Existing, err = s.SNMPRules(); err != nil {
 			return nil, previewState{}, err
 		}
@@ -76,6 +83,7 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 	if err != nil {
 		return nil, previewState{}, err
 	}
+	s.Progress.step("plan")
 	plan, err := BuildPlanWithSNMP(adapter, rows, ports, s.Program, existing, snmp)
 	if err != nil {
 		return nil, previewState{}, err
