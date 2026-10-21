@@ -39,10 +39,17 @@ keep working offline, and project files become `.scadabench`.
   app's own `autosave.subsim` and `recovery/*.subsim` are renamed in place at startup by
   both engines, never deleted or overwritten, journaled in `logs/project-file-migrations.jsonl`.
 
+Clock and cancelled-ID writes now retry briefly (10 x 30 ms) when antivirus or the indexer
+holds a just-written file; Kaspersky made the merged scenario tests fail 7/15 without it
+(0/15 with temp files in an excluded folder). The file chooser lists `.scadabench` only.
+
 Built by three agents in separate worktrees, reviewed and merged by the orchestrator.
 
 ## Evidence
 
+- Full merged run: Go engine `go test ./...` all pass (temp in an antivirus-excluded
+  folder), Python unit+integration 556 passed with 1 pre-existing failure (`test_go_release`
+  missing `studio_snmp.exe` in the spec, also on master), `verify.py` checks PASS.
 - Real Go license server + Python client e2e: 5 passed, including signed answers for the
   request and a revoked key staying dead after the file is renamed back.
 - Go engine service against the real new server: trial, "Check online now" through the

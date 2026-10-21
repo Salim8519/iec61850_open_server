@@ -9,6 +9,7 @@ revoked_ids (the cancelled license IDs, see revoked_ids.py).
 """
 import json
 import os
+import time
 from pathlib import Path
 
 REGISTRY_KEY = r"Software\ScadaBench"
@@ -40,14 +41,21 @@ class WindowsRegistry:
             pass
 
 
+WRITE_ATTEMPTS = 10
+WRITE_RETRY_SECONDS = 0.03
+
+
 def _write_text(path, text):
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        temporary = path.with_name(path.name + ".tmp")
-        temporary.write_text(text, encoding="utf-8")
-        os.replace(temporary, path)
-    except OSError:
-        pass
+    """Retry briefly: antivirus or the indexer may hold a just-written file; then give up silently."""
+    for _ in range(WRITE_ATTEMPTS):
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            temporary = path.with_name(path.name + ".tmp")
+            temporary.write_text(text, encoding="utf-8")
+            os.replace(temporary, path)
+            return
+        except OSError:
+            time.sleep(WRITE_RETRY_SECONDS)
 
 
 class ClockValue:

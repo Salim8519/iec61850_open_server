@@ -1,6 +1,7 @@
 package licensing
 
 import (
+	"time"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -108,7 +109,7 @@ func (v ClockValue) ReadInts() []*big.Int {
 // Write stores text in every place; failures are ignored. license_state.json is
 // rewritten only when its copy differs.
 func (v ClockValue) Write(text string) {
-	_ = pytext.WriteReplace(v.File, []byte(text))
+	writePatiently(v.File, []byte(text))
 	if v.Registry != nil {
 		v.Registry.Set(v.registryName, text)
 	}
@@ -118,9 +119,26 @@ func (v ClockValue) Write(text string) {
 	}
 	data, err := pyjson.Dumps(state.Set(v.Name, text))
 	if err == nil {
-		_ = pytext.WriteReplace(v.StateFile, data)
+		writePatiently(v.StateFile, data)
 	}
 }
+
+// writePatiently retries a write a few times: right after a file is written or deleted,
+// antivirus or the search indexer may hold it for a moment ("used by another process").
+// A write that still fails is ignored, as before (clock_store._write_text).
+func writePatiently(path string, data []byte) {
+	for attempt := 0; attempt < writeAttempts; attempt++ {
+		if pytext.WriteReplace(path, data) == nil {
+			return
+		}
+		time.Sleep(writeRetryDelay)
+	}
+}
+
+const (
+	writeAttempts   = 10
+	writeRetryDelay = 30 * time.Millisecond
+)
 
 // universalNewlines is read_text's newline translation ("\r\n" and "\r" become "\n").
 func universalNewlines(text string) string {
