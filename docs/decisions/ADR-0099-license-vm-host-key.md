@@ -5,7 +5,7 @@ section "VM host key"). Builds on [ADR-0097](ADR-0097-license-no-backdoors.md) (
 key, no backdoors) and [ADR-0098](ADR-0098-license-binding-tpm-lease.md) (hardware machine ID).
 Owner decision: a customer who runs ScadaBench inside virtual machines (Hyper-V, VMware, VirtualBox)
 on the one PC that holds the lifetime license must not need a second key, and the VM must work with no
-internet, for example on a laboratory laptop. Spec rows [LIC-70 to LIC-85](../specs/licensing.md).
+internet, for example on a laboratory laptop. Spec rows [LIC-70 to LIC-87](../specs/licensing.md).
 **Go engine only**: the frozen Python backend has no such routes and the frontend hides the screens
 when it answers 404 (precedent [ADR-0091](ADR-0091-gateway-own-points.md)).
 
@@ -54,8 +54,11 @@ virtual network can never reach the license server.
    requests per minute per peer address and 60 per minute in total, answered with a plain "try again in a
    minute". Requests are one JSON line of at most 4096 bytes.
 6. **Protocol.** Request `{"nonce": 32 hex, "vm_hwid": 64 hex}`; answer one JSON line `{"certificate": <the
-   host's license.cert object>, "signature": base64url(Ed25519 over the bytes "scadabench-vm-proof-v1|" +
-   nonce + "|" + vm_hwid)}`, or `{"error": "<plain words>"}` that reveals nothing else.
+   host's license.cert object>, "time": <the host's Unix seconds, an integer>, "signature":
+   base64url(Ed25519 over the bytes "scadabench-vm-proof-v2|" + nonce + "|" + vm_hwid + "|" + time)}`, or
+   `{"error": "<plain words>"}` that reveals nothing else. The time is part of the signature, so nobody can
+   make a proof younger than the host made it. There is no v1: the first design signed only the nonce and the
+   machine ID, which left `time` in `vm_proof.json` editable; it never shipped and is not supported.
 7. **Firewall.** The one inbound allow rule (program-scoped to the helper, TCP 47862, `-RemoteAddress
    LocalSubnet`) is added only through the existing network helper after the usual preview (item kind
    `hostkey_firewall`, fingerprint, "Yes, apply"), journaled and removed by Settings > Network > Clean up
@@ -66,17 +69,27 @@ virtual network can never reach the license server.
    and has a host search) a background single-flight search asks the default gateways and the `.1` of every
    local IPv4 subnet (2.5 s each, 30 s before the next search after a failure) with a fresh nonce. It
    accepts an answer only when the certificate verifies with the release keys, is `lifetime`, is not
-   cancelled in this VM's own records, has a `host_key`, and the signature verifies for this nonce and
-   this VM's machine ID. The status is then `licensed: true`, `plan: "lifetime"`, `mode: "vm-host"`,
-   `license_id` of the host's license and `host_key` (masked). The proof lives 24 h, is renewed in the
-   background after 6 h, and ends 24 h after the host disappears. The VM never reports the host's license to
-   the license server (the server would see one key from two machines).
-9. **Native guard.** The Go backend writes `vm_proof.json` (certificate, nonce, vm_hwid, signature, `time`
-   in seconds) into the license home. The native workers (`common/vm_proof.cpp`, tested through
-   `studio_license_check verify-vm`) accept it only when there is no valid license of their own, `vm_hwid`
-   is this machine's ID, `time` is at most 24 h old (a clock up to 300 s ahead is fine), the host
-   certificate is genuine, lifetime, names a host key and is not cancelled in any of the three places, and the
-   signature verifies. A damaged file never crashes anything and never licenses. An own valid license
+   cancelled in this VM's own records, has a `host_key`, the answer's `time` is within 600 s of this VM's own
+   clock (a host or a VM with a wrong clock is refused with "The clock of this virtual machine and the clock of
+   its host PC differ by more than 10 minutes. Set the correct time on both and try again."), and the
+   signature verifies for this nonce, this VM's machine ID and exactly that time. The status is then
+   `licensed: true`, `plan: "lifetime"`, `mode: "vm-host"`, `license_id` of the host's license and `host_key`
+   (masked). The proof lives 24 h counted from the time the host signed, is renewed in the background after
+   6 h, and ends 24 h after the host disappears. The VM never reports the host's license to the license
+   server (the server would see one key from two machines).
+9. **Proof file, Go backend and native guard.** The Go backend writes `vm_proof.json` (certificate, nonce,
+   vm_hwid, signature, `time` = the signed time, an integer) into the license home and reads it back at start,
+   so a restarted VM stays licensed for the rest of its 24 hours without the host. The Go backend
+   (`licensing/vm_proof_check.go`) and the native workers (`common/vm_proof.cpp`, tested through
+   `studio_license_check verify-vm`) accept the file only when there is no valid license of their own, `vm_hwid`
+   is this machine's ID, the host certificate is genuine, lifetime, names a host key and is not cancelled in
+   any of the three places, the signature verifies with that host key over that exact `time`, and
+   `-600 s <= now - time <= 24 h` (a time that is not a whole number is a damaged file). Editing `time`
+   breaks the signature. The license's own clock-rollback anchor (`.time_anchor` in three places, plus the run
+   log) applies as well: a proof is refused when the newest time ever seen is more than 24 h after `time`.
+   The Go backend advances that anchor while it holds a proof, live or just expired, so setting the VM clock
+   back cannot bring an expired proof back to life (the certificate's own 300 s rollback rule refuses any
+   larger set-back at once). A damaged file never crashes anything and never licenses. An own valid license
    wins whatever the proof says.
 10. **Screens (Settings > License).** "Let my virtual machines use this license" with a plain explanation, the
     masked key, the firewall review, and the reason in words when sharing is impossible (a trial, no
@@ -101,14 +114,19 @@ virtual network can never reach the license server.
   host proof too, which is harmless: the host is the license owner's own PC.
 - **A cancelled license** stops being answered by the host as soon as the host learns of it (its own online
   check, ADR-0097), so a VM loses it within 24 h at the latest. The VM learns nothing from the server.
-- **Known limits (written down, not hidden).** `time` in `vm_proof.json` is not signed (the contract fixes the
-  signed bytes as nonce and machine ID only), so someone who edits that file in a VM can keep an old proof alive
-  after the host is gone; the 24 h rule is a convenience bound, not a cryptographic one, like the trial clock
-  (ADR-0046). Signing `time` into the proof would close this and is a possible later protocol change. A VM
-  image cloned with the same firmware identity has the same machine ID and is the same machine to the
-  license, like any cloned disk. The port is reachable from every VM on the host's virtual switches, which is
-  the point of the feature; anything on those switches can ask, and learns only the host's certificate (which
-  holds the license ID and e-mail) and a signature. No admin rights are needed to ask.
+- **The time is signed.** The host signs its own clock into every proof and the VM checks it against its own
+  clock when the answer arrives, so the 24 h life of a proof cannot be stretched by editing `vm_proof.json`
+  (the first draft left `time` unsigned; that hole is closed, protocol v2). A proof copied to another VM is
+  useless (the machine ID is signed too) and a recorded one is useless for a new request (fresh nonce).
+- **Known limits (written down, not hidden).** The anchor only knows the times this computer was running: a VM
+  that is switched off for days after its proof ran out and is started with its clock set back into the proof's
+  day cannot tell, exactly like a trial or a lifetime license (ADR-0046); the signed host time, the run log and
+  the anchor copies in three places make it a deliberate, repeated act. A VM image cloned with the same firmware
+  identity has the same machine ID and is the same machine to the license, like any cloned disk. A host or VM
+  whose clock is more than 10 minutes off cannot be proven, by design, and the VM says so in words. The port is
+  reachable from every VM on the host's virtual switches, which is the point of the feature; anything on those
+  switches can ask, and learns only the host's certificate (which holds the license ID and e-mail), the host's
+  time and a signature. No admin rights are needed to ask.
 
 ## What this does not touch
 

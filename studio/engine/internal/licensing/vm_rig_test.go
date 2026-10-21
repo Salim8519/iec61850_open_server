@@ -59,6 +59,11 @@ func newVMRig(t *testing.T) *vmRig {
 // newVM is a computer with its own license home, its own machine ID and a search for the host.
 func (r *vmRig) newVM() *Service {
 	r.vmHome = hkTempDir(r.t)
+	return r.vmOn(r.vmHome)
+}
+
+// vmOn is the computer that uses license home home: the same one again after a restart.
+func (r *vmRig) vmOn(home string) *Service {
 	options := VMOptions{Hosts: func() []string { return []string{r.address} }, Timeout: 2 * time.Second, RetryAfter: 30 * time.Second,
 		Dial: func(ctx context.Context, address string) (net.Conn, error) {
 			r.dials.Add(1)
@@ -67,7 +72,7 @@ func (r *vmRig) newVM() *Service {
 			}
 			return hostkey.SystemDial(ctx, address)
 		}}
-	return New(Options{Home: r.vmHome, DataDir: r.vmHome, Enforce: true, Keys: r.host.signer.keys(),
+	return New(Options{Home: home, DataDir: home, Enforce: true, Keys: r.host.signer.keys(),
 		HWID: func() (string, error) { return r.vmHWID, nil }, Clock: func() float64 { return *r.now },
 		Debugger: func() bool { return false }, Logf: r.t.Logf, Registry: newHKRegistry(),
 		HostKey: HostKeyOptions{VM: &options}})
@@ -151,7 +156,8 @@ func (a attacker) serves(rig *vmRig, signer *hkSigner, fields map[string]any) {
 	bundle := signer.sign(rig.t, merged)
 	certificate, _ := json.Marshal(map[string]string{"payload": bundle.Payload, "signature": bundle.Signature})
 	rig.dial = dynamic(func(request hostkey.Request) hostkey.Answer {
-		return hostkey.Answer{Certificate: certificate, Signature: hostkey.Sign(a.private, request)}
+		at := int64(*rig.now)
+		return hostkey.Answer{Certificate: certificate, Time: at, Signature: hostkey.Sign(a.private, request, at)}
 	})
 }
 

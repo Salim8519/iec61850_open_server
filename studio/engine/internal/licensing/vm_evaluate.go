@@ -28,14 +28,19 @@ func (s *Service) integrityProblem() string {
 	return IntegrityProblem(folder, s.options.ExpectedFiles, s.options.Debugger)
 }
 
-// vmHostStatus is licensed while a verified proof younger than 24 hours exists. It never waits for
-// the network: a missing or old proof starts one background search and the status stays as it was.
+// vmHostStatus is licensed while a verified proof that is not older than 24 hours (by the time the
+// host signed) exists; the proof of the last run is read back from vm_proof.json and checked again.
+// It never waits for the network: a missing or old proof starts one background search and the status
+// stays as it was. While this computer holds a proof it advances the clock-rollback anchor like any
+// license does, whether the proof is still live or has just run out, so setting the clock back later
+// cannot bring an expired proof back (proofLive).
 func (s *Service) vmHostStatus(own Status) Status {
 	now := s.now()
-	s.vm.mu.Lock()
-	proof := s.vm.proof
-	s.vm.mu.Unlock()
-	if proof != nil && now >= proof.at-ClockToleranceSeconds && now-proof.at < vmProofMaxAge {
+	proof := s.storedVMProof()
+	if proof != nil {
+		s.anchor.Advance(now)
+	}
+	if proof != nil && s.proofLive(now, proof.at) == nil {
 		if now-proof.at >= vmRefreshAfter {
 			s.kickVMHost()
 		}

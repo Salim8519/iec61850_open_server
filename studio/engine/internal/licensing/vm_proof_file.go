@@ -10,7 +10,7 @@ import (
 
 // VMProofFile is vm_proof.json in the license home: what the native workers read to accept a
 // virtual machine whose host confirmed it. The workers accept it only for their own machine ID and
-// only while Time is at most 24 hours old (native/common/vm_proof.cpp).
+// only while Time, which the host signed, is at most 24 hours old (native/common/vm_proof.cpp).
 const VMProofFile = "vm_proof.json"
 
 type vmProofDocument struct {
@@ -22,9 +22,10 @@ type vmProofDocument struct {
 }
 
 // writeVMProof stores the host's answer for the native workers, replacing the old proof atomically.
-func (s *Service) writeVMProof(answer hostkey.Answer, request hostkey.Request, at int64) error {
+// Time is the time the host signed, so the file cannot be made younger by editing it.
+func (s *Service) writeVMProof(answer hostkey.Answer, request hostkey.Request) error {
 	data, err := json.MarshalIndent(vmProofDocument{Certificate: answer.Certificate, Nonce: request.Nonce,
-		VMHWID: request.VMHWID, Signature: answer.Signature, Time: at}, "", "  ")
+		VMHWID: request.VMHWID, Signature: answer.Signature, Time: answer.Time}, "", "  ")
 	if err != nil {
 		return err
 	}

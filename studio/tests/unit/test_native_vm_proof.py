@@ -34,13 +34,24 @@ def host_key(seed=HOST_SEED):
     return b64url(public_key(seed))
 
 
-def proof_text(now, vm_hwid=VM, nonce=NONCE, seed=HOST_SEED, age=0, signed_for=None, certificate=None, **fields):
-    """A vm_proof.json made `age` seconds ago; signed_for overrides what the host key signed."""
+def proof_text(now, vm_hwid=VM, nonce=NONCE, seed=HOST_SEED, age=0, signed_for=None, signed_time=None,
+               certificate=None, **fields):
+    """A vm_proof.json the host signed `age` seconds ago (its "time" is part of the signed message);
+    signed_for and signed_time override what the host key signed, so the file disagrees with it."""
     fields.setdefault("host_key", host_key(seed))
     certificate = certificate or bundle(**fields)
-    message = ("scadabench-vm-proof-v1|" + nonce + "|" + (signed_for or vm_hwid)).encode()
+    at = int(now - age)
+    message = ("scadabench-vm-proof-v2|" + nonce + "|" + (signed_for or vm_hwid) + "|" +
+               str(at if signed_time is None else signed_time)).encode()
     return json.dumps({"certificate": json.loads(certificate), "nonce": nonce, "vm_hwid": vm_hwid,
-                       "signature": b64url(sign(message, seed)), "time": int(now - age)})
+                       "signature": b64url(sign(message, seed)), "time": at})
+
+
+def edited_time(text, **changes):
+    """The same proof file with fields of it changed afterwards (what someone with a text editor does)."""
+    document = json.loads(text)
+    document.update(changes)
+    return json.dumps(document)
 
 
 def verify(tmp_path, text, machine=VM, now=None, key=None):
@@ -56,14 +67,59 @@ def test_a_fresh_proof_for_this_machine_is_accepted(tmp_path):
     now = time.time()
     assert verify(tmp_path, proof_text(now), now=now) == "ok"
     assert verify(tmp_path, proof_text(now, age=23 * 3600), now=now) == "ok"
-    assert verify(tmp_path, proof_text(now, age=-200), now=now) == "ok"  # a clock a little ahead is fine
+    assert verify(tmp_path, proof_text(now, age=-200), now=now) == "ok"  # a host clock a little ahead is fine
+    assert verify(tmp_path, proof_text(now, age=24 * 3600), now=now) == "ok"  # exactly a day is still fine
 
 
 def test_a_proof_older_than_a_day_or_from_the_future_is_refused(tmp_path):
     now = time.time()
     assert "out of date" in verify(tmp_path, proof_text(now, age=24 * 3600 + 5), now=now)
-    assert "out of date" in verify(tmp_path, proof_text(now, age=-400), now=now)
+    assert "out of date" in verify(tmp_path, proof_text(now, age=-601), now=now)  # more than 10 minutes ahead
+    assert verify(tmp_path, proof_text(now, age=-600), now=now) == "ok"
     assert "out of date" in verify(tmp_path, proof_text(now, age=10 * 86400), now=now)
+
+
+def test_editing_the_time_of_a_proof_breaks_the_signature_so_an_old_proof_cannot_be_made_young(tmp_path):
+    now = time.time()
+    expired = proof_text(now, age=25 * 3600)
+    assert "out of date" in verify(tmp_path, expired, now=now)
+    # The attack: change "time" to now. The host signed the old time, so the signature no longer fits.
+    assert "did not confirm" in verify(tmp_path, edited_time(expired, time=int(now)), now=now)
+    young = proof_text(now, age=3600)
+    assert verify(tmp_path, young, now=now) == "ok"
+    assert "did not confirm" in verify(tmp_path, edited_time(young, time=int(now)), now=now)
+    assert "did not confirm" in verify(tmp_path, edited_time(young, time=int(now - 3600) + 1), now=now)
+    # A host that signed another time than the file says is the same thing.
+    assert "did not confirm" in verify(tmp_path, proof_text(now, age=3600, signed_time=int(now) - 7200), now=now)
+
+
+def test_a_time_that_is_not_a_whole_number_is_a_damaged_file(tmp_path):
+    now = time.time()
+    young = proof_text(now, age=60)
+    at = json.loads(young)["time"]
+    for value in (float(at), str(at), None, [at], True, 0, -1):
+        assert verify(tmp_path, edited_time(young, time=value), now=now).startswith("fail"), value
+    assert "damaged" in verify(tmp_path, edited_time(young, time=float(at)), now=now)
+
+
+def test_setting_the_clock_back_cannot_bring_an_old_proof_back(tmp_path):
+    now = int(time.time())
+    # The computer saw `now` (the license clock anchor); someone then sets its clock back a day, where the
+    # proof (made at "now - 20 h") would look young again.
+    proof = proof_text(now - 86400, age=20 * 3600)
+    assert verify(tmp_path, proof, now=now - 86400) == "ok"  # the set-back clock alone would allow it
+    (tmp_path / ".time_anchor").write_text(str(now), encoding="utf-8")
+    assert "rollback" in verify(tmp_path, proof, now=now - 86400)
+    # The rule of the proof itself: a proof a day old by the clock is refused when the anchor is 200 s
+    # further on, although that is inside the certificate's own 300 s tolerance.
+    exactly_a_day = proof_text(now, age=24 * 3600)
+    (tmp_path / ".time_anchor").write_text(str(now), encoding="utf-8")
+    assert verify(tmp_path, exactly_a_day, now=now) == "ok"
+    (tmp_path / ".time_anchor").write_text(str(now + 200), encoding="utf-8")
+    assert "rollback" in verify(tmp_path, exactly_a_day, now=now)
+    # Nothing newer than the proof in the anchor: no objection.
+    (tmp_path / ".time_anchor").write_text(str(now - 3 * 86400), encoding="utf-8")
+    assert verify(tmp_path, proof_text(now, age=3600), now=now) == "ok"
 
 
 def test_a_proof_for_another_machine_is_refused_even_when_the_host_signed_it(tmp_path):

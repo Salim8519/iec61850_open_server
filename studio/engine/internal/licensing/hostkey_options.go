@@ -34,8 +34,6 @@ type VMOptions struct {
 const (
 	vmDefaultTimeout    = 2500 * time.Millisecond
 	vmDefaultRetryAfter = 30 * time.Second
-	// vmProofMaxAge is how long a host's proof licenses a virtual machine; the native guard uses the same.
-	vmProofMaxAge = 24 * 3600
 	// vmRefreshAfter is the age at which a proof is renewed in the background.
 	vmRefreshAfter = 6 * 3600
 )

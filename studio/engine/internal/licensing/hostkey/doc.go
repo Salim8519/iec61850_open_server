@@ -17,8 +17,14 @@ package hostkey
 const (
 	// Port is the TCP port of the proof service on the host's virtual-switch adapters.
 	Port = 47862
-	// ProofPrefix starts the signed message: ProofPrefix + nonce + "|" + vm_hwid.
-	ProofPrefix = "scadabench-vm-proof-v1|"
+	// ProofPrefix starts the signed message: ProofPrefix + nonce + "|" + vm_hwid + "|" + time. There is
+	// no older version of the proof: nothing with the unsigned form ever shipped.
+	ProofPrefix = "scadabench-vm-proof-v2|"
+	// ProofSkewSeconds is how far the host's signed time may be from a VM's own clock (10 minutes),
+	// and how far a proof's time may be ahead of the clock that checks it later.
+	ProofSkewSeconds = 600
+	// ProofMaxAgeSeconds is how long a signed proof stays valid (24 hours); the native guard uses the same.
+	ProofMaxAgeSeconds = 24 * 3600
 	// HelperExe is the host helper program shipped beside the native workers.
 	HelperExe = "scadabench_hostkey.exe"
 	// RunValueName is the HKCU Run value that starts the helper at logon (only while sharing is on).

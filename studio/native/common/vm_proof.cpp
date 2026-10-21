@@ -59,15 +59,20 @@ Verdict verify_vm_proof(const std::string& text, const std::vector<PublicKey>& k
         nonce = proof.at("nonce").get<std::string>();
         vm_hwid = proof.at("vm_hwid").get<std::string>();
         signature_text = proof.at("signature").get<std::string>();
-        time = proof.at("time").get<long long>();
+        const auto& time_field = proof.at("time");
+        if (!time_field.is_number_integer()) return fail("The virtual machine proof is damaged");
+        time = time_field.get<long long>();
         certificate = proof.at("certificate");
     } catch (const std::exception&) {
         return fail("The virtual machine proof is damaged");
     }
     if (vm_hwid != hwid) return fail("The virtual machine proof is for another computer");
-    if (time > now + kVmProofFutureTolerance || now - time > kVmProofMaxAge) {
+    if (time <= 0 || time > now + kVmProofFutureTolerance || now - time > kVmProofMaxAge) {
         return fail("The virtual machine proof is out of date");
     }
+    // The newest time this computer has seen (the license clock anchor, advanced by the backend) bounds
+    // the age too, so a clock set back cannot make an expired proof look young again.
+    if (clock.anchor - time > kVmProofMaxAge) return fail("System clock rollback detected");
     if (!lowercase_hex(nonce, 32) || !lowercase_hex(vm_hwid, 64)) return fail("The virtual machine proof is damaged");
     PublicKey host_key{};
     const auto host = check_host_certificate(certificate, keys, now, clock, host_key);
@@ -76,7 +81,7 @@ Verdict verify_vm_proof(const std::string& text, const std::vector<PublicKey>& k
     if (!decode_base64url(signature_text, signature) || signature.size() != 64) {
         return fail("The virtual machine proof is damaged");
     }
-    const std::string message = OBF_STR("scadabench-vm-proof-v1|") + nonce + "|" + vm_hwid;
+    const std::string message = OBF_STR("scadabench-vm-proof-v2|") + nonce + "|" + vm_hwid + "|" + std::to_string(time);
     if (crypto_ed25519_check(signature.data(), host_key.data(),
                              reinterpret_cast<const std::uint8_t*>(message.data()), message.size()) != 0) {
         return fail("The host did not confirm this virtual machine");

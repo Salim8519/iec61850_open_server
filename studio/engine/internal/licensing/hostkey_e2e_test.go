@@ -249,4 +249,24 @@ func checkNativeGuard(t *testing.T, h *hostE2E, proofPath, vmHome string) {
 	if got := run(proofPath, strings.Repeat("0", 64), time.Now()); !strings.Contains(got, "another computer") {
 		t.Fatalf("the native guard accepted the proof on another machine: %q", got)
 	}
+	// The time in the file is the one the host signed: a file whose time was edited is refused, also
+	// when the edit would make an expired proof look young.
+	data, err := os.ReadFile(proofPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var document map[string]any
+	if err := json.Unmarshal(data, &document); err != nil {
+		t.Fatal(err)
+	}
+	signed := int64(document["time"].(float64))
+	document["time"] = signed + 3600
+	edited, _ := json.Marshal(document)
+	editedPath := filepath.Join(vmHome, "edited_proof.json")
+	if err := os.WriteFile(editedPath, edited, 0o666); err != nil {
+		t.Fatal(err)
+	}
+	if got := run(editedPath, hwid, time.Unix(signed+3600, 0)); !strings.Contains(got, "did not confirm") {
+		t.Fatalf("the native guard accepted a proof whose time was edited: %q", got)
+	}
 }

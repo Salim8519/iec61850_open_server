@@ -95,7 +95,8 @@ func (h *HostResponder) Check() (*hostLicense, error) {
 	return &hostLicense{bundle: bundle, public: public, private: private}, nil
 }
 
-// Answer signs the proof of request for a VM and hands over the host's certificate.
+// Answer signs the proof of request for a VM, together with this PC's time, and hands over the host's
+// certificate. The time is part of the signature, so a VM can tell how old the proof is.
 func (h *HostResponder) Answer(request hostkey.Request) (hostkey.Answer, error) {
 	license, err := h.Check()
 	if err != nil {
@@ -108,5 +109,6 @@ func (h *HostResponder) Answer(request hostkey.Request) (hostkey.Answer, error) 
 	if err != nil {
 		return hostkey.Answer{}, err
 	}
-	return hostkey.Answer{Certificate: certificate, Signature: hostkey.Sign(license.private, request)}, nil
+	at := int64(h.options.Clock())
+	return hostkey.Answer{Certificate: certificate, Time: at, Signature: hostkey.Sign(license.private, request, at)}, nil
 }

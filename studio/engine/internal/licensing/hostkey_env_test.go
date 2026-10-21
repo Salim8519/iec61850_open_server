@@ -105,6 +105,7 @@ type hkHost struct {
 	protector hostkey.FakeProtector
 	registry  hkRegistry
 	now       *float64
+	skew      float64 // seconds this PC's clock is ahead of the test clock
 }
 
 func newHKHost(t *testing.T, signer *hkSigner) *hkHost {
@@ -143,5 +144,5 @@ func (h *hkHost) install(fields map[string]any) Bundle {
 
 func (h *hkHost) responder() *HostResponder {
 	return NewHostResponder(HostOptions{Home: h.home, Keys: h.signer.keys(), HWID: func() (string, error) { return h.hwid, nil },
-		Protector: h.protector, Registry: h.registry, Clock: func() float64 { return *h.now }})
+		Protector: h.protector, Registry: h.registry, Clock: func() float64 { return *h.now + h.skew }})
 }

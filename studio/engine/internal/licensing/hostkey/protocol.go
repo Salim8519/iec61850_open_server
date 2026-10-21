@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"strconv"
 )
 
 // Request is the one JSON line a VM sends: a fresh nonce and the VM's own machine ID.
@@ -13,17 +14,20 @@ type Request struct {
 	VMHWID string `json:"vm_hwid"`
 }
 
-// Answer is the one JSON line the host returns: its license.cert object and the host key's
-// signature over ProofMessage. Error is set instead (and the rest empty) when the host refuses.
+// Answer is the one JSON line the host returns: its license.cert object, the host's own clock in
+// Unix seconds (Time) and the host key's signature over ProofMessage, which covers that exact time.
+// Error is set instead (and the rest empty) when the host refuses.
 type Answer struct {
 	Certificate json.RawMessage `json:"certificate,omitempty"`
 	Signature   string          `json:"signature,omitempty"`
+	Time        int64           `json:"time,omitempty"`
 	Error       string          `json:"error,omitempty"`
 }
 
-// ProofMessage is the exact byte string the host key signs.
-func ProofMessage(nonce, vmHWID string) []byte {
-	return []byte(ProofPrefix + nonce + "|" + vmHWID)
+// ProofMessage is the exact byte string the host key signs: the prefix, the VM's nonce, the VM's
+// machine ID and the host's time as decimal Unix seconds, joined by "|".
+func ProofMessage(nonce, vmHWID string, at int64) []byte {
+	return []byte(ProofPrefix + nonce + "|" + vmHWID + "|" + strconv.FormatInt(at, 10))
 }
 
 func lowerHex(text string, length int) bool {
@@ -56,18 +60,20 @@ func (r Request) Validate() error {
 	return nil
 }
 
-// Sign signs the proof for request with the host's private key (base64url, no padding).
-func Sign(private ed25519.PrivateKey, request Request) string {
-	return base64.RawURLEncoding.EncodeToString(ed25519.Sign(private, ProofMessage(request.Nonce, request.VMHWID)))
+// Sign signs the proof for request at the host's time at with the host's private key (base64url,
+// no padding).
+func Sign(private ed25519.PrivateKey, request Request, at int64) string {
+	return base64.RawURLEncoding.EncodeToString(ed25519.Sign(private, ProofMessage(request.Nonce, request.VMHWID, at)))
 }
 
-// Verify checks a proof signature (base64url) made for request with the host's public key.
-func Verify(public ed25519.PublicKey, request Request, signature string) bool {
+// Verify checks a proof signature (base64url) made for request and exactly the time at with the
+// host's public key. A different time, nonce or machine never verifies.
+func Verify(public ed25519.PublicKey, request Request, at int64, signature string) bool {
 	raw, err := base64.RawURLEncoding.Strict().DecodeString(signature)
 	if err != nil || base64.RawURLEncoding.EncodeToString(raw) != signature || len(raw) != ed25519.SignatureSize || len(public) != ed25519.PublicKeySize {
 		return false
 	}
-	return ed25519.Verify(public, ProofMessage(request.Nonce, request.VMHWID), raw)
+	return ed25519.Verify(public, ProofMessage(request.Nonce, request.VMHWID, at), raw)
 }
 
 // EncodeKey is the text of a host public key: base64url without padding (43 characters).

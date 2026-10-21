@@ -35,7 +35,7 @@ func TestAVMWithoutALicenseIsLicensedByItsHostAndTheNativeWorkersGetTheirProof(t
 	if request.Validate() != nil || proof.VMHWID != rig.vmHWID || proof.Time != int64(*rig.now) {
 		t.Fatalf("proof file: %+v", proof)
 	}
-	if !hostkey.Verify(mustKey(t, rig.host.publicKey()), request, proof.Signature) {
+	if !hostkey.Verify(mustKey(t, rig.host.publicKey()), request, proof.Time, proof.Signature) {
 		t.Fatal("the proof file's signature does not verify with the host key")
 	}
 	if _, err := VerifyBundle(Bundle{proof.Certificate.Payload, proof.Certificate.Signature}, rig.host.signer.keys()); err != nil {

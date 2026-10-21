@@ -28,7 +28,10 @@ func TestALicensedHostAnswersWithItsCertificateAndAProofForThatVM(t *testing.T) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !hostkey.Verify(mustKey(t, host.publicKey()), vmRequest, answer.Signature) {
+	if answer.Time != int64(*host.now) {
+		t.Fatalf("the answer carries time %d, the host clock says %d", answer.Time, int64(*host.now))
+	}
+	if !hostkey.Verify(mustKey(t, host.publicKey()), vmRequest, answer.Time, answer.Signature) {
 		t.Fatal("the proof does not verify with the host key")
 	}
 	parsed, err := ParseBundle(string(answer.Certificate))
@@ -36,7 +39,7 @@ func TestALicensedHostAnswersWithItsCertificateAndAProofForThatVM(t *testing.T) 
 		t.Fatalf("the answer carries another certificate: %v", err)
 	}
 	other := hostkey.Request{Nonce: vmRequest.Nonce, VMHWID: strings.Repeat("cc", 32)}
-	if hostkey.Verify(mustKey(t, host.publicKey()), other, answer.Signature) {
+	if hostkey.Verify(mustKey(t, host.publicKey()), other, answer.Time, answer.Signature) {
 		t.Fatal("a proof for one VM verifies for another")
 	}
 }

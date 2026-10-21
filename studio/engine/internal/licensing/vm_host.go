@@ -23,54 +23,15 @@ type vmHostState struct {
 	refresh sync.Mutex // one search at a time: two never write the proof file together
 	mu      sync.Mutex
 	proof   *vmProof
+	loaded  bool // vm_proof.json was read once at start (storedVMProof)
 	running bool
 	nextTry float64
 }
 
-// acceptHostAnswer is every rule of the contract for an answer a VM gets: the certificate verifies
-// with the release keys, is a lifetime license that is not cancelled here and names a host key, and
-// the signature verifies for this request (this nonce and this VM's machine ID).
+// acceptHostAnswer applies the rules of verifyProof (vm_proof_check.go) to an answer just received:
+// certificate, signature for this nonce, this machine ID and the host's signed time, and clocks.
 func (s *Service) acceptHostAnswer(answer hostkey.Answer, request hostkey.Request) (*vmProof, error) {
-	bundle, err := ParseBundle(string(answer.Certificate))
-	if err != nil {
-		return nil, err
-	}
-	payload, err := VerifyBundle(bundle, s.options.Keys)
-	if err != nil {
-		return nil, err
-	}
-	version, damaged, err := payloadInt(payload, "version", true)
-	if err != nil || damaged || version != 1 {
-		return nil, errors.New(Unsupported)
-	}
-	if plan, _ := payload.Get("type"); plan != any("lifetime") {
-		return nil, errors.New(HostNotLifetimeText)
-	}
-	now := s.now()
-	issued, damaged, err := payloadInt(payload, "issued_at", false)
-	if err != nil || damaged {
-		return nil, errors.New(Damaged)
-	}
-	expires, _, _ := payloadInt(payload, "expires_at", true)
-	switch {
-	case now+ClockToleranceSeconds < max(s.anchor.MaxSeen(), issued):
-		return nil, errors.New(ClockRollback)
-	case expires > 0 && now >= expires:
-		return nil, errors.New(LicenseExpired)
-	}
-	licenseID, _ := payload.Get("license_id")
-	if s.revoked.Contains(licenseID) {
-		return nil, errors.New(RevokedText)
-	}
-	hostText := certHostKey(payload)
-	public, err := hostkey.DecodeKey(hostText)
-	if err != nil {
-		return nil, errors.New("the host's license has no virtual machine key")
-	}
-	if !hostkey.Verify(public, request, answer.Signature) {
-		return nil, errors.New("the host's signature does not match this request")
-	}
-	return &vmProof{at: now, licenseID: licenseID, hostKey: hostText}, nil
+	return s.verifyProof(answer.Certificate, request, answer.Signature, answer.Time, true)
 }
 
 // RefreshVMHost asks the hosts near this computer for a proof now (the same search a background
@@ -123,7 +84,7 @@ func (s *Service) askHost(vm *VMOptions) error {
 	if err != nil {
 		return err
 	}
-	if err := s.writeVMProof(found.Answer, request, accepted.at); err != nil {
+	if err := s.writeVMProof(found.Answer, request); err != nil {
 		return err
 	}
 	s.vm.mu.Lock()
