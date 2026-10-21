@@ -85,6 +85,10 @@ func TestScenariosMatchPython(t *testing.T) {
 	t.Setenv("STUDIO_LICENSE_CERT_PATH", "")
 	for _, sc := range recorded.Scenarios {
 		t.Run(sc.Name, func(t *testing.T) {
+			if sc.Legacy != nil {
+				// The Go engine accepts no v1 or v2 machine ID (ADR-0098); Python still does.
+				t.Skip("legacy machine IDs are Python-only")
+			}
 			root := scenarioDir(t)
 			clock, calls := 0.0, [][]any{}
 			var registry Registry

@@ -1,3 +1,10 @@
 module studio-engine
 
-go 1.24
+go 1.24.0
+
+require (
+	github.com/google/go-attestation v0.6.4
+	github.com/google/go-tpm v0.9.8
+)
+
+require golang.org/x/sys v0.41.0

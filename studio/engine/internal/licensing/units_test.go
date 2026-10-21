@@ -135,29 +135,10 @@ func TestKeysAndMasksMatchPython(t *testing.T) {
 	}
 }
 
-func TestMachineIDRulesMatchPython(t *testing.T) {
-	v := loadUnits(t)
-	for _, c := range v.Compose {
-		parts := MachineParts{MachineGUID: c.GUID, VolumeSerial: c.Serial, FirmwareUUID: c.UUID}
-		if Compose(parts) != c.V2 || ComposeLegacy(parts) != c.V1 {
-			t.Errorf("compose(%q) differs", c.GUID)
-		}
-	}
-	for _, c := range v.BoundHWID {
-		legacy := ""
-		if c.Legacy != nil {
-			legacy = *c.Legacy
-		}
-		got, _ := BoundHWID(mustDecode(t, c.Cert), mustDecode(t, c.Issued), c.Current, legacy)
-		want, ok := c.okString()
-		if !ok {
-			want = c.Current // Python's _machine_for falls back to the current ID
-		}
-		if got != want {
-			t.Errorf("bound_hwid(%s, %s) = %q, want %q", c.Cert, c.Issued, got, want)
-		}
-	}
-	for _, c := range v.SMBIOS {
+// TestSMBIOSSystemUUIDMatchesPython: the type 1 UUID reader is the one Python and the
+// native guard share. The machine ID built from it is v3 and has its own tests (hwid_test.go).
+func TestSMBIOSSystemUUIDMatchesPython(t *testing.T) {
+	for _, c := range loadUnits(t).SMBIOS {
 		if got := SMBIOSSystemUUID(fromHex(t, c.Raw)); got != c.UUID {
 			t.Errorf("smbios %s = %q, want %q", c.Raw, got, c.UUID)
 		}

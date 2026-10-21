@@ -1,0 +1,124 @@
+{
+  "about": "ADR-0098 machine ID v3 vectors; hwid = SHA256_HEX('scadabench-hwid-v3|'+firmware+'|'+board+'|'+extra). Written by an independent Python reference (the reference itself is re-run by test_native_license.py); used by the Go engine and the native guard tests.",
+  "cases": [
+    {
+      "name": "both real",
+      "firmware": "7a1b2c3d4e5f60718293a4b5c6d7e8f9",
+      "board": "SN-4711-X",
+      "guid": "6B29FC40-CA47-1067-B31D-00DD010662DA",
+      "hwid": "6b3e31535bc718148fd7f52539715d00705046ac4c012d34bd0a9f603da05d77"
+    },
+    {
+      "name": "firmware only, board is a placeholder",
+      "firmware": "7a1b2c3d4e5f60718293a4b5c6d7e8f9",
+      "board": "Default string",
+      "guid": "g1",
+      "hwid": "c200fb221094b952d29e7a5d60ca21616dfd398a5f76d86dc646ebf2175560bc"
+    },
+    {
+      "name": "board only, firmware is one repeated byte",
+      "firmware": "ffffffffffffffffffffffffffffffff",
+      "board": "BRD 123 456",
+      "guid": "g2",
+      "hwid": "7bdf6debff00bc1c46d49577109e3ffec159736587706215a683bf2accbd26b6"
+    },
+    {
+      "name": "both placeholders fall back to MachineGuid",
+      "firmware": "",
+      "board": "To be filled by O.E.M.",
+      "guid": " 6B29FC40-CA47-1067-B31D-00DD010662DA ",
+      "hwid": "7d73735aeda84e1ffc69517d356abc2a03123d705fd7fe8251dc6bc359fc530e"
+    },
+    {
+      "name": "placeholder firmware UUID in displayed order",
+      "firmware": "03000200040005000006000700080009",
+      "board": "None",
+      "guid": "G3",
+      "hwid": "c6041ce2e22cad32c3224f5fc48f51fed5ae4feedd6d8cabc764120266cd1ddf"
+    },
+    {
+      "name": "placeholder firmware UUID in raw byte order",
+      "firmware": "00020003000400050006000700080009",
+      "board": "N/A",
+      "guid": "G3",
+      "hwid": "c6041ce2e22cad32c3224f5fc48f51fed5ae4feedd6d8cabc764120266cd1ddf"
+    },
+    {
+      "name": "second placeholder firmware UUID",
+      "firmware": "00020003000400050006000700080009",
+      "board": "n/a",
+      "guid": "G3",
+      "hwid": "c6041ce2e22cad32c3224f5fc48f51fed5ae4feedd6d8cabc764120266cd1ddf"
+    },
+    {
+      "name": "board is trimmed and keeps its case",
+      "firmware": "7a1b2c3d4e5f60718293a4b5c6d7e8f9",
+      "board": "  AbC-123\t",
+      "guid": "g",
+      "hwid": "b85620cc260d46404f170518301fe1ad0eceec65dd09e4723d172e3a74a55048"
+    },
+    {
+      "name": "a Windows reinstall (new MachineGuid) keeps a firmware ID",
+      "firmware": "7a1b2c3d4e5f60718293a4b5c6d7e8f9",
+      "board": "SN-4711-X",
+      "guid": "another-guid",
+      "hwid": "6b3e31535bc718148fd7f52539715d00705046ac4c012d34bd0a9f603da05d77"
+    },
+    {
+      "name": "uppercase placeholder text",
+      "firmware": "",
+      "board": "TO BE FILLED BY O.E.M.",
+      "guid": "g4",
+      "hwid": "5fba4a100f731ce00aec50bbc7bb89d015f1c450ada9b9dce91261c015a9f253"
+    },
+    {
+      "name": "board 0",
+      "firmware": "",
+      "board": "0",
+      "guid": "g5",
+      "hwid": "759c0410d71d44f187b4d51862f6bb121d79e496d7341c73809f27c055fb88e6"
+    },
+    {
+      "name": "board of one repeated character",
+      "firmware": "",
+      "board": "0000000000",
+      "guid": "g6",
+      "hwid": "1af6ccfcd66f9b1c6cd985d1bd9eb66819b549c51fb527607673bdbbb94e15b2"
+    },
+    {
+      "name": "board of one repeated letter",
+      "firmware": "",
+      "board": "xxxx",
+      "guid": "g7",
+      "hwid": "89947f592070ce136333faf309c37183d8e7984f146553a6a82bf149de77e354"
+    },
+    {
+      "name": "board that only looks repeated",
+      "firmware": "",
+      "board": "0000000001",
+      "guid": "g8",
+      "hwid": "0015d554b1405809f3d7b04885abdaee594b529687c40b3f8a514ef62cac9ad2"
+    },
+    {
+      "name": "malformed firmware",
+      "firmware": "xyz",
+      "board": "",
+      "guid": "g9",
+      "hwid": "028a23105b7d38a42952eab67a69300f42524fd6001f19a3ca54157e9cf7b6d8"
+    },
+    {
+      "name": "uppercase firmware hex is lowercased",
+      "firmware": "7A1B2C3D4E5F60718293A4B5C6D7E8F9",
+      "board": "SN-1",
+      "guid": "g10",
+      "hwid": "b8a15afb560773790fe7eed54305a8e36b60e846a9a6de0fca9f81c62d5480da"
+    },
+    {
+      "name": "nothing readable at all",
+      "firmware": "",
+      "board": "",
+      "guid": "",
+      "hwid": "8ca207bedf9990db224312662dab0ad217d7dae77918ad13c23864512e169dee"
+    }
+  ]
+}

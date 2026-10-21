@@ -49,19 +49,13 @@ func (s *Service) evaluate() (Status, error) {
 		return Unlicensed(RevokedText, plan, licenseID, nil), nil
 	}
 	now := s.now()
-	bound, err := s.machineFor(payload)
+	bound, err := s.HWID()
 	if err != nil {
 		return Status{}, err
 	}
-	s.mu.Lock()
-	s.boundHWID = bound
-	s.mu.Unlock()
 	var status Status
-	if plan, _ := payload.Get("type"); plan != any("trial") { // lifetime: exactly the original rule
-		status, err = EvaluateCertificate(payload, bound, now, s.anchor.MaxSeen(), false, ClockToleranceSeconds)
-		if err != nil {
-			err = uncaught(err.Error())
-		}
+	if plan, _ := payload.Get("type"); plan != any("trial") { // lifetime: the original rule plus its binding
+		status, err = s.evaluateLifetime(payload, bound, now)
 	} else {
 		status, err = s.evaluateTrial(payload, bound, now)
 	}
@@ -72,6 +66,23 @@ func (s *Service) evaluate() (Status, error) {
 		s.anchor.Advance(now)
 	}
 	return status, nil
+}
+
+// evaluateLifetime is the lifetime rule of license_policy (300 s clock tolerance) plus what
+// ties the license to this computer (ADR-0098): the security chip's proof, or the online lease.
+func (s *Service) evaluateLifetime(payload *pyjson.Object, bound string, now int64) (Status, error) {
+	seen := s.anchor.MaxSeen()
+	if leaseDays(payload) > 0 && certAK(payload) == "" {
+		seen = max(seen, s.lease.ReceiptTime(payload, bound)) // signed server time guards the clock
+	}
+	status, err := EvaluateCertificate(payload, bound, now, seen, false, ClockToleranceSeconds)
+	if err != nil {
+		return Status{}, uncaught(err.Error())
+	}
+	if !status.Licensed {
+		return status, nil
+	}
+	return s.applyBinding(status, payload, bound, now), nil
 }
 
 // evaluateTrial is LicenseService._evaluate_trial: a missing anchor only asks for one

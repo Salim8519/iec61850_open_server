@@ -51,7 +51,7 @@ func (s *Service) StartTrial(email, code any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.install(answer)
+	return s.install(answer, nil)
 }
 
 // RequestTrialCode asks the server to email a trial code to email (any decoded JSON

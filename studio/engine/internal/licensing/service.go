@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"studio-engine/internal/licensing/pytext"
+	"studio-engine/internal/licensing/tpm"
 	"studio-engine/internal/pyjson"
 )
 
@@ -24,10 +25,8 @@ type Options struct {
 	Home    string // license home, normally DefaultHome()
 	DataDir string // the app data folder (logs/runs.jsonl feeds the time anchor)
 	Enforce bool   // packaged builds enforce; development never does
-	// HWID and LegacyHWID read the machine IDs. Both nil means this PC (MachineID and
-	// LegacyMachineID); HWID set and LegacyHWID nil means no legacy ID, as in Python.
+	// HWID reads the machine ID (v3, ADR-0098); nil means this PC (MachineID).
 	HWID          func() (string, error)
-	LegacyHWID    func() (string, error)
 	Clock         func() float64       // nil means time.time()
 	Keys          map[string][]byte    // nil means PublicKeys(); an empty map means none
 	ClientFactory ClientFactory        // nil means DefaultClientFactory
@@ -46,6 +45,10 @@ type Options struct {
 	AllowTestServer bool
 	// Nonce returns the 32 hex characters sent with every verify call; nil means RandomNonce.
 	Nonce func() string
+	// Chip is the computer's security chip (ADR-0098). The app composition passes
+	// tpm.System(); nil means no chip, so every license is a lease and tests never touch
+	// hardware.
+	Chip tpm.Chip
 }
 
 // Service owns this computer's license state (service.LicenseService).
@@ -54,19 +57,23 @@ type Service struct {
 	certFile   string
 	configFile string
 	stateFile  string
+	akFile     string // the stored attestation key of a chip-bound license
 	anchor     TimeAnchor
 	trialClock TrialClock
 	revoked    RevokedIDs
+	lease      LeaseStore
+	chip       chipState
 
-	mu         sync.Mutex // cache, machine IDs and bound ID
-	filesMu    sync.Mutex // serialises read-modify-write of the home files, like Python's RLock
-	cached     *Status
-	cachedAt   float64
-	hwid       string
-	hwidDone   bool
-	legacyDone bool
-	legacy     string
-	boundHWID  string
+	mu       sync.Mutex // cache and machine ID
+	filesMu  sync.Mutex // serialises read-modify-write of the home files, like Python's RLock
+	leaseMu  sync.Mutex // one lease check at a time: a check rotates the token
+	cached   *Status
+	cachedAt float64
+	hwid     string
+	hwidDone bool
+	// leaseValidFrom is when a lease license was last confirmed (signed): the later of its
+	// certificate's issue time and its newest signed verify answer.
+	leaseValidFrom int64
 }
 
 // DefaultHome is %LOCALAPPDATA%\ScadaBench (or ~/AppData/Local/ScadaBench).
@@ -103,16 +110,21 @@ func New(options Options) *Service {
 	if options.Parts == nil {
 		options.Parts = MachineTrialParts
 	}
-	if options.HWID == nil && options.LegacyHWID == nil {
-		options.HWID, options.LegacyHWID = MachineID, LegacyMachineID
+	if options.HWID == nil {
+		options.HWID = MachineID
+	}
+	if options.Chip == nil {
+		options.Chip = tpm.None{}
 	}
 	s := &Service{options: options, certFile: filepath.Join(options.Home, "license.cert"),
 		configFile: filepath.Join(options.Home, "client_config.json"),
 		stateFile:  filepath.Join(options.Home, "license_state.json"),
+		akFile:     filepath.Join(options.Home, "ak.blob"),
 		anchor: TimeAnchor{Value: NewClockValue("time_anchor", options.Home, options.Registry),
 			RunsFile: filepath.Join(options.DataDir, "logs", "runs.jsonl")},
 		trialClock: NewTrialClock(options.Home, options.Registry, options.Keys),
-		revoked:    NewRevokedIDs(options.Home, options.Registry)}
+		revoked:    NewRevokedIDs(options.Home, options.Registry),
+		lease:      NewLeaseStore(options.Home, options.Registry, options.Keys)}
 	if options.Enforce {
 		os.Setenv("STUDIO_LICENSE_CERT_PATH", s.certFile)
 	}
@@ -148,39 +160,6 @@ func (s *Service) HWID() (string, error) {
 		s.hwid, s.hwidDone = id, true
 	}
 	return s.hwid, nil
-}
-
-// LegacyHWID returns the pre-v2 machine ID, or "" when it cannot be read or is not wanted.
-func (s *Service) LegacyHWID() string {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if !s.legacyDone {
-		s.legacyDone = true
-		if s.options.LegacyHWID != nil {
-			if id, err := s.options.LegacyHWID(); err == nil {
-				s.legacy = id
-			}
-		}
-	}
-	return s.legacy
-}
-
-// machineFor is _machine_for: the machine ID this certificate must match.
-func (s *Service) machineFor(payload *pyjson.Object) (string, error) {
-	current, err := s.HWID()
-	if err != nil {
-		return "", err
-	}
-	certificateHWID, _ := payload.Get("hwid")
-	issuedAt, found := payload.Get("issued_at")
-	if !found {
-		issuedAt = int64(0)
-	}
-	bound, err := BoundHWID(certificateHWID, issuedAt, current, s.LegacyHWID())
-	if err == errIntOverflow {
-		return "", uncaught("cannot convert float infinity to integer")
-	}
-	return bound, nil
 }
 
 // ServerURL is the built-in license server in an enforcing build; client_config.json is

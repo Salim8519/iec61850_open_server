@@ -61,8 +61,8 @@ func TestRequireFollowsSecurityRules(t *testing.T) {
 }
 
 // TestMachineIDOnThisPC reads the real machine ID (read-only Windows calls). Set
-// STUDIO_EXPECTED_HWID to Python's hwid.machine_id() to compare both on one PC; the value
-// is never stored in the repository.
+// STUDIO_EXPECTED_HWID to the native guard's `studio_license_check hwid` to compare both on
+// one PC; the value is never stored in the repository.
 func TestMachineIDOnThisPC(t *testing.T) {
 	if runtime.GOOS != "windows" {
 		if _, err := MachineID(); err == nil {
@@ -74,15 +74,14 @@ func TestMachineIDOnThisPC(t *testing.T) {
 	if err != nil {
 		t.Skipf("machine ID unreadable here: %v", err)
 	}
-	legacy, err := LegacyMachineID()
-	pattern := regexp.MustCompile(`^[0-9a-f]{64}$`)
-	if err != nil || !pattern.MatchString(current) || !pattern.MatchString(legacy) || current == legacy {
-		t.Fatalf("machine IDs %q %q %v", current, legacy, err)
+	if !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(current) {
+		t.Fatalf("machine ID %q", current)
+	}
+	again, err := MachineID()
+	if err != nil || again != current {
+		t.Fatalf("the machine ID is not stable: %q then %q (%v)", current, again, err)
 	}
 	if want := os.Getenv("STUDIO_EXPECTED_HWID"); want != "" && want != current {
-		t.Fatal("Go machine ID differs from Python's")
-	}
-	if want := os.Getenv("STUDIO_EXPECTED_LEGACY_HWID"); want != "" && want != legacy {
-		t.Fatal("Go legacy machine ID differs from Python's")
+		t.Fatal("Go machine ID differs from the native guard's")
 	}
 }

@@ -134,10 +134,6 @@ func newScenarioService(t *testing.T, sc scenario, root string, clock *float64, 
 	if string(sc.HWID) == "null" {
 		options.HWID = func() (string, error) { return "", errors.New("Machine licensing is available on Windows only") }
 	}
-	if sc.Legacy != nil {
-		legacy := *sc.Legacy
-		options.LegacyHWID = func() (string, error) { return legacy, nil }
-	}
 	if options.Keys == nil {
 		options.Keys = testKeys(t)
 	}

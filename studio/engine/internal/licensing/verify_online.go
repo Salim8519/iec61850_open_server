@@ -66,14 +66,9 @@ func (s *Service) verifyLifetime(status Status) (any, error) {
 	if s.options.Clock()-last < VerifyEverySeconds {
 		return nil, nil
 	}
-	s.mu.Lock()
-	bound := s.boundHWID
-	s.mu.Unlock()
-	var err error
-	if bound == "" {
-		if bound, err = s.HWID(); err != nil {
-			return nil, err
-		}
+	bound, err := s.HWID()
+	if err != nil {
+		return nil, err
 	}
 	verdict, answer, err := s.signedVerdict(status.LicenseID, bound)
 	var server *ServerError
@@ -83,27 +78,40 @@ func (s *Service) verifyLifetime(status Status) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.applyVerdict(status.LicenseID, verdict, answer, bound)
+	return s.applyVerdict(status.LicenseID, verdict, answer)
 }
 
 // signedVerdict is OnlineChecks._signed_verdict: ask the server about a license with a
 // fresh nonce; the verdict and the whole answer come back only for a genuine signed answer,
 // otherwise a "bad_answer" ServerError (which callers treat like an unreachable server).
 func (s *Service) signedVerdict(licenseID any, machine string) (string, *pyjson.Object, error) {
+	verified, answer, err := s.signedAnswer(licenseID, machine, "")
+	return verified.Status, answer, err
+}
+
+// signedAnswer is signedVerdict for a license that may hold a lease token (ADR-0098): the
+// token goes with the request when there is one, and the genuine answer's own fields
+// (verdict, new token, signed time and the signed bundle itself) come back.
+func (s *Service) signedAnswer(licenseID any, machine, leaseToken string) (VerifiedAnswer, *pyjson.Object, error) {
 	nonce := s.options.Nonce()
 	client, err := s.client()
 	if err != nil {
-		return "", nil, err
+		return VerifiedAnswer{}, nil, err
 	}
-	answer, err := client.Verify(licenseID, machine, nonce)
+	var answer any
+	if binder, canBind := client.(BindingClient); canBind && leaseToken != "" {
+		answer, err = binder.VerifyLease(licenseID, machine, nonce, leaseToken)
+	} else {
+		answer, err = client.Verify(licenseID, machine, nonce)
+	}
 	if err != nil {
-		return "", nil, err
+		return VerifiedAnswer{}, nil, err
 	}
-	verdict, ok := VerifiedStatus(answer, nonce, licenseID, machine, s.options.Keys)
+	verified, ok := VerifyAnswer(answer, nonce, licenseID, machine, s.options.Keys)
 	if !ok {
-		return "", nil, &ServerError{Message: BadAnswerText, Code: "bad_answer"}
+		return VerifiedAnswer{}, nil, &ServerError{Message: BadAnswerText, Code: "bad_answer"}
 	}
-	return verdict, answerObject(answer), nil
+	return verified, answerObject(answer), nil
 }
 
 // cancel is OnlineChecks._cancel: the server cancelled this license, so remember it for
@@ -124,13 +132,13 @@ func (s *Service) cancel(licenseID any, verdict string) string {
 
 // applyVerdict stores what the server said: a cancelled license is remembered and loses
 // its certificate; a valid one may receive a fresh certificate.
-func (s *Service) applyVerdict(licenseID any, verdict string, answer *pyjson.Object, bound string) (any, error) {
+func (s *Service) applyVerdict(licenseID any, verdict string, answer *pyjson.Object) (any, error) {
 	update := pyjson.NewObject().Set("last_verify", s.now())
 	switch verdict {
 	case "revoked", "moved":
 		update.Set("revoked_reason", s.cancel(licenseID, verdict))
 	case "valid":
-		if err := s.refreshCertificate(answer, bound); err != nil {
+		if err := s.refreshCertificate(answer); err != nil {
 			return nil, err
 		}
 	}
@@ -156,15 +164,14 @@ func (s *Service) updateState(update *pyjson.Object) error {
 	return s.writeState(state)
 }
 
-// refreshCertificate keeps a reissued certificate for this PC; a legacy-bound certificate
-// is kept as is (a reissued one would no longer qualify for the legacy machine ID).
-func (s *Service) refreshCertificate(answer *pyjson.Object, bound string) error {
+// refreshCertificate keeps a reissued certificate for this PC.
+func (s *Service) refreshCertificate(answer *pyjson.Object) error {
 	fresh, found := answer.Get("certificate")
 	if !found || !truthy(fresh) {
 		return nil
 	}
 	hwid, err := s.HWID()
-	if err != nil || bound != hwid {
+	if err != nil {
 		return err
 	}
 	bundle, err := ParseBundle(fresh)

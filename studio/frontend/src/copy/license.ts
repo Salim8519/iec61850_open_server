@@ -15,6 +15,13 @@ export const LICENSE_COPY = {
   startWithEmail: 'Start free trial',
   checkOnlineButton: 'Check online now',
   checkOnlineHint: 'Confirms the date with the license server once. Your trial continues right away.',
+  checkOnlineLeaseHint: 'Confirms your license with the license server once. ScadaBench works again right away.',
+  bindingLabel: 'Tied to',
+  bindingTpm: "This computer's security chip",
+  bindingLease: 'Confirms online every 30 days',
+  bindingTpmHint: "This license is tied to this computer's security chip. It works offline, with no further checks.",
+  bindingLeaseHint: 'ScadaBench confirms this license with the license server in the background. '
+    + 'It keeps working offline for up to 30 days in between.',
   keyLabel: 'License key',
   keyPlaceholder: 'SUBS-XXXX-XXXX-XXXX-XXXX',
   keyHint: 'The key is in your purchase email. It works on one computer only and cannot be moved to another.',
@@ -39,12 +46,22 @@ export const LICENSE_COPY = {
   safeData: 'Your projects are safe: they stay in the data folder and open again as soon as ScadaBench is activated.',
 };
 
+/** "Tied to this computer's security chip" or "Confirms online every 30 days"; null when neither applies. */
+export function bindingText(status: LicenseStatus): string | null {
+  if (status.binding === 'tpm') return LICENSE_COPY.bindingTpm;
+  if (status.binding === 'lease') return LICENSE_COPY.bindingLease;
+  return null;
+}
+
 export function licenseState(status: LicenseStatus): Status {
   if (status.mode === 'development') {
     return { label: 'Development mode', tone: 'info', hint: 'Licensing is off while developing. Packaged builds check the license.' };
   }
   if (status.mode === 'lifetime') {
-    return { label: 'Lifetime license', tone: 'good', hint: 'This computer is licensed. No further action is needed.' };
+    const hint = status.binding === 'tpm' ? LICENSE_COPY.bindingTpmHint
+      : status.binding === 'lease' ? LICENSE_COPY.bindingLeaseHint
+        : 'This computer is licensed. No further action is needed.';
+    return { label: 'Lifetime license', tone: 'good', hint };
   }
   if (status.mode === 'trial') {
     const days = status.days_remaining ?? 0;

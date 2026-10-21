@@ -22,7 +22,7 @@ export function LicenseGate({ status, changed }: { status: LicenseStatus; change
       {status.online_check_required && <div className="license-online">
         <button className="primary large" onClick={() => online.run(checkOnline, changed)} disabled={online.busy}>
           <RefreshCw size={16} aria-hidden />{online.busy ? 'Checking…' : COPY.checkOnlineButton}</button>
-        <p className="small muted license-hint">{COPY.checkOnlineHint}</p>
+        <p className="small muted license-hint">{status.plan === 'trial' ? COPY.checkOnlineHint : COPY.checkOnlineLeaseHint}</p>
         {online.error && <div className="license-message problem" role="alert">{online.error.message}</div>}
       </div>}
       <div className="license-grid">

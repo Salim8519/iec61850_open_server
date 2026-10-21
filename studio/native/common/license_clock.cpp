@@ -142,7 +142,7 @@ ClockState read_clock_state(const std::string& directory, const std::vector<Publ
 namespace {
 
 Verdict verify_rules(const std::string& text, const std::vector<PublicKey>& keys, const std::string& hwid,
-                     long long now, const ClockState& clock, long long hwid_issued_before) {
+                     long long now, const ClockState& clock) {
     std::string type;
     long long expires = 0;
     try {  // read before the signature check only to pick the rules; verified just below
@@ -154,10 +154,10 @@ Verdict verify_rules(const std::string& text, const std::vector<PublicKey>& keys
     } catch (const std::exception&) {
     }
     if (type != "trial") {  // lifetime: exactly the original rule
-        return verify_certificate_text(text, keys, hwid, now, clock.anchor, hwid_issued_before);
+        return verify_certificate_text(text, keys, hwid, now, clock.anchor);
     }
     const long long latest = std::max(clock.anchor, clock.confirmed_at);
-    auto verdict = verify_certificate_text(text, keys, hwid, now, latest, hwid_issued_before, kTrialClockTolerance);
+    auto verdict = verify_certificate_text(text, keys, hwid, now, latest, kTrialClockTolerance);
     if (!verdict.ok) return verdict;
     if (clock.confirmed_at > 0 && expires > 0 && clock.confirmed_at >= expires) return fail("The license has expired");
     const bool unconfirmed = clock.grace_start > 0 && clock.confirmed_at < clock.grace_start;
@@ -170,8 +170,8 @@ Verdict verify_rules(const std::string& text, const std::vector<PublicKey>& keys
 }  // namespace
 
 Verdict verify_license(const std::string& text, const std::vector<PublicKey>& keys, const std::string& hwid,
-                       long long now, const ClockState& clock, long long hwid_issued_before) {
-    auto verdict = verify_rules(text, keys, hwid, now, clock, hwid_issued_before);
+                       long long now, const ClockState& clock) {
+    auto verdict = verify_rules(text, keys, hwid, now, clock);
     // Cancelled stays cancelled: a genuine certificate renamed back is still refused.
     if (verdict.ok && clock.revoked.count(certificate_license_id(text))) {
         return fail("The license was cancelled by the seller");

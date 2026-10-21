@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { buyUrl, isOtherComputer, offlineUrl, type LicenseStatus } from '../../frontend/src/api/license.ts';
-import { LICENSE_COPY, licenseState } from '../../frontend/src/copy/license.ts';
+import { bindingText, LICENSE_COPY, licenseState } from '../../frontend/src/copy/license.ts';
 
 const base: LicenseStatus = { licensed: false, mode: 'unlicensed', plan: null, days_remaining: null, expires_at: null,
   reason: 'This computer has no license yet.', license_id: null, email: null, enforced: true,
@@ -82,4 +82,24 @@ test('a trial the server wants confirmed asks for an email, and a mail outage ne
   assert.match(start, /answer\.status === 'no_code_needed'\) await trial\.run\(\(\) => startTrial\(email\), changed\)/);
   assert.match(start, /startTrial\(email, code\)/);
   assert.match(LICENSE_COPY.emailHint, /one free trial per person/);
+});
+
+test('a license says how it is tied to this computer, in plain words', () => {
+  const lifetime = { ...base, licensed: true, mode: 'lifetime' as const, plan: 'lifetime', reason: null };
+  assert.equal(bindingText({ ...lifetime, binding: 'tpm' }), "This computer's security chip");
+  assert.equal(bindingText({ ...lifetime, binding: 'lease' }), 'Confirms online every 30 days');
+  assert.equal(bindingText(lifetime), null);
+  assert.match(licenseState({ ...lifetime, binding: 'tpm' }).hint, /tied to this computer's security chip/);
+  assert.match(licenseState({ ...lifetime, binding: 'tpm' }).hint, /works offline/);
+  assert.match(licenseState({ ...lifetime, binding: 'lease' }).hint, /up to 30 days/);
+  assert.equal(licenseState(lifetime).label, 'Lifetime license');
+  const section = readFileSync(new URL('../../frontend/src/features/settings/LicenseSection.tsx', import.meta.url), 'utf8');
+  assert.match(section, /LICENSE_COPY\.bindingLabel, binding/);
+});
+
+test('a lease that needs one online check is shown with the same button and its own hint', () => {
+  const gate = readFileSync(new URL('../../frontend/src/features/license/LicenseGate.tsx', import.meta.url), 'utf8');
+  assert.match(gate, /status\.plan === 'trial' \? COPY\.checkOnlineHint : COPY\.checkOnlineLeaseHint/);
+  assert.match(LICENSE_COPY.checkOnlineLeaseHint, /Confirms your license/);
+  assert.match(api, /binding\?: 'tpm' \| 'lease'/);
 });

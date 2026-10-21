@@ -9,6 +9,7 @@ from pathlib import Path
 import subprocess
 import pytest
 from license_signer import bundle
+import hwid_v3
 from studio_app.licensing import hwid
 from studio_app.runtime.worker_process import WorkerProcess
 
@@ -47,13 +48,13 @@ def test_worker_refuses_to_serve_without_license(certificate):
 
 
 def test_worker_passes_license_gate_with_valid_certificate(certificate):
-    certificate.write_text(bundle(hwid=hwid.machine_id()), encoding="utf-8")
+    certificate.write_text(bundle(hwid=hwid_v3.machine_id()), encoding="utf-8")
     error = start_error(ENFORCED / "studio_ied.exe")
     assert "license" not in error.lower() and "License" not in error
 
 
 def test_worker_refuses_a_cancelled_license_whatever_the_certificate_says(certificate):
-    certificate.write_text(bundle(hwid=hwid.machine_id()), encoding="utf-8")
+    certificate.write_text(bundle(hwid=hwid_v3.machine_id()), encoding="utf-8")
     assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()
     revoked = certificate.parent / ".revoked_ids"
     revoked.write_text("SUBS-OTHR-OTHR-OTHR-OTHR,SUBS-TEST-TEST-TEST-TEST", encoding="utf-8")  # ADR-0097
@@ -65,20 +66,20 @@ def test_worker_refuses_a_cancelled_license_whatever_the_certificate_says(certif
     assert "cancelled" in start_error(ENFORCED / "studio_ied.exe")
 
 
-def test_worker_accepts_pre_v2_license_only_before_cutoff(certificate):
-    certificate.write_text(bundle(hwid=hwid.legacy_machine_id()), encoding="utf-8")
-    assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()
-    late = bundle(hwid=hwid.legacy_machine_id(), issued_at=hwid.LEGACY_ISSUED_BEFORE)
-    certificate.write_text(late, encoding="utf-8")
-    error = start_error(ENFORCED / "studio_ied.exe")
-    assert "another computer" in error or "rollback" in error
+def test_worker_accepts_only_the_machine_id_v3(certificate):
+    """ADR-0098: certificates for the older v1 and v2 machine IDs are refused, whenever they were issued."""
+    for old in (hwid.machine_id(), hwid.legacy_machine_id()):
+        certificate.write_text(bundle(hwid=old), encoding="utf-8")
+        assert "another computer" in start_error(ENFORCED / "studio_ied.exe")
+    certificate.write_text(bundle(hwid=hwid.legacy_machine_id(), issued_at=1_000_000_000), encoding="utf-8")
+    assert "another computer" in start_error(ENFORCED / "studio_ied.exe")
 
 
 def test_worker_applies_the_trial_online_rule(certificate):
     """ADR-0046 addendum 2026-10-19: no signed time yet = grace; grace over = online check."""
     import time
     now, day = int(time.time()), 86400
-    certificate.write_text(bundle(type="trial", hwid=hwid.machine_id(), issued_at=now - day,
+    certificate.write_text(bundle(type="trial", hwid=hwid_v3.machine_id(), issued_at=now - day,
                                   expires_at=now + 6 * day, license_id="TRIAL-test"), encoding="utf-8")
     assert "license" not in start_error(ENFORCED / "studio_ied.exe").lower()
     (certificate.parent / ".grace_start").write_text(str(now - 4 * day))
