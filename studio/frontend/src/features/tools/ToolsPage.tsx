@@ -33,7 +33,7 @@ export function ToolsPage({ project, locked, perform, tool, openTool, running, a
       {tool === 'explorer' && <ExplorerTool target={target} />}
       {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }}
         known={knownAddresses(project)} />}
-      {tool === 'gateway' && <ScadaTool header={header} runState={project.runtime} runIeds={runIeds} activity={activity} />}
+      {tool === 'gateway' && <ScadaTool header={header} ieds={project.ieds} runState={project.runtime} runIeds={runIeds} activity={activity} />}
       {tool === 'snmp' && <SnmpTool header={header} />}
       {tool === 'traffic' && <TrafficTool project={project} locked={locked} perform={perform} />}
     </div>;

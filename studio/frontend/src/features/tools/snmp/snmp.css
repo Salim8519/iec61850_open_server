@@ -15,17 +15,20 @@
 .snmp-values { table-layout: fixed; width: 100%; }
 .snmp-values td { vertical-align: top; }
 .snmp-values .col-type { width: 96px; }
-.snmp-values .col-changes { width: 230px; }
+.snmp-values .col-changes { width: 180px; }
 .snmp-values .col-writable { width: 80px; }
 .snmp-values .col-remove { width: 48px; }
 .snmp-values .col-actions { width: 200px; }
 .snmp-name { display: grid; gap: 2px; overflow-wrap: anywhere; }
+.snmp-label { width: 100%; min-height: 32px; font-weight: 600; }
+.snmp-oid { gap: 4px; flex-wrap: nowrap; }
+.snmp-oid .icon-button { min-height: 26px; height: 26px; width: 26px; }
 .snmp-value { overflow-wrap: anywhere; }
 .snmp-value-button { white-space: normal; overflow-wrap: anywhere; background: none; border: 1px dashed transparent; padding: 2px 4px; min-height: 0; text-align: left;
   color: inherit; font: inherit; cursor: text; }
 .snmp-value-button:hover, .snmp-value-button:focus-visible { border-color: var(--border); }
 .snmp-edit { width: 100%; min-width: 160px; }
-.snmp-behaviour { gap: 6px; flex-wrap: nowrap; }
+.snmp-behaviour { gap: 6px; flex-wrap: wrap; }
 .snmp-behaviour select { width: 140px; }
 .snmp-row-actions { gap: 4px; flex-wrap: nowrap; }
 .snmp-key td:first-child { box-shadow: inset 3px 0 0 var(--accent); }

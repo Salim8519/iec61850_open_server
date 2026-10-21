@@ -67,7 +67,10 @@ export const TYPE_NAMES: Record<PointType, string> = { integer: 'Integer', octet
 export const BEHAVIOURS: Record<Behaviour, string> = { fixed: 'Fixed', uptime: 'Counts up time', counter: 'Grows' };
 
 export const POINTS_COPY = {
-  search: 'Search name, OID or value', name: 'Name', oid: 'OID', type: 'Type', value: 'Value', behaviour: 'Changes',
+  search: 'Search label, name, OID or value', name: 'Label · name · OID',
+  label: 'Label', labelPlaceholder: 'Add a label…',
+  labelHint: 'Your own name for this value, such as "Uplink port 1". Saved with the project; managers never see it.',
+  changeOid: 'Change OID', oidHint: 'Enter saves · Esc cancels · a MIB name works too', oid: 'OID', type: 'Type', value: 'Value', behaviour: 'Changes',
   writable: 'Writable', live: 'Live values', stored: 'Stored values (start the devices to see them change)',
   rate: 'per second', add: 'Add value', addTitle: 'Add a value of your own',
   addHint: 'Type an OID (1.3.6.1.4.1.…) or a name a MIB knows, such as IF-MIB::ifAlias.1.',

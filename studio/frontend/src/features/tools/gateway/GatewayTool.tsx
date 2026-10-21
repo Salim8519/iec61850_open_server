@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { createActionQueue } from './actionQueue';
 import { GATEWAY_STATUS, gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
 import { liveFeed } from '../../../api/polls';
+import type { Ied } from '../../../api/types';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 import { TabBar } from '../../../ui/TabBar';
 import { CommandLog } from './CommandLog';
@@ -17,7 +18,7 @@ type Tab = 'points' | 'traffic' | 'commands';
 
 /** Gateway simulator: ScadaBench as the station gateway towards a SCADA master. Run stays separate.
  *  Settings column on the left, the tabs fill the rest of the window (ADR-0064). */
-export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: () => void }) {
+export function GatewayTool({ ieds, runState, runIeds }: { ieds: Ied[]; runState: string; runIeds: () => void }) {
   const [config, setConfig] = useState<GatewayConfig | null>(null);
   const [status, setStatus] = useState<GatewayStatus | null>(null);
   const [tab, setTab] = useState<Tab>('points');
@@ -52,7 +53,7 @@ export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: 
       <TabBar label="Gateway views" value={tab} change={setTab}
         tabs={(Object.keys(GATEWAY_COPY.tabs) as Tab[]).map(key => [key, GATEWAY_COPY.tabs[key]])} />
       <div className="panel-body">
-        {tab === 'points' && <PointTable protocol={config.protocol} locked={running} fail={setError} />}
+        {tab === 'points' && <PointTable protocol={config.protocol} ieds={ieds} locked={running} fail={setError} />}
         {tab === 'traffic' && <TrafficLog running={running} />}
         {tab === 'commands' && <CommandLog />}
       </div>

@@ -6,6 +6,7 @@ import { EXPLORER_COPY } from '../../../copy/tools';
 import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
 import { StatusPill } from '../../../ui/StatusPill';
+import { TabBar } from '../../../ui/TabBar';
 import type { Status } from '../../../copy/status';
 import { ModelTree } from './ModelTree';
 import { NodeDetail } from './NodeDetail';
@@ -20,13 +21,17 @@ const PILL: Record<ExplorerStatus['state'], Status> = {
   lost: { label: 'Connection lost', tone: 'problem', hint: 'The device closed the connection. Press Connect to try again.' },
 };
 
+type View = 'node' | 'watch';
+
 /** IED Explorer: connect by address, browse one level at a time, and watch chosen values. A toolbar row,
- *  then the model tree on the left and the node with the watch list pinned below it (ADR-0064). */
+ *  then the model tree on the left and one full-height panel on the right whose tabs switch between
+ *  the chosen node and the watch list, so small screens get the whole height for either. */
 export function ExplorerTool({ target }: { target?: { host: string; port: number } }) {
   const [status, setStatus] = useState<ExplorerStatus | null>(null);
   const [host, setHost] = useState(target?.host ?? '');
   const [port, setPort] = useState(String(target?.port ?? 102));
   const [node, setNode] = useState('');
+  const [view, setView] = useState<View>('node');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const run = useCallback((task: () => Promise<ExplorerStatus>) => {
@@ -80,11 +85,18 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
         <p className="explorer-error explorer-bar-error" role="alert">{error || status?.message}</p>}
     </form>
     {connected && status ? <div className="fill-body fill-split explorer-split">
-      <ModelTree key={`${status.host}:${status.port}`} selected={node} select={setNode} fail={setError} />
-      <div className="fill-column">
-        {node ? <NodeDetail reference={node} host={status.host} watched={watched} addWatch={addWatch} fail={setError} />
-          : <div className="card explorer-detail fill-grow panel-empty"><div className="guide-empty"><p>{EXPLORER_COPY.pickNode}</p></div></div>}
-        <WatchList status={status} run={run} />
+      <ModelTree key={`${status.host}:${status.port}`} selected={node} select={picked => { setNode(picked); setView('node'); }}
+        fail={setError} />
+      <div className="card fill-panel explorer-right">
+        <TabBar label={EXPLORER_COPY.views} value={view} change={setView} tabs={[
+          ['node', node ? node.split('/').pop() || node : EXPLORER_COPY.nodeTab],
+          ['watch', `${EXPLORER_COPY.watchTitle} (${status.watch.length})`]]} />
+        {/* Both stay mounted so opened objects and the watch scroll survive a tab switch. */}
+        <div className="panel-body explorer-tab" hidden={view !== 'node'}>
+          {node ? <NodeDetail reference={node} host={status.host} watched={watched} addWatch={addWatch} fail={setError} />
+            : <div className="explorer-detail panel-empty"><div className="guide-empty"><p>{EXPLORER_COPY.pickNode}</p></div></div>}
+        </div>
+        <div className="panel-body explorer-tab" hidden={view !== 'watch'}><WatchList status={status} run={run} /></div>
       </div>
     </div> : <div className="card fill-body panel-empty"><div className="guide-empty">
       <span className="guide-empty-icon"><Telescope size={24} /></span>

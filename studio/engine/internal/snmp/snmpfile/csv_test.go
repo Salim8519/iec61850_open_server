@@ -16,17 +16,17 @@ func TestCSVRoundTrip(t *testing.T) {
 	}
 	points = append(points,
 		model.Point{OID: "1.3.6.1.4.1.99999.9.1", Type: model.TypeCounter64, Value: "5",
-			Behaviour: model.BehaviourCounter, Rate: 0.125, Writable: true},
+			Behaviour: model.BehaviourCounter, Rate: 0.125, Writable: true, Label: "Feeder 1, packets"},
 		model.Point{OID: "1.3.6.1.4.1.99999.9.2", Type: model.TypeOctets, Value: "  padded, \"text\"  ",
 			Behaviour: model.BehaviourFixed, Writable: true})
 	text := WriteCSV(points, lib)
-	if !strings.HasPrefix(text, "oid,name,type,value,hex,behaviour,rate,writable\n") || !strings.HasSuffix(text, "\n") {
+	if !strings.HasPrefix(text, "oid,name,type,value,hex,behaviour,rate,writable,label\n") || !strings.HasSuffix(text, "\n") {
 		t.Fatalf("CSV text:\n%s", text)
 	}
-	if !strings.Contains(text, "\n1.3.6.1.2.1.1.1.0,SNMPv2-MIB::sysDescr.0,octets,Acme relay R-100 firmware 2.1,false,fixed,,false\n") {
+	if !strings.Contains(text, "\n1.3.6.1.2.1.1.1.0,SNMPv2-MIB::sysDescr.0,octets,Acme relay R-100 firmware 2.1,false,fixed,,false,\n") {
 		t.Errorf("sysDescr row missing:\n%s", text)
 	}
-	if !strings.Contains(text, "\n1.3.6.1.4.1.99999.9.1,SNMPv2-SMI::enterprises.99999.9.1,counter64,5,false,counter,0.125,true\n") {
+	if !strings.Contains(text, "\n1.3.6.1.4.1.99999.9.1,SNMPv2-SMI::enterprises.99999.9.1,counter64,5,false,counter,0.125,true,\"Feeder 1, packets\"\n") {
 		t.Errorf("counter row missing:\n%s", text)
 	}
 	back, problems, err := ParseCSV(text, lib)

@@ -12,6 +12,8 @@ import { SelectBar } from '../../../../ui/SelectBar';
 import { Pager } from '../../gateway/Pager';
 import { rowMatches } from '../rowMatch';
 import { AddPoint } from './AddPoint';
+import { oidOf } from './oidText';
+import { PointName } from './PointName';
 import { ValueEditor } from './ValueEditor';
 
 const PAGE = 100;
@@ -36,6 +38,9 @@ export function PointsTable({ device, running, refresh, fail }: {
     .then(() => { refresh(); reread(); }).catch(reason => fail(reason.message));
   const change = (oid: string, update: Partial<SnmpPoint>) =>
     savePoints(device.points.map(point => point.oid === oid ? { ...point, ...update } : point));
+  // A new OID keeps the value's settings; a name a MIB knows works too. False keeps the box open.
+  const move = (row: ValueRow, text: string) => oidOf(text, device.points)
+    .then(oid => change(row.oid, { oid })).then(() => true).catch(reason => { fail(reason.message); return false; });
   const shownKeys = shown.map(row => row.oid);
   const chosen = picked ? stillThere(picked, rows.map(row => row.oid)) : [];
   const removeChosen = () => {
@@ -71,7 +76,8 @@ export function PointsTable({ device, running, refresh, fail }: {
       <tbody>{shown.slice(first, first + PAGE).map(row => <tr key={row.oid} className={picked?.has(row.oid) ? 'picked' : undefined}>
         {picked && <td><input type="checkbox" checked={picked.has(row.oid)} aria-label={`Tick ${row.name}`}
           onChange={() => setPicked(togglePick(picked, row.oid))} /></td>}
-        <td><div className="snmp-name"><span>{row.name}</span><span className="small muted mono">{row.oid}</span></div></td>
+        <td><PointName row={row} rename={label => change(row.oid, { label: label || undefined })}
+          move={text => move(row, text)} /></td>
         <td className="snmp-value"><ValueEditor row={row} commit={value => setValue(row, value)} /></td>
         <td className="small">{TYPE_NAMES[row.type] ?? row.type}</td>
         <td><span className="row snmp-behaviour">

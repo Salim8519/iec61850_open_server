@@ -4,15 +4,23 @@
 .gateway-warning { color: var(--warning); margin: 0; }
 .gateway-problems { margin: 0; padding: 10px 14px 10px 30px; border-radius: var(--radius-small); background: var(--warning-soft);
   color: #92400e; font-size: 14px; display: grid; gap: 4px; }
-.gateway-points td { vertical-align: middle; padding: 6px 8px; }
-.gateway-points th { padding-left: 8px; padding-right: 8px; }
+.gateway-points td { vertical-align: middle; padding: 6px 6px; }
+.gateway-points th { padding-left: 6px; padding-right: 6px; }
 /* The whole table fits 1366x768 without sideways scrolling: the protocol tag sits under the type. */
-.gateway-points select { min-width: 0; width: 150px; }
+.gateway-points select { min-width: 0; width: 136px; }
 .type-cell { display: grid; gap: 2px; white-space: nowrap; }
 .gateway-number { width: 72px; }
 .gateway-points td.reference-cell { max-width: 200px; overflow-wrap: anywhere; }
-.gateway-points td.value-cell { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gateway-points:not(.picking) td:nth-child(6) input { width: 140px; } /* Select mode has no description column */
+.gateway-points td.value-cell { max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gateway-points td.point-name input { width: 130px; font-weight: 600; }
+.gateway-points td.scale-cell .gateway-number { width: 60px; }
+.reference-ied { gap: 6px; flex-wrap: nowrap; }
+.reference-change { min-height: 26px; padding: 0 6px; gap: 4px; font-size: var(--font-size-small); }
+.signal-change-row > td { background: var(--accent-soft); }
+.signal-change { display: grid; gap: 8px; padding: 4px 4px 8px; }
+.signal-change-command { gap: 10px; align-items: end; }
+.signal-change-command label { display: grid; gap: 4px; font-weight: 600; }
+.signal-change-command select { width: 260px; }
 .gateway-traffic { overflow: auto; padding: 8px 20px 16px; min-height: 200px;
   font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; background: var(--surface-2); }
 .traffic-line { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed var(--border); }

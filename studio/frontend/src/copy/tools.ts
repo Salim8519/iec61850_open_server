@@ -39,6 +39,7 @@ export const EXPLORER_COPY = {
   objectsHint: 'Open a data object to read its values. Add any value to the watch list to keep it updated.',
   datasets: 'Datasets', reports: 'Report blocks',
   reportsHint: 'Report blocks are listed only. Explorer never enables or reserves them, so SCADA and gateways keep theirs.',
+  views: 'Node or watch list', nodeTab: 'Logical node',
   watchTitle: 'Watch list', watchEmpty: 'Nothing watched yet. Press + next to any value to add it here.',
   watchHint: 'Values refresh at the chosen interval while Watch is on. Export saves them as a CSV file.',
   start: 'Start watching', stop: 'Stop watching', readOnce: 'Read now', exportCsv: 'Export CSV', clear: 'Clear', clearWatch: 'Clear the watch list',

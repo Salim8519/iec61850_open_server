@@ -12,10 +12,10 @@ import (
 )
 
 // csvHeader is the ScadaBench CSV header, in the order WriteCSV writes it.
-var csvHeader = []string{"oid", "name", "type", "value", "hex", "behaviour", "rate", "writable"}
+var csvHeader = []string{"oid", "name", "type", "value", "hex", "behaviour", "rate", "writable", "label"}
 
 var errHeader = errors.New("the first line of the CSV must be the header " +
-	"\"oid,name,type,value,hex,behaviour,rate,writable\"")
+	"\"oid,name,type,value,hex,behaviour,rate,writable\" (label may follow)")
 
 // ParseCSV reads ScadaBench CSV. A row may leave oid empty when name resolves, and type
 // empty to use the MIB syntax (or octets). Invalid rows are reported and skipped; values
@@ -147,7 +147,7 @@ func parseRow(lib *mib.Library, cols map[string]int, rec []string) (model.Point,
 		return model.Point{}, "writable \"" + get("writable") + "\" is not true/false, yes/no or 1/0"
 	}
 	return model.Point{OID: oid, Type: typ, Value: value, Hex: hex, Behaviour: behaviour,
-		Rate: rate, Writable: writable}, ""
+		Rate: rate, Writable: writable, Label: strings.TrimSpace(get("label"))}, ""
 }
 
 // WriteCSV writes points as ScadaBench CSV with module-qualified names from lib. An empty
@@ -171,7 +171,7 @@ func WriteCSV(points []model.Point, lib *mib.Library) string {
 			rate = strconv.FormatFloat(p.Rate, 'g', -1, 64)
 		}
 		_ = w.Write([]string{p.OID, name, p.Type, p.Value, strconv.FormatBool(p.Hex), behaviour,
-			rate, strconv.FormatBool(p.Writable)})
+			rate, strconv.FormatBool(p.Writable), p.Label})
 	}
 	w.Flush()
 	return b.String()

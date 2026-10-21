@@ -1,24 +1,23 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
-import { snmpApi, type PointType, type SnmpPoint } from '../../../../api/snmp';
+import type { PointType, SnmpPoint } from '../../../../api/snmp';
 import { POINTS_COPY, TYPE_NAMES } from '../../../../copy/snmp';
+import { oidOf } from './oidText';
 
-const NUMERIC = /^\.?\d+(\.\d+)+$/;
-
-/** A value of the user's own: an OID (or a MIB name), its type and its first value. */
+/** A value of the user's own: an OID (or a MIB name), its label, type and first value. */
 export function AddPoint({ points, add, close, fail }: {
   points: SnmpPoint[]; add: (point: SnmpPoint) => Promise<unknown>; close: () => void; fail: (message: string) => void;
 }) {
   const [name, setName] = useState('');
+  const [label, setLabel] = useState('');
   const [type, setType] = useState<PointType>('integer');
   const [value, setValue] = useState('0');
   const [writable, setWritable] = useState(false);
   const submit = async () => {
     fail('');
     try {
-      const oid = NUMERIC.test(name.trim()) ? name.trim().replace(/^\./, '') : (await snmpApi.resolve(name.trim())).oid;
-      if (points.some(point => point.oid === oid)) throw new Error(`${oid} is already a value of this device`);
-      await add({ oid, type, value, behaviour: 'fixed', writable });
+      const oid = await oidOf(name, points);
+      await add({ oid, label: label.trim() || undefined, type, value, behaviour: 'fixed', writable });
     } catch (reason) {
       fail((reason as Error).message);
     }
@@ -31,6 +30,8 @@ export function AddPoint({ points, add, close, fail }: {
     <div className="row snmp-add-fields">
       <label>{POINTS_COPY.oid}<input value={name} onChange={event => setName(event.target.value)} required
         placeholder="1.3.6.1.4.1.99999.1.0" spellCheck={false} /></label>
+      <label>{POINTS_COPY.label}<input value={label} onChange={event => setLabel(event.target.value)} maxLength={120}
+        placeholder={POINTS_COPY.labelPlaceholder} /></label>
       <label>{POINTS_COPY.type}<select value={type} onChange={event => {
         const next = event.target.value as PointType;
         setType(next);

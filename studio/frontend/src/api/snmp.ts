@@ -7,7 +7,8 @@ export type PointType = 'integer' | 'octets' | 'oid' | 'ipaddress' | 'counter32'
 export type Behaviour = 'fixed' | 'uptime' | 'counter';
 export type Level = 'noAuthNoPriv' | 'authNoPriv' | 'authPriv';
 export type SnmpVersion = 'v1' | 'v2c' | 'v3';
-export type SnmpPoint = { oid: string; type: PointType; value: string; hex?: boolean; behaviour?: Behaviour;
+/** `label` is the user's own name for the value (page and project only, never sent to managers). */
+export type SnmpPoint = { oid: string; label?: string; type: PointType; value: string; hex?: boolean; behaviour?: Behaviour;
   rate?: number; writable?: boolean };
 export type SnmpUser = { name: string; level: Level; auth?: string; auth_password?: string; priv?: string;
   priv_password?: string };

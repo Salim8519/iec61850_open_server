@@ -1,8 +1,9 @@
-import { Download, ListChecks, Lock, Plus, Save, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Download, ListChecks, Lock, Pencil, Plus, Save, Sparkles, Trash2, Undo2, Upload, X } from 'lucide-react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { gatewayApi, gatewayPointsPath, problemsOf, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
 import { liveFeed } from '../../../api/polls';
-import { ADDRESS_LABEL, GATEWAY_COPY, KIND_LABELS, KIND_WHERE, OWN_COPY } from '../../../copy/gateway';
+import type { Ied } from '../../../api/types';
+import { ADDRESS_LABEL, CHANGE_COPY, GATEWAY_COPY, KIND_LABELS, KIND_WHERE, OWN_COPY } from '../../../copy/gateway';
 import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
 import { choicesOf, effective } from '../../../ui/filterState';
@@ -17,11 +18,14 @@ import { isOwn, liveEdit, ownName } from './ownPoints';
 import { GATEWAY_POINT_FILTER, gatewayPointMatches } from './pointFilters';
 import { pointKey, mergeValues } from './pointRows';
 import { Pager } from './Pager';
+import { SignalChange } from './SignalChange';
 
 const PAGE = 100;
 
 /** The SCADA point list: proposed, imported or made up (own points), edited here, saved to the project. */
-export function PointTable({ protocol, locked, fail }: { protocol: Protocol; locked: boolean; fail: (message: string) => void }) {
+export function PointTable({ protocol, ieds, locked, fail }: {
+  protocol: Protocol; ieds: Ied[]; locked: boolean; fail: (message: string) => void;
+}) {
   const [rows, setRows] = useState<GatewayPoint[] | null>(null);
   const [dirty, setDirty] = useState(false);
   const [problems, setProblems] = useState<string[]>([]);
@@ -32,6 +36,7 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState<{ ok: boolean; text: string } | null>(null);
   const [picked, setPicked] = useState<Set<string> | null>(null);
+  const [changing, setChanging] = useState<string | null>(null);
   const filter = useListFilter('scada-points', GATEWAY_POINT_FILTER);
   const file = useRef<HTMLInputElement>(null);
   const dirtyRef = useRef(false);
@@ -40,7 +45,7 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const load = () => liveFeed.refresh(path);
   // Shared live feed every second: an unchanged list re-renders nothing (speed lane F).
   useEffect(() => {
-    setRows(null); setDirty(false); setProblems([]); setNotes([]); setAdding(false); setPicked(null);
+    setRows(null); setDirty(false); setProblems([]); setNotes([]); setAdding(false); setPicked(null); setChanging(null);
     return liveFeed.subscribe<{ points: GatewayPoint[] }>(path, 1000, value => {
       setRows(current => dirtyRef.current && current ? mergeValues(current, value.points) : value.points);
     }, error => fail(error.message));
@@ -76,8 +81,10 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
   const shown = useMemo(() => (rows ?? []).map((row, index) => ({ row, index }))
     .filter(({ row }) => gatewayPointMatches(row, values)), [rows, values]);
   const first = Math.min(page, Math.max(0, Math.ceil(shown.length / PAGE) - 1)) * PAGE;
-  const picking = !!picked && !locked; // while choosing rows the description column steps aside
   const shownKeys = shown.map(({ row, index }) => pointKey(row, index));
+  // Signals other IED points of the same type already serve: the Change row offers them as taken.
+  const takenFor = (index: number, kind: PointKind) => new Set((rows ?? [])
+    .filter((other, at) => at !== index && !isOwn(other) && other.kind === kind).map(other => `${other.ied}:${other.ref}`));
   const chosen = picked && rows ? stillThere(picked, rows.map(pointKey)) : [];
   const removeChosen = () => {
     if (!rows) return;
@@ -120,18 +127,21 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
         <li key={problem}>{problem}</li>)}{problems.length > 20 && <li>…and {problems.length - 20} more</li>}</ul>}
     </div>}
     {rows && rows.length === 0 ? <p className="muted watch-empty">{GATEWAY_COPY.emptyPoints}</p> :
-      <div className="table-scroll"><table className={`gateway-points${picking ? ' picking' : ''}`}><thead><tr>
+      <div className="table-scroll"><table className="gateway-points"><thead><tr>
         {picked && !locked && <th className="pick-col"><input type="checkbox" aria-label="Tick all points shown"
           checked={shownKeys.length > 0 && shownKeys.every(key => picked.has(key))}
-          onChange={() => setPicked(toggleShown(picked, shownKeys))} /></th>}<th>Type</th><th>{ADDRESS_LABEL[protocol]}</th>
-        <th>IED · reference</th><th>Scale</th><th>Value now</th>{!picking && <th>Description</th>}<th aria-label="Remove" /></tr></thead>
+          onChange={() => setPicked(toggleShown(picked, shownKeys))} /></th>}<th>{GATEWAY_COPY.name}</th><th>Type</th>
+        <th>{ADDRESS_LABEL[protocol]}</th><th>IED · path</th><th>Scale</th><th>Value now</th><th aria-label="Remove" /></tr></thead>
         <tbody>{shown.slice(first, first + PAGE).map(({ row, index }) => {
           const own = isOwn(row);
           const command = row.kind.startsWith('command');
           const key = pointKey(row, index);
-          return <tr key={key} className={picked?.has(key) ? 'picked' : undefined}>
+          return <Fragment key={key}><tr className={picked?.has(key) ? 'picked' : undefined}>
             {picked && !locked && <td><input type="checkbox" checked={picked.has(key)}
               aria-label={`Tick ${own ? ownName(row) : row.ref}`} onChange={() => setPicked(togglePick(picked, key))} /></td>}
+            <td className="point-name"><input value={row.description} disabled={locked} aria-label={GATEWAY_COPY.name}
+              placeholder={own ? OWN_COPY.namePlaceholder : GATEWAY_COPY.namePlaceholder}
+              onChange={event => update(index, { description: event.target.value })} /></td>
             <td><span className="type-cell"><select value={row.kind} disabled={locked} aria-label="Point type"
               onChange={event => update(index, own ? { kind: event.target.value as PointKind, value: undefined, target: undefined }
                 : { kind: event.target.value as PointKind })}>
@@ -140,10 +150,13 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
             <td><input className="gateway-number" inputMode="numeric" value={row.address} disabled={locked} aria-label="Address"
               onChange={event => update(index, { address: Number(event.target.value.replace(/\D/g, '')) })} /></td>
             {own ? <OwnReference row={row} rows={rows ?? []} locked={locked} change={target => update(index, { target })} />
-              : <td className="reference-cell" title={row.ref}><strong>{row.ied_name ?? row.ied}</strong>
+              : <td className="reference-cell" title={row.ref}><span className="row reference-ied"><strong>{row.ied_name ?? row.ied}</strong>
+                {!locked && <button type="button" className="ghost reference-change" aria-expanded={changing === key}
+                  title={CHANGE_COPY.button} onClick={() => setChanging(changing === key ? null : key)}>
+                  <Pencil size={13} />{CHANGE_COPY.short}</button>}</span>
                 <div className="small mono">{row.ref}</div>{row.monitor_only && command &&
                   <div className="small gateway-warning">Real IED: commands are refused</div>}</td>}
-            <td><input className="gateway-number" value={row.scale} disabled={locked} aria-label="Scale"
+            <td className="scale-cell"><input className="gateway-number" value={row.scale} disabled={locked} aria-label="Scale"
               onChange={event => update(index, { scale: Number(event.target.value) || 0 })} /></td>
             <td className="small value-cell" title={command && !own ? undefined : row.value_text}>{command
               ? <div className="own-command"><CommandButtons row={row} blocked={blockedReason(row, dirty)}
@@ -151,11 +164,13 @@ export function PointTable({ protocol, locked, fail }: { protocol: Protocol; loc
                 {own && <span className="small muted">{row.value_text ?? 'No command yet'}</span>}</div>
               : own ? <OwnValue row={row} set={value => setOwn(index, row, value)} fail={fail} />
                 : <span className={row.online ? '' : 'muted'}>{row.online === false && '⚠ '}{row.value_text ?? '—'}</span>}</td>
-            {!picking && <td><input value={row.description} disabled={locked} aria-label="Description" placeholder={own ? OWN_COPY.namePlaceholder : 'optional'}
-              onChange={event => update(index, { description: event.target.value })} /></td>}
             <td><button className="ghost icon-button" disabled={locked} aria-label={`Remove ${own ? ownName(row) : row.ref}`} title="Remove"
               onClick={() => rows && edit(rows.filter((_, at) => at !== index))}><X size={15} /></button></td>
-          </tr>;
+          </tr>{changing === key && !own && !locked && <SignalChange row={row} ieds={ieds} taken={takenFor(index, row.kind)} columns={picked ? 8 : 7}
+            close={() => setChanging(null)} choose={(ied, ref) => {
+              update(index, { ied: ied.id, ref, ied_name: ied.name, value_text: undefined, online: undefined });
+              setChanging(null);
+            }} />}</Fragment>;
         })}</tbody></table>
         {rows && rows.length > 0 && shown.length === 0 && <p className="muted watch-empty">{GATEWAY_COPY.emptyFilter}</p>}</div>}
     <Pager count={shown.length} page={page} size={PAGE} setPage={setPage} noun="points" />

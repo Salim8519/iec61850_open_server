@@ -9,9 +9,11 @@
 .explorer-tree-filter .filter-bar { padding: 8px 10px; }
 .explorer-tree-filter .filter-search { width: 100%; }
 .tree { list-style: none; margin: 0; padding: 4px 8px 12px; overflow: auto; }
-/* The watch list stays pinned under the node with its own scroll; the node takes the rest. */
-.explorer-split .fill-column > .explorer-detail { flex: 1 1 0; min-height: 160px; }
-.explorer-watch { flex: 1 1 0; min-height: 200px; }
+/* One right panel: tabs switch between the node and the watch list, each with the full height. */
+.explorer-tab { display: flex; flex-direction: column; }
+.explorer-tab[hidden] { display: none; }
+.explorer-tab > * { flex: 1 1 0; min-height: 0; }
+.explorer-tab > .card { border: 0; border-radius: 0; box-shadow: none; }
 .explorer-detail-body { display: block; }
 .watch-interval { width: auto; min-height: 32px; font-size: var(--font-size-small); }
 .explorer-watch .panel-head { gap: 8px; padding: 8px 12px; }

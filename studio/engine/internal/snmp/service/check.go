@@ -13,6 +13,9 @@ import (
 // MaxPoints is the most points one simulated device may have.
 const MaxPoints = 100000
 
+// MaxLabel is the longest own name a value may carry.
+const MaxLabel = 120
+
 // CheckDevice returns the first problem of a device, worded for the user, or nil. others are
 // the project's other devices (for the address check).
 func CheckDevice(d model.Device, others []model.Device) error {
@@ -124,6 +127,9 @@ func checkPoints(name string, points []model.Point) error {
 		case "", model.BehaviourFixed, model.BehaviourUptime, model.BehaviourCounter:
 		default:
 			return fmt.Errorf("%s: OID %s: unknown behaviour %q", name, key, point.Behaviour)
+		}
+		if len([]rune(point.Label)) > MaxLabel {
+			return fmt.Errorf("%s: OID %s: the label must be at most %d characters", name, key, MaxLabel)
 		}
 		if point.Rate < 0 || point.Rate > 1e12 {
 			return fmt.Errorf("%s: OID %s: the rate must be 0 to 1000000000000 per second", name, key)
