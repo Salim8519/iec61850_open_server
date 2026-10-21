@@ -126,9 +126,8 @@ void require_valid_license() {
     const auto now = static_cast<long long>(std::time(nullptr));
     // Anchor, signed server time and grace start from all three places (ADR-0046 addendum).
     const auto clock = read_clock_state(directory, release_keys(), true);
-    // A chip-bound license (ADR-0098) also needs the TPM proof; the Go backend does that. The
-    // backend starts the workers only for a licensed computer, so this guard checks the
-    // certificate, the machine ID v3, the clock and the cancelled IDs.
+    // The Go backend starts the workers only for a licensed computer; this guard independently
+    // checks the certificate, the machine ID v3 (ADR-0098), the clock and the cancelled IDs.
     const auto verdict = verify_license(text, release_keys(), compute_hwid(), now, clock);
     if (!verdict.ok) throw std::runtime_error("License check failed: " + verdict.reason);
     verified = true;

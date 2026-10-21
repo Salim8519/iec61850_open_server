@@ -1,6 +1,9 @@
 package licensing
 
 import (
+	"crypto/ed25519"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"os"
@@ -161,28 +164,38 @@ func TestBoardSerialIsReadFromTheBaseboardStructure(t *testing.T) {
 // TestCertificatesForTheOlderMachineIDsAreRefused: v1 and v2 IDs of the very same computer
 // are not accepted (no customers existed when they were removed, ADR-0098).
 func TestCertificatesForTheOlderMachineIDsAreRefused(t *testing.T) {
+	t.Setenv("STUDIO_LICENSE_CERT_PATH", "")
+	public, private, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sign := func(hwid string, issuedAt int64) string {
+		payload := map[string]any{"email": "", "expires_at": 0, "hwid": hwid, "issued_at": issuedAt,
+			"kid": KeyID(public), "license_id": "SUBS-2222-3333-4444-5555", "max_machines": 1,
+			"type": "lifetime", "version": 1}
+		text, _ := json.Marshal(payload) // keys come out sorted, as the real server writes them
+		signature := base64.RawURLEncoding.EncodeToString(ed25519.Sign(private, text))
+		bundle, _ := json.Marshal(map[string]string{"payload": string(text), "signature": signature})
+		return string(bundle)
+	}
 	parts := MachineParts{FirmwareUUID: "7a1b2c3d4e5f60718293a4b5c6d7e8f9", BoardSerial: "SN-1", MachineGUID: "guid-1"}
-	env := newBindEnv(t, nil)
-	env.hwid = Compose(parts)
-	env.service = env.newService()
+	home := scenarioDir(t)
+	current := Compose(parts)
+	service := New(Options{Home: home, DataDir: home, Enforce: true, Keys: map[string][]byte{KeyID(public): public},
+		HWID: func() (string, error) { return current, nil }, Clock: func() float64 { return 1_770_000_000 },
+		Debugger: func() bool { return false }, Logf: t.Logf, Registry: memoryRegistry{}})
 	v2 := sha256Hex("substation-studio-hwid-v2|guid-1|0000ABCD|" + parts.FirmwareUUID)
 	v1 := sha256Hex("substation-studio-hwid-v1|guid-1|0000ABCD")
 	for name, hwid := range map[string]string{"v2": v2, "v1": v1} {
 		for _, issuedAt := range []int64{1_000_000_000, 1_760_000_000} { // before and after the old cut-off logic
-			signed := env.server.sign(map[string]any{"email": "", "expires_at": 0, "hwid": hwid, "issued_at": issuedAt,
-				"license_id": bindKey, "max_machines": 1, "type": "lifetime", "version": 1})
-			text, _ := json.Marshal(signed)
-			_, err := env.service.ActivateOffline(string(text))
+			_, err := service.ActivateOffline(sign(hwid, issuedAt))
 			var refused *ActionError
 			if !errors.As(err, &refused) || refused.Message != WrongMachine {
 				t.Errorf("%s certificate issued at %d: %v", name, issuedAt, err)
 			}
 		}
 	}
-	signed := env.server.sign(map[string]any{"email": "", "expires_at": 0, "hwid": env.hwid, "issued_at": 1_760_000_000,
-		"license_id": bindKey, "max_machines": 1, "type": "lifetime", "version": 1})
-	text, _ := json.Marshal(signed)
-	if _, err := env.service.ActivateOffline(string(text)); err != nil {
+	if _, err := service.ActivateOffline(sign(current, 1_760_000_000)); err != nil {
 		t.Fatalf("the v3 certificate of this computer was refused: %v", err)
 	}
 }

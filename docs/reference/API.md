@@ -101,7 +101,7 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 | `PUT /project/test-panel` | test array | Stopped-only validated panel save |
 | `POST /traces/preview` | CSV multipart `file` | Five-row preview, columns and row count |
 | `GET /events` | `after` or `Last-Event-ID` | SSE replay, heartbeat and `resync` marker |
-| `GET /license/status` | - | `licensed, mode, plan, days_remaining, expires_at, reason, hwid, server_url, masked_key`; Go engine only, for chip-bound and lease licenses: `binding` (`tpm` / `lease`, ADR-0098) |
+| `GET /license/status` | - | `licensed, mode, plan, days_remaining, expires_at, reason, hwid, server_url, masked_key` |
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
 | `POST /license/activate` | `license_key` | Activate a lifetime key online; `move: true` answers 400 `moves_disabled` (licenses never move, ADR-0097) |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |

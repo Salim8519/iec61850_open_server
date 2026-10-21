@@ -15,13 +15,8 @@ export type LicenseStatus = {
   hwid: string | null;
   /** Always false: licenses never move to another computer. Kept so older screens still read it. */
   transfer_available: boolean;
-  /** A trial that could not confirm the date online, or a lease license not confirmed for 30 days. */
+  /** A trial that could not confirm the date online for longer than its offline grace. */
   online_check_required?: boolean;
-  /**
-   * How a lifetime license is tied to this computer (Go engine): "tpm" = its security chip, works
-   * offline for good; "lease" = confirms online every 30 days. Absent for trials and older licenses.
-   */
-  binding?: 'tpm' | 'lease';
   app_version: string;
 };
 

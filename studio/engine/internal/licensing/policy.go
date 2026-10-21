@@ -38,20 +38,13 @@ type Status struct {
 	LicenseID           any
 	Email               any
 	OnlineCheckRequired bool
-	// Binding is how a lifetime license is tied to this computer, for display only
-	// (ADR-0098): BindingTPM or BindingLease, "" for trials and certificates without either.
-	Binding string
 }
 
 // Object returns LicenseStatus.as_dict() with its field order.
 func (s Status) Object() *pyjson.Object {
-	object := pyjson.NewObject().Set("licensed", s.Licensed).Set("mode", s.Mode).Set("plan", s.Plan).
+	return pyjson.NewObject().Set("licensed", s.Licensed).Set("mode", s.Mode).Set("plan", s.Plan).
 		Set("days_remaining", s.DaysRemaining).Set("expires_at", s.ExpiresAt).Set("reason", s.Reason).
 		Set("license_id", s.LicenseID).Set("email", s.Email).Set("online_check_required", s.OnlineCheckRequired)
-	if s.Binding != "" { // Go engine only: the field is absent for every Python-shaped answer
-		object.Set("binding", s.Binding)
-	}
-	return object
 }
 
 // DevelopmentStatus is what development builds always report.

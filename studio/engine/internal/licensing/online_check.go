@@ -47,14 +47,6 @@ func (s *Service) VerifyOnlineIfDue(trialOnly bool) (any, error) {
 		}
 		return result, nil
 	}
-	if status.Binding == BindingLease { // lease licenses check at start and on every tick (ADR-0098)
-		verdict, err := s.verifyLease(status, false)
-		var server *ServerError
-		if errors.As(err, &server) {
-			return nil, nil
-		}
-		return verdict, err
-	}
 	if trialOnly {
 		return nil, nil
 	}
@@ -73,11 +65,6 @@ func (s *Service) CheckOnlineNow() (*pyjson.Object, error) {
 	}
 	if status.Plan == "trial" && truthy(status.LicenseID) {
 		if _, err := s.confirmTrialTime(status); err != nil {
-			return nil, err
-		}
-	}
-	if status.Binding == BindingLease {
-		if _, err := s.verifyLease(status, true); err != nil {
 			return nil, err
 		}
 	}

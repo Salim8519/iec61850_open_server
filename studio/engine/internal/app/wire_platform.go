@@ -6,7 +6,6 @@ import (
 	"studio-engine/internal/api"
 	"studio-engine/internal/api/platformapi"
 	"studio-engine/internal/licensing"
-	"studio-engine/internal/licensing/tpm"
 	"studio-engine/internal/netcfg"
 	"studio-engine/internal/updates"
 )
@@ -24,8 +23,7 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	if e.License == nil {
 		e.License = licensing.New(licensing.Options{Home: home, DataDir: o.DataDir, Enforce: o.Enforce,
 			NativeFolder: o.NativeDir, ExpectedFiles: o.NativeSeal, Logf: o.Logf,
-			Registry: licensing.WindowsRegistry{}, // real trial parts: Parts nil
-			Chip:     tpm.System()})               // the real security chip (ADR-0098)
+			Registry: licensing.WindowsRegistry{}}) // real trial parts: Parts nil
 
 	}
 	if e.Updates == nil {

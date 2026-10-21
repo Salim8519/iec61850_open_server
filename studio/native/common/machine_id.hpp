@@ -5,7 +5,6 @@
 // serial number (trimmed); each "" when it is a placeholder every cheap PC shares. extra is ""
 // unless BOTH are "", then the lowercased MachineGuid. Nothing here reads anything but the
 // firmware table and, only for PCs without firmware identity, the MachineGuid.
-// The native guard cannot do the TPM proof of a chip-bound license; the Go backend does it.
 #pragma once
 #include <cstdint>
 #include <string>

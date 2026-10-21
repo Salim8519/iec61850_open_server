@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"studio-engine/internal/licensing/pytext"
-	"studio-engine/internal/licensing/tpm"
 	"studio-engine/internal/pyjson"
 )
 
@@ -45,10 +44,6 @@ type Options struct {
 	AllowTestServer bool
 	// Nonce returns the 32 hex characters sent with every verify call; nil means RandomNonce.
 	Nonce func() string
-	// Chip is the computer's security chip (ADR-0098). The app composition passes
-	// tpm.System(); nil means no chip, so every license is a lease and tests never touch
-	// hardware.
-	Chip tpm.Chip
 }
 
 // Service owns this computer's license state (service.LicenseService).
@@ -57,23 +52,16 @@ type Service struct {
 	certFile   string
 	configFile string
 	stateFile  string
-	akFile     string // the stored attestation key of a chip-bound license
 	anchor     TimeAnchor
 	trialClock TrialClock
 	revoked    RevokedIDs
-	lease      LeaseStore
-	chip       chipState
 
 	mu       sync.Mutex // cache and machine ID
 	filesMu  sync.Mutex // serialises read-modify-write of the home files, like Python's RLock
-	leaseMu  sync.Mutex // one lease check at a time: a check rotates the token
 	cached   *Status
 	cachedAt float64
 	hwid     string
 	hwidDone bool
-	// leaseValidFrom is when a lease license was last confirmed (signed): the later of its
-	// certificate's issue time and its newest signed verify answer.
-	leaseValidFrom int64
 }
 
 // DefaultHome is %LOCALAPPDATA%\ScadaBench (or ~/AppData/Local/ScadaBench).
@@ -113,18 +101,13 @@ func New(options Options) *Service {
 	if options.HWID == nil {
 		options.HWID = MachineID
 	}
-	if options.Chip == nil {
-		options.Chip = tpm.None{}
-	}
 	s := &Service{options: options, certFile: filepath.Join(options.Home, "license.cert"),
 		configFile: filepath.Join(options.Home, "client_config.json"),
 		stateFile:  filepath.Join(options.Home, "license_state.json"),
-		akFile:     filepath.Join(options.Home, "ak.blob"),
 		anchor: TimeAnchor{Value: NewClockValue("time_anchor", options.Home, options.Registry),
 			RunsFile: filepath.Join(options.DataDir, "logs", "runs.jsonl")},
 		trialClock: NewTrialClock(options.Home, options.Registry, options.Keys),
-		revoked:    NewRevokedIDs(options.Home, options.Registry),
-		lease:      NewLeaseStore(options.Home, options.Registry, options.Keys)}
+		revoked:    NewRevokedIDs(options.Home, options.Registry)}
 	if options.Enforce {
 		os.Setenv("STUDIO_LICENSE_CERT_PATH", s.certFile)
 	}

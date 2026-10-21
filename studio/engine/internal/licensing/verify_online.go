@@ -85,33 +85,20 @@ func (s *Service) verifyLifetime(status Status) (any, error) {
 // fresh nonce; the verdict and the whole answer come back only for a genuine signed answer,
 // otherwise a "bad_answer" ServerError (which callers treat like an unreachable server).
 func (s *Service) signedVerdict(licenseID any, machine string) (string, *pyjson.Object, error) {
-	verified, answer, err := s.signedAnswer(licenseID, machine, "")
-	return verified.Status, answer, err
-}
-
-// signedAnswer is signedVerdict for a license that may hold a lease token (ADR-0098): the
-// token goes with the request when there is one, and the genuine answer's own fields
-// (verdict, new token, signed time and the signed bundle itself) come back.
-func (s *Service) signedAnswer(licenseID any, machine, leaseToken string) (VerifiedAnswer, *pyjson.Object, error) {
 	nonce := s.options.Nonce()
 	client, err := s.client()
 	if err != nil {
-		return VerifiedAnswer{}, nil, err
+		return "", nil, err
 	}
-	var answer any
-	if binder, canBind := client.(BindingClient); canBind && leaseToken != "" {
-		answer, err = binder.VerifyLease(licenseID, machine, nonce, leaseToken)
-	} else {
-		answer, err = client.Verify(licenseID, machine, nonce)
-	}
+	answer, err := client.Verify(licenseID, machine, nonce)
 	if err != nil {
-		return VerifiedAnswer{}, nil, err
+		return "", nil, err
 	}
-	verified, ok := VerifyAnswer(answer, nonce, licenseID, machine, s.options.Keys)
+	verdict, ok := VerifiedStatus(answer, nonce, licenseID, machine, s.options.Keys)
 	if !ok {
-		return VerifiedAnswer{}, nil, &ServerError{Message: BadAnswerText, Code: "bad_answer"}
+		return "", nil, &ServerError{Message: BadAnswerText, Code: "bad_answer"}
 	}
-	return verified, answerObject(answer), nil
+	return verdict, answerObject(answer), nil
 }
 
 // cancel is OnlineChecks._cancel: the server cancelled this license, so remember it for

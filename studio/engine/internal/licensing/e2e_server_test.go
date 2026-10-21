@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -13,14 +14,12 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"studio-engine/internal/licensing/tpm"
 )
 
 // These tests run the Go license service against the REAL license server (license-server/,
-// built from this repository or the binary STUDIO_LICENSE_SERVER_BIN). They are skipped while
-// the server predates ADR-0098 (no POST /api/v1/activate/tpm): the orchestrator runs them
-// after merging the server half.
+// built from this repository or the binary STUDIO_LICENSE_SERVER_BIN): activate once, the
+// same Machine ID can be issued again (a Windows reinstall), any other Machine ID is refused,
+// the weekly check is a signed answer and never stops an offline computer (ADR-0097, ADR-0098).
 
 type realServer struct {
 	process     *exec.Cmd
@@ -88,41 +87,46 @@ func startRealServer(t *testing.T) *realServer {
 			t.Fatal("the license server did not start")
 		}
 	}
-	server := &realServer{process: process, url: url, binary: binary, env: env, keys: map[string][]byte{KeyID(public): public}}
-	response, err := http.Post(url+"/api/v1/activate/tpm", "application/json", strings.NewReader("{}"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	response.Body.Close()
-	if response.StatusCode == http.StatusNotFound || response.StatusCode == http.StatusMethodNotAllowed {
-		t.Skip("this license server has no /api/v1/activate/tpm yet (ADR-0098 server half not merged)")
-	}
-	return server
+	return &realServer{process: process, url: url, binary: binary, env: env, keys: map[string][]byte{KeyID(public): public}}
 }
 
-func (s *realServer) issueKey(t *testing.T) string {
-	command := exec.Command(s.binary, "issue", "--email", "buyer@example.com")
+func (s *realServer) admin(t *testing.T, args ...string) []byte {
+	t.Helper()
+	command := exec.Command(s.binary, args...)
 	command.Env = s.env
 	var out bytes.Buffer
 	command.Stdout = &out
 	if err := command.Run(); err != nil {
-		t.Fatalf("issue: %v", err)
+		t.Fatalf("%s: %v", args[0], err)
 	}
+	return out.Bytes()
+}
+
+func (s *realServer) issueKey(t *testing.T) string {
+	out := s.admin(t, "issue", "--email", "buyer@example.com")
 	var issued struct{ License struct{ Key string } }
-	if err := json.Unmarshal(out.Bytes(), &issued); err != nil || issued.License.Key == "" {
-		t.Fatalf("issue answer %q: %v", out.String(), err)
+	if err := json.Unmarshal(out, &issued); err != nil || issued.License.Key == "" {
+		t.Fatalf("issue answer %q: %v", out, err)
 	}
 	return issued.License.Key
 }
 
-// computer is a Go license service pointed at the real server.
-func (s *realServer) computer(t *testing.T, chip tpm.Chip, hwid string) *Service {
+// stop ends the server (a second Kill from the test cleanup is harmless).
+func (s *realServer) stop() {
+	s.process.Process.Kill()
+	s.process.Wait()
+}
+
+// computer is a Go license service pointed at the real server; its clock is the real time
+// plus *offset seconds, so a test can let weeks pass.
+func (s *realServer) computer(t *testing.T, hwid string, offset *float64) *Service {
 	t.Helper()
 	t.Setenv("STUDIO_LICENSE_CERT_PATH", "")
 	home := scenarioDir(t)
 	service := New(Options{Home: home, DataDir: home, Enforce: true, Keys: s.keys, AllowTestServer: true,
 		HWID: func() (string, error) { return hwid, nil }, Debugger: func() bool { return false },
-		Logf: t.Logf, Registry: memoryRegistry{}, Chip: chip})
+		Clock: func() float64 { return float64(time.Now().Unix()) + *offset },
+		Logf:  t.Logf, Registry: memoryRegistry{}})
 	if _, err := service.SetServerURL(s.url); err != nil {
 		t.Fatal(err)
 	}
@@ -138,71 +142,97 @@ func status(t *testing.T, service *Service) Status {
 	return current
 }
 
-func TestRealServerLeaseTokenRotationAndAClonedCopy(t *testing.T) {
+func TestRealServerActivatesOnceAndKeepsTheSameIDForLife(t *testing.T) {
 	server := startRealServer(t)
 	key := server.issueKey(t)
-	hwid := strings.Repeat("e5", 32)
-	original := server.computer(t, tpm.None{}, hwid)
-	if _, err := original.Activate(key); err != nil {
+	hwid, offset := strings.Repeat("e5", 32), 0.0
+	first := server.computer(t, hwid, &offset)
+	if _, err := first.Activate(key); err != nil {
 		t.Fatalf("activate: %v", err)
 	}
-	if got := status(t, original); !got.Licensed || got.Binding != BindingLease {
+	if got := status(t, first); !got.Licensed || got.Plan != "lifetime" {
 		t.Fatalf("after activation: %+v", got)
 	}
-	first := original.lease.CurrentToken()
-	if first == "" {
-		t.Fatal("the activation answer carried no lease token")
+	// Windows is reinstalled: the license home is gone, the Machine ID v3 is the same.
+	reinstalled := server.computer(t, hwid, &offset)
+	if got := status(t, reinstalled); got.Licensed {
+		t.Fatalf("a new license home must start without a license: %+v", got)
 	}
-	// A copy of the license files on a second computer (same Machine ID, e.g. a cloned disk).
-	clone := server.computer(t, tpm.None{}, hwid)
-	for _, name := range []string{"license.cert", "license_state.json", ".lease_token", ".lease_answer"} {
-		if data, err := os.ReadFile(filepath.Join(original.options.Home, name)); err == nil {
-			os.WriteFile(filepath.Join(clone.options.Home, name), data, 0o666)
-		}
+	if _, err := reinstalled.Activate(key); err != nil {
+		t.Fatalf("the same key on the same Machine ID is issued again: %v", err)
 	}
-	if _, err := original.CheckOnlineNow(); err != nil {
-		t.Fatalf("check online (original): %v", err)
+	if got := status(t, reinstalled); !got.Licensed {
+		t.Fatalf("after the reinstall: %+v", got)
 	}
-	if second := original.lease.CurrentToken(); second == "" || second == first {
-		t.Fatalf("the token did not rotate: %q -> %q", first, second)
+	// Any other Machine ID is refused for good: no moves, no resets.
+	other := server.computer(t, strings.Repeat("a7", 32), &offset)
+	_, err := other.Activate(key)
+	var refused *ServerError
+	if !errors.As(err, &refused) || refused.Code != any("bound_elsewhere") {
+		t.Fatalf("another Machine ID got %v, want bound_elsewhere", err)
 	}
-	if _, err := clone.CheckOnlineNow(); err != nil {
-		t.Fatalf("check online (copy): %v", err)
+	if got := status(t, other); got.Licensed {
+		t.Fatalf("the refused computer is licensed: %+v", got)
 	}
-	if got := status(t, clone); got.Licensed || !clone.revoked.Contains(key) {
-		t.Fatalf("the copy kept its license: %+v", got)
-	}
-	if got := status(t, original); !got.Licensed {
-		t.Fatalf("the original lost its license: %+v", got)
+	// Activated once, works forever: no server, years later.
+	server.stop()
+	offset = 5 * 365 * 86400
+	if got := status(t, first); !got.Licensed {
+		t.Fatalf("the license needed the server: %+v", got)
 	}
 }
 
-func TestRealServerWithThisComputersRealChip(t *testing.T) {
-	if os.Getenv("STUDIO_REAL_TPM") != "1" {
-		t.Skip("set STUDIO_REAL_TPM=1 to activate with this computer's real security chip")
-	}
+func TestRealServerWeeklyCheckIsSignedAndNeverBlocksAnOfflineComputer(t *testing.T) {
 	server := startRealServer(t)
 	key := server.issueKey(t)
-	computer := server.computer(t, tpm.System(), strings.Repeat("e6", 32))
+	offset := 0.0
+	computer := server.computer(t, strings.Repeat("e6", 32), &offset)
 	if _, err := computer.Activate(key); err != nil {
 		t.Fatalf("activate: %v", err)
 	}
-	got := status(t, computer)
-	if !got.Licensed || (got.Binding != BindingTPM && got.Binding != BindingLease) {
-		t.Fatalf("status %+v", got)
+	if verdict, err := computer.VerifyOnlineIfDue(false); err != nil || verdict != nil {
+		t.Fatalf("a fresh license is not asked again: %v %v", verdict, err)
 	}
-	t.Logf("this computer's license is tied by: %s", got.Binding)
-	if got.Binding == BindingTPM {
-		server.stop(t) // a chip license never needs the server again
-		if again := status(t, computer); !again.Licensed {
-			t.Fatalf("the chip license needed the server: %+v", again)
-		}
+	offset = 8 * 86400
+	verdict, err := computer.VerifyOnlineIfDue(false)
+	if err != nil || verdict != any("valid") {
+		t.Fatalf("the weekly check: %v %v", verdict, err)
+	}
+	if got := status(t, computer); !got.Licensed {
+		t.Fatalf("after a valid check: %+v", got)
+	}
+	server.stop() // the server is gone: the next weekly check is skipped quietly
+	offset = 16 * 86400
+	verdict, err = computer.VerifyOnlineIfDue(false)
+	if err != nil || verdict != nil {
+		t.Fatalf("an unreachable server must not matter: %v %v", verdict, err)
+	}
+	if got := status(t, computer); !got.Licensed {
+		t.Fatalf("an offline computer lost its license: %+v", got)
 	}
 }
 
-// stop ends the server (a second Kill from the test cleanup is harmless).
-func (s *realServer) stop(t *testing.T) {
-	t.Helper()
-	s.process.Process.Kill()
-	s.process.Wait()
+func TestRealServerCancelledKeyStopsAtTheNextWeeklyCheckAndStaysCancelled(t *testing.T) {
+	server := startRealServer(t)
+	key := server.issueKey(t)
+	offset := 0.0
+	computer := server.computer(t, strings.Repeat("e7", 32), &offset)
+	if _, err := computer.Activate(key); err != nil {
+		t.Fatalf("activate: %v", err)
+	}
+	server.admin(t, "revoke", "--key", key, "--reason", "refund")
+	offset = 8 * 86400
+	verdict, err := computer.VerifyOnlineIfDue(false)
+	if err != nil || verdict != any("revoked") {
+		t.Fatalf("the weekly check after a refund: %v %v", verdict, err)
+	}
+	if got := status(t, computer); got.Licensed || !computer.revoked.Contains(key) {
+		t.Fatalf("the cancelled license still works: %+v", got)
+	}
+	if _, err := computer.Activate(key); err == nil {
+		t.Fatal("a cancelled key activated again")
+	}
+	if got := status(t, computer); got.Licensed {
+		t.Fatalf("cancelled stays cancelled: %+v", got)
+	}
 }
