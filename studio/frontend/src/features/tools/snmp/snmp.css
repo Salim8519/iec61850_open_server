@@ -4,7 +4,9 @@
 .snmp-add { width: 100%; justify-content: center; }
 .snmp-device-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 .snmp-device { display: grid; gap: 2px; width: 100%; text-align: left; padding: 8px 10px; min-height: 0;
-  border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface); }
+  border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface);
+  /* A card is a button: one full-width column and normal wrapping, so a long problem never spills out. */
+  grid-template-columns: minmax(0, 1fr); justify-content: stretch; justify-items: start; white-space: normal; }
 .snmp-device.active { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
 .snmp-device strong, .snmp-device span { overflow-wrap: anywhere; }
 .snmp-state.state-running { color: var(--success); }
@@ -71,6 +73,7 @@
 .snmp-write .row { align-items: end; gap: 10px; }
 .snmp-side .side-section { grid-template-columns: minmax(0, 1fr); }
 .snmp-connect { flex-wrap: nowrap; gap: 6px; }
-.snmp-connect > button { flex: 1; min-width: 0; width: auto; }
+.snmp-connect > button { flex: 1; min-width: 0; width: auto; white-space: normal; line-height: 1.25;
+  padding-block: 6px; text-align: center; }
 .snmp-live .live-dot { margin-left: 0; }
 .snmp-network-note { margin: 0; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); }

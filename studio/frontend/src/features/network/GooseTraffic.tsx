@@ -1,6 +1,7 @@
 import { Radio } from 'lucide-react';
 import { useLiveFeed } from '../../api/useLiveFeed';
 import type { GooseOverview } from '../../api/network';
+import type { Ied } from '../../api/types';
 import { EmptyState } from '../../ui/EmptyState';
 import { Hint } from '../../ui/Hint';
 import { InfoTip } from '../../ui/InfoTip';
@@ -8,10 +9,14 @@ import { StatusPill } from '../../ui/StatusPill';
 import { gooseStatus } from '../../copy/status';
 import { reachStatus } from '../../copy/gooseReach';
 import { shortBlock } from './endpoints';
+import { noListener, publisherRole, skippedGoose } from './gooseSkipped';
 
 /** Every GOOSE block of the project and what really arrives; GOOSE runs in every network mode (ADR-0073). */
-export function GooseTraffic({ running, revision }: { running: boolean; revision: number }) {
+export function GooseTraffic({ running, revision, ieds }: { running: boolean; revision: number; ieds: Ied[] }) {
   const { value: overview, error } = useLiveFeed<GooseOverview>('/goose', running ? 2000 : null, revision);
+  const skipped = skippedGoose(ieds);
+  const unknown = (overview?.unknown ?? []).filter(item => !skipped.publishers.has(item.gocb_ref));
+  const fromSkipped = (overview?.unknown ?? []).filter(item => skipped.publishers.has(item.gocb_ref));
   return <div className="card">
     <div className="card-heading"><h2><InfoTip term="goose" label="GOOSE traffic" /></h2>
       {overview && <StatusPill status={reachStatus(overview.state)} />}</div>
@@ -27,15 +32,17 @@ export function GooseTraffic({ running, revision }: { running: boolean; revision
         <th><InfoTip term="stnum" label="Messages" /></th></tr></thead>
       <tbody>{(overview?.watches || []).map(watch => <tr key={watch.key}>
         <td><strong>{shortBlock(watch.gocb_ref)}</strong><div className="small muted"><code>{watch.gocb_ref}</code></div></td>
-        <td>{watch.publisher?.name || 'Unknown'}<div className="small muted">{watch.publisher?.role === 'real' ? 'real device'
-          : watch.publisher?.role === 'outside_project' ? 'not in project' : 'simulated'}</div></td>
-        <td>{watch.subscribers.length ? watch.subscribers.map(item => item.name).join(', ') : <span className="muted">Nobody in project</span>}</td>
+        <td>{watch.publisher?.name || 'Unknown'}<div className="small muted">{publisherRole(watch, skipped)}</div></td>
+        <td>{watch.subscribers.length ? watch.subscribers.map(item => item.name).join(', ') : <span className="muted">{noListener(watch, skipped)}</span>}</td>
         <td><code>{`0x${watch.app_id.toString(16).toUpperCase().padStart(4, '0')}`}</code><div className="small"><code>{watch.mac}</code></div></td>
         <td><StatusPill status={gooseStatus(watch.state, watch.problem)} showHint={watch.state !== 'receiving'} />
           {watch.origin === 'wire' && <div className="small muted">from the network{watch.src_mac ? ` · ${watch.src_mac}` : ''}</div>}</td>
         <td className="small">{watch.frames ? `${watch.frames} seen · state ${watch.st_num ?? '-'}` : '–'}</td>
       </tr>)}</tbody></table>}
-    {!!overview?.unknown.length && <div className="guide-section"><Hint id="goose.unknown" />
-      <ul className="small">{overview.unknown.map(item => <li key={item.gocb_ref}><code>{item.gocb_ref}</code> · APPID {item.app_id} · {item.mac}</li>)}</ul></div>}
+    {!!fromSkipped.length && <div className="guide-section"><Hint id="goose.fromSkipped" />
+      <ul className="small">{fromSkipped.map(item => <li key={item.gocb_ref}><code>{item.gocb_ref}</code> · from{' '}
+        {skipped.publishers.get(item.gocb_ref)} · APPID {item.app_id} · {item.mac}</li>)}</ul></div>}
+    {!!unknown.length && <div className="guide-section"><Hint id="goose.unknown" />
+      <ul className="small">{unknown.map(item => <li key={item.gocb_ref}><code>{item.gocb_ref}</code> · APPID {item.app_id} · {item.mac}</li>)}</ul></div>}
   </div>;
 }

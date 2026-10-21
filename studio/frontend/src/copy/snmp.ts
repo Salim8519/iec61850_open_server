@@ -20,6 +20,10 @@ export const SNMP_COPY = {
   pickDevice: 'Pick a device on the left to see its values and settings.',
   running: (count: number) => `${count} ${count === 1 ? 'device answers' : 'devices answer'} SNMP`,
   stopped: 'Devices are stopped',
+  /** After Start, devices that could not open their address or port; the reason is on each device card. */
+  notStarted: (failed: number, running: number) => running
+    ? `${failed} ${failed === 1 ? 'device' : 'devices'} could not start. The reason is under ${failed === 1 ? 'it' : 'each one'} in the list.`
+    : `${failed === 1 ? 'The device' : `${failed} devices`} could not start. The reason is under ${failed === 1 ? 'it' : 'each one'} in the list.`,
   states: { running: 'Answering', stopped: 'Stopped', failed: 'Problem' } as Record<string, string>,
   addMenu: { switch: 'Network switch (8 ports)', gps: 'GPS time server', empty: 'Empty device',
     walk: 'Copy of a device (snmpwalk file)…', csv: 'From a ScadaBench CSV file…' },

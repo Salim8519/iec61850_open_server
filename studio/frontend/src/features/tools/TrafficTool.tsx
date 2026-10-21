@@ -9,7 +9,7 @@ export function TrafficTool({ project, locked, perform }: {
   const running = project.runtime !== 'stopped';
   const lab = project.network.mode === 'lab';
   return <>
-    <GooseTraffic running={running} revision={project.revision} />
+    <GooseTraffic running={running} revision={project.revision} ieds={project.ieds} />
     <SvTraffic running={running} revision={project.revision} lab={lab} locked={locked} perform={perform} />
   </>;
 }

@@ -30,6 +30,7 @@ export function SimulateView({ status, config, refresh, fail }: {
   };
   const add = (profile: string) => act(() => snmpApi.add(profile));
   const running = status.running > 0;
+  const failed = status.devices.filter(item => item.state === 'failed').length;
   const device = config.devices.find(item => item.id === selected);
   return <div className="fill-body fill-split scada-split">
     <aside className="card side-pane snmp-side" aria-label={SNMP_COPY.devices}>
@@ -43,6 +44,8 @@ export function SimulateView({ status, config, refresh, fail }: {
       </div>
       <p className={`small ${running ? 'snmp-live' : 'muted'}`} role="status">
         {running && <span className="live-dot" aria-hidden />}{running ? SNMP_COPY.running(status.running) : SNMP_COPY.stopped}</p>
+      {failed > 0 && <p className="small explorer-error snmp-not-started" role="alert">
+        ⚠ {SNMP_COPY.notStarted(failed, status.running)}</p>}
       <Menu label={SNMP_COPY.addDevice} align="left" triggerClass="snmp-add"
         trigger={<><Plus size={16} />{SNMP_COPY.addDevice}</>} items={[
           { label: SNMP_COPY.addMenu.switch, onSelect: () => add('switch') },

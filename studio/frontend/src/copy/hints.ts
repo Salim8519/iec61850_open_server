@@ -26,6 +26,7 @@ export const HINTS: Record<string, string> = {
   'goose.reach': 'Your simulated IEDs always exchange GOOSE with each other inside ScadaBench. Nothing to set up, in any network mode.',
   'goose.listen': 'While running, ScadaBench also listens to real GOOSE on this adapter. It never sends while sharing is off.',
   'goose.unknown': 'These GOOSE messages are on the network but not in your project. They come from other devices.',
+  'goose.fromSkipped': 'These GOOSE messages come from IEDs that are in your project but skipped, so ScadaBench does not send them. Another device on the network sends them.',
   'devices.empty': 'Bring in the configuration file of your relay (CID, ICD or SCD). ScadaBench reads its data and can then pretend to be that IED, or connect to the real one.',
   'test.points.empty': 'Add the alarms, statuses and measurements you want to change during a test. They are saved with the project.',
   'test.generators.empty': 'A generator moves a measurement by itself, for example a current that swings up and down.',
