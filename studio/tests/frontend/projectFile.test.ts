@@ -26,8 +26,8 @@ test('the refusal is plain English and names both extensions', () => {
     'This is an old project file (.subsim). ScadaBench now uses .scadabench project files.');
 });
 
-test('the file chooser offers the new extension and lists the old one only so it can explain itself', () => {
+test('the file chooser offers .scadabench and SCL files, never the old .subsim', () => {
   const accepted = OPEN_FILE_ACCEPT.split(',');
-  assert.ok(accepted.includes(PROJECT_EXTENSION) && accepted.includes('.subsim'));
+  assert.ok(accepted.includes(PROJECT_EXTENSION) && !accepted.includes('.subsim'));
   assert.deepEqual(['.cid', '.icd', '.scd', '.iid'].filter(extension => !accepted.includes(extension)), []);
 });

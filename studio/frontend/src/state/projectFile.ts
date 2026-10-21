@@ -14,5 +14,5 @@ export function fileKind(name: string): FileKind {
   return lower.endsWith(OLD_PROJECT_EXTENSION) ? 'old-project' : 'scl';
 }
 
-/** The file chooser lists SCL files and projects. .subsim is listed only so picking one explains itself. */
-export const OPEN_FILE_ACCEPT = `.cid,.icd,.scd,.iid,${PROJECT_EXTENSION},${OLD_PROJECT_EXTENSION}`;
+/** The file chooser lists SCL files and .scadabench projects only; a dropped .subsim is still explained. */
+export const OPEN_FILE_ACCEPT = `.cid,.icd,.scd,.iid,${PROJECT_EXTENSION}`;
