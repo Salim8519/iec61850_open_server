@@ -2,7 +2,18 @@ import { Plus, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { masterApi, type CommandRoute } from '../../../../api/master';
 import { CONVERTER_COPY, DEVICE_KINDS, UPSTREAM_KINDS } from '../../../../copy/converter';
+import { kindOfGatewayPoint, kindOfMasterCommand, type Kind } from '../../../../points/pointKind';
+import { EditableText } from '../../../../ui/EditableText';
 import { HelpTip } from '../../../../ui/HelpTip';
+import { KindBadge, kindRow } from '../../../../ui/KindBadge';
+import { ChoiceEdit } from '../ChoiceEdit';
+
+const choicesOf = (names: Record<string, string>) => Object.entries(names).map(([value, label]) => ({ value, label }));
+const UPSTREAM_CHOICES = choicesOf(UPSTREAM_KINDS);
+const DEVICE_CHOICES = choicesOf(DEVICE_KINDS);
+/** A command type as it is shown in a route: badge + the name the choice list uses. */
+const shownKind = (kind: Kind, name: string, raw?: string) => <span className="type-cell"><KindBadge kind={kind} raw={raw} />
+  <span className="small">{name}</span></span>;
 
 /** Upstream command address -> device command; needed where the device cannot be discovered (IEC 104). */
 export function CommandRoutes({ locked, fail }: { locked: boolean; fail: (message: string) => void }) {
@@ -31,20 +42,20 @@ export function CommandRoutes({ locked, fail }: { locked: boolean; fail: (messag
       {dirty && <button className="primary" onClick={save}><Save size={16} />{CONVERTER_COPY.saveRoutes}</button>}
     </div>
     {routes && routes.length === 0 ? <p className="muted watch-empty">{CONVERTER_COPY.routesEmpty}</p> :
-      <div className="table-scroll"><table className="gateway-points"><thead><tr><th>{CONVERTER_COPY.upstream}</th>
+      <div className="table-scroll"><table className="gateway-points compact-rows"><thead><tr><th>{CONVERTER_COPY.upstream}</th>
         <th>{CONVERTER_COPY.upstreamKind}</th><th>{CONVERTER_COPY.deviceKind}</th><th>{CONVERTER_COPY.deviceAddress}</th>
         <th>{CONVERTER_COPY.select}</th><th aria-label="Remove" /></tr></thead>
-        <tbody>{(routes ?? []).map((route, index) => <tr key={index}>
-          <td><input className="gateway-number" value={route.upstream} disabled={locked} aria-label={CONVERTER_COPY.upstream}
-            onChange={event => edit(index, { upstream: number(event.target.value) })} /></td>
-          <td><select value={route.upstream_kind} disabled={locked} aria-label={CONVERTER_COPY.upstreamKind}
-            onChange={event => edit(index, { upstream_kind: event.target.value })}>
-            {Object.entries(UPSTREAM_KINDS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></td>
-          <td><select value={route.kind} disabled={locked} aria-label={CONVERTER_COPY.deviceKind}
-            onChange={event => edit(index, { kind: event.target.value })}>
-            {Object.entries(DEVICE_KINDS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></td>
-          <td><input className="gateway-number" value={route.address} disabled={locked} aria-label={CONVERTER_COPY.deviceAddress}
-            onChange={event => edit(index, { address: number(event.target.value) })} /></td>
+        <tbody>{(routes ?? []).map((route, index) => <tr key={index} {...kindRow(kindOfGatewayPoint(route.upstream_kind))}>
+          <td className="address-cell"><EditableText mono inputMode="numeric" value={String(route.upstream)} disabled={locked}
+            label={CONVERTER_COPY.upstream} onSave={text => edit(index, { upstream: number(text) })} /></td>
+          <td><ChoiceEdit label={CONVERTER_COPY.upstreamKind} value={route.upstream_kind} choices={UPSTREAM_CHOICES} disabled={locked}
+            shown={shownKind(kindOfGatewayPoint(route.upstream_kind), UPSTREAM_KINDS[route.upstream_kind] ?? route.upstream_kind)}
+            onChange={upstream_kind => edit(index, { upstream_kind })} /></td>
+          <td><ChoiceEdit label={CONVERTER_COPY.deviceKind} value={route.kind} choices={DEVICE_CHOICES} disabled={locked}
+            shown={shownKind(kindOfMasterCommand(route.kind), DEVICE_KINDS[route.kind] ?? route.kind, DEVICE_KINDS[route.kind])}
+            onChange={kind => edit(index, { kind })} /></td>
+          <td className="address-cell"><EditableText mono inputMode="numeric" value={String(route.address)} disabled={locked}
+            label={CONVERTER_COPY.deviceAddress} onSave={text => edit(index, { address: number(text) })} /></td>
           <td><input type="checkbox" checked={route.select} disabled={locked} aria-label={CONVERTER_COPY.select}
             onChange={event => edit(index, { select: event.target.checked })} /></td>
           <td><button className="ghost icon-button" disabled={locked} aria-label="Remove route" title="Remove"

@@ -1,7 +1,12 @@
 // Filters of IED Explorer (change 0093): the model tree by logical-node class and the watch list.
 // Display only; Explorer still loads one level at a time and never writes.
-import type { WatchItem } from '../../../api/tools';
+import type { Attribute, WatchItem } from '../../../api/tools';
+import { EXPLORER_COPY } from '../../../copy/tools.ts';
+import { KIND_COPY } from '../../../copy/pointKinds.ts';
+import type { Kind } from '../../../points/pointKind.ts';
 import { textMatch, type FilterSpec, type FilterValues } from '../../../ui/filterState.ts';
+import { kindGroup, kindMatches } from '../../../ui/kindFilter.ts';
+import { watchKind } from './attributeKind.ts';
 
 export const TREE_FILTER: FilterSpec = {
   search: 'Search logical nodes',
@@ -27,6 +32,7 @@ export function nodeMatches(name: string, values: FilterValues): boolean {
 
 export const WATCH_FILTER: FilterSpec = {
   search: 'Search watched values',
+  groups: [kindGroup()],
   toggles: [
     { key: 'recent', label: 'Changed in last minute', hint: 'Values that changed while this page was open, in the last 60 s.' },
     { key: 'bad', label: 'Bad quality', hint: 'Values whose quality is not good, or that could not be read.' }],
@@ -48,5 +54,20 @@ export function trackChanges(previous: Map<string, { text: string; at: number }>
 export function watchMatches(item: WatchItem, values: FilterValues, changedAt: number, now: number): boolean {
   if (values.recent && !(changedAt && now - changedAt <= 60_000)) return false;
   if (values.bad && item.status === 'ok') return false;
+  if (!kindMatches(values.kind, watchKind(item))) return false;
   return textMatch(values.text, item.ref, item.fc, item.text);
+}
+
+/** One logical node's attributes (ADR-0095): search, point type, and a switch that hides the quality and
+ *  time helpers so only the points are left. */
+export const NODE_FILTER: FilterSpec = {
+  search: EXPLORER_COPY.searchAttributes,
+  groups: [kindGroup()],
+  toggles: [{ key: 'helpers', label: KIND_COPY.hideHelpers, hint: KIND_COPY.hideHelpersHint }],
+};
+
+export function attributeShown(object: string, attribute: Attribute, kind: Kind, values: FilterValues): boolean {
+  if (values.helpers && kind === 'AT') return false;
+  if (!kindMatches(values.kind, kind)) return false;
+  return textMatch(values.text, object, attribute.path, attribute.fc, attribute.type);
 }

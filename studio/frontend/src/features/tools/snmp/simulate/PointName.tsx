@@ -1,38 +1,23 @@
-import { Pencil } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import type { ValueRow } from '../../../../api/snmp';
 import { POINTS_COPY } from '../../../../copy/snmp';
+import { EditableText } from '../../../../ui/EditableText';
 
-/** The name cell of a value: the user's own label (always editable), the MIB name, and the OID,
- *  which the pencil turns into a box (Enter saves, Escape cancels). */
-export function PointName({ row, rename, move }: {
-  row: ValueRow; rename: (label: string) => void; move: (text: string) => Promise<boolean>;
-}) {
-  const saved = row.label ?? '';
-  const [label, setLabel] = useState(saved);
-  const [editing, setEditing] = useState(false);
-  useEffect(() => setLabel(saved), [saved]);
-  const commitLabel = () => { if (label.trim() !== saved) rename(label.trim()); };
-  const done = (text: string | null) => {
-    if (text === null || !text.trim() || text.trim() === row.oid) { setEditing(false); return; }
-    move(text).then(moved => { if (moved) setEditing(false); });
+/** A label is at most 120 characters (the Add value form stops typing there too). */
+const LABEL_MAX = 120;
+
+/** The name of a value: the user's own label when there is one, else the MIB name. Both can be changed in
+ *  place; clearing the text brings the MIB name back. The label is kept with the project; managers never see it. */
+export function PointLabel({ row, rename }: { row: ValueRow; rename: (label: string) => void }) {
+  const save = (text: string) => {
+    const next = text.trim().slice(0, LABEL_MAX);
+    rename(next === row.name ? '' : next);
   };
-  return <div className="snmp-name">
-    <input className="snmp-label" value={label} maxLength={120} placeholder={POINTS_COPY.labelPlaceholder}
-      aria-label={`${POINTS_COPY.label} of ${row.name}`} title={POINTS_COPY.labelHint}
-      onChange={event => setLabel(event.target.value)} onBlur={commitLabel}
-      onKeyDown={event => { if (event.key === 'Enter') commitLabel(); if (event.key === 'Escape') setLabel(saved); }} />
-    <span>{row.name}</span>
-    {editing
-      ? <><input autoFocus className="snmp-edit mono" defaultValue={row.oid} spellCheck={false}
-        aria-label={`${POINTS_COPY.changeOid} of ${row.name}`}
-        onBlur={event => done(event.target.value)}
-        onKeyDown={event => {
-          if (event.key === 'Enter') done((event.target as HTMLInputElement).value);
-          if (event.key === 'Escape') done(null);
-        }} /><span className="small muted">{POINTS_COPY.oidHint}</span></>
-      : <span className="row snmp-oid"><span className="small muted mono">{row.oid}</span>
-        <button type="button" className="ghost icon-button" title={POINTS_COPY.changeOid}
-          aria-label={`${POINTS_COPY.changeOid} of ${row.name}`} onClick={() => setEditing(true)}><Pencil size={13} /></button></span>}
-  </div>;
+  return <EditableText value={row.label || row.name} placeholder={POINTS_COPY.labelPlaceholder}
+    label={POINTS_COPY.labelOf(row.name)} onSave={save} />;
+}
+
+/** The OID of a value, shown in mono. A new OID keeps the value's settings; a name a MIB knows works too. */
+export function PointOid({ row, move }: { row: ValueRow; move: (text: string) => void }) {
+  return <EditableText mono value={row.oid} label={POINTS_COPY.oidOf(row.name)}
+    onSave={text => { if (text.trim()) move(text); }} />;
 }

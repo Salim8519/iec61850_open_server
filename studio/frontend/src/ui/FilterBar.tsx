@@ -1,6 +1,9 @@
 import { Check, Search, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { countText, isFiltered, type Choice, type FilterSpec, type FilterValues } from './filterState';
+import { KindBadge } from './KindBadge';
+import { KIND_TEXT } from '../copy/pointKinds';
+import type { Kind } from '../points/pointKind';
 import './filter-bar.css';
 
 /** The one filter bar of every list: search, choice chips, toggles, dropdowns and "N of M · Clear".
@@ -15,13 +18,26 @@ export function FilterBar({ spec, values, set, clear, shown, total, counts, opti
     {spec.search !== undefined && <label className="search-field filter-search"><Search size={16} aria-hidden />
       <input value={String(values.text ?? '')} placeholder={spec.search} aria-label={spec.search}
         onChange={event => set('text', event.target.value)} spellCheck={false} /></label>}
-    {spec.groups?.map(group => <span key={group.key} className="chip-group" role="radiogroup" aria-label={group.label}>
+    {spec.groups?.filter(group => group.select).map(group => {
+      const list = group.options.filter(option => option.value === group.initial || values[group.key] === option.value
+        || !counts || counts[group.key]?.[option.value]);
+      return <select key={group.key} aria-label={group.label} title={group.label}
+        className={`filter-select${values[group.key] !== group.initial ? ' active' : ''}`}
+        value={String(values[group.key] ?? group.initial)} onChange={event => set(group.key, event.target.value)}>
+        {list.map(option => { const count = counts?.[group.key]?.[option.value];
+          return <option key={option.value} value={option.value}>{group.kinds && option.value !== group.initial
+            ? `${KIND_TEXT[option.value as Kind].glyph} ${option.value} · ` : ''}{option.label}{count ? ` (${count.toLocaleString()})` : ''}</option>; })}
+      </select>;
+    })}
+    {spec.groups?.filter(group => !group.select).map(group => <span key={group.key} className="chip-group" role="radiogroup" aria-label={group.label}>
       {group.options.map(option => {
         const active = values[group.key] === option.value;
         const count = counts?.[group.key]?.[option.value];
+        const kind = group.kinds && option.value !== group.initial;
+        if (kind && !active && counts && !count) return null;
         return <button key={option.value} type="button" role="radio" aria-checked={active}
           className={`chip${active ? ' active' : ''}`} onClick={() => set(group.key, option.value)}>
-          {active && <Check size={13} aria-hidden />}{option.label}{count !== undefined && <span className="chip-count">{count}</span>}
+          {active && <Check size={13} aria-hidden />}{kind ? <KindBadge kind={option.value as Kind} /> : option.label}{count !== undefined && <span className="chip-count">{count}</span>}
         </button>;
       })}</span>)}
     {spec.toggles?.map(toggle => {

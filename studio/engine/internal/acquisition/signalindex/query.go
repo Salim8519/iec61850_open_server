@@ -22,6 +22,12 @@ type Query struct {
 	LD         string          // logical device; "" means no filter
 	BadQuality bool            // bad_quality == "true"
 	InDataset  bool            // in_dataset == "true"
+	// Go only (ADR-0095): point_kind (SP, DP, MV …) and helpers == "hide" (no q/t attributes);
+	// Classes are the IED's data classes, set by the route when point_kind is asked.
+	PointKind   string
+	HideHelpers bool
+	KindCounts  bool // kind_counts == "1": add {kind: n} counted without point_kind
+	Classes     map[string]string
 	offset     intArg
 	limit      intArg
 }
@@ -52,8 +58,12 @@ func ParseQuery(args url.Values) Query {
 	ld, _ := get("ld")
 	bad, _ := get("bad_quality")
 	inDataset, _ := get("in_dataset")
+	pointKind, _ := get("point_kind")
+	helpers, _ := get("helpers")
+	counts, _ := get("kind_counts")
 	query := Query{Text: pyv.Casefold(text), FC: fc, Writable: writable == "true", Report: report, Ref: ref,
-		LD: ld, BadQuality: bad == "true", InDataset: inDataset == "true"}
+		LD: ld, BadQuality: bad == "true", InDataset: inDataset == "true",
+		PointKind: pointKind, HideHelpers: helpers == "hide", KindCounts: counts == "1"}
 	for _, kind := range strings.Split(kindText, ",") {
 		if kind == "" {
 			continue

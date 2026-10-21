@@ -1,6 +1,7 @@
 import { Send, TriangleAlert } from 'lucide-react';
 import type { GatewayPoint } from '../../../api/gateway';
 import { GATEWAY_COPY, OWN_COPY } from '../../../copy/gateway';
+import '../../../ui/kind.css';
 import { commandLabels } from './gatewayCommands';
 import { ownName } from './ownPoints';
 
@@ -23,7 +24,7 @@ export function CommandWarning({ pending, real, own, busy, cancel, send }: {
   pending: PendingCommand; real: boolean; own?: boolean; busy: boolean; cancel: () => void; send: () => void;
 }) {
   const target = own ? `${OWN_COPY.ownPoint} · ${ownName(pending.row)}` : `${pending.row.ied_name ?? pending.row.ied} · ${pending.row.ref}`;
-  return <div className={`gateway-confirm${real ? ' real' : ''}`} role="alertdialog" aria-label="Confirm command">
+  return <div className={`confirm-box gateway-confirm${real ? ' real' : ''}`} role="alertdialog" aria-label="Confirm command">
     <p><TriangleAlert size={18} aria-hidden /><strong>{GATEWAY_COPY.confirmTitle(pending.label, target)}</strong></p>
     <p className="small">{own ? OWN_COPY.commandWarning : real ? GATEWAY_COPY.realWarning : GATEWAY_COPY.simulatedWarning}</p>
     <div className="row">

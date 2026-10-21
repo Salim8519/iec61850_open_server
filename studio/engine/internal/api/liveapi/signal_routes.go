@@ -7,6 +7,7 @@ import (
 	"studio-engine/internal/acquisition/pyv"
 	"studio-engine/internal/acquisition/signalindex"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/scl"
 )
 
 // runtimeValues reads point values from the runtime value table of a running IED.
@@ -33,6 +34,10 @@ func (s *Service) listSignals(w http.ResponseWriter, r *http.Request) {
 		values = runtimeValues{values: s.Deps.Values, iedID: id}
 	}
 	query := signalindex.ParseQuery(signalindex.ParseArgs(r.URL.RawQuery))
+	if query.PointKind != "" || query.KindCounts { // Go only (ADR-0095): counters and commands need the data classes
+		source, _ := pyv.Get(ied, "source").(string)
+		query.Classes, _ = scl.CachedDataClasses(pyv.GetStr(ied, "id"), pyv.GetStr(ied, "name"), source)
+	}
 	result, err := s.signals.For(ied).Search(query, values)
 	if err != nil {
 		writeError(w, err)

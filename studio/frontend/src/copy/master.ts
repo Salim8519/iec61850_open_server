@@ -109,6 +109,7 @@ export const MASTER_COPY = {
   noModbusPoints: 'No points yet. Modbus cannot list its points: add ranges or use Find registers in What to read.',
   pointsHint: 'Every point the device reported. All are watched; untick what you do not need. Name points so the list reads like your SCADA.',
   tickAll: 'Watch all', untickAll: 'Watch none', onlyWatched: 'Only watched', exportCsv: 'Export CSV', importLabels: 'Import names',
+  moreLabel: 'More point list actions: export CSV, import names',
   labelPlaceholder: 'add a name', stale: 'Not connected: these are the last values received.',
   sendTo: 'Command…', commandTitle: 'Send a command to the device',
   value: 'Value', code: 'Control code', select: 'Select before operate', kind: 'Command type',

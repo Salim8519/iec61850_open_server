@@ -2,7 +2,9 @@
 // them to rows the browser already has, and the FilterBar only displays and changes values.
 
 export type Choice = { value: string; label: string };
-export type FilterGroup = { key: string; label: string; options: Choice[]; initial: string };
+/** `kinds`: the options are point kinds (ADR-0095); chips show the kind badge and kinds with no rows hide.
+ *  `select`: show the group as one dropdown (with counts) instead of chips, for lists short on space. */
+export type FilterGroup = { key: string; label: string; options: Choice[]; initial: string; kinds?: boolean; select?: boolean };
 export type FilterToggle = { key: string; label: string; hint?: string; initial?: boolean; remember?: boolean };
 export type FilterSelect = { key: string; label: string; all: string };
 export type FilterSpec = {

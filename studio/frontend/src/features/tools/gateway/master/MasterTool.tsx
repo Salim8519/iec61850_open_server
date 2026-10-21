@@ -5,6 +5,9 @@ import { liveFeed } from '../../../../api/polls';
 import { MASTER_COPY, RANGES_COPY, TRAFFIC_WORDS } from '../../../../copy/master';
 import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { TabBar } from '../../../../ui/TabBar';
+import { FULL_PLACE } from '../../../../copy/fullView';
+import { FullView, FullViewButton } from '../../../../ui/FullView';
+import { useFullView } from '../../../../state/useFullView';
 import { TrafficLog } from '../TrafficLog';
 import { MasterCommandLog } from './MasterCommandLog';
 import { MasterConnect } from './MasterConnect';
@@ -22,6 +25,7 @@ export function MasterTool() {
   const [config, setConfig] = useState<MasterConfig | null>(null);
   const [status, setStatus] = useState<MasterStatus | null>(null);
   const [tab, setTab] = useState<Tab>('points');
+  const [full, setFull] = useFullView('master');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const refresh = useCallback(() => liveFeed.refresh(MASTER_STATUS), []);
@@ -50,8 +54,9 @@ export function MasterTool() {
         connect={() => act(masterApi.connect)} interrogate={() => act(masterApi.interrogate)}
         error={error || (status.available ? '' : MASTER_COPY.notBuilt)} />
     </aside>
+    <FullView full={full} change={setFull} place={FULL_PLACE.master} detail={`${config.protocol.toUpperCase()} · ${status.state}`}>
     <div className={`card fill-panel gateway-panel${connected ? ' running' : ''}`}>
-      <TabBar label="Master views" value={tab} change={setTab} tabs={tabs} />
+      <TabBar label="Master views" value={tab} change={setTab} tabs={tabs} end={<FullViewButton full={full} change={setFull} />} />
       <div className="panel-body">
         {tab === 'points' && <MasterPointTable status={status} fail={setError} />}
         {tab === 'ranges' && modbus && <ModbusRanges status={status} fail={setError} />}
@@ -60,5 +65,6 @@ export function MasterTool() {
         {tab === 'commands' && <MasterCommandLog />}
       </div>
     </div>
+    </FullView>
   </div>;
 }

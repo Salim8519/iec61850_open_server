@@ -1,5 +1,4 @@
 /* SNMP devices tool (ADR-0092): builds on the gateway's split layout, tables and logs. */
-.snmp-role-sentence { max-width: 520px; }
 .snmp-run { gap: 6px; }
 .snmp-live { color: var(--success); display: flex; align-items: center; gap: 6px; margin: 0; justify-self: start; }
 .snmp-add { width: 100%; justify-content: center; }
@@ -12,26 +11,36 @@
 .snmp-state.state-failed { color: var(--error); }
 .snmp-import { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-small); }
 .snmp-problems { margin: 4px 0 0; padding-left: 18px; max-height: 160px; overflow: auto; }
+/* Values lists (ADR-0095): one line per value, the type as a badge, edit pins on what you can change. */
 .snmp-values { table-layout: fixed; width: 100%; }
-.snmp-values td { vertical-align: top; }
-.snmp-values .col-type { width: 96px; }
-.snmp-values .col-changes { width: 180px; }
-.snmp-values .col-writable { width: 80px; }
-.snmp-values .col-remove { width: 48px; }
-.snmp-values .col-actions { width: 200px; }
-.snmp-name { display: grid; gap: 2px; overflow-wrap: anywhere; }
-.snmp-label { width: 100%; min-height: 32px; font-weight: 600; }
-.snmp-oid { gap: 4px; flex-wrap: nowrap; }
-.snmp-oid .icon-button { min-height: 26px; height: 26px; width: 26px; }
+.snmp-values td { vertical-align: middle; }
+.snmp-values th { padding-top: 8px; padding-bottom: 8px; }
+.snmp-values .col-oid { width: 190px; }
+.snmp-values .col-type { width: 72px; }
+.snmp-values .col-changes { width: 150px; }
+.snmp-values .col-writable { width: 84px; }
+.snmp-values .col-remove { width: 44px; }
+.snmp-values .col-actions { width: 230px; }
+.snmp-values .icon-button { min-height: 28px; height: 28px; width: 28px; }
+.snmp-values .mono { overflow-wrap: anywhere; }
 .snmp-value { overflow-wrap: anywhere; }
-.snmp-value-button { white-space: normal; overflow-wrap: anywhere; background: none; border: 1px dashed transparent; padding: 2px 4px; min-height: 0; text-align: left;
-  color: inherit; font: inherit; cursor: text; }
-.snmp-value-button:hover, .snmp-value-button:focus-visible { border-color: var(--border); }
-.snmp-edit { width: 100%; min-width: 160px; }
+.snmp-value-edit { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 2px 4px; }
 .snmp-behaviour { gap: 6px; flex-wrap: wrap; }
-.snmp-behaviour select { width: 140px; }
+.snmp-behaviour select { width: 128px; }
 .snmp-row-actions { gap: 4px; flex-wrap: nowrap; }
-.snmp-key td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.snmp-important { color: var(--accent-hover); vertical-align: -2px; margin-right: 4px; }
+/* Device header: name, address, tabs and the "..." menu on one row; the tabs rest on its bottom line. */
+.snmp-device-head { padding: 0 12px 0 16px; gap: 4px 14px; }
+.snmp-device-address { min-width: 0; }
+.snmp-device-head .tabbar { padding: 0; border-bottom: 0; }
+.snmp-device-head .tabbar button { min-height: 44px; }
+/* One bar above the values: buttons, search, type chips, toggle, note and count. */
+.snmp-bar { display: flex; align-items: center; gap: 6px 10px; flex-wrap: wrap; padding: 8px 16px;
+  border-bottom: 1px solid var(--border); background: var(--surface); }
+.snmp-bar > .filter-bar { flex: 1 1 420px; min-width: 0; padding: 0; border-bottom: 0; background: transparent; }
+.snmp-actions { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+.snmp-actions button { min-height: 36px; }
+.snmp-live-note { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
 .snmp-settings { display: grid; gap: 16px; padding: 16px; align-content: start; }
 .snmp-fieldset { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-small); padding: 10px 12px; display: grid; gap: 10px; margin: 0; }
 .snmp-fieldset legend { font-weight: 600; padding: 0 4px; }

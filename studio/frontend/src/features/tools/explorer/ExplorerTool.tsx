@@ -7,6 +7,9 @@ import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
 import { StatusPill } from '../../../ui/StatusPill';
 import { TabBar } from '../../../ui/TabBar';
+import { EXPLORER_FULL_PLACE } from '../../../copy/fullView';
+import { FullView, FullViewButton } from '../../../ui/FullView';
+import { useFullView } from '../../../state/useFullView';
 import type { Status } from '../../../copy/status';
 import { ModelTree } from './ModelTree';
 import { NodeDetail } from './NodeDetail';
@@ -32,6 +35,7 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
   const [port, setPort] = useState(String(target?.port ?? 102));
   const [node, setNode] = useState('');
   const [view, setView] = useState<View>('node');
+  const [full, setFull] = useFullView('explorer');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const run = useCallback((task: () => Promise<ExplorerStatus>) => {
@@ -87,8 +91,9 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
     {connected && status ? <div className="fill-body fill-split explorer-split">
       <ModelTree key={`${status.host}:${status.port}`} selected={node} select={picked => { setNode(picked); setView('node'); }}
         fail={setError} />
+      <FullView full={full} change={setFull} place={EXPLORER_FULL_PLACE} detail={`${status.host}:${status.port}`}>
       <div className="card fill-panel explorer-right">
-        <TabBar label={EXPLORER_COPY.views} value={view} change={setView} tabs={[
+        <TabBar label={EXPLORER_COPY.views} value={view} change={setView} end={<FullViewButton full={full} change={setFull} />} tabs={[
           ['node', node ? node.split('/').pop() || node : EXPLORER_COPY.nodeTab],
           ['watch', `${EXPLORER_COPY.watchTitle} (${status.watch.length})`]]} />
         {/* Both stay mounted so opened objects and the watch scroll survive a tab switch. */}
@@ -98,6 +103,7 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
         </div>
         <div className="panel-body explorer-tab" hidden={view !== 'watch'}><WatchList status={status} run={run} /></div>
       </div>
+      </FullView>
     </div> : <div className="card fill-body panel-empty"><div className="guide-empty">
       <span className="guide-empty-icon"><Telescope size={24} /></span>
       <h3>{EXPLORER_COPY.notConnected}</h3><p>{EXPLORER_COPY.intro}</p></div></div>}

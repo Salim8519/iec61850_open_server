@@ -1,0 +1,6 @@
+/* Type column of point tables and the compact type dropdown of narrow lists (ADR-0095). */
+td.type-cell { white-space: nowrap; }
+td.type-cell > * + * { margin-left: 6px; }
+.fc-tag { padding: 0 7px; font-size: 12px; font-weight: 600; vertical-align: middle; }
+.kind-select { width: auto; max-width: 100%; min-height: 36px; font-size: var(--font-size-small); }
+.kind-select.active { border-color: var(--accent); border-width: 2px; }

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { choicesOf, countText, effective, initialValues, isFiltered, rememberable, restore, textMatch,
   type FilterSpec } from '../../frontend/src/ui/filterState.ts';
-import { GATEWAY_POINT_FILTER, gatewayKind, gatewayPointMatches, MASTER_POINT_FILTER, masterPointMatches }
+import { GATEWAY_POINT_FILTER, gatewayPointMatches, MASTER_POINT_FILTER, masterPointMatches }
   from '../../frontend/src/features/tools/gateway/pointFilters.ts';
 import { COMMAND_FILTER, gatewayCommandMatches, gatewayResult, isKeepAlive, masterCommandMatches, TRAFFIC_FILTER,
   trafficMatches } from '../../frontend/src/features/tools/gateway/logFilters.ts';
@@ -55,14 +55,14 @@ test('search matches every word in any field, ignoring case', () => {
   assert.ok(textMatch('30001', 30001));
 });
 
-test('SCADA points filter by type, IED, bad quality and not served', () => {
+test('SCADA points filter by point type, IED, bad quality and not served', () => {
   const row = { id: 'a', kind: 'double' as const, address: 10, ied: 'i1', ied_name: 'FEED1', ref: 'FEED1LD1/XCBR1.Pos.stVal',
     scale: 1, description: 'Breaker', online: true };
   const all = values(GATEWAY_POINT_FILTER);
-  assert.equal(gatewayKind('command_single'), 'commands');
-  assert.equal(gatewayKind('float'), 'measured');
-  assert.ok(gatewayPointMatches(row, { ...all, kind: 'status', ied: 'FEED1', text: 'breaker' }));
-  assert.ok(!gatewayPointMatches(row, { ...all, kind: 'measured' }));
+  assert.ok(gatewayPointMatches(row, { ...all, kind: 'DP', ied: 'FEED1', text: 'breaker' }));
+  assert.ok(!gatewayPointMatches(row, { ...all, kind: 'SP' }), 'a double point is not a single point');
+  assert.ok(!gatewayPointMatches(row, { ...all, kind: 'MV' }));
+  assert.ok(gatewayPointMatches({ ...row, kind: 'command_double' }, { ...all, kind: 'DC' }));
   assert.ok(!gatewayPointMatches(row, { ...all, ied: 'FEED2' }));
   assert.ok(!gatewayPointMatches(row, { ...all, bad: true }));
   assert.ok(gatewayPointMatches({ ...row, online: false }, { ...all, bad: true }));
@@ -70,15 +70,17 @@ test('SCADA points filter by type, IED, bad quality and not served', () => {
   assert.ok(gatewayPointMatches({ ...row, id: undefined }, { ...all, unserved: true }), 'a row without id is not saved yet');
 });
 
-test('master points filter by group, kind, quality and watched', () => {
+test('master points filter by group, point type, quality, command and watched', () => {
   const row = { key: 'single:1', group: 'single', group_name: 'Single point', type: 'M_SP', address: 1, value: 1,
     value_text: 'ON', quality_text: 'good', good: true, time_ms: null, cause: '', changes: 0, label: 'Alarm',
     ticked: true, stale: false, command: 'single' as const };
   const all = values(MASTER_POINT_FILTER);
-  assert.ok(masterPointMatches(row, { ...all, kind: 'status' }));
-  assert.ok(masterPointMatches(row, { ...all, kind: 'commands' }), 'a commandable status point is in both');
-  assert.ok(!masterPointMatches(row, { ...all, kind: 'measured' }));
-  assert.ok(masterPointMatches({ ...row, group: 'float', command: null }, { ...all, kind: 'measured' }));
+  assert.ok(masterPointMatches(row, { ...all, kind: 'SP' }));
+  assert.ok(masterPointMatches(row, { ...all, commandable: true }), 'a commandable status point is still a status point');
+  assert.ok(!masterPointMatches(row, { ...all, kind: 'DP' }));
+  assert.ok(!masterPointMatches(row, { ...all, kind: 'MV' }));
+  assert.ok(masterPointMatches({ ...row, group: 'float', command: null }, { ...all, kind: 'MV' }));
+  assert.ok(!masterPointMatches({ ...row, group: 'float', command: null }, { ...all, commandable: true }));
   assert.ok(!masterPointMatches(row, { ...all, bad: true }));
   assert.ok(!masterPointMatches({ ...row, ticked: false }, { ...all, watched: true }));
   assert.ok(!masterPointMatches(row, { ...all, group: 'Double point' }));
@@ -153,11 +155,11 @@ test('Devices list, data points and comparison filters', () => {
   assert.ok(!deviceMatches(ied, { ...all, problems: true }));
   assert.ok(deviceMatches({ ...(ied as object), warnings: ['x'] } as never, { ...all, problems: true }));
   assert.deepEqual(roleCounts([ied, { ...(ied as object), role: 'real' } as never]), { all: 2, real: 1, simulated: 1, off: 0 });
-  const query = new URLSearchParams(signalQuery({ ...values(SIGNAL_FILTER), text: ' pos ', kind: 'measured', ld: 'FEED1LD1',
+  const query = new URLSearchParams(signalQuery({ ...values(SIGNAL_FILTER), text: ' pos ', point_kind: 'MV', ld: 'FEED1LD1',
     bad: true, dataset: true, report: 'R1' }, 200));
-  assert.deepEqual(Object.fromEntries(query), { q: 'pos', offset: '200', fc: 'MX', ld: 'FEED1LD1', report: 'R1',
+  assert.deepEqual(Object.fromEntries(query), { q: 'pos', offset: '200', kind_counts: '1', point_kind: 'MV', ld: 'FEED1LD1', report: 'R1',
     bad_quality: 'true', in_dataset: 'true' });
-  assert.deepEqual(Object.fromEntries(new URLSearchParams(signalQuery(values(SIGNAL_FILTER), 0))), { q: '', offset: '0' });
+  assert.deepEqual(Object.fromEntries(new URLSearchParams(signalQuery(values(SIGNAL_FILTER), 0))), { q: '', offset: '0', kind_counts: '1' });
   const compare = values(COMPARE_FILTER);
   assert.equal(compare.show, 'problems', 'Differences only is the default');
   assert.ok(!compareMatches({ ref: 'a', fc: 'ST', category: 'match' }, compare));

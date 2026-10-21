@@ -6,6 +6,11 @@ import { Spinner } from '../ui/Spinner';
 import { initialView, rememberView, type PickerView } from './pickerMemory';
 import { buildSignalQuery, signalKey } from './signalQuery';
 import { shortRef } from '../equipment/relayDisplay';
+import { useDataClasses } from '../points/dataClasses';
+import { KindBadge, kindRow } from '../ui/KindBadge';
+import { ALL_KINDS } from '../ui/kindFilter';
+import { KindSelect } from './KindSelect';
+import { kindOfSignal } from './signalKind';
 import './signal-search-picker.css';
 
 type Props = {
@@ -28,11 +33,13 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
     initialView(memoryKey, fixedIedId || chosen?.ied_id, onlyIed));
   const iedId = fixedIedId || view.iedId || onlyIed;
   const { query, reportRef, offset } = view;
+  const pointKind = view.pointKind ?? ALL_KINDS;
   const [items, setItems] = useState<Signal[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const ied = ieds.find(item => item.id === iedId);
+  const classOf = useDataClasses(iedId);
   // A new search, report or IED starts again at the first page; paging keeps the rest.
   const change = (next: Partial<PickerView>) => setView(current => ({ ...current, offset: 0, ...next }));
   useEffect(() => { rememberView(memoryKey, { ...view, iedId }); }, [memoryKey, view, iedId]);
@@ -43,13 +50,13 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
       setLoading(true);
       api<{ items: Signal[]; total: number }>(
         `/ieds/${iedId}/signals?${buildSignalQuery({ q: query, reportRef, offset,
-          kinds: allowedKinds, fc: allowedFc, writableOnly })}`)
+          kinds: allowedKinds, fc: allowedFc, writableOnly, pointKind })}`)
         .then(data => { if (!cancelled) { setItems(data.items); setTotal(data.total); setError(''); } })
         .catch(reason => { if (!cancelled) setError(reason.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
     }, 150);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [iedId, query, reportRef, offset, allowedKinds?.join(','), allowedFc, writableOnly]);
+  }, [iedId, query, reportRef, offset, pointKind, allowedKinds?.join(','), allowedFc, writableOnly]);
   const chosenKey = chosen ? signalKey(chosen.ied_id, chosen.ref) : '';
   const binding = (signal: Signal): SignalBinding => ({ ied_id: iedId,
     report_ref: reportRef === '__all__' ? null : reportRef, ref: signal.ref });
@@ -64,11 +71,14 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
       <div className="search-field signal-search-query"><Search size={14} />
         <input aria-label="Search signals" placeholder="Search signals…" value={query}
           disabled={disabled} onChange={e => change({ query: e.target.value })} /></div>
-      <select aria-label="Report" value={reportRef} disabled={disabled}
-        onChange={e => change({ reportRef: e.target.value })}>
-        <option value="__all__">All reports</option>
-        {ied.reports.map(report => <option key={report.ref} value={report.ref}>{report.ref}</option>)}
-      </select>
+      <div className="signal-search-filters">
+        <select aria-label="Report" value={reportRef} disabled={disabled}
+          onChange={e => change({ reportRef: e.target.value })}>
+          <option value="__all__">All reports</option>
+          {ied.reports.map(report => <option key={report.ref} value={report.ref}>{report.ref}</option>)}
+        </select>
+        <KindSelect value={pointKind} disabled={disabled} onChange={next => change({ pointKind: next })} />
+      </div>
     </>}
     {error && <p role="alert">{error}</p>}
     {ied && <><div className="signal-search-list" aria-busy={loading}>
@@ -77,11 +87,13 @@ export function SignalSearchPicker({ ieds, fixedIedId, allowedKinds, allowedFc,
         const key = signalKey(iedId, signal.ref);
         const taken = exclude?.has(key);
         const triggerable = signal.writable && signal.fc !== 'CF';
-        return <div className={`signal-search-row${key === chosenKey ? ' chosen' : ''}`} key={signal.ref}>
-          <span className={`signal-dot ${triggerable ? 'writable' : 'readonly'}`} aria-hidden="true" />
+        const kind = kindOfSignal(signal, classOf, ied?.controls);
+        return <div className={`signal-search-row kind-edge${key === chosenKey ? ' chosen' : ''}`} key={signal.ref} {...kindRow(kind)}>
+          <KindBadge kind={kind} raw={signal.kind} />
           <span className="signal-search-text" title={signal.ref}>
             <strong>{signal.description || shortRef(signal.ref, ied?.name)}</strong>
-            <small>{signal.description ? `${shortRef(signal.ref, ied?.name)} · ` : ''}{signal.kind} · {signal.fc}</small></span>
+            <small>{signal.description ? `${shortRef(signal.ref, ied?.name)} · ` : ''}{signal.fc}
+              {' · '}{triggerable ? 'can be changed' : 'display only'}</small></span>
           {key === chosenKey ? <span className="badge live">Chosen ✓</span> :
             taken ? <span className="badge live">Added ✓</span> :
             <button className={triggerable && !chosenKey ? 'primary' : ''} disabled={disabled || loading}

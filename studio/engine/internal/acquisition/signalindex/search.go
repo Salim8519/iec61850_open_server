@@ -38,7 +38,11 @@ func (ix *Index) Search(q Query, values ValueReader) (*pyjson.Object, error) {
 		items = append(items, object)
 	}
 	devices := pyv.Strings(ix.devices)
-	return pyv.O("total", int64(len(matches)), "items", items, "devices", devices), nil
+	result := pyv.O("total", int64(len(matches)), "items", items, "devices", devices)
+	if q.KindCounts { // Go only (ADR-0095)
+		result.Set("kind_counts", ix.kindCounts(q, report, values))
+	}
+	return result, nil
 }
 
 // filter returns the positions of the matching signals in model order. It starts from the
@@ -96,7 +100,7 @@ func (ix *Index) candidates(q Query, report *memberSet) ([]int, bool) {
 // noFilter is true when every condition of the route's comprehension holds for any signal.
 func (q Query) noFilter() bool {
 	return q.Text == "" && q.FC == "" && q.Ref == "" && q.Kinds == nil && !q.Writable && q.Report == "" &&
-		q.LD == "" && !q.BadQuality && !q.InDataset
+		q.LD == "" && !q.BadQuality && !q.InDataset && q.PointKind == "" && !q.HideHelpers
 }
 
 // keep applies the value-independent conditions of the comprehension.
@@ -117,6 +121,8 @@ func (ix *Index) keep(q Query, report *memberSet, item *signal) bool {
 	case q.InDataset && !ix.inDataset.refs[item.ref]:
 		return false
 	case q.LD != "" && item.ld != q.LD:
+		return false
+	case !q.keepKind(item):
 		return false
 	}
 	return true

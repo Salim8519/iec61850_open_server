@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Ied, Signal, SignalBinding } from '../api/types';
 import { api } from '../api/client';
+import { useDataClasses } from '../points/dataClasses';
+import { KindBadge } from '../ui/KindBadge';
+import { ALL_KINDS } from '../ui/kindFilter';
+import { KindSelect } from './KindSelect';
+import { kindOfSignal } from './signalKind';
 import './signal-picker.css';
 
 type Props = { ieds: Ied[]; disabled?: boolean; value?: SignalBinding;
@@ -16,10 +21,13 @@ export function SignalPicker({ ieds, disabled, value, allowedKinds, allowedFc, w
   const [total, setTotal] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [pointKind, setPointKind] = useState(ALL_KINDS);
   const selectionRevision = useRef(0);
   const ied = ieds.find(item => item.id === iedId);
   const report = ied?.reports.find(item => item.ref === reportRef);
   const kinds = allowedKinds?.join(',') || '';
+  const classOf = useDataClasses(iedId);
+  const kindOf = (signal: Signal) => kindOfSignal(signal, classOf, ied?.controls);
   useEffect(() => {
     setIed(value?.ied_id || ''); setReport(value ? value.report_ref || '__all__' : '');
     setSelected(null); setOffset(0);
@@ -41,12 +49,13 @@ export function SignalPicker({ ieds, disabled, value, allowedKinds, allowedFc, w
     if (reportRef !== '__all__') params.set('report', reportRef);
     if (kinds) params.set('kind', kinds);
     if (allowedFc) params.set('fc', allowedFc);
+    if (pointKind !== ALL_KINDS) params.set('point_kind', pointKind);
     api<{ items: Signal[]; total: number }>(`/ieds/${iedId}/signals?${params}`)
       .then(data => { if (!cancelled) { setItems(data.items); setTotal(data.total); setError(''); } })
       .catch(reason => { if (!cancelled) setError(reason.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [iedId, reportRef, offset, kinds, allowedFc]);
+  }, [iedId, reportRef, offset, kinds, allowedFc, pointKind]);
   return <fieldset className="signal-picker stack" disabled={disabled}>
     <legend>IED / report / signal / exact path</legend>
     <label>IED<select value={iedId} onChange={e => {
@@ -64,6 +73,7 @@ export function SignalPicker({ ieds, disabled, value, allowedKinds, allowedFc, w
       {!!report.unresolved.length && <span role="status">{report.unresolved.length} unresolved dataset members are not selectable.</span>}
     </div>}
     {ied && reportRef && <>
+      <label>Point type<KindSelect value={pointKind} onChange={next => { setPointKind(next); setOffset(0); }} /></label>
       <label>Signal<select value={selected?.ref || ''} onChange={e => {
         const signal = items.find(item => item.ref === e.target.value) || null;
         setSelected(signal);
@@ -72,13 +82,13 @@ export function SignalPicker({ ieds, disabled, value, allowedKinds, allowedFc, w
       }}>
         <option value="">{loading ? 'Loading signals...' : 'Choose a signal'}</option>
         {selected && !items.some(item => item.ref === selected.ref) && <option value={selected.ref}>{selected.description || selected.ref}</option>}
-        {items.map(item => <option key={item.ref} value={item.ref}>{item.description || item.ref} | {item.ref} [{item.fc}]</option>)}
+        {items.map(item => <option key={item.ref} value={item.ref}>{kindOf(item)} · {item.description || item.ref} | {item.ref} [{item.fc}]</option>)}
       </select></label>
       <div className="row small"><button type="button" disabled={loading || offset === 0} onClick={() => setOffset(offset - 100)}>Previous</button>
         <span>{total ? offset + 1 : 0}-{Math.min(offset + 100, total)} / {total}</span>
         <button type="button" disabled={loading || offset + 100 >= total} onClick={() => setOffset(offset + 100)}>Next</button></div>
       {selected && <><code className="reference-block">{selected.ref}</code>
-        <div className="small">{selected.kind} | {selected.fc} | Assigned when selected</div></>}
+        <div className="small row"><KindBadge kind={kindOf(selected)} raw={selected.kind} />{selected.fc} | Assigned when selected</div></>}
     </>}
     {error && <p role="alert">{error}</p>}
   </fieldset>;

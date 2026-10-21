@@ -6,6 +6,9 @@ import { MASTER_CONFIG, MASTER_STATUS, masterApi, type MasterConfig, type Master
 import { CONVERTER_COPY } from '../../../../copy/converter';
 import { MASTER_COPY, TRAFFIC_WORDS } from '../../../../copy/master';
 import { TabBar } from '../../../../ui/TabBar';
+import { FULL_PLACE } from '../../../../copy/fullView';
+import { FullView, FullViewButton } from '../../../../ui/FullView';
+import { useFullView } from '../../../../state/useFullView';
 import { CommandLog } from '../CommandLog';
 import { GatewaySettings } from '../GatewaySettings';
 import { MasterConnect } from '../master/MasterConnect';
@@ -26,6 +29,7 @@ const WORDS = { intro: CONVERTER_COPY.intro, realCommands: CONVERTER_COPY.realCo
  *  The column holds "1 · Read the device" above "2 · Serve to SCADA", each with its own status and button. */
 export function ConverterTool() {
   const [tab, setTab] = useState<Tab>('device');
+  const [full, setFull] = useFullView('converter');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ side: 'device' | 'scada'; text: string } | null>(null);
   // Both sides' settings and status on the shared live feed, every 1.5 s as before (speed lane F).
@@ -67,8 +71,9 @@ export function ConverterTool() {
         start={() => act('scada', gatewayApi.start)} stop={() => act('scada', gatewayApi.stop)}
         error={error?.side === 'scada' ? error.text : ''} />
     </aside>
+    <FullView full={full} change={setFull} place={FULL_PLACE.converter}>
     <div className={`card fill-panel gateway-panel${serving ? ' running' : ''}`}>
-      <TabBar label="Converter views" value={tab} change={setTab}
+      <TabBar label="Converter views" value={tab} change={setTab} end={<FullViewButton full={full} change={setFull} />}
         tabs={(Object.keys(CONVERTER_COPY.tabs) as Tab[]).map(key => [key, CONVERTER_COPY.tabs[key]])} />
       <div className="panel-body">
         {tab === 'device' && <MasterPointTable status={master.status} fail={fail} />}
@@ -77,8 +82,9 @@ export function ConverterTool() {
         {tab === 'scada' && <TrafficLog running={serving} />}
         {tab === 'deviceTraffic' && <TrafficLog running={connected} load={masterApi.traffic} feedKey="master-traffic" words={TRAFFIC_WORDS}
           hint={MASTER_COPY.trafficHint} />}
-        {tab === 'commands' && <CommandLog />}
+        {tab === 'commands' && <CommandLog protocol={gateway.config.protocol} />}
       </div>
     </div>
+    </FullView>
   </div>;
 }

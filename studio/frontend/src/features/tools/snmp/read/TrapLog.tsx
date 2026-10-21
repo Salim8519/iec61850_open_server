@@ -2,11 +2,14 @@ import { BellRing, CircleStop, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { liveFeed } from '../../../../api/polls';
 import { snmpApi, type SnmpConfig, type SnmpStatus, type SnmpUser, type TrapEntry } from '../../../../api/snmp';
+import { TYPE_NAMES } from '../../../../copy/snmp';
 import { TRAP_RECEIVER_COPY as COPY } from '../../../../copy/snmpRead';
 import { Disclosure } from '../../../../ui/Disclosure';
 import { HelpTip } from '../../../../ui/HelpTip';
+import { KindBadge } from '../../../../ui/KindBadge';
 import { ValueText } from '../simulate/ValueEditor';
 import { UsersEditor } from '../simulate/UsersEditor';
+import { kindOfValue } from '../valueFilter';
 
 const KEEP = 500;
 
@@ -63,7 +66,8 @@ export function TrapLog({ status, config, refresh, fail }: {
         </header>
         {entry.problem && <p className="small explorer-error">{entry.problem}</p>}
         {entry.varbinds.length > 0 && <ul className="snmp-trap-values">{entry.varbinds.map(row =>
-          <li key={row.oid}><span className="small">{row.name}</span> = <ValueText row={row} /></li>)}</ul>}
+          <li key={row.oid}>{row.type && <KindBadge kind={kindOfValue(row)} raw={TYPE_NAMES[row.type] ?? row.type} />}
+            {' '}<span className="small">{row.name}</span> = <ValueText row={row} /></li>)}</ul>}
       </article>)}
     </div>
   </>;

@@ -82,6 +82,7 @@ export const GATEWAY_COPY = {
   commandsHint: 'Every command, from SCADA or from this page, in three steps: what was asked, what the IED did, and what ScadaBench saw afterwards.',
   pause: 'Pause', resume: 'Resume', clear: 'Clear view',
   removeAll: 'Remove all points', select: 'Select', selectHint: 'Choose several points to remove',
+  more: 'More', moreLabel: 'More point list actions: import, export, remove all',
   removedNote: (count: number) => `${count} ${count === 1 ? 'point' : 'points'} removed. Press Save point list to keep this, or Discard changes to undo.`,
   emptyFilter: 'No row matches the filter. Press Clear to see every row.',
 };

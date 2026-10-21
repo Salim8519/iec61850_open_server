@@ -10,8 +10,9 @@ import '../explorer/explorer.css';
 import '../gateway/gateway.css';
 import './snmp.css';
 
-/** Tools › SNMP devices (ADR-0092): "Act as" Simulate devices or Read devices in the header row,
- *  the chosen view fills the window. Both may run at once; switching never stops anything. */
+/** Tools › SNMP devices (ADR-0092): "Act as" Simulate devices or Read devices in the header row (the long
+ *  sentence about the role sits behind its "?"), the chosen view fills the window. Both may run at once;
+ *  switching never stops anything. */
 export function SnmpTool({ header }: { header: (extra?: ReactNode) => ReactNode }) {
   const [status, setStatus] = useState<SnmpStatus | null>(null);
   const [config, setConfig] = useState<SnmpConfig | null>(null);
@@ -29,8 +30,7 @@ export function SnmpTool({ header }: { header: (extra?: ReactNode) => ReactNode 
     <SegmentedControl label={SNMP_COPY.actAs} value={role} onChange={change}
       options={(['simulate', 'read'] as SnmpRole[]).map(value => ({ value, label: SNMP_ROLES[value].label,
         title: SNMP_ROLES[value].sentence }))} />
-    <HelpTip text={SNMP_COPY.roleHint} label="What does each role do?" />
-    <span className="small muted snmp-role-sentence">{SNMP_ROLES[role].sentence}</span>
+    <HelpTip text={`${SNMP_ROLES[role].sentence} ${SNMP_COPY.roleHint}`} label="What does each role do?" />
   </div>;
   if (!status || !config) {
     const missing = error.includes('does not provide');

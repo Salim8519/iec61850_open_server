@@ -76,10 +76,9 @@ test('live values merge into own rows by id, never into drafts', () => {
 });
 
 test('the point list offers Add point next to Propose from IEDs, which keeps own points', () => {
-  const table = read('features/tools/gateway/PointTable.tsx');
-  assert.match(table, /GATEWAY_COPY\.propose[\s\S]*OWN_COPY\.add/);
-  assert.match(table, /gatewayApi\.propose\(protocol, \(rows \?\? \[\]\)\.filter\(isOwn\)\)/);
-  assert.match(table, /<OwnValue row=\{row\}/);
+  assert.match(read('features/tools/gateway/PointToolbar.tsx'), /GATEWAY_COPY\.propose[\s\S]*OWN_COPY\.add/);
+  assert.match(read('features/tools/gateway/PointTable.tsx'), /gatewayApi\.propose\(protocol, \(rows \?\? \[\]\)\.filter\(isOwn\)\)/);
+  assert.match(read('features/tools/gateway/PointRow.tsx'), /<OwnValue row=\{row\}/);
   const cells = read('features/tools/gateway/OwnCells.tsx');
   assert.ok(!/OwnValue[\s\S]*disabled=\{locked\}/.test(cells), 'own values stay changeable while the gateway runs');
   assert.deepEqual(Object.keys(OWN_KIND_LABELS), ['single', 'double', 'float', 'integer', 'command_single', 'command_double']);

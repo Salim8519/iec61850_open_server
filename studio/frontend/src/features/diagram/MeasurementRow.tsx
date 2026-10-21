@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react';
 import type { Measurement } from '../../api/types';
+import { kindOfSignal } from '../../components/signalKind';
 import { MeasurementValue, measurementName, useMeasurementLive } from '../../equipment/MeasurementPanel';
 import { settingFromText, type MeasurementPatch, type SettingKey } from '../../equipment/measurementDisplay';
 import { shortRef } from '../../equipment/relayDisplay';
+import { useDataClasses } from '../../points/dataClasses';
 import { useSignalValue } from '../../state/useLive';
+import { EditableText } from '../../ui/EditableText';
+import { KindBadge, kindRow } from '../../ui/KindBadge';
 import { DraftField } from './DraftField';
 
 type Props = {
@@ -24,6 +28,8 @@ const FIELDS: { key: SettingKey; label: string; mode: 'decimal' | 'numeric' | 't
 export function MeasurementRow({ nodeId, entry, iedName, showIed, index, count, locked, selected, toggle,
   change, move, remove }: Props) {
   const live = useMeasurementLive(nodeId, entry);
+  const classOf = useDataClasses(entry.source.ied_id);
+  const kind = live.signal ? kindOfSignal(live.signal, classOf) : undefined;
   const fallback = useSignalValue(`${entry.source.ied_id}:${entry.source.ref}`);
   const raw = live.raw === undefined ? fallback : live.raw;
   const [problems, setProblems] = useState<Partial<Record<SettingKey, string>>>({});
@@ -34,15 +40,14 @@ export function MeasurementRow({ nodeId, entry, iedName, showIed, index, count, 
   };
   const problem = Object.values(problems).find(Boolean);
   const name = measurementName(entry, iedName);
-  return <div className={`measure-row${selected ? ' selected' : ''}`}>
+  return <div className={`measure-row${kind ? ' kind-edge' : ''}${selected ? ' selected' : ''}`} {...(kind ? kindRow(kind) : {})}>
     <div className="measure-row-head">
       {locked ? <span className="relay-card-index" aria-hidden="true">{index + 1}</span> :
         <input type="checkbox" checked={selected} onChange={toggle} aria-label={`Select ${name}`}
           title="Tick to change several measurements together" />}
       {locked ? <strong className="measure-row-name">{name}</strong> :
-        <input className="measure-row-name" maxLength={100} value={name} aria-label={`Measurement ${index + 1} name`}
-          placeholder="Name this measurement" title="Rename"
-          onChange={event => change({ label: event.target.value || entry.source.ref })} />}
+        <span className="measure-row-name"><EditableText value={name} label={`Measurement ${index + 1} name`}
+          placeholder="Name this measurement" onSave={text => change({ label: text.trim().slice(0, 100) || entry.source.ref })} /></span>}
       {locked && <MeasurementValue raw={raw} entry={entry} stopped={live.stopped} bad={live.bad} />}
     </div>
     {locked ? <p className="measure-row-summary">
@@ -57,9 +62,10 @@ export function MeasurementRow({ nodeId, entry, iedName, showIed, index, count, 
     <div className="measure-row-foot">
       {!locked && <span className="measure-row-now">Now <MeasurementValue raw={raw} entry={entry}
         stopped={live.stopped} bad={live.bad} /></span>}
+      {live.signal && kind && <KindBadge kind={kind} raw={live.signal.kind} />}
       <p className="measure-row-meta" title={entry.source.ref}>
         {showIed && iedName && <span>{iedName} · </span>}<code>{shortRef(entry.source.ref, iedName)}</code>
-        {live.signal && <span> · {live.signal.kind} · {live.signal.fc}</span>}</p>
+        {live.signal && <span> · {live.signal.fc}</span>}</p>
       {!locked && <span className="relay-card-tools">
         <button className="icon ghost" title="Move up" aria-label={`Move ${name} up`}
           disabled={index === 0} onClick={() => move(-1)}><ArrowUp size={14} /></button>

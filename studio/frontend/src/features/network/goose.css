@@ -5,7 +5,8 @@
 .goose-reach-option.selected { border-color: var(--accent); background: var(--surface-2); }
 .goose-reach-option input { margin-top: 3px; }
 .goose-reach-option span { display: flex; flex-direction: column; gap: 2px; }
-.goose-confirm { border: 1px solid #f19a9a; background: var(--error-soft); border-radius: 10px; padding: 10px 14px; }
+/* Same look as the shared .confirm-box (ui/kind.css): one command-confirm style from tokens. */
+.goose-confirm { border: 1.5px solid var(--error-line); background: var(--error-soft); border-radius: var(--radius); padding: 10px 14px; }
 .goose-confirm.real { border-width: 2px; border-color: var(--error); }
 .goose-confirm p { margin: 0 0 6px; display: flex; gap: 8px; align-items: flex-start; }
 .goose-confirm ul { margin: 0 0 6px; padding-left: 22px; }
