@@ -52,6 +52,14 @@ type Config struct {
 	LogMaxMegabytes int    `json:"log_max_megabytes"`
 	LogMaxFiles     int    `json:"log_max_files"`
 	MaxDataMB       int    `json:"max_data_megabytes"`
+
+	// Owner page (ADR-0072): served only under AdminPath, only to requests that carry
+	// AdminGatewaySecret (added by the Cloudflare Worker on AdminOrigin).
+	AdminPath          string `json:"admin_path"`
+	AdminOrigin        string `json:"admin_origin"`
+	AdminGatewaySecret string `json:"admin_gateway_secret"`
+	MarketingFrom      string `json:"marketing_from"`
+	MarketingDomain    string `json:"marketing_domain"`
 }
 
 // Defaults returns a safe starting configuration rooted at dataDir.
@@ -62,6 +70,7 @@ func Defaults(dataDir string) Config {
 		ProductName: "ScadaBench Lifetime License", MaxTransfersPerYear: 2,
 		PayPalMode: "sandbox", MailgunRegion: "us", PowDifficulty: 18, RateGeneral: 10, RateSensitive: 5,
 		LogDir: filepath.Join(dataDir, "logs"), LogMaxMegabytes: 5, LogMaxFiles: 3, MaxDataMB: 45,
+		AdminOrigin: "https://scadabench.com",
 	}
 }
 
@@ -152,6 +161,11 @@ func (c Config) TrialIPWindow() time.Duration {
 		days = 30
 	}
 	return time.Duration(days) * 24 * time.Hour
+}
+
+// AdminReady reports whether the owner page can be served at all.
+func (c Config) AdminReady() bool {
+	return strings.HasPrefix(c.AdminPath, "/") && len(c.AdminPath) > 2 && len(c.AdminGatewaySecret) >= 32
 }
 
 // RandomHex returns n random bytes as lowercase hex.

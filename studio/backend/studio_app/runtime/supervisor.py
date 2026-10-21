@@ -9,11 +9,13 @@ from studio_app.networking.loopback import assign_endpoints
 
 
 class Supervisor:
-    def __init__(self, executable, work_directory, on_event, lab_addresses=addresses_on):
+    def __init__(self, executable, work_directory, on_event, lab_addresses=addresses_on, goose_bus=None):
         self.executable = Path(executable)
         self.work_directory = Path(work_directory)
         self.on_event = on_event
         self.lab_addresses = lab_addresses
+        # Returns {ied_id: "udp:PORT:MAC"}: where each IED publishes GOOSE (ADR-0073).
+        self.goose_bus = goose_bus or (lambda ieds: {})
         self.workers = {}
         self.endpoints = {}
 
@@ -41,19 +43,20 @@ class Supervisor:
         allowed = self.lab_addresses(network["adapter_guid"]) if network["mode"] == "lab" else ()
         preflight(ieds, network, allowed)
         self.work_directory.mkdir(parents=True, exist_ok=True)
+        buses = self.goose_bus(ieds)
         try:
             for ied in ieds:
-                self._launch(ied, network)
+                self._launch(ied, network, buses.get(ied["id"], ""))
         except Exception:
             self.stop_some(ieds)
             raise
 
-    def _launch(self, ied, network):
+    def _launch(self, ied, network, bus=""):
         config = self.work_directory / (ied["id"] + ".cfg")
         config.write_text(ied["cfg"], encoding="utf-8")
         worker = WorkerProcess(self.executable, lambda event, key=ied["id"]: self.on_event(key, event))
         self.workers[ied["id"]] = worker
-        request = start_request(ied, network, ied["controls"], config.resolve())
+        request = start_request(ied, network, ied["controls"], config.resolve(), bus)
         started = worker.request("start", **request)
         check_capabilities(started)
         self.endpoints[ied["id"]] = (started.get("ip", request["ip"]), int(started.get("port", request["port"])))

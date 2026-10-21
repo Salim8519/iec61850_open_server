@@ -1,10 +1,11 @@
-// Layer-2 GOOSE reception and supervision for the GOOSE traffic view.
+// GOOSE decoding and supervision for the GOOSE traffic view and subscriber inputs.
+// Frames arrive from the Studio GOOSE engine through the loopback inbox (ADR-0073).
 #include "goose_traffic.hpp"
 #include "mms_json.hpp"
-#include "npcap.hpp"
 extern "C" {
 #include "hal_time.h"
 }
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
 #include <stdexcept>
@@ -51,10 +52,7 @@ GooseTraffic::~GooseTraffic() { stop(); }
 
 Json GooseTraffic::start(const Json& request) {
     if (receiver) throw std::runtime_error("GOOSE listener already running");
-    if (!npcap_available()) throw std::runtime_error("Npcap is not installed, so GOOSE cannot be received");
-    auto interface_id = npcap_interface_for(request.at("adapter_guid").get<std::string>());
     receiver = GooseReceiver_create();
-    GooseReceiver_setInterfaceId(receiver, interface_id.c_str());
     for (const auto& item : request.at("subscriptions")) {
         auto watch = std::make_unique<GooseWatch>();
         watch->key = item.at("key").get<std::string>();
@@ -77,15 +75,24 @@ Json GooseTraffic::start(const Json& request) {
     GooseSubscriber_setObserver(observer);
     GooseSubscriber_setListener(observer, observed, this);
     GooseReceiver_addSubscriber(receiver, observer);
-    GooseReceiver_start(receiver);
-    if (!GooseReceiver_isRunning(receiver)) {
+    // The receiver is never started: no adapter is opened here. The inbox hands each
+    // engine frame to the stack, which calls the listeners above synchronously.
+    int port;
+    try {
+        port = inbox.open([this](uint8_t* frame, int size, bool wire) {
+            std::lock_guard<std::mutex> guard(deliver_lock);
+            from_wire = wire;
+            if (size >= 12) std::copy(frame + 6, frame + 12, from_mac);
+            GooseReceiver_handleMessage(receiver, frame, size);
+        });
+    } catch (...) {
         GooseReceiver_destroy(receiver);
         receiver = nullptr;
-        throw std::runtime_error("Could not open the network adapter for GOOSE");
+        throw;
     }
     running = true;
     supervisor = std::thread([this] { supervise(); });
-    return {{"listening", true}, {"interface", interface_id}, {"subscriptions", watches.size()}};
+    return {{"listening", true}, {"inbox_port", port}, {"subscriptions", watches.size()}};
 }
 
 void GooseTraffic::on_frame(GooseSubscriber subscriber, GooseWatch* watch) {
@@ -112,6 +119,7 @@ void GooseTraffic::on_frame(GooseSubscriber subscriber, GooseWatch* watch) {
     if (!changed && watch->state == state) return;
     watch->state = state;
     Json event = {{"event", "goose_rx"}, {"key", watch->key}, {"gocb_ref", watch->gocb_ref},
+        {"origin", from_wire ? "wire" : "app"}, {"src_mac", mac_text(from_mac)},
         {"st_num", st}, {"sq_num", watch->sq_num}, {"conf_rev", conf}, {"dataset", dataset},
         {"go_id", go_id},
         {"test", GooseSubscriber_isTest(subscriber)}, {"tal_ms", watch->tal_ms},
@@ -139,7 +147,8 @@ void GooseTraffic::on_observed(GooseSubscriber subscriber) {
     auto go_id = GooseSubscriber_getGoId(subscriber);
     auto dataset = GooseSubscriber_getDataSet(subscriber);
     emit_frame({{"event", "goose_unknown"}, {"gocb_ref", ref}, {"app_id", GooseSubscriber_getAppId(subscriber)},
-                {"mac", mac_text(mac)}, {"src_mac", mac_text(source)}, {"dataset", dataset ? dataset : ""},
+                {"mac", mac_text(mac)}, {"src_mac", mac_text(source)}, {"origin", from_wire ? "wire" : "app"},
+                {"dataset", dataset ? dataset : ""},
                 {"go_id", go_id ? go_id : ""}, {"conf_rev", GooseSubscriber_getConfRev(subscriber)},
                 {"st_num", GooseSubscriber_getStNum(subscriber)}, {"test", GooseSubscriber_isTest(subscriber)},
                 {"vlan_id", GooseSubscriber_isVlanSet(subscriber) ? Json(GooseSubscriber_getVlanId(subscriber)) : Json(nullptr)}});
@@ -147,7 +156,10 @@ void GooseTraffic::on_observed(GooseSubscriber subscriber) {
 
 void GooseTraffic::supervise() {
     while (running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        {
+            std::unique_lock<std::mutex> waiting(wake_lock);
+            if (wake.wait_for(waiting, std::chrono::milliseconds(250), [this] { return !running; })) break;
+        }
         std::lock_guard<std::mutex> guard(lock);
         auto now = Hal_getTimeInMs();
         Json summary = Json::array();
@@ -168,10 +180,14 @@ void GooseTraffic::supervise() {
 }
 
 void GooseTraffic::stop() {
-    running = false;
+    {
+        std::lock_guard<std::mutex> waiting(wake_lock);
+        running = false;
+    }
+    wake.notify_all();
     if (supervisor.joinable()) supervisor.join();
+    inbox.close();
     if (receiver) {
-        GooseReceiver_stop(receiver);
         GooseReceiver_destroy(receiver);
         receiver = nullptr;
     }

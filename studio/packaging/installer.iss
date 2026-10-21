@@ -45,6 +45,12 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Shortcuts:"
 
+[InstallDelete]
+; Program files only: the Go and Python releases share this AppId and folder (ADR-0083), and
+; an upgrade from one to the other must not keep the other's runtime files. User data and the
+; license live in %LOCALAPPDATA% (or a data folder beside the exe), never in _internal.
+Type: filesandordirs; Name: "{app}\_internal"
+
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 

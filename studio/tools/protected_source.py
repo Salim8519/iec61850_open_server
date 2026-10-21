@@ -5,6 +5,7 @@ The repository source is never edited: the copy receives the native integrity se
 """
 import importlib.util
 from pathlib import Path
+import re
 import shutil
 import subprocess
 
@@ -48,7 +49,10 @@ def integrity_source(native_bin):
 def version_source(version):
     """Return version.py text with the placeholder replaced by the real release version."""
     template = (PACKAGE / "version.py").read_text(encoding="utf-8")
-    return template.replace('__version__ = "0.0.0+dev"', f'__version__ = "{version}"', 1)
+    result, count = re.subn(r'__version__ = "[0-9.]+\+dev"', f'__version__ = "{version}"', template, count=1)
+    if count != 1:
+        raise RuntimeError("version.py has no development version to replace")
+    return result
 
 
 def prepare(destination, native_bin, release=None, version=None):

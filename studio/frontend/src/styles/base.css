@@ -18,6 +18,8 @@ button.danger-outline { color: var(--error); border-color: #f19a9a; background: 
 button.danger-outline:hover:not(:disabled) { background: var(--error-soft); }
 button.ghost { border-color: transparent; background: transparent; }
 button.ghost:hover:not(:disabled) { background: var(--hover); }
+button.ghost.danger-text { color: var(--error); }
+button.ghost.danger-text:hover:not(:disabled) { background: var(--error-soft); }
 button.icon { padding: 0; width: var(--control-height); }
 button.large, .button.large { min-height: var(--control-height-large); padding: 0 20px; font-size: 1rem; }
 input, select, textarea {
@@ -62,3 +64,4 @@ tbody tr:hover { background: var(--surface-2); }
 hr { border: 0; border-top: 1px solid var(--border); margin: 20px 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 details > summary { cursor: pointer; }
+.file-address { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin-top: 4px; }

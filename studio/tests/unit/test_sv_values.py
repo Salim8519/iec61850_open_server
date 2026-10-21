@@ -33,5 +33,6 @@ def test_frequency_survives_mode_changes():
     lab = {"mode": "lab", "adapter_guid": "{15A6105F-A715-444F-9D7C-AA259A2EED8A}", "adapter_label": "Lab",
            "nominal_hz": 60}
     assert validate_network(_merged_network(lab, {"mode": "loopback"})) == {
-        "mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 60}
+        "mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 60,
+        "goose_reach": "inside", "goose_uplink_guid": "", "goose_share_guid": ""}
     assert validate_network(_merged_network(lab, {"nominal_hz": 50}))["mode"] == "lab"

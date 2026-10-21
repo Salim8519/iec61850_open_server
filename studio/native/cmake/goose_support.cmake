@@ -17,9 +17,17 @@ endforeach()
 get_property(goose_dir_defs DIRECTORY "${IEC_SOURCE}/src" PROPERTY COMPILE_DEFINITIONS)
 list(REMOVE_ITEM goose_dir_defs EXCLUDE_ETHERNET_WINDOWS)
 set_property(DIRECTORY "${IEC_SOURCE}/src" PROPERTY COMPILE_DEFINITIONS "${goose_dir_defs}")
+# Studio's Ethernet HAL (ADR-0073): ethernet_dispatch.c routes "udp:" interface ids to
+# the loopback GOOSE engine backend and numeric ids to the vendor Npcap HAL, which
+# ethernet_pcap.c compiles unmodified under Pcap_* names.
+set(studio_hal_sources
+    "${CMAKE_CURRENT_SOURCE_DIR}/hal/ethernet_dispatch.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/hal/ethernet_pcap.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/hal/ethernet_udp.c")
 foreach(hal_target hal hal-shared)
-    target_sources(${hal_target} PRIVATE "${IEC_SOURCE}/hal/ethernet/win32/ethernet_win32.c")
-    target_include_directories(${hal_target} PRIVATE "${NPCAP_SDK}/Include")
+    target_sources(${hal_target} PRIVATE ${studio_hal_sources})
+    target_include_directories(${hal_target} PRIVATE "${NPCAP_SDK}/Include"
+        "${IEC_SOURCE}/hal/ethernet/win32" "${CMAKE_CURRENT_SOURCE_DIR}/hal")
     target_link_libraries(${hal_target} "${NPCAP_SDK}/Lib/x64/wpcap.lib" "${NPCAP_SDK}/Lib/x64/Packet.lib")
 endforeach()
 

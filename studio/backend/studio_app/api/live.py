@@ -63,7 +63,7 @@ def goose():
     for watch in watches:
         watch.update(state="stopped", problem="", frames=0)
     return jsonify(running=False, npcap=npcap_status(), state="stopped", unknown=[], watches=watches,
-                   message="Press Run to start listening for GOOSE")
+                   engine=runtime().live.engine.snapshot(), message="Press Run to start GOOSE")
 
 
 @blueprint.get("/goose/links")

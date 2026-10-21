@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}DA', attribute 'fc': [facet 'enumeration'] The value 'XX' is not an element of the set {'ST', 'MX', 'CO', 'SP', 'SG', 'SE', 'SV', 'CF', 'DC', 'EX', 'SR', 'BL', 'OR'}."}]}

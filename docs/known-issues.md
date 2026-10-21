@@ -62,6 +62,11 @@ Station-level SLD import, signal flow, station health, Sampled Values listening 
 test mode are built (changes 0058-0062) with stand-in and VMware-adapter evidence only;
 real vendor SCDs with CSWI LNodes, third-party relays and merging units are pending.
 Studio cannot set the GOOSE simulation bit on simulated IEDs (TMODE-06, retired).
+GOOSE engine (0109, ADR-0073): sharing was tested on a VMware adapter with an independent Npcap
+peer only, not with a physical switch or a third-party relay. Each simulated IED sends with its own
+MAC, so switch port security limiting MACs per port may drop shared GOOSE. Wi-Fi drivers usually
+drop frames with a foreign source MAC (Wi-Fi is Advanced-only, with a warning). A second
+ScadaBench on the same LAN running the same project is reported as a conflict, which is intended.
 UI v2 (change 0054) awaits owner visual acceptance; checked at 1366×768 and 1920×1080.
 Licensing (0069): no protected EXE/installer built yet (dry run and unit tests only); PayPal
 and Mailgun tested against fakes, not live sandbox; release key/URL not configured; offline

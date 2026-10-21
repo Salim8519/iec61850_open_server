@@ -1,9 +1,11 @@
 import { PlugZap, RefreshCw, Unplug } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type { MasterConfig, MasterProtocol, MasterStatus } from '../../../../api/master';
 import { PROTOCOL_NAMES } from '../../../../copy/gateway';
 import { ASK_AGAIN, MASTER_ADVANCED, MASTER_COPY, MASTER_MAIN, MASTER_SETTING_LABELS, RANGES_COPY } from '../../../../copy/master';
 import { Disclosure } from '../../../../ui/Disclosure';
 import { HelpTip } from '../../../../ui/HelpTip';
+import { Spinner } from '../../../../ui/Spinner';
 import { StatusPill } from '../../../../ui/StatusPill';
 
 const AVAILABLE: MasterProtocol[] = ['iec104', 'dnp3', 'modbus'];
@@ -17,6 +19,9 @@ export function MasterConnect({ config, status, busy, save, connect, disconnect,
   connect: () => void; disconnect: () => void; interrogate: () => void; title?: string; help?: string; error?: string;
 }) {
   const connected = status.state === 'connected' || status.state === 'lost';
+  // A connect can wait up to t0 (10 s) for the device: say so instead of showing a silent "Not connected".
+  const [connecting, setConnecting] = useState(false);
+  useEffect(() => { if (!busy) setConnecting(false); }, [busy]);
   const protocol = config.protocol;
   const values = config.settings[protocol];
   const change = (key: string, value: number | boolean) => save(protocol, config.host, { ...values, [key]: value });
@@ -41,7 +46,8 @@ export function MasterConnect({ config, status, busy, save, connect, disconnect,
     <p className="side-line">{MASTER_COPY.intervalHint[protocol]}</p>
     {MASTER_ADVANCED[protocol].length > 0 && <Disclosure>{MASTER_ADVANCED[protocol].map(field)}</Disclosure>}
     <div className="side-foot">
-      <StatusPill status={{ label: MASTER_COPY.states[status.state], tone, hint: status.message }} />
+      {connecting && !connected ? <Spinner label={MASTER_COPY.connecting(config.host, values.port)} slowHint={MASTER_COPY.connectingSlow} />
+        : <StatusPill status={{ label: MASTER_COPY.states[status.state], tone, hint: status.message }} />}
       {connected && <p className="side-line">{status.host}:{status.port} · {MASTER_COPY.points(status.points)}</p>}
       {status.state !== 'disconnected' && status.state !== 'connected' && status.message &&
         <p className="side-error" role="status">{status.message}</p>}
@@ -52,7 +58,7 @@ export function MasterConnect({ config, status, busy, save, connect, disconnect,
         <RefreshCw size={16} />{ASK_AGAIN[protocol].label}</button>}
       {connected
         ? <button onClick={disconnect} disabled={busy}><Unplug size={16} />{MASTER_COPY.disconnect}</button>
-        : <button className="primary" onClick={connect} disabled={busy || !status.available || !config.host}>
+        : <button className="primary" onClick={() => { setConnecting(true); connect(); }} disabled={busy || !status.available || !config.host}>
           <PlugZap size={16} />{MASTER_COPY.connect}</button>}
     </div>
   </section>;

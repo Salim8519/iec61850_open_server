@@ -1,0 +1,52 @@
+Standard SNMP MIB modules in ScadaBench
+
+ScadaBench contains, unmodified, the standard MIB modules listed below so that it can show
+SNMP names (for example IF-MIB::ifOperStatus) without extra downloads. They are code
+components extracted from IETF RFCs, plus modules from the IANA registries:
+
+  SNMPv2-SMI (RFC 2578), SNMPv2-TC (RFC 2579), SNMPv2-CONF (RFC 2580), SNMPv2-MIB (RFC 3418),
+  RFC1155-SMI (RFC 1155), RFC-1212 (RFC 1212), RFC1213-MIB (RFC 1213), RFC-1215 (RFC 1215),
+  IF-MIB (RFC 2863), IP-MIB (RFC 4293), TCP-MIB (RFC 4022), UDP-MIB (RFC 4113),
+  INET-ADDRESS-MIB (RFC 4001), SNMP-FRAMEWORK-MIB (RFC 3411),
+  SNMP-USER-BASED-SM-MIB (RFC 3414), SNMP-TARGET-MIB, SNMP-NOTIFICATION-MIB and
+  SNMP-PROXY-MIB (RFC 3413), ENTITY-MIB and UUID-TC-MIB (RFC 6933),
+  ENTITY-SENSOR-MIB (RFC 3433), HOST-RESOURCES-MIB and HOST-RESOURCES-TYPES (RFC 2790),
+  UPS-MIB (RFC 1628), BRIDGE-MIB (RFC 4188), NTPv4-MIB (RFC 5907), SYSAPPL-MIB (RFC 2287),
+  IANAifType-MIB, IANA-ADDRESS-FAMILY-NUMBERS-MIB and IANA-ENTITY-MIB (IANA,
+  https://www.iana.org/assignments/).
+
+The RFC texts are available at https://www.rfc-editor.org/. Code components of IETF
+documents are licensed by the IETF Trust under the terms of the Simplified BSD License set
+forth in Section 4 of the IETF Trust's Legal Provisions Relating to IETF Documents
+(https://trustee.ietf.org/license-info):
+
+Copyright (c) IETF Trust and the persons identified as authors of the code.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+- Redistributions of source code must retain the above copyright notice, this list of
+  conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright notice, this list of
+  conditions and the following disclaimer in the documentation and/or other materials
+  provided with the distribution.
+
+- Neither the name of Internet Society, IETF or IETF Trust, nor the names of specific
+  contributors, may be used to endorse or promote products derived from this software
+  without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The copyright years and authors of each module are given in the module itself and in the
+RFC that publishes it. The IANA-maintained modules are public registries of the Internet
+Assigned Numbers Authority.

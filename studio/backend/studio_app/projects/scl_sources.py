@@ -1,8 +1,10 @@
 """Identify the original SCL documents stored with the project's IEDs."""
+import functools
 import hashlib
 from studio_app.contracts.errors import StudioError
 
 
+@functools.lru_cache(maxsize=20)  # a project holds at most 20 SCL files; polls hashed them every time
 def source_id(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 

@@ -187,3 +187,14 @@ def test_installer_is_built_outside_the_release_folder_then_moved_in(monkeypatch
     tool.installer(mode, "9.9.9")
     assert outputs[0] != mode.dist and not outputs[0].exists()
     assert (mode.dist / "ScadaBench-Setup-9.9.9.exe").read_bytes() == b"setup"
+
+
+def test_protected_package_ships_every_program_the_development_package_ships():
+    """Dev and packaged must behave the same: no worker (e.g. studio_goose.exe) may be left out."""
+    import re
+    programs = {}
+    for spec in ("studio.spec", "studio_protected.spec"):
+        text = (STUDIO / "packaging" / spec).read_text(encoding="utf-8")
+        programs[spec] = set(re.findall(r'\(str\(native / "(studio_\w+\.exe)"\), "native"\)', text))
+    assert "studio_goose.exe" in programs["studio.spec"]
+    assert programs["studio_protected.spec"] == programs["studio.spec"]

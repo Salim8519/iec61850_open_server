@@ -1,0 +1,27 @@
+oid,name,type,value,hex,behaviour,rate,writable
+,SNMPv2-MIB::sysName.0,,relay-01,,,,yes
+.1.3.6.1.2.1.1.3.0,,timeticks,100,,,,
+,ifOperStatus.2,,up,,,,
+,ifPhysAddress.2,,00:15:5D:0A:0B:0C,,,,
+1.3.6.1.2.1.1.1.0,,octets,"two
+lines, with ""quotes""",no,fixed,,0
+1.3.6.1.2.1.2.2.1.10.2,,counter32,0007,false,counter,2.5,1
+1.3.6.1.4.1.99999.1.1,,gauge32,42,,,,
+1.3.6.1.4.1.99999.1.2,,integer,2147483648,,,,
+1.3.6.1.4.1.99999.1.3,,counter32,4294967296,,,,
+1.3.6.1.4.1.99999.1.4,,counter64,18446744073709551616,,,,
+1.3.6.1.4.1.99999.1.5,,ipaddress,10.0.0.256,,,,
+1.3.x.6,,octets,a,,,,
+1.3.6.1.4.1.99999.1.6,,octets,0g,true,,,
+1.3.6.1.4.1.99999.1.7,,octets,a,maybe,,,
+1.3.6.1.4.1.99999.1.8,,integer,1,,sometimes,,
+1.3.6.1.4.1.99999.1.9,,integer,1,,uptime,,
+,NO-SUCH-MIB::thing.0,octets,a,,,,
+1.3.6.1.4.1.99999.1.10,,null,x,,,,
+1.3.6.1.4.1.99999.1.11,,gauge32,5,,counter,fast,
+1.3.6.1.4.1.99999.1.12,,float,5,,,,
+,,octets,orphan,,,,
+1.3.6.1.4.1.99999.1.1,,gauge32,43,,,,
+1.3.6.1.4.1.99999.1.13,,oid,IF-MIB::ifIndex,,,,
+1.3.6.1.4.1.99999.1.14,,opaque,9F 78 04 3F C0 00 00,,,,
+1.3.6.1.4.1.99999.1.15,,null,,,,,

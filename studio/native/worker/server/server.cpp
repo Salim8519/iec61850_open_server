@@ -2,6 +2,7 @@
 #include "controls/controls.hpp"
 #include "goose/publishing.hpp"
 #include "read_hook.h"
+#include "schedule.h"
 extern "C" {
 #include "iec61850_config_file_parser.h"
 }
@@ -63,33 +64,43 @@ Json Server::start(const Json& config) {
     }
     auto goose = prepare_goose(*this, config);
     int port = config.value("port", 102);
-    IedServer_start(handle, port);
+    // Same single-threaded MMS server, driven by the worker's event loop (workstream G).
+    IedServer_startThreadless(handle, port);
     if (!IedServer_isRunning(handle)) {
         stop();
         throw std::runtime_error("MMS bind failed: " + ip + ":" + std::to_string(port));
     }
+    loop.start(handle);
     start_goose(*this);
     access.start();
     auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
-                                     "control_selection_events", "standard_controls", "goose_aware"});
+                                     "control_selection_events", "standard_controls", "goose_aware", "goose_bus"});
     if (observing) capabilities.push_back("mms_access");
     return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
 }
 
+// The model tree walk costs microseconds per reference; update_batch and reads resolve the
+// same references again and again, so each one is walked once per start (speed lane N1).
 DataAttribute* Server::attribute(const std::string& reference) {
     if (!handle) throw std::runtime_error("IED is not running");
+    auto known = attributes.find(reference);
+    if (known != attributes.end()) return known->second;
     auto node = IedModel_getModelNodeByObjectReference(model, reference.c_str());
     if (!node || node->modelType != DataAttributeModelType)
         throw std::runtime_error("Unknown data attribute: " + reference);
-    return reinterpret_cast<DataAttribute*>(node);
+    auto attribute = reinterpret_cast<DataAttribute*>(node);
+    attributes.emplace(reference, attribute);
+    return attribute;
 }
 
 void Server::stop() {
     access.stop();
     if (goose_thread.joinable()) goose_thread.join();
+    loop.stop();
     goose_interface.clear();
-    if (handle) { IedServer_stop(handle); IedServer_destroy(handle); handle = nullptr; }
+    if (handle) { studio_server_stop(handle); IedServer_destroy(handle); handle = nullptr; }
     controls.clear();
     revisions.clear();
+    attributes.clear();
     if (model) { IedModel_destroy(model); model = nullptr; }
 }

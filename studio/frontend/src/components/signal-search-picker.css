@@ -25,3 +25,8 @@
 .signal-pick-mark { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center;
   flex-shrink: 0; background: white; color: var(--primary); }
 .mapping-subhead { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+/* The point chosen now stays visible in the list, so a wrong pick is fixed with one click. */
+.signal-search-row.chosen { border-color: var(--primary); background: var(--primary-soft); }
+.signal-pick-actions { display: flex; gap: 4px; flex-shrink: 0; }
+/* One click adds every listed signal that is not added yet (measurement lists). */
+.signal-search-all { justify-self: start; }

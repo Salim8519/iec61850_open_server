@@ -1,0 +1,4633 @@
+[
+ {
+  "name": "network 0",
+  "fn": "validate_network",
+  "args": {
+   "value": null
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 1",
+  "fn": "validate_network",
+  "args": {
+   "value": {}
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 2",
+  "fn": "validate_network",
+  "args": {
+   "value": []
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 3",
+  "fn": "validate_network",
+  "args": {
+   "value": 0
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 4",
+  "fn": "validate_network",
+  "args": {
+   "value": ""
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 5",
+  "fn": "validate_network",
+  "args": {
+   "value": [
+    1
+   ]
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'list' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 6",
+  "fn": "validate_network",
+  "args": {
+   "value": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'str' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 7",
+  "fn": "validate_network",
+  "args": {
+   "value": 5
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'int' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 8",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Choose a network adapter before switching to lab network mode",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 9",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "lab",
+    "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 10",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "lab",
+    "adapter_guid": "{0123abcd-0123-4567-89ab-0123456789ab}"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 11",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "lab",
+    "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}\n"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\\n\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 12",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "loopback",
+    "adapter_guid": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Adapter identifier is not a Windows adapter GUID",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 13",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "LAB"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Network mode must be 'loopback' (this PC only) or 'lab' (network adapter)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 14",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": [
+     "lab"
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 15",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": null
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Network mode must be 'loopback' (this PC only) or 'lab' (network adapter)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 16",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "nominal_hz": 60
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 17",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "nominal_hz": 60.0
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60.0, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 18",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "nominal_hz": "50"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Nominal frequency must be 50 Hz or 60 Hz",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 19",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "nominal_hz": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Nominal frequency must be 50 Hz or 60 Hz",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 20",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "nominal_hz": [
+     50
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 21",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "nominal_hz": 55
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Nominal frequency must be 50 Hz or 60 Hz",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 22",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "goose_reach": "outside"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 23",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "goose_reach": [
+     "inside"
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "GOOSE must stay 'inside' ScadaBench or be shared 'outside' with the network",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 24",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "goose_reach": null
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "GOOSE must stay 'inside' ScadaBench or be shared 'outside' with the network",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 25",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "goose_uplink_guid": "{0123abcd-0123-4567-89ab-0123456789ab}"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 26",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "goose_share_guid": "nope"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "GOOSE adapter identifier is not a Windows adapter GUID",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 27",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "goose_uplink_guid": 5
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "GOOSE adapter identifier is not a Windows adapter GUID",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 28",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "adapter_label": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 29",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "adapter_label": 12.5
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"12.5\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 30",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "adapter_label": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 31",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "adapter_label": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"[1]\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 32",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789\ufb00}"
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"loopback\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789FF}\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "network 33",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "adapter_guid": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Adapter identifier is not a Windows adapter GUID",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "network 34",
+  "fn": "validate_network",
+  "args": {
+   "value": {
+    "mode": "lab",
+    "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+    "nominal_hz": 60,
+    "goose_reach": "outside",
+    "extra": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}"
+ },
+ {
+  "name": "live 0",
+  "fn": "validate_live",
+  "args": {
+   "value": null
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 1",
+  "fn": "validate_live",
+  "args": {
+   "value": {}
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 2",
+  "fn": "validate_live",
+  "args": {
+   "value": []
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 3",
+  "fn": "validate_live",
+  "args": {
+   "value": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'str' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 4",
+  "fn": "validate_live",
+  "args": {
+   "value": [
+    1
+   ]
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'list' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 5",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "access": "polling"
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"polling\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 6",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "access": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Access must be 'auto_reports' (use a free report block) or 'polling'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 7",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "access": [
+     "polling"
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 8",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "poll_ms": 249
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Polling interval must be between 250 ms and 60 s",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 9",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "poll_ms": 250
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 250}"
+ },
+ {
+  "name": "live 10",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "poll_ms": 60001
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Polling interval must be between 250 ms and 60 s",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 11",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "poll_ms": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Polling interval must be between 250 ms and 60 s",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 12",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "poll_ms": 1000.0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Polling interval must be between 250 ms and 60 s",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 13",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "192.168.1.20"
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"192.168.1.20\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 14",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "127.0.0.1"
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"127.0.0.1\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 15",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "0.0.0.0"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be a normal device address, not 0.0.0.0",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 16",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "224.0.0.1"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be a normal device address, not 224.0.0.1",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 17",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "239.255.255.255"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be a normal device address, not 239.255.255.255",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 18",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "240.0.0.1"
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"240.0.0.1\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 19",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "255.255.255.255"
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"255.255.255.255\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 20",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "1.2.3"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 21",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "01.2.3.4"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 22",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "1.2.3.256"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 23",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": " 1.2.3.4"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 24",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "1.2.3.4/24"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 25",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "\u0661.2.3.4"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 26",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "1..3.4"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 27",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": 5
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 28",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 29",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": ""
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 30",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": false
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 31",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": 0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 32",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "port": 0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 33",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "port": 65535
+   }
+  },
+  "ieds": [],
+  "out": "{\"ip\": \"\", \"port\": 65535, \"access\": \"auto_reports\", \"poll_ms\": 1000}"
+ },
+ {
+  "name": "live 34",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "port": "102"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 35",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "port": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 36",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "port": 100000000000000000000
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "live 37",
+  "fn": "validate_live",
+  "args": {
+   "value": {
+    "ip": "x",
+    "port": 0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Real IED address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 0",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": null
+  },
+  "ieds": [],
+  "out": "{\"devices\": {}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 1",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {}
+  },
+  "ieds": [],
+  "out": "{\"devices\": {}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 2",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": []
+  },
+  "ieds": [],
+  "out": "{\"devices\": {}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 3",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": "x"
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'str' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 4",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": [
+    1
+   ]
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 5",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": 5
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'int' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 6",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"devices\": {}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 7",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": []
+   }
+  },
+  "ieds": [],
+  "out": "{\"devices\": {}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 8",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Test mode needs one mode per logical device",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 9",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Test mode needs one mode per logical device",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 10",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": 1
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"devices\": {\"LD\": 1}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 11",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": 5.0
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"devices\": {\"LD\": 5.0}, \"simulation\": false}"
+ },
+ {
+  "name": "test mode 12",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": 6
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Each logical device mode must be 1 (on) to 5 (off)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 13",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": true
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Each logical device mode must be 1 (on) to 5 (off)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 14",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": "1"
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Each logical device mode must be 1 (on) to 5 (off)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 15",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": [
+      1
+     ]
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 16",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "LD": 2.5
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Each logical device mode must be 1 (on) to 5 (off)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 17",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "0": 1,
+     "1": 1,
+     "2": 1,
+     "3": 1,
+     "4": 1,
+     "5": 1,
+     "6": 1,
+     "7": 1,
+     "8": 1,
+     "9": 1,
+     "10": 1,
+     "11": 1,
+     "12": 1,
+     "13": 1,
+     "14": 1,
+     "15": 1,
+     "16": 1,
+     "17": 1,
+     "18": 1,
+     "19": 1,
+     "20": 1,
+     "21": 1,
+     "22": 1,
+     "23": 1,
+     "24": 1,
+     "25": 1,
+     "26": 1,
+     "27": 1,
+     "28": 1,
+     "29": 1,
+     "30": 1,
+     "31": 1,
+     "32": 1,
+     "33": 1,
+     "34": 1,
+     "35": 1,
+     "36": 1,
+     "37": 1,
+     "38": 1,
+     "39": 1,
+     "40": 1,
+     "41": 1,
+     "42": 1,
+     "43": 1,
+     "44": 1,
+     "45": 1,
+     "46": 1,
+     "47": 1,
+     "48": 1,
+     "49": 1,
+     "50": 1,
+     "51": 1,
+     "52": 1,
+     "53": 1,
+     "54": 1,
+     "55": 1,
+     "56": 1,
+     "57": 1,
+     "58": 1,
+     "59": 1,
+     "60": 1,
+     "61": 1,
+     "62": 1,
+     "63": 1,
+     "64": 1,
+     "65": 1,
+     "66": 1,
+     "67": 1,
+     "68": 1,
+     "69": 1,
+     "70": 1,
+     "71": 1,
+     "72": 1,
+     "73": 1,
+     "74": 1,
+     "75": 1,
+     "76": 1,
+     "77": 1,
+     "78": 1,
+     "79": 1,
+     "80": 1,
+     "81": 1,
+     "82": 1,
+     "83": 1,
+     "84": 1,
+     "85": 1,
+     "86": 1,
+     "87": 1,
+     "88": 1,
+     "89": 1,
+     "90": 1,
+     "91": 1,
+     "92": 1,
+     "93": 1,
+     "94": 1,
+     "95": 1,
+     "96": 1,
+     "97": 1,
+     "98": 1,
+     "99": 1,
+     "100": 1
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Test mode needs one mode per logical device",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 18",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "simulation": 1
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Simulation must be on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "test mode 19",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "simulation": true
+   }
+  },
+  "ieds": [],
+  "out": "{\"devices\": {}, \"simulation\": true}"
+ },
+ {
+  "name": "test mode 20",
+  "fn": "validate_test_mode",
+  "args": {
+   "value": {
+    "devices": {
+     "A": 3,
+     "B": 4
+    },
+    "simulation": false,
+    "x": 1
+   }
+  },
+  "ieds": [],
+  "out": "{\"devices\": {\"A\": 3, \"B\": 4}, \"simulation\": false}"
+ },
+ {
+  "name": "ied settings 0",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {}
+  },
+  "ieds": [],
+  "out": "{\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 1",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "role": "real"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"real\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 2",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "role": "off"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"off\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 3",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "role": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "IED role must be simulated, real or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 4",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "role": [
+     "real"
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 5",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "role": null
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "IED role must be simulated, real or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 6",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "goose_publish": 0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "GOOSE publishing must be on or off",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 7",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "goose_publish": false
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": false, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 8",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "lab_ip": "10.0.0.5"
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"10.0.0.5\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 9",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "lab_ip": "127.0.0.1"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Lab network address must be a normal device address, not 127.0.0.1",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 10",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "lab_ip": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 11",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "lab_ip": 7
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Lab network address must be an IPv4 address such as 192.168.1.20",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 12",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "live": {
+     "ip": "1.2.3.4",
+     "access": "polling",
+     "poll_ms": 500
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"simulated\", \"live\": {\"ip\": \"1.2.3.4\", \"port\": 102, \"access\": \"polling\", \"poll_ms\": 500}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "ied settings 13",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "live": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'list' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 14",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "test_mode": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "AttributeError",
+   "message": "'list' object has no attribute 'get'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 15",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "test_mode": {
+     "devices": {
+      "LD": 9
+     }
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "ValueError",
+   "message": "Each logical device mode must be 1 (on) to 5 (off)",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "ied settings 16",
+  "fn": "validate_ied_settings",
+  "args": {
+   "value": {
+    "role": "real",
+    "lab_ip": "10.0.0.1",
+    "goose_publish": false,
+    "extra": true
+   }
+  },
+  "ieds": [],
+  "out": "{\"role\": \"real\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"10.0.0.1\", \"goose_publish\": false, \"test_mode\": {\"devices\": {}, \"simulation\": false}}"
+ },
+ {
+  "name": "update network 0",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {}
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update network 1",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": null
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update network 2",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "nominal_hz": 60
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update network 3",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "mode": "lab",
+    "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}"
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update network 4",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update network 5",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "mode": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Network mode must be 'loopback' (this PC only) or 'lab' (network adapter)",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update network 6",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": [
+    "nominal_hz"
+   ]
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'list' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "update network 7",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": [
+    "mode"
+   ]
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'list' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "update network 8",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": "nominal_hz"
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'str' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "update network 9",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": [
+    [
+     1
+    ]
+   ]
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "update network 10",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": 5
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'int' object is not iterable",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "update network 11",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "nominal_hz": 61
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Nominal frequency must be 50 Hz or 60 Hz",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update network 12",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "goose_reach": "inside"
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update network clash",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "10.0.0.5",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "10.0.0.5",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "mode": "lab",
+    "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "B and A both use 10.0.0.5:102. Give each IED its own address.",
+   "code": "validation",
+   "details": [
+    "B and A both use 10.0.0.5:102. Give each IED its own address."
+   ]
+  }
+ },
+ {
+  "name": "update network no clash",
+  "fn": "update_network",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "10.0.0.5",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "10.0.0.5",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "value": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"10.0.0.5\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"10.0.0.5\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 0",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": null
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Only role, live, lab_ip, goose_publish and port can be changed here",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 1",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {}
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Only role, live, lab_ip, goose_publish and port can be changed here",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 2",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": []
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Only role, live, lab_ip, goose_publish and port can be changed here",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 3",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "name": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Only role, live, lab_ip, goose_publish and port can be changed here",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 4",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "role": "real"
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"role\": \"real\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"port\": 102}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"real\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 5",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "role": "x"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: IED role must be simulated, real or off",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 6",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "port": 103
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"port\": 103}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 103, \"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 7",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "port": "103"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: Port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 8",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "port": 0
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: Port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 9",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "port": true
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: Port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 10",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "lab_ip": "10.0.0.9"
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"10.0.0.9\", \"goose_publish\": true, \"port\": 102}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"10.0.0.9\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 11",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "lab_ip": "bad"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: Lab network address must be an IPv4 address such as 192.168.1.20",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 12",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "live": {
+     "ip": "1.2.3.4"
+    }
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"role\": \"simulated\", \"live\": {\"ip\": \"1.2.3.4\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"port\": 102}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": {\"ip\": \"1.2.3.4\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 13",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "live": null
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"port\": 102}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 14",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "live": [
+     1
+    ]
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "'list' object is not a mapping",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "update ied 15",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "live": {
+     "port": 0
+    }
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: Real IED port must be a whole number from 1 to 65535 (MMS normally uses 102)",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 16",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "goose_publish": "yes"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "A: GOOSE publishing must be on or off",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied 17",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "role": "simulated",
+    "port": 102
+   }
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"port\": 102}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": {\"ip\": \"\", \"port\": 102, \"access\": \"auto_reports\", \"poll_ms\": 1000}, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"loopback\", \"adapter_guid\": \"\", \"adapter_label\": \"\", \"nominal_hz\": 50, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "update ied 18",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "ip": "1.1.1.1"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Only role, live, lab_ip, goose_publish and port can be changed here",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied unknown",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "zz",
+   "changes": {
+    "role": "off"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "Unknown IED",
+   "code": "not_found",
+   "details": []
+  }
+ },
+ {
+  "name": "update ied port clash",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.2",
+      "port": 103,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "port": 103
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "B and A both use 127.50.0.2:103. Give each IED its own address.",
+   "code": "validation",
+   "details": [
+    "B and A both use 127.50.0.2:103. Give each IED its own address."
+   ]
+  }
+ },
+ {
+  "name": "update ied real clash",
+  "fn": "update_ied",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "real",
+      "live": {
+       "ip": "",
+       "port": 102,
+       "access": "polling",
+       "poll_ms": 1000
+      },
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      },
+      "scl_address": {
+       "ip": "10.1.1.1"
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "real",
+      "live": {
+       "ip": "10.1.1.1",
+       "port": 102
+      },
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "loopback",
+     "adapter_guid": "",
+     "adapter_label": "",
+     "nominal_hz": 50,
+     "goose_reach": "inside",
+     "goose_uplink_guid": "",
+     "goose_share_guid": ""
+    }
+   },
+   "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "changes": {
+    "role": "real"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "B and A both use 10.1.1.1:102. Give each IED its own address.",
+   "code": "validation",
+   "details": [
+    "B and A both use 10.1.1.1:102. Give each IED its own address."
+   ]
+  }
+ },
+ {
+  "name": "conflicts 0 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "cccccccccccccccccccccccccccccccc",
+     "name": "C",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "[\"B and A both use 127.50.0.2:102. Give each IED its own address.\", \"C and B both use 127.50.0.2:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "conflicts 0 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "cccccccccccccccccccccccccccccccc",
+     "name": "C",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "out": "[\"B and A both use 127.50.0.2:102. Give each IED its own address.\", \"C and B both use 127.50.0.2:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "conflicts 1 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "127.50.0.2",
+     "port": 102.0,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "cccccccccccccccccccccccccccccccc",
+     "name": "C",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "[\" and A both use 127.50.0.2:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "conflicts 1 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "127.50.0.2",
+     "port": 102.0,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "cccccccccccccccccccccccccccccccc",
+     "name": "C",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "out": "[\" and A both use 127.50.0.2:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "conflicts 2 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "x",
+     "port": 102,
+     "role": "off",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "x",
+     "port": 102,
+     "role": "off",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "[]"
+ },
+ {
+  "name": "conflicts 2 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "x",
+     "port": 102,
+     "role": "off",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "x",
+     "port": 102,
+     "role": "off",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "out": "[]"
+ },
+ {
+  "name": "conflicts 3 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "1",
+     "port": 102,
+     "role": "real",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "1",
+     "port": 102,
+     "role": "real",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     },
+     "scl_address": {
+      "ip": "9.9.9.9"
+     }
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "[]"
+ },
+ {
+  "name": "conflicts 3 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "1",
+     "port": 102,
+     "role": "real",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "1",
+     "port": 102,
+     "role": "real",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     },
+     "scl_address": {
+      "ip": "9.9.9.9"
+     }
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "out": "[]"
+ },
+ {
+  "name": "conflicts 4 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "name": "A",
+     "ip": "i"
+    },
+    {
+     "name": "B",
+     "ip": "i",
+     "port": 102
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "[\"B and A both use i:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "conflicts 4 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "name": "A",
+     "ip": "i"
+    },
+    {
+     "name": "B",
+     "ip": "i",
+     "port": 102
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "out": "[\"B and A both use i:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "conflicts 5 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "name": "A",
+     "ip": [
+      1
+     ]
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "conflicts 5 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "name": "A",
+     "ip": [
+      1
+     ]
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "err": {
+   "class": "TypeError",
+   "message": "unhashable type: 'list'",
+   "code": null,
+   "details": null
+  }
+ },
+ {
+  "name": "conflicts 6 loopback",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "10.0.0.1",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "10.0.0.1",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "loopback"
+   }
+  },
+  "ieds": [],
+  "out": "[]"
+ },
+ {
+  "name": "conflicts 6 lab",
+  "fn": "endpoint_conflicts",
+  "args": {
+   "ieds": [
+    {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "name": "A",
+     "ip": "127.50.0.2",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "10.0.0.1",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    },
+    {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "name": "B",
+     "ip": "10.0.0.1",
+     "port": 102,
+     "role": "simulated",
+     "live": null,
+     "lab_ip": "",
+     "goose_publish": true,
+     "test_mode": {
+      "devices": {},
+      "simulation": false
+     }
+    }
+   ],
+   "network": {
+    "mode": "lab"
+   }
+  },
+  "ieds": [],
+  "out": "[\"B and A both use 10.0.0.1:102. Give each IED its own address.\"]"
+ },
+ {
+  "name": "save reach 0",
+  "fn": "save_reach",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "reach": "outside",
+   "uplink": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+   "share": "{0123ABCD-0123-4567-89AB-0123456789AB}"
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"outside\", \"goose_uplink_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"goose_share_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\"}}}"
+ },
+ {
+  "name": "save reach 1",
+  "fn": "save_reach",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "reach": "inside",
+   "uplink": null,
+   "share": ""
+  },
+  "ieds": [],
+  "out": "{\"result\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}, \"project\": {\"id\": \"ffffffffffffffffffffffffffffffff\", \"ieds\": [{\"id\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"name\": \"A\", \"ip\": \"127.50.0.2\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}, {\"id\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"name\": \"B\", \"ip\": \"127.50.0.3\", \"port\": 102, \"role\": \"simulated\", \"live\": null, \"lab_ip\": \"\", \"goose_publish\": true, \"test_mode\": {\"devices\": {}, \"simulation\": false}}], \"network\": {\"mode\": \"lab\", \"adapter_guid\": \"{0123ABCD-0123-4567-89AB-0123456789AB}\", \"adapter_label\": \"Eth\", \"nominal_hz\": 60, \"goose_reach\": \"inside\", \"goose_uplink_guid\": \"\", \"goose_share_guid\": \"\"}}}"
+ },
+ {
+  "name": "save reach 2",
+  "fn": "save_reach",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "reach": "x",
+   "uplink": "",
+   "share": ""
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "GOOSE must stay 'inside' ScadaBench or be shared 'outside' with the network",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "save reach 3",
+  "fn": "save_reach",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "reach": "outside",
+   "uplink": "bad",
+   "share": ""
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "GOOSE adapter identifier is not a Windows adapter GUID",
+   "code": "validation",
+   "details": []
+  }
+ },
+ {
+  "name": "save reach 4",
+  "fn": "save_reach",
+  "args": {
+   "project": {
+    "id": "ffffffffffffffffffffffffffffffff",
+    "ieds": [
+     {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "A",
+      "ip": "127.50.0.2",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     },
+     {
+      "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "name": "B",
+      "ip": "127.50.0.3",
+      "port": 102,
+      "role": "simulated",
+      "live": null,
+      "lab_ip": "",
+      "goose_publish": true,
+      "test_mode": {
+       "devices": {},
+       "simulation": false
+      }
+     }
+    ],
+    "network": {
+     "mode": "lab",
+     "adapter_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "adapter_label": "Eth",
+     "nominal_hz": 60,
+     "goose_reach": "outside",
+     "goose_uplink_guid": "{0123ABCD-0123-4567-89AB-0123456789AB}",
+     "goose_share_guid": ""
+    }
+   },
+   "reach": [
+    "inside"
+   ],
+   "uplink": "",
+   "share": ""
+  },
+  "ieds": [],
+  "err": {
+   "class": "StudioError",
+   "message": "GOOSE must stay 'inside' ScadaBench or be shared 'outside' with the network",
+   "code": "validation",
+   "details": []
+  }
+ }
+]

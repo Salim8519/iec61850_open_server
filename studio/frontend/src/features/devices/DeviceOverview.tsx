@@ -1,6 +1,7 @@
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../../api/client';
+import { countOf } from '../../copy/count';
 import type { LiveSession } from '../../api/network';
 import type { Ied, Project } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
@@ -40,16 +41,16 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
         {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? 'Copied' : 'Copy address'}</button>
     </div>}
     {ied.role === 'real' && <DeviceConnection ied={ied} session={session} locked={locked} perform={perform} />}
-    {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>This device is switched off. It is ignored when you press Run.</p>}
+    {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>Skipped: it stays in the project, but is not started when you press Run. Choose Simulate or Monitor real device to use it.</p>}
     <TestModeCard ied={ied} summary={mode} perform={perform} />
     {ied.role === 'simulated' && publishes > 0 && <label className="row" style={{ fontWeight: 500, color: 'var(--text)' }}>
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}
         onChange={event => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { goose_publish: event.target.checked }))} />
-      <span>Send its <InfoTip term="goose" label="GOOSE" /> messages{lab ? '' : ' (works on the lab network only)'}</span></label>}
+      <span>Send its <InfoTip term="goose" label="GOOSE" /> messages</span></label>}
     <GoosePartners ied={ied} project={project} open={iedId => selectDevice?.(iedId)} />
     <ReadByClients ied={ied} running={project.runtime !== 'stopped'} />
     {(!!ied.warnings.length || !!ied.goose?.diagnostics?.length || ied.validation) && <Disclosure title={
-      `File check details${ied.warnings.length + (ied.goose?.diagnostics?.length || 0) ? ` · ${ied.warnings.length + (ied.goose?.diagnostics?.length || 0)} notes` : ''}`}>
+      `File check details${ied.warnings.length + (ied.goose?.diagnostics?.length || 0) ? ` · ${countOf(ied.warnings.length + (ied.goose?.diagnostics?.length || 0), 'note')}` : ''}`}>
       {ied.validation && <p className="small" style={{ margin: 0 }}>File structure: <strong>{ied.validation.status}</strong>
         {ied.validation.schema ? ` (${ied.validation.schema})` : ''}</p>}
       {[...ied.warnings, ...(ied.goose?.diagnostics || [])].map(note => <p key={note} className="small" style={{ margin: 0 }}>• {note}</p>)}

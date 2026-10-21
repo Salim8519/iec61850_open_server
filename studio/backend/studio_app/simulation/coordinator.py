@@ -41,7 +41,8 @@ class Coordinator:
         self.last_automation_time = time.monotonic()
         self.cadence = Cadence(self.last_automation_time)
         self.log = None
-        self.supervisor = Supervisor(executable, directory / "runtime", self.on_worker_event)
+        self.supervisor = Supervisor(executable, directory / "runtime", self.on_worker_event,
+                                     goose_bus=lambda ieds: self.live.engine.bus_for(ieds))
         self.scenario_runner = ScenarioRunner(self.update, self.supervisor.read, self.emit)
         self.sample_writer = SampleWriter(self)
         self.automation = Automation(self)
@@ -93,6 +94,11 @@ class Coordinator:
         with self.cycle_lock:
             if ied_ids is not None and self.state in {"running", "paused"}:
                 return add_ieds(self, set(ied_ids))
+            if self.state in {"running", "paused"}:
+                # "Run all" during a partial run adds every IED not Off that is not running yet (change 0106).
+                rest = {ied["id"] for ied in runnable(self.projects.project)} - self.active
+                if rest:
+                    return add_ieds(self, rest)
             self._start(None if ied_ids is None else set(ied_ids))
 
     def _start(self, selection=None):
@@ -105,7 +111,7 @@ class Coordinator:
             if not project["ieds"]:
                 raise ValueError("Import or create an IED before Run")
             if not ieds:
-                raise ValueError("Set at least one IED to 'Be this IED' or 'Read real IED' before Run")
+                raise ValueError("Set at least one IED to 'Simulate' or 'Monitor real device' before Run")
             conflicts = endpoint_conflicts(ieds, project["network"])
             if conflicts:
                 raise ValueError(conflicts[0])

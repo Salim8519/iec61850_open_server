@@ -46,11 +46,11 @@ test('a receiving sender outside the project shows its live state, a silent one 
   const link: GooseLink = { id: 'L', gocb_ref: 'FEED1LD1/LLN0$GO$Feed1SwiPosCtl', publisher: 'FEED1', subscriber: 'BUS1',
     block: 'Feed1SwiPosCtl', status: 'declared', remote: false, match: 'named', inputs: [],
     live: { state: 'receiving', problem: '', st_num: 41, sq_num: 3, frames: 56 } } as unknown as GooseLink;
-  assert.equal(linkStatus(link, true, true, true).label, 'Receiving');
-  assert.match(linkStatus(link, true, true, true).hint, /FEED1 is not in this project/);
+  assert.equal(linkStatus(link, true, true).label, 'Receiving');
+  assert.match(linkStatus(link, true, true).hint, /FEED1 is not in this project/);
   const waiting = { ...link, live: { ...link.live!, state: 'waiting' } } as GooseLink;
-  assert.equal(linkStatus(waiting, true, true, true).label, 'Outside project');
-  assert.equal(linkStatus(link, false, true, true).label, 'Outside project', 'stopped: nothing live to show');
+  assert.equal(linkStatus(waiting, true, true).label, 'Outside project');
+  assert.equal(linkStatus(link, false, true).label, 'Outside project', 'stopped: nothing live to show');
 });
 
 test('equipment names and states wrap instead of being cut', () => {

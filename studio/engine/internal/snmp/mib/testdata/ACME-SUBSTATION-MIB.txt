@@ -1,0 +1,163 @@
+-- A fictional vendor MIB written for the ScadaBench tests (enterprise 99999 is not real).
+ACME-SUBSTATION-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, OBJECT-IDENTITY, NOTIFICATION-TYPE,
+    Integer32, Counter64, Gauge32, enterprises
+        FROM SNMPv2-SMI           -- RFC 2578
+    TEXTUAL-CONVENTION, DisplayString, MacAddress, RowStatus
+        FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF;
+
+acmeSubstationMIB MODULE-IDENTITY
+    LAST-UPDATED "202610200000Z"
+    ORGANIZATION "Acme Test Equipment (fictional)"
+    CONTACT-INFO "nobody@example.invalid"
+    DESCRIPTION
+        "Objects of a fictional protection relay.
+         The description spans
+         several lines."
+    REVISION     "202610200000Z"
+    DESCRIPTION  "First version."
+    ::= { enterprises 99999 }
+
+acmeObjects   OBJECT IDENTIFIER ::= { acmeSubstationMIB 1 }
+acmeNotifs    OBJECT IDENTIFIER ::= { acmeSubstationMIB 0 }
+acmeConformance OBJECT-IDENTITY
+    STATUS      current
+    DESCRIPTION "Conformance -- not a comment inside a string -- information."
+    ::= { acmeSubstationMIB 2 }
+
+AcmeBreakerState ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION "Position of a circuit breaker."
+    SYNTAX      INTEGER { intermediate(0), open(1), closed(2), badState(3) }
+
+AcmeSerial ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "32a"
+    STATUS      current
+    DESCRIPTION "A printable serial number."
+    SYNTAX      OCTET STRING (SIZE (0..32))
+
+acmeRelaySerial OBJECT-TYPE
+    SYNTAX      AcmeSerial
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Serial number of the relay."
+    ::= { acmeObjects 1 }
+
+acmeRelayTemperature OBJECT-TYPE
+    SYNTAX      Integer32 (-40..125)
+    UNITS       "degrees Celsius"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Internal temperature."   -- trailing comment
+    ::= { acmeObjects 2 }
+
+acmeBayTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF AcmeBayEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "One row per bay."
+    ::= { acmeObjects 3 }
+
+acmeBayEntry OBJECT-TYPE
+    SYNTAX      AcmeBayEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "A bay."
+    INDEX       { acmeBayIndex, IMPLIED acmeBayName }
+    ::= { acmeBayTable 1 }
+
+AcmeBayEntry ::= SEQUENCE {
+    acmeBayIndex     Integer32,
+    acmeBayName      DisplayString,
+    acmeBayBreaker   AcmeBreakerState,
+    acmeBayEnergy    Counter64,
+    acmeBayMac       MacAddress,
+    acmeBayLoad      Gauge32,
+    acmeBayStatus    RowStatus
+}
+
+acmeBayIndex OBJECT-TYPE
+    SYNTAX      Integer32 (1..64)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Bay number."
+    ::= { acmeBayEntry 1 }
+
+acmeBayName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (1..16))
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Bay name."
+    ::= { acmeBayEntry 2 }
+
+acmeBayBreaker OBJECT-TYPE
+    SYNTAX      AcmeBreakerState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Breaker position."
+    DEFVAL      { open }
+    ::= { acmeBayEntry 3 }
+
+acmeBayEnergy OBJECT-TYPE
+    SYNTAX      Counter64
+    UNITS       "Wh"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Energy through the bay."
+    ::= { acmeBayEntry 4 }
+
+acmeBayMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "MAC address of the bay controller."
+    ::= { acmeBayEntry 5 }
+
+acmeBayLoad OBJECT-TYPE
+    SYNTAX      Gauge32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Load in percent."
+    ::= { acmeBayEntry 6 }
+
+acmeBayStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "Row status."
+    ::= { acmeBayEntry 7 }
+
+acmeBreakerTrip NOTIFICATION-TYPE
+    OBJECTS     { acmeBayBreaker, acmeBayLoad }
+    STATUS      current
+    DESCRIPTION "A breaker tripped."
+    ::= { acmeNotifs 1 }
+
+acmeGroup OBJECT-GROUP
+    OBJECTS     { acmeRelaySerial, acmeRelayTemperature, acmeBayBreaker,
+                  acmeBayEnergy, acmeBayMac, acmeBayLoad, acmeBayStatus }
+    STATUS      current
+    DESCRIPTION "Objects."
+    ::= { acmeConformance 1 }
+
+acmeNotifGroup NOTIFICATION-GROUP
+    NOTIFICATIONS { acmeBreakerTrip }
+    STATUS      current
+    DESCRIPTION "Notifications."
+    ::= { acmeConformance 2 }
+
+acmeCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION "Compliance."
+    MODULE      -- this module
+        MANDATORY-GROUPS { acmeGroup, acmeNotifGroup }
+        OBJECT      acmeBayBreaker
+        MIN-ACCESS  read-only
+        DESCRIPTION "Write access is not required."
+    ::= { acmeConformance 3 }
+
+END

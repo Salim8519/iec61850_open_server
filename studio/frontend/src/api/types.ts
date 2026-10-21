@@ -1,6 +1,7 @@
 import type { Node, Edge } from '@xyflow/react';
 
-export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'SOURCE' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'JUNCTION' | 'INFEED';
+export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'SOURCE' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'JUNCTION' | 'INFEED'
+  | 'MEASUREMENT_LIST';
 export type InfeedType = 'line' | 'transformer' | 'grid';
 export type SignalBinding = { ied_id: string; report_ref: string | null; ref: string };
 export type StateMapping =
@@ -9,10 +10,15 @@ export type StateMapping =
   | { mode: 'contacts_to_dbpos'; open: SignalBinding; closed: SignalBinding };
 export type ControlBinding = { ied_id: string; ref: string };
 export type RelayStatus = { id: string; label: string; source: SignalBinding };
+/** One measurement list row (ADR-0090): shown = raw × scale + offset, `decimals` places, then unit. */
+export type Measurement = { id: string; label: string; source: SignalBinding;
+  scale: number; offset: number; unit: string; decimals: number };
 export type EquipmentData = {
   label: string; kind: EquipmentKind; rotation: number;
   state_mapping?: StateMapping | null; control_binding?: ControlBinding | null;
   relay_statuses?: RelayStatus[];
+  /** Measurement list only; other kinds never carry it. */
+  measurements?: Measurement[];
   trip_command_polarity?: 'operate_false' | 'operate_true';
   trip_state_polarity?: 'operated_false' | 'operated_true';
   push_mode?: 'spc_momentary' | 'latching_status' | 'self_resetting'; push_value?: boolean;
@@ -49,7 +55,8 @@ export type IedRole = 'simulated' | 'real' | 'off';
 export type LiveSettings = { ip: string; port: number; access: 'auto_reports' | 'polling'; poll_ms: number };
 export type GooseControl = { name: string; gocb_ref: string; go_id: string; dataset_ref: string; app_id: number;
   mac: string; vlan_id: number; vlan_priority: number; conf_rev: number };
-export type NetworkSettings = { mode: 'loopback' | 'lab'; adapter_guid: string; adapter_label: string };
+export type NetworkSettings = { mode: 'loopback' | 'lab'; adapter_guid: string; adapter_label: string;
+  goose_reach?: 'inside' | 'outside' };
 export type Project = {
   id: string; name: string; session_id: string; revision: number;
   ieds: Ied[]; diagram: Diagram; runtime: string; network: NetworkSettings;

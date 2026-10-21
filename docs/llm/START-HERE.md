@@ -23,7 +23,8 @@ a gap between them.
 1. Inspect the working tree and preserve unrelated user changes.
 2. State the observed evidence, assumption and intended compatibility effect.
 3. Change the smallest owning layer. Route handlers validate/delegate; domain code
-   stays pure; native code owns MMS state; the browser only projects backend state.
+   stays pure; native code owns MMS state; the Go GOOSE engine (`studio/goose_engine`,
+   ADR-0073) owns where GOOSE frames go; the browser only projects backend state.
 4. Add or update tests in the changed layer. Protocol claims require an independent
    client or packet-level record in addition to UI tests.
 5. Update an ADR for architecture, design, contract or dependency changes. Append a

@@ -1,8 +1,11 @@
 import { Download, Search, Share2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
+import { countOf } from '../../copy/count';
+import { HEALTH, liveFeed } from '../../api/polls';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
+import { Spinner } from '../../ui/Spinner';
 import { Hint } from '../../ui/Hint';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { flowRows, LINK_STYLE, linkState, MANY_IEDS, wireVerdicts, type FlowEdge, type FlowGraph, type FlowType } from './signalFlow';
@@ -23,11 +26,8 @@ export function SignalFlowView({ iedName, running }: { iedName?: string; running
   const [live, setLive] = useState<Record<string, { state: string; checked_at: string }>>({});
   useEffect(() => {
     if (!running) { setLive({}); return; }
-    const load = () => api<{ ieds: { checks: { area: string; item: string; message: string; observed_at: string | null }[] }[] }>('/health')
-      .then(value => setLive(wireVerdicts(value.ieds))).catch(() => {});
-    load();
-    const timer = setInterval(load, 3000);
-    return () => clearInterval(timer);
+    return liveFeed.subscribe<{ ieds: { checks: { area: string; item: string; message: string; observed_at: string | null }[] }[] }>(
+      HEALTH, 3000, value => setLive(wireVerdicts(value.ieds)));
   }, [running]);
   useEffect(() => {
     api<{ sources: Source[] }>('/signal-flow/sources').then(value => {
@@ -47,7 +47,8 @@ export function SignalFlowView({ iedName, running }: { iedName?: string; running
   }, [source, focus, iedName]);
   const rows = useMemo(() => graph ? flowRows(graph, type, query) : [], [graph, type, query]);
   if (!graph) return <div className={iedName ? '' : 'card'}><EmptyState icon={<Share2 size={22} />}
-    title="Signal flow" hintId={error ? 'flow.error' : 'flow.intro'} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
+    title="Signal flow" hintId={error ? 'flow.error' : 'flow.intro'}
+    action={error ? undefined : <Spinner label="Reading who sends what to whom…" />} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
   const problems = graph.diagnostics.filter(item => item.level === 'problem');
   const notes = graph.diagnostics.filter(item => item.level === 'info');
   const names = Object.fromEntries(graph.ieds.map(item => [item.name, item]));
@@ -96,7 +97,7 @@ export function SignalFlowView({ iedName, running }: { iedName?: string; running
         <td><strong>{block.ied}</strong>{names[block.ied] && !names[block.ied].loaded && <div className="small muted">in SCD only</div>}</td>
         <td><span className={`badge flow-type line-${LINK_STYLE[block.type].line}`} title={LINK_STYLE[block.type].hint}>
           {LINK_STYLE[block.type].label}</span> <code title={block.ref}>{block.name}</code>
-          <div className="small muted">Dataset {block.dataset || '—'} · {block.members.length} values</div></td>
+          <div className="small muted">Dataset {block.dataset || '—'} · {countOf(block.members.length, 'value')}</div></td>
         <td><div className="flow-chips">{edges.length ? edges.map(receiver) :
           <span className="small muted">No receiver in this file</span>}</div></td></tr>)}</tbody></table>
       {!rows.length && <EmptyState icon={<Share2 size={20} />} title="No links to show" hintId="flow.empty" />}

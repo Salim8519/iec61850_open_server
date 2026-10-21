@@ -1,0 +1,11 @@
+{
+  "tour_seen_version": 1,
+  "sld_goose_layer": 1,
+  "sld_readers_layer": 0,
+  "list_filters": {
+    "ied-list": {
+      "query": "\u00e9",
+      "live": true
+    }
+  }
+}

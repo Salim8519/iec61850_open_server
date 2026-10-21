@@ -7,6 +7,7 @@ import { needsStatus, UI_STATUS } from '../../copy/status';
 import { SourceEditor } from '../test/SourceEditor';
 import { ControlMapping } from './ControlMapping';
 import { RelayStatusEditor } from './RelayStatusEditor';
+import { MeasurementEditor } from './MeasurementEditor';
 import { AdvancedSettings, BasicSettings } from './SheetSettings';
 import { StateMappingEditor } from './StateMappingEditor';
 import { SwitchHints } from './SwitchHints';
@@ -15,7 +16,7 @@ import { TEST_COPY } from '../../equipment/testButtons';
 import type { SwitchHints as Hints } from '../../equipment/energization';
 
 type Props = {
-  node: EquipmentNode; project: Project; locked: boolean; busy: boolean; values: Record<string, unknown>;
+  node: EquipmentNode; project: Project; locked: boolean; busy: boolean;
   operation?: string; section?: string; hints?: Hints; update: (data: EquipmentNode['data']) => void; remove: () => void; duplicate: () => void;
   operate: (nodeId: string, action: string) => void; close: () => void;
   applyColors: (active: string | null, inactive: string | null) => void;
@@ -24,7 +25,7 @@ type Props = {
   running: Set<string>; test: RunTest; testMessage?: string;
 };
 
-export function EquipmentSheet({ node, project, locked, busy, values, operation, section, hints, update, remove, duplicate,
+export function EquipmentSheet({ node, project, locked, busy, operation, section, hints, update, remove, duplicate,
   operate, close, applyColors, perform, showFlow, running, test, testMessage }: Props) {
   const data = node.data;
   const info = kindInfo(data.kind);
@@ -32,7 +33,7 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
   const trip = data.kind === 'TRIP_RELAY';
   const push = data.kind === 'PUSH_BUTTON';
   const statusButton = push && data.push_mode !== 'spc_momentary';
-  const showState = !['JUNCTION', 'RELAY', 'INFEED'].includes(data.kind) && (!push || statusButton);
+  const showState = !['JUNCTION', 'RELAY', 'INFEED', 'MEASUREMENT_LIST'].includes(data.kind) && (!push || statusButton);
   const showControl = switching || trip || (push && !statusButton);
   const canAct = statusButton ? !!data.state_mapping : !!data.control_binding;
   const missing = setupItems(data).filter(item => !item.done && !item.optional);
@@ -73,12 +74,15 @@ export function EquipmentSheet({ node, project, locked, busy, values, operation,
           disabled={locked} update={update} /></section>}
       {data.kind === 'RELAY' && <section className="sheet-section"><h3>Signals on this relay</h3>
         <RelayStatusEditor key={node.id} nodeId={node.id} data={data} project={project} locked={locked}
-          values={values} update={update} perform={perform} /></section>}
+          update={update} perform={perform} /></section>}
+      {data.kind === 'MEASUREMENT_LIST' && <section className="sheet-section"><h3>Measurements in this list</h3>
+        <MeasurementEditor key={node.id} nodeId={node.id} data={data} project={project} locked={locked}
+          update={update} /></section>}
       {source && <section className="sheet-section"><h3>How the value changes</h3>
-        <SourceEditor point={source} project={project} values={values} perform={perform} /></section>}
+        <SourceEditor point={source} project={project} perform={perform} /></section>}
       <section className="sheet-section"><AdvancedSettings data={data} locked={locked} update={update} applyColors={applyColors} />
         {!locked && <div className="row">
-          {!['JUNCTION', 'RELAY'].includes(data.kind) && <button className="ghost" onClick={() =>
+          {!['JUNCTION', 'RELAY', 'MEASUREMENT_LIST'].includes(data.kind) && <button className="ghost" onClick={() =>
             update({ ...data, rotation: (data.rotation + 90) % 360 })}><RotateCw size={16} />Rotate</button>}
           <button className="ghost" onClick={duplicate}><Copy size={16} />Duplicate</button>
           {linkedIed && showFlow && <button className="ghost" onClick={() => showFlow(linkedIed)}>

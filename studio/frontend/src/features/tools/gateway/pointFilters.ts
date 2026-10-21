@@ -1,7 +1,7 @@
 // Filters of the SCADA point lists (change 0093): display only, on rows the page already has.
 import type { GatewayPoint, PointKind } from '../../../api/gateway';
 import type { MasterPoint } from '../../../api/master';
-import { KIND_LABELS } from '../../../copy/gateway.ts';
+import { KIND_LABELS, OWN_COPY } from '../../../copy/gateway.ts';
 import { textMatch, type FilterGroup, type FilterSpec, type FilterValues } from '../../../ui/filterState.ts';
 
 const TYPE_GROUP: FilterGroup = { key: 'kind', label: 'Point type', initial: 'all', options: [
@@ -14,7 +14,8 @@ export const GATEWAY_POINT_FILTER: FilterSpec = {
   groups: [TYPE_GROUP],
   toggles: [
     { key: 'bad', label: 'Bad quality', hint: 'Points SCADA receives as invalid, for example while the IEDs are not running.' },
-    { key: 'unserved', label: 'Not served', hint: 'New rows that SCADA gets only after Save point list.' }],
+    { key: 'unserved', label: 'Not served', hint: 'New rows that SCADA gets only after Save point list.' },
+    { key: 'own', label: OWN_COPY.filter, hint: OWN_COPY.filterHint }],
 };
 
 export const gatewayKind = (kind: PointKind) => kind.startsWith('command') ? 'commands'
@@ -24,7 +25,8 @@ export function gatewayPointMatches(row: GatewayPoint, values: FilterValues): bo
   if (values.kind !== 'all' && gatewayKind(row.kind) !== values.kind) return false;
   if (values.ied && (row.ied_name ?? row.ied) !== values.ied) return false;
   if (values.bad && row.online !== false) return false;
-  if (values.unserved && row.id) return false;
+  if (values.unserved && row.id && !row.draft) return false;
+  if (values.own && row.source !== 'manual') return false;
   return textMatch(values.text, row.ref, row.ied_name ?? row.ied, row.address, KIND_LABELS[row.kind], row.description);
 }
 

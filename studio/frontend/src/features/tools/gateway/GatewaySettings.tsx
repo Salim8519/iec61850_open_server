@@ -1,9 +1,10 @@
 import { Play, Square } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { GatewayConfig, GatewayStatus, Listen, Protocol } from '../../../api/gateway';
 import { ADVANCED_SETTINGS, GATEWAY_COPY, MAIN_SETTINGS, PROTOCOL_HINTS, PROTOCOL_NAMES, SETTING_LABELS } from '../../../copy/gateway';
 import { Disclosure } from '../../../ui/Disclosure';
 import { HelpTip } from '../../../ui/HelpTip';
+import { Spinner } from '../../../ui/Spinner';
 import { StatusPill } from '../../../ui/StatusPill';
 
 /** The settings column of the gateway (ADR-0064): protocol, who may connect, the few settings SCADA
@@ -16,6 +17,9 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
 }) {
   const copy = { ...GATEWAY_COPY, ...words };
   const running = status.state === 'running';
+  // Starting takes about a second (a worker starts and binds the port): show it instead of a still "Stopped".
+  const [starting, setStarting] = useState(false);
+  useEffect(() => { if (!busy) setStarting(false); }, [busy]);
   const protocol = config.protocol;
   const values = config.settings[protocol];
   const real = config.real_commands;
@@ -47,7 +51,7 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
       <HelpTip text={real ? copy.realCommandsOn : copy.realCommandsOff} label="What does this allow?" /></span>
     {ADVANCED_SETTINGS[protocol].length > 0 && <Disclosure>{ADVANCED_SETTINGS[protocol].map(field)}</Disclosure>}
     <div className="side-foot">
-      <StatusPill status={pill} />
+      {starting && !running ? <Spinner label={copy.starting} /> : <StatusPill status={pill} />}
       {running && <p className="side-line" aria-live="polite">{status.message} · {status.clients.length
         ? `${copy.connected(status.clients.length)}: ${status.clients.join(', ')}` : copy.none}</p>}
       {!running && status.state === 'failed' && status.message && <p className="side-error" role="alert">{status.message}</p>}
@@ -55,7 +59,8 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
       {error && <p className="side-error" role="alert">{error}</p>}
       {running
         ? <button onClick={stop} disabled={busy}><Square size={16} />{copy.stop}</button>
-        : <button className="primary" onClick={start} disabled={busy || !status.available}><Play size={16} />{copy.start}</button>}
+        : <button className="primary" onClick={() => { setStarting(true); start(); }} disabled={busy || !status.available}>
+          <Play size={16} />{copy.start}</button>}
     </div>
   </section>;
 }

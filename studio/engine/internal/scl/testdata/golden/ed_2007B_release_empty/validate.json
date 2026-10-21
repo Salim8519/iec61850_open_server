@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}SCL', attribute 'release': The attribute 'release' is not allowed."}]}

@@ -1,0 +1,1975 @@
+{
+"times": [
+"2026-10-20T08:15:30.123456+00:00",
+"2026-10-20T08:15:31+00:00",
+"2026-01-02T03:04:05.000006+00:00",
+"2026-12-31T23:59:59.999999+00:00"
+],
+"exe": "C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"program": "C:\\Studio\\native\\studio_ied.exe",
+"gateway": "C:\\Studio\\native\\studio_gateway.exe",
+"gateway_rule": "ScadaBench-Gateway-7f166b55503f",
+"scenarios": [
+{
+"name": "apply_flow",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"apply",
+"$fp",
+null
+],
+[
+"apply",
+"0000000000000000000000000000000000000000000000000000000000000000",
+true
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"rules",
+"$rule"
+],
+[
+"set",
+"adapters",
+[
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+},
+{
+"ip": "192.168.50.21",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+]
+],
+[
+"tick",
+11
+],
+[
+"cleanup_preview"
+],
+[
+"cleanup",
+"0000000000000000000000000000000000000000000000000000000000000000",
+true
+],
+[
+"cleanup",
+"$clean",
+"yes"
+],
+[
+"cleanup",
+"$clean",
+true
+],
+[
+"cleanup_preview"
+],
+[
+"cleanup",
+"$clean",
+true
+]
+],
+"results": [
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"52c7e3784563f9fc6ec7d15471c8b0708fb3adcaf6b31ce84c5e36f295ce616b\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"}]}\n"
+},
+{
+"error": "StudioError",
+"message": "Review the change list and confirm it before applying",
+"code": "validation",
+"details": []
+},
+{
+"error": "StudioError",
+"message": "This preview has expired. Review the changes again.",
+"code": "conflict",
+"details": []
+},
+{
+"ok": "{\"applied\":true,\"message\":\"Lab network is ready. Press Run to start the IEDs on the network.\",\"results\":[{\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-26dc71960b7d\",\"message\":\"\",\"ok\":true}]}\n"
+},
+null,
+null,
+null,
+{
+"ok": "{\"fingerprint\":\"cf384256d0ec63856dbce2e04aad0f0a7e8d1d7af98c53c5863d42022d1c63a2\",\"items\":[{\"action\":\"remove\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Remove address 192.168.50.21 that ScadaBench added to 'Lab NIC'\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"remove\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Remove the Windows Firewall rule that ScadaBench added for the simulated IEDs\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true}\n"
+},
+{
+"error": "StudioError",
+"message": "The list of ScadaBench changes is different now. Review it again.",
+"code": "conflict",
+"details": []
+},
+{
+"error": "StudioError",
+"message": "Confirm the clean-up list first",
+"code": "validation",
+"details": []
+},
+{
+"ok": "{\"message\":\"ScadaBench's network changes were removed. IEDs are back on 'This PC only' mode.\",\"results\":[{\"description\":\"Remove address 192.168.50.21 that ScadaBench added to 'Lab NIC'\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Remove the Windows Firewall rule that ScadaBench added for the simulated IEDs\",\"key\":\"firewall:SubstationStudio-MMS-26dc71960b7d\",\"message\":\"\",\"ok\":true}]}\n"
+},
+{
+"ok": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n"
+},
+{
+"ok": "{\"message\":\"ScadaBench's network changes were removed. IEDs are back on 'This PC only' mode.\",\"results\":[]}\n"
+}
+],
+"journal": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIjUyYzdlMzc4NDU2M2Y5ZmM2ZWM3ZDE1NDcxYzhiMDcwOGZiM2FkY2FmNmIzMWNlODRjNWUzNmYyOTVjZTYxNmIiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJmb3IiOiAiQmF5IiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMSswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIjUyYzdlMzc4NDU2M2Y5ZmM2ZWM3ZDE1NDcxYzhiMDcwOGZiM2FkY2FmNmIzMWNlODRjNWUzNmYyOTVjZTYxNmIiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiXSwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0yNmRjNzE5NjBiN2QiLCAib3duZWQiOiB0cnVlLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMDEtMDJUMDM6MDQ6MDUuMDAwMDA2KzAwOjAwIiwgImV2ZW50IjogInJlbW92ZWQiLCAiZmluZ2VycHJpbnQiOiAiY2YzODQyNTZkMGVjNjM4NTZkYmNlMmUwNGFhZDBmMGE3ZThkMWQ3YWY5OGM1M2M1ODYzZDQyMDIyZDFjNjNhMiIsICJpdGVtIjogeyJhY3Rpb24iOiAicmVtb3ZlIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImZvciI6ICJCYXkiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogdHJ1ZSwgInByZWZpeCI6IDI0fSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OSswMDowMCIsICJldmVudCI6ICJyZW1vdmVkIiwgImZpbmdlcnByaW50IjogImNmMzg0MjU2ZDBlYzYzODU2ZGJjZTJlMDRhYWQwZjBhN2U4ZDFkN2FmOThjNTNjNTg2M2Q0MjAyMmQxYzYzYTIiLCAiaXRlbSI6IHsiYWN0aW9uIjogInJlbW92ZSIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiXSwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0yNmRjNzE5NjBiN2QiLCAib3duZWQiOiB0cnVlLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQo=",
+"requests": [
+"apply-00000000000000000000000000000001.json",
+"apply-00000000000000000000000000000001.result.json",
+"remove-00000000000000000000000000000002.json",
+"remove-00000000000000000000000000000002.result.json"
+],
+"probes": [
+[
+"192.168.50.21"
+],
+[
+"192.168.50.21"
+]
+],
+"firewall": [],
+"launches": [
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000001.json",
+"4932f54058746d277c218c18cbd19827aaef2f056a5bd0cc29ddf54c5497fa0e",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNTJjN2UzNzg0NTYzZjlmYzZlYzdkMTU0NzFjOGIwNzA4ZmIzYWRjYWY2YjMxY2U4NGM1ZTM2ZjI5NWNlNjE2YiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0yNmRjNzE5NjBiN2QiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19"
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\remove-00000000000000000000000000000002.json",
+"d0e622627ee1427a7949a98e72549b71c897575bcc09b5461960132944b845bd",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAicmVtb3ZlIiwgImZpbmdlcnByaW50IjogImNmMzg0MjU2ZDBlYzYzODU2ZGJjZTJlMDRhYWQwZjBhN2U4ZDFkN2FmOThjNTNjNTg2M2Q0MjAyMmQxYzYzYTIiLCAiaXRlbXMiOiBbeyJhY3Rpb24iOiAicmVtb3ZlIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImZvciI6ICJCYXkiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogdHJ1ZSwgInByZWZpeCI6IDI0fSwgeyJhY3Rpb24iOiAicmVtb3ZlIiwgImFkZHJlc3NlcyI6IFsiMTkyLjE2OC41MC4yMSJdLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTI2ZGM3MTk2MGI3ZCIsICJvd25lZCI6IHRydWUsICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIn1dfQ=="
+}
+],
+"events": [
+[
+"set",
+"bay",
+"lab_ip",
+"192.168.50.21"
+],
+[
+"network",
+{
+"mode": "lab",
+"adapter_guid": "{11111111-1111-1111-1111-111111111111}",
+"adapter_label": "Lab NIC"
+}
+],
+[
+"network",
+{
+"mode": "loopback"
+}
+]
+],
+"adapter_calls": 5
+},
+{
+"name": "repick",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": null,
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [
+"192.168.50.21",
+"192.168.50.22"
+],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+{
+"bay": {
+"ip": "192.168.50.21",
+"prefix": 24
+}
+}
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"probe",
+[
+"192.168.50.21",
+"192.168.50.22",
+"192.168.50.23",
+"192.168.50.24",
+"192.168.50.25",
+"192.168.50.26",
+"192.168.50.27",
+"192.168.50.28",
+"192.168.50.29",
+"192.168.50.30",
+"192.168.50.31",
+"192.168.50.32",
+"192.168.50.33",
+"192.168.50.34",
+"192.168.50.35",
+"192.168.50.36",
+"192.168.50.37",
+"192.168.50.38",
+"192.168.50.39"
+]
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+{}
+]
+],
+"results": [
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"fe999838edeb65aba5ed90e53c978e032b51a12a4ca0ae1783a192569af2c230\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.23/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.23\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.23\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-fab03c03a659\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.23\",\"scd_ip\":\"\",\"status\":\"ok\"}]}\n"
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"ac1d8b9b252bb6caeb3cb33ee366b23961389970f19d2aae5ad76e4e49e0e82e\",\"items\":[],\"needs_admin\":false,\"ready\":false,\"rows\":[{\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"\",\"status\":\"in_use_on_network\"}]}\n"
+},
+{
+"error": "StudioError",
+"message": "Fix the highlighted address problems before applying",
+"code": "validation",
+"details": []
+},
+null,
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"ac1d8b9b252bb6caeb3cb33ee366b23961389970f19d2aae5ad76e4e49e0e82e\",\"items\":[],\"needs_admin\":false,\"ready\":false,\"rows\":[{\"hint\":\"Another device already answers on 192.168.50.25. Pick a different address so the two do not clash.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.25\",\"scd_ip\":\"\",\"status\":\"in_use_on_network\"}]}\n"
+}
+],
+"journal": "",
+"requests": [],
+"probes": [
+[
+"192.168.50.21"
+],
+[
+"192.168.50.22"
+],
+[
+"192.168.50.23"
+],
+[
+"192.168.50.21"
+],
+[
+"192.168.50.21"
+],
+[
+"192.168.50.21"
+],
+[
+"192.168.50.22"
+],
+[
+"192.168.50.23"
+],
+[
+"192.168.50.24"
+],
+[
+"192.168.50.25"
+]
+],
+"firewall": [],
+"launches": [],
+"events": [],
+"adapter_calls": 2
+},
+{
+"name": "scd_many",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+},
+{
+"id": "b2",
+"name": "Feeder 2",
+"scl_address": {
+"ip": "192.168.50.30",
+"subnet": "255.255.255.0"
+},
+"port": 2102
+},
+{
+"id": "b3",
+"name": "Feeder 3",
+"scl_address": null,
+"port": 102
+},
+{
+"id": "b4",
+"name": "Tie",
+"scl_address": {
+"ip": "192.168.50.10",
+"subnet": "255.255.255.0"
+}
+},
+{
+"id": "b5",
+"name": "Real one",
+"role": "real",
+"scl_address": {
+"ip": "192.168.50.40"
+}
+},
+{
+"id": "b6",
+"name": "Copy",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.0.0"
+}
+},
+{
+"id": "b7",
+"name": "Far",
+"scl_address": {
+"ip": "10.9.9.9",
+"subnet": "255.255.255.0"
+}
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+},
+{
+"guid": "{22222222-2222-2222-2222-222222222222}",
+"name": "Wi-Fi",
+"description": "Wireless",
+"status": "Up",
+"index": 3,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "wifi",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.30",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [
+"192.168.50.21"
+],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+null
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+{
+"b3": {
+"ip": "192.168.50.77",
+"prefix": 24
+},
+"b7": {
+"ip": "10.9.9.9",
+"prefix": 33
+},
+"zz": {
+"ip": "1.1.1.1"
+},
+"b2": {}
+}
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+{
+"b3": {
+"ip": "192.168.50.77",
+"prefix": "255.255.255.0"
+}
+}
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"bogus",
+null
+],
+[
+"preview",
+null,
+"scd",
+null
+],
+[
+"preview",
+"{22222222-2222-2222-2222-222222222222}",
+"scd",
+null
+]
+],
+"results": [
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"a3021e5d6b00fef49e567c0c8f99d7bca460de4c3132e3a35d62315b7909b4ae\",\"items\":[{\"action\":\"keep\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Use address 192.168.50.10 that is already on 'Lab NIC' for Tie\",\"for\":\"Tie\",\"ip\":\"192.168.50.10\",\"kind\":\"alias\",\"owned\":false,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 10.9.9.9/24 to 'Lab NIC' for Far\",\"for\":\"Far\",\"ip\":\"10.9.9.9\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"10.9.9.9\",\"192.168.50.10\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-8fd373d368b8\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":false,\"rows\":[{\"alternative\":{\"ip\":\"192.168.50.22\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"alternative\":{\"ip\":\"192.168.50.23\",\"prefix\":24},\"hint\":\"192.168.50.30 already belongs to 'Wi-Fi'. Pick another address or disconnect that adapter.\",\"ied_id\":\"b2\",\"name\":\"Feeder 2\",\"prefix\":24,\"proposed\":\"192.168.50.30\",\"scd_ip\":\"192.168.50.30\",\"status\":\"used_by_other_adapter\"},{\"alternative\":{\"ip\":\"192.168.50.24\",\"prefix\":24},\"hint\":\"This IED has no IP address in the SCD. Switch to 'free addresses on the adapter' or type an address.\",\"ied_id\":\"b3\",\"name\":\"Feeder 3\",\"prefix\":null,\"proposed\":\"\",\"scd_ip\":\"\",\"status\":\"missing_scd_address\"},{\"hint\":\"This address is already on the adapter. ScadaBench will use it but will not remove it later, because ScadaBench did not add it.\",\"ied_id\":\"b4\",\"name\":\"Tie\",\"prefix\":24,\"proposed\":\"192.168.50.10\",\"scd_ip\":\"192.168.50.10\",\"status\":\"already_on_adapter\"},{\"alternative\":{\"ip\":\"192.168.50.26\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"b6\",\"name\":\"Copy\",\"prefix\":16,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"hint\":\"Not used on this PC. Devices in this new network can only be checked after the address is added; Windows reports a clash then.\",\"ied_id\":\"b7\",\"name\":\"Far\",\"prefix\":24,\"proposed\":\"10.9.9.9\",\"scd_ip\":\"10.9.9.9\",\"status\":\"ok\"}]}\n"
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"3f5811b8de7d158b410f2c1f6b11d911263a66d70e2a0915193a0898a9d3561e\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.22\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.23/24 to 'Lab NIC' for Feeder 2\",\"for\":\"Feeder 2\",\"ip\":\"192.168.50.23\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.24/24 to 'Lab NIC' for Feeder 3\",\"for\":\"Feeder 3\",\"ip\":\"192.168.50.24\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.25/24 to 'Lab NIC' for Tie\",\"for\":\"Tie\",\"ip\":\"192.168.50.25\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.26/24 to 'Lab NIC' for Copy\",\"for\":\"Copy\",\"ip\":\"192.168.50.26\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.27/24 to 'Lab NIC' for Far\",\"for\":\"Far\",\"ip\":\"192.168.50.27\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.22\",\"192.168.50.23\",\"192.168.50.24\",\"192.168.50.25\",\"192.168.50.26\",\"192.168.50.27\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-75b12a7608c1\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.22\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b2\",\"name\":\"Feeder 2\",\"prefix\":24,\"proposed\":\"192.168.50.23\",\"scd_ip\":\"192.168.50.30\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b3\",\"name\":\"Feeder 3\",\"prefix\":24,\"proposed\":\"192.168.50.24\",\"scd_ip\":\"\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b4\",\"name\":\"Tie\",\"prefix\":24,\"proposed\":\"192.168.50.25\",\"scd_ip\":\"192.168.50.10\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b6\",\"name\":\"Copy\",\"prefix\":24,\"proposed\":\"192.168.50.26\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b7\",\"name\":\"Far\",\"prefix\":24,\"proposed\":\"192.168.50.27\",\"scd_ip\":\"10.9.9.9\",\"status\":\"ok\"}]}\n"
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"2a65ad62a7a84f5b515226cf4e3f732ca862eef0434b638025dac47c251c5343\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.77/24 to 'Lab NIC' for Feeder 3\",\"for\":\"Feeder 3\",\"ip\":\"192.168.50.77\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"keep\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Use address 192.168.50.10 that is already on 'Lab NIC' for Tie\",\"for\":\"Tie\",\"ip\":\"192.168.50.10\",\"kind\":\"alias\",\"owned\":false,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.10\",\"192.168.50.77\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-6f4d0d67ef2d\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":false,\"rows\":[{\"alternative\":{\"ip\":\"192.168.50.22\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"alternative\":{\"ip\":\"192.168.50.23\",\"prefix\":24},\"hint\":\"192.168.50.30 already belongs to 'Wi-Fi'. Pick another address or disconnect that adapter.\",\"ied_id\":\"b2\",\"name\":\"Feeder 2\",\"prefix\":24,\"proposed\":\"192.168.50.30\",\"scd_ip\":\"192.168.50.30\",\"status\":\"used_by_other_adapter\"},{\"hint\":\"Address typed by you.\",\"ied_id\":\"b3\",\"name\":\"Feeder 3\",\"prefix\":24,\"proposed\":\"192.168.50.77\",\"scd_ip\":\"\",\"status\":\"ok\"},{\"hint\":\"This address is already on the adapter. ScadaBench will use it but will not remove it later, because ScadaBench did not add it.\",\"ied_id\":\"b4\",\"name\":\"Tie\",\"prefix\":24,\"proposed\":\"192.168.50.10\",\"scd_ip\":\"192.168.50.10\",\"status\":\"already_on_adapter\"},{\"alternative\":{\"ip\":\"192.168.50.26\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"b6\",\"name\":\"Copy\",\"prefix\":16,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"alternative\":{\"ip\":\"192.168.50.27\",\"prefix\":24},\"hint\":\"Enter an IPv4 address such as 192.168.1.21 and a prefix from 8 to 30\",\"ied_id\":\"b7\",\"name\":\"Far\",\"prefix\":24,\"proposed\":\"10.9.9.9\",\"scd_ip\":\"10.9.9.9\",\"status\":\"invalid_manual\"}]}\n"
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"e6917572410b07963f91a94ce0ea616b8e96848a5a414cd8424a78d9c4d2bef3\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.77/24 to 'Lab NIC' for Feeder 3\",\"for\":\"Feeder 3\",\"ip\":\"192.168.50.77\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"keep\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Use address 192.168.50.10 that is already on 'Lab NIC' for Tie\",\"for\":\"Tie\",\"ip\":\"192.168.50.10\",\"kind\":\"alias\",\"owned\":false,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 10.9.9.9/24 to 'Lab NIC' for Far\",\"for\":\"Far\",\"ip\":\"10.9.9.9\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"10.9.9.9\",\"192.168.50.10\",\"192.168.50.77\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-b53eadfb78d2\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":false,\"rows\":[{\"alternative\":{\"ip\":\"192.168.50.22\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"alternative\":{\"ip\":\"192.168.50.23\",\"prefix\":24},\"hint\":\"192.168.50.30 already belongs to 'Wi-Fi'. Pick another address or disconnect that adapter.\",\"ied_id\":\"b2\",\"name\":\"Feeder 2\",\"prefix\":24,\"proposed\":\"192.168.50.30\",\"scd_ip\":\"192.168.50.30\",\"status\":\"used_by_other_adapter\"},{\"hint\":\"Address typed by you.\",\"ied_id\":\"b3\",\"name\":\"Feeder 3\",\"prefix\":24,\"proposed\":\"192.168.50.77\",\"scd_ip\":\"\",\"status\":\"ok\"},{\"hint\":\"This address is already on the adapter. ScadaBench will use it but will not remove it later, because ScadaBench did not add it.\",\"ied_id\":\"b4\",\"name\":\"Tie\",\"prefix\":24,\"proposed\":\"192.168.50.10\",\"scd_ip\":\"192.168.50.10\",\"status\":\"already_on_adapter\"},{\"alternative\":{\"ip\":\"192.168.50.26\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"b6\",\"name\":\"Copy\",\"prefix\":16,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"hint\":\"Not used on this PC. Devices in this new network can only be checked after the address is added; Windows reports a clash then.\",\"ied_id\":\"b7\",\"name\":\"Far\",\"prefix\":24,\"proposed\":\"10.9.9.9\",\"scd_ip\":\"10.9.9.9\",\"status\":\"ok\"}]}\n"
+},
+{
+"error": "ValueError",
+"message": "Address strategy must be 'scd' or 'adapter'",
+"code": null,
+"details": null
+},
+{
+"error": "StudioError",
+"message": "That network adapter is no longer available. Refresh the adapter list.",
+"code": "validation",
+"details": []
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.30\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"Wireless\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"6d59255dd065ce7a2764eb0172b57527df56e623d3f3f41bfe3a38adae2ef6b4\",\"items\":[{\"action\":\"keep\",\"adapter_guid\":\"{22222222-2222-2222-2222-222222222222}\",\"adapter_index\":3,\"adapter_name\":\"Wi-Fi\",\"description\":\"Use address 192.168.50.30 that is already on 'Wi-Fi' for Feeder 2\",\"for\":\"Feeder 2\",\"ip\":\"192.168.50.30\",\"kind\":\"alias\",\"owned\":false,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{22222222-2222-2222-2222-222222222222}\",\"adapter_index\":3,\"adapter_name\":\"Wi-Fi\",\"description\":\"Add address 10.9.9.9/24 to 'Wi-Fi' for Far\",\"for\":\"Far\",\"ip\":\"10.9.9.9\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"10.9.9.9\",\"192.168.50.30\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-c40595ee4338\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":false,\"rows\":[{\"alternative\":{\"ip\":\"192.168.50.22\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"hint\":\"This address is already on the adapter. ScadaBench will use it but will not remove it later, because ScadaBench did not add it.\",\"ied_id\":\"b2\",\"name\":\"Feeder 2\",\"prefix\":24,\"proposed\":\"192.168.50.30\",\"scd_ip\":\"192.168.50.30\",\"status\":\"already_on_adapter\"},{\"alternative\":{\"ip\":\"192.168.50.24\",\"prefix\":24},\"hint\":\"This IED has no IP address in the SCD. Switch to 'free addresses on the adapter' or type an address.\",\"ied_id\":\"b3\",\"name\":\"Feeder 3\",\"prefix\":null,\"proposed\":\"\",\"scd_ip\":\"\",\"status\":\"missing_scd_address\"},{\"alternative\":{\"ip\":\"192.168.50.25\",\"prefix\":24},\"hint\":\"192.168.50.10 already belongs to 'Lab NIC'. Pick another address or disconnect that adapter.\",\"ied_id\":\"b4\",\"name\":\"Tie\",\"prefix\":24,\"proposed\":\"192.168.50.10\",\"scd_ip\":\"192.168.50.10\",\"status\":\"used_by_other_adapter\"},{\"alternative\":{\"ip\":\"192.168.50.26\",\"prefix\":24},\"hint\":\"Another device already answers on 192.168.50.21. Pick a different address so the two do not clash.\",\"ied_id\":\"b6\",\"name\":\"Copy\",\"prefix\":16,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"in_use_on_network\"},{\"hint\":\"Not used on this PC. Devices in this new network can only be checked after the address is added; Windows reports a clash then.\",\"ied_id\":\"b7\",\"name\":\"Far\",\"prefix\":24,\"proposed\":\"10.9.9.9\",\"scd_ip\":\"10.9.9.9\",\"status\":\"ok\"}]}\n"
+}
+],
+"journal": "",
+"requests": [],
+"probes": [
+[
+"192.168.50.21"
+],
+[
+"192.168.50.21",
+"192.168.50.22",
+"192.168.50.23",
+"192.168.50.24",
+"192.168.50.25"
+],
+[
+"192.168.50.22",
+"192.168.50.23",
+"192.168.50.24",
+"192.168.50.25",
+"192.168.50.26",
+"192.168.50.27"
+],
+[
+"192.168.50.21",
+"192.168.50.77"
+],
+[
+"192.168.50.21",
+"192.168.50.77"
+],
+[
+"192.168.50.21"
+]
+],
+"firewall": [],
+"launches": [],
+"events": [],
+"adapter_calls": 1
+},
+{
+"name": "nothing_to_publish",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102,
+"role": "real"
+},
+{
+"id": "x",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102,
+"role": "off"
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+null
+]
+],
+"results": [
+{
+"error": "StudioError",
+"message": "No IED is set to 'Simulate', so there is nothing to put on the network. Set an IED to 'Simulate' in Devices first.",
+"code": "validation",
+"details": []
+}
+],
+"journal": "",
+"requests": [],
+"probes": [],
+"firewall": [],
+"launches": [],
+"events": [],
+"adapter_calls": 1
+},
+{
+"name": "elevation_modes",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+},
+{
+"id": "b2",
+"name": "B2",
+"scl_address": null,
+"port": 2102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"set",
+"elevate",
+"cancel"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"elevate",
+"refused"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"elevate",
+"none"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"elevate",
+"runtime"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"elevate",
+"no_ok"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"elevate",
+"partial"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"elevate",
+"fail"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"cleanup_preview"
+],
+[
+"set",
+"elevate",
+"ok"
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"cleanup_preview"
+]
+],
+"results": [
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for B2\",\"for\":\"B2\",\"ip\":\"192.168.50.22\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\",\"192.168.50.22\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-68ddcda8b56a\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b2\",\"name\":\"B2\",\"prefix\":24,\"proposed\":\"192.168.50.22\",\"scd_ip\":\"\",\"status\":\"ok\"}]}\n"
+},
+null,
+{
+"error": "StudioError",
+"message": "Windows administrator permission was not given, so nothing was changed",
+"code": "validation",
+"details": []
+},
+null,
+{
+"error": "StudioError",
+"message": "The network helper refused the request: Unknown helper action",
+"code": "validation",
+"details": []
+},
+null,
+{
+"error": "StudioError",
+"message": "The network helper finished without a result; nothing was recorded as changed",
+"code": "validation",
+"details": []
+},
+null,
+{
+"error": "RuntimeError",
+"message": "The network helper did not finish within two minutes",
+"code": null,
+"details": null
+},
+null,
+{
+"error": "KeyError",
+"message": "'ok'",
+"code": null,
+"details": null
+},
+null,
+{
+"error": "KeyError",
+"message": "'ok'",
+"code": null,
+"details": null
+},
+null,
+{
+"ok": "{\"applied\":false,\"message\":\"Some changes failed; nothing else was switched. See each line for the reason.\",\"results\":[{\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for B2\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.22\",\"message\":\"Access denied\",\"ok\":false},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-68ddcda8b56a\",\"message\":\"\",\"ok\":true}]}\n"
+},
+{
+"ok": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n"
+},
+null,
+{
+"ok": "{\"applied\":true,\"message\":\"Lab network is ready. Press Run to start the IEDs on the network.\",\"results\":[{\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for B2\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.22\",\"message\":\"\",\"ok\":true},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-68ddcda8b56a\",\"message\":\"\",\"ok\":true}]}\n"
+},
+{
+"ok": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n"
+}
+],
+"journal": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIjY2OWU4OWQ1MTVkNmViNTg5MGIzNjE0MDViZmEzNWEzOTlmZTBiMTQ0ZDk0NWY3YTMyMzQ3NGNkZmI4ZjM4MWMiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJmb3IiOiAiQmF5IiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMSswMDowMCIsICJldmVudCI6ICJmYWlsZWQiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImZvciI6ICJCMiIsICJpcCI6ICIxOTIuMTY4LjUwLjIyIiwgImtpbmQiOiAiYWxpYXMiLCAib3duZWQiOiB0cnVlLCAicHJlZml4IjogMjR9LCAicmVzdWx0IjogIk5vIHJlc3VsdCJ9DQp7ImF0IjogIjIwMjYtMDEtMDJUMDM6MDQ6MDUuMDAwMDA2KzAwOjAwIiwgImV2ZW50IjogImZhaWxlZCIsICJmaW5nZXJwcmludCI6ICI2NjllODlkNTE1ZDZlYjU4OTBiMzYxNDA1YmZhMzVhMzk5ZmUwYjE0NGQ5NDVmN2EzMjM0NzRjZGZiOGYzODFjIiwgIml0ZW0iOiB7ImFjdGlvbiI6ICJhZGQiLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIiwgIjE5Mi4xNjguNTAuMjIiXSwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy02OGRkY2RhOGI1NmEiLCAib3duZWQiOiB0cnVlLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSJ9LCAicmVzdWx0IjogIk5vIHJlc3VsdCJ9DQp7ImF0IjogIjIwMjYtMTItMzFUMjM6NTk6NTkuOTk5OTk5KzAwOjAwIiwgImV2ZW50IjogImFwcGxpZWQiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImZvciI6ICJCYXkiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogdHJ1ZSwgInByZWZpeCI6IDI0fSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJmYWlsZWQiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImZvciI6ICJCMiIsICJpcCI6ICIxOTIuMTY4LjUwLjIyIiwgImtpbmQiOiAiYWxpYXMiLCAib3duZWQiOiB0cnVlLCAicHJlZml4IjogMjR9LCAicmVzdWx0IjogIkFjY2VzcyBkZW5pZWQifQ0KeyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMxKzAwOjAwIiwgImV2ZW50IjogImFwcGxpZWQiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImFkZHJlc3NlcyI6IFsiMTkyLjE2OC41MC4yMSIsICIxOTIuMTY4LjUwLjIyIl0sICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJraW5kIjogImZpcmV3YWxsIiwgIm5hbWUiOiAiU3Vic3RhdGlvblN0dWRpby1NTVMtNjhkZGNkYThiNTZhIiwgIm93bmVkIjogdHJ1ZSwgInBvcnRzIjogWzEwMiwgMjEwMl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUifSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMDAwNiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIjY2OWU4OWQ1MTVkNmViNTg5MGIzNjE0MDViZmEzNWEzOTlmZTBiMTQ0ZDk0NWY3YTMyMzQ3NGNkZmI4ZjM4MWMiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJmb3IiOiAiQmF5IiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMi0zMVQyMzo1OTo1OS45OTk5OTkrMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICI2NjllODlkNTE1ZDZlYjU4OTBiMzYxNDA1YmZhMzVhMzk5ZmUwYjE0NGQ5NDVmN2EzMjM0NzRjZGZiOGYzODFjIiwgIml0ZW0iOiB7ImFjdGlvbiI6ICJhZGQiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiZm9yIjogIkIyIiwgImlwIjogIjE5Mi4xNjguNTAuMjIiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMC4xMjM0NTYrMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICI2NjllODlkNTE1ZDZlYjU4OTBiMzYxNDA1YmZhMzVhMzk5ZmUwYjE0NGQ5NDVmN2EzMjM0NzRjZGZiOGYzODFjIiwgIml0ZW0iOiB7ImFjdGlvbiI6ICJhZGQiLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIiwgIjE5Mi4xNjguNTAuMjIiXSwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy02OGRkY2RhOGI1NmEiLCAib3duZWQiOiB0cnVlLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQo=",
+"requests": [
+"apply-00000000000000000000000000000001.json",
+"apply-00000000000000000000000000000002.json",
+"apply-00000000000000000000000000000002.result.json",
+"apply-00000000000000000000000000000003.json",
+"apply-00000000000000000000000000000004.json",
+"apply-00000000000000000000000000000005.json",
+"apply-00000000000000000000000000000005.result.json",
+"apply-00000000000000000000000000000006.json",
+"apply-00000000000000000000000000000006.result.json",
+"apply-00000000000000000000000000000007.json",
+"apply-00000000000000000000000000000007.result.json",
+"apply-00000000000000000000000000000008.json",
+"apply-00000000000000000000000000000008.result.json"
+],
+"probes": [
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+],
+[
+"192.168.50.21",
+"192.168.50.22"
+]
+],
+"firewall": [],
+"launches": [
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000001.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000002.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000003.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000004.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000005.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000006.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000007.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000008.json",
+"c68eca4c68c86437fd7b36cc7411b6b35f816c4a8c2a2d21b22a7323d6713c6a",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNjY5ZTg5ZDUxNWQ2ZWI1ODkwYjM2MTQwNWJmYTM1YTM5OWZlMGIxNDRkOTQ1ZjdhMzIzNDc0Y2RmYjhmMzgxYyIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCMiIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTY4ZGRjZGE4YjU2YSIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiLCAiMTkyLjE2OC41MC4yMiJdLCAicG9ydHMiOiBbMTAyLCAyMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+}
+],
+"events": [
+[
+"set",
+"bay",
+"lab_ip",
+"192.168.50.21"
+],
+[
+"set",
+"b2",
+"lab_ip",
+"192.168.50.22"
+],
+[
+"network",
+{
+"mode": "lab",
+"adapter_guid": "{11111111-1111-1111-1111-111111111111}",
+"adapter_label": "Lab NIC"
+}
+]
+],
+"adapter_calls": 11
+},
+{
+"name": "network_changed",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"set",
+"adapters",
+[
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+},
+{
+"ip": "192.168.50.21",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+]
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"apply",
+"$fp",
+true
+]
+],
+"results": [
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"52c7e3784563f9fc6ec7d15471c8b0708fb3adcaf6b31ce84c5e36f295ce616b\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"}]}\n"
+},
+null,
+{
+"error": "StudioError",
+"message": "The network changed since you reviewed it. Review the new change list.",
+"code": "conflict",
+"details": {
+"fingerprint": "ced8db8b46bb729dedd8a26c9b11acd58052bccfd43a6aff6bd150fa9ef78441"
+}
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false},{\"ip\":\"192.168.50.21\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"ced8db8b46bb729dedd8a26c9b11acd58052bccfd43a6aff6bd150fa9ef78441\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.22\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.22\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-e85db5efdd28\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.22\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"}]}\n"
+},
+{
+"ok": "{\"applied\":true,\"message\":\"Lab network is ready. Press Run to start the IEDs on the network.\",\"results\":[{\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.22\",\"message\":\"\",\"ok\":true},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-e85db5efdd28\",\"message\":\"\",\"ok\":true}]}\n"
+}
+],
+"journal": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImNlZDhkYjhiNDZiYjcyOWRlZGQ4YTI2YzliMTFhY2Q1ODA1MmJjY2ZkNDNhNmFmZjZiZDE1MGZhOWVmNzg0NDEiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJmb3IiOiAiQmF5IiwgImlwIjogIjE5Mi4xNjguNTAuMjIiLCAia2luZCI6ICJhbGlhcyIsICJvd25lZCI6IHRydWUsICJwcmVmaXgiOiAyNH0sICJyZXN1bHQiOiAiIn0NCnsiYXQiOiAiMjAyNi0xMC0yMFQwODoxNTozMSswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImNlZDhkYjhiNDZiYjcyOWRlZGQ4YTI2YzliMTFhY2Q1ODA1MmJjY2ZkNDNhNmFmZjZiZDE1MGZhOWVmNzg0NDEiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjIiXSwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy1lODVkYjVlZmRkMjgiLCAib3duZWQiOiB0cnVlLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQo=",
+"requests": [
+"apply-00000000000000000000000000000001.json",
+"apply-00000000000000000000000000000001.result.json"
+],
+"probes": [
+[
+"192.168.50.21"
+],
+[
+"192.168.50.22"
+],
+[
+"192.168.50.22"
+],
+[
+"192.168.50.22"
+]
+],
+"firewall": [],
+"launches": [
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000001.json",
+"90b35d9df79476a1827851aec55f09e06ae361ac4ca625eafeec927bf1847e61",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiY2VkOGRiOGI0NmJiNzI5ZGVkZDhhMjZjOWIxMWFjZDU4MDUyYmNjZmQ0M2E2YWZmNmJkMTUwZmE5ZWY3ODQ0MSIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMiIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy1lODVkYjVlZmRkMjgiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIyIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19"
+}
+],
+"events": [
+[
+"set",
+"bay",
+"lab_ip",
+"192.168.50.22"
+],
+[
+"network",
+{
+"mode": "lab",
+"adapter_guid": "{11111111-1111-1111-1111-111111111111}",
+"adapter_label": "Lab NIC"
+}
+]
+],
+"adapter_calls": 3
+},
+{
+"name": "existing_rule",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+},
+{
+"ip": "192.168.50.21",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+null
+],
+[
+"set",
+"rules",
+"$rule"
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+null
+],
+[
+"apply",
+"$fp",
+true
+]
+],
+"results": [
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false},{\"ip\":\"192.168.50.21\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"7c1ffd1831d56700f6ea8f8d546d8fcc6e4667fe391a03e7b88bf90335ea1daa\",\"items\":[{\"action\":\"keep\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Use address 192.168.50.21 that is already on 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":false,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"This address is already on the adapter. ScadaBench will use it but will not remove it later, because ScadaBench did not add it.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"already_on_adapter\"}]}\n"
+},
+null,
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false},{\"ip\":\"192.168.50.21\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"b973befcea18dff65afcb79cee1048e9d0e55364574d72d9dd1b327422aa2997\",\"items\":[{\"action\":\"keep\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Use address 192.168.50.21 that is already on 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":false,\"prefix\":24},{\"action\":\"keep\",\"addresses\":[\"192.168.50.21\"],\"description\":\"The Windows Firewall rule for ScadaBench already exists\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":false,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":false,\"ready\":true,\"rows\":[{\"hint\":\"This address is already on the adapter. ScadaBench will use it but will not remove it later, because ScadaBench did not add it.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"already_on_adapter\"}]}\n"
+},
+{
+"ok": "{\"applied\":true,\"message\":\"Lab network is ready. Press Run to start the IEDs on the network.\",\"results\":[]}\n"
+}
+],
+"journal": "",
+"requests": [],
+"probes": [
+[],
+[],
+[]
+],
+"firewall": [],
+"launches": [],
+"events": [
+[
+"set",
+"bay",
+"lab_ip",
+"192.168.50.21"
+],
+[
+"network",
+{
+"mode": "lab",
+"adapter_guid": "{11111111-1111-1111-1111-111111111111}",
+"adapter_label": "Lab NIC"
+}
+]
+],
+"adapter_calls": 2
+},
+{
+"name": "cache",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"adapters",
+false
+],
+[
+"set",
+"adapters",
+[
+{
+"guid": "{22222222-2222-2222-2222-222222222222}",
+"name": "Wi-Fi",
+"description": "Wireless",
+"status": "Up",
+"index": 3,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "wifi",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.30",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+]
+],
+[
+"tick",
+5
+],
+[
+"adapters",
+false
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+null
+],
+[
+"tick",
+6
+],
+[
+"adapters",
+false
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"scd",
+null
+],
+[
+"adapters",
+true
+]
+],
+"results": [
+{
+"ok": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n"
+},
+null,
+null,
+{
+"ok": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n"
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"52c7e3784563f9fc6ec7d15471c8b0708fb3adcaf6b31ce84c5e36f295ce616b\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"}]}\n"
+},
+null,
+{
+"ok": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.30\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"Wireless\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n"
+},
+{
+"error": "StudioError",
+"message": "That network adapter is no longer available. Refresh the adapter list.",
+"code": "validation",
+"details": []
+},
+{
+"ok": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.30\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"Wireless\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n"
+}
+],
+"journal": "",
+"requests": [],
+"probes": [
+[
+"192.168.50.21"
+]
+],
+"firewall": [],
+"launches": [],
+"events": [],
+"adapter_calls": 3
+},
+{
+"name": "gateway",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [
+{
+"name": "TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe",
+"display": "studio_gateway.exe"
+}
+],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"gw_preview"
+],
+[
+"gw_apply",
+"$gw",
+false
+],
+[
+"set",
+"blocking",
+[]
+],
+[
+"gw_apply",
+"$gw",
+true
+],
+[
+"gw_preview"
+],
+[
+"gw_apply",
+"$gw",
+true
+],
+[
+"gw_apply",
+"nope",
+true
+],
+[
+"set",
+"blocking",
+[
+{
+"name": "TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe",
+"display": "studio_gateway.exe"
+}
+]
+],
+[
+"gw_preview"
+],
+[
+"gw_apply",
+"$gw",
+true
+],
+[
+"set",
+"gateway_rules",
+"$gwrule"
+],
+[
+"gw_preview"
+],
+[
+"preview",
+"{11111111-1111-1111-1111-111111111111}",
+"adapter",
+null
+],
+[
+"apply",
+"$fp",
+true
+],
+[
+"set",
+"state",
+{
+"gateway": [
+"$gwrule"
+],
+"disabled": [
+"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe"
+]
+}
+],
+[
+"cleanup_preview"
+],
+[
+"set",
+"elevate",
+"fail"
+],
+[
+"cleanup",
+"$clean",
+true
+],
+[
+"cleanup_preview"
+],
+[
+"set",
+"elevate",
+"ok"
+],
+[
+"cleanup",
+"$clean",
+true
+],
+[
+"cleanup_preview"
+]
+],
+"results": [
+{
+"ok": "{\"blocked\":true,\"fingerprint\":\"93e18b15b6a22c084a08be8d13239f0b78abae0c2e2a431f69f56d9dfd34d0e9\",\"items\":[{\"action\":\"add\",\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"},{\"action\":\"add\",\"description\":\"Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its 'allow access?' question was closed); clean-up switches it on again\",\"display\":\"studio_gateway.exe\",\"kind\":\"unblock\",\"name\":\"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n"
+},
+{
+"error": "StudioError",
+"message": "Review the Windows Firewall changes and confirm them first",
+"code": "validation",
+"details": []
+},
+null,
+{
+"error": "StudioError",
+"message": "Windows Firewall changed since you reviewed it. Review the new list.",
+"code": "conflict",
+"details": {
+"fingerprint": "af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65"
+}
+},
+{
+"ok": "{\"blocked\":false,\"fingerprint\":\"af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65\",\"items\":[{\"action\":\"add\",\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n"
+},
+{
+"ok": "{\"applied\":true,\"message\":\"Done: Settings \\u203a Network \\u203a Clean up undoes this.\",\"results\":[{\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"key\":\"firewall:ScadaBench-Gateway-7f166b55503f\",\"message\":\"\",\"ok\":true}]}\n"
+},
+{
+"error": "StudioError",
+"message": "This preview has expired. Review the changes again.",
+"code": "conflict",
+"details": []
+},
+null,
+{
+"ok": "{\"blocked\":true,\"fingerprint\":\"93e18b15b6a22c084a08be8d13239f0b78abae0c2e2a431f69f56d9dfd34d0e9\",\"items\":[{\"action\":\"add\",\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"},{\"action\":\"add\",\"description\":\"Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its 'allow access?' question was closed); clean-up switches it on again\",\"display\":\"studio_gateway.exe\",\"kind\":\"unblock\",\"name\":\"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n"
+},
+{
+"ok": "{\"applied\":true,\"message\":\"Done: Settings \\u203a Network \\u203a Clean up undoes this.\",\"results\":[{\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"key\":\"firewall:ScadaBench-Gateway-7f166b55503f\",\"message\":\"\",\"ok\":true},{\"description\":\"Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its 'allow access?' question was closed); clean-up switches it on again\",\"key\":\"unblock:TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"message\":\"\",\"ok\":true}]}\n"
+},
+null,
+{
+"ok": "{\"blocked\":true,\"fingerprint\":\"93e18b15b6a22c084a08be8d13239f0b78abae0c2e2a431f69f56d9dfd34d0e9\",\"items\":[{\"action\":\"add\",\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"},{\"action\":\"add\",\"description\":\"Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its 'allow access?' question was closed); clean-up switches it on again\",\"display\":\"studio_gateway.exe\",\"kind\":\"unblock\",\"name\":\"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n"
+},
+{
+"ok": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"52c7e3784563f9fc6ec7d15471c8b0708fb3adcaf6b31ce84c5e36f295ce616b\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-26dc71960b7d\",\"owned\":true,\"ports\":[102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"}]}\n"
+},
+{
+"ok": "{\"applied\":true,\"message\":\"Lab network is ready. Press Run to start the IEDs on the network.\",\"results\":[{\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-26dc71960b7d\",\"message\":\"\",\"ok\":true}]}\n"
+},
+null,
+{
+"ok": "{\"fingerprint\":\"8ca59a1145306cf528fb36fced1c9c78512f953de1ae7521f79e198a5203690b\",\"items\":[{\"action\":\"remove\",\"description\":\"Remove the Windows Firewall rule that ScadaBench added for its gateway\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"},{\"action\":\"remove\",\"description\":\"Switch the Windows Firewall rule that blocked the gateway on again, as it was before\",\"display\":\"studio_gateway.exe\",\"kind\":\"unblock\",\"name\":\"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true}\n"
+},
+null,
+{
+"ok": "{\"message\":\"ScadaBench's network changes were removed. IEDs are back on 'This PC only' mode.\",\"results\":[{\"description\":\"Remove the Windows Firewall rule that ScadaBench added for its gateway\",\"key\":\"firewall:ScadaBench-Gateway-7f166b55503f\",\"message\":\"\",\"ok\":true},{\"description\":\"Switch the Windows Firewall rule that blocked the gateway on again, as it was before\",\"key\":\"unblock:TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"message\":\"Access denied\",\"ok\":false}]}\n"
+},
+{
+"ok": "{\"fingerprint\":\"06598a0c98775f2fa9ef1794c91e7e224ed13bdbe502aeec719bed9415ccb4f6\",\"items\":[{\"action\":\"remove\",\"description\":\"Switch the Windows Firewall rule that blocked the gateway on again, as it was before\",\"display\":\"studio_gateway.exe\",\"kind\":\"unblock\",\"name\":\"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true}\n"
+},
+null,
+{
+"ok": "{\"message\":\"ScadaBench's network changes were removed. IEDs are back on 'This PC only' mode.\",\"results\":[{\"description\":\"Switch the Windows Firewall rule that blocked the gateway on again, as it was before\",\"key\":\"unblock:TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"message\":\"\",\"ok\":true}]}\n"
+},
+{
+"ok": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n"
+}
+],
+"journal": "eyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogImFmOWFmZjUxN2RiZTRmZmQwZDY3NDM5N2RiN2QxZmNlYjM0NDQ3ZWMyNzhjNGU5M2Q4YWY4YmRjOWEyNmJhNjUiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJncm91cCI6ICJTY2FkYUJlbmNoIiwgImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAib3duZWQiOiB0cnVlLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMTAtMjBUMDg6MTU6MzErMDA6MDAiLCAiZXZlbnQiOiAiYXBwbGllZCIsICJmaW5nZXJwcmludCI6ICI5M2UxOGIxNWI2YTIyYzA4NGEwOGJlOGQxMzIzOWYwYjc4YWJhZTBjMmUyYTQzMWY2OWY1NmQ5ZGZkMzRkMGU5IiwgIml0ZW0iOiB7ImFjdGlvbiI6ICJhZGQiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJraW5kIjogImdhdGV3YXlfZmlyZXdhbGwiLCAibmFtZSI6ICJTY2FkYUJlbmNoLUdhdGV3YXktN2YxNjZiNTU1MDNmIiwgIm93bmVkIjogdHJ1ZSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUifSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMDAwNiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIjkzZTE4YjE1YjZhMjJjMDg0YTA4YmU4ZDEzMjM5ZjBiNzhhYmFlMGMyZTJhNDMxZjY5ZjU2ZDlkZmQzNGQwZTkiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJraW5kIjogInVuYmxvY2siLCAibmFtZSI6ICJUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMTItMzFUMjM6NTk6NTkuOTk5OTk5KzAwOjAwIiwgImV2ZW50IjogImFwcGxpZWQiLCAiZmluZ2VycHJpbnQiOiAiNTJjN2UzNzg0NTYzZjlmYzZlYzdkMTU0NzFjOGIwNzA4ZmIzYWRjYWY2YjMxY2U4NGM1ZTM2ZjI5NWNlNjE2YiIsICJpdGVtIjogeyJhY3Rpb24iOiAiYWRkIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImZvciI6ICJCYXkiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJraW5kIjogImFsaWFzIiwgIm93bmVkIjogdHJ1ZSwgInByZWZpeCI6IDI0fSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTEwLTIwVDA4OjE1OjMwLjEyMzQ1NiswMDowMCIsICJldmVudCI6ICJhcHBsaWVkIiwgImZpbmdlcnByaW50IjogIjUyYzdlMzc4NDU2M2Y5ZmM2ZWM3ZDE1NDcxYzhiMDcwOGZiM2FkY2FmNmIzMWNlODRjNWUzNmYyOTVjZTYxNmIiLCAiaXRlbSI6IHsiYWN0aW9uIjogImFkZCIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiXSwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0yNmRjNzE5NjBiN2QiLCAib3duZWQiOiB0cnVlLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSJ9LCAicmVzdWx0IjogIiJ9DQp7ImF0IjogIjIwMjYtMTAtMjBUMDg6MTU6MzErMDA6MDAiLCAiZXZlbnQiOiAicmVtb3ZlZCIsICJmaW5nZXJwcmludCI6ICI4Y2E1OWExMTQ1MzA2Y2Y1MjhmYjM2ZmNlZDFjOWM3ODUxMmY5NTNkZTFhZTc1MjFmNzllMTk4YTUyMDM2OTBiIiwgIml0ZW0iOiB7ImFjdGlvbiI6ICJyZW1vdmUiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJraW5kIjogImdhdGV3YXlfZmlyZXdhbGwiLCAibmFtZSI6ICJTY2FkYUJlbmNoLUdhdGV3YXktN2YxNjZiNTU1MDNmIiwgIm93bmVkIjogdHJ1ZSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUifSwgInJlc3VsdCI6ICIifQ0KeyJhdCI6ICIyMDI2LTAxLTAyVDAzOjA0OjA1LjAwMDAwNiswMDowMCIsICJldmVudCI6ICJmYWlsZWQiLCAiZmluZ2VycHJpbnQiOiAiOGNhNTlhMTE0NTMwNmNmNTI4ZmIzNmZjZWQxYzljNzg1MTJmOTUzZGUxYWU3NTIxZjc5ZTE5OGE1MjAzNjkwYiIsICJpdGVtIjogeyJhY3Rpb24iOiAicmVtb3ZlIiwgImRpc3BsYXkiOiAic3R1ZGlvX2dhdGV3YXkuZXhlIiwgImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIn0sICJyZXN1bHQiOiAiQWNjZXNzIGRlbmllZCJ9DQp7ImF0IjogIjIwMjYtMTItMzFUMjM6NTk6NTkuOTk5OTk5KzAwOjAwIiwgImV2ZW50IjogInJlbW92ZWQiLCAiZmluZ2VycHJpbnQiOiAiMDY1OThhMGM5ODc3NWYyZmE5ZWYxNzk0YzkxZTdlMjI0ZWQxM2JkYmU1MDJhZWVjNzE5YmVkOTQxNWNjYjRmNiIsICJpdGVtIjogeyJhY3Rpb24iOiAicmVtb3ZlIiwgImRpc3BsYXkiOiAic3R1ZGlvX2dhdGV3YXkuZXhlIiwgImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIn0sICJyZXN1bHQiOiAiIn0NCg==",
+"requests": [
+"apply-00000000000000000000000000000001.json",
+"apply-00000000000000000000000000000001.result.json",
+"apply-00000000000000000000000000000002.json",
+"apply-00000000000000000000000000000002.result.json",
+"apply-00000000000000000000000000000003.json",
+"apply-00000000000000000000000000000003.result.json",
+"remove-00000000000000000000000000000004.json",
+"remove-00000000000000000000000000000004.result.json",
+"remove-00000000000000000000000000000005.json",
+"remove-00000000000000000000000000000005.result.json"
+],
+"probes": [
+[
+"192.168.50.21"
+],
+[
+"192.168.50.21"
+]
+],
+"firewall": [
+[
+"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe"
+],
+[
+"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe"
+],
+[
+"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe"
+],
+[
+"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe"
+]
+],
+"launches": [
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000001.json",
+"86b7eda9adb03b79afd8f9c914e41ee6cd7c1c307d2f66b1c2856c546aabd373",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiYWY5YWZmNTE3ZGJlNGZmZDBkNjc0Mzk3ZGI3ZDFmY2ViMzQ0NDdlYzI3OGM0ZTkzZDhhZjhiZGM5YTI2YmE2NSIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19"
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000002.json",
+"e3946d0a23719c4a0bb80fd106261bb5ad8a33b59aefb048ab09c0ea090cfffd",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiOTNlMThiMTViNmEyMmMwODRhMDhiZThkMTMyMzlmMGI3OGFiYWUwYzJlMmE0MzFmNjlmNTZkOWRmZDM0ZDBlOSIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogInVuYmxvY2siLCAibmFtZSI6ICJUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAiZGlzcGxheSI6ICJzdHVkaW9fZ2F0ZXdheS5leGUiLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ=="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\apply-00000000000000000000000000000003.json",
+"4932f54058746d277c218c18cbd19827aaef2f056a5bd0cc29ddf54c5497fa0e",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiNTJjN2UzNzg0NTYzZjlmYzZlYzdkMTU0NzFjOGIwNzA4ZmIzYWRjYWY2YjMxY2U4NGM1ZTM2ZjI5NWNlNjE2YiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgImZvciI6ICJCYXkiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0yNmRjNzE5NjBiN2QiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19"
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\remove-00000000000000000000000000000004.json",
+"152ac6fd7a6a45511f5b90b5999dbe64f616e2bf2a15f49b9a05078224181917",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAicmVtb3ZlIiwgImZpbmdlcnByaW50IjogIjhjYTU5YTExNDUzMDZjZjUyOGZiMzZmY2VkMWM5Yzc4NTEyZjk1M2RlMWFlNzUyMWY3OWUxOThhNTIwMzY5MGIiLCAiaXRlbXMiOiBbeyJhY3Rpb24iOiAicmVtb3ZlIiwgImdyb3VwIjogIlNjYWRhQmVuY2giLCAia2luZCI6ICJnYXRld2F5X2ZpcmV3YWxsIiwgIm5hbWUiOiAiU2NhZGFCZW5jaC1HYXRld2F5LTdmMTY2YjU1NTAzZiIsICJvd25lZCI6IHRydWUsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIn0sIHsiYWN0aW9uIjogInJlbW92ZSIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJraW5kIjogInVuYmxvY2siLCAibmFtZSI6ICJUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSJ9XX0="
+},
+{
+"argv": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+"--network-helper",
+"<DATA>\\network\\requests\\remove-00000000000000000000000000000005.json",
+"d375ca0c619529b2a195b396054e658a54fc5fdf98589533014a1072e3a21cea",
+"C:\\Studio\\native\\studio_ied.exe"
+],
+"payload": "eyJhY3Rpb24iOiAicmVtb3ZlIiwgImZpbmdlcnByaW50IjogIjA2NTk4YTBjOTg3NzVmMmZhOWVmMTc5NGM5MWU3ZTIyNGVkMTNiZGJlNTAyYWVlYzcxOWJlZDk0MTVjY2I0ZjYiLCAiaXRlbXMiOiBbeyJhY3Rpb24iOiAicmVtb3ZlIiwgImRpc3BsYXkiOiAic3R1ZGlvX2dhdGV3YXkuZXhlIiwgImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIn1dfQ=="
+}
+],
+"events": [
+[
+"set",
+"bay",
+"lab_ip",
+"192.168.50.21"
+],
+[
+"network",
+{
+"mode": "lab",
+"adapter_guid": "{11111111-1111-1111-1111-111111111111}",
+"adapter_label": "Lab NIC"
+}
+],
+[
+"network",
+{
+"mode": "loopback"
+}
+]
+],
+"adapter_calls": 7
+},
+{
+"name": "gateway_errors",
+"ieds": [
+{
+"id": "bay",
+"name": "Bay",
+"scl_address": {
+"ip": "192.168.50.21",
+"subnet": "255.255.255.0"
+},
+"port": 102
+}
+],
+"env": {
+"adapters": [
+{
+"guid": "{11111111-1111-1111-1111-111111111111}",
+"name": "Lab NIC",
+"description": "USB Ethernet",
+"status": "Up",
+"index": 7,
+"mac": "",
+"speed": "1 Gbps",
+"kind": "ethernet",
+"default_route": false,
+"addresses": [
+{
+"ip": "192.168.50.10",
+"prefix": 24,
+"skip_as_source": false,
+"origin": "Manual"
+}
+]
+}
+],
+"rules": [],
+"probe": [],
+"elevate": "ok",
+"gateway_rules": [],
+"blocking": [],
+"state": {
+"gateway": [],
+"disabled": []
+}
+},
+"steps": [
+[
+"set",
+"gateway_rules",
+"!RuntimeError:Windows Firewall could not be read: Access is denied."
+],
+[
+"gw_preview"
+],
+[
+"set",
+"gateway_rules",
+"!ValueError:bad json"
+],
+[
+"gw_preview"
+],
+[
+"set",
+"gateway_rules",
+"!KeyError:name"
+],
+[
+"gw_preview"
+]
+],
+"results": [
+null,
+{
+"error": "StudioError",
+"message": "Windows Firewall could not be checked: Windows Firewall could not be read: Access is denied.",
+"code": "validation",
+"details": []
+},
+null,
+{
+"error": "StudioError",
+"message": "Windows Firewall could not be checked: bad json",
+"code": "validation",
+"details": []
+},
+null,
+{
+"error": "KeyError",
+"message": "'name'",
+"code": null,
+"details": null
+}
+],
+"journal": "",
+"requests": [],
+"probes": [],
+"firewall": [],
+"launches": [],
+"events": [],
+"adapter_calls": 0
+}
+],
+"check": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

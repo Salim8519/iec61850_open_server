@@ -1,9 +1,12 @@
 import { Download, FileText, HeartPulse, RefreshCw } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
+import { HEALTH, liveFeed } from '../../api/polls';
 import { areaInfo, verdictStatus } from '../../copy/health';
+import { countOf } from '../../copy/count';
 import { Disclosure } from '../../ui/Disclosure';
 import { EmptyState } from '../../ui/EmptyState';
+import { Spinner } from '../../ui/Spinner';
 import { Hint } from '../../ui/Hint';
 import { StatusPill } from '../../ui/StatusPill';
 
@@ -22,15 +25,10 @@ export function HealthView({ running }: { running: boolean }) {
   const [open, setOpen] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const load = useCallback(() => api<Health>('/health').then(setHealth).catch(reason => setError(reason.message)), []);
-  useEffect(() => {
-    load();
-    if (!running) return;
-    const timer = setInterval(load, 3000);
-    return () => clearInterval(timer);
-  }, [load, running]);
+  useEffect(() => liveFeed.subscribe<Health>(HEALTH, running ? 3000 : null, setHealth,
+    reason => setError(reason.message)), [running]);
   if (!health) return <div className="card"><EmptyState icon={<HeartPulse size={22} />} title="Health check"
-    hintId="health.intro" />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
+    hintId="health.intro" action={error ? undefined : <Spinner label="Checking the station…" />} />{error && <p role="alert" className="import-unavailable">{error}</p>}</div>;
   const ieds = [...health.ieds].sort((a, b) => ORDER.indexOf(a.verdict) - ORDER.indexOf(b.verdict));
   return <div className="card">
     <div className="card-heading"><h2>Health check</h2><span className="row">
@@ -55,8 +53,8 @@ export function HealthView({ running }: { running: boolean }) {
     <div className="list" role="list" style={{ padding: '0 20px 20px' }}>{ieds.map(ied => <div key={ied.id} role="listitem">
       <button type="button" className={`list-row${open === ied.id ? ' active' : ''}`} aria-expanded={open === ied.id}
         onClick={() => setOpen(open === ied.id ? '' : ied.id)}>
-        <span className="list-text"><strong>{ied.name}</strong><small>{ied.role === 'real' ? 'Reads real IED' :
-          ied.role === 'simulated' ? 'Simulated by ScadaBench' : 'Off'} · {ied.checks.length} checks</small></span>
+        <span className="list-text"><strong>{ied.name}</strong><small>{ied.role === 'real' ? 'Monitors real device' :
+          ied.role === 'simulated' ? 'Simulated by ScadaBench' : 'Skipped'} · {countOf(ied.checks.length, 'check')}</small></span>
         <StatusPill status={verdictStatus(ied.verdict)} /></button>
       {open === ied.id && <div className="table-scroll"><table><thead><tr><th>Area</th><th>What</th><th>Result</th>
         <th>Why / what to do</th><th>Seen</th></tr></thead><tbody>

@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "SCL type nesting exceeds 32 levels", "code": "validation", "details": []}

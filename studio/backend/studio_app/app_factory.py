@@ -14,8 +14,8 @@ from studio_app.api import startup_gate
 from studio_app.runtime.event_bus import EventBus
 from studio_app.simulation.coordinator import Coordinator
 from studio_app.api import projects, scl, signals, runtime, events, security, scenarios, ieds, traces, equipment
-from studio_app.api import test_panel, network, live, sld, signal_flow, health, test_mode, license, preferences, tools
-from studio_app.api import gateway, gateway_master
+from studio_app.api import test_panel, network, live, sld, signal_flow, health, test_mode, license, preferences, tools, updates
+from studio_app.api import gateway, gateway_master, goose_share
 from studio_app.gateway.converter import ConverterSource
 from studio_app.gateway.manager import GatewayManager
 from studio_app.gateway.master_manager import MasterManager
@@ -28,13 +28,17 @@ from studio_app.tools.explorer import ExplorerService
 from studio_app.tools.ied_scan import ScanService
 from studio_app.tools.control_client import ControlClient
 from studio_app.tools.tool_memory import ToolMemory
+from studio_app.updates.service import UpdateService
+from studio_app.licensing import release_key
 
 
-def create_app(settings=None, token=None, secret_key=None, admin_origin=None, license_service=None):
+def create_app(settings=None, token=None, secret_key=None, admin_origin=None, license_service=None, update_service=None):
     settings = settings or Settings.defaults()
     license_service = license_service or LicenseService(
         default_home(), settings.directory, enforce=bool(getattr(sys, "frozen", False)),
         native_folder=settings.native_executable.parent, registry=WindowsRegistry())
+    update_service = update_service or UpdateService(settings.directory, lambda: getattr(
+        license_service, "server_url", lambda: release_key.DEFAULT_SERVER_URL)())
     app = Flask(__name__, static_folder=None)
     app.config.update(SECRET_KEY=secret_key or secrets.token_hex(32), LAUNCH_TOKEN=token or secrets.token_urlsafe(32),
                       MAX_CONTENT_LENGTH=100 * 1024 * 1024, SESSION_COOKIE_HTTPONLY=True,
@@ -58,14 +62,15 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
                           explorer=ExplorerService(settings.live_executable, bus.publish, memory, control),
                           scanner=ScanService(settings.live_executable, memory=memory), tool_memory=memory,
                           gateway=gateway_manager, master=master_manager,
-                          gateway_firewall=gateway_firewall)
+                          gateway_firewall=gateway_firewall, updates=update_service)
     app.before_request(security.protect_request)
     app.before_request(startup_gate.wait_for_project)  # After the security and license checks.
     for module in (projects, scl, signals, runtime, events, security, scenarios, ieds, traces,
                    test_panel, equipment, network, live, sld, signal_flow, health, test_mode, license,
-                   preferences, tools, gateway, gateway_master):
+                   preferences, tools, gateway, gateway_master, updates, goose_share):
         app.register_blueprint(module.blueprint, url_prefix="/api/v1")
     license_service.start_background_verify()
+    update_service.start_background()
     recovery.start()
     threading.Thread(target=_resume_gateway, args=(recovery, gateway_manager, master_manager), name="gateway-resume", daemon=True).start()
 

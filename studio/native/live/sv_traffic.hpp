@@ -8,6 +8,7 @@ extern "C" {
 #include "sv_subscriber.h"
 }
 #include <atomic>
+#include <condition_variable>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -52,4 +53,6 @@ private:
     std::mutex lock;
     std::thread supervisor;
     std::atomic<bool> running{false};
+    std::mutex wake_lock;           // stop() wakes the supervisor's 500 ms wait at once
+    std::condition_variable wake;
 };

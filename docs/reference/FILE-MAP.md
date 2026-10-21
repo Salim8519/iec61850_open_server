@@ -47,8 +47,9 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Adapter listing | `networking/ip_helper.py` (Windows IP Helper API), `networking/adapters.py` (normalise, PowerShell fallback) |
 | Network/IED settings, format 11 | `domain/network_settings.py`, `projects/ied_settings.py` |
 | SCL communication and GOOSE | `scl/communication.py`, `goose_controls.py`, `goose_links.py` |
-| GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |
-| GOOSE observation and LGOS | `native/live/goose_traffic.cpp`, `acquisition/goose_monitor.py`, `domain/goose_supervision.py` |
+| GOOSE publishing (native) | `native/worker/goose/publishing.cpp`, `native/hal/` (Ethernet dispatch: `udp:` → engine, numbers → Npcap), `native/common/npcap.cpp`, `native/cmake/goose_*.cmake` |
+| GOOSE engine (ADR-0073, Go) | `goose_engine/` (`internal/frame`, `guard`, `bus`, `uplink`, `npcap`, `engine`, `ipc`, `cmd/studio_goose`), `tools/build_goose_engine.py`, `acquisition/goose_engine.py`, `goose_share.py`, `domain/goose_reach.py`, `projects/goose_reach.py`, `api/goose_share.py`, `features/network/GooseReach.tsx`, `GooseShareWarning.tsx`, `GooseConflicts.tsx`, `copy/gooseReach.ts`; tests `protocol/goose_engine_rig.py`, `engine_wire_rig.py`, `npcap_peer.py` |
+| GOOSE observation and LGOS | `native/live/goose_traffic.cpp`, `goose_inbox.cpp`, `acquisition/goose_monitor.py`, `domain/goose_supervision.py` |
 | GOOSE link map (ADR-0065) | `scl/goose_vendor.py`, `goose_inventory.py`, `goose_remote.py`, `goose_sources.py`, `domain/goose_link_map.py`, `goose_link_live.py`, `projects/goose_links.py` |
 | GOOSE inputs (ADR-0066) | `domain/goose_inputs.py`, `acquisition/goose_inputs.py` |
 | MMS client access (ADR-0066) | `native/worker/server/access_log.*`, `read_hook.*`, `domain/mms_access.py`, `simulation/mms_access.py` |
@@ -60,7 +61,11 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Licensing (app) | `domain/license_policy.py`, `licensing/`, `api/license.py`, `api/security.py` gate, `frontend/src/features/license/` |
 | Licensing (native) | `native/common/license_guard.*`, `native/release/release_key.hpp`, `native/third_party/monocypher/` |
 | License server | `license-server/` (Go): `internal/api`, `store`, `security`, `certs`, `paypal`, `mail`, `sales`, `deploy/` (owner commands: `deploy-server.cmd`, `set-payments.cmd`, `set-price.cmd`, `payments.cmd`) |
+| Owner page (ADR-0072) | `license-server/internal/adminauth/` (password, codes, sessions, lockout), `internal/audit/`, `internal/store/subscribers.go`, `internal/api/owner*.go`, `pages/admin*.{html,css,js}`, `pages/unsubscribe.html`, `cmd/license-server/adminsetup.go`, `gateway/` (Cloudflare Worker), `deploy/admin.ps1`; owner commands `admin-setup.cmd`, `reset-admin.cmd` |
 | Brand and website | `studio/branding/`, `tools/build_icons.py`, `tools/build_installer_art.py` (installer pictures), `website/` (Astro, Cloudflare Pages) |
+| Update check (ADR-0071) | app: `updates/versions.py` (pure rules), `updates/service.py`, `api/updates.py`, `frontend/src/api/updates.ts`, `app/UpdateNote.tsx`, `features/settings/UpdateSection.tsx`; server: `license-server/internal/release/`, `internal/api/release.go`, `cmd/license-server/release.go`, `deploy/release-record.ps1`, `owner.ps1 -Action release` |
+| Waiting indicators and pickers (change 0105) | `ui/Spinner.tsx`, `ui/useDelayed.ts`, `components/pickerMemory.ts`, `components/SignalSearchPicker.tsx`, `features/devices/DeleteIedsDialog.tsx`, `DeviceSelectBar.tsx` |
+| Run shapes (change 0106) | `copy/runShape.ts`, `features/devices/DeviceRunSummary.tsx`, `runGroups.ts`, `features/diagram/RunStrip.tsx`, `equipment/liveContext.ts` (`StoppedIeds`), `simulation/coordinator.py` (`start` adds the rest) |
 | Guided tour | `frontend/src/features/tour/`, `copy/tour.ts`, `projects/preferences.py`, `api/preferences.py` |
 | Desktop window (ADR-0048) | `studio/backend/studio_app/launcher/entrypoint.py`, `app_window.py`, `single_instance.py`, `window_focus.py`, `windowed.py` |
 | Protected release | `tools/configure_release.py`, `compile_protected.py`, `pack_frontend.py`, `packaging/studio_protected.spec` (installed folder + one-file portable exe), `installer.iss` |

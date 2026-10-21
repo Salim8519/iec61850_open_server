@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { countOf } from '../../copy/count';
+import { useShownWork, workSteps, type Work } from '../../state/workSteps';
+import { StepList } from '../../ui/StepList';
 import './import-selection.css';
 
 export type ImportPreview = {
@@ -7,9 +10,11 @@ export type ImportPreview = {
     logical_devices: number; unavailable_reason: string }[];
 };
 
-export function ImportSelection({ preview, busy, error, confirm, cancel }: {
+export function ImportSelection({ preview, busy, error, confirm, cancel, work }: {
   preview: ImportPreview; busy: boolean; error: string;
   confirm: (names: string[]) => void; cancel: () => void;
+  /** The running import, shown as its steps inside this window (change 0150). */
+  work?: Work | null;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [selected, setSelected] = useState<string[]>(() => {
@@ -17,6 +22,7 @@ export function ImportSelection({ preview, busy, error, confirm, cancel }: {
     return usable.length === 1 ? [usable[0].name] : [];
   });
   const [query, setQuery] = useState('');
+  const shownWork = useShownWork(work ?? null);
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
@@ -38,13 +44,14 @@ export function ImportSelection({ preview, busy, error, confirm, cancel }: {
             (!selected.includes(ied.name) && selected.length >= preview.available_slots)}
           onChange={event => setSelected(names => event.target.checked ? [...names, ied.name] : names.filter(name => name !== ied.name))} />
         <span><strong>{ied.name}</strong><small>{[ied.manufacturer, ied.type].filter(Boolean).join(' · ') || 'Manufacturer not specified'}
-          {' · '}{ied.logical_devices} logical devices</small>
+          {' · '}{countOf(ied.logical_devices, 'logical device')}</small>
           {ied.description && <small>{ied.description}</small>}
           {ied.unavailable_reason && <small className="import-unavailable">{ied.unavailable_reason}</small>}
         </span>
       </label>)}
       {!visible.length && <p className="muted">No matching IEDs.</p>}
     </div>
+    {shownWork && <StepList title={shownWork.title} steps={workSteps(shownWork)} />}
     {error && <p className="import-unavailable" role="alert">{error}</p>}
     <div className="import-actions"><span className="muted small">{selected.length} selected · {preview.available_slots} slots available</span>
       <button onClick={cancel} disabled={busy}>Cancel</button>

@@ -12,6 +12,7 @@ import (
 	"substation-license-server/internal/config"
 	"substation-license-server/internal/logging"
 	"substation-license-server/internal/paypal"
+	"substation-license-server/internal/release"
 	"substation-license-server/internal/sales"
 	"substation-license-server/internal/security"
 	"substation-license-server/internal/store"
@@ -40,9 +41,15 @@ type Server struct {
 	Log      *logging.Capped
 	Payments Payments
 	Mailer   Mailer
+	News     NewsMailer
 	Sales    *sales.Book
 	Now      func() time.Time
 	usage    dataUsage
+	owner    *ownerState
+	// livePrice holds a price changed on the owner page (no restart needed).
+	livePrice livePrice
+	// releaseBody is the signed newest-version answer, built once by LoadRelease.
+	releaseBody *release.Signed
 }
 
 // New builds a server with the documented production limits.
@@ -56,7 +63,8 @@ func New(cfg config.Config, db *store.Store, signer *certs.Signer, log *logging.
 	}
 	return &Server{Config: cfg, Store: db, Signer: signer, Log: log,
 		Limiter: security.NewLimiter(limits), Sales: sales.Open(cfg.DataDir),
-		Pow: security.NewVerifier(cfg.PowSecret, cfg.PowDifficulty), Now: time.Now}
+		Pow: security.NewVerifier(cfg.PowSecret, cfg.PowDifficulty), Now: time.Now,
+		owner: newOwnerState(cfg.DataDir)}
 }
 
 type apiError struct {
@@ -75,6 +83,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/v1/health", s.limited(security.ClassGeneral, s.health))
 	mux.HandleFunc("GET /api/v1/challenge", s.limited(security.ClassGeneral, s.challenge))
 	mux.HandleFunc("GET /api/v1/product", s.product)
+	mux.HandleFunc("GET /api/v1/release", s.latestRelease)
 	mux.HandleFunc("POST /api/v1/trial", s.limited(security.ClassSensitive, s.trial))
 	mux.HandleFunc("POST /api/v1/trial/email-code", s.limited(security.ClassSensitive, s.trialEmailCode))
 	mux.HandleFunc("POST /api/v1/activate", s.limited(security.ClassSensitive, s.activate))
@@ -86,6 +95,9 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /api/v1/admin/{action}", s.admin)
 	mux.HandleFunc("GET /buy", s.buyPage)
 	mux.HandleFunc("GET /activate", s.activatePage)
+	mux.HandleFunc("GET /unsubscribe", s.unsubscribePage)
+	mux.HandleFunc("POST /unsubscribe", s.unsubscribePage)
+	s.mountOwner(mux)
 	mux.Handle("GET /static/{name}", staticHandler())
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/buy", http.StatusFound)

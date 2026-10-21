@@ -2,6 +2,8 @@
 
 Accepted: 2026-10-14. Owner decision: Npcap is installed by the user (free licence);
 Studio detects and guides, never bundles. Specification: [GOOSE](../specs/goose.md).
+Partly replaced by [ADR-0073](ADR-0073-goose-engine-go.md): GOOSE now runs inside the app in every
+mode without Npcap; Npcap is needed only to share GOOSE with the network or hear real devices.
 
 - Every native build compiles libiec61850 GOOSE. `cmake/goose_options.cmake`
   requires the pinned Npcap SDK 1.15 (`tools/fetch_npcap_sdk.py`, SHA-256 checked)

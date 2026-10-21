@@ -9,5 +9,5 @@ type Props = {
 /** Relay-scoped one-click signal adding; search and choice live in the shared picker. */
 export function RelaySignalAdder({ ied, existing, disabled, onAdd }: Props) {
   return <SignalSearchPicker ieds={[ied]} fixedIedId={ied.id}
-    exclude={existing} disabled={disabled} chooseLabel="Add" choose={onAdd} />;
+    exclude={existing} disabled={disabled} chooseLabel="Add" memoryKey={`sld-relay-${ied.id}`} choose={onAdd} />;
 }

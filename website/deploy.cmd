@@ -11,10 +11,15 @@ set "VERSION="
 for /f "tokens=2 delims='" %%V in ('findstr /c:"const VERSION" src\data\site.ts') do set "VERSION=%%V"
 if not defined VERSION (echo Could not read VERSION from src\data\site.ts. & goto :failed)
 if exist dist\_redirects del dist\_redirects
+rem The Go release (studio\dist-go, ADR-0083) is the main version; the Python release in
+rem studio\dist-protected is used only when no Go build of this version exists.
+set "RELEASE=..\studio\dist-go"
+if not exist "%RELEASE%\ScadaBench-Setup-%VERSION%.exe" set "RELEASE=..\studio\dist-protected"
+echo Release folder: %RELEASE%
 set "SETUP=ScadaBench-Setup-%VERSION%.exe"
-if not exist "..\studio\dist-protected\%SETUP%" (echo No release installer %SETUP% in studio\dist-protected; the download link will not work yet. & goto :installer_done)
+if not exist "%RELEASE%\%SETUP%" (echo No release installer %SETUP% in %RELEASE%; the download link will not work yet. & goto :installer_done)
 if not exist dist\download mkdir dist\download
-copy /y "..\studio\dist-protected\%SETUP%" "dist\download\%SETUP%" >nul
+copy /y "%RELEASE%\%SETUP%" "dist\download\%SETUP%" >nul
 findstr /c:"/download/%SETUP%" dist\download\index.html >nul || (echo The download page does not link %SETUP%. & goto :failed)
 >>dist\_redirects echo /download/ScadaBench-Setup.exe /download/%SETUP% 302
 echo Installer included: %SETUP%
@@ -30,13 +35,19 @@ if exist "%TOKEN_FILE%" (
 rem The portable exe that runs directly (ADR-0063) is over the 25 MiB Pages limit: it goes to the
 rem scadabench-downloads R2 bucket (download.scadabench.com); old portable links redirect to it.
 set "PORTABLE=ScadaBench-Portable-%VERSION%.exe"
-if not exist "..\studio\dist-protected\%PORTABLE%" set "PORTABLE="
-if not defined PORTABLE (echo No portable exe found in studio\dist-protected; the portable link will not work yet. & goto :portable_done)
+if not exist "%RELEASE%\%PORTABLE%" set "PORTABLE="
+if not defined PORTABLE (echo No portable exe found in %RELEASE%; the portable link will not work yet. & goto :portable_done)
 findstr /c:"download.scadabench.com/download/%PORTABLE%" dist\download\index.html >nul || (echo The download page does not link %PORTABLE%: set the version in src\data\site.ts. & goto :failed)
-call npx --yes wrangler@4 r2 object put "scadabench-downloads/download/%PORTABLE%" --file "..\studio\dist-protected\%PORTABLE%" --content-type application/vnd.microsoft.portable-executable --content-disposition "attachment; filename=%PORTABLE%" --remote || goto :failed
+call npx --yes wrangler@4 r2 object put "scadabench-downloads/download/%PORTABLE%" --file "%RELEASE%\%PORTABLE%" --content-type application/vnd.microsoft.portable-executable --content-disposition "attachment; filename=%PORTABLE%" --remote || goto :failed
 >>dist\_redirects echo /download/ScadaBench-Portable.exe https://download.scadabench.com/download/%PORTABLE% 302
 >>dist\_redirects echo /download/ScadaBench-Portable-* https://download.scadabench.com/download/%PORTABLE% 302
 echo Portable exe uploaded: %PORTABLE%
+rem LGPL-2.1: the source of the libiconv-2.dll shipped beside studio_xsd.exe, at the address
+rem named in _internal\licenses\libiconv\libiconv-NOTICE.txt (ADR-0083).
+set "ICONV_SOURCE=..\.local\native\archives\libiconv-1.17.tar.gz"
+if not exist "%ICONV_SOURCE%" (echo Missing %ICONV_SOURCE%; the libiconv source link would not work. & goto :failed)
+call npx --yes wrangler@4 r2 object put "scadabench-downloads/source/libiconv-1.17.tar.gz" --file "%ICONV_SOURCE%" --content-type application/gzip --content-disposition "attachment; filename=libiconv-1.17.tar.gz" --remote || goto :failed
+echo libiconv source uploaded.
 :portable_done
 rem Tutorial videos: the light 720p copies from marketing\videos\web_encode.py when present,
 rem otherwise the 1080p masters rendered by marketing\videos\make.py (never the raw captures).
@@ -53,6 +64,8 @@ goto :videos_done
 echo No tutorial videos found; run marketing\videos\make.py, then web_encode.py.
 :videos_done
 call npx --yes wrangler@4 pages deploy dist --project-name scadabench --branch main --commit-dirty=true || goto :failed
+rem Tell installed apps (daily, quiet update check) which version the site now offers.
+if exist "%RELEASE%\%SETUP%" powershell -NoProfile -ExecutionPolicy Bypass -File "..\license-server\deploy\owner.ps1" -Action release || echo The website is live, but installed apps were not told about %VERSION%. Run it again with: powershell -File license-server\deploy\owner.ps1 -Action release
 echo.
 echo Published. Live at https://scadabench.com (preview: https://scadabench.pages.dev)
 pause

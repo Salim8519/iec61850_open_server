@@ -1,0 +1,1550 @@
+{
+"test_key": {
+"kid": "3097e2de",
+"public": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12"
+},
+"parse": [
+{
+"input": "\"0.1.13\"",
+"ok": [
+0,
+1,
+13
+]
+},
+{
+"input": "\"0.1.14\"",
+"ok": [
+0,
+1,
+14
+]
+},
+{
+"input": "\"0.1.13+dev\"",
+"ok": [
+0,
+1,
+13
+]
+},
+{
+"input": "\"0.10.2\"",
+"ok": [
+0,
+10,
+2
+]
+},
+{
+"input": "\"1.2\"",
+"ok": null
+},
+{
+"input": "\"1.2.3.4\"",
+"ok": null
+},
+{
+"input": "\"01.002.0003\"",
+"ok": [
+1,
+2,
+3
+]
+},
+{
+"input": "\"12345.1.1\"",
+"ok": null
+},
+{
+"input": "\"0.1.14\\n\"",
+"ok": [
+0,
+1,
+14
+]
+},
+{
+"input": "\"0.1.14+dev\\n\"",
+"ok": [
+0,
+1,
+14
+]
+},
+{
+"input": "\"0.1.14 \"",
+"ok": null
+},
+{
+"input": "\"\\u0660.\\u0661.\\u0662\"",
+"ok": [
+0,
+1,
+2
+]
+},
+{
+"input": "\"0.1.14+\"",
+"ok": null
+},
+{
+"input": "\"0.1.14+a_b\"",
+"ok": null
+},
+{
+"input": "\"\"",
+"ok": null
+},
+{
+"input": "null",
+"ok": null
+},
+{
+"input": "0",
+"ok": null
+},
+{
+"input": "false",
+"ok": null
+},
+{
+"input": "5",
+"error": "TypeError"
+},
+{
+"input": "1.5",
+"error": "TypeError"
+},
+{
+"input": "[\"0.1.14\"]",
+"error": "TypeError"
+},
+{
+"input": "\"v0.1.14\"",
+"ok": null
+},
+{
+"input": "\"0.1.14\\n\\n\"",
+"ok": null
+},
+{
+"input": "\"\\uff11.\\uff12.\\uff13\"",
+"ok": [
+1,
+2,
+3
+]
+}
+],
+"newer": [
+{
+"a": "\"0.1.13\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"0.1.13\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"0.1.13\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.13\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.13\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.14\"",
+"b": "\"0.1.13\"",
+"ok": true
+},
+{
+"a": "\"0.1.14\"",
+"b": "\"0.1.13+dev\"",
+"ok": true
+},
+{
+"a": "\"0.1.14\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.14\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.14\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.13+dev\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"0.1.13+dev\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"0.1.13+dev\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.13+dev\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.13+dev\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.10.2\"",
+"b": "\"0.1.13\"",
+"ok": true
+},
+{
+"a": "\"0.10.2\"",
+"b": "\"0.1.13+dev\"",
+"ok": true
+},
+{
+"a": "\"0.10.2\"",
+"b": "\"0.1.14\"",
+"ok": true
+},
+{
+"a": "\"0.10.2\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.10.2\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"1.2\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"1.2\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"1.2\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"1.2\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"1.2\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"1.2.3.4\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"1.2.3.4\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"1.2.3.4\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"1.2.3.4\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"1.2.3.4\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"01.002.0003\"",
+"b": "\"0.1.13\"",
+"ok": true
+},
+{
+"a": "\"01.002.0003\"",
+"b": "\"0.1.13+dev\"",
+"ok": true
+},
+{
+"a": "\"01.002.0003\"",
+"b": "\"0.1.14\"",
+"ok": true
+},
+{
+"a": "\"01.002.0003\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"01.002.0003\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"12345.1.1\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"12345.1.1\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"12345.1.1\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"12345.1.1\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"12345.1.1\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.14\\n\"",
+"b": "\"0.1.13\"",
+"ok": true
+},
+{
+"a": "\"0.1.14\\n\"",
+"b": "\"0.1.13+dev\"",
+"ok": true
+},
+{
+"a": "\"0.1.14\\n\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.14\\n\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.14\\n\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.14+dev\\n\"",
+"b": "\"0.1.13\"",
+"ok": true
+},
+{
+"a": "\"0.1.14+dev\\n\"",
+"b": "\"0.1.13+dev\"",
+"ok": true
+},
+{
+"a": "\"0.1.14+dev\\n\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+dev\\n\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+dev\\n\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.14 \"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"0.1.14 \"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"0.1.14 \"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.14 \"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.14 \"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"\\u0660.\\u0661.\\u0662\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"\\u0660.\\u0661.\\u0662\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"\\u0660.\\u0661.\\u0662\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"\\u0660.\\u0661.\\u0662\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"\\u0660.\\u0661.\\u0662\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.14+\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+\"",
+"b": "null",
+"ok": false
+},
+{
+"a": "\"0.1.14+a_b\"",
+"b": "\"0.1.13\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+a_b\"",
+"b": "\"0.1.13+dev\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+a_b\"",
+"b": "\"0.1.14\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+a_b\"",
+"b": "\"garbage\"",
+"ok": false
+},
+{
+"a": "\"0.1.14+a_b\"",
+"b": "null",
+"ok": false
+}
+],
+"safe_url": [
+{
+"input": "\"https://scadabench.com/download\"",
+"safe": true
+},
+{
+"input": "\"https://www.scadabench.com/x\"",
+"safe": true
+},
+{
+"input": "\"https://download.scadabench.com\"",
+"safe": true
+},
+{
+"input": "\"http://scadabench.com/x\"",
+"safe": false
+},
+{
+"input": "\"https://evil.example/x\"",
+"safe": false
+},
+{
+"input": "\"https://SCADABENCH.COM/x\"",
+"safe": true
+},
+{
+"input": "\"HTTPS://scadabench.com\"",
+"safe": true
+},
+{
+"input": "\"https://scadabench.com:443/x\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com:0/x\"",
+"safe": true
+},
+{
+"input": "\"https://scadabench.com:/x\"",
+"safe": true
+},
+{
+"input": "\"https://scadabench.com:00/x\"",
+"safe": true
+},
+{
+"input": "\"https://scadabench.com:99999/x\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com:x/\"",
+"safe": false
+},
+{
+"input": "\"https://user@scadabench.com/\"",
+"safe": false
+},
+{
+"input": "\"https://@scadabench.com/\"",
+"safe": true
+},
+{
+"input": "\"https://:pw@scadabench.com/\"",
+"safe": true
+},
+{
+"input": "\"https://:p\\u00e9@scadabench.com/\"",
+"safe": true
+},
+{
+"input": "\"https://:p\\uff1a@scadabench.com/\"",
+"safe": false
+},
+{
+"input": "\"https://[::1]/\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com]/\"",
+"safe": false
+},
+{
+"input": "\" \\u0001https://scadabench.com/\"",
+"safe": true
+},
+{
+"input": "\"ht\\ttps://scadabench.com/\"",
+"safe": true
+},
+{
+"input": "\"https:/\\n/scadabench.com/\"",
+"safe": true
+},
+{
+"input": "\"https://scadabench.com%41/\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com.evil/\"",
+"safe": false
+},
+{
+"input": "\"https://evil.com@scadabench.com/\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com@evil.com/\"",
+"safe": false
+},
+{
+"input": "\"https:scadabench.com\"",
+"safe": false
+},
+{
+"input": "\"//scadabench.com/x\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com?x\"",
+"safe": true
+},
+{
+"input": "\"https://scadabench.com#x\"",
+"safe": true
+},
+{
+"input": "\"https://sc\\u0430dabench.com/\"",
+"safe": false
+},
+{
+"input": "\"https://scadabench.com\\\\@evil/\"",
+"safe": false
+},
+{
+"input": "\"\"",
+"safe": false
+},
+{
+"input": "null",
+"safe": false
+},
+{
+"input": "5",
+"safe": false
+},
+{
+"input": "\"https://\\u212aadabench.com/\"",
+"safe": false
+}
+],
+"records": [
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"min_version\":\"0.1.14\"}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"min_version\":null}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"min_version\":\"x\"}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14+dev\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":5,\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "TypeError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-13-45\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"1999-01-01\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"  padded\\n\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"padded\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":null,\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://evil.example\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":null}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":{\"url\":\"https://download.scadabench.com/p.exe\",\"sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":{\"url\":\"https://download.scadabench.com/p.exe\",\"sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":{\"url\":\"https://download.scadabench.com/p.exe\",\"sha256\":\"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\"}}",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\n\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\n\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"extra\":1}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"input": "[1]",
+"error": "ValueError"
+},
+{
+"input": "\"x\"",
+"error": "ValueError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"min_version\":7}",
+"error": "TypeError"
+},
+{
+"input": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\\n\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\\n\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+}
+],
+"verify": [
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJGYTVSNHlXYVlOa0NQZU1QS0tNcVRndHVoMDk4VWVQdkNlX2w3WVNOR19td3p5Sm1PZUtQRFNSWGZqUHI0TEdXTVoxTXJyNjg0ZjhGbXozN0ZsMHpDdyJ9",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNVwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJYS0ZscE1kN01PWW00TzRhaEpUazRHQ2FNekowV21CclZRVTVZVVN6RXZEVFFQUzIxc25ISDJzLWRqS1hwWXpBVXNycUhuTjI2RVByRGhaek1oMXhBdyJ9",
+"ok": "{\"version\":\"0.1.15\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJjd3dmUV8xUWkzclcxZVZYTzZsYkdHbWRpVDBnUkk0LWpSQ2IyNmxrSTdWZFVfdkpHUTd6RXJuc3ZGbTZobUdGLXZsQXVoZVJNMGFMUG5zX3lvUzBDdyJ9",
+"error": "ValueError"
+},
+{
+"raw": "e2JhZA==",
+"error": "JSONDecodeError"
+},
+{
+"raw": "WzFd",
+"error": "AttributeError"
+},
+{
+"raw": "eyJwYXlsb2FkIjogMSwgInNpZ25hdHVyZSI6ICJ4In0=",
+"error": "ValueError"
+},
+{
+"raw": "77u/eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJGYTVSNHlXYVlOa0NQZU1QS0tNcVRndHVoMDk4VWVQdkNlX2w3WVNOR19td3p5Sm1PZUtQRFNSWGZqUHI0TEdXTVoxTXJyNjg0ZjhGbXozN0ZsMHpDdyJ9",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"raw": "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHsicGF5bG9hZCI6ICJ7XCJ2ZXJzaW9uXCI6XCIwLjEuMTRcIixcImRhdGVcIjpcIjIwMjYtMTAtMjBcIixcIm5vdGVzXCI6XCJGYXN0ZXIgU0xELlwiLFwicGFnZVwiOlwiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZFwiLFwiaW5zdGFsbGVyXCI6e1widXJsXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkL1NjYWRhQmVuY2gtU2V0dXAtMC4xLjE0LmV4ZVwiLFwic2hhMjU2XCI6XCJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhXCJ9fSIsICJzaWduYXR1cmUiOiAiRmE1UjR5V2FZTmtDUGVNUEtLTXFUZ3R1aDA5OFVlUHZDZV9sN1lTTkdfbXd6eUptT2VLUERTUlhmalByNExHV01aMU1ycjY4NGY4Rm16MzdGbDB6Q3cifQ==",
+"error": "ValueError"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJGYTVSNHlXYVlOa0NQZU1QS0tNcVRndHVoMDk4VWVQdkNlX2w3WVNOR19td3p5Sm1PZUtQRFNSWGZqUHI0TEdXTVoxTXJyNjg0ZjhGbXozN0ZsMHpDdyIsICJraWQiOiAiMzA5N2UyZGUifQ==",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJGYTVSNHlXYVlOa0NQZU1QS0tNcVRndHVoMDk4VWVQdkNlX2w3WVNOR19td3p5Sm1PZUtQRFNSWGZqUHI0TEdXTVoxTXJyNjg0ZjhGbXozN0ZsMHpDdyIsICJraWQiOiBbIngiXX0=",
+"error": "TypeError"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJGYTVSNHlXYVlOa0NQZU1QS0tNcVRndHVoMDk4VWVQdkNlX2w3WVNOR19td3p5Sm1PZUtQRFNSWGZqUHI0TEdXTVoxTXJyNjg0ZjhGbXozN0ZsMHpDdyIsICJraWQiOiAiMDAwMDAwMDAifQ==",
+"ok": "{\"version\":\"0.1.14\",\"date\":\"2026-10-20\",\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"installer\":{\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\",\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"portable\":null}"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICIhRmE1UjR5V2FZTmtDUGVNUEtLTXFUZ3R1aDA5OFVlUHZDZV9sN1lTTkdfbXd6eUptT2VLUERTUlhmalByNExHV01aMU1ycjY4NGY4Rm16MzdGbDB6Q3cifQ==",
+"error": "Error"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJGYTVSNHlXYVlOa0NQZU1QS0tNcVRndHVoMDk4VWVQdkNlX2w3WVNOR19td3p5Sm1PZUtQRFNSWGZqUHI0TEdXTVoxTXJyNjg0ZjhGbXozN0ZsMHpDIn0=",
+"error": "Error"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkXCIsXCJpbnN0YWxsZXJcIjp7XCJ1cmxcIjpcImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlXCIsXCJzaGEyNTZcIjpcImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFcIn19IiwgInNpZ25hdHVyZSI6ICJcdTAwZTkifQ==",
+"error": "ValueError"
+},
+{
+"raw": "/w==",
+"error": "UnicodeDecodeError"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIntcInZlcnNpb25cIjpcIjAuMS4xNFwiLFwiZGF0ZVwiOlwiMjAyNi0xMC0yMFwiLFwibm90ZXNcIjpcIkZhc3RlciBTTEQuXCIsXCJwYWdlXCI6XCJodHRwczovL2V2aWwuZXhhbXBsZVwiLFwiaW5zdGFsbGVyXCI6e1widXJsXCI6XCJodHRwczovL3NjYWRhYmVuY2guY29tL2Rvd25sb2FkL1NjYWRhQmVuY2gtU2V0dXAtMC4xLjE0LmV4ZVwiLFwic2hhMjU2XCI6XCJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhXCJ9fSIsICJzaWduYXR1cmUiOiAiOVMweGdheU0well2UHM3TzRqb2N6eVYzbTdPVE5TYlhWQk1IRzZoU3lPelZ4MTdDeXYyNUJpeFRXYVZscHdESDNaNHMwNldNTWRUcml0bU44QTNkQkEifQ==",
+"error": "ValueError"
+},
+{
+"raw": "eyJwYXlsb2FkIjogIlsxXSIsICJzaWduYXR1cmUiOiAiUWJmM25iZVpLdEhzVFdlY1Y2OEM1MEdodTZJUWViczBYZ3BOOENTSFVOYzlNSGx6ZXF3NTF0VDlpaXM1czN3enc5RFNnSTkzZXZlTmc2dVdzTWtkRFEifQ==",
+"error": "ValueError"
+}
+],
+"scenarios": [
+{
+"name": "newer release offered",
+"steps": [
+{
+"op": "due",
+"now": 1000000
+},
+{
+"op": "check",
+"answers": [
+{
+"body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"}}\", \"signature\": \"Fa5R4yWaYNkCPeMPKKMqTgtuh098UePvCe_l7YSNG_mwzyJmOeKPDSRXfjPr4LGWMZ1Mrr684f8Fmz37Fl0zCw\"}",
+"etag": "\"e1\""
+}
+]
+},
+{
+"op": "due"
+},
+{
+"op": "manual",
+"now": 1000030
+},
+{
+"op": "configure",
+"arg": {
+"dismissed": "0.1.14"
+}
+},
+{
+"op": "configure",
+"arg": {
+"auto": false
+}
+},
+{
+"op": "due",
+"now": 1172800
+},
+{
+"op": "status",
+"current": "0.1.14"
+},
+{
+"op": "status",
+"current": "0.1.15+dev"
+}
+],
+"results": [
+{
+"value": true,
+"requests": [],
+"file": null
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"value": false,
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":true,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0Ig0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":false,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":true,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0IiwNCiAgImF1dG8iOiBmYWxzZQ0KfQ=="
+},
+{
+"value": false,
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0IiwNCiAgImF1dG8iOiBmYWxzZQ0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":false,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.14\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0IiwNCiAgImF1dG8iOiBmYWxzZQ0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":false,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.15+dev\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0IiwNCiAgImF1dG8iOiBmYWxzZQ0KfQ=="
+}
+]
+},
+{
+"name": "refused answers",
+"steps": [
+{
+"op": "check",
+"now": 1000000,
+"answers": [
+{
+"body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"}}\", \"signature\": \"cwwfQ_1Qi3rW1eVXO6lbGGmdiT0gRI4-jRCb26lkI7VdU_vJGQ7zErnsvFm6hmGF-vlAuheRM0aLPns_yoS0Cw\"}",
+"etag": "\"e1\""
+}
+]
+},
+{
+"op": "check",
+"answers": [
+{
+"body": "[1]",
+"etag": "\"e1\""
+}
+]
+},
+{
+"op": "check",
+"answers": [
+{
+"body": "{bad",
+"etag": null
+}
+]
+},
+{
+"op": "status"
+}
+],
+"results": [
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"bad_answer\",\"important\":false,\"latest\":null}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogImJhZF9hbnN3ZXIiLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"crash": "AttributeError",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogImJhZF9hbnN3ZXIiLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"bad_answer\",\"important\":false,\"latest\":null}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogImJhZF9hbnN3ZXIiLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"bad_answer\",\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogImJhZF9hbnN3ZXIiLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+}
+]
+},
+{
+"name": "offline keeps the last answer",
+"steps": [
+{
+"op": "check",
+"now": 1000000,
+"answers": [
+{
+"body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"}}\", \"signature\": \"Fa5R4yWaYNkCPeMPKKMqTgtuh098UePvCe_l7YSNG_mwzyJmOeKPDSRXfjPr4LGWMZ1Mrr684f8Fmz37Fl0zCw\"}",
+"etag": "\"e1\""
+}
+]
+},
+{
+"op": "check",
+"now": 2000000,
+"answers": [
+{
+"urlerror": true
+}
+]
+},
+{
+"op": "check",
+"now": 3000000,
+"answers": [
+{
+"http": 304
+}
+]
+},
+{
+"op": "check",
+"answers": [
+{
+"http": 404
+}
+]
+},
+{
+"op": "check",
+"answers": [
+{
+"http": 500
+}
+]
+},
+{
+"op": "check",
+"answers": [
+{
+"body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"}}\", \"signature\": \"Fa5R4yWaYNkCPeMPKKMqTgtuh098UePvCe_l7YSNG_mwzyJmOeKPDSRXfjPr4LGWMZ1Mrr684f8Fmz37Fl0zCw\"}",
+"etag": null
+}
+]
+},
+{
+"op": "check",
+"answers": [
+{
+"http": 304
+}
+]
+}
+],
+"results": [
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":2000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"offline\",\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json",
+"if-none-match": "\"e1\""
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiAib2ZmbGluZSIsDQogICJjaGVja2VkX2F0IjogMjAwMDAwMA0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":3000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json",
+"if-none-match": "\"e1\""
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDMwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":3000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"no_release\",\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json",
+"if-none-match": "\"e1\""
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiAibm9fcmVsZWFzZSIsDQogICJjaGVja2VkX2F0IjogMzAwMDAwMA0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":3000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"server_error\",\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json",
+"if-none-match": "\"e1\""
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiAic2VydmVyX2Vycm9yIiwNCiAgImNoZWNrZWRfYXQiOiAzMDAwMDAwDQp9"
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":3000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json",
+"if-none-match": "\"e1\""
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6IG51bGwsDQogICJlcnJvciI6IG51bGwsDQogICJjaGVja2VkX2F0IjogMzAwMDAwMA0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":3000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6IG51bGwsDQogICJlcnJvciI6IG51bGwsDQogICJjaGVja2VkX2F0IjogMzAwMDAwMA0KfQ=="
+}
+]
+},
+{
+"name": "important release",
+"steps": [
+{
+"op": "check",
+"now": 1000000,
+"answers": [
+{
+"body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"},\\\"min_version\\\":\\\"0.1.14\\\"}\", \"signature\": \"-HkSWFmc8BYDxnBYi9qqnZPY2AeVrX_tPpyk-InnK2ROn0lTnPLBNfdiYCU61rKvFvM2pALWH2ssZC9xt7uQAA\"}",
+"etag": "\"e1\""
+}
+]
+},
+{
+"op": "configure",
+"arg": {
+"dismissed": "0.1.14"
+}
+},
+{
+"op": "status"
+}
+],
+"results": [
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":true,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDANCn0="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":true,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0Ig0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":true,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IHsNCiAgICAidmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJkYXRlIjogIjIwMjYtMTAtMjAiLA0KICAgICJtaW5fdmVyc2lvbiI6ICIwLjEuMTQiLA0KICAgICJub3RlcyI6ICJGYXN0ZXIgU0xELiIsDQogICAgInBhZ2UiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZCIsDQogICAgImluc3RhbGxlciI6IHsNCiAgICAgICJ1cmwiOiAiaHR0cHM6Ly9zY2FkYWJlbmNoLmNvbS9kb3dubG9hZC9TY2FkYUJlbmNoLVNldHVwLTAuMS4xNC5leGUiLA0KICAgICAgInNoYTI1NiI6ICJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIg0KICAgIH0sDQogICAgInBvcnRhYmxlIjogbnVsbA0KICB9LA0KICAiZXRhZyI6ICJcImUxXCIiLA0KICAiZXJyb3IiOiBudWxsLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJkaXNtaXNzZWQiOiAiMC4xLjE0Ig0KfQ=="
+}
+]
+},
+{
+"name": "configure rules",
+"steps": [
+{
+"op": "configure",
+"now": 1000000,
+"arg": {
+"auto": "yes"
+}
+},
+{
+"op": "configure",
+"arg": {
+"other": 1
+}
+},
+{
+"op": "configure",
+"arg": null
+},
+{
+"op": "configure",
+"arg": [
+1
+]
+},
+{
+"op": "configure",
+"arg": {}
+},
+{
+"op": "configure",
+"arg": {
+"dismissed": "x"
+}
+},
+{
+"op": "configure",
+"arg": {
+"dismissed": 5
+}
+},
+{
+"op": "configure",
+"arg": {
+"dismissed": 0
+}
+},
+{
+"op": "configure",
+"arg": {
+"dismissed": null,
+"auto": true
+}
+},
+{
+"op": "configure",
+"arg": {
+"auto": false,
+"dismissed": "bad"
+}
+},
+{
+"op": "status"
+}
+],
+"results": [
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"auto must be true or false\"}\n",
+"requests": [],
+"file": null
+},
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+"requests": [],
+"file": null
+},
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+"requests": [],
+"file": null
+},
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+"requests": [],
+"file": null
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "e30="
+},
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"dismissed must be a version\"}\n",
+"requests": [],
+"file": "e30="
+},
+{
+"crash": "TypeError",
+"requests": [],
+"file": "e30="
+},
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"dismissed must be a version\"}\n",
+"requests": [],
+"file": "e30="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAiYXV0byI6IHRydWUsDQogICJkaXNtaXNzZWQiOiBudWxsDQp9"
+},
+{
+"http": 400,
+"body": "{\"code\":\"invalid\",\"error\":\"dismissed must be a version\"}\n",
+"requests": [],
+"file": "ew0KICAiYXV0byI6IHRydWUsDQogICJkaXNtaXNzZWQiOiBudWxsDQp9"
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAiYXV0byI6IHRydWUsDQogICJkaXNtaXNzZWQiOiBudWxsDQp9"
+}
+]
+},
+{
+"name": "hand edited file",
+"steps": [
+{
+"op": "write",
+"data": "{\"theme\": 1, \"checked_at\": \"x\", \"auto\": 0, \"release\": {\"version\": \"9.9.9\"}}"
+},
+{
+"op": "status",
+"now": 1000000
+},
+{
+"op": "due"
+},
+{
+"op": "manual"
+},
+{
+"op": "check",
+"answers": [
+{
+"body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"}}\", \"signature\": \"Fa5R4yWaYNkCPeMPKKMqTgtuh098UePvCe_l7YSNG_mwzyJmOeKPDSRXfjPr4LGWMZ1Mrr684f8Fmz37Fl0zCw\"}",
+"etag": "\"e1\""
+}
+]
+},
+{
+"op": "write",
+"data": "{\"release\": {\"date\": \"x\"}}"
+},
+{
+"op": "status"
+},
+{
+"op": "write",
+"data": "[1]"
+},
+{
+"op": "status"
+},
+{
+"op": "write",
+"data": "\ufeff{}"
+},
+{
+"op": "status"
+},
+{
+"op": "write",
+"data": "{\"release\": {\"version\": \"1.0.0\", \"min_version\": 3}}"
+},
+{
+"op": "status"
+},
+{
+"op": "write",
+"data": "{\"release\": {}, \"dismissed\": \"1.0.0\"}"
+},
+{
+"op": "status"
+}
+],
+"results": [
+{},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":\"x\",\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"version\":\"9.9.9\"}}\n",
+"requests": [],
+"file": "eyJ0aGVtZSI6IDEsICJjaGVja2VkX2F0IjogIngiLCAiYXV0byI6IDAsICJyZWxlYXNlIjogeyJ2ZXJzaW9uIjogIjkuOS45In19"
+},
+{
+"crash": "TypeError",
+"requests": [],
+"file": "eyJ0aGVtZSI6IDEsICJjaGVja2VkX2F0IjogIngiLCAiYXV0byI6IDAsICJyZWxlYXNlIjogeyJ2ZXJzaW9uIjogIjkuOS45In19"
+},
+{
+"crash": "TypeError",
+"requests": [],
+"file": "eyJ0aGVtZSI6IDEsICJjaGVja2VkX2F0IjogIngiLCAiYXV0byI6IDAsICJyZWxlYXNlIjogeyJ2ZXJzaW9uIjogIjkuOS45In19"
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+"requests": [
+{
+"url": "https://license.scadabench.com/api/v1/release",
+"timeout": 6,
+"headers": {
+"user-agent": "ScadaBench",
+"accept": "application/json"
+}
+}
+],
+"file": "ew0KICAidGhlbWUiOiAxLA0KICAiY2hlY2tlZF9hdCI6IDEwMDAwMDAsDQogICJhdXRvIjogMCwNCiAgInJlbGVhc2UiOiB7DQogICAgInZlcnNpb24iOiAiMC4xLjE0IiwNCiAgICAiZGF0ZSI6ICIyMDI2LTEwLTIwIiwNCiAgICAibWluX3ZlcnNpb24iOiAiIiwNCiAgICAibm90ZXMiOiAiRmFzdGVyIFNMRC4iLA0KICAgICJwYWdlIjogImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQiLA0KICAgICJpbnN0YWxsZXIiOiB7DQogICAgICAidXJsIjogImh0dHBzOi8vc2NhZGFiZW5jaC5jb20vZG93bmxvYWQvU2NhZGFCZW5jaC1TZXR1cC0wLjEuMTQuZXhlIiwNCiAgICAgICJzaGEyNTYiOiAiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSINCiAgICB9LA0KICAgICJwb3J0YWJsZSI6IG51bGwNCiAgfSwNCiAgImV0YWciOiAiXCJlMVwiIiwNCiAgImVycm9yIjogbnVsbA0KfQ=="
+},
+{},
+{
+"crash": "KeyError",
+"requests": [],
+"file": "eyJyZWxlYXNlIjogeyJkYXRlIjogIngifX0="
+},
+{},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "WzFd"
+},
+{},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "77u/e30="
+},
+{},
+{
+"crash": "TypeError",
+"requests": [],
+"file": "eyJyZWxlYXNlIjogeyJ2ZXJzaW9uIjogIjEuMC4wIiwgIm1pbl92ZXJzaW9uIjogM319"
+},
+{},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "eyJyZWxlYXNlIjoge30sICJkaXNtaXNzZWQiOiAiMS4wLjAifQ=="
+}
+]
+},
+{
+"name": "no server",
+"server_url": "ftp://x",
+"steps": [
+{
+"op": "check",
+"now": 1000000
+},
+{
+"op": "status"
+}
+],
+"results": [
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"no_server\",\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogIm5vX3NlcnZlciIsDQogICJjaGVja2VkX2F0IjogMTAwMDAwMA0KfQ=="
+},
+{
+"http": 200,
+"body": "{\"auto\":true,\"available\":false,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"no_server\",\"important\":false,\"latest\":null}\n",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogIm5vX3NlcnZlciIsDQogICJjaGVja2VkX2F0IjogMTAwMDAwMA0KfQ=="
+}
+]
+},
+{
+"name": "server address unreadable",
+"server_url": null,
+"steps": [
+{
+"op": "check",
+"now": 1000000
+}
+],
+"results": [
+{
+"crash": "AttributeError",
+"requests": [],
+"file": "ew0KICAicmVsZWFzZSI6IG51bGwsDQogICJldGFnIjogbnVsbCwNCiAgImVycm9yIjogbnVsbCwNCiAgImNoZWNrZWRfYXQiOiAxMDAwMDAwDQp9"
+}
+]
+}
+]
+}

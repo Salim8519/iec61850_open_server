@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element '{http://www.iec.ch/61850/2003/SCL}EnumVal': [facet 'pattern'] The value 'aus\u2713' is not accepted by the pattern '[\\p{IsBasicLatin}\\p{IsLatin-1Supplement}]*'.", "code": "validation", "details": []}

@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}LDevice', attribute 'ldName': [facet 'pattern'] The value 'Bay-1' is not accepted by the pattern '[A-Za-z][0-9A-Za-z_]*'."}]}

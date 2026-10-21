@@ -14,11 +14,18 @@
 
 Shell: 232 px white sidebar with four places (Devices, SLD, Test, Settings at the
 bottom with Activity) that collapses to 72 px icons below 1100 px; a 64 px top bar
-with page title, one-line subtitle, File menu, run state words and one Run/Stop pill.
+with page title, one-line subtitle, File menu, run state words and one Run/Stop pill. The run state
+shows ○ stopped, ◐ some IEDs (amber dashed, white *Stop all*) or ● all IEDs (green *Stop*); green
+means everything runs (change 0106).
 Pages scroll inside a centred 1440 px column with 20 px gaps between cards, except open tools
 and Devices, which fill the window (ADR-0064): a side column and panes that scroll on their own,
 the page itself never scrolls; below 1000×620 they stack and the page scrolls again.
 Targets: 1366×768 and 1920×1080.
+
+Waiting (change 0105): every wait a person would notice shows the shared Spinner (turning ring and
+words saying what is happening; a calm "still working" line after 8 s); a slow project action shows
+its words in the top bar run state; a list never says "no match" before its first answer arrives.
+Updates (ADR-0071): one quiet line above Settings when a newer version exists, hidden with ×.
 
 Calm rules: one title and one subtitle per page; one primary action per area; rare
 options inside a single "Advanced" disclosure; hints only in empty states, wizards
@@ -32,10 +39,10 @@ Measuring, Protection & control, Drawing. The 380 px right sheet appears only wh
 something is selected: status pill, Operate (while running), name and start position,
 "comes from" / "goes to" connections, then Advanced and object actions.
 
-Devices: 280 px list column with its own scroll (Import, filter bar, compact rows: name, data
+Devices: 280 px list column with its own scroll (Import with *Select* beside it, filter bar, compact rows: name, data
 points, then the role/status pills on their own line so they are never cut, change 0097) beside one
 detail card: a one-line header (name, "N points · N controls · N notes", ?, *Run this IED* or
-*Connect*, *Be this IED* / *Read real IED* / *Leave out*, ADR-0068), one role line (who publishes,
+*Connect*, *Simulate* / *Monitor real device* / *Skip*, ADR-0068, names change 0142), one role line (who publishes,
 address, "reachable from this PC only" or the network card) and tabs Overview (thin stats line), Data points (table
 fills the height), Compare with SCD (real devices), Signal flow and Files. Test and Settings switch
 sections with a segmented control.
@@ -62,9 +69,11 @@ has no terminals and is pressed by clicking it. Relay panels show one row per si
 with a value chip (filled 1, hollow 0, dashed —). State fills (ADR-0026) colour only
 the moving part; Intermediate is dashed amber and Invalid dashed red.
 
-Signal layers (ADR-0065): two toolbar switches with On/Off words. Small grey IED tags (11.5 px,
-1 px #A9B1BD border, 7 px radius) show the full IED name beside bound equipment and scale up when
-zoomed out; a stopped IED's tag is dotted with "not running"; a problem adds one small ⚠ and a dashed
+Signal layers (ADR-0065): two toolbar switches with On/Off words. An IED bound to equipment is one
+18 px "G" mark (accent outline, 5 px radius) inside the top-right corner of that equipment, never
+beside it, so it covers no neighbour or wire (change 0105); its full name is on hover. Unbound IEDs
+keep small grey name tags (11.5 px, 1 px #A9B1BD border, 7 px radius) left of the drawing; tags
+scale up when zoomed out (marks at most 1.5×); a stopped IED's tag is dotted with "not running"; a problem adds one small ⚠ and a dashed
 amber border (words on hover). IEDs outside the project have no canvas tag: one toolbar button
 "N senders outside project ▾" opens a 340 px list (change 0097). A pulse is one
 5 px accent dot (hollow and dashed when expected) on a faint 1.5 px curve that fades in 2 s.

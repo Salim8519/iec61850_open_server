@@ -1,6 +1,6 @@
 import { ArrowLeftRight } from 'lucide-react';
 import type { MasterProtocol, Role } from '../../../api/master';
-import { DIAGRAM, ROLE_HINTS, ROLE_NAMES, SIDES } from '../../../copy/master';
+import { DIAGRAM, ROLE_HINTS, ROLE_LOCKED, ROLE_NAMES, SIDES, roleTitle } from '../../../copy/master';
 import { HelpTip } from '../../../ui/HelpTip';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
 
@@ -14,8 +14,8 @@ export function RoleSwitch({ role, locked, change, protocol, upstream }: {
   return <div className="role-switch">
     <strong>Act as</strong>
     <SegmentedControl label="Act as" value={role} disabled={locked} onChange={change}
-      options={ROLES.map(value => ({ value, label: ROLE_NAMES[value], title: ROLE_HINTS[value] }))} />
-    <HelpTip text={`${ROLE_HINTS[role]}${locked ? ' Stop or disconnect to switch roles.' : ''}`} label="What does each role do?" />
+      options={ROLES.map(value => ({ value, label: ROLE_NAMES[value], title: roleTitle(value, locked) }))} />
+    <HelpTip text={`${ROLE_HINTS[role]}${locked ? ` ${ROLE_LOCKED}` : ''}`} label="What does each role do?" />
     <SideCaption role={role} protocol={protocol} upstream={upstream} />
   </div>;
 }

@@ -3,21 +3,23 @@ import type { RelayStatus, Signal } from '../../api/types';
 import { ValueControl } from '../test/ValueControl';
 import { RelayValueChip } from '../../equipment/RelayPanel';
 import { useLiveValue } from '../../equipment/liveContext';
+import { useSignalValue } from '../../state/useLive';
 import { pulseTarget, relayRowLabel, shortRef } from '../../equipment/relayDisplay';
 
 export const PULSE_MS = 1000;
 
 type Props = {
   entry: RelayStatus; iedName?: string; index: number; count: number; locked: boolean;
-  signal?: Signal; liveKey: string; fallback: unknown; generator: boolean;
+  signal?: Signal; liveKey: string; fallbackKey: string; generator: boolean;
   rename: (label: string) => void; move: (direction: number) => void; remove: () => void;
   perform: (task: () => Promise<unknown>) => Promise<void>;
 };
 
 /** One relay signal card: rename/reorder while stopped, value and initiation while running. */
-export function RelayStatusRow({ entry, iedName, index, count, locked, signal, liveKey, fallback, generator,
+export function RelayStatusRow({ entry, iedName, index, count, locked, signal, liveKey, fallbackKey, generator,
   rename, move, remove, perform }: Props) {
   const live = useLiveValue(liveKey);
+  const fallback = useSignalValue(fallbackKey);
   const value = live === undefined ? fallback : live;
   const triggerable = !!signal && signal.writable && signal.fc !== 'CF';
   const target = pulseTarget(value);

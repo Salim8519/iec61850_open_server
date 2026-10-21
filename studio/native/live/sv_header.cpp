@@ -1,8 +1,11 @@
 // Passive SV header reader: APPID, MAC addresses, VLAN, simulate bit and svID.
 #include "sv_header.hpp"
-#include <chrono>
+#include "npcap.hpp"
 #include <cstdio>
-#include <vector>
+#include <winsock2.h>
+#include <windows.h>
+#define HAVE_REMOTE
+#include <pcap.h>
 
 namespace {
 std::string mac_text(const uint8_t* mac) {
@@ -71,27 +74,61 @@ bool parse_sv_header(const uint8_t* frame, int size, SvHeader& out) {
 
 SvHeaderReader::~SvHeaderReader() { stop(); }
 
-void SvHeaderReader::start(const std::string& interface_id) {
-    socket = Ethernet_createSocket(interface_id.c_str(), nullptr);
-    if (!socket) return;
-    Ethernet_setProtocolFilter(socket, 0x88ba);
-    running = true;
+bool SvHeaderReader::start(const std::string& interface_id, SVReceiver sv_receiver) {
+    // Same device name, snap length, promiscuous mode and filter as libiec61850's Npcap HAL.
+    std::string device;
+    for (const auto& adapter : npcap_adapters())
+        if (std::to_string(adapter["index"].get<int>()) == interface_id) device = adapter["name"].get<std::string>();
+    char error[PCAP_ERRBUF_SIZE];
+    if (device.empty() || !(capture = pcap_open_live(device.c_str(), 65536, PCAP_OPENFLAG_PROMISCUOUS, 1, error)))
+        return false;
+    struct bpf_program program;
+    bool ready = pcap_setnonblock(capture, 1, error) == 0 && pcap_setmintocopy(capture, 0) == 0 &&
+                 pcap_compile(capture, &program, "(ether proto 0x88ba) or (vlan and ether proto 0x88ba)", 1, 0) == 0;
+    if (ready) {
+        ready = pcap_setfilter(capture, &program) == 0;
+        pcap_freecode(&program);
+    }
+    stop_event = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    if (!ready || !stop_event || !pcap_getevent(capture)) {
+        stop();
+        return false;
+    }
+    receiver = sv_receiver;
     worker = std::thread([this] { run(); });
+    return true;
 }
 
-void SvHeaderReader::run() {
-    std::vector<uint8_t> buffer(1600);
-    while (running) {
-        int size = Ethernet_receivePacket(socket, buffer.data(), int(buffer.size()));
-        if (size <= 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            continue;
-        }
+// Every waiting header frame. Npcap clears the receive event before each read, so a frame
+// that arrives after the last (empty) read sets it again and wakes the loop.
+bool SvHeaderReader::drain_headers() {
+    bool any = false;
+    struct pcap_pkthdr* info = nullptr;
+    const u_char* data = nullptr;
+    while (pcap_next_ex(capture, &info, &data) > 0) {
+        any = true;
         SvHeader header;
-        if (!parse_sv_header(buffer.data(), size, header)) continue;
+        int size = info->caplen > 1600 ? 1600 : int(info->caplen);  // the former HAL receive buffer
+        if (!parse_sv_header(data, size, header)) continue;
         std::lock_guard<std::mutex> guard(lock);
         if (seen.size() < 1000 || seen.count(sv_key(header.app_id, header.dst_mac)))
             seen[sv_key(header.app_id, header.dst_mac)] = header;
+    }
+    return any;
+}
+
+void SvHeaderReader::run() {
+    HANDLE events[2] = {pcap_getevent(capture), stop_event};
+    for (;;) {
+        bool traffic = drain_headers();
+        // The receiver's own capture waits up to its 1 ms read timeout for a frame still on its
+        // way, so both captures end each wake having read the same frames.
+        if (receiver)
+            while (SVReceiver_tick(receiver)) traffic = true;
+        // One more look 20 ms after traffic stops; with no traffic the loop sleeps until a
+        // frame or stop arrives (no idle wakes).
+        DWORD woke = WaitForMultipleObjects(2, events, FALSE, traffic ? 20 : INFINITE);
+        if (woke != WAIT_OBJECT_0 && woke != WAIT_TIMEOUT) break;
     }
 }
 
@@ -101,12 +138,17 @@ std::map<std::string, SvHeader> SvHeaderReader::snapshot() {
 }
 
 void SvHeaderReader::stop() {
-    running = false;
+    if (stop_event) SetEvent(stop_event);
     if (worker.joinable()) worker.join();
-    if (socket) {
-        Ethernet_destroySocket(socket);
-        socket = nullptr;
+    if (capture) {
+        pcap_close(capture);
+        capture = nullptr;
     }
+    if (stop_event) {
+        CloseHandle(stop_event);
+        stop_event = nullptr;
+    }
+    receiver = nullptr;
     std::lock_guard<std::mutex> guard(lock);
     seen.clear();
 }

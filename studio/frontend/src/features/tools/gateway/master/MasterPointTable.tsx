@@ -1,6 +1,7 @@
 import { Download, PlugZap, Send, Upload } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { masterApi, type MasterCommand, type MasterPoint, type MasterStatus } from '../../../../api/master';
+import { MASTER_POINTS, masterApi, type MasterCommand, type MasterPoint, type MasterStatus } from '../../../../api/master';
+import { liveFeed } from '../../../../api/polls';
 import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { COMMANDS, MASTER_COPY } from '../../../../copy/master';
 import { useListFilter } from '../../../../state/useListFilter';
@@ -23,12 +24,8 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
   // A command drafted for another protocol must not survive a protocol switch (change 0089).
   useEffect(() => setDraft(null), [status.protocol]);
   const file = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const load = () => masterApi.points().then(value => setRows(value.points)).catch(error => fail(error.message));
-    load();
-    const timer = setInterval(load, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  useEffect(() => liveFeed.subscribe<{ points: MasterPoint[] }>(MASTER_POINTS, 1000, value => setRows(value.points),
+    error => fail(error.message)), []);
   useEffect(() => setPage(0), [filter.values]);
   const untick = (keys: string[]) => {
     const hidden = new Set(keys);

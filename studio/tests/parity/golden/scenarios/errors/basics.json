@@ -1,0 +1,14 @@
+{"name": "errors-basics", "template_names": ["Feeder01"], "steps": [
+  {"req": "POST /api/v1/session", "json": {"token": "golden-session-token"}},
+  {"req": "GET /api/v1/no-such-route"},
+  {"req": "DELETE /api/v1/project"},
+  {"req": "POST /api/v1/ieds/template", "json": {"name": "Feeder01"}},
+  {"req": "POST /api/v1/ieds/template", "json": {"name": ""}},
+  {"req": "POST /api/v1/ieds/template", "raw": "{not json", "content_type": "application/json"},
+  {"req": "PUT /api/v1/preferences", "json": {"unknown": true}},
+  {"req": "PUT /api/v1/project/diagram", "json": {"diagram": {"nodes": [], "edges": []}, "revision": "x", "tab_id": "t"}},
+  {"req": "POST /api/v1/project/diagram/from-scl/preview", "json": {"source_id": "nope"}},
+  {"req": "POST /api/v1/runtime/fly"},
+  {"req": "POST /api/v1/ieds/removal-preview", "json": {"ids": []}},
+  {"req": "GET /api/v1/project"}
+]}

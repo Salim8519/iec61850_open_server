@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}P': [facet 'minLength'] The value has a length of '0'; this underruns the allowed minimum length of '1'."}]}

@@ -38,3 +38,16 @@ def test_sv_is_subscribe_only():
     assert "sv_test_publisher" not in spec
     options = (NATIVE / "cmake/goose_options.cmake").read_text(encoding="utf-8")
     assert "set(CONFIG_IEC61850_L2_SMV ON" in options and "set(CONFIG_IEC61850_R_SMV OFF" in options
+
+
+def test_ethernet_hal_routes_udp_to_the_engine_and_numbers_to_npcap():
+    """GOOSE-26: "udp:" ids reach the GOOSE engine; numeric ids keep the vendor Npcap HAL (SV)."""
+    support = (NATIVE / "cmake/goose_support.cmake").read_text(encoding="utf-8")
+    for name in ("ethernet_dispatch.c", "ethernet_pcap.c", "ethernet_udp.c"):
+        assert f"hal/{name}" in support
+    pcap = (NATIVE / "hal/ethernet_pcap.c").read_text(encoding="utf-8")
+    assert '#include "ethernet_win32.c"' in pcap  # the vendor file compiles unmodified
+    dispatch = (NATIVE / "hal/ethernet_dispatch.c").read_text(encoding="utf-8")
+    assert "StudioUdp_isInterface(interfaceId)" in dispatch and "Pcap_Ethernet_createSocket" in dispatch
+    worker = (NATIVE / "worker/goose/publishing.cpp").read_text(encoding="utf-8")
+    assert "\"udp:\"" in worker and "npcap" not in worker.lower()

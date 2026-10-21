@@ -1,4 +1,4 @@
-import { ArrowLeft, Radar, Radio, Router, Telescope } from 'lucide-react';
+import { ArrowLeft, Network, Radar, Radio, Router, Telescope } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import type { Activity } from '../../api/activity';
 import type { Project } from '../../api/types';
@@ -7,10 +7,11 @@ import { ExplorerTool } from './explorer/ExplorerTool';
 import { FindTool } from './find/FindTool';
 import { knownAddresses } from './find/findFilters';
 import { ScadaTool } from './gateway/ScadaTool';
+import { SnmpTool } from './snmp/SnmpTool';
 import { TrafficTool } from './TrafficTool';
 import './tools.css';
 
-const ICONS: Record<ToolId, typeof Radio> = { explorer: Telescope, find: Radar, gateway: Router, traffic: Radio };
+const ICONS: Record<ToolId, typeof Radio> = { explorer: Telescope, find: Radar, gateway: Router, snmp: Network, traffic: Radio };
 
 /** The Tools place: a list of tool cards, or the one open tool with a way back. */
 export function ToolsPage({ project, locked, perform, tool, openTool, running, activity, runIeds }: {
@@ -28,11 +29,12 @@ export function ToolsPage({ project, locked, perform, tool, openTool, running, a
       <h2><Icon size={20} aria-hidden /> {card.name}</h2>{extra}
     </div>;
     return <div className={`content${tool === 'traffic' ? '' : ' fill-page'}`}>
-      {tool !== 'gateway' && header()}
+      {tool !== 'gateway' && tool !== 'snmp' && header()}
       {tool === 'explorer' && <ExplorerTool target={target} />}
       {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }}
         known={knownAddresses(project)} />}
       {tool === 'gateway' && <ScadaTool header={header} runState={project.runtime} runIeds={runIeds} activity={activity} />}
+      {tool === 'snmp' && <SnmpTool header={header} />}
       {tool === 'traffic' && <TrafficTool project={project} locked={locked} perform={perform} />}
     </div>;
   }

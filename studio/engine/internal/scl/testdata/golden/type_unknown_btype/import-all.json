@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Unsupported basic type FLOAT16 at BayControllerCTRL/GGIO1.AnIn1.mag.f", "code": "validation", "details": []}

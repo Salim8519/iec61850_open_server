@@ -1,0 +1,122 @@
+[
+ [
+  404,
+  "{\"error\":\"Unknown runtime action\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Start the simulation before pausing automation\"}\n"
+ ],
+ [
+  404,
+  "{\"error\":\"Unknown runtime action\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Unknown IED\"}\n"
+ ],
+ [
+  200,
+  "{\"energization\":{\"edges\":{},\"hints\":{},\"nodes\":{}},\"states\":[]}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IEDs before operating equipment\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Equipment operation must be a JSON object\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IEDs before operating equipment\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IEDs before operating equipment\"}\n"
+ ],
+ [
+  400,
+  "{\"code\":\"validation\",\"details\":[],\"error\":\"Unknown equipment\"}\n"
+ ],
+ [
+  400,
+  "{\"code\":\"validation\",\"details\":[],\"error\":\"Run the IED before using a test button\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Equipment test must be a JSON object\"}\n"
+ ],
+ [
+  200,
+  "[]\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IEDs before starting a scenario\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IEDs before starting a scenario\"}\n"
+ ],
+ [
+  415,
+  "{\"error\":\"Did not attempt to load JSON data because the request Content-Type was not 'application/json'.\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"'ied_id'\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"'ref'\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"The browser (or proxy) sent a request that this server could not understand.\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"IED is not running\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Pulse requires a Boolean value and 100 to 60000 milliseconds\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Pulse requires a Boolean value and 100 to 60000 milliseconds\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Pulse requires a Boolean value and 100 to 60000 milliseconds\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IED before triggering a pulse\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"Run the IED before resuming a source\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"'ref'\"}\n"
+ ],
+ [
+  400,
+  "{\"code\":\"not_found\",\"details\":[],\"error\":\"Unknown IED\"}\n"
+ ],
+ [
+  400,
+  "{\"error\":\"'ied_id'\"}\n"
+ ],
+ [
+  400,
+  "{\"code\":\"not_found\",\"details\":[],\"error\":\"Unknown IED\"}\n"
+ ],
+ [
+  200,
+  "{\"items\":[]}\n"
+ ]
+]

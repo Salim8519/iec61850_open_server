@@ -3,7 +3,7 @@ import { ViewportPortal, useNodes, useStore } from '@xyflow/react';
 import type { EquipmentNode } from '../../../api/types';
 import { clientLine, externalClients, outsideNames, readerBadge } from '../../../copy/signalLayers';
 import type { SignalLayerStore } from '../../../equipment/signalLayerStore';
-import { edgePoint, equipmentByIed, linkCurve, placeTags, tagScale, TAG_HEIGHT, type TagSpec } from '../../../equipment/signalLayout';
+import { edgePoint, equipmentByIed, linkCurve, markScale, placeTags, tagCentre, tagScale, type TagSpec } from '../../../equipment/signalLayout';
 import { EDGE_PULSE_MS, problemWords, PULSE_MS } from '../../../equipment/signalPulses';
 import { IedTag, type TagProblem } from './IedTag';
 import { PulseDot } from './PulseDot';
@@ -13,7 +13,8 @@ export type SignalSelection = { kind: 'link'; id: string } | { kind: 'ied'; name
 
 /** GOOSE and MMS activity drawn above the SLD (spec signal-layers). A view only: it reads the
  * shared store and the drawing's positions, and never changes or saves the diagram.
- * Only small IED name tags stay on the canvas; IEDs outside the project have no tag (change 0097). */
+ * Only small IED corner marks (or name tags for unbound IEDs) stay on the canvas; IEDs outside the
+ * project have no tag (changes 0097, 0105). */
 export function SignalOverlay({ store, iedNames, running, selection, select }: {
   store: SignalLayerStore; iedNames: Record<string, string>; running: Set<string> | null; selection: SignalSelection;
   select: (selection: SignalSelection) => void;
@@ -21,7 +22,10 @@ export function SignalOverlay({ store, iedNames, running, selection, select }: {
   const state = useSyncExternalStore(store.subscribe, store.get, store.get);
   const nodes = useNodes<EquipmentNode>();
   // Tags keep a readable size when the drawing is zoomed out (like symbol strokes, ADR-0045).
-  const scale = tagScale(useStore(store => store.transform[2]));
+  const zoom = useStore(store => store.transform[2]);
+  const scale = tagScale(zoom);
+  // Corner marks grow less, so they stay inside their equipment (change 0105).
+  const mark = markScale(zoom);
   const { goose, readers } = state.layers;
   useEffect(() => {
     const wait = store.prune(performance.now());
@@ -45,7 +49,7 @@ export function SignalOverlay({ store, iedNames, running, selection, select }: {
   const boxes = nodes.map(node => ({ id: node.id, x: node.position.x, y: node.position.y,
     width: node.measured?.width ?? 80, height: node.measured?.height ?? 60 }));
   const placed = placeTags(boxes, bound, specs);
-  const at = new Map(placed.map(tag => [tag.name, { x: tag.x + 36 * scale, y: tag.y + (TAG_HEIGHT / 2) * scale }]));
+  const at = new Map(placed.map(tag => [tag.name, tagCentre(tag, scale, mark)]));
   const links = new Map(state.map.links.map(link => [link.id, link]));
   const outsiders = outsideNames(state.map.ieds);
   const now = performance.now();
@@ -83,7 +87,7 @@ export function SignalOverlay({ store, iedNames, running, selection, select }: {
         const clients = readers && tag.iedId ? state.clients[tag.iedId] : undefined;
         const operated = state.controls.filter(item => item.iedId === tag.iedId).at(-1);
         const received = active.filter(pulse => links.get(pulse.linkId)!.subscriber === tag.name).at(-1);
-        return <IedTag key={tag.name} tag={tag} scale={scale} problems={problems(tag.name)}
+        return <IedTag key={tag.name} tag={tag} scale={tag.corner ? mark : scale} problems={problems(tag.name)}
           readers={readerBadge(clients)} readersTitle={externalClients(clients).map(clientLine).join('\n')}
           operated={operated && { key: operated.key, label: operated.label }}
           received={received && { key: received.key, label: received.short }}

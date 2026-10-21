@@ -1,38 +1,45 @@
 import { ArrowDownLeft, ArrowUpRight, Info, Pause, Play, Trash2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { gatewayApi, type TrafficEntry } from '../../../api/gateway';
+import { liveFeed } from '../../../api/polls';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
 import { HelpTip } from '../../../ui/HelpTip';
+import { SpacerBlock, useVirtualRows } from '../../../ui/VirtualRows';
 import { TRAFFIC_FILTER, trafficMatches } from './logFilters';
 
 const KEEP = 1000;
+const LINE_HEIGHT = 26;
 const ICONS = { rx: ArrowDownLeft, tx: ArrowUpRight, info: Info } as const;
 const SCADA_WORDS = { rx: 'from SCADA', tx: 'to SCADA', info: 'note' };
 type Load = (after: number) => Promise<{ entries: TrafficEntry[]; last: number }>;
 
 /** Decoded traffic, newest at the bottom; it follows new lines unless paused. The master view passes its own source. */
-export function TrafficLog({ running, load: source = gatewayApi.traffic, words = SCADA_WORDS, hint = GATEWAY_COPY.trafficHint }: {
-  running: boolean; load?: Load; words?: Record<'rx' | 'tx' | 'info', string>; hint?: string;
+export function TrafficLog({ running, load: source = gatewayApi.traffic, feedKey = 'gateway-traffic', words = SCADA_WORDS,
+  hint = GATEWAY_COPY.trafficHint }: {
+  running: boolean; load?: Load; feedKey?: string; words?: Record<'rx' | 'tx' | 'info', string>; hint?: string;
 }) {
   const [lines, setLines] = useState<TrafficEntry[]>([]);
   const [paused, setPaused] = useState(false);
   const filter = useListFilter('traffic', TRAFFIC_FILTER);
   const last = useRef(0);
   const box = useRef<HTMLDivElement>(null);
+  // On the shared live feed (speed lane F): never overlapping, paused while the window is hidden,
+  // and an empty page ("nothing after N") re-renders nothing.
   useEffect(() => {
-    if (paused) return;
-    const load = () => source(last.current).then(page => {
-      if (!page.entries.length) return;
-      last.current = page.last;
-      setLines(current => [...current, ...page.entries].slice(-KEEP));
-    }).catch(() => {});
-    load();
-    const timer = setInterval(load, running ? 500 : 2000);
-    return () => clearInterval(timer);
-  }, [paused, running, source]);
-  const shown = lines.filter(line => trafficMatches(line, filter.values));
+    if (paused) return undefined;
+    return liveFeed.subscribeTask(feedKey, running ? 500 : 2000,
+      () => source(last.current).then(page => page.entries.length ? page : null), page => {
+        const fresh = page.entries.filter(entry => entry.seq > last.current);
+        last.current = Math.max(last.current, page.last);
+        if (fresh.length) setLines(current => [...current, ...fresh].slice(-KEEP));
+      });
+  }, [paused, running, source, feedKey]);
+  const shown = useMemo(() => lines.filter(line => trafficMatches(line, filter.values)), [lines, filter.values]);
+  const keyOf = useCallback((index: number) => shown[index]?.seq ?? index, [shown]);
+  // Only the lines on screen are drawn (up to 1000 are kept); the scrollbar still covers them all.
+  const { range, spacer } = useVirtualRows(box, shown.length, keyOf, LINE_HEIGHT);
   useEffect(() => {
     if (!paused && box.current) box.current.scrollTop = box.current.scrollHeight;
   }, [shown.length, paused]);
@@ -45,16 +52,18 @@ export function TrafficLog({ running, load: source = gatewayApi.traffic, words =
         <HelpTip text={hint} label="What is this?" /></>} />
     <div className="gateway-traffic" ref={box} role="log" aria-live={paused ? 'off' : 'polite'}>
       {shown.length === 0 && <p className="muted">{lines.length ? GATEWAY_COPY.emptyFilter : 'No messages yet.'}</p>}
-      {shown.map(line => {
+      <SpacerBlock height={range.before} spacerRef={spacer} />
+      {shown.slice(range.start, range.end).map(line => {
         const dir = (line.dir in ICONS ? line.dir : 'info') as keyof typeof ICONS;
         const Icon = ICONS[dir];
-        return <div key={line.seq} className={`traffic-line dir-${line.dir}`}>
+        return <div key={line.seq} data-vrow={line.seq} className={`traffic-line dir-${line.dir}`}>
           <span className="traffic-time">{new Date(line.at * 1000).toLocaleTimeString()}</span>
           <Icon size={14} aria-label={words[dir]} />
           {line.peer && <span className="traffic-peer">{line.peer}</span>}
           <span className="traffic-text">{line.text}</span>
         </div>;
       })}
+      <SpacerBlock height={range.after} />
     </div>
   </>;
 }

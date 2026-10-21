@@ -6,7 +6,7 @@ studio = Path(SPECPATH).parent
 workspace = studio.parent
 native = Path(os.environ.get("STUDIO_BUILD_NATIVE", studio / "native/build/Release"))
 frontend = Path(os.environ.get("STUDIO_BUILD_FRONTEND", studio / "frontend/dist"))
-required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
+required = [native / "studio_ied.exe", native / "studio_live.exe", native / "studio_goose.exe", native / "studio_probe.exe", native / "studio_gateway.exe", native / "studio_control.exe",
             native / "studio_master.exe",
             frontend / "index.html"]
 for path in required:
@@ -18,6 +18,7 @@ analysis = Analysis(
     pathex=[str(studio / "backend")],
     binaries=[(str(native / "studio_ied.exe"), "native"),
               (str(native / "studio_live.exe"), "native"),
+              (str(native / "studio_goose.exe"), "native"),
               (str(native / "studio_probe.exe"), "native"),
               (str(native / "studio_gateway.exe"), "native"),
               (str(native / "studio_control.exe"), "native"),

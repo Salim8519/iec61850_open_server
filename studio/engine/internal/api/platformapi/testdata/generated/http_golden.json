@@ -1,0 +1,2416 @@
+{
+ "app_version": "0.1.14+dev",
+ "current": "0.1.13",
+ "server_url": "https://license.scadabench.com",
+ "hwid": "abababababababababababababababababababababababababababababababab",
+ "program": "C:\\Studio\\native\\studio_ied.exe",
+ "gateway": "C:\\Studio\\native\\studio_gateway.exe",
+ "network_env": {
+  "adapters": [
+   {
+    "guid": "{11111111-1111-1111-1111-111111111111}",
+    "name": "Lab NIC",
+    "description": "USB Ethernet",
+    "status": "Up",
+    "index": 7,
+    "mac": "",
+    "speed": "1 Gbps",
+    "kind": "ethernet",
+    "default_route": false,
+    "addresses": [
+     {
+      "ip": "192.168.50.10",
+      "prefix": 24,
+      "skip_as_source": false,
+      "origin": "Manual"
+     }
+    ]
+   },
+   {
+    "guid": "{22222222-2222-2222-2222-222222222222}",
+    "name": "Wi-Fi",
+    "description": "USB Ethernet",
+    "status": "Up",
+    "index": 3,
+    "mac": "",
+    "speed": "1 Gbps",
+    "kind": "wifi",
+    "default_route": false,
+    "addresses": [
+     {
+      "ip": "10.0.0.5",
+      "prefix": 24,
+      "skip_as_source": false,
+      "origin": "Manual"
+     }
+    ]
+   }
+  ],
+  "rules": [],
+  "probe": [],
+  "elevate": "ok",
+  "gateway_rules": [],
+  "blocking": [],
+  "state": {
+   "gateway": [],
+   "disabled": []
+  }
+ },
+ "test_key": {
+  "kid": "3097e2de",
+  "public": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12"
+ },
+ "steps": [
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters",
+   "status": 200,
+   "response": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=1",
+   "status": 200,
+   "response": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=true",
+   "status": 200,
+   "response": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=1&refresh=0",
+   "status": 200,
+   "response": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"nominal_hz\": 60}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":60}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"nominal_hz\": 55}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Nominal frequency must be 50 Hz or 60 Hz\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"mode\": \"bogus\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Network mode must be 'loopback' (this PC only) or 'lab' (network adapter)\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"mode\": \"lab\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Choose a network adapter before switching to lab network mode\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "\"x\"",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "5",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":60}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"nominal_hz\": 50}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"That network adapter is no longer available. Refresh the adapter list.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"No IED is set to 'Simulate', so there is nothing to put on the network. Set an IED to 'Simulate' in Devices first.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "ieds",
+   "value": [
+    {
+     "id": "bay",
+     "name": "Bay",
+     "role": "simulated",
+     "scl_address": {
+      "ip": "192.168.50.21",
+      "subnet": "255.255.255.0"
+     },
+     "ip": "127.50.0.1",
+     "port": 102,
+     "source": "<SCL/>"
+    },
+    {
+     "id": "b2",
+     "name": "B2",
+     "role": "simulated",
+     "scl_address": null,
+     "ip": "127.50.0.1",
+     "port": 102,
+     "source": "<SCL/>"
+    },
+    {
+     "id": "r1",
+     "name": "Real",
+     "role": "real",
+     "scl_address": {
+      "ip": "192.168.50.40"
+     },
+     "ip": "127.50.0.3",
+     "port": 102,
+     "source": "<SCL/>"
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"nominal_hz\": 60}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[\"B2 and Bay both use 127.50.0.1:102. Give each IED its own address.\"],\"error\":\"B2 and Bay both use 127.50.0.1:102. Give each IED its own address.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=%FF",
+   "status": 200,
+   "response": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "ieds",
+   "value": [
+    {
+     "id": "bay",
+     "name": "Bay",
+     "role": "simulated",
+     "scl_address": {
+      "ip": "192.168.50.21",
+      "subnet": "255.255.255.0"
+     },
+     "ip": "127.50.0.1",
+     "port": 102,
+     "source": "<SCL/>"
+    },
+    {
+     "id": "b2",
+     "name": "B2",
+     "role": "simulated",
+     "scl_address": null,
+     "ip": "127.50.0.2",
+     "port": 2102,
+     "source": "<SCL/>"
+    },
+    {
+     "id": "r1",
+     "name": "Real",
+     "role": "real",
+     "scl_address": {
+      "ip": "192.168.50.40"
+     },
+     "ip": "127.50.0.3",
+     "port": 102,
+     "source": "<SCL/>"
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"mode\": \"lab\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_label\": \"Lab NIC\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_label\":\"Lab NIC\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"lab\",\"nominal_hz\":50}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"goose_reach\": \"network\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"GOOSE must stay 'inside' ScadaBench or be shared 'outside' with the network\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"mode\": \"loopback\", \"nominal_hz\": 60}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":60}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"mode\": \"loopback\", \"nominal_hz\": 50}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "runtime",
+   "state": "running"
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"nominal_hz\": 60}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Stop the simulation before editing its structure\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Stop the simulation before editing its structure\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Stop the simulation before editing its structure\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/cleanup/apply",
+   "body": "{\"confirm\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Stop the simulation before editing its structure\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/cleanup/preview",
+   "status": 200,
+   "response": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/gateway-firewall",
+   "status": 200,
+   "response": "{\"blocked\":false,\"fingerprint\":\"af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65\",\"items\":[{\"action\":\"add\",\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "runtime",
+   "state": "stopped"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{22222222-2222-2222-2222-222222222222}\", \"strategy\": \"scd\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"adapter\":{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"0a02a3c782da399d4d5c6b0ab28a01b76bba62c2f3e7817b293903f96fab32ad\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{22222222-2222-2222-2222-222222222222}\",\"adapter_index\":3,\"adapter_name\":\"Wi-Fi\",\"description\":\"Add address 192.168.50.21/24 to 'Wi-Fi' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-2eceb36f2d8f\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":false,\"rows\":[{\"hint\":\"Not used on this PC. Devices in this new network can only be checked after the address is added; Windows reports a clash then.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"},{\"alternative\":{\"ip\":\"10.0.0.22\",\"prefix\":24},\"hint\":\"This IED has no IP address in the SCD. Switch to 'free addresses on the adapter' or type an address.\",\"ied_id\":\"b2\",\"name\":\"B2\",\"prefix\":null,\"proposed\":\"\",\"scd_ip\":\"\",\"status\":\"missing_scd_address\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"strategy\": 5}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"error\":\"Address strategy must be 'scd' or 'adapter'\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"strategy\": [1]}",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": null, \"strategy\": [1]}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"That network adapter is no longer available. Refresh the adapter list.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"strategy\": \"bogus\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"error\":\"Address strategy must be 'scd' or 'adapter'\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "\"x\"",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "0",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"That network adapter is no longer available. Refresh the adapter list.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"manual\": {\"b2\": {\"ip\": \"192.168.50.77\", \"prefix\": 24}}}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"ecd1bbf31ca7e87b660a575739e735f0de4f2a7aa0bc4825b8b63fcc5021d24f\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.77/24 to 'Lab NIC' for B2\",\"for\":\"B2\",\"ip\":\"192.168.50.77\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\",\"192.168.50.77\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-ef871281805c\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"},{\"hint\":\"Address typed by you.\",\"ied_id\":\"b2\",\"name\":\"B2\",\"prefix\":24,\"proposed\":\"192.168.50.77\",\"scd_ip\":\"\",\"status\":\"ok\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"strategy\": \"adapter\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"adapter\":{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},\"fingerprint\":\"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\",\"items\":[{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for B2\",\"for\":\"B2\",\"ip\":\"192.168.50.22\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"add\",\"addresses\":[\"192.168.50.21\",\"192.168.50.22\"],\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-68ddcda8b56a\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"}],\"needs_admin\":true,\"ready\":true,\"rows\":[{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"bay\",\"name\":\"Bay\",\"prefix\":24,\"proposed\":\"192.168.50.21\",\"scd_ip\":\"192.168.50.21\",\"status\":\"ok\"},{\"hint\":\"No other device answered on this address.\",\"ied_id\":\"b2\",\"name\":\"B2\",\"prefix\":24,\"proposed\":\"192.168.50.22\",\"scd_ip\":\"\",\"status\":\"ok\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Review the change list and confirm it before applying\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Review the change list and confirm it before applying\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": \"yes\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Review the change list and confirm it before applying\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"conflict\",\"details\":[],\"error\":\"This preview has expired. Review the changes again.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "cancel"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Windows administrator permission was not given, so nothing was changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "runtime"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 503,
+   "response": "{\"error\":\"The network helper did not finish within two minutes\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "refused"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"The network helper refused the request: Unknown helper action\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "none"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"The network helper finished without a result; nothing was recorded as changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "fail"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"applied\":false,\"message\":\"Some changes failed; nothing else was switched. See each line for the reason.\",\"results\":[{\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for B2\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.22\",\"message\":\"Access denied\",\"ok\":false},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-68ddcda8b56a\",\"message\":\"\",\"ok\":true}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":50},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/cleanup/preview",
+   "status": 200,
+   "response": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "ok"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/apply",
+   "body": "{\"fingerprint\": \"669e89d515d6eb5890b361405bfa35a399fe0b144d945f7a323474cdfb8f381c\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"applied\":true,\"message\":\"Lab network is ready. Press Run to start the IEDs on the network.\",\"results\":[{\"description\":\"Add address 192.168.50.21/24 to 'Lab NIC' for Bay\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Add address 192.168.50.22/24 to 'Lab NIC' for B2\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.22\",\"message\":\"\",\"ok\":true},{\"description\":\"Allow other devices to reach the simulated IEDs on TCP port 102, 2102 through Windows Firewall\",\"key\":\"firewall:SubstationStudio-MMS-68ddcda8b56a\",\"message\":\"\",\"ok\":true}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_label\":\"Lab NIC\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"lab\",\"nominal_hz\":50},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/network",
+   "body": "{\"nominal_hz\": 60}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_label\":\"Lab NIC\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"lab\",\"nominal_hz\":60}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_label\":\"Lab NIC\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"lab\",\"nominal_hz\":60},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "rules",
+   "value": [
+    "SubstationStudio-MMS-68ddcda8b56a"
+   ]
+  },
+  {
+   "op": "net",
+   "key": "adapters",
+   "value": [
+    {
+     "guid": "{11111111-1111-1111-1111-111111111111}",
+     "name": "Lab NIC",
+     "description": "USB Ethernet",
+     "status": "Up",
+     "index": 7,
+     "mac": "",
+     "speed": "1 Gbps",
+     "kind": "ethernet",
+     "default_route": false,
+     "addresses": [
+      {
+       "ip": "192.168.50.10",
+       "prefix": 24,
+       "skip_as_source": false,
+       "origin": "Manual"
+      },
+      {
+       "ip": "192.168.50.21",
+       "prefix": 24,
+       "skip_as_source": false,
+       "origin": "Manual"
+      },
+      {
+       "ip": "192.168.50.22",
+       "prefix": 24,
+       "skip_as_source": false,
+       "origin": "Manual"
+      }
+     ]
+    },
+    {
+     "guid": "{22222222-2222-2222-2222-222222222222}",
+     "name": "Wi-Fi",
+     "description": "USB Ethernet",
+     "status": "Up",
+     "index": 3,
+     "mac": "",
+     "speed": "1 Gbps",
+     "kind": "wifi",
+     "default_route": false,
+     "addresses": [
+      {
+       "ip": "10.0.0.5",
+       "prefix": 24,
+       "skip_as_source": false,
+       "origin": "Manual"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "op": "tick",
+   "seconds": 11
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters",
+   "status": 200,
+   "response": "{\"adapters\":[{\"addresses\":[{\"ip\":\"192.168.50.10\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false},{\"ip\":\"192.168.50.21\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false},{\"ip\":\"192.168.50.22\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{11111111-1111-1111-1111-111111111111}\",\"index\":7,\"kind\":\"ethernet\",\"mac\":\"\",\"name\":\"Lab NIC\",\"speed\":\"1 Gbps\",\"status\":\"Up\"},{\"addresses\":[{\"ip\":\"10.0.0.5\",\"origin\":\"Manual\",\"prefix\":24,\"skip_as_source\":false}],\"default_route\":false,\"description\":\"USB Ethernet\",\"guid\":\"{22222222-2222-2222-2222-222222222222}\",\"index\":3,\"kind\":\"wifi\",\"mac\":\"\",\"name\":\"Wi-Fi\",\"speed\":\"1 Gbps\",\"status\":\"Up\"}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/cleanup/preview",
+   "status": 200,
+   "response": "{\"fingerprint\":\"c18b82ff81459b9447e40ccf4cdede1c149a030cecb6a0a3d732224e2ac5aa60\",\"items\":[{\"action\":\"remove\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Remove address 192.168.50.21 that ScadaBench added to 'Lab NIC'\",\"for\":\"Bay\",\"ip\":\"192.168.50.21\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24},{\"action\":\"remove\",\"addresses\":[\"192.168.50.21\",\"192.168.50.22\"],\"description\":\"Remove the Windows Firewall rule that ScadaBench added for the simulated IEDs\",\"group\":\"Substation Studio\",\"kind\":\"firewall\",\"name\":\"SubstationStudio-MMS-68ddcda8b56a\",\"owned\":true,\"ports\":[102,2102],\"program\":\"C:\\\\Studio\\\\native\\\\studio_ied.exe\"},{\"action\":\"remove\",\"adapter_guid\":\"{11111111-1111-1111-1111-111111111111}\",\"adapter_index\":7,\"adapter_name\":\"Lab NIC\",\"description\":\"Remove address 192.168.50.22 that ScadaBench added to 'Lab NIC'\",\"for\":\"B2\",\"ip\":\"192.168.50.22\",\"kind\":\"alias\",\"owned\":true,\"prefix\":24}],\"needs_admin\":true}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/cleanup/apply",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Confirm the clean-up list first\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/cleanup/apply",
+   "body": "{\"fingerprint\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"conflict\",\"details\":[],\"error\":\"The list of ScadaBench changes is different now. Review it again.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/cleanup/apply",
+   "body": "{\"fingerprint\": \"c18b82ff81459b9447e40ccf4cdede1c149a030cecb6a0a3d732224e2ac5aa60\", \"confirm\": 1}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Confirm the clean-up list first\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/cleanup/apply",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/cleanup/apply",
+   "body": "{\"fingerprint\": \"c18b82ff81459b9447e40ccf4cdede1c149a030cecb6a0a3d732224e2ac5aa60\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"message\":\"ScadaBench's network changes were removed. IEDs are back on 'This PC only' mode.\",\"results\":[{\"description\":\"Remove address 192.168.50.21 that ScadaBench added to 'Lab NIC'\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.21\",\"message\":\"\",\"ok\":true},{\"description\":\"Remove the Windows Firewall rule that ScadaBench added for the simulated IEDs\",\"key\":\"firewall:SubstationStudio-MMS-68ddcda8b56a\",\"message\":\"\",\"ok\":true},{\"description\":\"Remove address 192.168.50.22 that ScadaBench added to 'Lab NIC'\",\"key\":\"alias:{11111111-1111-1111-1111-111111111111}:192.168.50.22\",\"message\":\"\",\"ok\":true}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network",
+   "status": 200,
+   "response": "{\"network\":{\"adapter_guid\":\"\",\"adapter_label\":\"\",\"goose_reach\":\"inside\",\"goose_share_guid\":\"\",\"goose_uplink_guid\":\"\",\"mode\":\"loopback\",\"nominal_hz\":60},\"npcap\":{\"download\":\"https://npcap.com/#download\",\"installed\":false,\"message\":\"Sharing GOOSE with the network needs the free Npcap driver. Install it from npcap.com, then restart ScadaBench. GOOSE between your simulated IEDs works without it.\",\"path\":\"\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/cleanup/preview",
+   "status": 200,
+   "response": "{\"fingerprint\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"items\":[],\"needs_admin\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/gateway-firewall",
+   "status": 200,
+   "response": "{\"blocked\":false,\"fingerprint\":\"af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65\",\"items\":[{\"action\":\"add\",\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Review the Windows Firewall changes and confirm them first\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "body": "{\"fingerprint\": \"af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Review the Windows Firewall changes and confirm them first\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "body": "{\"fingerprint\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"conflict\",\"details\":[],\"error\":\"This preview has expired. Review the changes again.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "body": "\"x\"",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "cancel"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "body": "{\"fingerprint\": \"af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Windows administrator permission was not given, so nothing was changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "elevate",
+   "value": "ok"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "body": "{\"fingerprint\": \"af9aff517dbe4ffd0d674397db7d1fceb34447ec278c4e93d8af8bdc9a26ba65\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"applied\":true,\"message\":\"Done: Settings \\u203a Network \\u203a Clean up undoes this.\",\"results\":[{\"description\":\"Allow other computers to reach the ScadaBench gateway (IEC 104, DNP3 or Modbus TCP) through Windows Firewall\",\"key\":\"firewall:ScadaBench-Gateway-7f166b55503f\",\"message\":\"\",\"ok\":true}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "gateway_rules",
+   "value": [
+    "ScadaBench-Gateway-7f166b55503f"
+   ]
+  },
+  {
+   "op": "net",
+   "key": "blocking",
+   "value": [
+    {
+     "name": "TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe",
+     "display": "studio_gateway.exe"
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/gateway-firewall",
+   "status": 200,
+   "response": "{\"blocked\":true,\"fingerprint\":\"918daffd5acc842f439648cef664ce070bd7e9ac8ca7795120b2424a769fffd2\",\"items\":[{\"action\":\"keep\",\"description\":\"The Windows Firewall rule for the ScadaBench gateway already exists\",\"group\":\"ScadaBench\",\"kind\":\"gateway_firewall\",\"name\":\"ScadaBench-Gateway-7f166b55503f\",\"owned\":false,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"},{\"action\":\"add\",\"description\":\"Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its 'allow access?' question was closed); clean-up switches it on again\",\"display\":\"studio_gateway.exe\",\"kind\":\"unblock\",\"name\":\"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"owned\":true,\"program\":\"C:\\\\Studio\\\\native\\\\studio_gateway.exe\"}],\"needs_admin\":true,\"open\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/gateway-firewall",
+   "body": "{\"fingerprint\": \"918daffd5acc842f439648cef664ce070bd7e9ac8ca7795120b2424a769fffd2\", \"confirm\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"applied\":true,\"message\":\"Done: Settings \\u203a Network \\u203a Clean up undoes this.\",\"results\":[{\"description\":\"Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its 'allow access?' question was closed); clean-up switches it on again\",\"key\":\"unblock:TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\",\"message\":\"\",\"ok\":true}]}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "blocking",
+   "value": "!RuntimeError:netsh failed"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/gateway-firewall",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Windows Firewall could not be checked: netsh failed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "gateway_rules",
+   "value": "!ValueError:bad rule list"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/gateway-firewall",
+   "status": 400,
+   "response": "{\"code\":\"validation\",\"details\":[],\"error\":\"Windows Firewall could not be checked: bad rule list\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "adapters",
+   "value": "!RuntimeError:The adapter list could not be read"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=1",
+   "status": 503,
+   "response": "{\"error\":\"The adapter list could not be read\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/network/plan/preview",
+   "body": "{\"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\"}",
+   "content_type": "application/json",
+   "status": 503,
+   "response": "{\"error\":\"The adapter list could not be read\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "adapters",
+   "value": "!KeyError:guid"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=1",
+   "status": 400,
+   "response": "{\"error\":\"'guid'\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "net",
+   "key": "adapters",
+   "value": "!ValueError:odd adapter"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/network/adapters?refresh=1",
+   "status": 400,
+   "response": "{\"error\":\"odd adapter\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 1000000
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/app/update",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"}}\", \"signature\": \"Fa5R4yWaYNkCPeMPKKMqTgtuh098UePvCe_l7YSNG_mwzyJmOeKPDSRXfjPr4LGWMZ1Mrr684f8Fmz37Fl0zCw\"}",
+     "etag": "\"e1\""
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "body": "{\"ignored\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 1000120
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "http": 304
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000120,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"dismissed\": \"0.1.14\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000120,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":true,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"auto\": false}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"auto\":false,\"available\":true,\"checked_at\":1000120,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":true,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"auto\": \"yes\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"auto must be true or false\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"other\": 1}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"auto\":false,\"available\":true,\"checked_at\":1000120,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":true,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"dismissed\": \"x\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"dismissed must be a version\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"dismissed\": 5}",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"dismissed\": 0}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"dismissed must be a version\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"dismissed\": null, \"auto\": true}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000120,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "x",
+   "content_type": "text/plain",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "null",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "\"auto\"",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"invalid\",\"error\":\"Only auto and dismissed can be changed\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/app/update",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":1000120,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 2000000
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "urlerror": true
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":2000000,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"offline\",\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 2000100
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "http": 404
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":2000100,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"no_release\",\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 2000200
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "http": 500
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":2000200,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":\"server_error\",\"important\":false,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 2000300
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "body": "[1]",
+     "etag": null
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 2000400
+  },
+  {
+   "op": "answers",
+   "queue": [
+    {
+     "body": "{\"payload\": \"{\\\"version\\\":\\\"0.1.14\\\",\\\"date\\\":\\\"2026-10-20\\\",\\\"notes\\\":\\\"Faster SLD.\\\",\\\"page\\\":\\\"https://scadabench.com/download\\\",\\\"installer\\\":{\\\"url\\\":\\\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\\\",\\\"sha256\\\":\\\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\\"},\\\"min_version\\\":\\\"0.1.14\\\"}\", \"signature\": \"-HkSWFmc8BYDxnBYi9qqnZPY2AeVrX_tPpyk-InnK2ROn0lTnPLBNfdiYCU61rKvFvM2pALWH2ssZC9xt7uQAA\"}",
+     "etag": "\"e2\""
+    }
+   ]
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":2000400,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":true,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/app/update",
+   "body": "{\"dismissed\": \"0.1.14\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":2000400,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":true,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/app/update",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":true,\"checked_at\":2000400,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":true,\"latest\":{\"date\":\"2026-10-20\",\"installer\":{\"sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"url\":\"https://scadabench.com/download/ScadaBench-Setup-0.1.14.exe\"},\"min_version\":\"0.1.14\",\"notes\":\"Faster SLD.\",\"page\":\"https://scadabench.com/download\",\"portable\":null,\"version\":\"0.1.14\"}}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "update_file",
+   "data": "{\"release\": {\"date\": \"x\"}}"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/app/update",
+   "status": 400,
+   "response": "{\"error\":\"'version'\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "update_file",
+   "data": "[1]"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/app/update",
+   "status": 200,
+   "response": "{\"auto\":true,\"available\":false,\"checked_at\":null,\"checking\":false,\"current\":\"0.1.13\",\"dismissed\":false,\"error\":null,\"important\":false,\"latest\":null}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "update_file",
+   "data": "{\"checked_at\": \"x\"}"
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/app/update/check",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "update_file",
+   "data": "{\"release\": {\"version\": \"1.0.0\", \"min_version\": 3}}"
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/app/update",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license",
+   "enforce": false
+  },
+  {
+   "op": "now",
+   "value": 1760000000
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":false,\"expires_at\":null,\"hwid\":null,\"license_id\":null,\"licensed\":true,\"masked_key\":null,\"mode\":\"development\",\"plan\":\"dev\",\"reason\":null,\"server_url\":\"\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"buyer@example.com\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-2345-6789-ABCD-EFGH\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\\\"}\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"https://x.example\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license",
+   "enforce": true
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status?x=1",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "client",
+   "answers": {
+    "trial": [
+     {
+      "raise": [
+       "The trial was already used on this computer.",
+       "trial_used"
+      ]
+     },
+     {
+      "raise": [
+       "Cannot reach the license server.",
+       "offline"
+      ]
+     },
+     {
+      "raise": [
+       "Server trouble",
+       "server_error"
+      ]
+     },
+     {
+      "raise": [
+       "Odd",
+       "weird"
+      ]
+     },
+     {
+      "raise": [
+       "Odd",
+       null
+      ]
+     },
+     {
+      "return": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"nO9I_XeFV9n3WCQNAQae4isoFJ-BEuKHnYI_INNs8F7o2exnErhNPh9W6X1fymv2D2ydqr7x7OU2tF4BZnTLBQ\"}"
+     },
+     {
+      "return": {
+       "payload": 1
+      }
+     },
+     {
+      "return": {
+       "payload": "{\"email\":\"\",\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760000000,\"kid\":\"3097e2de\",\"license_id\":\"TRIAL-abababababab\",\"max_machines\":1,\"type\":\"trial\",\"version\":1}",
+       "signature": "97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 409,
+   "response": "{\"code\":\"trial_used\",\"error\":\"The trial was already used on this computer.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 503,
+   "response": "{\"code\":\"offline\",\"error\":\"Cannot reach the license server.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 503,
+   "response": "{\"code\":\"server_error\",\"error\":\"Server trouble\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 400,
+   "response": "{\"code\":\"weird\",\"error\":\"Odd\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 400,
+   "response": "{\"code\":null,\"error\":\"Odd\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 400,
+   "response": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"The license file is incomplete. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "body": "not json",
+   "content_type": "text/plain",
+   "status": 200,
+   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 1760000061
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "client",
+   "answers": {
+    "activate": [
+     {
+      "return": "{\"payload\": \"{\\\"email\\\":\\\"buyer@example.com\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-2345-6789-ABCD-EFGH\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\"}"
+     },
+     {
+      "raise": [
+       "This key is used on another computer.",
+       "bound_elsewhere"
+      ]
+     },
+     {
+      "raise": [
+       "No such key.",
+       "unknown_key"
+      ]
+     }
+    ],
+    "transfer": [
+     {
+      "return": {
+       "payload": "{\"email\":\"buyer@example.com\",\"expires_at\":0,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"issued_at\":1760000000,\"kid\":\"3097e2de\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"max_machines\":1,\"type\":\"lifetime\",\"version\":1}",
+       "signature": "h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA"
+      }
+     },
+     {
+      "raise": [
+       "Too many moves.",
+       "transfer_limit"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "\"SUBS-2345-6789-ABCD-EFGH\"",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": 5}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": null}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-1111\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{bad",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_key\",\"error\":\"A license key looks like SUBS-XXXX-XXXX-XXXX-XXXX. Copy it from your purchase email.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \" subs-2345-6789-abcd-efgh \"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": 0}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"bound_elsewhere\",\"error\":\"This key is used on another computer.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": \"yes\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": []}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"unknown_key\",\"error\":\"No such key.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": true}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"transfer_limit\",\"error\":\"Too many moves.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate",
+   "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\"}",
+   "content_type": "application/json",
+   "status": 503,
+   "response": "{\"code\":\"offline\",\"error\":\"no canned answer\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 1760000200
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"This is not a license file. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": \"not json\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"This is not a license file. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": 5}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"The license file is incomplete. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": null}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"The license file is incomplete. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": \"[1]\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"The license file is incomplete. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-TEST-TEST-TEST-TEST\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"nO9I_XeFV9n3WCQNAQae4isoFJ-BEuKHnYI_INNs8F7o2exnErhNPh9W6X1fymv2D2ydqr7x7OU2tF4BZnTLBQ\\\"}\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"not_valid_here\",\"error\":\"This license belongs to a different computer. Enter your license key to move it here, or start a trial.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "[\"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"buyer@example.com\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-2345-6789-ABCD-EFGH\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\\\"}\"]",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_certificate\",\"error\":\"This is not a license file. Paste the whole license.cert text.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": {\"certificate\": {\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":1760604800,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"TRIAL-abababababab\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"trial\\\",\\\"version\\\":1}\", \"signature\": \"97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA\"}}}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/activate-offline",
+   "body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"buyer@example.com\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-2345-6789-ABCD-EFGH\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\\\"}\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \" https://lic.example.com// \"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://lic.example.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"ftp://x\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"The server address must start with https://\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": true}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"The server address must start with https://\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": {\"a\": 1}}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_url\",\"error\":\"The server address must start with https://\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"http://localhost:8080/\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"http://localhost:8080\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "x",
+   "content_type": "text/plain",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "[\"https://y\"]",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"https://y\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 1760000400
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license_file",
+   "path": "home/license.cert",
+   "data": "{\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":1760604800,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"TRIAL-abababababab\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"trial\\\",\\\"version\\\":1}\", \"signature\": \"97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA\"}"
+  },
+  {
+   "op": "now",
+   "value": 1760259200
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":4,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "now",
+   "value": 1760086400
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"reason\":\"System clock rollback detected: the date on this computer is earlier than when ScadaBench last ran. Correct the date and time in Windows, then reopen ScadaBench.\",\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license_file",
+   "path": "home/license_state.json",
+   "data": "{\"revoked_reason\": \"gone\"}"
+  },
+  {
+   "op": "license_file",
+   "path": "home/license.cert",
+   "hex": "ff"
+  },
+  {
+   "op": "now",
+   "value": 1760777600
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 400,
+   "response": "{\"error\":\"'utf-8' codec can't decode byte 0xff in position 0: invalid start byte\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "license_file",
+   "path": "home/client_config.json",
+   "data": "[]"
+  },
+  {
+   "op": "now",
+   "value": 1760864000
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 400,
+   "response": "{\"error\":\"'utf-8' codec can't decode byte 0xff in position 0: invalid start byte\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "PUT",
+   "path": "/api/v1/license/config",
+   "body": "{\"server_url\": \"https://z\"}",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  }
+ ]
+}

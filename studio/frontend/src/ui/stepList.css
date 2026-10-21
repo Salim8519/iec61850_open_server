@@ -1,0 +1,22 @@
+/* StepList (change 0150): the one display for waits longer than a moment. */
+.step-list { display: grid; gap: 10px; padding: 14px 16px; border: 1px solid var(--border);
+  border-radius: var(--radius-small); background: var(--surface-2); max-width: 560px; }
+.step-list-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.step-list ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.step-list li { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: start; gap: 8px; }
+.step-icon { display: grid; place-items: center; height: 20px; }
+.step-done .step-icon { color: var(--success); }
+.step-running .step-icon { color: var(--primary); }
+.step-waiting { color: var(--muted); }
+.step-running .step-text > span:first-child { font-weight: 600; }
+.step-text { display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.step-time { white-space: nowrap; }
+.step-bar { display: block; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.step-bar > span { display: block; height: 100%; background: var(--primary); transition: width 0.2s ease; }
+.step-calm { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .step-bar > span { transition: none; } }
+/* WorkPanel: the same list in the middle of the window while a file opens or imports. */
+.work-panel-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center;
+  padding: 16px; background: rgb(23 43 77 / 20%); }
+.work-panel { width: min(480px, 100%); }
+.work-panel .step-list { max-width: none; background: var(--surface); box-shadow: var(--shadow-large); }

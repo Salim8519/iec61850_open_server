@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
+import { createActionQueue } from '../actionQueue';
+import { MASTER_STATUS, masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
+import { liveFeed } from '../../../../api/polls';
 import { MASTER_COPY, RANGES_COPY, TRAFFIC_WORDS } from '../../../../copy/master';
 import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { TabBar } from '../../../../ui/TabBar';
@@ -22,19 +24,20 @@ export function MasterTool() {
   const [tab, setTab] = useState<Tab>('points');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const refresh = useCallback(() => masterApi.status().then(setStatus).catch(reason => setError(reason.message)), []);
+  const refresh = useCallback(() => liveFeed.refresh(MASTER_STATUS), []);
   useEffect(() => {
     masterApi.config().then(setConfig).catch(reason => setError(reason.message));
-    refresh();
-    const timer = setInterval(refresh, 1500);
-    return () => clearInterval(timer);
-  }, [refresh]);
-  const act = (task: () => Promise<unknown>) => {
-    setBusy(true); setError('');
-    task().catch(reason => setError(reason.message)).finally(() => { setBusy(false); refresh(); });
+    return liveFeed.subscribe<MasterStatus>(MASTER_STATUS, 1500, setStatus, reason => setError(reason.message));
+  }, []);
+  const [queue] = useState(createActionQueue);
+  // Saves run quietly so a Connect pressed right after typing the address is not lost (they share the queue).
+  const act = (task: () => Promise<unknown>, quiet = false) => {
+    if (!quiet) setBusy(true);
+    setError('');
+    queue(task).catch(reason => setError(reason.message)).finally(() => { if (!quiet) setBusy(false); refresh(); });
   };
   const save = (protocol: MasterProtocol, host: string, settings: Record<string, number | boolean>) =>
-    act(() => masterApi.saveConfig(protocol, host, settings).then(setConfig));
+    act(() => masterApi.saveConfig(protocol, host, settings).then(setConfig), true);
   if (!config || !status) return <div className="card fill-body"><div className="guide-empty"><p>Loading the SCADA master…</p>
     {error && <p className="explorer-error">{error}</p>}</div></div>;
   const connected = status.state !== 'disconnected' && status.state !== 'failed';
@@ -52,7 +55,7 @@ export function MasterTool() {
       <div className="panel-body">
         {tab === 'points' && <MasterPointTable status={status} fail={setError} />}
         {tab === 'ranges' && modbus && <ModbusRanges status={status} fail={setError} />}
-        {tab === 'traffic' && <TrafficLog running={connected} load={masterApi.traffic} words={TRAFFIC_WORDS}
+        {tab === 'traffic' && <TrafficLog running={connected} load={masterApi.traffic} feedKey="master-traffic" words={TRAFFIC_WORDS}
           hint={MASTER_COPY.trafficHint} />}
         {tab === 'commands' && <MasterCommandLog />}
       </div>

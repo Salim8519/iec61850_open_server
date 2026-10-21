@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "rules": [
+    {"name": "ids", "pattern": "32 lowercase hex", "replace": "<uuid:n> by first appearance in the transcript",
+     "reason": "uuid4().hex ids (IED ids, session_id, run_id, pulse and IPC request ids) are random per run"},
+    {"name": "id_keyed_order", "replace": "objects whose keys are all ids are ordered by <uuid:n>",
+     "reason": "jsonify sorts keys, so an object keyed by random uuid4 ids (health modes.ieds) changes order every run; raw byte order is checked separately from G5"},
+    {"name": "wall_time", "keys": ["timestamp", "time", "at"], "suffixes": ["_at"], "prefixes": ["last_"],
+     "replace": "<ts> for epoch numbers in [1e9, 4e9] or ISO-8601 strings",
+     "reason": "wall-clock time of the recording machine"},
+    {"name": "durations", "prefixes": ["elapsed", "latency", "age"], "suffixes": ["_ms", "_seconds"],
+     "replace": "<dur:int|float> for numbers >= 0 (type kept)",
+     "reason": "timings vary per run; Go may be faster"},
+    {"name": "ports", "replace": "<port> for the server port and udp:<port>: interfaces",
+     "reason": "port 0 binds a free port per run"},
+    {"name": "paths", "replace": "<data>, <bin> for the temp data folder and the native folder",
+     "reason": "temporary folders differ per run"},
+    {"name": "sse_id", "replace": "event ids relative to the first event of the scenario",
+     "reason": "the bus sequence depends on start-up events published before the stream opened"},
+    {"name": "cookie", "replace": "Set-Cookie name and attributes, not the signed value",
+     "reason": "the session cookie is signed with a random secret"}
+  ]
+}

@@ -9,7 +9,6 @@ from studio_app.scl.importer import import_scl
 
 ROOT = Path(__file__).resolve().parents[3]
 BIN = Path(os.environ.get("STUDIO_NATIVE_BIN", ROOT / "studio/native/build/Release"))
-ADAPTER = os.environ.get("STUDIO_GOOSE_ADAPTER", "")
 pytestmark = pytest.mark.skipif(not (BIN / "studio_ied.exe").exists(), reason="Native build required")
 
 
@@ -32,7 +31,6 @@ def test_worker_reports_goose_readiness(tmp_path):
         worker.close()
 
 
-@pytest.mark.skipif(not ADAPTER, reason="Set STUDIO_GOOSE_ADAPTER to a lab adapter GUID")
 def test_frames_survive_vendor_console_output(tmp_path):
     model, config = publisher_model(tmp_path)
     events = []
@@ -40,15 +38,15 @@ def test_frames_survive_vendor_console_output(tmp_path):
     try:
         started = worker.request("start", cfg=str(config), ip="127.50.0.233", port=18133,
                                  controls=model["controls"], edition=2,
-                                 goose={"publish": True, "adapter_guid": ADAPTER})
+                                 goose={"publish": True, "interface": "udp:9:025B12000001"})
         assert started["goose"]["active"], started["goose"]
         deadline = time.monotonic() + 30
         while time.monotonic() < deadline and not any(
                 event.get("event") == "goose_publishing" and event.get("state") == "active" for event in events):
             time.sleep(0.1)
         assert any(event.get("state") == "active" for event in events if event.get("event") == "goose_publishing")
-        # The vendor Ethernet layer prints to the console while opening the adapter.
-        # The private channel must still carry well-formed replies afterwards.
+        # Vendor code prints to the console (the Npcap layer does when opening an adapter).
+        # The private channel must still carry well-formed replies while GOOSE is published.
         for _ in range(20):
             assert worker.request("read", ref="IED1_XCBRGenericIO/XCBR1.Pos.stVal") in {0, 1, 2, 3}
         assert not any(event.get("event") == "worker_failed" for event in events)

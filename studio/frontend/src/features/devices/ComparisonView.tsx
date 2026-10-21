@@ -6,6 +6,7 @@ import { hint } from '../../copy/hints';
 import { COMPARE } from '../../copy/compare';
 import { useListFilter } from '../../state/useListFilter';
 import { EmptyState } from '../../ui/EmptyState';
+import { Spinner } from '../../ui/Spinner';
 import { FilterBar } from '../../ui/FilterBar';
 import { HelpTip } from '../../ui/HelpTip';
 import { StatusPill } from '../../ui/StatusPill';
@@ -23,8 +24,11 @@ export function ComparisonView({ iedId, ready }: { iedId: string; ready: boolean
     if (!ready) return;
     api<Comparison>(`/live/${iedId}/comparison`).then(setResult).catch(reason => setError(reason.message));
   }, [iedId, ready]);
+  // While running, an empty result means the device model is still being read: say so, not "press Run".
   if (!ready || !result) return <div className="fill-scroll"><EmptyState icon={<GitCompare size={20} />}
-    title="SCD compared with the device" hintId={error ? 'live.compare' : 'live.compare_wait'} /></div>;
+    title="SCD compared with the device" hintId={error || ready ? 'live.compare' : 'live.compare_wait'}
+    action={ready && !error ? <Spinner label="Reading the device and comparing it with the SCD…"
+      slowHint="Still reading. Large devices can take a minute." /> : undefined} /></div>;
   const differences = result.signals.filter(row => row.category !== 'match').length
     + result.summary.datasets_different + result.summary.reports_missing;
   const counts = { problems: differences, all: result.signals.length, missing_on_device: result.summary.missing_on_device ?? 0,

@@ -1,11 +1,14 @@
 // GOOSE publishing for simulated IEDs. libiec61850 owns the GoCB state and frames;
-// this module only selects the adapter and reports what the stack did.
+// this module only points the stack at the Studio GOOSE engine and reports what it did.
+// A worker never receives a network adapter (GOOSE-05, ADR-0073): the engine alone
+// decides whether a frame may leave this PC.
 #include "publishing.hpp"
-#include "npcap.hpp"
 #include <thread>
 
 namespace {
-void gocb_event(MmsGooseControlBlock control, int event, void*) {
+void gocb_event(MmsGooseControlBlock control, int event, void* parameter) {
+    // A client changed GoEna; the next frames go out on the following periodic runs.
+    static_cast<Server*>(parameter)->loop.poll_for(20);
     auto ln = MmsGooseControlBlock_getLogicalNode(control);
     std::string name = MmsGooseControlBlock_getName(control);
     std::string node = ln ? ln->name : "";
@@ -26,20 +29,14 @@ Json prepare_goose(Server& server, const Json& config) {
     auto settings = config.value("goose", Json::object());
     if (!settings.value("publish", false) || summary["control_blocks"] == 0) return summary;
     summary["requested"] = true;
-    auto status = npcap_status();
-    summary["npcap"] = status;
-    if (!status["available"].get<bool>()) {
-        summary["reason"] = "Npcap is not installed, so GOOSE cannot be sent";
+    auto interface_id = settings.value("interface", "");
+    if (interface_id.rfind("udp:", 0) != 0) {
+        summary["reason"] = "GOOSE is sent only through the ScadaBench GOOSE engine";
         return summary;
     }
-    try {
-        server.goose_interface = npcap_interface_for(settings.at("adapter_guid").get<std::string>());
-    } catch (const std::exception& error) {
-        summary["reason"] = error.what();
-        return summary;
-    }
+    server.goose_interface = interface_id;
     IedServer_setGooseInterfaceId(server.handle, server.goose_interface.c_str());
-    IedServer_setGoCBHandler(server.handle, gocb_event, nullptr);
+    IedServer_setGoCBHandler(server.handle, gocb_event, &server);
     summary["active"] = true;
     return summary;
 }
@@ -47,9 +44,11 @@ Json prepare_goose(Server& server, const Json& config) {
 void start_goose(Server& server) {
     if (server.goose_interface.empty()) return;
     auto handle = server.handle;
-    server.goose_thread = std::thread([handle] {
+    auto loop = &server.loop;
+    server.goose_thread = std::thread([handle, loop] {
         emit_frame({{"event", "goose_publishing"}, {"state", "starting"}});
         IedServer_enableGoosePublishing(handle);
+        loop->poll_for(20);  // the first frames go out on the next periodic runs
         emit_frame({{"event", "goose_publishing"}, {"state", "active"}});
     });
 }

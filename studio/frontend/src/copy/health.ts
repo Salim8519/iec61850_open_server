@@ -11,14 +11,14 @@ export const VERDICTS: Record<Verdict, Status> = {
 };
 
 export const AREAS: Record<string, { label: string; hint: string }> = {
-  role: { label: 'Role', hint: 'IEDs that are left out are not checked.' },
+  role: { label: 'Role', hint: 'Skipped IEDs are not checked.' },
   connection: { label: 'Connection', hint: 'Whether ScadaBench can talk to the device on port 102.' },
   model: { label: 'Data model', hint: 'Every data point in the SCD should exist on the device with the same type.' },
   datasets: { label: 'Datasets', hint: 'Datasets group the values that reports and GOOSE send.' },
   reports: { label: 'Report blocks', hint: 'Report blocks send values to clients such as SCADA.' },
   report_settings: { label: 'Report settings', hint: 'The dataset and configuration revision of each report block.' },
   goose_device: { label: 'GOOSE block on device', hint: 'GOOSE ID, dataset, revision and on/off of each GOOSE block, read from the device.' },
-  goose_wire: { label: 'GOOSE on the network', hint: 'What the listener actually received on the lab adapter.' },
+  goose_wire: { label: 'GOOSE on the network', hint: 'What ScadaBench actually received, from simulated IEDs or real devices.' },
   mode: { label: 'Mode', hint: 'Whether each logical device is on, blocked, in test or off, and whether the IED is in simulation.' },
 };
 

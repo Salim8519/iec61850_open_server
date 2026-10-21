@@ -1,0 +1,1116 @@
+{
+"validation": [
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiBudWxsLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "9cc973ce98ee46665f1027c648d9f9e80dd3aee025220912abe6d3c9a795971f",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: None",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAzMjMyMjM1Nzc3LCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "148111b82148f551c8d080dadd9ef09b89a5b7401a54023e3932b4276923c492",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": 3232235777, \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiB0cnVlLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "b0d9212d3a465adaef62795ca7dbc746ba8a3ad6874c4be08216702aeaa3b1d8",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": true, \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiBmYWxzZSwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "4038f9ddd1670cfb04efb707d0fdef7cc79f1280abde04da7b40e78d9f72e39f",
+"error": "HelperRefused",
+"message": "Address 0.0.0.0 cannot be used for the lab network",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAtMSwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "233e54541fe2a22fe0f334ba572bb93b5aeed07e2e77c504615b8e86651e14f8",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: -1",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiA0Mjk0OTY3Mjk2LCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "d1c25ff6d36737a1cfe77ea3024ed154232bc9f3892a2a2705a3035666132b8d",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: 4294967296",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAxLjUsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "cc0276a3d537551d9e0a2198afae28eb39161f897a60635872c46ad921263295",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: 1.5",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiBbXSwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "52789b3d6f6bcd6864bbb2eaa1cf9768e7e96d9af960342f4df18b8699964dee",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: []",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiB7fSwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "85b01534b46a6d44ceff4d1918bd242c1a5343e3bd39d7643c6a7869c1bebe85",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: {}",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTI3LjAuMC41IiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "b92039c271439c4b09eac22525afb60bb8e23243be879ab455b97d7a763b086c",
+"error": "HelperRefused",
+"message": "Address 127.0.0.5 cannot be used for the lab network",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMC4wLjAuMCIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "2a99ba601d021f0995ecea6a4fe02b108f3eed6c12e511499a0eb32d3fb47c30",
+"error": "HelperRefused",
+"message": "Address 0.0.0.0 cannot be used for the lab network",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMjI0LjEuMS4xIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "3acc948d6bf4b0223e0648c7011d282e3b6f3add890f46c422e5106c288c4556",
+"error": "HelperRefused",
+"message": "Address 224.1.1.1 cannot be used for the lab network",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTY5LjI1NC4xLjIiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "c8e45bb9e4802088dbdb4e4971ff2ce55d7e9be2a46fc598f0fa806aded906b5",
+"error": "HelperRefused",
+"message": "Address 169.254.1.2 cannot be used for the lab network",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMS4yLjMiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "d62d9e8d2ed25255913a74c7e2ee94eb3587691dd610aa23515d09c90a697934",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: '1.2.3'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMDEuMi4zLjQiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "4f523595023e6b2bb761f69cc73c50a23256281a41c86d407a943cdaaa0ce614",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: '01.2.3.4'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMS4yLjMuNC8yNCIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "b1d01129e1b8aa1dfb7a53b284bd1ffce25f62fd193538c5f8d08ed8ffc579e7",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: '1.2.3.4/24'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMjU1LjI1NS4yNTUuMjU1IiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "44f856bc1b36e40dc7f2aafee55fb319424f61baa24ecb31b715e9449bf819d9",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"255.255.255.255\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTAuMC4wLjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "0bc9c26d326263310e778be3baa59ba122c3375b57f084c4473f3cd5d1158975",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"10.0.0.1\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiaXQncyIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "5fda9f0aa8915a0622d2e7cb73dbe370d0fdb39043f26585417baa30775b1e9d",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: \"it's\"",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiXHUwMGU5IiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "86fd283ca3c499a9a2af55a72e618f1210bc98648d3eb52b11e1354ddd04ffaa",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: '\u00e9'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "a96f22c778a2858fe78f5689e9941b1c69351396ab6f6b5e50edb1a63a57eb8c",
+"error": "HelperRefused",
+"message": "Not an IPv4 address: None",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMWF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "bf4469a21c635069f90cf874061b9f45c78988b759766e2ddb7398969f3eb81f",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter GUID",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9XG4iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "ad6cd7e23cdd88b54d54a54cc654a40d7f7be54d3402a538703e3d2cd0401e4e",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\\n\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9XG5cbiIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "6824e917d0a8c8f3023d3c3d49d1e3c437fb0db07f8ddb6183798c0d0801be30",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter GUID",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogbnVsbCwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "2426baecfaf69f41282a69a92747ea677d42115cf86566c03d66924a7c150946",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter GUID",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogIldpLUZpOyBSZW1vdmUtSXRlbSBDOlxcIiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "f4e16060b145f93cb6b5c1b6df7c21086c3942d97d91cfa8b926b22fbc7a20b1",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter GUID",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiAwLCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "66033698470b223802324752eda66d4fa72c79c39b4f7e28e193eae346c127f9",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter index",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiAtMSwgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "90041e03d56e9e727b207aa5071a402d0c10665e7b0a8020dcf24ec27d9df039",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter index",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiB0cnVlLCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "5c1245f008802cf9a4afdc2f3cb87535759cae2672670a25855aca9d6186bd47",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter index",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiAiNyIsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "6549d37c4081d6d00e8e1a0f51a4c92a06ff26e1b2882a2d71991f06cee5490b",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter index",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LjAsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "256cbc015ea485029a03d43dedc7a020226b01a2caa768973fc36420219a09ac",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter index",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiAxMTgwNTkxNjIwNzE3NDExMzAzNDI0LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "726f3f4e77dff10302bfaea0d2e439bd795a0643192846ef254a80f5b36cc67d",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 1180591620717411303424, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiBudWxsLCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "84f36e9cf6741690d82949b55154196f367f68331553461040cb74949d03d358",
+"error": "HelperRefused",
+"message": "Alias item has no valid adapter index",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiA3LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "86a1c1c00ca9669d262cb5c5dd47649af0c504473e35266e31a9b36637d9cbed",
+"error": "HelperRefused",
+"message": "Alias prefix must be between 8 and 30",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiA4LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "910091d42796eff5e9f3c0909a33091a265838734cf443ec114c35dd51d2bb86",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 8, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAzMCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "b0016acdfa19d15994ba10fbaeaae9c172b4879dd289a43d080498d17513f64e",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 30, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAzMSwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "1d5225fa8bb4af9247aa7c212d3b177e1162234fbb76981d0a7946571c4bf697",
+"error": "HelperRefused",
+"message": "Alias prefix must be between 8 and 30",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiB0cnVlLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "04e7722464234160bce7e444ba4abb157180b23abc9db02864c3962d119590c9",
+"error": "HelperRefused",
+"message": "Alias prefix must be between 8 and 30",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAiMjQiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "16e4d9318c8c88554d1698714508afa67bd92da80cbb1acebc84ce405635b60b",
+"error": "HelperRefused",
+"message": "Alias prefix must be between 8 and 30",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNC4wLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "02b72ceef2344db7a5ef41e64c9eae000582d6651c30b60ce3bd201abe4a8f75",
+"error": "HelperRefused",
+"message": "Alias prefix must be between 8 and 30",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogZmFsc2UsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "fea5d489dfe001bcac2b107ab46df0fb7f8ac1481fecd767b1871e3d80eb3048",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogMCwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "e1534eebac88888c79a99c1b027096ec98bb8febfc3943ee1411761af7ba847b",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogIiIsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "52b66feb8f0f06bb8e3e1bf66ea27fb86c936a2a4b80c353610f925ba33c7c4b",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogInllcyIsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "b3504fcf8f2cf806ab04fa3b677b8d15e754b090072503d905f5e5b78cc002a9",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": \"yes\", \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogMSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "ba167d62ac0b209427258e3679ed5518e750f2c9d24f10de5eb00583da959bd5",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": 1, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogW10sICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "5451ef58babcd6754a3b97a746ed0d9a555ea1e9ca09faf70701282d4353dde8",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogWzBdLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "4090d33fbfb2ef533fa0e318432a903eef735d574d15bacc3c2166080ea9aa5d",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": [0], \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogbnVsbCwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "46a829624fe2a3b110350489f1a1bd6ab98b47c258c43615495a72748e420f17",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAicm91dGUiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "53d5e319da45d3a7c4e1fc5544dda978d66c8206a464fac10f56071eb4ed243c",
+"error": "HelperRefused",
+"message": "Unknown change kind 'route'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5QUIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "439533eabb15484cde7d79140b138b919919519b8ee17b58f1fab5ca3e869f81",
+"error": "HelperRefused",
+"message": "Firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWJcbiIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiXSwgInBvcnRzIjogWzEwMl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "29f10585e54c7f395f20564ae3e6289af074372c174b3f579f9e8e59c087b319",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\\n\", \"group\": \"Substation Studio\", \"addresses\": [\"192.168.50.21\"], \"ports\": [102], \"program\": \"C:\\\\Studio\\\\native\\\\studio_ied.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJBbGxvdyBldmVyeXRoaW5nIiwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImFkZHJlc3NlcyI6IFsiMTkyLjE2OC41MC4yMSJdLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "67b2d30038541303a2465b12b2a261320920b2cd13c7157f2e4541bd1079039e",
+"error": "HelperRefused",
+"message": "Firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6IDUsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiXSwgInBvcnRzIjogWzEwMl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "097d483a538e1b3fdbfdc8423a21cc967875e13e70e19a3c06c6553de9bd2f6a",
+"error": "HelperRefused",
+"message": "Firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiT3RoZXIiLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "10b634b8523b55665a4f4d30500c7698be42bddc6cb0776e9a1a090c5a24609a",
+"error": "HelperRefused",
+"message": "Firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiBudWxsLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "8a9b92eea7bface0cd69a9326d97b8920b9089bc097c3bd91b988d11a467b56d",
+"error": "HelperRefused",
+"message": "Firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAic3Vic3RhdGlvbiBzdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "be5d43e90e7302209a452ae85fd7a443f6fab2257e560b1c1597df50365103c1",
+"error": "HelperRefused",
+"message": "Firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFtdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "ec3a6dfee4ff274a52cdc086b3200144fce74ef2c40a195e4ce585aab604eb25",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFswXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "294f67a54702819fd677d5152507dd623ce58b7d41682f5fb2bf8bad135191b2",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFs2NTUzNl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "37a68300da2a06dcb58a8bf2d66afe612f605ab2ee0a098b293d0feeaf7c7014",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFt0cnVlXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "4c893ef4a9553a808f011b1907ca700358efbe63fe10520a39ea45b2c410d22c",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsiMTAyIl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "b6139326965961712400e817b1feabb9787dd2b4085f601bf7a2dd52c2c071cb",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IDEwMiwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "2035bbb57996926ba6175d1a1a80d425ef7837ccb7e890ef01d2a18c435a7b06",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxLCA2NTUzNV0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "22d074b1f8c2d229628cb0a86418fa0f1852c3394f6d423da9e9c06506f09ca7",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"group\": \"Substation Studio\", \"addresses\": [\"192.168.50.21\"], \"ports\": [1, 65535], \"program\": \"C:\\\\Studio\\\\native\\\\studio_ied.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDIuMF0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "bc565926d224385cc4303ff7da1c2b99f71958af60c5eff1a248fe186c8ef240",
+"error": "HelperRefused",
+"message": "Firewall ports are invalid",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogW10sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "7abfb07ec244edcfbb3257f098469cd861fed6fa5a5cfb2904c50a6e3b6a8555",
+"error": "HelperRefused",
+"message": "Firewall rule needs at least one address",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogIngiLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "4373132be382f3fc9ae5eceae2279a92f85a7d9e03f6048922a7a60ca2272a8f",
+"error": "HelperRefused",
+"message": "Firewall rule needs at least one address",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxLjIuMy40IiwgIjEyNy4wLjAuMSJdLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "bfbdf2fcc1116cad8bfdb83ec8cca5631ca9892f131e987c795e94309d304e1a",
+"error": "HelperRefused",
+"message": "Address 127.0.0.1 cannot be used for the lab network",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWzVdLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "63e2220e758830b0640c66413e9f4ac9655434441529ec98959a9b82a8f012e8",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"group\": \"Substation Studio\", \"addresses\": [5], \"ports\": [102], \"program\": \"C:\\\\Studio\\\\native\\\\studio_ied.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogbnVsbCwgInBvcnRzIjogWzEwMl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "fcdd9c3dd20a4856c37751769470cb54b68ce78230905500f48a9afcc7e60f49",
+"error": "HelperRefused",
+"message": "Firewall rule needs at least one address",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU1RVRElPXFxOQVRJVkVcXFNUVURJT19JRUQuRVhFIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "b733a1ec80697234d758e3a6d8780cc5b569110a6b4571c878e63bb692da619d",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"group\": \"Substation Studio\", \"addresses\": [\"192.168.50.21\"], \"ports\": [102], \"program\": \"C:\\\\STUDIO\\\\NATIVE\\\\STUDIO_IED.EXE\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOi9TdHVkaW8vbmF0aXZlL3N0dWRpb19pZWQuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "ad52dc09d01d0600752dce7f36c93d1d4aacfcc8c8c1e4787eddf4b6693fc359",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"group\": \"Substation Studio\", \"addresses\": [\"192.168.50.21\"], \"ports\": [102], \"program\": \"C:/Studio/native/studio_ied.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFx4XFwuLlxcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "f740a056eda054dbd635c587065c5e5713963d8c2bf4801cb0eba2e97d3553d9",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"group\": \"Substation Studio\", \"addresses\": [\"192.168.50.21\"], \"ports\": [102], \"program\": \"C:\\\\Studio\\\\x\\\\..\\\\native\\\\studio_ied.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICJDOlxcV2luZG93c1xcU3lzdGVtMzJcXGNtZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "beae475f33c8220b42da714870b9066ad806a7ebbd2eb55c41df65d46a693ac7",
+"error": "HelperRefused",
+"message": "Firewall rule must name the ScadaBench IED worker",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6IG51bGwsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "2b59e5ac0a2ee078596bff81263820321ffb44fe899dae4927722881c5ac19b9",
+"error": "HelperRefused",
+"message": "Firewall rule must name the ScadaBench IED worker",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZmlyZXdhbGwiLCAibmFtZSI6ICJTdWJzdGF0aW9uU3R1ZGlvLU1NUy0wMTIzNDU2Nzg5YWIiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAiYWRkcmVzc2VzIjogWyIxOTIuMTY4LjUwLjIxIl0sICJwb3J0cyI6IFsxMDJdLCAicHJvZ3JhbSI6ICIiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "75ddd5c281b1877e997e4a1313f472e48c77f9ea1ac0e65f86bc9c1fe1842b7c",
+"error": "HelperRefused",
+"message": "Firewall rule must name the ScadaBench IED worker",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJwcm9ncmFtIjogImM6XFxzdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "659a8bb73f7dd73f0f51b48369b465477ed2f746ad0e297d727e65eafea609bc",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"gateway_firewall\", \"name\": \"ScadaBench-Gateway-7f166b55503f\", \"group\": \"ScadaBench\", \"program\": \"c:\\\\studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "fe38f4906738f86c4607fa3761d578fd6158b786c723f2cb9390a0a0d10ba092",
+"error": "HelperRefused",
+"message": "Gateway firewall changes must name the ScadaBench gateway worker",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJwcm9ncmFtIjogIkM6XFxXaW5kb3dzXFxTeXN0ZW0zMlxcc3ZjaG9zdC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "954defaba3c79bb5c1b03e6e832724f3f7b73a8ec4abcb69f056542f769cbaac",
+"error": "HelperRefused",
+"message": "Gateway firewall changes must name the ScadaBench gateway worker",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNvbWV0aGluZy1lbHNlIiwgImdyb3VwIjogIlNjYWRhQmVuY2giLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "2bb6e04f3a6e942793da513f9a407eaf43ac88425ba88652449e5c8106a59afb",
+"error": "HelperRefused",
+"message": "Gateway firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU3Vic3RhdGlvbiBTdHVkaW8iLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "6e3f357f5f722bef722a327c3d5b362562f77740592f60a090c4b421d41f29af",
+"error": "HelperRefused",
+"message": "Gateway firewall item is not a ScadaBench rule",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIngnOyBSZW1vdmUtTmV0RmlyZXdhbGxSdWxlIC1OYW1lICo7ICciLCAiZGlzcGxheSI6ICJzdHVkaW9fZ2F0ZXdheS5leGUiLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "f2ae805b71c9638ff4b046ff9917fdf248d5dccd23e6b21c4203b84de58d3089",
+"error": "HelperRefused",
+"message": "Not a Windows Firewall rule name",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc1x1MDBlOXJ7XHUwMGM0Qn1cdTAwZTc6XFx4LmV4ZSAoMSkiLCAiZGlzcGxheSI6ICJzdHVkaW9fZ2F0ZXdheS5leGUiLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "693fb85497a69bfd30fd9c02b76467c2da98791d51abeaa0d2039f3184a8e3fc",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"unblock\", \"name\": \"TCP Query Us\\u00e9r{\\u00c4B}\\u00e7:\\\\x.exe (1)\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLCAiZGlzcGxheSI6ICJzdHVkaW9fZ2F0ZXdheS5leGUiLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "32c74036b698ff73452eb8fdd84691a2f92fa8a434ea5cb0df6a3f04ecd99495",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"unblock\", \"name\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwgImRpc3BsYXkiOiAic3R1ZGlvX2dhdGV3YXkuZXhlIiwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "faf8bd56d333a8893f5299c7d4d533acbaf64eb36c0877a7a6646f4e0de9b7ea",
+"error": "HelperRefused",
+"message": "Not a Windows Firewall rule name",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogInJ1bGVcbiIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "d29ea0181f307ab30cf27666dd21ce148460c4a743367e033588b86702d38129",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"unblock\", \"name\": \"rule\\n\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogInJ1XG5sZSIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "29422cedcf9e0bba8d0f2c0096616be830223740bf608ba40d983148a6785345",
+"error": "HelperRefused",
+"message": "Not a Windows Firewall rule name",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIiIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "3a86cdfd403b72bb2b06f279978cfb124acb797c6b93a252d6831f81cb061ea2",
+"error": "HelperRefused",
+"message": "Not a Windows Firewall rule name",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogImFiXCJjIiwgImRpc3BsYXkiOiAic3R1ZGlvX2dhdGV3YXkuZXhlIiwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "3db940f767344ee43b24ca179f90be00a671ff06d5b7ce92e5f70fb8be23215d",
+"error": "HelperRefused",
+"message": "Not a Windows Firewall rule name",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlVEUF94LTEuMjozKCkiLCAiZGlzcGxheSI6ICJzdHVkaW9fZ2F0ZXdheS5leGUiLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "f6c7feb40fb29711cb525763a5bcacca2c9aa2fc3c6e493b8b88367190d2936c",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"unblock\", \"name\": \"UDP_x-1.2:3()\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "b3a7eba93559ce99b1b6595bc0440da56e0f5d4d6143263fd142ea673d588dff",
+"error": "HelperRefused",
+"message": "Gateway firewall changes must name the ScadaBench gateway worker",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiBudWxsLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "c53c9c8d68beec13c2efc342cb6aa9576266f3c1e9c13206e99f4cc7489b5be0",
+"error": "HelperRefused",
+"message": "Unknown change kind None",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiA1LCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "d86fe06b2e839b2ac91a7f121e372d6da57e5ced55fced2cd2b798170dbd551e",
+"error": "HelperRefused",
+"message": "Unknown change kind 5",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiBbIngiXSwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "66e31c372156296ebbcebca4b7a892d717c56af4bfd929049047fcaab5d36026",
+"error": "HelperRefused",
+"message": "Unknown change kind ['x']",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiaXQncyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"digest": "2abf943c16b2f01fcb579da55a83915c03bb2ed54adbc4c40d11a339da76006f",
+"error": "HelperRefused",
+"message": "Unknown change kind \"it's\"",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiQWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "e7cca58cb6914fe82830a0d423185d7b7fd7e1cd9ba0bccbdac19695824f5a25",
+"error": "HelperRefused",
+"message": "Unknown change kind 'Alias'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFtbeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dXX0=",
+"digest": "ed9cde96383158c0f3081d96080816f915d47ee43a5c5b0f6f1337f8991b19cd",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFsiYWxpYXMiXX0=",
+"digest": "0c7f19f28b30fee6cbb717b46c938f3291eb1313b20b43cc1f7aedfa41369253",
+"error": "HelperRefused",
+"message": "Only changes owned by ScadaBench can be applied or removed",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImZpcmV3YWxsIiwgIm5hbWUiOiAiU3Vic3RhdGlvblN0dWRpby1NTVMtMDEyMzQ1Njc4OWFiIiwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImFkZHJlc3NlcyI6IFsiMTkyLjE2OC41MC4yMSJdLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJnYXRld2F5X2ZpcmV3YWxsIiwgIm5hbWUiOiAiU2NhZGFCZW5jaC1HYXRld2F5LTdmMTY2YjU1NTAzZiIsICJncm91cCI6ICJTY2FkYUJlbmNoIiwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "05258c5d8e003cf6393a726845cc51559e2f4e13eba9c9c9c65cd9903165b6dd",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"firewall\", \"name\": \"SubstationStudio-MMS-0123456789ab\", \"group\": \"Substation Studio\", \"addresses\": [\"192.168.50.21\"], \"ports\": [102], \"program\": \"C:\\\\Studio\\\\native\\\\studio_ied.exe\", \"owned\": true, \"action\": \"add\"}, {\"kind\": \"gateway_firewall\", \"name\": \"ScadaBench-Gateway-7f166b55503f\", \"group\": \"ScadaBench\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}, {\"kind\": \"unblock\", \"name\": \"TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\\\studio\\\\native\\\\studio_gateway.exe\", \"display\": \"studio_gateway.exe\", \"program\": \"C:\\\\Studio\\\\native\\\\studio_gateway.exe\", \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiZm9ybWF0LWRpc2siLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "a7e0edd53fc42483c1c8cf0d695b215f8a1ec4c7a9e61fbb284b52affc5dd50f",
+"error": "HelperRefused",
+"message": "Unknown helper action",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAicmVtb3ZlIiwgImZpbmdlcnByaW50IjogImYiLCAiaXRlbXMiOiBbeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "f9ddf4b0b41b11fe43450182fb18b7f6513a0a350096e0adf9ccff99bcd5ff96",
+"ok": "{\"action\": \"remove\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFtdfQ==",
+"digest": "07324f6130c3644b1b6fe582bdfac0af09843c8dc190e4062985a8ef8a168efb",
+"error": "HelperRefused",
+"message": "Request must contain between 1 and 64 changes",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "86d1ca2046ef9ce257289b166b634107cc4ccd018860b5022e7f71ed497da56e",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}, {\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"digest": "205c2ca1103f0128ae1917533d2a39253253a7ca07d2fc995533231787478c59",
+"error": "HelperRefused",
+"message": "Request must contain between 1 and 64 changes",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiaXRlbXMiOiAieCJ9",
+"digest": "63457d235ed082cf6d433c51dba0aebbb8404c041e3b4a2ef44cf7f8603a04a9",
+"error": "HelperRefused",
+"message": "Unknown helper action",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiBbImFwcGx5Il0sICJpdGVtcyI6IFtdfQ==",
+"digest": "7bf0666ca0c98f5476cce46c456985970c940ae6d4a1bcaa47b3d30ef5c5e3c7",
+"error": "TypeError",
+"message": "unhashable type: 'list'",
+"code": null,
+"details": null
+},
+{
+"payload": "WzFd",
+"digest": "080a9ed428559ef602668b4c00f114f1a11c3f6b02a435f0bdc154578e4d7f22",
+"error": "AttributeError",
+"message": "'list' object has no attribute 'get'",
+"code": null,
+"details": null
+},
+{
+"payload": "Ingi",
+"digest": "ba2df4903a2c14e86dc3bcca58911b44ac1d2514b7227bf6eb08cfb978f55a1b",
+"error": "AttributeError",
+"message": "'str' object has no attribute 'get'",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "2ae7acefd138d52dbc3489a5bc4b301264ee3191259b9417778b838706d6353a",
+"error": "HelperRefused",
+"message": "Unknown helper action",
+"code": null,
+"details": null
+},
+{
+"payload": "e2JhZA==",
+"digest": "17eed55d881c0dd5fe0935a98d89dd9e52d62aed941f3fb7d17bd490e5aa3e8f",
+"error": "HelperRefused",
+"message": "Request file is not valid JSON",
+"code": null,
+"details": null
+},
+{
+"payload": "77u/eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "b6c80e1078ff2c7159ded4eb73fd0e20bc24187b5ffb4c3181467fe5b51bc4e8",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "eyJhIjogIv8ifQ==",
+"digest": "8dc39d0784734fd37c37fdb210806e5495a5d946245f46e3cace3d0d15215b73",
+"error": "HelperRefused",
+"message": "Request file is not valid JSON",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19IA==",
+"digest": "58b703471820f2bf0b1482022c776c8e40784d13a92abb18642a6c80fd1fbf9e",
+"ok": "{\"action\": \"apply\", \"fingerprint\": \"f\", \"items\": [{\"kind\": \"alias\", \"adapter_guid\": \"{11111111-1111-1111-1111-111111111111}\", \"adapter_index\": 7, \"adapter_name\": \"Lab NIC\", \"ip\": \"192.168.50.21\", \"prefix\": 24, \"owned\": true, \"action\": \"add\"}]}"
+},
+{
+"payload": "",
+"digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+"error": "HelperRefused",
+"message": "Request file is not valid JSON",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "0000000000000000000000000000000000000000000000000000000000000000",
+"error": "HelperRefused",
+"message": "Request file changed after ScadaBench prepared it",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "E086D587DFD0DA563AA17F984211A6F4ECBB21A76F68DF51E1F1810CA18812CB",
+"error": "HelperRefused",
+"message": "Request file changed after ScadaBench prepared it",
+"code": null,
+"details": null
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC45OSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"digest": "e086d587dfd0da563aa17f984211a6f4ecbb21a76f68df51e1f1810ca18812cb",
+"error": "HelperRefused",
+"message": "Request file changed after ScadaBench prepared it",
+"code": null,
+"details": null
+}
+],
+"runner": [
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImZpcmV3YWxsIiwgIm5hbWUiOiAiU3Vic3RhdGlvblN0dWRpby1NTVMtMDEyMzQ1Njc4OWFiIiwgImdyb3VwIjogIlN1YnN0YXRpb24gU3R1ZGlvIiwgImFkZHJlc3NlcyI6IFsiMTkyLjE2OC41MC4yMSJdLCAicG9ydHMiOiBbMTAyXSwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9faWVkLmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJnYXRld2F5X2ZpcmV3YWxsIiwgIm5hbWUiOiAiU2NhZGFCZW5jaC1HYXRld2F5LTdmMTY2YjU1NTAzZiIsICJncm91cCI6ICJTY2FkYUJlbmNoIiwgInByb2dyYW0iOiAiQzpcXFN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAidW5ibG9jayIsICJuYW1lIjogIlRDUCBRdWVyeSBVc2Vye0NENTA4ODNDLTE1MkYtNEEzQS04NjRDLTAwQTUyMTU0ODA4Rn1jOlxcc3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJkaXNwbGF5IjogInN0dWRpb19nYXRld2F5LmV4ZSIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifV19",
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetFirewallRule -Name 'SubstationStudio-MMS-0123456789ab' -DisplayName 'ScadaBench simulated IEDs (MMS)' -Group 'Substation Studio' -Direction Inbound -Action Allow -Protocol TCP -LocalPort 102 -LocalAddress 192.168.50.21 -Program 'C:\\Studio\\native\\studio_ied.exe' -Profile Any | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetFirewallRule -Name 'ScadaBench-Gateway-7f166b55503f' -DisplayName 'ScadaBench station gateway' -Group 'ScadaBench' -Direction Inbound -Action Allow -Protocol TCP -Program 'C:\\Studio\\native\\studio_gateway.exe' -Profile Any | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; $rule = Get-NetFirewallRule -Name 'TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe'; if ($rule.Action -ne 'Block' -or $rule.Direction -ne 'Inbound' -or (($rule | Get-NetFirewallApplicationFilter).Program -ne 'C:\\Studio\\native\\studio_gateway.exe')) { throw 'This rule is not a Windows block rule for the ScadaBench gateway; nothing was changed' }; Disable-NetFirewallRule -Name 'TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe' | Out-Null"
+],
+"timeout": 60
+}
+],
+"exit": 0,
+"result": "eyJyZWZ1c2VkIjogZmFsc2UsICJyZXN1bHRzIjogW3sia2V5IjogImFsaWFzOnsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9OjE5Mi4xNjguNTAuMjEiLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifSwgeyJrZXkiOiAiZmlyZXdhbGw6U3Vic3RhdGlvblN0dWRpby1NTVMtMDEyMzQ1Njc4OWFiIiwgIm9rIjogZmFsc2UsICJtZXNzYWdlIjogIiAgKyBDYXRlZ29yeUluZm8gOiB4In0sIHsia2V5IjogImZpcmV3YWxsOlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAib2siOiBmYWxzZSwgIm1lc3NhZ2UiOiAibGFzdCBvdXQifSwgeyJrZXkiOiAidW5ibG9jazpUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifV19"
+},
+{
+"payload": "eyJhY3Rpb24iOiAicmVtb3ZlIiwgImZpbmdlcnByaW50IjogImYiLCAiaXRlbXMiOiBbeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJmaXJld2FsbCIsICJuYW1lIjogIlN1YnN0YXRpb25TdHVkaW8tTU1TLTAxMjM0NTY3ODlhYiIsICJncm91cCI6ICJTdWJzdGF0aW9uIFN0dWRpbyIsICJhZGRyZXNzZXMiOiBbIjE5Mi4xNjguNTAuMjEiXSwgInBvcnRzIjogWzEwMl0sICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2llZC5leGUiLCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiZ2F0ZXdheV9maXJld2FsbCIsICJuYW1lIjogIlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAiZ3JvdXAiOiAiU2NhZGFCZW5jaCIsICJwcm9ncmFtIjogIkM6XFxTdHVkaW9cXG5hdGl2ZVxcc3R1ZGlvX2dhdGV3YXkuZXhlIiwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogInVuYmxvY2siLCAibmFtZSI6ICJUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAiZGlzcGxheSI6ICJzdHVkaW9fZ2F0ZXdheS5leGUiLCAicHJvZ3JhbSI6ICJDOlxcU3R1ZGlvXFxuYXRpdmVcXHN0dWRpb19nYXRld2F5LmV4ZSIsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; Remove-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PolicyStore ActiveStore -Confirm:$false | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; Remove-NetFirewallRule -Name 'SubstationStudio-MMS-0123456789ab' | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; Remove-NetFirewallRule -Name 'ScadaBench-Gateway-7f166b55503f' | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; $rule = Get-NetFirewallRule -Name 'TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe'; if ($rule.Direction -ne 'Inbound' -or (($rule | Get-NetFirewallApplicationFilter).Program -ne 'C:\\Studio\\native\\studio_gateway.exe')) { throw 'This rule no longer belongs to the ScadaBench gateway; nothing was changed' }; Enable-NetFirewallRule -Name 'TCP Query User{CD50883C-152F-4A3A-864C-00A52154808F}c:\\studio\\native\\studio_gateway.exe' | Out-Null"
+],
+"timeout": 60
+}
+],
+"exit": 0,
+"result": "eyJyZWZ1c2VkIjogZmFsc2UsICJyZXN1bHRzIjogW3sia2V5IjogImFsaWFzOnsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9OjE5Mi4xNjguNTAuMjEiLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifSwgeyJrZXkiOiAiZmlyZXdhbGw6U3Vic3RhdGlvblN0dWRpby1NTVMtMDEyMzQ1Njc4OWFiIiwgIm9rIjogZmFsc2UsICJtZXNzYWdlIjogIiAgKyBDYXRlZ29yeUluZm8gOiB4In0sIHsia2V5IjogImZpcmV3YWxsOlNjYWRhQmVuY2gtR2F0ZXdheS03ZjE2NmI1NTUwM2YiLCAib2siOiBmYWxzZSwgIm1lc3NhZ2UiOiAibGFzdCBvdXQifSwgeyJrZXkiOiAidW5ibG9jazpUQ1AgUXVlcnkgVXNlcntDRDUwODgzQy0xNTJGLTRBM0EtODY0Qy0wMEE1MjE1NDgwOEZ9YzpcXHN0dWRpb1xcbmF0aXZlXFxzdHVkaW9fZ2F0ZXdheS5leGUiLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifV19"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAzMjMyMjM1Nzc3LCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn1dfQ==",
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 3232235777 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+}
+],
+"exit": 0,
+"result": "eyJyZWZ1c2VkIjogZmFsc2UsICJyZXN1bHRzIjogW3sia2V5IjogImFsaWFzOnsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9OjMyMzIyMzU3NzciLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifV19"
+},
+{
+"payload": "eyJhY3Rpb24iOiAiYXBwbHkiLCAiZmluZ2VycHJpbnQiOiAiZiIsICJpdGVtcyI6IFt7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9LCB7ImtpbmQiOiAiYWxpYXMiLCAiYWRhcHRlcl9ndWlkIjogInsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9IiwgImFkYXB0ZXJfaW5kZXgiOiA3LCAiYWRhcHRlcl9uYW1lIjogIkxhYiBOSUMiLCAiaXAiOiAiMTkyLjE2OC41MC4yMSIsICJwcmVmaXgiOiAyNCwgIm93bmVkIjogdHJ1ZSwgImFjdGlvbiI6ICJhZGQifSwgeyJraW5kIjogImFsaWFzIiwgImFkYXB0ZXJfZ3VpZCI6ICJ7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfSIsICJhZGFwdGVyX2luZGV4IjogNywgImFkYXB0ZXJfbmFtZSI6ICJMYWIgTklDIiwgImlwIjogIjE5Mi4xNjguNTAuMjEiLCAicHJlZml4IjogMjQsICJvd25lZCI6IHRydWUsICJhY3Rpb24iOiAiYWRkIn0sIHsia2luZCI6ICJhbGlhcyIsICJhZGFwdGVyX2d1aWQiOiAiezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX0iLCAiYWRhcHRlcl9pbmRleCI6IDcsICJhZGFwdGVyX25hbWUiOiAiTGFiIE5JQyIsICJpcCI6ICIxOTIuMTY4LjUwLjIxIiwgInByZWZpeCI6IDI0LCAib3duZWQiOiB0cnVlLCAiYWN0aW9uIjogImFkZCJ9XX0=",
+"calls": [
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+},
+{
+"argv": [
+"powershell.exe",
+"-NoProfile",
+"-NonInteractive",
+"-Command",
+"$ErrorActionPreference='Stop'; New-NetIPAddress -InterfaceIndex 7 -IPAddress 192.168.50.21 -PrefixLength 24 -AddressFamily IPv4 -SkipAsSource $true -PolicyStore ActiveStore | Out-Null"
+],
+"timeout": 60
+}
+],
+"exit": 0,
+"result": "eyJyZWZ1c2VkIjogZmFsc2UsICJyZXN1bHRzIjogW3sia2V5IjogImFsaWFzOnsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9OjE5Mi4xNjguNTAuMjEiLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifSwgeyJrZXkiOiAiYWxpYXM6ezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX06MTkyLjE2OC41MC4yMSIsICJvayI6IGZhbHNlLCAibWVzc2FnZSI6ICIgICsgQ2F0ZWdvcnlJbmZvIDogeCJ9LCB7ImtleSI6ICJhbGlhczp7MTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExfToxOTIuMTY4LjUwLjIxIiwgIm9rIjogZmFsc2UsICJtZXNzYWdlIjogImxhc3Qgb3V0In0sIHsia2V5IjogImFsaWFzOnsxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTF9OjE5Mi4xNjguNTAuMjEiLCAib2siOiB0cnVlLCAibWVzc2FnZSI6ICIifSwgeyJrZXkiOiAiYWxpYXM6ezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX06MTkyLjE2OC41MC4yMSIsICJvayI6IGZhbHNlLCAibWVzc2FnZSI6ICJcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTlcdTAwZTkifSwgeyJrZXkiOiAiYWxpYXM6ezExMTExMTExLTExMTEtMTExMS0xMTExLTExMTExMTExMTExMX06MTkyLjE2OC41MC4yMSIsICJvayI6IGZhbHNlLCAibWVzc2FnZSI6ICJmaW5hbCJ9XX0="
+},
+{
+"payload": "WzFd",
+"calls": [],
+"exit": 1,
+"raised": "AttributeError",
+"result": null
+}
+],
+"helper_command": [
+"C:\\Program Files\\ScadaBench\\ScadaBench.exe",
+[
+"--network-helper",
+"C:\\data dir\\network\\requests\\apply-ab.json",
+"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+"C:\\Studio\\native\\studio_ied.exe"
+]
+],
+"list2cmdline": [
+[
+[],
+""
+],
+[
+[
+""
+],
+"\"\""
+],
+[
+[
+"a b"
+],
+"\"a b\""
+],
+[
+[
+"say \"hi\""
+],
+"\"say \\\"hi\\\"\""
+],
+[
+[
+"back\\slash\\"
+],
+"back\\slash\\"
+],
+[
+[
+"ends with\\"
+],
+"\"ends with\\\\\""
+],
+[
+[
+"quote\\\""
+],
+"quote\\\\\\\""
+],
+[
+[
+"tab\tx"
+],
+"\"tab\tx\""
+],
+[
+[
+"\\\\server\\share\\x y\\"
+],
+"\"\\\\server\\share\\x y\\\\\""
+],
+[
+[
+"\u00e9 \u00fc",
+"plain",
+"a\\\\\"b"
+],
+"\"\u00e9 \u00fc\" plain a\\\\\\\\\\\"b"
+],
+[
+[
+"--network-helper",
+"C:\\a b\\r.json"
+],
+"--network-helper \"C:\\a b\\r.json\""
+]
+]
+}

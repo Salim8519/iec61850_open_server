@@ -1,5 +1,6 @@
 """Change project network mode and per-IED role, endpoint and GOOSE settings."""
 from studio_app.contracts.errors import StudioError
+from studio_app.domain.goose_reach import REACH_KEYS
 from studio_app.domain.network_settings import (
     effective_endpoint, real_endpoint, validate_ied_settings, validate_network)
 
@@ -28,10 +29,12 @@ def endpoint_conflicts(ieds, network):
 
 
 def _merged_network(current, value):
-    """A frequency-only change keeps the mode; a mode change keeps the frequency."""
+    """A frequency-only change keeps the mode; a mode change keeps the frequency and
+    where GOOSE goes (GOOSE-23), which are changed only through their own settings."""
     if set(value) <= {"nominal_hz"}:
         return {**current, **value}
-    return {**value, "nominal_hz": value.get("nominal_hz", current.get("nominal_hz", 50))}
+    kept = {key: current[key] for key in ("nominal_hz", *REACH_KEYS) if key in current}
+    return {**kept, **value}
 
 
 def update_network(service, value):

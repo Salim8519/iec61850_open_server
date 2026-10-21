@@ -26,7 +26,7 @@ export function GoosePartners({ ied, project, open }: { ied: Ied; project: Proje
           <td>{partnerId ? <button className="partner-chip" onClick={() => open(partnerId)}>{partner}</button>
             : <span className="partner-chip outside" title="Outside project: import its CID or connect the real device">{partner}</span>}</td>
           <td>{link.block || 'vendor input'}{what ? ` · ${what}${link.inputs.length > 2 ? ` +${link.inputs.length - 2}` : ''}` : ''}</td>
-          <td><StatusPill status={linkStatus(link, running, project.network.mode === 'lab', !partnerId && !sends)} /></td></tr>;
+          <td><StatusPill status={linkStatus(link, running, !partnerId && !sends)} /></td></tr>;
       })}</tbody></table></div>
     {notes.map(note => <p key={note.message} className="small" style={{ margin: '6px 0 0' }} title={note.hint}>• {note.message}</p>)}
   </section>;

@@ -51,6 +51,7 @@ changed, dropped or invented by accident.
 | [Gateway simulator](gateway.md) | IEC 104, Modbus TCP and DNP3 gateway with smart point list and autonomous start |
 | [Licensing](licensing.md) | Trial and 1-PC lifetime license, offline activation, protected release |
 | [License helper](license-helper.md) | Owner's portable, offline, password-locked license EXE |
+| [Owner page](owner-page.md) | Private phone-friendly owner page: sales, keys, issues, disk, news; two-step sign-in behind a Cloudflare gateway |
 
 ## Proposed specifications
 

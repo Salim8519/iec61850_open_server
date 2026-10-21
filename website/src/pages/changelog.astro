@@ -7,7 +7,48 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Operate from the SLD, one-page network setup, standard commands, clearer GOOSE</h2>
+    <h2>{SITE.version} · SNMP devices on your network, delete many points at once</h2>
+    <ul>
+      <li>SNMP devices now go on the network together with your IEDs. In Settings › Network, pick the network card once: each simulated switch or GPS clock gets its own address on that card, so a SCADA or network monitor on another PC can read it.</li>
+      <li>ScadaBench checks that nobody else uses an address before giving it to a device, keeps the address the device had last time when it is still free, and lets you type your own. Windows asks once; Clean up removes everything again.</li>
+      <li>Select several points and delete them together, in the SNMP values and in the gateway point list. Use the search and filters, press "All shown", then Delete. In the gateway, Discard changes still brings them back.</li>
+      <li>Menus such as Add device are never cut off any more, even in narrow panels or with a zoomed window.</li>
+    </ul>
+    <h2>0.1.17 · SNMP devices: simulate switches and GPS clocks, read any SNMP device</h2>
+    <ul>
+      <li>New tool in Tools: SNMP devices. Simulate devices plays a managed network switch (8 ports) or a GPS time server, so your SCADA or network monitor can read them and receive their traps. You can also start from an empty device or from a file (snmpwalk output or CSV).</li>
+      <li>SNMP v1, v2c and v3 are all supported, including v3 users with a password and encryption (MD5, SHA-1, SHA-2; DES and AES-128/192/256).</li>
+      <li>Each simulated device has its own address and port. Change any value by hand, even while it runs, and press an event such as "Port 3 link down" or "GPS sync lost" to send the trap your monitor expects.</li>
+      <li>Read devices connects to any real or simulated SNMP device, reads all its values, shows them with their names and meanings (for example IF-MIB::ifOperStatus.3 = 2 · down) and re-reads them every second. You can write a value, save what you read as a new simulated device, and receive traps.</li>
+      <li>30 standard MIBs are built in. Add your own vendor MIB files to see their names, and remove any you do not need.</li>
+    </ul>
+    <h2>0.1.16 · Your own gateway points, measurement lists, clearer IED roles</h2>
+    <ul>
+      <li>Gateway: besides "Propose from IEDs", press Add point to make up your own points. Set their value yourself (ON/OFF, breaker position or a number), even while the gateway runs; SCADA sees the change at once. A command point can drive one of your own breakers, so SCADA sees the result.</li>
+      <li>SLD: a new Measurement list (Add › Measuring) shows many measurements in one box. Each row has its own scale, offset, unit and decimals, for example raw 11000 × 0.001 = 11.00 kV. Tick several rows to change their scaling together.</li>
+      <li>Clearer IED roles: Simulate (ScadaBench plays this IED), Monitor real device (ScadaBench reads the real IED and shows its live values) and Skip (kept in the project, not started at Run), with one sentence under each. A monitored device now shows its real address.</li>
+      <li>Network setup: choose "This PC only (loopback)" to keep the IEDs talking to each other on this PC, with no change in Windows.</li>
+    </ul>
+    <h2>0.1.15 · New faster engine: starts quicker, runs lighter, smaller download</h2>
+    <ul>
+      <li>ScadaBench runs on a new engine that is ready in about half a second. Starting 20 IEDs takes 0.6 s instead of 1.7 s, and a breaker command reaches the IED about three times faster.</li>
+      <li>Much lighter on your PC: with 20 IEDs running, ScadaBench itself uses about 20 times less processor time than before.</li>
+      <li>Live values reach the screen the moment they change, instead of being asked for again and again.</li>
+      <li>Stop and closing the window take a fraction of a second, and every IED stops with them.</li>
+      <li>The installer is about half the size, and nothing else needs to be installed: double-click and ScadaBench runs (GOOSE and Sampled Values still need the free Npcap driver, as before).</li>
+      <li>Same projects, same license, same results: install over your current version, nothing to convert.</li>
+    </ul>
+    <h2>0.1.14 · Clear run state, easier IED delete, pickers that keep your place, update check</h2>
+    <ul>
+      <li>You can now see at a glance whether nothing, some or all IEDs run: ○ stopped, ◐ some IEDs (amber), ● all IEDs (green). Running one IED no longer makes the whole diagram look live.</li>
+      <li>Devices says which IEDs are live and lists them first, with one button to run the others. On the SLD, equipment of a stopped IED is grey and says "IED stopped"; Run all starts the rest.</li>
+      <li>Delete an IED from its page header, or press Select to delete several IEDs at once. One review shows what changes, and a backup of the project is saved first.</li>
+      <li>Choosing an IED point on the SLD no longer starts over: the picker keeps your IED, search and page, marks the chosen point, and lets you pick another or undo with one click.</li>
+      <li>GOOSE on the SLD is now a small "G" inside the equipment's corner, so it never covers the next bay.</li>
+      <li>Waiting shows a spinner with words everywhere it takes a moment (start, Run, opening files, network cards, data points, comparisons), and lists no longer say "no match" before they have loaded.</li>
+      <li>ScadaBench checks once a day whether a newer version exists and shows one quiet line above Settings; nothing about your PC is sent, and you can switch it off in Settings › About.</li>
+    </ul>
+    <h2>0.1.13 · Operate from the SLD, one-page network setup, standard commands, clearer GOOSE</h2>
     <ul>
       <li>Click a breaker or switch on the SLD while the IEDs run: Operate sends a real IEC 61850 command, exactly like SCADA. Test buttons move a simulated breaker by itself (open, closed, moving, bad state) without sending any command.</li>
       <li>Run or connect a single IED straight from Devices, without starting the whole station.</li>

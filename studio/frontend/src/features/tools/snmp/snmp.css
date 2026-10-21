@@ -1,0 +1,64 @@
+/* SNMP devices tool (ADR-0092): builds on the gateway's split layout, tables and logs. */
+.snmp-role-sentence { max-width: 520px; }
+.snmp-run { gap: 6px; }
+.snmp-live { color: var(--success); display: flex; align-items: center; gap: 6px; margin: 0; justify-self: start; }
+.snmp-add { width: 100%; justify-content: center; }
+.snmp-device-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.snmp-device { display: grid; gap: 2px; width: 100%; text-align: left; padding: 8px 10px; min-height: 0;
+  border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface); }
+.snmp-device.active { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.snmp-device strong, .snmp-device span { overflow-wrap: anywhere; }
+.snmp-state.state-running { color: var(--success); }
+.snmp-state.state-failed { color: var(--error); }
+.snmp-import { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-small); }
+.snmp-problems { margin: 4px 0 0; padding-left: 18px; max-height: 160px; overflow: auto; }
+.snmp-values { table-layout: fixed; width: 100%; }
+.snmp-values td { vertical-align: top; }
+.snmp-values .col-type { width: 96px; }
+.snmp-values .col-changes { width: 230px; }
+.snmp-values .col-writable { width: 80px; }
+.snmp-values .col-remove { width: 48px; }
+.snmp-values .col-actions { width: 200px; }
+.snmp-name { display: grid; gap: 2px; overflow-wrap: anywhere; }
+.snmp-value { overflow-wrap: anywhere; }
+.snmp-value-button { white-space: normal; overflow-wrap: anywhere; background: none; border: 1px dashed transparent; padding: 2px 4px; min-height: 0; text-align: left;
+  color: inherit; font: inherit; cursor: text; }
+.snmp-value-button:hover, .snmp-value-button:focus-visible { border-color: var(--border); }
+.snmp-edit { width: 100%; min-width: 160px; }
+.snmp-behaviour { gap: 6px; flex-wrap: nowrap; }
+.snmp-behaviour select { width: 140px; }
+.snmp-row-actions { gap: 4px; flex-wrap: nowrap; }
+.snmp-key td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.snmp-settings { display: grid; gap: 16px; padding: 16px; align-content: start; }
+.snmp-fieldset { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-small); padding: 10px 12px; display: grid; gap: 10px; margin: 0; }
+.snmp-fieldset legend { font-weight: 600; padding: 0 4px; }
+.snmp-user { padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
+.side-pane .snmp-user { grid-template-columns: minmax(0, 1fr); }
+.side-pane input, .side-pane select { min-width: 0; max-width: 100%; }
+.snmp-user-hint { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 0; }
+.snmp-secret { gap: 4px; flex-wrap: nowrap; }
+.snmp-secret input { flex: 1; min-width: 0; }
+.snmp-target { gap: 10px; align-items: end; }
+.snmp-target input:not(.gateway-number):not([type=checkbox]) { width: 150px; }
+.snmp-target select { width: 90px; }
+.snmp-target .gateway-check { display: flex; align-items: center; gap: 6px; padding-bottom: 8px; }
+.snmp-results { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.snmp-add-form .snmp-add-fields { gap: 10px; align-items: end; }
+.snmp-refused { color: var(--text-2); }
+.snmp-refused strong { color: var(--error); }
+.snmp-trap-bar label { gap: 6px; font-weight: 600; white-space: nowrap; }
+.snmp-trap-list { padding: 10px 16px; display: grid; gap: 10px; align-content: start; }
+.snmp-trap { border: 1px solid var(--border); border-radius: var(--radius-small); padding: 8px 12px; background: var(--surface); }
+.snmp-trap header { gap: 10px; }
+.snmp-trap-values { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 2px; overflow-wrap: anywhere; }
+.snmp-mib-search { width: 220px; }
+.snmp-block { display: block; }
+.snmp-target-text, .snmp-sysdescr { margin: 0; overflow-wrap: anywhere; }
+.snmp-note { padding: 8px 16px; }
+.snmp-write { display: grid; gap: 8px; }
+.snmp-write .row { align-items: end; gap: 10px; }
+.snmp-side .side-section { grid-template-columns: minmax(0, 1fr); }
+.snmp-connect { flex-wrap: nowrap; gap: 6px; }
+.snmp-connect > button { flex: 1; min-width: 0; width: auto; }
+.snmp-live .live-dot { margin-left: 0; }
+.snmp-network-note { margin: 0; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); }

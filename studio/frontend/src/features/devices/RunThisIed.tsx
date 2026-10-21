@@ -4,7 +4,7 @@ import type { Ied, Project } from '../../api/types';
 import { RUN_ONE_COPY } from '../../copy/running';
 
 /** Run or connect only this IED (ADR-0067). The top bar Run still starts everything not set to Off.
- * Simulated: its MMS server, reports, polling answers, GOOSE in lab mode and all its points.
+ * Simulated: its MMS server, reports, polling answers, GOOSE and all its points.
  * Real: a client read (free report blocks, else polling) that sends nothing unless you operate. */
 export function RunThisIed({ ied, project, busy, perform }: {
   ied: Ied; project: Project; busy: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;

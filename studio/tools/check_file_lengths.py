@@ -8,6 +8,8 @@ EXCLUDED_DIRS = {
     "generated", "data", "reference-screens", "third_party",
 }
 EXCLUDED_FILES = {"package-lock.json", "uv.lock"}
+# Verbatim IETF/IANA MIB modules (imported engineering data, ADR-0092).
+EXCLUDED_PATHS = ("studio/engine/internal/snmp/mib/builtin/",)
 EXTENSIONS = {".py", ".ts", ".tsx", ".js", ".css", ".md", ".json", ".toml",
               ".yml", ".yaml", ".txt", ".cpp", ".h", ".hpp", ".ps1", ".spec",
               ".go", ".sh", ".html", ".iss", ".service", ".astro", ".mjs", ".cmd"}
@@ -18,6 +20,8 @@ def maintained_files():
     for folder in (ROOT / "studio", ROOT / "docs", ROOT / "license-server", ROOT / "website"):
         for path in folder.rglob("*"):
             if not path.is_file() or any(p in EXCLUDED_DIRS for p in path.parts):
+                continue
+            if path.relative_to(ROOT).as_posix().startswith(EXCLUDED_PATHS):
                 continue
             if path.name not in EXCLUDED_FILES and path.suffix in EXTENSIONS:
                 yield path

@@ -1,0 +1,369 @@
+[
+ [
+  null,
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  [],
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  {
+   "explorer": 5,
+   "find": []
+  },
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  {
+   "explorer": {
+    "interval_ms": true,
+    "port": false,
+    "host": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+   }
+  },
+  {
+   "explorer": {
+    "host": "",
+    "port": false,
+    "interval_ms": 1000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  {
+   "explorer": {
+    "interval_ms": 60000,
+    "port": 1180591620717411303424,
+    "host": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+   }
+  },
+  {
+   "explorer": {
+    "host": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+    "port": 1180591620717411303424,
+    "interval_ms": 60000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  {
+   "find": {
+    "port": 1.5,
+    "range": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "choice": "ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+   }
+  },
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  {
+   "find": {
+    "port": true,
+    "range": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "choice": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+   }
+  },
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {}
+   },
+   "find": {
+    "range": "",
+    "port": true,
+    "choice": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+   }
+  }
+ ],
+ [
+  {
+   "explorer": {
+    "watch_by_host": {
+     "h": [
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "tttttttttttttttttttttttttttttttttttttttt"
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": 1e+16
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": null
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": [
+        1,
+        "it's",
+        {
+         "k": -0.0
+        },
+        false
+       ]
+      },
+      {
+       "ref": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "fc": "ST"
+      },
+      {
+       "ref": "r",
+       "fc": "STXYZ"
+      },
+      {
+       "ref": "r",
+       "fc": ""
+      },
+      5
+     ]
+    }
+   }
+  },
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {
+     "h": [
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "tttttttttttttttttttttttttttttttt"
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "1e+16"
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "None"
+      },
+      {
+       "ref": "r",
+       "fc": "ST",
+       "type": "[1, \"it's\", {'k': -0.0}, False]"
+      }
+     ]
+    }
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ],
+ [
+  {
+   "explorer": {
+    "watch_by_host": {
+     "host0": [],
+     "host1": [],
+     "host2": [],
+     "host3": [],
+     "host4": [],
+     "host5": [],
+     "host6": [],
+     "host7": [],
+     "host8": [],
+     "host9": [],
+     "host10": [],
+     "host11": [],
+     "host12": [],
+     "host13": [],
+     "host14": [],
+     "host15": [],
+     "host16": [],
+     "host17": [],
+     "host18": [],
+     "host19": [],
+     "host20": [],
+     "host21": [],
+     "host22": [],
+     "host23": [],
+     "host24": [],
+     "host25": [],
+     "host26": [],
+     "host27": [],
+     "host28": [],
+     "host29": [],
+     "host30": [],
+     "host31": [],
+     "host32": [],
+     "host33": [],
+     "host34": [],
+     "host35": [],
+     "host36": [],
+     "host37": [],
+     "host38": [],
+     "host39": [],
+     "host40": [],
+     "host41": [],
+     "host42": [],
+     "host43": [],
+     "host44": [],
+     "host45": [],
+     "host46": [],
+     "host47": [],
+     "host48": [],
+     "host49": [],
+     "host50": [],
+     "host51": [],
+     "host52": [],
+     "host53": [],
+     "host54": [],
+     "host55": [],
+     "host56": [],
+     "host57": [],
+     "host58": [],
+     "host59": [],
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": []
+    }
+   }
+  },
+  {
+   "explorer": {
+    "host": "",
+    "port": 102,
+    "interval_ms": 1000,
+    "watch_by_host": {
+     "host11": [],
+     "host12": [],
+     "host13": [],
+     "host14": [],
+     "host15": [],
+     "host16": [],
+     "host17": [],
+     "host18": [],
+     "host19": [],
+     "host20": [],
+     "host21": [],
+     "host22": [],
+     "host23": [],
+     "host24": [],
+     "host25": [],
+     "host26": [],
+     "host27": [],
+     "host28": [],
+     "host29": [],
+     "host30": [],
+     "host31": [],
+     "host32": [],
+     "host33": [],
+     "host34": [],
+     "host35": [],
+     "host36": [],
+     "host37": [],
+     "host38": [],
+     "host39": [],
+     "host40": [],
+     "host41": [],
+     "host42": [],
+     "host43": [],
+     "host44": [],
+     "host45": [],
+     "host46": [],
+     "host47": [],
+     "host48": [],
+     "host49": [],
+     "host50": [],
+     "host51": [],
+     "host52": [],
+     "host53": [],
+     "host54": [],
+     "host55": [],
+     "host56": [],
+     "host57": [],
+     "host58": [],
+     "host59": []
+    }
+   },
+   "find": {
+    "range": "",
+    "port": 102,
+    "choice": ""
+   }
+  }
+ ]
+]

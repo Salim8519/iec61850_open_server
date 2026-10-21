@@ -8,6 +8,6 @@ export function commandLabels(row: GatewayPoint): [string, string] {
 
 /** Why a command row cannot send now, or '' when its Send buttons are offered. */
 export function blockedReason(row: GatewayPoint, unsaved: boolean): string {
-  if (unsaved || !row.id) return GATEWAY_COPY.saveFirst;
+  if (unsaved || !row.id || row.draft) return GATEWAY_COPY.saveFirst;
   return row.monitor_only ? GATEWAY_COPY.commandsOff : '';
 }

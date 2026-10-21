@@ -26,15 +26,17 @@ func (s *Server) createOrder(r *http.Request, ip string) (any, error) {
 	}
 	var request struct {
 		HWID string `json:"hwid"`
+		News bool   `json:"news"`
 	}
 	decode(r, &request)
 	custom := ""
 	if certs.ValidHWID(strings.TrimSpace(request.HWID)) {
 		custom = strings.TrimSpace(request.HWID)
 	}
+	amount, currency := s.price()
 	id, err := s.Payments.CreateOrder(r.Context(), paypal.OrderRequest{Product: s.Config.ProductName,
-		Brand: "ScadaBench", Amount: s.Config.LicensePrice, Currency: s.Config.LicenseCurrency, CustomID: custom,
-		InvoiceID: s.newInvoice(s.Config.LicensePrice, s.Config.LicenseCurrency)})
+		Brand: "ScadaBench", Amount: amount, Currency: currency, CustomID: custom,
+		InvoiceID: s.newInvoice(amount, currency, request.News)})
 	if err != nil {
 		s.Log.Event("paypal_error", map[string]any{"step": "create", "error": err.Error()})
 		return nil, apiError{http.StatusBadGateway, "paypal_error", "PayPal could not start the payment. Try again."}
@@ -90,6 +92,11 @@ func (s *Server) Fulfil(_ context.Context, captured paypal.Capture) (store.Order
 	if created {
 		s.Log.Event("order_fulfilled", map[string]any{"order": order.OrderID, "key": logging.MaskKey(order.LicenseKey)})
 		s.recordSale(order, captured)
+		if wantsNews(captured.InvoiceID) && order.Email != "" {
+			if _, err := s.Store.Subscribe(order.Email, "checkout", s.Now()); err != nil {
+				s.Log.Event("subscribe_error", map[string]any{"order": order.OrderID, "error": err.Error()})
+			}
+		}
 	}
 	if !order.Emailed && s.Mailer != nil && order.Email != "" {
 		subject, text := mail.LicenseEmail(s.Config.ProductName, order.LicenseKey, s.Config.PublicURL, s.Config.SupportEmail)

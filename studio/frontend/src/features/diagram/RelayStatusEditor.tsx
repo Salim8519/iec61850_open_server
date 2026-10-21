@@ -13,11 +13,11 @@ const MAX_STATUSES = 50;
 
 type Props = {
   nodeId: string; data: EquipmentData; project: Project; locked: boolean;
-  values: Record<string, unknown>; update: (data: EquipmentData) => void;
+  update: (data: EquipmentData) => void;
   perform: (task: () => Promise<unknown>) => Promise<void>;
 };
 
-export function RelayStatusEditor({ nodeId, data, project, locked, values, update, perform }: Props) {
+export function RelayStatusEditor({ nodeId, data, project, locked, update, perform }: Props) {
   const entries = data.relay_statuses || [];
   const [signals, setSignals] = useState<Record<string, Signal>>({});
   const [error, setError] = useState('');
@@ -79,7 +79,7 @@ export function RelayStatusEditor({ nodeId, data, project, locked, values, updat
     const key = `${item.source.ied_id}:${item.source.ref}`;
     return <RelayStatusRow key={item.id} entry={item}
       iedName={project.ieds.find(ied => ied.id === item.source.ied_id)?.name} index={index} count={entries.length}
-      locked={locked} signal={signals[key]} liveKey={relayValueKey(nodeId, item.id)} fallback={values[key]}
+      locked={locked} signal={signals[key]} liveKey={relayValueKey(nodeId, item.id)} fallbackKey={key}
       generator={project.sources.some(source => `${source.ied_id}:${source.ref}` === key && source.spec.mode !== 'manual')}
       rename={label => setEntries(entries.map(current =>
         current.id === item.id ? { ...current, label } : current))}

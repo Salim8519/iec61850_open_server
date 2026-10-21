@@ -3,13 +3,22 @@ import { Menu } from '../ui/Menu';
 import { TOUR_COPY, TUTORIALS_URL } from '../copy/tour';
 import { PLACES, type PlaceId } from './places';
 import type { Running } from './running';
+import type { UpdateStatus } from '../api/updates';
+import { UpdateNote } from './UpdateNote';
+import { useEventCount } from '../state/useLive';
+
+/** Only this number re-renders when events arrive, not the sidebar or the app. */
+function ActivityCount() {
+  return <>{useEventCount()}</>;
+}
 
 const ICONS: Record<PlaceId, typeof Workflow> = { diagram: Workflow, devices: Cpu, test: FlaskConical, tools: Wrench,
   settings: Settings };
 
-export function Sidebar({ current, go, connected, eventCount, openActivity, openTour, live }: {
-  current: PlaceId; go: (id: PlaceId) => void; connected: boolean; eventCount: number; openActivity: () => void;
+export function Sidebar({ current, go, connected, openActivity, openTour, live, update, dismissUpdate }: {
+  current: PlaceId; go: (id: PlaceId) => void; connected: boolean; openActivity: () => void;
   openTour: () => void; live: Partial<Record<PlaceId, Running>>;
+  update?: UpdateStatus | null; dismissUpdate?: (version: string) => void;
 }) {
   const item = (id: PlaceId) => {
     const Icon = ICONS[id];
@@ -19,7 +28,7 @@ export function Sidebar({ current, go, connected, eventCount, openActivity, open
     return <button key={id} className={`nav-item${current === id ? ' active' : ''}`} aria-current={current === id ? 'page' : undefined}
       title={running ? `${entry.heading}: ${words}` : entry.heading} data-tour={`place-${id}`} onClick={() => go(id)}>
       <Icon size={21} /><span>{entry.title}</span>
-      {running && <><span className={`live-dot${running.paused ? ' paused' : ''}`} data-live={id} aria-hidden />
+      {running && <><span className={`live-dot${running.paused ? ' paused' : ''}${running.partial ? ' partial' : ''}`} data-live={id} aria-hidden />
         <span className="sr-only">: {words}</span></>}</button>;
   };
   return <nav className="sidebar" aria-label="Main">
@@ -28,6 +37,7 @@ export function Sidebar({ current, go, connected, eventCount, openActivity, open
     {PLACES.filter(entry => entry.id !== 'settings').map(entry => item(entry.id))}
     <div className="sidebar-spacer" />
     <div className="sidebar-foot">
+      {dismissUpdate && <UpdateNote status={update ?? null} dismiss={dismissUpdate} />}
       {item('settings')}
       <Menu label={TOUR_COPY.helpTitle} align="left" up triggerClass="nav-item" triggerTour="help"
         trigger={<><CircleHelp size={19} /><span>{TOUR_COPY.helpTitle}</span></>} items={[
@@ -36,7 +46,7 @@ export function Sidebar({ current, go, connected, eventCount, openActivity, open
             onSelect: () => { window.open(TUTORIALS_URL, '_blank', 'noopener'); } },
         ]} />
       <button className="nav-item" onClick={openActivity} title="Activity">
-        <Activity size={19} /><span>Activity ({eventCount})</span></button>
+        <Activity size={19} /><span>Activity (<ActivityCount />)</span></button>
       <span className="small muted" style={{ padding: '4px 12px' }} title={connected ? 'Engine connected' : 'Connecting'}>
         <span className="dot" style={{ display: 'inline-block', marginRight: 8, color: connected ? 'var(--success)' : 'var(--warning)' }} />
         <span>{connected ? 'Engine connected' : 'Connecting…'}</span></span>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { connectSession } from '../../api/client';
 import { getLicenseStatus, LICENSE_REQUIRED_EVENT, type LicenseStatus } from '../../api/license';
 import { LicenseGate } from './LicenseGate';
+import { Spinner } from '../../ui/Spinner';
 
 /**
  * Shows the app only when the backend says this computer is licensed. Development
@@ -23,5 +24,7 @@ export function LicenseBoundary({ children }: { children: ReactNode }) {
   if (status) return <LicenseGate status={status} changed={setStatus} />;
   // Unknown state (old backend, session missing): show the app; it reports its own errors.
   if (failure) return <>{children}</>;
-  return null;
+  // Never a blank window while the engine starts (change 0105).
+  return <div className="boot-wait"><Spinner label="Starting ScadaBench…" size={22}
+    slowHint="Still starting. The first start after an update can take a little longer." /></div>;
 }

@@ -1,4 +1,6 @@
-"""Station health: GOOSE with an unexpected goID is flagged on the wire (HEALTH-06)."""
+"""Station health: GOOSE with an unexpected goID is flagged when received (HEALTH-06).
+
+Runs through the app's GOOSE engine (ADR-0073), so no adapter is needed."""
 import os
 import time
 from pathlib import Path
@@ -7,12 +9,11 @@ import pytest
 from studio_app.domain.goose_consistency import wire_check
 from studio_app.runtime.worker_process import WorkerProcess
 from studio_app.scl.importer import import_scl
+from goose_engine_rig import READY, EngineRig
 
 ROOT = Path(__file__).resolve().parents[3]
 BIN = Path(os.environ.get("STUDIO_NATIVE_BIN", ROOT / "studio/native/build/Release"))
-ADAPTER = os.environ.get("STUDIO_GOOSE_ADAPTER", "")
-pytestmark = [pytest.mark.skipif(not (BIN / "studio_live.exe").exists(), reason="Native build required"),
-              pytest.mark.skipif(not ADAPTER, reason="Set STUDIO_GOOSE_ADAPTER to a lab adapter GUID")]
+pytestmark = pytest.mark.skipif(not READY, reason="Native build and GOOSE engine required")
 
 
 def first(events, predicate, seconds):
@@ -30,16 +31,17 @@ def test_go_id_mismatch_is_reported(tmp_path):
     control = model["goose"]["publishes"][0]
     config = tmp_path / "publisher.cfg"
     config.write_text(model["cfg"], encoding="utf-8")
-    received = []
-    listener = WorkerProcess(BIN / "studio_live.exe", received.append)
+    rig = EngineRig()
+    received = rig.received
     worker = WorkerProcess(BIN / "studio_ied.exe", lambda event: None)
     expected = {"key": control["gocb_ref"], "gocb_ref": control["gocb_ref"], "app_id": control["app_id"],
                 "mac": control["mac"], "go_id": "not-" + control["go_id"], "dataset_ref": control["dataset_ref"],
                 "conf_rev": control["conf_rev"]}
     try:
-        listener.request("goose_start", timeout=30, adapter_guid=ADAPTER, subscriptions=[expected])
+        bus = rig.publish("IED1_XCBR", [control["gocb_ref"]])
+        rig.listen([expected])
         worker.request("start", cfg=str(config), ip="127.50.0.235", port=18135, controls=model["controls"],
-                       edition=2, goose={"publish": True, "adapter_guid": ADAPTER})
+                       edition=2, goose={"publish": True, "interface": bus})
         frame = first(received, lambda e: e.get("event") == "goose_rx" and e.get("state") == "problem", 40)
         assert frame, "The listener never reported the goID difference"
         assert frame["problem"] == "go_id_mismatch" and frame["go_id"] == control["go_id"]
@@ -50,4 +52,4 @@ def test_go_id_mismatch_is_reported(tmp_path):
         assert f"wire {control['go_id']}" in verdict["message"] and expected["go_id"] in verdict["message"]
     finally:
         worker.close()
-        listener.close()
+        rig.close()

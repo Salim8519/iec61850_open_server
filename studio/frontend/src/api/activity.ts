@@ -7,6 +7,8 @@ export type Activity = {
   scan: { state: string; probed: number; total: number };
   master: { state: 'disconnected' | 'connected' | 'lost' | 'failed'; protocol: string; host: string; points: number };
   sequences: number;
+  /** Go engine only, read from GET /tools/snmp (not part of /activity). */
+  snmp?: { running: number; reader: string; target: string; listening: boolean };
 };
 
 export const activityApi = { get: () => api<Activity>('/activity') };

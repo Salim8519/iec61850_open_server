@@ -7,25 +7,30 @@ import { sectionSentence } from '../../equipment/energization';
 import type { useStudio } from '../../state/useStudio';
 import { AddMenu } from './AddMenu';
 import { addBay as placeBay, type BayKind } from '../../equipment/bayTemplates';
+import { defaultLabel } from '../../equipment/kindInfo';
 import { Canvas } from './Canvas';
 import { EquipmentSheet } from './EquipmentSheet';
 import { SldImport } from './SldImport';
 import { TidyButton } from './TidyButton';
 import { useCanvasShortcuts } from './useCanvasShortcuts';
-import { useModes } from '../devices/useModes';
+import { useModeBadges } from '../devices/useModes';
+import { createKeyedStore } from '../../equipment/keyedStore';
+import { markClick } from '../../app/perf';
 import { SignalLayerSwitches } from './signals/SignalLayerSwitches';
 import { SignalOverlay, type SignalSelection } from './signals/SignalOverlay';
 import { SignalSheet } from './signals/SignalSheet';
 import { useSignalLayers } from './signals/useSignalLayers';
 import { OutsideSenders } from './signals/OutsideSenders';
 import { TestMenu, type MenuAt } from './TestMenu';
+import { RunStrip } from './RunStrip';
+import { runSummary } from '../../copy/runShape';
 import './diagram.css';
 
 type Studio = ReturnType<typeof useStudio>;
 
-export function DiagramPage({ studio, project, locked, openDevices, openFile, openNetwork }: {
+export function DiagramPage({ studio, project, locked, openDevices, openFile }: {
   studio: Studio; project: Project; locked: boolean; openDevices: (flowIedId?: string) => void;
-  openFile: () => void; openNetwork: () => void;
+  openFile: () => void;
 }) {
   const [selection, setSelection] = useState<string[]>([]);
   const [operation, setOperation] = useState<{ nodeId: string; message: string } | null>(null);
@@ -35,9 +40,15 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile, op
   const runningKey = (project.running_ieds || []).join(',');
   const running = useMemo(() => new Set(runningKey ? runningKey.split(',') : []), [runningKey]);
   const diagram = project.diagram;
+  // Only some IEDs run (change 0106): name them on the lock badge and grey the stopped IEDs' equipment.
+  const summary = runSummary(project);
+  const stoppedKey = summary.shape === 'partial' ? summary.stopped.map(ied => ied.id).join(',') : '';
+  const stoppedIeds = useMemo(() => new Set(stoppedKey ? stoppedKey.split(',') : []), [stoppedKey]);
   const iedKey = JSON.stringify(project.ieds.map(ied => [ied.id, ied.name]));
   const iedNames = useMemo(() => Object.fromEntries(project.ieds.map(ied => [ied.id, ied.name])), [iedKey]);
-  const { modes } = useModes(project.runtime !== 'stopped', project.revision);
+  // Mode badges reach each equipment through a keyed store, never through this page's state.
+  const badges = useMemo(() => createKeyedStore<string>(), []);
+  useModeBadges(badges, project.runtime !== 'stopped', project.revision);
   const energy = useSyncExternalStore(studio.energization.subscribe, studio.energization.get, studio.energization.get);
   const layers = useSignalLayers(studio.signalLayers, project.revision, project.runtime !== 'stopped');
   const selectSignal = useCallback((next: SignalSelection) => { setSignal(next); if (next) setSelection([]); }, []);
@@ -52,24 +63,27 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile, op
   const edit = useCallback((next: Diagram, group?: string) => studio.updateDiagram(next, group), [studio.updateDiagram]);
   const actions = useCanvasShortcuts({ active: !studio.busy, locked, diagram, selection, edit, setSelection,
     undo: studio.undo, redo: studio.redo });
-  const add = (kind: EquipmentKind) => {
+  const add = useCallback((kind: EquipmentKind) => {
     const count = diagram.nodes.filter(node => node.data.kind === kind).length + 1;
-    const base = { kind, label: `${kind}-${count}`, rotation: 0 };
+    const base = { kind, label: defaultLabel(kind, count), rotation: 0 };
     const item: EquipmentNode = { id: crypto.randomUUID(), type: 'equipment',
       position: { x: 200 + (diagram.nodes.length % 4) * 140, y: 100 + Math.floor(diagram.nodes.length / 4) * 160 },
       data: kind === 'INFEED' ? { ...base, infeed_type: 'line', infeed_state: 'live' } :
+        kind === 'MEASUREMENT_LIST' ? { ...base, measurements: [] } :
         kind === 'JUNCTION' || kind === 'RELAY' ? base : { ...base, trip_command_polarity: 'operate_false',
         trip_state_polarity: 'operated_true', push_mode: 'latching_status', push_value: true, initial_position: 'open' } };
     edit({ ...diagram, nodes: [...diagram.nodes, item] }); setSelection([item.id]);
-  };
-  const junctions = selection.filter(id => diagram.nodes.find(node => node.id === id)?.data.kind === 'JUNCTION');
-  const addBay = (kind: BayKind) => {
+  }, [diagram, edit]);
+  const junctionKey = selection.filter(id => diagram.nodes.find(node => node.id === id)?.data.kind === 'JUNCTION').join(',');
+  const junctions = useMemo(() => junctionKey ? junctionKey.split(',') : [], [junctionKey]);
+  const addBay = useCallback((kind: BayKind) => {
     const result = placeBay(diagram, kind, { attach: junctions });
     edit(result.diagram); setSelection(result.ids);
-  };
+  }, [diagram, edit, junctions]);
   const attachHint = junctions.length ? `New bays connect to the ${junctions.length} selected busbar point${junctions.length > 1 ? 's' : ''}.`
     : 'Tip: select a busbar junction first and the bay connects to it.';
   const operate = useCallback((nodeId: string, action: string) => {
+    markClick(nodeId);
     setOperation(null);
     studio.perform(async () => {
       const result = await api<{ action: string; wire_value: boolean | null }>(
@@ -88,28 +102,37 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile, op
   }, [studio.perform]);
   const openMenu = useCallback((nodeId: string, x: number, y: number) => setMenu({ nodeId, x, y }), []);
   const menuNode = menu ? diagram.nodes.find(item => item.id === menu.nodeId) : undefined;
-  const toolbar = <div className="canvas-toolbar" role="toolbar" aria-label="Diagram tools">
+  // The toolbar and lock note are made only when what they show changes, so Canvas (memo) skips
+  // re-rendering when this page renders for an unrelated reason (speed lane F).
+  const { canUndo, canRedo, undo, redo, prepare, runtime, busy } = studio;
+  const noIeds = !project.ieds.length;
+  const toolbar = useMemo(() => <div className="canvas-toolbar" role="toolbar" aria-label="Diagram tools">
     <AddMenu disabled={locked} add={add} addBay={addBay} attachHint={attachHint} />
-    <SldImport disabled={locked} revision={project.revision} apply={(next: Diagram) => edit(next)} prepare={studio.prepare} />
+    <SldImport disabled={locked} revision={project.revision} apply={(next: Diagram) => edit(next)} prepare={prepare} />
     <TidyButton diagram={diagram} selection={selection} locked={locked} apply={(next: Diagram) => edit(next)} />
     <span className="divider" />
-    <button className="icon ghost" title="Undo" aria-label="Undo" disabled={locked || !studio.canUndo} onClick={studio.undo}><Undo2 size={18} /></button>
-    <button className="icon ghost" title="Redo" aria-label="Redo" disabled={locked || !studio.canRedo} onClick={studio.redo}><Redo2 size={18} /></button>
+    <button className="icon ghost" title="Undo" aria-label="Undo" disabled={locked || !canUndo} onClick={undo}><Undo2 size={18} /></button>
+    <button className="icon ghost" title="Redo" aria-label="Redo" disabled={locked || !canRedo} onClick={redo}><Redo2 size={18} /></button>
     <span className="divider" />
-    <SignalLayerSwitches layers={layers.state.layers} toggle={layers.toggle} />
-    <OutsideSenders state={layers.state} importFile={openFile} />
-    {!project.ieds.length && <><span className="divider" />
+    <SignalLayerSwitches layers={layers.layers} toggle={layers.toggle} />
+    <OutsideSenders store={studio.signalLayers} importFile={openFile} />
+    {noIeds && <><span className="divider" />
       <button className="ghost" onClick={() => openDevices()}><Cpu size={17} />Import an IED first</button></>}
-  </div>;
+  </div>, [locked, add, addBay, attachHint, project.revision, edit, prepare, diagram, selection, canUndo, canRedo, undo, redo,
+    layers.layers, layers.toggle, studio.signalLayers, openFile, noIeds, openDevices]);
+  const partial = summary.shape === 'partial';
+  const summaryKey = partial ? `${summary.running.map(ied => ied.id)}|${summary.stopped.map(ied => ied.id)}` : '';
+  const lockNote = useMemo(() => partial ? <RunStrip summary={summary} busy={busy} runAll={() => runtime('start')} /> : undefined,
+    [partial, summaryKey, busy]);
   return <div className="diagram">
     <Canvas diagram={diagram} change={edit} locked={locked} selection={selection} setSelection={setSelection}
-      valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={modes.equipment} operate={operate} toolbar={toolbar} overlay={overlay} nodeMenu={openMenu} />
+      valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={badges} operate={operate} toolbar={toolbar} overlay={overlay} nodeMenu={openMenu}
+      stoppedIeds={stoppedIeds} lockNote={lockNote} />
     {menu && menuNode && <TestMenu at={menu} node={menuNode} project={project} running={running} test={test}
       openSheet={() => setSelection([menuNode.id])} close={() => setMenu(null)} />}
-    {signal && !selection.length && <SignalSheet state={layers.state} selection={signal} select={selectSignal} showFlow={openDevices}
-      lab={project.network.mode === 'lab'} openNetwork={openNetwork} />}
+    {signal && !selection.length && <SignalSheet store={studio.signalLayers} selection={signal} select={selectSignal} showFlow={openDevices} />}
     {selected && <LiveValues.Provider value={studio.equipmentValues}><EquipmentSheet node={selected} project={project}
-      locked={locked} busy={studio.busy} values={studio.values} perform={studio.perform} operate={operate}
+      locked={locked} busy={studio.busy} perform={studio.perform} operate={operate}
       operation={operation?.nodeId === selected.id ? operation.message : undefined} close={() => setSelection([])}
       section={sectionSentence(energy.nodes[selected.id])} hints={energy.hints?.[selected.id]}
       update={data => edit({ ...diagram, nodes: diagram.nodes.map(item => item.id === selected.id ? { ...item, data } : item) })}

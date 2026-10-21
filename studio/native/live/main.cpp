@@ -22,7 +22,7 @@ int main() {
     const std::map<std::string, std::function<Json(const Json&)>> operations = {
         {"hello", [](const Json&) {
             return Json{{"capabilities", {"live_discover", "live_reports", "live_poll",
-                                          "goose_listen", "sv_listen", "read_only_client",
+                                          "goose_listen", "goose_inbox", "sv_listen", "read_only_client",
                                           "explore", "identify"}}};
         }},
         {"npcap_status", [](const Json&) { return npcap_status(); }},

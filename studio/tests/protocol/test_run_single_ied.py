@@ -76,3 +76,16 @@ def test_test_button_moves_breaker_without_command(app):
     first["role"] = "real"
     refused = client.post("/api/v1/equipment/cb/test", json={"action": "closed"})
     assert refused.status_code == 400 and "real device" in refused.json["error"]
+
+
+def test_run_all_during_a_partial_run_adds_the_rest(app):
+    """Change 0106: the top bar's "Run all" joins the stopped IEDs instead of refusing."""
+    app, client, first, second, status = app
+    runtime = app.extensions["runtime"]
+    client.post(f"/api/v1/runtime/ieds/{first['id']}/start")
+    answer = client.post("/api/v1/runtime/start")
+    assert answer.status_code == 200 and answer.json["running"] == sorted([first["id"], second["id"]])
+    assert probe(A, status) is not None and probe(B, "RunBCTRL/XSWI1.Pos.stVal") is not None
+    assert client.post("/api/v1/runtime/start").status_code == 400, "nothing left to start"
+    client.post("/api/v1/runtime/stop")
+    assert runtime.state == "stopped"

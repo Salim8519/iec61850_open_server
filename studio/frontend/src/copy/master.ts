@@ -12,6 +12,14 @@ export const ROLE_HINTS: Record<Role, string> = {
   converter: 'ScadaBench reads another gateway or RTU as a master and serves the same points to your SCADA.',
 };
 
+/** Why the role buttons are greyed out while something runs (said on every button, not only in the help). */
+export const ROLE_LOCKED = 'Stop or disconnect to switch roles.';
+
+/** Tooltip of one role button: what the role does, and why it cannot be picked right now. */
+export function roleTitle(role: Role, locked: boolean): string {
+  return locked ? `${ROLE_HINTS[role]} ${ROLE_LOCKED}` : ROLE_HINTS[role];
+}
+
 /** What ScadaBench is and what the device is, in the words of each protocol. */
 export const SIDES: Record<MasterProtocol, { us: string; device: string; usShort: string; deviceShort: string }> = {
   iec104: { us: 'controlling station (104 master)', device: 'controlled station (104 slave)',
@@ -89,6 +97,8 @@ export const MASTER_COPY = {
     modbus: 'ScadaBench reads every range in What to read at this interval.',
   } as Record<MasterProtocol, string>,
   connect: 'Connect', disconnect: 'Disconnect', settingsTitle: 'Device connection',
+  connecting: (host: string, port: unknown) => `Connecting to ${host}:${port}…`,
+  connectingSlow: 'Still trying. The device has until the connect timeout (t0) to answer.',
   notBuilt: 'The master program is not built in this copy of ScadaBench.',
   emptyNotConnected: 'Points appear here by themselves after Connect.',
   states: { disconnected: 'Not connected', connected: 'Connected', lost: 'Link lost, trying again', failed: 'Stopped with a problem' },

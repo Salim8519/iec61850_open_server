@@ -13,6 +13,7 @@ from .removal import impact
 from . import bulk_removal
 from .test_panel import validate_panel
 from .stored_import import import_stored
+from .goose_reach import LAB_NOTICE, LAB_TITLE, lab_notice
 from studio_app.contracts.errors import StudioError
 from studio_app.domain.scenario import validate_scenarios
 from studio_app.domain.source import source_summary
@@ -234,10 +235,11 @@ class ProjectService:
                            "push buttons no longer accept wires.")
             else:
                 message = f"Project upgraded to format {CURRENT_FORMAT}." + standard
+            goose_note = lab_notice(raw.get("network"), network)
             self.migration_notice = ({
                 "message": message,
-                "details": details, "backup": recovery,
-            } if legacy else None)
+                "details": [*details, *([LAB_NOTICE] if goose_note else [])], "backup": recovery,
+            } if legacy else {"message": LAB_TITLE, "details": [LAB_NOTICE], "backup": ""} if goose_note else None)
             try:
                 assign_endpoints(imported)
                 if persist:

@@ -1,6 +1,7 @@
 import { Activity } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
+import { useLiveFeed } from '../../api/useLiveFeed';
 import { svStatus } from '../../copy/sv';
 import { UI_STATUS } from '../../copy/status';
 import { EmptyState } from '../../ui/EmptyState';
@@ -22,15 +23,8 @@ const unit = (name: string) => name.includes('TVTR') || name.includes('Vol') ? '
 /** Sampled Values streams from the SCD and what is really on the lab adapter (listen only). */
 export function SvTraffic({ running, revision, lab, locked, perform }: { running: boolean; revision: number; lab: boolean;
   locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void> }) {
-  const [overview, setOverview] = useState<Overview | null>(null);
+  const overview = useLiveFeed<Overview>('/sv', running ? 1000 : null, revision).value;
   const [open, setOpen] = useState('');
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => api<Overview>('/sv').then(value => { if (!cancelled) setOverview(value); }).catch(() => {});
-    load();
-    const timer = running ? setInterval(load, 1000) : undefined;
-    return () => { cancelled = true; if (timer) clearInterval(timer); };
-  }, [running, revision]);
   if (!overview) return null;
   const selected = overview.watches.find(item => item.key === open);
   return <div className="card">
@@ -48,7 +42,7 @@ export function SvTraffic({ running, revision, lab, locked, perform }: { running
           <td>{stream.publisher}</td>
           <td><code>{`0x${stream.app_id.toString(16).toUpperCase().padStart(4, '0')}`}</code><div className="small"><code>{stream.mac}</code></div></td>
           <td>{lab ? <StatusPill status={svStatus(stream.state, stream.problems)} showHint={stream.state !== 'receiving'} />
-            : <StatusPill status={UI_STATUS.goose_needs_lab} />}</td>
+            : <StatusPill status={UI_STATUS.sv_needs_lab} />}</td>
           <td className="small">{stream.received_rate ? `${Math.round(stream.received_rate)}/s` : '–'}
             <div className="muted">SCD {stream.expected_rate ? `${stream.expected_rate}/s` : 'not stated'}</div></td>
           <td className="small">{stream.received_lost ?? '–'}</td>

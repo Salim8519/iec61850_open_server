@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}ConnectedAP': No match found for key-sequence ['Elsewhere'] of keyref '{http://www.iec.ch/61850/2003/SCL}refConnectedAP2IED'."}]}

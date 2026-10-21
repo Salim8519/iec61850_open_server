@@ -2,7 +2,9 @@
 from pathlib import Path
 from studio_app.domain.equipment_state import binding_keys
 from studio_app.networking.npcap import npcap_status
+from .goose_engine import GooseEngine
 from .goose_monitor import GooseMonitor
+from .goose_share import GooseShare
 from .live_values import LiveValues
 from .real_session import RealSession
 from .sv_monitor import SvMonitor
@@ -33,6 +35,8 @@ class LiveManager:
         self.executable = Path(executable)
         self.values = LiveValues(coordinator)
         self.sessions = {}
+        self.engine = GooseEngine(self)
+        self.share = GooseShare(self)
         self.goose = GooseMonitor(self)
         self.sv = SvMonitor(self)
 
@@ -46,7 +50,9 @@ class LiveManager:
             raise ValueError("The live client (studio_live.exe) is not built yet; rebuild the native programs")
         self.connect(project, real)
         try:
-            self.goose.start(ieds, project["network"], npcap_status()["installed"])
+            self.goose.start(ieds)
+            if self.engine.running:
+                self.share.start(project)
         except Exception as error:
             self.goose.status.update(state="failed", message=f"GOOSE listener could not start: {error}")
             self.coordinator.emit("goose_listener_failed", message=str(error))
@@ -72,6 +78,7 @@ class LiveManager:
 
     def stop(self):
         self.goose.stop()
+        self.engine.stop()
         self.sv.stop()
         sessions, self.sessions = self.sessions, {}
         for session in sessions.values():

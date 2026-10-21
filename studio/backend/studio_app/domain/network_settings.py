@@ -1,13 +1,15 @@
 """Validate project network mode and per-IED role, endpoint and GOOSE settings."""
 import ipaddress
 import re
+from .goose_reach import REACHES
 from .test_mode import validate_test_mode
 
 MODES = {"loopback", "lab"}
 ROLES = {"simulated", "real", "off"}
 ACCESS = {"auto_reports", "polling"}
 GUID = re.compile(r"^\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}$")
-DEFAULT_NETWORK = {"mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 50}
+DEFAULT_NETWORK = {"mode": "loopback", "adapter_guid": "", "adapter_label": "", "nominal_hz": 50,
+                   "goose_reach": "inside", "goose_uplink_guid": "", "goose_share_guid": ""}
 NOMINAL_HZ = {50, 60}
 DEFAULT_LIVE = {"ip": "", "port": 102, "access": "auto_reports", "poll_ms": 1000}
 
@@ -41,8 +43,14 @@ def validate_network(value):
         raise ValueError("Adapter identifier is not a Windows adapter GUID")
     if value["nominal_hz"] not in NOMINAL_HZ or isinstance(value["nominal_hz"], bool):
         raise ValueError("Nominal frequency must be 50 Hz or 60 Hz")
+    if value["goose_reach"] not in REACHES:
+        raise ValueError("GOOSE must stay 'inside' ScadaBench or be shared 'outside' with the network")
+    uplinks = {key: str(value.get(key) or "").upper() for key in ("goose_uplink_guid", "goose_share_guid")}
+    if any(guid and not GUID.match(guid) for guid in uplinks.values()):
+        raise ValueError("GOOSE adapter identifier is not a Windows adapter GUID")
     return {"mode": value["mode"], "adapter_guid": guid,
-            "adapter_label": str(value.get("adapter_label") or "")[:100], "nominal_hz": value["nominal_hz"]}
+            "adapter_label": str(value.get("adapter_label") or "")[:100], "nominal_hz": value["nominal_hz"],
+            "goose_reach": value["goose_reach"], **uplinks}
 
 
 def validate_live(value):
@@ -92,5 +100,5 @@ def command_refusal(ied):
         return (f"{ied['name']} is a real device, so nothing was sent from here. Real equipment is "
                 "operated only from Tools (IED Explorer or the gateway), after a confirmation.")
     if role == "off":
-        return f"{ied['name']} is left out of this project's run. Set it to 'Be this IED' to operate it."
+        return f"{ied['name']} is skipped in this project's run. Set it to 'Simulate' to operate it."
     return None

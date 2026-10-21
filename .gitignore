@@ -6,6 +6,10 @@ studio/frontend/node_modules/
 studio/frontend/dist/
 studio/dist/
 studio/build/
+studio/engine/build/
+studio/engine/cmd/scadabench_portable/payload/
+studio/engine/cmd/*/zz_release_windows_amd64.syso
+studio/dist-go/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -36,3 +40,4 @@ studio/release-archive/
 # Module-integrity signing secret (never commit)
 studio/native/release/module_signing.seed
 *.pcapng
+license-server/gateway/.wrangler/

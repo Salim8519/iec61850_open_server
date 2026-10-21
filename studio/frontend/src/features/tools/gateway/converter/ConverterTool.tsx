@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../../api/gateway';
-import { masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
+import { createActionQueue } from '../actionQueue';
+import { GATEWAY_CONFIG, GATEWAY_STATUS, gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../../api/gateway';
+import { liveFeed } from '../../../../api/polls';
+import { MASTER_CONFIG, MASTER_STATUS, masterApi, type MasterConfig, type MasterProtocol, type MasterStatus } from '../../../../api/master';
 import { CONVERTER_COPY } from '../../../../copy/converter';
 import { MASTER_COPY, TRAFFIC_WORDS } from '../../../../copy/master';
 import { TabBar } from '../../../../ui/TabBar';
@@ -23,18 +25,30 @@ const WORDS = { intro: CONVERTER_COPY.intro, realCommands: CONVERTER_COPY.realCo
 /** Protocol converter: ScadaBench reads the device as master and serves the same points upstream.
  *  The column holds "1 · Read the device" above "2 · Serve to SCADA", each with its own status and button. */
 export function ConverterTool() {
-  const [master, setMaster] = useState<{ config: MasterConfig; status: MasterStatus } | null>(null);
-  const [gateway, setGateway] = useState<{ config: GatewayConfig; status: GatewayStatus } | null>(null);
   const [tab, setTab] = useState<Tab>('device');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ side: 'device' | 'scada'; text: string } | null>(null);
-  const refresh = useCallback(() => Promise.all([masterApi.config(), masterApi.status(), gatewayApi.config(), gatewayApi.status()])
-    .then(([mc, ms, gc, gs]) => { setMaster({ config: mc, status: ms }); setGateway({ config: gc, status: gs }); })
-    .catch(reason => setError({ side: 'device', text: reason.message })), []);
-  useEffect(() => { refresh(); const timer = setInterval(refresh, 1500); return () => clearInterval(timer); }, [refresh]);
-  const act = (side: 'device' | 'scada', task: () => Promise<unknown>) => {
-    setBusy(true); setError(null);
-    task().catch(reason => setError({ side, text: reason.message })).finally(() => { setBusy(false); refresh(); });
+  // Both sides' settings and status on the shared live feed, every 1.5 s as before (speed lane F).
+  const [parts, setParts] = useState<{ mc?: MasterConfig; ms?: MasterStatus; gc?: GatewayConfig; gs?: GatewayStatus }>({});
+  useEffect(() => {
+    const fail = (reason: Error) => setError({ side: 'device', text: reason.message });
+    const stops = [
+      liveFeed.subscribe<MasterConfig>(MASTER_CONFIG, 1500, mc => setParts(current => ({ ...current, mc })), fail),
+      liveFeed.subscribe<MasterStatus>(MASTER_STATUS, 1500, ms => setParts(current => ({ ...current, ms })), fail),
+      liveFeed.subscribe<GatewayConfig>(GATEWAY_CONFIG, 1500, gc => setParts(current => ({ ...current, gc })), fail),
+      liveFeed.subscribe<GatewayStatus>(GATEWAY_STATUS, 1500, gs => setParts(current => ({ ...current, gs })), fail),
+    ];
+    return () => stops.forEach(stop => stop());
+  }, []);
+  const refresh = useCallback(() => [MASTER_CONFIG, MASTER_STATUS, GATEWAY_CONFIG, GATEWAY_STATUS].forEach(liveFeed.refresh), []);
+  const master = parts.mc && parts.ms ? { config: parts.mc, status: parts.ms } : null;
+  const gateway = parts.gc && parts.gs ? { config: parts.gc, status: parts.gs } : null;
+  const [queue] = useState(createActionQueue);
+  // Saves run quietly so Connect or Start pressed right after typing a setting is not lost (one queue).
+  const act = (side: 'device' | 'scada', task: () => Promise<unknown>, quiet = false) => {
+    if (!quiet) setBusy(true);
+    setError(null);
+    queue(task).catch(reason => setError({ side, text: reason.message })).finally(() => { if (!quiet) setBusy(false); refresh(); });
   };
   const fail = (text: string) => setError({ side: 'device', text });
   if (!master || !gateway) return <div className="card fill-body"><div className="guide-empty"><p>Loading the protocol converter…</p>
@@ -45,11 +59,11 @@ export function ConverterTool() {
     <aside className="card side-pane" aria-label={CONVERTER_COPY.columnTitle}>
       <MasterConnect config={master.config} status={master.status} busy={busy} title={CONVERTER_COPY.deviceStep}
         help={`${CONVERTER_COPY.intro} ${MASTER_COPY.intro(master.config.protocol)}`}
-        save={(protocol: MasterProtocol, host, settings) => act('device', () => masterApi.saveConfig(protocol, host, settings))}
+        save={(protocol: MasterProtocol, host, settings) => act('device', () => masterApi.saveConfig(protocol, host, settings), true)}
         connect={() => act('device', masterApi.connect)} disconnect={() => act('device', masterApi.disconnect)}
         interrogate={() => act('device', masterApi.interrogate)} error={error?.side === 'device' ? error.text : ''} />
       <GatewaySettings config={gateway.config} status={gateway.status} busy={busy} words={WORDS} title={CONVERTER_COPY.scadaStep}
-        save={(protocol: Protocol, listen: Listen, settings, real) => act('scada', () => gatewayApi.saveConfig(protocol, listen, settings, real))}
+        save={(protocol: Protocol, listen: Listen, settings, real) => act('scada', () => gatewayApi.saveConfig(protocol, listen, settings, real), true)}
         start={() => act('scada', gatewayApi.start)} stop={() => act('scada', gatewayApi.stop)}
         error={error?.side === 'scada' ? error.text : ''} />
     </aside>
@@ -61,7 +75,7 @@ export function ConverterTool() {
         {tab === 'served' && <ServedPoints protocol={gateway.config.protocol} fail={fail} />}
         {tab === 'routes' && <CommandRoutes locked={serving} fail={fail} />}
         {tab === 'scada' && <TrafficLog running={serving} />}
-        {tab === 'deviceTraffic' && <TrafficLog running={connected} load={masterApi.traffic} words={TRAFFIC_WORDS}
+        {tab === 'deviceTraffic' && <TrafficLog running={connected} load={masterApi.traffic} feedKey="master-traffic" words={TRAFFIC_WORDS}
           hint={MASTER_COPY.trafficHint} />}
         {tab === 'commands' && <CommandLog />}
       </div>

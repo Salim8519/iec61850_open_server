@@ -61,14 +61,18 @@ Press for a Push Button. The server rejects mixed `action` and `value`.
 | `GET /network` | - | Network mode and Npcap status |
 | `PUT /network` | `{mode,adapter_guid?,adapter_label?}` | Stopped-only; endpoint conflicts refused |
 | `GET /network/adapters` | `refresh=1` | Windows adapters with IPv4 addresses (cached 10 s) |
-| `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints (a row that cannot be used adds `alternative: {ip, prefix}`, change 0098), change items, fingerprint |
+| `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints (a row that cannot be used adds `alternative: {ip, prefix}`, change 0098), change items, fingerprint; Go also plans SNMP devices (`ied_id` `snmp:<id>`, `kind`, `saved`, item `snmp_firewall`, change 0148) |
+| `GET /network/plan/progress` | | Go only (ADR-0093): the running address check: `run`, `running`, `steps[{key,label,state,ms}]`, `asked`, `answered`, `rows[{id,name,address,state}]` with state `checking`/`free`/`in_use`/`not_checked` |
 | `POST /network/plan/apply` | `{fingerprint,confirm:true}` | Re-plan; 409 if changed; elevated helper; enters lab mode |
 | `GET /network/cleanup/preview` | - | Outstanding owned items and fingerprint |
 | `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |
 | `GET /network/gateway-firewall` | - | Gateway firewall check: items, fingerprint, `open`, `blocked`, `needs_admin` (no elevation) |
 | `POST /network/gateway-firewall` | `{fingerprint,confirm:true}` | Allow rule + switch off Block rules for the gateway worker; 409 if Windows changed (ADR-0062) |
 | `PUT /ieds/{id}/settings` | `{role?,live?,lab_ip?,goose_publish?,port?}` | Stopped-only; SCL never rewritten |
-| `GET /goose` | - | Configured/observed GOOSE blocks, problems, unknown GOOSE |
+| `GET /goose` | - | Configured/observed GOOSE blocks (`origin` app/wire, `src_mac`), problems, unknown GOOSE, `engine` (ADR-0073) |
+| `GET /goose/share` | - | Where GOOSE goes: `reach`, picked `uplink`, Advanced `choices`, `risk` {level, reasons}, `npcap`, `state`, `message`, `conflicts` |
+| `PUT /goose/share` | `{reach, uplink_guid?, adapter_guid?, confirm?}` | Allowed while running. `outside` needs `confirm:true`, Npcap and the `adapter_guid` shown (GOOSE-19) |
+| `POST /goose/conflicts` | `{ied_id, choice: stop\|continue, confirm?}` | Answer a conflict for this Run; `continue` needs `confirm:true` |
 | `GET /goose/links` | - | GOOSE link map (ADR-0065): `ieds`, `blocks` (status, `member_refs`), `links` (status, inputs, `live`), `diagnostics`, `summary` |
 | `GET /mms/access` | - | MMS clients per simulated IED (ADR-0066): address, nodes read, report blocks, commands |
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
@@ -83,6 +87,8 @@ ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input
 (`reason`) and `mms_access` (client list, live view only, never in the run log); worker
 `connection`, `report_control` and control events carry `peer` (`ip:port`) and
 `control_applied` carries `external`. Signal events from GOOSE inputs have source `goose_input`.
+ADR-0073 adds `goose_conflict` (`ied_id`, `gocb_ref`, `src_mac`, `sharing`), `goose_share` (`state`
+off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`ied_id`, `limit_per_second`).
 
 ## Scenarios, tests and events
 
@@ -99,6 +105,9 @@ ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
 | `POST /license/activate` | `license_key`, `move` | Activate (or move) a lifetime key online |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
+| `GET /app/update` | - | `current, auto, checked_at, checking, error, available, important, dismissed, latest` (ADR-0071; stored answer, no internet call) |
+| `POST /app/update/check` | - | Ask the license server now (a repeat within 60 s reuses the answer); failures are an `error` code, never a 5xx |
+| `PUT /app/update` | `{auto?: bool, dismissed?: version or null}` | Once-a-day switch; hide the note for one version (not for an important update) |
 | `GET /preferences` | - | `tour_seen_version`, `tour_version`, `list_filters`, `sld_goose_layer`, `sld_readers_layer` |
 | `PUT /preferences` | `{tour_seen_version?, list_filters?: {list: {key: text or bool}}, sld_goose_layer?, sld_readers_layer?}` | Store UI preferences in the data folder; a list's filters replace only that list (change 0093); layers 0 or 1 (change 0094) |
 | `PUT /license/config` | `server_url` (https) | Change the license server address |
@@ -123,8 +132,29 @@ ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input
 | `PUT /tools/master/ranges`, `/routes`; `POST /tools/master/probe`, `/probe/ranges` | `modbus_ranges`, `routes`, `table`, `start`, `end`, `data_type` | Modbus ranges, converter command routes, Find registers (<= 10,000 addresses) and adding what it found |
 | `GET /tools/master/traffic?after=`, `/commands` | - | Decoded device traffic, master command log |
 
+SNMP devices (ADR-0092), Go engine only, under `/tools/snmp` (the Python engine answers 404):
+
+| Method/path | Input | Result / invariant |
+| --- | --- | --- |
+| `GET /tools/snmp`, `/config`; `POST /role` | `role` (`simulate`, `read`) | Status (devices, reader, receiver) and the saved `snmp` section |
+| `POST /devices`, `/import`; `PUT/DELETE /devices/{id}` | `profile` (`switch`, `gps`, `empty`); `kind` (`walk`, `csv`), `name`, `text`; `device` | Add from a profile or a file (line diagnostics), change, delete |
+| `POST /start`, `/stop` | - | Start/stop all simulated devices; a port clash is explained with a free port |
+| `GET/PUT /devices/{id}/points`, `PUT /devices/{id}/value`, `GET /devices/{id}/points.csv` | `points`; `oid`, `value`, `hex` | Values with names; live change while running; CSV export |
+| `GET /devices/{id}/actions`, `POST /devices/{id}/trap` | `action` | Events (link down, sync lost...) that change values and send traps/informs |
+| `GET /requests` | - | Request log of the simulated devices |
+| `POST /read/connect`, `/disconnect`, `/walk`, `/set`, `/save`; `PUT /read/poll`, `/watch`; `GET /read/values` | `target`; `root`; `point`, `confirm`; `name`; `every_ms` (>= 200); `oids` | Read a device: walk all, re-read, write, save as simulated device |
+| `POST /traps/listen`, `/traps/stop`; `GET /traps` | `ip`, `port`, `users` | Trap/inform receiver (v1/v2c/v3) and received traps with names |
+| `GET/POST /mibs`, `DELETE /mibs/{module}`, `POST /mibs/restore`, `GET /mibs/resolve?name=` | `name`, `text` (MIB file) | MIB library: built-in and added modules, remove, bring back, name to OID |
+
 Packaged builds answer 402 `license_required` on every other `/api/v1` call until licensed
 (ADR-0046); development never does. License endpoints return `{error, code}` on failure.
+
+License server owner page (ADR-0072, [spec](../specs/owner-page.md)): under the configured
+`<owner path>`, reachable only with the gateway Worker's `X-Admin-Gateway` secret (otherwise 404):
+`GET /api/session`, `POST /api/login|logout|logout-all`, `GET /api/overview|licenses|purchases|activity|issues|disk|subscribers|news/status`,
+`POST /api/licenses/issue|note|revoke|reset-hwid|resend`, `POST /api/subscribers/add|remove`, `POST /api/news/test`;
+with a fresh `X-Confirm-Code`: `POST /api/licenses/delete`, `/api/disk/clean`, `/api/news/send`.
+Public: `GET/POST /unsubscribe?t=` (POST is RFC 8058 one-click); `POST /api/v1/checkout/create-order` accepts `news`.
 
 Private native IPC is not HTTP: version-1 length-prefixed JSON on worker stdin/stdout.
 `studio/backend/studio_app/runtime/worker_protocol.py` owns framing; native worker

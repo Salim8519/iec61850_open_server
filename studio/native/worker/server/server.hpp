@@ -1,6 +1,7 @@
 #pragma once
 #include "ipc/framing.hpp"
 #include "access_log.hpp"
+#include "event_loop.hpp"
 extern "C" {
 #include "iec61850_server.h"
 #include "iec61850_dynamic_model.h"
@@ -19,9 +20,12 @@ struct Server {
     IedServer handle = nullptr;
     std::vector<std::unique_ptr<ControlBinding>> controls;
     std::unordered_map<DataAttribute*, uint64_t> revisions;
+    // Resolved object references (IPC thread only; the model is fixed while running).
+    std::unordered_map<std::string, DataAttribute*> attributes;
     std::string goose_interface;
     std::thread goose_thread;
     AccessLog access;
+    EventLoop loop;
     Server();
     ~Server();
     Json start(const Json& config);

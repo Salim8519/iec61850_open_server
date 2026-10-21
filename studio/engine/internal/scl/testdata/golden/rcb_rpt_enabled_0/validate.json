@@ -1,0 +1,1 @@
+{"status": "invalid", "schema": "SCL2007B4", "errors": [{"line": 2, "message": "Element '{http://www.iec.ch/61850/2003/SCL}RptEnabled', attribute 'max': [facet 'minExclusive'] The value '0' must be greater than '0'."}]}

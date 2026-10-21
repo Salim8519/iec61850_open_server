@@ -1,0 +1,1 @@
+{"type": "StudioError", "message": "Verified SCL export requires a supported, schema-valid document: Element 'SCL': No matching global declaration available for the validation root.", "code": "validation", "details": []}
