@@ -3,19 +3,44 @@
 .gateway-check { gap: 8px; font-weight: 600; }
 .gateway-warning { color: var(--warning); margin: 0; }
 .gateway-problems { margin: 0; padding: 10px 14px 10px 30px; border-radius: var(--radius-small); background: var(--warning-soft);
-  color: #92400e; font-size: 14px; display: grid; gap: 4px; }
-.gateway-points td { vertical-align: middle; padding: 6px 8px; }
-.gateway-points th { padding-left: 8px; padding-right: 8px; }
-/* The whole table fits 1366x768 without sideways scrolling: the protocol tag sits under the type. */
-.gateway-points select { min-width: 0; width: 150px; }
-.type-cell { display: grid; gap: 2px; white-space: nowrap; }
+  color: var(--warning-text); font-size: 14px; display: grid; gap: 4px; }
+.gateway-points td { vertical-align: middle; padding: 6px 6px; }
+.gateway-points th { padding-left: 6px; padding-right: 6px; }
+/* The whole table fits 1366x768 without sideways scrolling; the protocol's own type is in the badge's hover and the type list. */
+.gateway-points select { min-width: 0; width: 136px; }
+/* One line per point (ADR-0095): the type badge and its name sit side by side. */
+span.type-cell { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }  /* never the shared <td class="type-cell"> */
 .gateway-number { width: 72px; }
-.gateway-points td.reference-cell { max-width: 200px; overflow-wrap: anywhere; }
-.gateway-points td.value-cell { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gateway-points:not(.picking) td:nth-child(6) input { width: 140px; } /* Select mode has no description column */
+.gateway-points td.reference-cell { max-width: 380px; overflow-wrap: anywhere; }
+.reference-line { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; }
+.reference-path { color: var(--text-2); }
+/* One line per point (ADR-0095): IED, path and Change stay side by side; a long path ends in … (full path on hover). */
+.gateway-points .reference-line { flex-wrap: nowrap; min-width: 0; }
+.gateway-points .reference-line strong, .gateway-points .reference-change { flex-shrink: 0; white-space: nowrap; }
+.gateway-points td.reference-cell .reference-path { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gateway-points .editable-text { white-space: nowrap; flex-wrap: nowrap; }
+.gateway-points td.value-cell { max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gateway-points td.point-name { min-width: 150px; }
+.gateway-points td.address-cell, .gateway-points td.scale-cell { white-space: nowrap; }
+/* Edit-in-place inputs stay as wide as the value they replace, so the row does not jump. */
+.gateway-points .editable-input { min-width: 0; width: 180px; }
+.gateway-points td.address-cell .editable-input, .gateway-points td.scale-cell .editable-input { width: 84px; }
+.gateway-points .choice-select { width: 230px; }
+.choice-locked { display: inline-block; padding: 2px 6px; }
+.panel-toolbar .active-toggle { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.reference-change { min-height: 26px; padding: 0 6px; gap: 4px; font-size: var(--font-size-small); }
+.signal-change-row > td { background: var(--accent-soft); }
+.signal-change { display: grid; gap: 8px; padding: 4px 4px 8px; }
+.signal-change-command { gap: 10px; align-items: end; }
+.signal-change-command label { display: grid; gap: 4px; font-weight: 600; }
+.signal-change-command select { width: 260px; }
 .gateway-traffic { overflow: auto; padding: 8px 20px 16px; min-height: 200px;
   font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; background: var(--surface-2); }
 .traffic-line { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed var(--border); }
+/* The type badge opens a 104 line when the line names a point type; the slot keeps the columns in line. */
+.traffic-kind { flex: 0 0 62px; align-self: center; }
+.traffic-line .kind-badge { height: 20px; padding: 0 5px; }
+.traffic-line .kind-badge.command { height: 22px; }
 .traffic-line svg { flex-shrink: 0; position: relative; top: 2px; }
 .traffic-time { color: var(--text-3); min-width: 86px; }
 .traffic-peer { color: var(--text-2); min-width: 120px; }
@@ -26,7 +51,7 @@
 /* Settings column parts (ADR-0064): compact notices, details behind a summary. */
 .gateway-notices { display: grid; gap: 8px; }
 .gateway-run-note { display: grid; gap: 8px; padding: 8px 10px; border-radius: var(--radius-small); background: var(--warning-soft);
-  border: 1px dashed #f0b35a; color: #92400e; }
+  border: 1px dashed var(--warning); color: var(--warning-text); }
 .gateway-run-note button { min-height: 34px; }
 .side-details summary { font-weight: 600; }
 .side-details ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 2px; }
@@ -36,7 +61,7 @@
 .gateway-panel thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
 .gateway-send { gap: 6px; flex-wrap: nowrap; }
 .gateway-send button { min-height: 32px; padding: 0 10px; }
-.gateway-confirm { border: 1px solid #f19a9a; background: var(--error-soft); border-radius: 10px; padding: 10px 14px; }
+/* The look of the confirm box is the shared .confirm-box (ui/kind.css); a REAL device gets the strong border. */
 .gateway-confirm.real { border-width: 2px; border-color: var(--error); }
 .gateway-confirm p { margin: 0 0 6px; display: flex; gap: 8px; align-items: center; }
 .gateway-confirm p svg { color: var(--error); flex-shrink: 0; }

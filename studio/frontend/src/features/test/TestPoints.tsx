@@ -1,48 +1,51 @@
-import { ArrowDown, ArrowUp, ListChecks, Plus, Trash2, X } from 'lucide-react';
-import { useState } from 'react';
+import { ListChecks, Plus, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { api } from '../../api/client';
-import type { Project, Signal, TestControl } from '../../api/types';
+import type { Project, TestControl } from '../../api/types';
 import { SignalSearchPicker } from '../../components/SignalSearchPicker';
+import { useDataClassesOf } from '../../components/useDataClassesOf';
 import '../../components/signal-search-picker.css';
-import { shortRef } from '../../equipment/relayDisplay';
-import { Disclosure } from '../../ui/Disclosure';
+import { countKinds } from '../../points/pointKind';
+import { useListFilter } from '../../state/useListFilter';
 import { EmptyState } from '../../ui/EmptyState';
+import { FilterBar } from '../../ui/FilterBar';
+import { effective, isFiltered } from '../../ui/filterState';
 import { Spinner } from '../../ui/Spinner';
-import { ValueControl } from './ValueControl';
+import { TestPointRow, type Item } from './TestPointRow';
+import { swapPoints, TEST_FILTER, testIedChoices, testPointKind, testPointMatches } from './testFilters';
 import { useLiveFeed } from '../../api/useLiveFeed';
-import { useSignalValue } from '../../state/useLive';
 
-type Item = TestControl & { signal: Signal; automatic: boolean; overridden: boolean };
 const STOP_TO_ADD = 'Stop the run to add test points';
+/** Below this many points a filter bar is only noise; it appears at once if a remembered filter is on. */
+const FILTER_FROM = 6;
 
 type Perform = (task: () => Promise<unknown>) => Promise<void>;
-
-/** One test point's control; only this cell re-renders when the point's live value changes. */
-function PointControl({ item, running, perform }: { item: Item; running: boolean; perform: Perform }) {
-  const live = useSignalValue(`${item.ied_id}:${item.ref}`);
-  return <ValueControl point={item} signal={item.signal} running={running} perform={perform}
-    value={live ?? item.signal.value} segmented
-    pulse={{ active: item.active_value, durationMs: item.duration_ms }} generator={item.automatic} />;
-}
 
 export function TestPoints({ project, perform, prepare }: {
   project: Project; perform: Perform; prepare: () => Promise<void>;
 }) {
   const [adding, setAdding] = useState(false);
+  const filter = useListFilter('test-points', TEST_FILTER);
   const running = project.runtime !== 'stopped';
   const entries = project.test_panel || [];
   // Shared live feed: every second while running, once otherwise; unchanged answers do nothing.
   const panel = useLiveFeed<{ items: Item[] }>('/project/test-panel', running ? 1000 : null, project.test_panel).value;
   const items = panel?.items ?? [];
   const loaded = !!panel;
+  const classFor = useDataClassesOf(items.map(item => item.ied_id));
+  const options = useMemo(() => ({ ied: testIedChoices(items, project.ieds) }), [items, project.ieds]);
+  const values = effective(TEST_FILTER, filter.values, options);
+  const rows = items.map(item => {
+    const ied = project.ieds.find(entry => entry.id === item.ied_id);
+    return { item, ied, kind: testPointKind(item, ied, ref => classFor(item.ied_id, ref)) };
+  });
+  const inScope = rows.filter(row => testPointMatches(row.item, row.kind, row.ied?.name, { ...values, point_kind: 'all' }));
+  const shown = rows.filter(row => testPointMatches(row.item, row.kind, row.ied?.name, values));
   const save = (next: TestControl[]) => perform(async () => { await prepare(); await api('/project/test-panel', 'PUT', next); });
-  const move = (index: number, direction: number) => {
-    const next = [...entries]; [next[index], next[index + direction]] = [next[index + direction], next[index]]; save(next);
-  };
-  const edit = (entry: TestControl) => save(entries.map(item => item.id === entry.id ? entry : item));
+  const showBar = items.length >= FILTER_FROM || isFiltered(TEST_FILTER, filter.values);
   return <div className="stack">
-    <div className="row" style={{ justifyContent: 'space-between' }}>
-      <p className="muted" style={{ margin: 0 }}>{running ? 'Your saved alarms, statuses and measurements. Change them here while the IEDs run; stop the run to add or remove test points.'
+    <div className="row test-points-head">
+      <p className="muted">{running ? 'Your saved alarms, statuses and measurements. Change them here while the IEDs run; stop the run to add or remove test points.'
         : 'Your saved alarms, statuses and measurements. Press Run, then change them here.'}</p>
       {(adding || !!items.length) && <button className={adding ? '' : 'primary'} disabled={running} title={running ? STOP_TO_ADD : undefined}
         onClick={() => setAdding(!adding)}>
@@ -57,25 +60,21 @@ export function TestPoints({ project, perform, prepare }: {
       hintId="test.points.empty" action={<button className="primary" disabled={running} title={running ? STOP_TO_ADD : undefined}
         onClick={() => setAdding(true)}>
         <Plus size={16} />Add test point</button>} /></div>}
-    {!!items.length && <div className="card"><table><thead><tr><th>Name</th><th>Value</th><th style={{ width: 120 }} /></tr></thead>
-      <tbody>{items.map((item, index) => {
-        const ied = project.ieds.find(entry => entry.id === item.ied_id);
-        return <tr key={item.id}><td style={{ minWidth: 240 }}><strong>{item.label}</strong>
-          <div className="small muted">{ied?.name || 'Missing device'} · {shortRef(item.ref, ied?.name)}</div>
-          {!running && <Disclosure title="Edit"><label>Name<input maxLength={100} defaultValue={item.label}
-            onBlur={event => event.target.value.trim() && event.target.value !== item.label && edit({ ...item, label: event.target.value })} /></label>
-            {item.signal.kind === 'BOOLEAN' && <div className="form-grid">
-              <label>Pulse value<select value={String(item.active_value)} onChange={event => edit({ ...item, active_value: event.target.value === 'true' })}>
-                <option value="true">True</option><option value="false">False</option></select></label>
-              <label>Pulse length (ms)<input type="number" min={100} max={60000} step={100} defaultValue={item.duration_ms}
-                onBlur={event => Number(event.target.value) !== item.duration_ms && edit({ ...item, duration_ms: Number(event.target.value) })} /></label>
-            </div>}</Disclosure>}</td>
-          <td><PointControl item={item} running={running} perform={perform} /></td>
-          <td><div className="row" style={{ justifyContent: 'flex-end', gap: 2 }}>
-            <button className="icon ghost" aria-label={`Move ${item.label} up`} disabled={running || index === 0} onClick={() => move(index, -1)}><ArrowUp size={16} /></button>
-            <button className="icon ghost" aria-label={`Move ${item.label} down`} disabled={running || index === items.length - 1} onClick={() => move(index, 1)}><ArrowDown size={16} /></button>
-            <button className="icon ghost" aria-label={`Remove ${item.label}`} disabled={running}
-              onClick={() => save(entries.filter(entry => entry.id !== item.id))}><Trash2 size={16} /></button></div></td></tr>;
-      })}</tbody></table></div>}
+    {!!items.length && <div className="card">
+      {showBar && <FilterBar label="Filter test points" spec={TEST_FILTER} values={values} set={filter.set} clear={filter.clear}
+        shown={shown.length} total={items.length} options={options} counts={{ point_kind: countKinds(inScope, row => row.kind) }} />}
+      <table className="compact-rows"><thead><tr><th title="Hover a badge for its full name and the exact data type">Type</th><th>Name</th><th>Value</th><th style={{ width: 120 }} /></tr></thead>
+        <tbody>{shown.map(({ item, ied, kind }, index) => {
+          const entry = entries.find(candidate => candidate.id === item.id);
+          const above = shown[index - 1]?.item.id;
+          const below = shown[index + 1]?.item.id;
+          return entry && <TestPointRow key={item.id} item={item} entry={entry} kind={kind} iedName={ied?.name}
+            running={running} perform={perform}
+            edit={next => save(entries.map(current => current.id === next.id ? next : current))}
+            move={{ up: above ? () => save(swapPoints(entries, item.id, above)) : undefined,
+              down: below ? () => save(swapPoints(entries, item.id, below)) : undefined }}
+            remove={() => save(entries.filter(current => current.id !== item.id))} />;
+        })}</tbody></table>
+      {!shown.length && <div className="empty">No test point matches. Press Clear to see them all.</div>}</div>}
   </div>;
 }

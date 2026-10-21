@@ -65,3 +65,10 @@ directly under a one-row form (C), plus a filter bar on every list. Change:
 - `GatewayStatusBar.tsx` and `MasterStatusBar.tsx` are removed; their content lives in the column.
 - The design rule "Pages scroll inside a centred 1440 px column" still applies to the SLD, Test,
   Settings, the Tools list and the GOOSE & SV traffic page.
+
+## Amendment 2026-10-21: IED Explorer right side is one panel with tabs (change 0151)
+
+Owner: the node and the watch list stacked as two half-height boxes waste space, and small screens
+matter. Of three drawn layouts (tabs, three columns, bottom dock) the owner chose tabs: the right
+side is one full-height panel with the tabs "<logical node>" and "Watch list (N)". Both stay
+mounted so opened objects and the watch list keep their state; picking a node shows its tab.

@@ -69,6 +69,7 @@ func (a *Area) Routes() []api.Route {
 		route("POST", "/scl/import", a.importSCL),
 		route("POST", "/ieds/template", a.template),
 		route("GET", "/ieds/{ied_id}/source", a.source),
+		route("GET", "/ieds/{ied_id}/data-classes", a.dataClasses),
 		route("POST", "/ieds/{ied_id}/export-scl", a.exportSCL),
 		route("GET", "/ieds/{key}/removal-preview", a.removalPreview),
 		route("DELETE", "/ieds/{key}", a.removeIED),

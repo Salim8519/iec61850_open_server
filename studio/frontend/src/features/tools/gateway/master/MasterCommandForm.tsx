@@ -2,6 +2,7 @@ import { Send, TriangleAlert, X } from 'lucide-react';
 import { useState } from 'react';
 import { masterApi, type CommandKind, type CrobCode, type MasterCommand, type MasterProtocol } from '../../../../api/master';
 import { ADDRESS_WORD, COMMAND_HINT, COMMAND_NAMES, COMMANDS, CROB_CODES, MASTER_COPY, TARGET_WORD } from '../../../../copy/master';
+import '../../../../ui/kind.css';
 
 const ON_OFF = [{ value: 1, label: 'ON (1)' }, { value: 0, label: 'OFF (0)' }];
 const CHOICES: Partial<Record<CommandKind, { value: number; label: string }[]>> = {
@@ -58,7 +59,7 @@ export function MasterCommandForm({ draft, host, protocol, close, fail }: {
         <Send size={14} />Review…</button>
     </div>
     {!clock && <p className="small muted" style={{ margin: 0 }}>{COMMAND_HINT[protocol]}</p>}
-    {confirming && <div className="gateway-confirm real" role="alertdialog" aria-label="Confirm command">
+    {confirming && <div className="confirm-box gateway-confirm real" role="alertdialog" aria-label="Confirm command">
       <p><TriangleAlert size={18} aria-hidden /><strong>{MASTER_COPY.confirmTitle(COMMAND_NAMES[command.kind],
         clock ? undefined : command.address, host, TARGET_WORD[protocol])}</strong></p>
       <p className="small">{MASTER_COPY.realWarning}</p>

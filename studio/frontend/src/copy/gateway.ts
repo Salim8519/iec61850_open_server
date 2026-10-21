@@ -36,7 +36,17 @@ export const ADVANCED_SETTINGS: Record<Protocol, string[]> = {
   iec104: ['t1', 't2', 't3', 'k', 'w'], modbus: [], dnp3: ['unsolicited'],
 };
 
+/** Moving a point to another IED or path (the "Change" row in the point list). */
+export const CHANGE_COPY = {
+  button: 'Change the IED or path of this point', short: 'Change', cancel: 'Close without changing',
+  title: (address: number) => `Change the signal of point ${address}`,
+  hint: 'Only signals that fit this type are listed. Press Save point list afterwards.',
+  noIeds: 'This project has no IEDs yet. Add an IED first.', chooseIed: 'Choose an IED', control: 'Controllable object',
+  chooseControl: 'Choose what this command operates', used: 'used by another point', noControls: 'This IED has no controllable objects',
+};
+
 export const GATEWAY_COPY = {
+  name: 'Name', namePlaceholder: 'Add a name',
   intro: 'ScadaBench acts as the substation gateway. Your SCADA connects to it and sees the IEDs of this project as one station. Press Start gateway: ScadaBench proposes the useful points and waits for SCADA. The IEDs start separately with Run at the top. SCADA commands operate the IEDs over real IEC 61850 MMS.',
   listen: 'Who can connect', thisPc: 'This PC only', network: 'All network adapters',
   listenHint: 'Choose All network adapters when SCADA runs on another PC. ScadaBench checks Windows Firewall for you below.',
@@ -72,6 +82,7 @@ export const GATEWAY_COPY = {
   commandsHint: 'Every command, from SCADA or from this page, in three steps: what was asked, what the IED did, and what ScadaBench saw afterwards.',
   pause: 'Pause', resume: 'Resume', clear: 'Clear view',
   removeAll: 'Remove all points', select: 'Select', selectHint: 'Choose several points to remove',
+  more: 'More', moreLabel: 'More point list actions: import, export, remove all',
   removedNote: (count: number) => `${count} ${count === 1 ? 'point' : 'points'} removed. Press Save point list to keep this, or Discard changes to undo.`,
   emptyFilter: 'No row matches the filter. Press Clear to see every row.',
 };

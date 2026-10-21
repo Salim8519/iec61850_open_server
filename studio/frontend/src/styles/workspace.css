@@ -4,6 +4,7 @@
 .canvas-toolbar { position: absolute; z-index: 6; left: 20px; top: 16px; display: flex; gap: 8px; align-items: center;
   padding: 6px; background: var(--surface); border: var(--line) solid var(--border-strong); border-radius: 12px; box-shadow: var(--shadow);
   flex-wrap: wrap; max-width: calc(100% - 40px); }
+.canvas-toolbar button.ghost { text-decoration: none; }  /* the toolbar frame already says "buttons" */
 .canvas:has(.canvas-lock) .canvas-toolbar { max-width: calc(100% - 280px); }
 .canvas-toolbar .divider { width: 1px; height: 26px; background: var(--border); }
 .canvas-empty { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); text-align: center;
@@ -30,9 +31,9 @@
 .sheet-actions button { flex: 1; min-height: var(--control-height-large); }
 .list { display: grid; gap: 8px; }
 .list-row { width: 100%; justify-content: flex-start; text-align: left; min-height: 64px; padding: 10px 14px;
-  border: var(--line) solid var(--border); border-radius: var(--radius); background: var(--surface); gap: 12px; white-space: normal; }
-.list-row:hover:not(:disabled) { background: var(--surface); border-color: var(--border-strong); }
-.list-row.active { background: var(--accent-soft); border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  border: var(--line) solid var(--frame); border-radius: var(--radius); background: var(--surface); gap: 12px; white-space: normal; }
+.list-row:hover:not(:disabled) { background: var(--surface); border-color: var(--control-border-hover); }
+.list-row.active { background: var(--accent-soft); border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), inset 5px 0 0 var(--accent); }
 .list-row .list-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
 .list-row strong { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .list-row small { font-size: var(--font-size-small); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -42,6 +43,7 @@
 .tabbar button { border: 0; border-radius: 0; border-bottom: 3px solid transparent; background: none;
   color: var(--text-2); min-height: 46px; padding: 0 12px; }
 .tabbar button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 650; }
+.tabbar-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
 .fact { border: var(--line) solid var(--border); border-radius: var(--radius-small); padding: 12px 14px; background: var(--surface-2); }
 .fact span { display: block; font-size: var(--font-size-small); color: var(--text-2); }

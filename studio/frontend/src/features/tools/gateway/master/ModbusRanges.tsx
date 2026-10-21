@@ -2,10 +2,17 @@ import { Plus, Radar, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { masterApi, type MasterStatus, type ModbusRange } from '../../../../api/master';
 import { DATA_TYPE_NAMES, RANGES_COPY, TABLE_NAMES } from '../../../../copy/master';
+import { kindOfMasterGroup } from '../../../../points/pointKind';
+import { EditableText } from '../../../../ui/EditableText';
 import { HelpTip } from '../../../../ui/HelpTip';
+import { KindBadge, kindRow } from '../../../../ui/KindBadge';
+import { ChoiceEdit } from '../ChoiceEdit';
 import { FindRegisters } from './FindRegisters';
 
 const BITS = new Set(['coils', 'discrete_inputs']);
+const TABLE_CHOICES = Object.entries(TABLE_NAMES).map(([value, label]) => ({ value, label }));
+/** A Modbus table holds one kind of point: coils and discrete inputs are on/off, registers are values. */
+const tableKind = (table: string) => kindOfMasterGroup(table.replace(/s$/, ''));
 const REGISTER_TYPES = ['uint16', 'int16', 'uint32', 'int32', 'float32'];
 
 /** Modbus has no discovery: the ranges ScadaBench reads every poll interval, and Find registers. */
@@ -43,16 +50,18 @@ export function ModbusRanges({ status, fail }: { status: MasterStatus; fail: (me
     {(showFind ?? (ranges?.length === 0 || status.probe.state === 'running')) && <div className="guide-section panel-messages">
       <FindRegisters status={status} added={() => { load(); setShowFind(false); }} fail={fail} /></div>}
     {ranges && ranges.length === 0 ? <p className="muted watch-empty">{RANGES_COPY.empty}</p> :
-      <div className="table-scroll"><table className="gateway-points"><thead><tr><th>{RANGES_COPY.table}</th>
+      <div className="table-scroll"><table className="gateway-points compact-rows"><thead><tr><th>{RANGES_COPY.table}</th>
         <th>{RANGES_COPY.start}</th><th>{RANGES_COPY.count}</th><th>{RANGES_COPY.type}</th><th>{RANGES_COPY.order}</th>
         <th>Answer</th><th aria-label="Remove" /></tr></thead>
-        <tbody>{(ranges ?? []).map((range, index) => <tr key={index}>
-          <td><select value={range.table} aria-label={RANGES_COPY.table} onChange={event => edit(index, { table: event.target.value })}>
-            {Object.keys(TABLE_NAMES).map(table => <option key={table} value={table}>{TABLE_NAMES[table]}</option>)}</select></td>
-          <td><input className="gateway-number" value={range.start} aria-label={RANGES_COPY.start}
-            onChange={event => edit(index, { start: number(event.target.value) })} /></td>
-          <td><input className="gateway-number" value={range.count} aria-label={RANGES_COPY.count}
-            onChange={event => edit(index, { count: number(event.target.value) })} /></td>
+        <tbody>{(ranges ?? []).map((range, index) => <tr key={index} {...kindRow(tableKind(range.table))}>
+          <td><ChoiceEdit label={RANGES_COPY.table} value={range.table} choices={TABLE_CHOICES}
+            shown={<span className="type-cell"><KindBadge kind={tableKind(range.table)} raw={TABLE_NAMES[range.table]} />
+              <span className="small">{TABLE_NAMES[range.table] ?? range.table}</span></span>}
+            onChange={table => edit(index, { table })} /></td>
+          <td className="address-cell"><EditableText mono inputMode="numeric" value={String(range.start)} label={RANGES_COPY.start}
+            onSave={text => edit(index, { start: number(text) })} /></td>
+          <td className="address-cell"><EditableText mono inputMode="numeric" value={String(range.count)} label={RANGES_COPY.count}
+            onSave={text => edit(index, { count: number(text) })} /></td>
           <td>{BITS.has(range.table) ? DATA_TYPE_NAMES.bool : <select value={range.data_type} aria-label={RANGES_COPY.type}
             onChange={event => edit(index, { data_type: event.target.value })}>
             {REGISTER_TYPES.map(type => <option key={type} value={type}>{DATA_TYPE_NAMES[type]}</option>)}</select>}</td>

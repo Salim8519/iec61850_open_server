@@ -31,8 +31,11 @@
 .devices-list-head > .active-toggle { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 /* Some IEDs run (change 0106): one summary line, running rows first with a solid left bar. */
 .device-run-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; flex-shrink: 0;
-  padding: 8px 14px; border: 1.5px dashed var(--warning); border-radius: var(--radius); background: var(--warning-soft); color: #92400e; }
+  padding: 8px 14px; border: 1.5px dashed var(--warning); border-radius: var(--radius); background: var(--warning-soft); color: var(--warning-text); }
 .device-run-summary .device-run-words { flex: 1; min-width: 240px; overflow-wrap: anywhere; }
 .device-run-summary button { min-height: 36px; }
 .list-row.compact.is-live { box-shadow: inset 4px 0 0 var(--success); }
 .list-row.compact.is-live.active { box-shadow: 0 0 0 1px var(--accent), inset 4px 0 0 var(--success); }
+/* Data point rows stay on one line when they fit; a long description and reference wrap instead of being cut. */
+.device-detail table.compact-rows .point-cell { white-space: normal; overflow-wrap: anywhere; width: 55%; }
+.point-desc { margin-right: 8px; font-weight: 600; }

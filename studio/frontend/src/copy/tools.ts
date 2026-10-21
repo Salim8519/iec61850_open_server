@@ -22,6 +22,9 @@ export const TOOLS: ToolCard[] = [
     hint: 'Checks every GOOSE block and Sampled Values stream of your project against what really arrives. GOOSE needs nothing extra; Sampled Values need the free Npcap driver and a lab network.' },
 ];
 
+/** The "?" next to a tool's title: what the tool is, in the words of its card. */
+export const toolHelp = (card: ToolCard) => `${card.line} ${card.hint}`;
+
 export const TOOLS_COPY = {
   intro: 'Handy helpers for testing and commissioning. Pick a tool; All tools returns to this list.',
   back: 'All tools',
@@ -39,10 +42,13 @@ export const EXPLORER_COPY = {
   objectsHint: 'Open a data object to read its values. Add any value to the watch list to keep it updated.',
   datasets: 'Datasets', reports: 'Report blocks',
   reportsHint: 'Report blocks are listed only. Explorer never enables or reserves them, so SCADA and gateways keep theirs.',
+  views: 'Node or watch list', nodeTab: 'Logical node',
   watchTitle: 'Watch list', watchEmpty: 'Nothing watched yet. Press + next to any value to add it here.',
   watchHint: 'Values refresh at the chosen interval while Watch is on. Export saves them as a CSV file.',
   start: 'Start watching', stop: 'Stop watching', readOnce: 'Read now', exportCsv: 'Export CSV', clear: 'Clear', clearWatch: 'Clear the watch list',
-  every: 'Refresh every', everyShort: 'Every',
+  more: 'More', moreWatch: 'More watch list actions',
+  searchAttributes: 'Search data objects and attributes', filterAttributes: 'Filter data attributes',
+  noAttributes: 'No data attribute matches the filter. Press Clear to see everything.',  every: 'Refresh every', everyShort: 'Every',
   noMatch: 'Nothing matches the filter. Press Clear to see everything.',
   notConnected: 'Connect to an IED to see its data model here',
   command: 'Command:', cancel: 'Cancel', nowReads: 'The device now reads:',

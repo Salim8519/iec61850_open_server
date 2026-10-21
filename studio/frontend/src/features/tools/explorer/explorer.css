@@ -9,9 +9,11 @@
 .explorer-tree-filter .filter-bar { padding: 8px 10px; }
 .explorer-tree-filter .filter-search { width: 100%; }
 .tree { list-style: none; margin: 0; padding: 4px 8px 12px; overflow: auto; }
-/* The watch list stays pinned under the node with its own scroll; the node takes the rest. */
-.explorer-split .fill-column > .explorer-detail { flex: 1 1 0; min-height: 160px; }
-.explorer-watch { flex: 1 1 0; min-height: 200px; }
+/* One right panel: tabs switch between the node and the watch list, each with the full height. */
+.explorer-tab { display: flex; flex-direction: column; }
+.explorer-tab[hidden] { display: none; }
+.explorer-tab > * { flex: 1 1 0; min-height: 0; }
+.explorer-tab > .card { border: 0; border-radius: 0; box-shadow: none; }
 .explorer-detail-body { display: block; }
 .watch-interval { width: auto; min-height: 32px; font-size: var(--font-size-small); }
 .explorer-watch .panel-head { gap: 8px; padding: 8px 12px; }
@@ -29,9 +31,11 @@
 .object { border-top: 1px solid var(--border); }
 .object-row { display: flex; align-items: center; justify-content: space-between; padding: 2px 12px; }
 .object-toggle { gap: 8px; min-height: 40px; }
-.fc-list { display: inline-flex; gap: 4px; margin-left: 6px; }
-.fc-badge { display: inline-block; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border-strong);
-  font-size: 12px; font-weight: 650; color: var(--text-2); background: var(--surface-2); font-family: 'Cascadia Code', Consolas, monospace; }
+.fc-list, .object-kinds { display: inline-flex; gap: 4px; margin-left: 6px; }
+/* The FC is a small plain tag; the point type is the coloured badge (ADR-0095). */
+.fc-badge { display: inline-block; padding: 0 5px; border-radius: 4px; border: 1px solid var(--frame);
+  font-size: 11.5px; font-weight: 650; color: var(--text-2); background: var(--surface-2); font-family: 'Cascadia Code', Consolas, monospace; }
+.explorer-watch td.reference-cell { max-width: none; white-space: normal; overflow: visible; overflow-wrap: anywhere; }
 .attribute-table { margin: 0 12px 12px; width: calc(100% - 24px); }
 .attribute-table td, .attribute-table th { padding-top: 6px; padding-bottom: 6px; }
 .icon-button { min-height: 32px; height: 32px; width: 32px; padding: 0; justify-content: center; }
@@ -52,7 +56,6 @@ a.button.disabled { pointer-events: none; opacity: 0.5; }
 .command-panel { margin: 0 12px 8px; display: grid; gap: 8px; }
 .command-row { gap: 8px; align-items: center; flex-wrap: wrap; }
 .command-step { width: 90px; }
-.command-confirm { border: 1px solid #f19a9a; background: var(--error-soft); border-radius: 10px; padding: 10px 14px; }
 .command-confirm p { margin: 0 0 6px; }
 .command-confirm .row { gap: 8px; }
 .command-result { display: grid; gap: 4px; padding: 6px 0; }

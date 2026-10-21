@@ -2,8 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { createActionQueue } from './actionQueue';
 import { GATEWAY_STATUS, gatewayApi, type GatewayConfig, type GatewayStatus, type Listen, type Protocol } from '../../../api/gateway';
 import { liveFeed } from '../../../api/polls';
+import type { Ied } from '../../../api/types';
 import { GATEWAY_COPY } from '../../../copy/gateway';
 import { TabBar } from '../../../ui/TabBar';
+import { FULL_PLACE, gatewayFullDetail } from '../../../copy/fullView';
+import { FullView, FullViewButton } from '../../../ui/FullView';
+import { useFullView } from '../../../state/useFullView';
 import { CommandLog } from './CommandLog';
 import { GatewayFirewall } from './GatewayFirewall';
 import { GatewayNotices } from './GatewayNotices';
@@ -17,10 +21,11 @@ type Tab = 'points' | 'traffic' | 'commands';
 
 /** Gateway simulator: ScadaBench as the station gateway towards a SCADA master. Run stays separate.
  *  Settings column on the left, the tabs fill the rest of the window (ADR-0064). */
-export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: () => void }) {
+export function GatewayTool({ ieds, runState, runIeds }: { ieds: Ied[]; runState: string; runIeds: () => void }) {
   const [config, setConfig] = useState<GatewayConfig | null>(null);
   const [status, setStatus] = useState<GatewayStatus | null>(null);
   const [tab, setTab] = useState<Tab>('points');
+  const [full, setFull] = useFullView('gateway');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const refresh = useCallback(() => liveFeed.refresh(GATEWAY_STATUS), []);
@@ -48,14 +53,18 @@ export function GatewayTool({ runState, runIeds }: { runState: string; runIeds: 
         {config.listen === 'network' && <GatewayFirewall port={Number(config.settings[config.protocol].port)} />}
       </GatewaySettings>
     </aside>
+    <FullView full={full} change={setFull} place={FULL_PLACE.gateway} detail={gatewayFullDetail(config.protocol, running)}
+      status={<button className={running ? '' : 'primary'} disabled={busy} onClick={() => act(running ? gatewayApi.stop : gatewayApi.start)}>
+        {running ? GATEWAY_COPY.stop : GATEWAY_COPY.start}</button>}>
     <div className={`card fill-panel gateway-panel${running ? ' running' : ''}`}>
-      <TabBar label="Gateway views" value={tab} change={setTab}
+      <TabBar label="Gateway views" value={tab} change={setTab} end={<FullViewButton full={full} change={setFull} />}
         tabs={(Object.keys(GATEWAY_COPY.tabs) as Tab[]).map(key => [key, GATEWAY_COPY.tabs[key]])} />
       <div className="panel-body">
-        {tab === 'points' && <PointTable protocol={config.protocol} locked={running} fail={setError} />}
+        {tab === 'points' && <PointTable protocol={config.protocol} ieds={ieds} locked={running} fail={setError} />}
         {tab === 'traffic' && <TrafficLog running={running} />}
-        {tab === 'commands' && <CommandLog />}
+        {tab === 'commands' && <CommandLog protocol={config.protocol} />}
       </div>
     </div>
+    </FullView>
   </div>;
 }

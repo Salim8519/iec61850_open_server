@@ -29,9 +29,11 @@ const (
 
 // Point is one simulated OID, or one value read from a device. Value is always text: decimal
 // for numbers (Counter64 does not fit a JSON number), dotted for OID and IpAddress, and the
-// string itself for octets unless Hex is set ("00 1a ff").
+// string itself for octets unless Hex is set ("00 1a ff"). Label is the user's own name for
+// the value, shown instead of the MIB name; it never goes on the wire.
 type Point struct {
 	OID       string  `json:"oid"`
+	Label     string  `json:"label,omitempty"`
 	Type      string  `json:"type"`
 	Value     string  `json:"value"`
 	Hex       bool    `json:"hex,omitempty"`

@@ -17,6 +17,7 @@ export const READ_COPY = {
   emptyHint: 'Type its address on the left and press Connect. To try it now, start a simulated device in Simulate devices: its address is already filled in.',
   search: 'Search name, OID, value or meaning', keyOnly: 'Important only', watchedOnly: 'Watched only',
   keyHint: 'The device\'s name and description, port states, sensors, battery and clock status.',
+  important: 'Important value',
   watch: 'Watch', unwatch: 'Stop watching', watchHint: 'Watched values are re-read with the important ones.',
   set: 'Change', setTitle: (name: string) => `Change ${name} on the device?`,
   setHint: 'This writes the new value into the device, like a network management system would. Many devices refuse values they do not allow.',

@@ -1,12 +1,15 @@
 /* SCADA master view and the role switch (ADR-0061). Shared tokens only. */
-.master-points td input:not([type='checkbox']) { width: 160px; min-height: 30px; height: 30px; padding-top: 0; padding-bottom: 0; }
+/* The name is text with a pin (ADR-0095); its input opens as wide as a typical name. */
+.master-points td .editable-input { width: 200px; }
+.master-points td .editable-text { min-width: 120px; }
 .master-points th:first-child, .master-points td:first-child { width: 1%; padding-right: 0; }
-.master-points td button { min-height: 30px; }
+.master-points td button:not(.editable-text) { min-height: 30px; }
 .master-toolbar .search-field { width: 190px; }
 .master-hint { gap: 12px; align-items: baseline; }
 .master-points td:nth-child(2), .master-points td:nth-child(5), .master-points td:nth-child(6) { white-space: nowrap; }
 .master-points tr.unwatched td { color: var(--text-3); }
 .master-points tr.unwatched td strong { font-weight: 500; }
+.master-points tr.unwatched .editable-text { color: var(--text-3); }
 .quality-good { color: var(--success); }
 .quality-bad { color: var(--warning); font-weight: 600; }
 .master-command { display: grid; gap: 8px; padding: 10px 14px; border: 1px solid var(--accent-line);

@@ -9,14 +9,14 @@ export function OwnReference({ row, rows, locked, change }: {
   row: GatewayPoint; rows: GatewayPoint[]; locked: boolean; change: (target: string | undefined) => void;
 }) {
   const drives = targetName(rows, row.target);
-  return <td className="reference-cell" title={OWN_COPY.hint}><strong>{OWN_COPY.ownPoint}</strong>
+  return <td className="reference-cell" title={OWN_COPY.hint}><span className="reference-line"><strong>{OWN_COPY.ownPoint}</strong>
     {isCommand(row.kind) && !locked
-      ? <div><select className="own-target" value={row.target ?? ''} aria-label={OWN_COPY.drives}
+      ? <select className="own-target" value={row.target ?? ''} aria-label={OWN_COPY.drives}
         onChange={event => change(event.target.value || undefined)}>
         <option value="">{OWN_COPY.drivesNone}</option>
         {ownTargets(rows).map(choice => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
-      </select></div>
-      : <div className="small muted own-note">{drives ? OWN_COPY.driving(drives) : OWN_COPY.madeUp}</div>}</td>;
+      </select>
+      : <span className="small muted own-note">{drives ? OWN_COPY.driving(drives) : OWN_COPY.madeUp}</span>}</span></td>;
 }
 
 /** The value an own status or measured point serves, changeable at any time. */

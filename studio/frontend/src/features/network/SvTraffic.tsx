@@ -4,8 +4,10 @@ import { api } from '../../api/client';
 import { useLiveFeed } from '../../api/useLiveFeed';
 import { svStatus } from '../../copy/sv';
 import { UI_STATUS } from '../../copy/status';
+import { kindOfDataClass } from '../../points/pointKind';
 import { EmptyState } from '../../ui/EmptyState';
 import { Hint } from '../../ui/Hint';
+import { KindBadge, kindRow } from '../../ui/KindBadge';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { StatusPill } from '../../ui/StatusPill';
 
@@ -19,6 +21,8 @@ type Overview = { running: boolean; state: string; message: string; nominal_hz: 
 
 const SYNC = ['not synchronised', 'local clock', 'global clock'];
 const unit = (name: string) => name.includes('TVTR') || name.includes('Vol') ? 'V' : 'A';
+/** Every channel of a 9-2LE stream is an instantaneous analog sample (data class SAV): a measured value. */
+const CHANNEL_KIND = kindOfDataClass('SAV');
 
 /** Sampled Values streams from the SCD and what is really on the lab adapter (listen only). */
 export function SvTraffic({ running, revision, lab, locked, perform }: { running: boolean; revision: number; lab: boolean;
@@ -52,8 +56,9 @@ export function SvTraffic({ running, revision, lab, locked, perform }: { running
       <h3 style={{ margin: 0 }}>{selected.sv_id} · measured values (nominal {overview.nominal_hz} Hz)</h3>
       {selected.layout !== '9-2LE' ? <p className="small">Not interpreted: this dataset is not a 9-2LE layout, so only raw numbers are shown.
         {selected.received_raw?.length ? ` First values: ${selected.received_raw.slice(0, 8).join(', ')}` : ''}</p>
-        : <table><thead><tr><th>Channel</th><th>RMS</th><th>Fundamental</th><th>Angle</th></tr></thead><tbody>
-          {(selected.received_values ?? []).map(channel => <tr key={channel.name}><td><code>{channel.name}</code></td>
+        : <table className="compact-rows"><thead><tr><th>Channel</th><th>Type</th><th>RMS</th><th>Fundamental</th><th>Angle</th></tr></thead><tbody>
+          {(selected.received_values ?? []).map(channel => <tr key={channel.name} {...kindRow(CHANNEL_KIND)}><td><code>{channel.name}</code></td>
+            <td><KindBadge kind={CHANNEL_KIND} raw="Sampled value" /></td>
             <td>{channel.rms.toFixed(3)} {unit(channel.name)}</td><td>{channel.magnitude.toFixed(3)} {unit(channel.name)}</td>
             <td>{channel.angle.toFixed(1)}°</td></tr>)}</tbody></table>}
       {!selected.received_values?.length && selected.layout === '9-2LE' && <p className="small muted">Values appear after one full cycle is received.</p>}

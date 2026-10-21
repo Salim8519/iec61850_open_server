@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
 import type { Ied, Scenario, ScenarioStep, Signal } from '../../api/types';
+import { KindSelect } from '../../components/KindSelect';
+import { kindOfSignal } from '../../components/signalKind';
+import { useDataClasses } from '../../points/dataClasses';
+import { KindBadge } from '../../ui/KindBadge';
+import { ALL_KINDS } from '../../ui/kindFilter';
 import { runWords, stepAction, stepCount } from './sequenceWords';
 
 export function SequenceEditor({ ieds, scenarios, running, perform }: {
@@ -12,6 +17,8 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
   const [draft, setDraft] = useState<Scenario>(fresh);
   const [iedId, setIedId] = useState(ieds[0]?.id || '');
   const [query, setQuery] = useState('');
+  const [pointKind, setPointKind] = useState(ALL_KINDS);
+  const classOf = useDataClasses(iedId);
   const [signals, setSignals] = useState<Signal[]>([]);
   const [ref, setRef] = useState('');
   const [at, setAt] = useState(0);
@@ -23,16 +30,19 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
     let active = true;
     const timer = setTimeout(() => {
       if (!iedId) { setSignals([]); return; }
-      api<{ items: Signal[] }>(`/ieds/${iedId}/signals?q=${encodeURIComponent(query)}&limit=100`)
+      const kindPart = pointKind === ALL_KINDS ? '' : `&point_kind=${pointKind}`;
+      api<{ items: Signal[] }>(`/ieds/${iedId}/signals?q=${encodeURIComponent(query)}&limit=100${kindPart}`)
         .then(result => { if (active) setSignals(result.items.filter(signal =>
           signal.kind.startsWith('FLOAT') || signal.kind.startsWith('INT') ||
           ['BOOLEAN', 'Dbpos', 'Enum', 'Quality', 'Timestamp'].includes(signal.kind))); })
         .catch(reason => { if (active) setError(reason.message); });
     }, 200);
     return () => { active = false; clearTimeout(timer); };
-  }, [iedId, query]);
+  }, [iedId, query, pointKind]);
   useEffect(() => liveFeed.subscribe<typeof status>('/scenarios/runs', 1000, setStatus,
     reason => setError(reason.message)), []);
+  const chosen = signals.find(item => item.ref === ref);
+  const controls = ieds.find(ied => ied.id === iedId)?.controls;
   const addStep = () => {
     const signal = signals.find(item => item.ref === ref);
     if (!signal) { setError('Choose a signal from the search results.'); return; }
@@ -73,10 +83,14 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
           <label>IED<select value={iedId} onChange={e => { setIedId(e.target.value); setRef(''); }}>
             <option value="">Choose IED</option>{ieds.map(ied => <option value={ied.id} key={ied.id}>{ied.name}</option>)}</select></label>
           <label>Search references<input value={query} onChange={e => { setQuery(e.target.value); setRef(''); }} /></label>
+          <label>Point type<KindSelect value={pointKind} onChange={next => { setPointKind(next); setRef(''); }} /></label>
         </div>
-        <div className="row"><label style={{ flex: 1 }}>Signal<select value={ref} onChange={e => {
-          setRef(e.target.value); setValue(String(signals.find(item => item.ref === e.target.value)?.value ?? 0));
-        }}><option value="">Choose signal</option>{signals.map(signal => <option key={signal.ref} value={signal.ref}>{signal.ref} [{signal.fc}]</option>)}</select></label>
+        <div className="row"><label style={{ flex: 1 }}>Signal<span className="row">
+          <select style={{ flex: 1 }} value={ref} onChange={e => {
+            setRef(e.target.value); setValue(String(signals.find(item => item.ref === e.target.value)?.value ?? 0));
+          }}><option value="">Choose signal</option>{signals.map(signal => <option key={signal.ref} value={signal.ref}>
+            {kindOfSignal(signal, classOf, controls)} · {signal.ref} [{signal.fc}]</option>)}</select>
+          {chosen && <KindBadge kind={kindOfSignal(chosen, classOf, controls)} raw={chosen.kind} />}</span></label>
           <label>Value<input value={value} onChange={e => setValue(e.target.value)} /></label><button disabled={!ref} onClick={addStep}>Add step</button></div>
         <div className="table-scroll"><table><thead><tr><th>Seconds</th><th>Action</th><th>Reference</th><th>Value</th><th /></tr></thead>
           <tbody>{draft.steps.map(step => <tr key={step.id}><td>{step.at}</td><td>{stepAction(step.action)}</td><td><code>{step.ref}</code></td>

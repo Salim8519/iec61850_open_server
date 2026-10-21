@@ -1,6 +1,6 @@
 /** Remembers where each signal picker was (IED, search, report, page) for this browser tab,
  *  so closing and reopening a picker, or picking a wrong point, never starts the search over. */
-export type PickerView = { iedId: string; query: string; reportRef: string; offset: number };
+export type PickerView = { iedId: string; query: string; reportRef: string; offset: number; pointKind?: string };
 
 const views = new Map<string, PickerView>();
 

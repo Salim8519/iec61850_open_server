@@ -7,7 +7,17 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · SNMP devices on your network, delete many points at once</h2>
+    <h2>{SITE.version} · Point types everywhere, full view, clearer controls</h2>
+    <ul>
+      <li>Every point now shows its type the same way on every page and tool: a small badge (SP single point, DP double point, MV measured value, CT counter, commands, settings and more) and a coloured edge on its row. The colours mean the same thing in Devices, Test, the SCADA gateway, master and converter, SNMP devices and IED Explorer.</li>
+      <li>Every point list can be filtered by type, with the number of points of each type. Device data points can also hide the quality and time helpers.</li>
+      <li>Values you can change show a small pencil and a dashed line. Click, type, press Enter.</li>
+      <li>One line per point, so you see about twice as many points at once. New Full view button on the big lists: only the list fills the window, Esc goes back.</li>
+      <li>Buttons, boxes, lists and frames have clearer outlines, so it is easy to tell what you can click, type in or only read.</li>
+      <li>Your own names for SNMP values and gateway points; change the IED or path of a gateway point in place. IED Explorer shows the node and the watch list as tabs.</li>
+      <li>Network setup is much faster and shows each step while it works; the address from the SCL file is always shown.</li>
+    </ul>
+    <h2>0.1.18 · SNMP devices on your network, delete many points at once</h2>
     <ul>
       <li>SNMP devices now go on the network together with your IEDs. In Settings › Network, pick the network card once: each simulated switch or GPS clock gets its own address on that card, so a SCADA or network monitor on another PC can read it.</li>
       <li>ScadaBench checks that nobody else uses an address before giving it to a device, keeps the address the device had last time when it is still free, and lets you type your own. Windows asks once; Clean up removes everything again.</li>

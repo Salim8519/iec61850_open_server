@@ -6,8 +6,10 @@ import { GATEWAY_COPY } from '../../../copy/gateway';
 import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
 import { HelpTip } from '../../../ui/HelpTip';
+import { KindBadge } from '../../../ui/KindBadge';
 import { SpacerBlock, useVirtualRows } from '../../../ui/VirtualRows';
 import { TRAFFIC_FILTER, trafficMatches } from './logFilters';
+import { trafficKind } from './trafficKind';
 
 const KEEP = 1000;
 const LINE_HEIGHT = 26;
@@ -56,7 +58,9 @@ export function TrafficLog({ running, load: source = gatewayApi.traffic, feedKey
       {shown.slice(range.start, range.end).map(line => {
         const dir = (line.dir in ICONS ? line.dir : 'info') as keyof typeof ICONS;
         const Icon = ICONS[dir];
+        const typed = trafficKind(line.text);  // only when the line starts with a standard type id (M_DP_TB_1 …)
         return <div key={line.seq} data-vrow={line.seq} className={`traffic-line dir-${line.dir}`}>
+          <span className="traffic-kind">{typed && <KindBadge kind={typed.kind} raw={typed.token} />}</span>
           <span className="traffic-time">{new Date(line.at * 1000).toLocaleTimeString()}</span>
           <Icon size={14} aria-label={words[dir]} />
           {line.peer && <span className="traffic-peer">{line.peer}</span>}

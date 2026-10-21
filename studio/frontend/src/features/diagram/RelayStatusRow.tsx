@@ -1,9 +1,13 @@
 import { ArrowDown, ArrowUp, Trash2, Zap } from 'lucide-react';
 import type { RelayStatus, Signal } from '../../api/types';
+import { kindOfSignal } from '../../components/signalKind';
 import { ValueControl } from '../test/ValueControl';
 import { RelayValueChip } from '../../equipment/RelayPanel';
 import { useLiveValue } from '../../equipment/liveContext';
+import { useDataClasses } from '../../points/dataClasses';
 import { useSignalValue } from '../../state/useLive';
+import { EditableText } from '../../ui/EditableText';
+import { KindBadge, kindRow } from '../../ui/KindBadge';
 import { pulseTarget, relayRowLabel, shortRef } from '../../equipment/relayDisplay';
 
 export const PULSE_MS = 1000;
@@ -23,14 +27,15 @@ export function RelayStatusRow({ entry, iedName, index, count, locked, signal, l
   const value = live === undefined ? fallback : live;
   const triggerable = !!signal && signal.writable && signal.fc !== 'CF';
   const target = pulseTarget(value);
-  return <div className={`relay-card ${locked ? 'live' : ''}`}>
+  const classOf = useDataClasses(entry.source.ied_id);
+  const kind = signal ? kindOfSignal(signal, classOf) : undefined;
+  return <div className={`relay-card ${locked ? 'live' : ''}${kind ? ' kind-edge' : ''}`} {...(kind ? kindRow(kind) : {})}>
     <div className="relay-card-head">
       <span className="relay-card-index" aria-hidden="true">{index + 1}</span>
       {locked ? <strong className="relay-card-name" title={entry.label}>{relayRowLabel(entry, iedName)}</strong> :
-        <input className="relay-card-name" maxLength={100} value={relayRowLabel(entry, iedName)}
-          aria-label={`Signal ${index + 1} name`} placeholder="Name this signal" title="Rename"
-          onChange={e => rename(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />}
+        <span className="relay-card-name"><EditableText value={relayRowLabel(entry, iedName)}
+          label={`Signal ${index + 1} name`} placeholder="Name this signal"
+          onSave={text => rename(text.trim().slice(0, 100) || entry.source.ref)} /></span>}
       {locked ? <RelayValueChip value={value} /> : <span className="relay-card-tools">
         <button className="icon ghost" title="Move up" aria-label={`Move ${entry.label} up`}
           disabled={index === 0} onClick={() => move(-1)}><ArrowUp size={14} /></button>
@@ -42,7 +47,7 @@ export function RelayStatusRow({ entry, iedName, index, count, locked, signal, l
     <div className="relay-card-meta">
       {entry.label !== entry.source.ref &&
         <code title={entry.source.ref}>{shortRef(entry.source.ref, iedName)}</code>}
-      {signal && <span>{signal.kind} · {signal.fc}</span>}
+      {signal && kind && <><KindBadge kind={kind} raw={signal.kind} /><span>{signal.fc}</span></>}
       {signal ? <span className={`relay-kind ${triggerable ? 'trigger' : 'display'}`}>
         {triggerable ? <><Zap size={11} />Triggerable</> : 'Display only'}</span> :
         <span className="muted">Loading…</span>}

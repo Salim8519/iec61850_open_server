@@ -2,7 +2,8 @@ import { ArrowLeft, Network, Radar, Radio, Router, Telescope } from 'lucide-reac
 import { useState, type ReactNode } from 'react';
 import type { Activity } from '../../api/activity';
 import type { Project } from '../../api/types';
-import { TOOLS, TOOLS_COPY, type ToolId } from '../../copy/tools';
+import { TOOLS, TOOLS_COPY, toolHelp, type ToolId } from '../../copy/tools';
+import { HelpTip } from '../../ui/HelpTip';
 import { ExplorerTool } from './explorer/ExplorerTool';
 import { FindTool } from './find/FindTool';
 import { knownAddresses } from './find/findFilters';
@@ -23,17 +24,19 @@ export function ToolsPage({ project, locked, perform, tool, openTool, running, a
   if (tool) {
     const card = TOOLS.find(entry => entry.id === tool)!;
     const Icon = ICONS[tool];
-    // One header row per tool; the SCADA tool adds its "Act as" switch to the same row (ADR-0064).
+    // One slim header row per tool: the way back, the title with a "?" that says what the tool is, and the
+    // tool's own switch ("Act as" of the SCADA and SNMP tools) on the same row (ADR-0064, ADR-0095).
     const header = (extra?: ReactNode) => <div className="row tool-header">
       <button className="ghost" onClick={() => openTool(null)}><ArrowLeft size={16} />{TOOLS_COPY.back}</button>
-      <h2><Icon size={20} aria-hidden /> {card.name}</h2>{extra}
+      <h2><Icon size={20} aria-hidden /> {card.name}</h2>
+      <HelpTip text={toolHelp(card)} label={TOOLS_COPY.whatIsThis} />{extra}
     </div>;
     return <div className={`content${tool === 'traffic' ? '' : ' fill-page'}`}>
       {tool !== 'gateway' && tool !== 'snmp' && header()}
       {tool === 'explorer' && <ExplorerTool target={target} />}
       {tool === 'find' && <FindTool openExplorer={(host, port) => { setTarget({ host, port }); openTool('explorer'); }}
         known={knownAddresses(project)} />}
-      {tool === 'gateway' && <ScadaTool header={header} runState={project.runtime} runIeds={runIeds} activity={activity} />}
+      {tool === 'gateway' && <ScadaTool header={header} ieds={project.ieds} runState={project.runtime} runIeds={runIeds} activity={activity} />}
       {tool === 'snmp' && <SnmpTool header={header} />}
       {tool === 'traffic' && <TrafficTool project={project} locked={locked} perform={perform} />}
     </div>;

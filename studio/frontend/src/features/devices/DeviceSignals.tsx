@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
 import type { Ied, Project, Signal } from '../../api/types';
+import { kindOfSignal } from '../../components/signalKind';
+import { useDataClasses } from '../../points/dataClasses';
+import type { Kind } from '../../points/pointKind';
 import { useListFilter } from '../../state/useListFilter';
 import { FilterBar } from '../../ui/FilterBar';
 import { effective, type Choice } from '../../ui/filterState';
-import { SIGNAL_FILTER, signalQuery } from './deviceFilters';
+import { POINT_KIND, SIGNAL_FILTER, signalQuery } from './deviceFilters';
 import { SignalTable } from './SignalTable';
 
 const PAGE = 100;
@@ -20,6 +23,9 @@ export function DeviceSignals({ ied, project, perform, prepare }: {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [total, setTotal] = useState(0);
   const [devices, setDevices] = useState<string[]>([]);
+  // Points per type, when the engine sends them: chips of types this IED does not have then hide.
+  const [kindCounts, setKindCounts] = useState<Partial<Record<Kind, number>> | undefined>();
+  const classOf = useDataClasses(ied.id);
   const [message, setMessage] = useState('');
   // True until the answer for the current IED and search arrives: never show "no match" too early.
   const [loading, setLoading] = useState(true);
@@ -37,8 +43,10 @@ export function DeviceSignals({ ied, project, perform, prepare }: {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const timer = setTimeout(() => api<{ items: Signal[]; total: number; devices?: string[] }>(`/ieds/${ied.id}/signals?${query}`)
-      .then(result => { if (!cancelled) { setSignals(result.items); setTotal(result.total); setDevices(result.devices ?? []); } })
+    const timer = setTimeout(() => api<{ items: Signal[]; total: number; devices?: string[]; kind_counts?: Partial<Record<Kind, number>> }>(`/ieds/${ied.id}/signals?${query}`)
+      .then(result => { if (!cancelled) {
+        setSignals(result.items); setTotal(result.total); setDevices(result.devices ?? []); setKindCounts(result.kind_counts);
+      } })
       .catch(reason => { if (!cancelled) setMessage(reason.message); })
       .finally(() => { if (!cancelled) setLoading(false); }), 150);
     return () => { cancelled = true; clearTimeout(timer); };
@@ -52,10 +60,10 @@ export function DeviceSignals({ ied, project, perform, prepare }: {
   });
   return <>
     <FilterBar label="Filter data points" spec={SIGNAL_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
-      shown={total} total={ied.signal_count} options={options} />
+      shown={total} total={ied.signal_count} options={options} counts={kindCounts ? { [POINT_KIND]: kindCounts } : undefined} />
     {message && <p className="small muted panel-note" role="status">{message}</p>}
-    <SignalTable signals={signals} iedId={ied.id} running={running} perform={perform} addTest={addTest}
-      loading={loading} />
+    <SignalTable signals={signals} kindOf={signal => kindOfSignal(signal, classOf, ied.controls)} iedId={ied.id}
+      running={running} perform={perform} addTest={addTest} loading={loading} />
     <div className="pager"><span>{total ? offset + 1 : 0}–{Math.min(offset + PAGE, total)} of {total.toLocaleString()}</span>
       <div className="row"><button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - PAGE))}>Previous</button>
         <button disabled={offset + PAGE >= total} onClick={() => setOffset(offset + PAGE)}>Next</button></div></div>

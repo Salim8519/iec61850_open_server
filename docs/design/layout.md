@@ -4,8 +4,8 @@
 | --- | --- |
 | Background | #ECEEF2 (sidebar #F7F8FA, canvas #E9EDF2) |
 | Surface | #FFFFFF (sidebar, top bar, cards, sheets) |
-| Text / secondary / tertiary | #0F172A / #3F4856 / #5B6472 |
-| Border | #D3D8E0 cards/rows, strong #A9B1BD controls; 1.5 px (`--line`), ADR-0034 |
+| Text / secondary / tertiary | #0F172A / #1F2937 / #374151 (ADR-0094) |
+| Border | #B6BDC7 inner lines; frames #6B7280 (cards, list rows, shell, 2 px dividers); controls #374151, hover #111827; #A9B1BD kept for the diagram; 1.5 px (`--line`), ADR-0034/0094 |
 | Accent | #2563EB on #EFF6FF (one accent only) |
 | Success / Warning / Error | #15803D / #B45309 / #B91C1C with soft tints |
 | Font | System UI, 15 px base, scale 13/15/17/20/26, line-height 1.5, rem units |
@@ -51,6 +51,15 @@ Tool pages (ADR-0064): a header row (All tools, title, the tool's own switch suc
 either a settings column (status, inline errors and the primary button kept at its bottom) beside
 tabs that fill the rest, or a one-row toolbar above the results. Every list has the shared filter
 bar (search, chips with a tick when on, "N of M · Clear"). Long explanations sit behind "?".
+
+Point types (ADR-0095): every list of points shows one type badge (SP, DP, IS, MV, CT, SC, DC, SE,
+CM, CF, TX, AT, UN: letters and symbol, colour from the `--kind-*` tokens) and a 5 px left edge in
+the same colour; commands have a double border, helpers and unknown types a dotted one. Every point
+list filters by one "All types" list with counts, and rows take one line (`compact-rows`). A value
+that can be changed shows a ✎ pin and a dashed line; values that change by themselves show "⟳ auto".
+Full view: the big lists (Devices data points, gateway, master, converter, SNMP, Explorer) have a
+*Full view* button at the end of the tab row; the list then fills the window under a slim dark bar
+(place, facts, the main start/run button, *Exit full view (Esc)*), remembered per list.
 
 Live colouring (running only): live red solid 4 px, maybe live amber dotted, dead grey
 dashed, earthed green dash-dot, earth fault purple long dash 5 px; a bottom-right legend

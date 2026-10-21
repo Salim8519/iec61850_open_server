@@ -89,3 +89,10 @@ device gets an address another device answers on, and the address saved with the
   any project change that moves them) restarts running devices on their new addresses.
 - The trap receiver's own firewall rule is not part of this step (Windows may ask once when it
   listens on all network cards).
+
+## Amendment 2026-10-21: own labels and changeable OIDs (change 0151)
+
+Owner: a value must be nameable and its OID changeable after it was added. A point has an optional
+`label` (at most 120 characters) shown above the MIB name; it is project data only and never sent
+to managers. The OID of a value can be changed in place (dotted or a MIB name; duplicates refused).
+ScadaBench CSV gains an optional last column `label`; older files without it import unchanged.

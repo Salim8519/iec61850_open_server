@@ -2,7 +2,9 @@
 // the backend keeps every line and Export/Clear behave as before.
 import type { CommandEntry, TrafficEntry } from '../../../api/gateway';
 import type { MasterCommandEntry } from '../../../api/master';
+import { kindOfMasterCommand, type Kind } from '../../../points/pointKind.ts';
 import { textMatch, type FilterSpec, type FilterValues } from '../../../ui/filterState.ts';
+import { kindGroup, kindMatches } from '../../../ui/kindFilter.ts';
 
 export const TRAFFIC_FILTER: FilterSpec = {
   search: 'Search messages',
@@ -29,6 +31,7 @@ export function trafficMatches(line: TrafficEntry, values: FilterValues): boolea
 export const COMMAND_FILTER: FilterSpec = {
   search: 'Search commands',
   groups: [
+    kindGroup(),
     { key: 'result', label: 'Result', initial: 'all', options: [
       { value: 'all', label: 'All' }, { value: 'done', label: 'Done' }, { value: 'refused', label: 'Refused' }] },
     { key: 'from', label: 'Sent by', initial: 'all', options: [
@@ -42,7 +45,9 @@ export function gatewayResult(entry: CommandEntry): 'done' | 'refused' | 'waitin
   return text.startsWith('operated') || text.includes('is now') ? 'done' : 'refused';
 }
 
-export function gatewayCommandMatches(entry: CommandEntry, values: FilterValues): boolean {
+/** `kind` is the type of the operated point (see commandKinds.ts); "unknown" when the point is gone. */
+export function gatewayCommandMatches(entry: CommandEntry, values: FilterValues, kind: Kind = 'UN'): boolean {
+  if (!kindMatches(values.kind, kind)) return false;
   if (values.result !== 'all' && gatewayResult(entry) !== values.result) return false;
   const mine = entry.protocol === 'manual';
   if ((values.from === 'me' && !mine) || (values.from === 'scada' && mine)) return false;
@@ -51,6 +56,7 @@ export function gatewayCommandMatches(entry: CommandEntry, values: FilterValues)
 
 /** The master's own commands come from this page; the converter relays SCADA's ("SCADA via the converter"). */
 export function masterCommandMatches(entry: MasterCommandEntry, values: FilterValues): boolean {
+  if (!kindMatches(values.kind, kindOfMasterCommand(entry.kind))) return false;
   const result = entry.state === 'confirmed' ? 'done' : entry.state === 'refused' ? 'refused' : 'waiting';
   if (values.result !== 'all' && result !== values.result) return false;
   const scada = /scada/i.test(entry.who);

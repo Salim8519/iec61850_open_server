@@ -2,6 +2,7 @@ import { Loader2, Send } from 'lucide-react';
 import { useState } from 'react';
 import { explorerApi, type Attribute, type OperateAnswer } from '../../../api/tools';
 import { EXPLORER_COPY } from '../../../copy/tools';
+import '../../../ui/kind.css';
 import { commandChoices, type Choice } from './commandChoices';
 import { ValueText } from './ValueText';
 
@@ -31,7 +32,7 @@ export function CommandPanel({ reference, host, attributes, fail, operated }: {
         onClick={() => { setAnswer(null); setPending(choice); }}><Send size={14} />{choice.label}…</button>)}
       {busy && <Loader2 size={16} className="spin" />}
     </div>
-    {pending && <div className="command-confirm" role="alertdialog" aria-label="Confirm command">
+    {pending && <div className="confirm-box command-confirm" role="alertdialog" aria-label="Confirm command">
       <p><strong>{EXPLORER_COPY.confirmTitle(pending.label, reference, host)}</strong></p>
       <p className="small">{EXPLORER_COPY.confirmHint}</p>
       <div className="row">

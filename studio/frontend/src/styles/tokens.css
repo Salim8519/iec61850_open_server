@@ -13,10 +13,28 @@
   --surface: #ffffff;
   --surface-2: #f4f5f8;
   --text: #0f172a;
-  --text-2: #3f4856;
-  --text-3: #5b6472;
-  --border: #d3d8e0;
+  --text-2: #1f2937;
+  --text-3: #374151;
+  --border: #b6bdc7;
   --border-strong: #a9b1bd;
+  /* Higher-contrast controls (ADR-0094): near-black control outlines, grey frames on cards,
+     list rows and the shell. --border-strong stays for the diagram, which is tuned separately. */
+  --control-border: #374151;
+  --control-border-hover: #111827;
+  --frame: #6b7280;
+  --table-head: #e5e7eb;
+  /* Point kinds (ADR-0095): one colour per kind for every list; never green, amber or red,
+     which stay for good / warning / problem. Letters on the badge carry the meaning. */
+  --kind-sp: #0f766e; --kind-sp-soft: #ccfbf1;
+  --kind-dp: #6d28d9; --kind-dp-soft: #ede9fe;
+  --kind-is: #475569; --kind-is-soft: #e2e8f0;
+  --kind-mv: #0369a1; --kind-mv-soft: #e0f2fe;
+  --kind-ct: #4338ca; --kind-ct-soft: #e0e7ff;
+  --kind-cmd: #a21caf; --kind-cmd-soft: #fae8ff;
+  --kind-cf: #57534e; --kind-cf-soft: #f5f5f4;
+  --kind-tx: #4b5563; --kind-tx-soft: #f3f4f6;
+  --warning-text: #92400e;
+  --error-line: #f19a9a;
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
   --accent-soft: #eff6ff;

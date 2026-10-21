@@ -13,6 +13,10 @@ entry point: it starts current backend source and Vite in one console, opens the
 browser, applies frontend edits through HMR and restarts on Python changes. It
 uses `studio/data`; Ctrl+C stops only the frontend/backend trees it started.
 
+Run `stop-studio.cmd` from the repository root to stop every ScadaBench process on this PC
+(app, engine, workers, dev launchers, Vite); `stop-studio.cmd --dry-run` only lists them. The
+network helper is never stopped.
+
 After native C++ changes, build `studio/native/build/Release`; the development
 backend watches that worker and restarts when the executable is replaced. Launch
 a frozen preview directly from its `studio/dist/.../SubstationStudio.exe` path.

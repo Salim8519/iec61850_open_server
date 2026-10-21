@@ -17,7 +17,7 @@ export type GatewayStatus = { state: 'stopped' | 'running' | 'failed'; message: 
   role?: 'gateway' | 'master' | 'converter' };
 export type TrafficEntry = { seq: number; at: number; dir: string; peer: string; text: string };
 export type CommandEntry = { seq: number; at: number; label: string; protocol: string; peer: string; request: string;
-  applied: string; observed: string };
+  applied: string; observed: string; point_id?: string | null };
 type Page<T> = { entries: T[]; last: number; dropped: number };
 
 /** The per-point problems the backend lists when a point list cannot be saved. */

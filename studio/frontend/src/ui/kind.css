@@ -1,0 +1,45 @@
+/* Point kinds (ADR-0095): one badge, one row edge and one edit pin for every list.
+   Colours come only from the --kind-* tokens; pages never pick their own. */
+.kind-cell { display: inline-flex; align-items: center; gap: 6px; vertical-align: middle; }
+.kind-badge { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 7px; border-radius: 6px;
+  border: 1.5px solid var(--kind); color: var(--kind); background: var(--kind-soft); white-space: nowrap;
+  font: 700 11.5px/1 'Cascadia Code', Consolas, monospace; letter-spacing: .3px; }
+.kind-badge > span { font-family: system-ui, sans-serif; font-size: 12px; }
+.kind-badge.command { background: var(--surface); border-style: double; border-width: 3px; height: 24px; }
+.kind-badge.quiet { background: var(--surface); border-style: dotted; }
+.kind-name { font-size: var(--font-size-small); color: var(--text-2); }
+.kind-SP, [data-kind="SP"] { --kind: var(--kind-sp); --kind-soft: var(--kind-sp-soft); }
+.kind-DP, [data-kind="DP"] { --kind: var(--kind-dp); --kind-soft: var(--kind-dp-soft); }
+.kind-IS, [data-kind="IS"] { --kind: var(--kind-is); --kind-soft: var(--kind-is-soft); }
+.kind-MV, [data-kind="MV"] { --kind: var(--kind-mv); --kind-soft: var(--kind-mv-soft); }
+.kind-CT, [data-kind="CT"] { --kind: var(--kind-ct); --kind-soft: var(--kind-ct-soft); }
+.kind-SC, .kind-DC, .kind-SE, .kind-CM, [data-kind="SC"], [data-kind="DC"], [data-kind="SE"], [data-kind="CM"] {
+  --kind: var(--kind-cmd); --kind-soft: var(--kind-cmd-soft); }
+.kind-CF, [data-kind="CF"] { --kind: var(--kind-cf); --kind-soft: var(--kind-cf-soft); }
+.kind-TX, .kind-AT, .kind-UN, [data-kind="TX"], [data-kind="AT"], [data-kind="UN"] { --kind: var(--kind-tx); --kind-soft: var(--kind-tx-soft); }
+/* Badge + edge: the first cell of a typed row carries the kind colour on its left edge. */
+tr[data-kind] > td:first-child { box-shadow: inset 5px 0 0 var(--kind); }
+[data-kind].kind-edge { box-shadow: inset 5px 0 0 var(--kind); }
+/* Chips of the type filter show the badge before the count. */
+.chip .kind-badge { height: 20px; padding: 0 5px; }
+.chip .kind-badge.command { height: 22px; }
+/* Edit pin: anything you can change shows ✎ and a dashed line; a click edits in place. */
+.editable-text { min-height: 0; height: auto; padding: 2px 6px; gap: 6px; border: 0; border-bottom: 1.5px dashed var(--frame);
+  border-radius: 4px 4px 0 0; background: transparent; color: var(--text); font-weight: 600; white-space: normal;
+  text-align: left; justify-content: flex-start; cursor: text; overflow-wrap: anywhere; }
+.editable-text:hover:not(:disabled) { background: var(--accent-soft); border-color: transparent; border-bottom: 1.5px solid var(--accent); }
+.editable-text.is-empty { color: var(--text-3); font-weight: 500; font-style: italic; }
+.editable-text.mono { font-family: 'Cascadia Code', Consolas, monospace; font-size: 12.5px; font-weight: 400; }
+.editable-text.locked { display: inline-block; border: 0; cursor: default; }
+.edit-pin { flex-shrink: 0; color: var(--accent-hover); }
+.editable-input { min-height: 32px; width: 100%; min-width: 120px; border-color: var(--accent); }
+.editable-input.mono { font-family: 'Cascadia Code', Consolas, monospace; font-size: 12.5px; }
+.auto-value { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 600; }
+.auto-tag { display: inline-flex; align-items: center; gap: 3px; padding: 0 7px; border: 1px dotted var(--text-3);
+  border-radius: 999px; font: 600 11.5px system-ui, sans-serif; color: var(--text-3); }
+/* Shared confirm box before a command (gateway, explorer, GOOSE): one look, from tokens. */
+.confirm-box { border: 1.5px solid var(--error-line); background: var(--error-soft); border-radius: var(--radius); padding: 10px 14px; }
+/* Compact list rows (ADR-0095): one line per point so a 1366×768 screen shows about ten. */
+table.compact-rows td { padding-top: 5px; padding-bottom: 5px; }
+table.compact-rows select { min-height: 32px; font-size: var(--font-size-small); }
+table.compact-rows input:not([type=checkbox]):not(.editable-input) { min-height: 32px; }
