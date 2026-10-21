@@ -3,6 +3,7 @@ import { Copy, KeyRound, Upload } from 'lucide-react';
 import { activateLicense, activateOffline, LicenseError, offlineUrl, type LicenseStatus } from '../../api/license';
 import { LICENSE_COPY as COPY } from '../../copy/license';
 import { Disclosure } from '../../ui/Disclosure';
+import { ActivationCode } from './ActivationCode';
 import './license-gate.css';
 
 type Changed = (status: LicenseStatus) => void;
@@ -56,6 +57,7 @@ export function ServerOptions({ status, changed }: { status: LicenseStatus; chan
           <button type="button" onClick={copy}><Copy size={15} aria-hidden />{copied ? 'Copied' : COPY.copyMachine}</button></div>
       </label>
       <p className="small muted license-hint">{COPY.machineHint}</p>
+      <ActivationCode />
       <label>{COPY.serverLabel}
         <input readOnly value={status.server_url} className="mono" />
       </label>

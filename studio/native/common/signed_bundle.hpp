@@ -18,6 +18,9 @@ enum class BundleCheck { ok, damaged, unreadable_signature, bad_signature };
 BundleCheck check_signed_bundle(const nlohmann::json& bundle, const std::vector<PublicKey>& keys,
                                 nlohmann::json& payload);
 
+// Decodes base64url or standard base64, padded or not; false for any other character.
+bool decode_base64url(const std::string& text, std::vector<std::uint8_t>& out);
+
 // The 8-hex key id carried as "kid" (first 4 bytes of SHA-256 of the public key).
 std::string key_id(const PublicKey& key);
 

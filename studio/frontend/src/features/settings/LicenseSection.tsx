@@ -5,6 +5,8 @@ import { bindingText, LICENSE_COPY, licenseState } from '../../copy/license';
 import { StatusPill } from '../../ui/StatusPill';
 import { Spinner } from '../../ui/Spinner';
 import { KeyActivation, ServerOptions } from '../license/LicenseActions';
+import { VM_HOST_COPY } from '../../copy/vmHost';
+import { VmHostSection } from './VmHostSection';
 
 /** Settings › License: current state, Machine ID, server address and upgrade from trial. */
 export function LicenseSection() {
@@ -19,6 +21,7 @@ export function LicenseSection() {
   if (status.app_version) rows.push(['Version', status.app_version]);
   if (status.masked_key) rows.push(['License key', status.masked_key]);
   if (status.email) rows.push(['Licensed to', status.email]);
+  if (status.host_key) rows.push([VM_HOST_COPY.hostKeyRow, status.host_key]);
   const binding = bindingText(status);
   if (binding) rows.push([LICENSE_COPY.bindingLabel, binding]);
   if (status.expires_at) rows.push(['Trial ends', new Date(status.expires_at * 1000).toLocaleString()]);
@@ -33,6 +36,7 @@ export function LicenseSection() {
           <ShoppingCart size={16} aria-hidden />Buy lifetime license</a>}
         <KeyActivation changed={setStatus} compact />
       </>}
+      {status.enforced && status.mode === 'lifetime' && <VmHostSection />}
       {status.enforced && <ServerOptions status={status} changed={setStatus} />}
     </div>
   </div>;

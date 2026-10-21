@@ -21,10 +21,12 @@
         <input id="key" placeholder="SUBS-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" required>
       </div>
       <div>
-        <label for="hwid">Machine ID</label>
-        <input id="hwid" placeholder="64 characters" autocomplete="off" spellcheck="false" required>
+        <label for="hwid">Activation code</label>
+        <input id="hwid" placeholder="Paste the activation code" autocomplete="off" spellcheck="false" required>
         <p class="hint">In ScadaBench on the offline PC: <em>Settings › License</em>, then
-          <em>Offline activation</em>, then <em>Copy Machine ID</em>.</p>
+          <em>Offline activation</em>, then <em>Copy activation code</em>. The code lets the virtual
+          machines on that PC use the license too. A plain 64-character Machine ID also works, but then
+          virtual machines cannot use the license.</p>
       </div>
       <button id="submit" class="btn btn-dark" type="submit">Get license file</button>
     </form>
@@ -42,9 +44,15 @@
 <script>
   const form = document.getElementById("form");
   const submit = document.getElementById("submit");
+  // The activation code is "<Machine ID>.<virtual machine key>"; a bare Machine ID is accepted too.
+  // The virtual machine key is base64url (case matters), the Machine ID is lowercase hex.
   function request() {
-    return { license_key: document.getElementById("key").value.trim(),
-      hwid: document.getElementById("hwid").value.trim().toLowerCase() };
+    const code = document.getElementById("hwid").value.trim();
+    const dot = code.indexOf(".");
+    const body = { license_key: document.getElementById("key").value.trim(),
+      hwid: (dot < 0 ? code : code.slice(0, dot)).toLowerCase() };
+    if (dot >= 0) body.host_key = code.slice(dot + 1);
+    return body;
   }
   async function run(path) {
     submit.disabled = true;

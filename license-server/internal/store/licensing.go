@@ -11,6 +11,12 @@ import (
 // is bound to another machine is never rebound: each license works on one computer only
 // (ADR-0097), so there is no transfer and no reset in the store.
 func (s *Store) Activate(key, hwid string, now time.Time) (License, error) {
+	return s.ActivateWithHostKey(key, hwid, "", now)
+}
+
+// ActivateWithHostKey is Activate that also remembers the PC's public VM host key. The newest key
+// wins, so a Windows reinstall (a new key pair) can activate again; an empty hostKey changes nothing.
+func (s *Store) ActivateWithHostKey(key, hwid, hostKey string, now time.Time) (License, error) {
 	return s.UpdateLicense(key, func(license *License) error {
 		if license.Revoked {
 			return ErrRevoked
@@ -21,6 +27,9 @@ func (s *Store) Activate(key, hwid string, now time.Time) (License, error) {
 		if license.HWID == "" {
 			license.HWID = hwid
 			license.ActivatedAt = now.Unix()
+		}
+		if hostKey != "" && license.Type != "trial" {
+			license.HostKey = hostKey
 		}
 		return nil
 	})

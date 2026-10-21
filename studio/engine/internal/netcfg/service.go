@@ -45,6 +45,8 @@ type NetworkService struct {
 	NewID      func() string                                                         // uuid4().hex for request files
 	SNMP       SNMPProjects                                                          // nil: no SNMP devices (Python)
 	SNMPRules  func() ([]string, error)                                              // SNMP rule names present
+	// HostKeyRules lists the virtual machine licensing rule names present (ADR-0099).
+	HostKeyRules func() ([]string, error)
 	Progress   PreviewProgress                                                       // live state of the address check
 
 	mu       sync.Mutex
@@ -63,6 +65,9 @@ func NewNetworkService(projects Projects, directory, program, executable string)
 		},
 		SNMPRules: func() ([]string, error) {
 			return RuleNames(SNMPRulePrefix, func() ([]string, error) { return ListSNMPRules(shell) })
+		},
+		HostKeyRules: func() ([]string, error) {
+			return RuleNames(HostKeyPrefix, func() ([]string, error) { return ListHostKeyRules(shell) })
 		},
 		Elevator: UACElevator{}, Probe: ARPProber{},
 		Firewall: func(names []string) (map[string]bool, map[string]bool, error) { return GatewayState(names, shell) },

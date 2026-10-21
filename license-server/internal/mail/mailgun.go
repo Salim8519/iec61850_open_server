@@ -80,7 +80,7 @@ func LicenseEmail(product, key, publicURL, support string) (string, string) {
 		"2. Paste the key into the 'License key' box and press 'Activate this computer'.",
 		"",
 		"Computer without internet? Open " + strings.TrimRight(publicURL, "/") + "/activate",
-		"on any other computer, enter the key and the Machine ID shown in ScadaBench,",
+		"on any other computer, enter the key and the activation code shown in ScadaBench,",
 		"then copy the downloaded license file back to ScadaBench ('Offline activation').",
 		"",
 		"Each license works on one computer only. It cannot be moved to another computer.",

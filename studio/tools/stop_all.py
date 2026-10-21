@@ -16,7 +16,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 APP_EXES = {"scadabench.exe", "scadabench-portable.exe", "studio_server.exe", "studio_ied.exe",
             "studio_live.exe", "studio_probe.exe", "studio_control.exe", "studio_gateway.exe",
-            "studio_master.exe", "studio_goose.exe", "studio_snmp.exe", "studio_xsd.exe"}
+            "studio_master.exe", "studio_goose.exe", "studio_snmp.exe", "studio_xsd.exe",
+            "scadabench_hostkey.exe"}
 # Python and Node belong to ScadaBench only when they run its launchers, backend or Vite.
 DEV_MARKERS = ("run_dev.py", "run_dev_engine.py", "studio_app", "vite")
 LIST_COMMAND = ("Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, Name, "

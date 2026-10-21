@@ -19,6 +19,9 @@ import (
 type Payload struct {
 	Email       string `json:"email"`
 	ExpiresAt   int64  `json:"expires_at"`
+	// HostKey is the licensed PC's public VM host key (base64url, 32 bytes; ADR-0099). Optional:
+	// absent for trials and for licenses activated without one. It sorts between expires_at and hwid.
+	HostKey     string `json:"host_key,omitempty"`
 	HWID        string `json:"hwid"`
 	IssuedAt    int64  `json:"issued_at"`
 	KeyID       string `json:"kid"`

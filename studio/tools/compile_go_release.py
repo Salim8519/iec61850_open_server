@@ -3,7 +3,8 @@
     python studio/tools/compile_go_release.py --version 0.1.15            -> studio/dist-go
     python studio/tools/compile_go_release.py --version 0.1.15 --dry-run  show every step
 Steps: preflight -> frontend build + frontend.pak -> licensed native workers + studio_goose
-(shared with compile_protected.py) -> studio_xsd -> Go engine ScadaBench.exe (packaged, sealed)
+(shared with compile_protected.py) -> studio_xsd -> studio_snmp -> scadabench_hostkey -> Go engine
+ScadaBench.exe (packaged, sealed)
 -> installed folder layout -> leak check -> code signing -> module signature -> portable exe
 embedding that exact folder -> Inno Setup installer (same installer.iss and AppId as Python).
 The Python release (compile_protected.py) is unchanged and stays the fallback.
@@ -62,6 +63,17 @@ def build_snmp(mode):
         build_snmp_engine.build(output=target)
 
 
+def build_hostkey(mode):
+    """scadabench_hostkey.exe (ADR-0099) beside the workers: the helper that lets the PC's virtual machines
+    use its lifetime license. Built without build tags, so the test seam is never in a release."""
+    mode.step("Virtual machine helper -> scadabench_hostkey.exe")
+    import build_hostkey_helper
+    target = mode.native_bin / "scadabench_hostkey.exe"
+    print(f"  $ go build ./cmd/scadabench_hostkey -> {target}", flush=True)
+    if not mode.dry_run:
+        build_hostkey_helper.build(output=target)
+
+
 def preflight(mode):
     release = compile_protected.preflight(mode)
     if not mode.version or not all(part.isdigit() for part in mode.version.split(".")):
@@ -86,6 +98,7 @@ def main(argv=None):
     compile_protected.build_native(mode, release)
     build_xsd(mode)
     build_snmp(mode)
+    build_hostkey(mode)
     folder = steps.fresh_folder(mode)
     steps.build_engine(mode, folder, SEALED)
     steps.lay_out(mode, folder, mode.build / "frontend.pak")

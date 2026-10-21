@@ -1,0 +1,11 @@
+/* Settings › License › virtual machines. Shared tokens only; all text wraps, nothing is clipped. */
+.vm-host { display: grid; gap: 10px; }
+.vm-host-title { margin: 0; gap: 8px; }
+.vm-host-switch { align-items: flex-start; }
+.vm-host-switch input { flex: none; margin-top: 1px; }
+.vm-host-switch span { overflow-wrap: anywhere; }
+.vm-host-state, .vm-host-key { overflow-wrap: anywhere; }
+.vm-host-reason { color: var(--warning); margin: 0; overflow-wrap: anywhere; }
+.vm-host-firewall { display: grid; gap: 8px; }
+.vm-host-firewall button { justify-self: start; }
+.vm-host-confirm { display: grid; gap: 6px; }

@@ -19,6 +19,9 @@ type machineRequest struct {
 	EmailCode  string           `json:"email_code"`
 	// Nonce is optional and only read by verify: the signed answer echoes it.
 	Nonce string `json:"nonce"`
+	// HostKey is optional and only read by activate: the PC's public VM host key (ADR-0099),
+	// base64url without padding, 32 bytes. It goes into the certificate as host_key.
+	HostKey string `json:"host_key"`
 	// SentKey is license_key exactly as the app sent it (LicenseKey is normalised).
 	SentKey string `json:"-"`
 }
@@ -54,7 +57,11 @@ func (s *Server) CertificateFor(license store.License, hwid string) (certs.Bundl
 		}
 		expires = license.ActivatedAt + int64(days)*86400
 	}
-	return s.Signer.Sign(certs.Payload{Email: license.Email, ExpiresAt: expires, HWID: hwid,
+	hostKey := license.HostKey
+	if license.Type == "trial" {
+		hostKey = "" // only a lifetime license can be shared with virtual machines
+	}
+	return s.Signer.Sign(certs.Payload{Email: license.Email, ExpiresAt: expires, HostKey: hostKey, HWID: hwid,
 		IssuedAt: now, LicenseID: license.Key, MaxMachines: 1, Type: license.Type})
 }
 
@@ -70,7 +77,10 @@ func (s *Server) activate(r *http.Request, ip string) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	license, err := s.Store.Activate(request.LicenseKey, request.HWID, s.Now())
+	if request.HostKey != "" && !certs.ValidHostKey(request.HostKey) {
+		return nil, badRequest("The virtual machine key must be 32 bytes in base64url without padding (43 characters)")
+	}
+	license, err := s.Store.ActivateWithHostKey(request.LicenseKey, request.HWID, request.HostKey, s.Now())
 	if err != nil {
 		return nil, err
 	}

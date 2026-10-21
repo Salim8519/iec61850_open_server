@@ -55,6 +55,9 @@ func (p *presence) present(item *pyjson.Object) (bool, error) {
 	case "unblock":
 		err := p.firewall()
 		return err == nil && p.disabled[f.text("name")], firstError(err, f.err())
+	case HostKeyKind:
+		names, err := p.service.HostKeyRuleNames()
+		return err == nil && contains(names, f.text("name")), firstError(err, f.err())
 	case "snmp_firewall":
 		if !p.read["snmp_rules"] {
 			names, err := p.service.SNMPRules()

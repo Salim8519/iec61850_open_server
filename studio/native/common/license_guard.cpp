@@ -5,6 +5,7 @@
 #include "obfuscate.hpp"
 #include "release_key.hpp"
 #include "signed_bundle.hpp"
+#include "vm_proof.hpp"
 #include <nlohmann/json.hpp>
 #include <algorithm>
 #include <cctype>
@@ -121,7 +122,6 @@ void require_valid_license() {
     }
     const auto path = certificate_path();
     const auto text = read_text_file(path);
-    if (text.empty()) throw std::runtime_error("No license on this computer. Activate Studio first.");
     const auto directory = path.substr(0, path.find_last_of("\\/") + 1);
     const auto now = static_cast<long long>(std::time(nullptr));
     // Anchor, signed server time and grace start from all three places (ADR-0046 addendum).
@@ -129,8 +129,16 @@ void require_valid_license() {
     // A chip-bound license (ADR-0098) also needs the TPM proof; the Go backend does that. The
     // backend starts the workers only for a licensed computer, so this guard checks the
     // certificate, the machine ID v3, the clock and the cancelled IDs.
-    const auto verdict = verify_license(text, release_keys(), compute_hwid(), now, clock);
-    if (!verdict.ok) throw std::runtime_error("License check failed: " + verdict.reason);
+    Verdict verdict = text.empty() ? Verdict{false, "No license on this computer. Activate Studio first."}
+                                   : verify_license(text, release_keys(), compute_hwid(), now, clock);
+    if (!verdict.ok) {
+        // A virtual machine without its own license may carry a recent proof of its licensed host.
+        const auto proof = read_text_file(directory + "vm_proof.json");
+        if (proof.empty() || !verify_vm_proof(proof, release_keys(), compute_hwid(), now, clock).ok) {
+            if (text.empty()) throw std::runtime_error(verdict.reason);
+            throw std::runtime_error("License check failed: " + verdict.reason);
+        }
+    }
     verified = true;
 }
 #else

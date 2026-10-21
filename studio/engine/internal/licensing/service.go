@@ -39,6 +39,9 @@ type Options struct {
 	Registry Registry
 	// Parts returns the trial part hashes; nil means this PC (MachineTrialParts).
 	Parts func() (*pyjson.Object, error)
+	// HostKey is the VM host key (ADR-0099): the DPAPI protector of the host key and the search a
+	// virtual machine makes for its host. The zero value switches the feature off.
+	HostKey HostKeyOptions
 	// AllowTestServer is the explicit test-only seam: tests and the sandbox may talk to a
 	// server on this PC. The release composition never sets it, so an enforcing build only
 	// ever asks its built-in server and ignores client_config.json (ADR-0097).
@@ -60,6 +63,7 @@ type Service struct {
 	akFile     string // the stored attestation key of a chip-bound license
 	anchor     TimeAnchor
 	trialClock TrialClock
+	vm         vmHostState // the proof of a licensed host (vm_host.go)
 	revoked    RevokedIDs
 	lease      LeaseStore
 	chip       chipState

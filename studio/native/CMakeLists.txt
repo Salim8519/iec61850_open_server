@@ -22,7 +22,7 @@ set(STUDIO_HEADERS
     "${JSON_SOURCE}/single_include" "${NPCAP_SDK}/Include" common)
 # License guard: compiled into every build; enforcement exists only when the option is ON.
 add_library(studio_license STATIC common/license_guard.cpp common/machine_id.cpp common/license_clock.cpp
-    common/signed_bundle.cpp
+    common/signed_bundle.cpp common/vm_proof.cpp
     common/integrity.cpp
     third_party/monocypher/monocypher.c third_party/monocypher/monocypher-ed25519.c)
 target_include_directories(studio_license PUBLIC common third_party/monocypher "${JSON_SOURCE}/single_include")
