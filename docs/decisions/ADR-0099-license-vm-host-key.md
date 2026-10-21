@@ -155,3 +155,9 @@ evaluated first and wins), and the Python backend.
 - A customer who reinstalls Windows on the host loses `host_key.dpapi`: activating again (same key, same
   computer) makes a new host key and the certificate is replaced.
 - No EXE was built and nothing deployed (the installer script was only syntax-checked with `ISCC /O-`).
+
+## Dependency
+
+`golang.org/x/sys` v0.41.0 (the Go project's own Windows API package, BSD licence) for the
+virtual-adapter list and the HKCU Run value. It is the only module the Go engine needs; it
+replaces hand-written syscalls and adds no network code.

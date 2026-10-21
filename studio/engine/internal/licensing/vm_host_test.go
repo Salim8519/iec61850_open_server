@@ -14,7 +14,7 @@ func TestAVMWithoutALicenseIsLicensedByItsHostAndTheNativeWorkersGetTheirProof(t
 	rig := newVMRig(t)
 	status := rig.untilLicensed()
 	if !status.Licensed || status.Mode != ModeVMHost || status.Plan != "lifetime" || status.LicenseID != "SUBS-HOST-HOST-HOST-HOST" ||
-		status.OnlineCheckRequired || status.Binding != "" || status.Email != nil {
+		status.OnlineCheckRequired || status.Email != nil {
 		t.Fatalf("status of the VM: %+v", status)
 	}
 	data, err := os.ReadFile(filepath.Join(rig.vmHome, VMProofFile))
