@@ -47,9 +47,9 @@ export const TUTORIALS: Tutorial[] = [
     'Press Start gateway: the point list is proposed from your IEDs, with addresses and live values.',
     'SCADA commands, or the Send buttons, operate the IEDs over real IEC 61850. SCADA master and Protocol converter test the other side.',
   ] },
-  { slug: 'activation', title: 'Activate, move or go offline', seconds: 46, steps: [
+  { slug: 'activation', title: 'Activate or go offline', seconds: 46, steps: [
     'A new install opens on the activation screen: start the free 7-day trial, or paste the key from your purchase email.',
-    'New PC? Enter the key there and choose Move the key here (twice a year, self-service).',
+    'Each license works on one computer only and cannot be moved. Reinstalling Windows on the same computer is fine; a new computer needs its own license.',
     'No internet on site? Copy the Machine ID, get a license file at license.scadabench.com/activate and load it.',
   ] },
 ];

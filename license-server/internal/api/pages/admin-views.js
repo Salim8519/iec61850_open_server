@@ -96,17 +96,10 @@
     const action = (label, work, tone) => el("button", { class: "btn small " + (tone || "ghost"), type: "button",
       text: label, onclick: (event) => busy(event.currentTarget, work) });
     const buttons = [action("Copy key", () => copy(license.key))];
-    if (!license.revoked) {
-      if (license.email) buttons.push(action("Email key again", async () => {
-        await api("POST", "licenses/resend", { key: license.key });
-        toast("Key emailed to " + license.email);
-      }));
-      if (license.hwid) buttons.push(action("Free for a new PC", async () => {
-        if (!confirm("The key will stop working on its current PC once that PC checks online. Continue?")) return;
-        await api("POST", "licenses/reset-hwid", { key: license.key });
-        toast("The key can now be activated on another PC"); refresh();
-      }));
-    }
+    if (!license.revoked && license.email) buttons.push(action("Email key again", async () => {
+      await api("POST", "licenses/resend", { key: license.key });
+      toast("Key emailed to " + license.email);
+    }));
     buttons.push(action("Edit note", async () => {
       const note = prompt("Your note for this key (only you see it):", license.note || "");
       if (note === null) return;
@@ -159,8 +152,8 @@
     el("label", { class: "check" }, send, el("span", { text: "Email the key to them with activation steps" })),
     el("div", { class: "row" }, button));
     return el("div", { class: "card" }, el("h2", { text: "Make a lifetime key" }),
-      el("p", { class: "hint", text: "For friends, testers or buyers who paid another way. The key works on one PC. " +
-        "Up to 25 keys a day, as a safety limit." }), form, result);
+      el("p", { class: "hint", text: "For friends, testers or buyers who paid another way. The key works on one PC " +
+        "and cannot be moved to another PC. Up to 25 keys a day, as a safety limit." }), form, result);
   }
 
   views.licenses = async () => {

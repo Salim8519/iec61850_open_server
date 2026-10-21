@@ -22,10 +22,9 @@ var (
 	ErrUnknownKey = errors.New("license key not found; check for typing mistakes")
 	// ErrRevoked means the key was cancelled (refund, chargeback or admin).
 	ErrRevoked = errors.New("this license key was cancelled; contact support")
-	// ErrBoundElsewhere means the key is locked to a different computer.
-	ErrBoundElsewhere = errors.New("this license key is already activated on another computer")
-	// ErrTransferLimit means the yearly move allowance is used up.
-	ErrTransferLimit = errors.New("this key was moved too often this year; contact support")
+	// ErrBoundElsewhere means the key is locked to a different computer. Keys are never moved.
+	ErrBoundElsewhere = errors.New("This license key is already used on another computer. " +
+		"Each license works on one computer only.")
 	// ErrDatabaseBusy means another process (usually the running server) holds the file.
 	ErrDatabaseBusy = errors.New("database is in use by the running server")
 )
@@ -54,7 +53,7 @@ type License struct {
 	Revoked     bool    `json:"revoked"`
 	Reason      string  `json:"reason,omitempty"`
 	OrderID     string  `json:"order_id,omitempty"`
-	Transfers   []int64 `json:"transfers,omitempty"`
+	Transfers   []int64 `json:"transfers,omitempty"` // legacy: read from old records, never written
 	// Note is the owner's own label, for example "Ahmed, friend" (owner page only).
 	Note string `json:"note,omitempty"`
 }

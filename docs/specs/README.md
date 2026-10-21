@@ -50,7 +50,7 @@ changed, dropped or invented by accident.
 | [Find IEDs](find-ieds.md) | Scan a previewed range for IEC 61850 devices and identify them |
 | [Gateway simulator](gateway.md) | IEC 104, Modbus TCP and DNP3 gateway with smart point list and autonomous start |
 | [Licensing](licensing.md) | Trial and 1-PC lifetime license, offline activation, protected release |
-| [License helper](license-helper.md) | Owner's portable, offline, password-locked license EXE |
+| [License helper](license-helper.md) | Retired (ADR-0097): the owner's offline license EXE no longer exists |
 | [Owner page](owner-page.md) | Private phone-friendly owner page: sales, keys, issues, disk, news; two-step sign-in behind a Cloudflare gateway |
 
 ## Proposed specifications

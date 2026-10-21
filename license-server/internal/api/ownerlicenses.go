@@ -139,16 +139,6 @@ func (s *Server) ownerRevoke(r *http.Request, call *ownerCall) (any, error) {
 	return license, err
 }
 
-func (s *Server) ownerResetHWID(r *http.Request, call *ownerCall) (any, error) {
-	request, err := readKeyRequest(r)
-	if err != nil {
-		return nil, err
-	}
-	license, err := s.Store.ResetHWID(request.Key)
-	s.ownerAudit("reset-hwid", call.ip, logging.MaskKey(request.Key), err == nil)
-	return license, err
-}
-
 func (s *Server) ownerResend(r *http.Request, call *ownerCall) (any, error) {
 	request, err := readKeyRequest(r)
 	if err != nil {

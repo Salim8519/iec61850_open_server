@@ -33,3 +33,28 @@ func TestSendPostsFormWithBasicAuth(t *testing.T) {
 		t.Fatal("EU region ignored")
 	}
 }
+
+func TestEmailsStateTheOneComputerPolicyAndNeverMentionMoves(t *testing.T) {
+	_, customer := LicenseEmail("Studio", "SUBS-AAAA-BBBB-CCCC-DDDD", "https://lic.example.com", "")
+	_, owner := SaleEmail("Studio", Sale{Mode: "live", Amount: "149.00", Currency: "USD"})
+	for _, want := range []string{
+		"Each license works on one computer only. It cannot be moved to another computer.",
+		"Reinstalling Windows on the same computer is fine",
+		"A new computer, a new motherboard, or a reset of the computer's security chip (TPM) needs a new license.",
+		"No refunds after a license is activated.",
+	} {
+		if !strings.Contains(customer, want) {
+			t.Fatalf("customer email misses %q", want)
+		}
+	}
+	if !strings.Contains(owner, "No refunds") {
+		t.Fatal("owner email must repeat the refund rule")
+	}
+	for _, text := range []string{customer, owner} {
+		for _, banned := range []string{"reset-hwid", "move it", "times a year", "free the key"} {
+			if strings.Contains(text, banned) {
+				t.Fatalf("email still contains %q", banned)
+			}
+		}
+	}
+}

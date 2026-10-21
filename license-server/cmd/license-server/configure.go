@@ -79,7 +79,6 @@ func configure(args []string) error {
 	}
 	cfg.LicenseCurrency = strings.ToUpper(p.text("Currency (USD, EUR, ...)", cfg.LicenseCurrency, false))
 	cfg.TrialDays = p.number("Free trial days", cfg.TrialDays)
-	cfg.MaxTransfersPerYear = p.number("Self-service computer moves per key per year (0 = only you can reset)", cfg.MaxTransfersPerYear)
 	fmt.Println("== PayPal (developer.paypal.com > Apps & Credentials) ==")
 	cfg.PayPalMode = p.choice("Mode", cfg.PayPalMode, "sandbox", "live")
 	cfg.PayPalClientID = p.text("PayPal client ID", cfg.PayPalClientID, false)

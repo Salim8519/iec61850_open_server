@@ -83,7 +83,10 @@ func LicenseEmail(product, key, publicURL, support string) (string, string) {
 		"on any other computer, enter the key and the Machine ID shown in ScadaBench,",
 		"then copy the downloaded license file back to ScadaBench ('Offline activation').",
 		"",
-		"The key works on one computer. Keep this email; you need the key to reinstall.",
+		"Each license works on one computer only. It cannot be moved to another computer.",
+		"Reinstalling Windows on the same computer is fine; keep this email, you need the key then.",
+		"A new computer, a new motherboard, or a reset of the computer's security chip (TPM) needs a new license.",
+		"No refunds after a license is activated.",
 	}
 	if support != "" {
 		lines = append(lines, "", "Questions? Reply to "+support+".")

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
@@ -18,6 +17,10 @@ type machineRequest struct {
 	Parts      store.TrialParts `json:"parts"`
 	Email      string           `json:"email"`
 	EmailCode  string           `json:"email_code"`
+	// Nonce is optional and only read by verify: the signed answer echoes it.
+	Nonce string `json:"nonce"`
+	// SentKey is license_key exactly as the app sent it (LicenseKey is normalised).
+	SentKey string `json:"-"`
 }
 
 func (s *Server) readMachine(r *http.Request, needKey, needPow bool) (machineRequest, error) {
@@ -26,6 +29,7 @@ func (s *Server) readMachine(r *http.Request, needKey, needPow bool) (machineReq
 		return request, err
 	}
 	request.HWID = strings.TrimSpace(request.HWID)
+	request.SentKey = request.LicenseKey
 	request.LicenseKey = certs.NormalizeKey(request.LicenseKey)
 	if !certs.ValidHWID(request.HWID) {
 		return request, badRequest("Machine ID must be the 64-character code shown in ScadaBench")
@@ -59,16 +63,14 @@ func (s *Server) trialCertificate(trial store.Trial) (certs.Bundle, error) {
 		IssuedAt: trial.IssuedAt, LicenseID: "TRIAL-" + trial.HWID[:12], MaxMachines: 1, Type: "trial"})
 }
 
+// activate binds an unbound key to this machine, or confirms the same machine again. A key
+// bound to another machine stays there: every license works on one computer only.
 func (s *Server) activate(r *http.Request, ip string) (any, error) {
 	request, err := s.readMachine(r, true, true)
 	if err != nil {
 		return nil, err
 	}
 	license, err := s.Store.Activate(request.LicenseKey, request.HWID, s.Now())
-	if errors.Is(err, store.ErrBoundElsewhere) && s.Config.MaxTransfersPerYear > 0 {
-		return nil, apiError{http.StatusConflict, "bound_elsewhere", "This key is active on another computer. " +
-			"You can move it to this computer (the other computer stops working when it next checks online)."}
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -77,45 +79,14 @@ func (s *Server) activate(r *http.Request, ip string) (any, error) {
 	return s.withTime(map[string]any{"certificate": bundle}), err
 }
 
-func (s *Server) transfer(r *http.Request, ip string) (any, error) {
-	request, err := s.readMachine(r, true, true)
-	if err != nil {
-		return nil, err
-	}
-	license, err := s.Store.Transfer(request.LicenseKey, request.HWID, s.Now(), s.Config.MaxTransfersPerYear)
-	if err != nil {
-		return nil, err
-	}
-	bundle, err := s.CertificateFor(license, request.HWID)
-	s.Log.Event("transfer", map[string]any{"ip": ip, "key": logging.MaskKey(license.Key), "hwid": request.HWID[:12]})
-	return s.withTime(map[string]any{"certificate": bundle}), err
-}
+// errMovesDisabled is what old 0.1.x apps (which still offer "move the key") read.
+var errMovesDisabled = apiError{http.StatusGone, "moves_disabled",
+	"Moving a license to another computer is not possible. Each license works on one computer only."}
 
-// verify lets installed apps learn about refunds, revocations and moves; every
-// answer carries the signed server time that trial apps confirm once a day.
-func (s *Server) verify(r *http.Request, ip string) (any, error) {
-	request, err := s.readMachine(r, false, false)
-	if err != nil {
-		return nil, err
-	}
-	if request.LicenseKey == "" || strings.HasPrefix(request.LicenseKey, "TRIAL-") {
-		return s.withTime(map[string]any{"status": "valid"}), nil
-	}
-	license, err := s.Store.GetLicense(request.LicenseKey)
-	if errors.Is(err, store.ErrUnknownKey) {
-		return s.withTime(map[string]any{"status": "unknown"}), nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	switch {
-	case license.Revoked:
-		return s.withTime(map[string]any{"status": "revoked"}), nil
-	case license.HWID != request.HWID:
-		return s.withTime(map[string]any{"status": "moved"}), nil
-	}
-	bundle, err := s.CertificateFor(license, request.HWID)
-	return s.withTime(map[string]any{"status": "valid", "certificate": bundle}), err
+// transfer is retired (ADR-0097): it never reads the request and never changes a key.
+func (s *Server) transfer(_ *http.Request, ip string) (any, error) {
+	s.Log.Event("transfer_refused", map[string]any{"ip": ip})
+	return nil, errMovesDisabled
 }
 
 // IssueKey creates an admin key; with hwid it is pre-bound for offline delivery.

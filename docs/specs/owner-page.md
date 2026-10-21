@@ -23,7 +23,9 @@ The path is chosen once and kept only in the server settings and in
 - **Overview**: live sales today / month / all (sandbox excluded, refunds subtracted), keys in use,
   hand-made keys, trials, news subscribers, storage against the 45 MB data limit, latest activity.
 - **Licenses**: make a lifetime key (optional email, note, "email the key"), search, copy, email
-  again, free for a new PC, cancel (revoke), edit note, delete (hand-made keys only, needs a code).
+  again, cancel (revoke), edit note, delete (hand-made keys only, needs a code). There is no
+  "free for a new PC": a key works on one computer only and nothing here unbinds or re-binds it
+  (ADR-0097, [ADR-0097](../decisions/ADR-0097-license-no-backdoors.md)). A new computer needs a new key.
 - **Purchases**: every PayPal payment, refund and chargeback with buyer details.
 - **Issues**: problem events from the rotated server logs in plain words (keys are masked in logs),
   search, "show every event".
@@ -44,6 +46,7 @@ The path is chosen once and kept only in the server settings and in
 | OWN-05 | Delete, disk cleanup and news sending need a fresh code; at most 25 hand-made keys a day. | `license-server/internal/api/owner_actions_test.go::TestOwnerMakesFriendKeyAndConfirmsDelete`, `license-server/internal/api/owner_actions_test.go::TestOwnerDailyKeyCap` |
 | OWN-06 | News reaches only people who agreed; unsubscribe is one click (POST) and GET never unsubscribes. | `license-server/internal/api/owner_actions_test.go::TestCheckoutOptInSubscribesAndOneClickUnsubscribe`, `license-server/internal/api/owner_actions_test.go::TestOwnerNewsGoesOnlyToSubscribersWithUnsubscribeLink`, `license-server/internal/store/subscribers_test.go::TestSubscribersNeedConsentAndCanLeave` |
 | OWN-07 | Cleanup removes only rotated server logs; the database is never removed. | `license-server/internal/api/owner_actions_test.go::TestOwnerCleanRemovesOnlyOldLogs` |
+| OWN-08 | The owner page has no action that unbinds or re-binds a key (`licenses/reset-hwid` is gone, also from the page script). | `license-server/internal/api/moves_test.go::TestOwnerPageHasNoFreeForNewPCAction` |
 
 ## Cloudflare Access (recommended extra lock, about 5 minutes, once)
 

@@ -40,7 +40,7 @@ func adminCommand(command string, args []string) error {
 	if err != nil {
 		return err
 	}
-	needsKey := command == "revoke" || command == "reset-hwid" || command == "certificate" || command == "delete"
+	needsKey := command == "revoke" || command == "certificate" || command == "delete"
 	if needsKey && request.Key == "" {
 		return errors.New("--key is required")
 	}

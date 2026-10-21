@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Prose from '../../components/Prose.astro';
 import { SITE } from '../../data/site';
-import { REFUND_POLICY } from '../../data/faqs';
+import { ONE_COMPUTER_POLICY, REFUND_POLICY } from '../../data/faqs';
 ---
 <Base title="License agreement" description="The terms for using ScadaBench.">
   <PageHeader eyebrow="Legal" title="License agreement." lede="The plain-language terms for using ScadaBench." />
@@ -12,8 +12,8 @@ import { REFUND_POLICY } from '../../data/faqs';
     <h2>1. What you get</h2>
     <p>A trial lets one computer use ScadaBench for {SITE.trialDays} days. A lifetime license lets one computer use it
       without time limit. A license is personal to the buyer and may not be shared, resold or used on more computers at once.</p>
-    <h2>2. Moving to a new computer</h2>
-    <p>You may move a license to another computer yourself up to {SITE.movesPerYear} times a year. The previous computer stops working when it next checks online.</p>
+    <h2>2. One computer only</h2>
+    <p>{ONE_COMPUTER_POLICY}</p>
     <h2>3. What you may not do</h2>
     <ul>
       <li>Bypass, disable or tamper with licensing, or reverse engineer the software except where law allows it.</li>

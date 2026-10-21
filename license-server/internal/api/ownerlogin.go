@@ -28,7 +28,6 @@ func (s *Server) ownerRoutes(mux *http.ServeMux, api string) {
 		{"POST licenses/issue", signedIn, s.ownerIssue},
 		{"POST licenses/note", signedIn, s.ownerNote},
 		{"POST licenses/revoke", signedIn, s.ownerRevoke},
-		{"POST licenses/reset-hwid", signedIn, s.ownerResetHWID},
 		{"POST licenses/resend", signedIn, s.ownerResend},
 		{"POST licenses/delete", confirmed, s.ownerDelete},
 		{"GET purchases", signedIn, s.ownerPurchases},
