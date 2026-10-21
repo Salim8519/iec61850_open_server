@@ -76,7 +76,7 @@ func BulkPreview(project *pyjson.Object, keys any) (*pyjson.Object, error) {
 
 // BulkRemove is the pure part of bulk_removal.remove: the fresh preview (which must carry
 // the same fingerprint) and the candidate project. The service then writes the
-// "before-ied-delete-<uuid>.subsim" backup, swaps, saves and answers
+// "before-ied-delete-<uuid>.scadabench" backup, swaps, saves and answers
 // {**preview, "recovery_file": <backup path>}.
 func BulkRemove(project *pyjson.Object, keys, fingerprint any) (*pyjson.Object, *pyjson.Object, error) {
 	current, err := BulkPreview(project, keys)

@@ -18,7 +18,7 @@ type RestoreInput struct {
 	Version int64                     // from StoredIEDs
 	Models  map[string]*pyjson.Object // freshly imported model per stored IED id (StoredGroup.Assign)
 	// Preserve writes the exact archive bytes to recovery/before-format-8-migration-<uuid>
-	// .subsim and returns its path; it is called only for a legacy format, right after the
+	// .scadabench and returns its path; it is called only for a legacy format, right after the
 	// diagram migration, as Python does.
 	Preserve func() (string, error)
 	NewID    func() string // uuid4().hex, used when the document has no id

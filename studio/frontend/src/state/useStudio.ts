@@ -10,6 +10,7 @@ import { coalesce } from './coalesce';
 import { deliverLive, openEventStream, RELOADS, type StudioStream } from './eventStream';
 import { liveData } from './liveData';
 import { useWork } from './workSteps';
+import { fileKind, OLD_PROJECT_MESSAGE } from './projectFile';
 
 /** Events this much older than a project read are certainly in it (same PC clock; generous margin). */
 const READ_MARGIN_MS = 250;
@@ -168,7 +169,8 @@ export function useStudio() {
   }, 'Adding a sample IED…');
   // Opening and importing show their steps in the middle of the window (change 0150).
   const importFile = (file: File) => {
-    const project = file.name.toLowerCase().endsWith('.subsim');
+    if (fileKind(file.name) === 'old-project') { setError(OLD_PROJECT_MESSAGE); return Promise.resolve(); }
+    const project = fileKind(file.name) === 'project';
     steps.begin(project ? `Opening ${file.name}` : `Reading ${file.name}`, project
       ? ['Save your diagram', 'Open the project file', 'Show the project']
       : ['Save your diagram', 'Read the IEDs in the file']);

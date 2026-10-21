@@ -11,7 +11,7 @@ import (
 
 // Journal line kinds (one pyjson.Compact object per line, "\n" terminated):
 //
-//	{"journal":1,"base":"<sha256 hex of autosave.subsim, or "" when there was none>"}
+//	{"journal":1,"base":"<sha256 hex of autosave.scadabench, or "" when there was none>"}
 //	{"rev":N,"doc":{...}}                                  full compact document
 //	{"rev":N,"keys":[...],"set":{...},"scl":{"order":[...],"add":{...}}}   change
 //	{"snap":N,"sha256":"<hex>"}                            snapshot N is being renamed in

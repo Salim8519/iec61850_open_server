@@ -94,7 +94,7 @@ func python(t *testing.T, args ...string) string {
 // to the same snapshot, and Go's re-export reopens in Python to the same snapshot again.
 func TestPythonArchiveRoundTrip(t *testing.T) {
 	folder := testutil.TempDir(t)
-	pythonFile := filepath.Join(folder, "python.subsim")
+	pythonFile := filepath.Join(folder, "python.scadabench")
 	want := python(t, "make", pythonFile)
 	payload, err := os.ReadFile(pythonFile)
 	if err != nil {
@@ -111,7 +111,7 @@ func TestPythonArchiveRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	goFile := filepath.Join(folder, "go.subsim")
+	goFile := filepath.Join(folder, "go.scadabench")
 	if err := os.WriteFile(goFile, exported, 0o600); err != nil {
 		t.Fatal(err)
 	}

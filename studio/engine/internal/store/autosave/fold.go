@@ -14,9 +14,9 @@ import (
 
 // ErrJournalMismatch means the autosave on disk is neither the journal's base nor one of
 // the snapshots it marked (for example another program saved it); both files are kept.
-var ErrJournalMismatch = errors.New("autosave journal does not belong to autosave.subsim; both files were kept")
+var ErrJournalMismatch = errors.New("autosave journal does not belong to autosave.scadabench; both files were kept")
 
-// Fold applies a leftover <data>/autosave.journal to autosave.subsim and removes the
+// Fold applies a leftover <data>/autosave.journal to autosave.scadabench and removes the
 // journal only after the new autosave was renamed in. It returns the number of records
 // applied (0 and no error when there is no journal). A damaged or partial last line is a
 // torn write and is ignored; a damaged earlier line is an error and keeps both files.
@@ -49,7 +49,7 @@ func Fold(dataDir string, enc *archive.Encoder) (int, error) {
 	var doc *pyjson.Object
 	if _, full := pending[0].record.Get("doc"); !full {
 		if payload == nil {
-			return 0, fmt.Errorf("%w (no autosave.subsim)", errMissing)
+			return 0, fmt.Errorf("%w (no autosave.scadabench)", errMissing)
 		}
 		if doc, err = archive.Decode(payload); err != nil {
 			return 0, fmt.Errorf("autosave journal cannot be folded into an unreadable autosave: %w", err)

@@ -16,7 +16,7 @@ import (
 func TestCopySeamFailureProtectsAutosave(t *testing.T) {
 	defer func() { copyUnreadable = copyFile }()
 	dir := testutil.TempDir(t)
-	source := filepath.Join(dir, "autosave.subsim")
+	source := filepath.Join(dir, "autosave.scadabench")
 	if err := os.WriteFile(source, []byte("damaged"), 0o666); err != nil {
 		t.Fatal(err)
 	}

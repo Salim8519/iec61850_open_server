@@ -129,7 +129,7 @@ Anything not in the table is compared exactly. Adding a rule needs a change reco
    caused them must match. *Periodic* kinds (`goose_status`, `sv_status`, `live_status`,
    `energization` refreshes) compare shapes exactly and counts within +-1 per period;
    the split lives in `golden/event_kinds.json`, one reason per kind.
-9. **Binary**: `.subsim` / project download = zip -> compare entry list, compression
+9. **Binary**: `.scadabench` / project download = zip -> compare entry list, compression
    method and `project.json` bytes (zip timestamps ignored). CSV and HTML report bodies
    byte-compare after the timestamp rule. SCL export bytes: section 4.
 

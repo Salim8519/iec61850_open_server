@@ -43,7 +43,7 @@ func derive(base *pyjson.Object, overrides ...any) *pyjson.Object {
 	return next
 }
 
-// autosaveJSON returns the project.json of <dir>/autosave.subsim re-encoded with pyjson.
+// autosaveJSON returns the project.json of <dir>/autosave.scadabench re-encoded with pyjson.
 func autosaveJSON(t *testing.T, dir string) []byte {
 	t.Helper()
 	payload, err := os.ReadFile(filepath.Join(dir, AutosaveName))

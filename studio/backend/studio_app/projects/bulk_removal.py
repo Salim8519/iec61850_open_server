@@ -4,6 +4,7 @@ import json
 from uuid import uuid4
 from studio_app.contracts.errors import StudioError
 from .document import compact
+from .project_files import EXTENSION
 from .removal import impacts, without_ieds
 
 
@@ -29,7 +30,7 @@ def remove(service, keys, fingerprint):
         if recovery.is_symlink():
             raise StudioError("Recovery directory must not be a symbolic link")
         recovery.mkdir(exist_ok=True)
-        backup = recovery / ("before-ied-delete-" + uuid4().hex + ".subsim")
+        backup = recovery / ("before-ied-delete-" + uuid4().hex + EXTENSION)
         payload = service.export()
         with backup.open("xb") as stream:
             stream.write(payload)

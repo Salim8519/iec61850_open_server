@@ -54,7 +54,7 @@ func TestStartupGateHoldsUntilRecovery(t *testing.T) {
 	}
 
 	broken := testutil.TempDir(t)
-	if err := os.Mkdir(filepath.Join(broken, "autosave.subsim"), 0o755); err != nil {
+	if err := os.Mkdir(filepath.Join(broken, "autosave.scadabench"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	failed := composeAt(t, broken, testutil.TempDir(t))

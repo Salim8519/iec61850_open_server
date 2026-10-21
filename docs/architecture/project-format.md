@@ -1,9 +1,17 @@
 # Project format and SCL
 
-Projects use a versioned .subsim ZIP archive. Include manifest, engineering model,
+Projects use a versioned .scadabench ZIP archive (ADR-0096). Include manifest, engineering model,
 diagram, mappings, source definitions, scenarios, original SCL and referenced CSV.
 Save atomically through a temporary sibling and replace; keep a recovery autosave.
 Reject traversal paths, oversized archives and unsupported project versions.
+
+Only `.scadabench` is accepted when the user opens a project; a `.subsim` file (the extension
+before ADR-0096) is refused with "This is an old project file (.subsim). ScadaBench now uses
+.scadabench project files." (`POST /project/open` answers 400, code `old_project_file`).
+The app's own copies use the same extension: `autosave.scadabench` and `recovery/*.scadabench`.
+At startup, before anything is read, both engines rename the app's own old `autosave.subsim`
+and `recovery/*.subsim` in place; nothing is deleted or overwritten (when the new name exists
+both files stay) and every file is journaled in `logs/project-file-migrations.jsonl`.
 
 The implemented archive has one `project.json` entry. Formats 2 through 8 deduplicate
 original XML in a checksum-verified source table and regenerates derived runtime

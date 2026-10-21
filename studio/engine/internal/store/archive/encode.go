@@ -1,4 +1,4 @@
-// Package archive reads and writes .subsim project archives exactly as
+// Package archive reads and writes .scadabench project archives exactly as
 // studio_app.projects.archive does: a ZIP with the single deflated member project.json holding
 // json.dumps(compact(project), allow_nan=False) (format 15).
 //

@@ -7,6 +7,7 @@ import (
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/store/projectfile"
 )
 
 // getProject is GET /project: snapshot + runtime, running_ieds, startup_recovery.
@@ -131,7 +132,7 @@ func (a *Area) downloadProject(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	sendFile(w, r, payload, "application/zip", "substation.subsim")
+	sendFile(w, r, payload, "application/zip", projectfile.DownloadName)
 	return nil
 }
 
@@ -140,9 +141,12 @@ func (a *Area) openProject(w http.ResponseWriter, r *http.Request) error {
 	if err := a.requireStopped(); err != nil {
 		return err
 	}
-	payload, _, err := upload(r, "file")
+	payload, name, err := upload(r, "file")
 	if err != nil {
 		return err
+	}
+	if projectfile.IsOldName(name) { // a .subsim file is refused in plain words (ADR-0096)
+		return apperr.Coded(projectfile.OldProjectMessage, projectfile.OldProjectCode)
 	}
 	if err := a.deps.Projects.Restore(payload, true); err != nil {
 		return err

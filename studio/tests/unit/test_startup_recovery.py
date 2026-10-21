@@ -19,7 +19,7 @@ def test_startup_recovers_engineering_without_writing_or_running(tmp_path):
     saved.scenarios([{"id": "sequence", "name": "Saved sequence", "enabled": True,
         "steps": [{"id": "set", "at": 0, "ied_id": ied["id"],
                    "ref": "RecoveredCTRL/GGIO1.AnIn1.mag.f", "value": 15}]}])
-    payload = (tmp_path / "autosave.subsim").read_bytes()
+    payload = (tmp_path / "autosave.scadabench").read_bytes()
     app = create_app(Settings(tmp_path, tmp_path / "does-not-exist.exe", tmp_path), "recovery-test")
     try:
         assert app.extensions["startup"].wait(60)  # Recovery runs in the background.
@@ -32,7 +32,7 @@ def test_startup_recovers_engineering_without_writing_or_running(tmp_path):
         assert restored["ieds"][0]["state"] == "stopped"
         assert app.extensions["runtime"].state == "stopped"
         assert app.extensions["runtime"].supervisor.workers == {}
-        assert (tmp_path / "autosave.subsim").read_bytes() == payload
+        assert (tmp_path / "autosave.scadabench").read_bytes() == payload
         client = app.test_client()
         client.post("/api/v1/session", json={"token": "recovery-test"})
         assert client.get("/api/v1/project").json["startup_recovery"]["status"] == "restored"
@@ -42,26 +42,26 @@ def test_startup_recovers_engineering_without_writing_or_running(tmp_path):
 
 def test_corrupt_autosave_is_preserved_before_new_work(tmp_path):
     original = b"interrupted or damaged archive"
-    (tmp_path / "autosave.subsim").write_bytes(original)
+    (tmp_path / "autosave.scadabench").write_bytes(original)
     projects = ProjectService(tmp_path)
     result = recover_startup(projects)
     assert result["status"] == "unreadable"
     backup = Path(result["backup"])
     assert backup.read_bytes() == original
-    assert (tmp_path / "autosave.subsim").read_bytes() == original
+    assert (tmp_path / "autosave.scadabench").read_bytes() == original
     assert projects.project["ieds"] == []
     projects.add_template("NewWork")
     assert backup.read_bytes() == original
 
 
 def test_recovery_backup_failure_stops_startup(tmp_path, monkeypatch):
-    (tmp_path / "autosave.subsim").write_bytes(b"damaged")
+    (tmp_path / "autosave.scadabench").write_bytes(b"damaged")
     def fail(*_args):
         raise PermissionError("injected backup failure")
     monkeypatch.setattr("studio_app.projects.startup_recovery.shutil.copyfile", fail)
     with pytest.raises(RuntimeError, match="startup stopped"):
         recover_startup(ProjectService(tmp_path))
-    assert (tmp_path / "autosave.subsim").read_bytes() == b"damaged"
+    assert (tmp_path / "autosave.scadabench").read_bytes() == b"damaged"
 
 
 def test_project_restore_save_failure_preserves_current_project(tmp_path, monkeypatch):

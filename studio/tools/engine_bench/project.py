@@ -45,7 +45,7 @@ def relocate(engine, block=0):
     with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as target:
         target.writestr("project.json", json.dumps(document))
     started = time.perf_counter()
-    engine.upload("/api/v1/project/open", "file", "bench.subsim", stream.getvalue())
+    engine.upload("/api/v1/project/open", "file", "bench.scadabench", stream.getvalue())
     return time.perf_counter() - started
 
 

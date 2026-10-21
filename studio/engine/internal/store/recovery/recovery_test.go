@@ -42,7 +42,7 @@ func TestPreserveMigrationKeepsExactBytes(t *testing.T) {
 	}
 	name := filepath.Base(path)
 	if filepath.Dir(path) != filepath.Join(dir, "recovery") || !strings.HasPrefix(name, "before-format-8-migration-") ||
-		len(name) != len("before-format-8-migration-")+32+len(".subsim") || strings.Contains(path, "/") {
+		len(name) != len("before-format-8-migration-")+32+len(".scadabench") || strings.Contains(path, "/") {
 		t.Fatalf("path %s", path)
 	}
 	if stored, _ := os.ReadFile(path); !bytes.Equal(stored, payload) {
@@ -80,7 +80,7 @@ func TestRecoveryFolderLinkIsRefused(t *testing.T) {
 	if _, err := WriteDeleteBackup(dir, []byte("x")); message(err) != "Recovery directory must not be a symbolic link" {
 		t.Errorf("delete backup: %v", err)
 	}
-	_ = os.WriteFile(filepath.Join(dir, "autosave.subsim"), []byte("bad"), 0o666)
+	_ = os.WriteFile(filepath.Join(dir, "autosave.scadabench"), []byte("bad"), 0o666)
 	_, err := RecoverStartup(dir, func([]byte) error { return errors.New("bad") })
 	if appErr, ok := err.(*apperr.Error); !ok || appErr.Kind != apperr.Runtime ||
 		appErr.Message != "Recovery folder is a link; cannot safely preserve unreadable autosave" {
@@ -96,7 +96,7 @@ func TestRecoverStartupResults(t *testing.T) {
 		t.Fatalf("no autosave: %v %v", result, err)
 	}
 	payload := validArchive(t)
-	_ = os.WriteFile(filepath.Join(dir, "autosave.subsim"), payload, 0o666)
+	_ = os.WriteFile(filepath.Join(dir, "autosave.scadabench"), payload, 0o666)
 	result, err = RecoverStartup(dir, func(got []byte) error {
 		if !bytes.Equal(got, payload) {
 			t.Error("restore got other bytes")
@@ -125,7 +125,7 @@ func TestRecoverStartupResults(t *testing.T) {
 
 func TestRecoverStartupSizeLimitAndNonFile(t *testing.T) {
 	dir := testutil.TempDir(t)
-	file, _ := os.Create(filepath.Join(dir, "autosave.subsim"))
+	file, _ := os.Create(filepath.Join(dir, "autosave.scadabench"))
 	_ = file.Truncate(archive.MaxUnpacked + 1) // sparse: no real 100 MB written
 	_ = file.Close()
 	result, err := RecoverStartup(dir, func([]byte) error { t.Error("restore called"); return nil })
@@ -133,7 +133,7 @@ func TestRecoverStartupSizeLimitAndNonFile(t *testing.T) {
 		t.Fatalf("size: %v %v", details, err)
 	}
 	other := testutil.TempDir(t)
-	_ = os.Mkdir(filepath.Join(other, "autosave.subsim"), 0o777)
+	_ = os.Mkdir(filepath.Join(other, "autosave.scadabench"), 0o777)
 	_, err = RecoverStartup(other, nil)
 	if message(err) != "Autosave is not a regular local file; inspect it before starting ScadaBench" {
 		t.Fatalf("directory autosave: %v", err)

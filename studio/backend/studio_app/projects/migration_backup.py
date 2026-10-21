@@ -3,6 +3,7 @@ import zipfile
 from io import BytesIO
 from uuid import uuid4
 from studio_app.contracts.errors import StudioError
+from .project_files import EXTENSION
 
 
 def preserve(directory, payload):
@@ -10,7 +11,7 @@ def preserve(directory, payload):
     if recovery.is_symlink():
         raise StudioError("Recovery directory must not be a symbolic link")
     recovery.mkdir(exist_ok=True)
-    destination = recovery / ("before-format-8-migration-" + uuid4().hex + ".subsim")
+    destination = recovery / ("before-format-8-migration-" + uuid4().hex + EXTENSION)
     destination.write_bytes(payload)
     if destination.read_bytes() != payload:
         raise StudioError("Project migration recovery verification failed")

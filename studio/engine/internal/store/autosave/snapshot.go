@@ -161,7 +161,7 @@ func (w *SnapshotWriter) awaitTurn() {
 }
 
 // write encodes the document, writes autosave.tmp, marks the snapshot in the journal,
-// renames it onto autosave.subsim and trims the journal. No lock is held during I/O.
+// renames it onto autosave.scadabench and trims the journal. No lock is held during I/O.
 func (w *SnapshotWriter) write(request *snapshotRequest) error {
 	payload, err := w.enc.Encode(request.doc)
 	if err != nil {

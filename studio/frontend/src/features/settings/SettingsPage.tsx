@@ -19,7 +19,7 @@ export function SettingsPage({ project, locked, perform, openTraffic, update }: 
   const [npcap, setNpcap] = useState<NpcapStatus | null>(null);
   useEffect(() => { api<{ npcap: NpcapStatus }>('/network').then(value => setNpcap(value.npcap)).catch(() => {}); }, []);
   const rows: [string, string][] = [
-    ['Project', project.name], ['Project format', 'ScadaBench project (.subsim)'],
+    ['Project', project.name], ['Project format', 'ScadaBench project (.scadabench)'],
     ['Session', `${project.session_id.slice(0, 8)} · revision ${project.revision}`],
     ['IEDs', String(project.ieds.length)], ['Equipment on the diagram', String(project.diagram.nodes.length)],
   ];

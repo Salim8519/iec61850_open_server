@@ -1,4 +1,4 @@
-// Package autosave keeps <data>/autosave.subsim current without making a mutation wait for
+// Package autosave keeps <data>/autosave.scadabench current without making a mutation wait for
 // the full archive: every committed mutation appends one synced line to the change journal
 // (Journal), and a coalescing background writer (SnapshotWriter) writes full snapshots.
 // Fold applies a journal left by a process that died, so Python never sees a journal.
@@ -11,17 +11,19 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"studio-engine/internal/store/projectfile"
 )
 
 // File names inside the data folder (persistence-2 section 1; the journal is Go-only).
 const (
-	AutosaveName = "autosave.subsim"
-	TempName     = "autosave.tmp" // Path("autosave.subsim").with_suffix(".tmp")
+	AutosaveName = projectfile.AutosaveName
+	TempName     = "autosave.tmp" // Path("autosave.scadabench").with_suffix(".tmp")
 	JournalName  = "autosave.journal"
 )
 
 // WriteAutosave writes payload like ProjectService.save(): <data>/autosave.tmp
-// (create/truncate, no fsync) then os.replace onto autosave.subsim (MoveFileEx with
+// (create/truncate, no fsync) then os.replace onto autosave.scadabench (MoveFileEx with
 // MOVEFILE_REPLACE_EXISTING, which os.Rename uses on Windows).
 func WriteAutosave(dataDir string, payload []byte) error {
 	temporary := filepath.Join(dataDir, TempName)

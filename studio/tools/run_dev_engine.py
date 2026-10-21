@@ -116,7 +116,7 @@ def run_dev_wait(api, ui):
 
 def fold_before_python(data, print_only):
     """A Go run that ended without its final snapshot leaves autosave.journal; fold it into
-    autosave.subsim (studio_server --fold-journal) so Python opens exactly what Go saved."""
+    autosave.scadabench (studio_server --fold-journal) so Python opens exactly what Go saved."""
     if not (data / "autosave.journal").exists():
         return
     if print_only:

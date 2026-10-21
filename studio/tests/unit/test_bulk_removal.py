@@ -21,7 +21,7 @@ def test_bulk_impact_and_backup_restoration(tmp_path):
     assert [ied["name"] for ied in projects.project["ieds"]] == ["Keep"]
     assert len(projects.project["test_panel"]) == 1
     assert projects.project["diagram"]["nodes"][0]["data"]["state_mapping"] is None
-    assert len(list((tmp_path / "recovery").glob("*.subsim"))) == 1
+    assert len(list((tmp_path / "recovery").glob("*.scadabench"))) == 1
     projects.restore(Path(result["recovery_file"]).read_bytes())
     assert len(projects.project["ieds"]) == 3 and len(projects.project["test_panel"]) == 3
 
