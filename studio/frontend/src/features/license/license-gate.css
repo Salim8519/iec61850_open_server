@@ -33,3 +33,5 @@
 }
 .activation-code { display: grid; gap: 6px; }
 .activation-code .row input { flex: 1; min-width: 0; }
+/* The activation screen's two closed options (offline, virtual machine) look the same and read bold. */
+.license-card > .disclosure > summary { font-weight: 700; }

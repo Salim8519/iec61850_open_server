@@ -41,9 +41,18 @@ export const VM_HOST_COPY = {
     + 'virtual machines use this license later.',
   copyActivation: 'Copy activation code',
   copiedActivation: 'Copied',
-  gateNotice: 'Running ScadaBench inside a virtual machine? It looks for the PC it runs on by itself. On that PC, '
-    + 'open Settings › License and turn on "Let my virtual machines use this license". This screen then continues '
-    + 'on its own.',
+  gateTitle: 'Using a virtual machine?',
+  gateIntro: 'A virtual machine (VM) on a licensed PC needs no key, no file and no internet. It uses the license '
+    + 'of the PC it runs on (Hyper-V, VMware or VirtualBox).',
+  gateSteps: [
+    'On the PC that runs this VM: activate ScadaBench there first, if it is not activated yet.',
+    'On that PC: open Settings › License and tick "Let my virtual machines use this license". If ScadaBench offers '
+      + 'a Windows Firewall rule, apply it.',
+    'Come back to this VM. This screen continues on its own within a few seconds. Nothing to type here.',
+  ],
+  gateLooking: 'Looking for a licensed PC on the virtual network…',
+  gateNote: 'The VM keeps working offline as long as that PC is switched on with this option ticked. A VM copied to '
+    + 'another computer stops.',
 };
 
 /** The status of a virtual machine that is licensed through its host PC. */

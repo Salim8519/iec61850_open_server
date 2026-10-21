@@ -31,6 +31,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
     { q: 'What does the license cover?', a: `One lifetime license covers one computer, with no time limit. ${ONE_COMPUTER_POLICY}` },
     { q: 'Can I move my license to another computer?', a: `No. ${ONE_COMPUTER_POLICY}` },
     { q: 'My substation PC has no internet. Can I still activate?', a: `Yes. Copy the Machine ID from ScadaBench, activate on any other computer at ${SITE.licenseServer.replace('https://', '')}/activate and load the license file on the offline PC.` },
+    { q: 'Can I use ScadaBench in a virtual machine?', a: 'Yes, on your licensed PC. Tick "Let my virtual machines use this license" in Settings › License and every VM on that PC (Hyper-V, VMware, VirtualBox) uses the same license, with no second key and no internet. A VM copied to another computer stops. See the picture guide on the tutorials page.' },
     { q: 'Can my company buy several licenses or get an invoice?', a: `Yes. Write to ${SITE.supportEmail} with the number of licenses and your company details.` },
   ] },
 ];

@@ -3,7 +3,12 @@ package hostkey
 import (
 	"errors"
 	"os"
+	"time"
 )
+
+// startWait is how long turning sharing on waits for a just-started helper to take its lock, so
+// Settings shows "On" and not "not running yet" for a helper that is merely still starting.
+const startWait = 3 * time.Second
 
 // Process is the helper's process seam: whether it runs in this Windows session, and starting it.
 type Process interface {
@@ -65,7 +70,7 @@ func (s Sharing) Enable() error {
 	if s.Process.Running() {
 		return nil
 	}
-	return s.Process.Start(s.Executable)
+	return s.start()
 }
 
 // Disable turns sharing off: the Run value goes; the helper ends itself within seconds.
@@ -85,5 +90,17 @@ func (s Sharing) Refresh() error {
 	if s.Process.Running() {
 		return nil
 	}
-	return s.Process.Start(s.Executable)
+	return s.start()
+}
+
+// start runs the helper and waits briefly until it holds its lock. A helper that refuses to serve
+// (for example sharing was switched off meanwhile) simply never takes it; that is not an error.
+func (s Sharing) start() error {
+	if err := s.Process.Start(s.Executable); err != nil {
+		return err
+	}
+	for deadline := time.Now().Add(startWait); !s.Process.Running() && time.Now().Before(deadline); {
+		time.Sleep(50 * time.Millisecond)
+	}
+	return nil
 }

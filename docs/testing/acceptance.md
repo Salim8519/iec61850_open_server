@@ -14,6 +14,11 @@ Record actual hardware, fixtures, client versions and evidence with results.
 Independent MMS client checks are distinct from browser tests.
 No certification, hard real-time or vendor-protection-equivalence claims.
 
+Recorded real-machine runs:
+- [VM uses the host PC's license, real VMware VM (2026-10-22)](vm-host-real-vm-2026-10-22.md),
+  change [0156](../changes/2026/0156-activate-once-vm-host-key.md), follow-up
+  [0157](../changes/2026/0157-vm-box-and-guide.md).
+
 Final user-requested action: hibernate this laptop only after the complete goal
 and all required acceptance checks are genuinely finished. Do not hibernate for
 a partial milestone or while blocked on a check needing user input.

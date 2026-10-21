@@ -84,7 +84,7 @@ test('the activation screen asks again while a virtual machine may be finding it
   const notice = read('features/license/VmHostNotice.tsx');
   assert.match(notice, /if \(status\.licensed\) changed\(status\)/);
   assert.match(notice, /window\.clearInterval\(timer\)/);
-  assert.match(VM_HOST_COPY.gateNotice, /turn on "Let my virtual machines use this license"/);
+  assert.match(VM_HOST_COPY.gateSteps[1], /tick "Let my virtual machines use this license"/);
 });
 
 test('nothing in the new screens is cut off: text wraps and no ellipsis is used', () => {
@@ -95,4 +95,18 @@ test('nothing in the new screens is cut off: text wraps and no ellipsis is used'
   for (const file of ['VmHostSection.tsx', 'VmHostFirewall.tsx']) {
     assert.doesNotMatch(read(`features/settings/${file}`), /text-overflow|ellipsis|\.slice\(|substring/);
   }
+});
+
+test('the activation screen has a clear "Using a virtual machine?" box beside offline activation', () => {
+  assert.equal(VM_HOST_COPY.gateTitle, 'Using a virtual machine?');
+  assert.equal(VM_HOST_COPY.gateSteps.length, 3);
+  assert.match(VM_HOST_COPY.gateSteps[1], /Let my virtual machines use this license/);
+  assert.match(VM_HOST_COPY.gateSteps[2], /continues on its own/);
+  assert.match(VM_HOST_COPY.gateIntro, /no key, no file and no internet/);
+  const gate = read('features/license/LicenseGate.tsx');
+  assert.ok(gate.indexOf('<ServerOptions') < gate.indexOf('<VmHostNotice'), 'the box sits right after the offline options');
+  const box = read('features/license/VmHostNotice.tsx');
+  assert.match(box, /<Disclosure title=\{COPY\.gateTitle\}>/);  // closed like the offline options
+  assert.match(box, /<ol className="small license-steps">/);
+  assert.match(box, /<Spinner label=\{COPY\.gateLooking\}/);
 });

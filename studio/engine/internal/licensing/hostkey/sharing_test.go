@@ -110,3 +110,22 @@ func TestStartingTheAppNeverTurnsSharingOn(t *testing.T) {
 		t.Fatal("Refresh turned sharing on by itself")
 	}
 }
+
+// slowProcess is a helper that takes its lock only a few checks after it was started.
+type slowProcess struct{ checks, after int }
+
+func (p *slowProcess) Running() bool                 { p.checks++; return p.checks > p.after }
+func (p *slowProcess) Start(executable string) error { p.checks = 0; return nil }
+
+func TestTurningSharingOnWaitsForAHelperThatIsStillStarting(t *testing.T) {
+	process := &slowProcess{after: 4}
+	sharing := Sharing{Run: &MemoryRunKey{}, Process: process, Executable: `C:\x\scadabench_hostkey.exe`,
+		Exists: func(string) bool { return true }}
+	process.checks = -100 // not running before the switch is turned on
+	if err := sharing.Enable(); err != nil {
+		t.Fatal(err)
+	}
+	if state := sharing.State(); !state.Enabled || !state.Running {
+		t.Fatalf("Settings would show 'not running yet' for a helper that was only starting: %+v", state)
+	}
+}

@@ -131,6 +131,9 @@ func (h *hostE2E) service(home string, vm *VMOptions) *Service {
 // startHelper runs the real helper program and waits until it answers on bind.
 func (h *hostE2E) startHelper(bind string) *exec.Cmd {
 	h.t.Helper()
+	if hostkey.SystemProcess().Running() { // one helper per Windows session: the test's would end at once
+		h.t.Skip("a real VM helper runs in this Windows session (VM sharing is on); turn it off to run this test")
+	}
 	exe := filepath.Join(hkTempDir(h.t), "scadabench_hostkey.exe")
 	buildTool(h.t, engineDir(), exe, "./cmd/scadabench_hostkey", "-tags", "hostkeytest")
 	command := exec.Command(exe)
