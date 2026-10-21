@@ -39,23 +39,20 @@ func number(value any) (float64, bool) {
 	return 0, false
 }
 
-// VerifyOnlineIfDue learns about refunds or key moves for a lifetime license once every
-// VerifyEverySeconds; offline PCs simply keep their license. It returns the server's
-// verdict (any decoded JSON value), or nil when nothing was asked.
-func (s *Service) VerifyOnlineIfDue() (any, error) {
-	if !s.options.Enforce {
-		return nil, nil
-	}
-	status, err := s.Current(true)
-	if err != nil {
-		return nil, err
-	}
-	state, err := readObject(s.stateFile)
-	if err != nil {
-		return nil, err
-	}
+// verifyLifetime is OnlineChecks._verify_lifetime: once every VerifyEverySeconds a
+// lifetime license learns about refunds or key moves; offline PCs simply keep their
+// license. It returns the server's verdict (any decoded JSON value), or nil.
+func (s *Service) verifyLifetime(status Status) (any, error) {
+	stateValue, readable := pytext.ReadJSON(s.stateFile)
 	if !status.Licensed || status.Plan != "lifetime" {
 		return nil, nil
+	}
+	state, isObject := stateValue.(*pyjson.Object)
+	if !readable {
+		state, isObject = pyjson.NewObject(), true
+	}
+	if !isObject {
+		return nil, uncaught("'license_state.json' does not hold a JSON object")
 	}
 	lastVerify, found := state.Get("last_verify")
 	if !found {
@@ -71,6 +68,7 @@ func (s *Service) VerifyOnlineIfDue() (any, error) {
 	s.mu.Lock()
 	bound := s.boundHWID
 	s.mu.Unlock()
+	var err error
 	if bound == "" {
 		if bound, err = s.HWID(); err != nil {
 			return nil, err
@@ -88,12 +86,12 @@ func (s *Service) VerifyOnlineIfDue() (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.applyVerdict(answerObject(answer), answer, state, bound)
+	return s.applyVerdict(answerObject(answer), bound)
 }
 
 // applyVerdict stores what the server said: a revoked or moved license loses its
 // certificate (renamed, never deleted); a valid one may receive a fresh certificate.
-func (s *Service) applyVerdict(object *pyjson.Object, answer any, state *pyjson.Object, bound string) (any, error) {
+func (s *Service) applyVerdict(object *pyjson.Object, bound string) (any, error) {
 	if object == nil {
 		return nil, uncaught("license server answer is not an object")
 	}
@@ -102,7 +100,7 @@ func (s *Service) applyVerdict(object *pyjson.Object, answer any, state *pyjson.
 	case []any, *pyjson.Object:
 		return nil, uncaught("unhashable verdict")
 	}
-	state.Set("last_verify", s.now())
+	update := pyjson.NewObject().Set("last_verify", s.now())
 	text, _ := verdict.(string)
 	switch {
 	case text == "revoked" || text == "moved":
@@ -110,7 +108,7 @@ func (s *Service) applyVerdict(object *pyjson.Object, answer any, state *pyjson.
 		if text == "revoked" {
 			reason = RevokedText
 		}
-		state.Set("revoked_reason", reason)
+		update.Set("revoked_reason", reason)
 		target := filepath.Join(filepath.Dir(s.certFile), fmt.Sprintf("license.cert.%s-%d", text, s.now()))
 		if err := os.Rename(s.certFile, target); err != nil {
 			return nil, err
@@ -121,13 +119,26 @@ func (s *Service) applyVerdict(object *pyjson.Object, answer any, state *pyjson.
 			return nil, err
 		}
 	}
-	s.filesMu.Lock()
-	err := s.writeState(state)
-	s.filesMu.Unlock()
-	if err != nil {
+	if err := s.updateState(update); err != nil {
 		return nil, err
 	}
 	return verdict, nil
+}
+
+// updateState re-reads license_state.json and merges update into it, as Python's
+// state.update() under the lock (other keys, such as the clock copies, are kept).
+func (s *Service) updateState(update *pyjson.Object) error {
+	s.filesMu.Lock()
+	defer s.filesMu.Unlock()
+	state, err := readObject(s.stateFile)
+	if err != nil {
+		return err
+	}
+	for _, key := range update.Keys() {
+		value, _ := update.Get(key)
+		state.Set(key, value)
+	}
+	return s.writeState(state)
 }
 
 // refreshCertificate keeps a reissued certificate for this PC; a legacy-bound certificate
@@ -166,17 +177,4 @@ func (s *Service) refreshCertificate(answer *pyjson.Object, bound string) error 
 	s.filesMu.Lock()
 	defer s.filesMu.Unlock()
 	return pytext.WriteReplace(s.certFile, text)
-}
-
-// StartBackgroundVerify runs VerifyOnlineIfDue once in the background when enforcing;
-// failures are logged, never shown.
-func (s *Service) StartBackgroundVerify() {
-	if !s.options.Enforce {
-		return
-	}
-	go func() {
-		if _, err := s.VerifyOnlineIfDue(); err != nil {
-			s.options.Logf("Background license check failed: %v", err)
-		}
-	}()
 }

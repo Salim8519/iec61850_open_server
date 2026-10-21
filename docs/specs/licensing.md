@@ -2,7 +2,7 @@
 
 Decision: [ADR-0046](../decisions/ADR-0046-licensing-and-protected-release.md).
 Change: [0069](../changes/2026/0069-licensing.md); trial hardening:
-[0106](../changes/2026/0106-trial-hardening.md) (ADR-0046 addendum 2026-10-19).
+[0152](../changes/2026/0152-trial-hardening.md) (ADR-0046 addendum 2026-10-19).
 
 ## Purpose
 

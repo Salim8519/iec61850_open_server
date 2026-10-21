@@ -22,7 +22,9 @@ import (
 // License is LicenseService as api/license.py uses it (*licensing.Service).
 type License interface {
 	Status() (*pyjson.Object, error)
-	StartTrial() (*pyjson.Object, error)
+	StartTrial(email, code any) (*pyjson.Object, error)
+	RequestTrialCode(email any) (*pyjson.Object, error)
+	CheckOnlineNow() (*pyjson.Object, error)
 	Activate(licenseKey any, move bool) (*pyjson.Object, error)
 	ActivateOffline(certificate any) (*pyjson.Object, error)
 	SetServerURL(url any) (*pyjson.Object, error)
@@ -109,7 +111,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // GoOnlyRoutes are the routes this area adds beyond Flask's.
 var GoOnlyRoutes = map[string]bool{"GET /api/v1/network/plan/progress": true}
 
-// Routes implements api.Area: 5 license, 3 update and 10 network routes (one Go only).
+// Routes implements api.Area: 7 license, 3 update and 10 network routes (one Go only).
 func (a *Area) Routes() []api.Route {
 	route := func(method, pattern string, h handler) api.Route {
 		return api.Route{Method: method, Pattern: "/api/v1" + pattern, Handler: h}
@@ -117,8 +119,10 @@ func (a *Area) Routes() []api.Route {
 	return []api.Route{
 		route("GET", "/license/status", a.licenseStatus),
 		route("POST", "/license/trial", a.licenseTrial),
+		route("POST", "/license/trial/email-code", a.licenseTrialEmailCode),
 		route("POST", "/license/activate", a.licenseActivate),
 		route("POST", "/license/activate-offline", a.licenseActivateOffline),
+		route("POST", "/license/check-online", a.licenseCheckOnline),
 		route("PUT", "/license/config", a.licenseConfig),
 		route("GET", "/app/update", a.updateStatus),
 		route("POST", "/app/update/check", a.updateCheck),

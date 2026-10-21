@@ -8,3 +8,6 @@ import "errors"
 func readMachineParts(bool) (MachineParts, error) {
 	return MachineParts{}, errors.New("Machine licensing is available on Windows only")
 }
+
+// readRawTrialParts finds no part outside Windows, as trial_parts.machine_parts does.
+func readRawTrialParts() RawTrialParts { return RawTrialParts{} }

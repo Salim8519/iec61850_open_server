@@ -11,6 +11,7 @@ TRIAL = signed(type="trial", expires_at=NOW + 7 * DAY, license_id="TRIAL-abababa
 CERT = "home/license.cert"
 STATE = "home/license_state.json"
 WORKER_DIGEST = hashlib.sha256(b"worker").hexdigest()
+PARTS = {"guid": "1" * 64, "volume": "", "firmware": "f" * 64}  # what parts_provider answers
 
 
 def at(now, op, **fields):
@@ -33,7 +34,7 @@ SCENARIOS = [
     {"name": "development", "enforce": False, "steps": [
         at(NOW, "status"), at(NOW, "licensed"), at(NOW, "trial"), at(NOW, "offline", arg=LIFETIME),
         at(NOW, "config", arg="https://x.example"), at(NOW, "activate", arg="SUBS-2345-6789-ABCD-EFGH"),
-        at(NOW, "verify")]},
+        at(NOW, "verify"), at(NOW, "verify", trial_only=True), at(NOW, "check"), at(NOW, "email_code", arg="a@b")]},
     {"name": "no certificate", "steps": [at(NOW, "status"), at(NOW, "licensed")]},
     {"name": "offline lifetime", "steps": [
         at(NOW + 60, "offline", arg=LIFETIME), at(NOW + 3650 * DAY, "status"), at(NOW + 3650 * DAY, "licensed")]},
@@ -47,7 +48,8 @@ SCENARIOS = [
     {"name": "trial countdown", "steps": [
         put(CERT, TRIAL), at(NOW + DAY + 5, "status"), at(NOW + 7 * DAY, "status")]},
     {"name": "clock rollback", "steps": [
-        put(CERT, TRIAL), at(NOW + 3 * DAY, "licensed"), at(NOW + DAY, "status")]},
+        put(CERT, TRIAL), at(NOW + 3 * DAY, "licensed"), at(NOW + DAY, "status"), at(NOW + 4 * DAY, "licensed"),
+        at(NOW + DAY, "status")]},
     {"name": "run log rollback", "steps": [
         put(CERT, LIFETIME), put("data/logs/runs.jsonl", '{"kind":"run_started","at":"2026-01-01T00:00:00+00:00"}\n'),
         at(NOW, "status")]},
@@ -105,3 +107,7 @@ SCENARIOS = [
         at(NOW, "status"), put(CERT, LIFETIME), {"op": "write", "path": "home/.time_anchor", "hex": "39393939393939393939"},
         at(NOW, "status")]},
 ]
+
+from scenario_trials import TRIAL_SCENARIOS  # noqa: E402  (after the shared helpers above)
+
+SCENARIOS += TRIAL_SCENARIOS

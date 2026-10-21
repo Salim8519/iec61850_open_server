@@ -67,7 +67,7 @@ func (s *Service) install(input any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	status, err := EvaluateCertificate(payload, bound, now, s.anchor.MaxSeen(), false)
+	status, err := EvaluateCertificate(payload, bound, now, s.anchor.MaxSeen(), false, ClockToleranceSeconds)
 	if err != nil {
 		return nil, uncaught(err.Error())
 	}
@@ -78,15 +78,29 @@ func (s *Service) install(input any) (*pyjson.Object, error) {
 		}
 		return nil, &ActionError{Message: reason, Code: "not_valid_here"}
 	}
-	if err := s.storeCertificate(bundle, now); err != nil {
+	if err := s.storeCertificate(bundle, now, s.trialStamp(input, payload)); err != nil {
 		return nil, err
 	}
 	return s.Status()
 }
 
+// trialStamp is the signed server time a trial answer carries (a decoded server answer
+// may have "server_time"); nil when there is none to remember.
+func (s *Service) trialStamp(input any, payload *pyjson.Object) func() error {
+	answer, isObject := input.(*pyjson.Object)
+	if plan, _ := payload.Get("type"); plan != any("trial") || !isObject {
+		return nil
+	}
+	stamp, _ := answer.Get("server_time")
+	return func() error {
+		_, err := s.trialClock.Remember(stamp)
+		return err
+	}
+}
+
 // storeCertificate writes license.cert (indent=2), clears the revoked reason, records
-// the verify time and advances the anchor.
-func (s *Service) storeCertificate(bundle Bundle, now int64) error {
+// the verify time, advances the anchor and remembers a trial's signed time (remember).
+func (s *Service) storeCertificate(bundle Bundle, now int64, remember func() error) error {
 	s.filesMu.Lock()
 	defer s.filesMu.Unlock()
 	text, err := pytext.DumpsIndent(bundle.Object())
@@ -105,6 +119,11 @@ func (s *Service) storeCertificate(bundle Bundle, now int64) error {
 		return err
 	}
 	s.anchor.Advance(now)
+	if remember != nil {
+		if err := remember(); err != nil {
+			return err
+		}
+	}
 	s.invalidate()
 	return nil
 }
@@ -123,26 +142,6 @@ func (s *Service) client() (Client, error) {
 		return nil, err
 	}
 	return s.options.ClientFactory(url), nil
-}
-
-// StartTrial asks the server for a trial certificate for this PC.
-func (s *Service) StartTrial() (*pyjson.Object, error) {
-	if err := s.requireEnforced(); err != nil {
-		return nil, err
-	}
-	client, err := s.client()
-	if err != nil {
-		return nil, err
-	}
-	hwid, err := s.HWID()
-	if err != nil {
-		return nil, err
-	}
-	bundle, err := client.StartTrial(hwid)
-	if err != nil {
-		return nil, err
-	}
-	return s.install(bundle)
 }
 
 // Activate binds licenseKey (any decoded JSON value) to this PC; move transfers it.

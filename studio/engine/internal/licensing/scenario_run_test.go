@@ -87,7 +87,12 @@ func TestScenariosMatchPython(t *testing.T) {
 		t.Run(sc.Name, func(t *testing.T) {
 			root := scenarioDir(t)
 			clock, calls := 0.0, [][]any{}
-			service := newScenarioService(t, sc, root, &clock, &calls)
+			var registry Registry
+			memory := memoryRegistry{}
+			if sc.Registry {
+				registry = memory
+			}
+			service := newScenarioService(t, sc, root, &clock, &calls, registry)
 			for index, step := range sc.Steps {
 				if step.Now != nil {
 					clock = *step.Now
@@ -114,6 +119,9 @@ func TestScenariosMatchPython(t *testing.T) {
 				}
 				if problem := sameFiles(t, snapshotFiles(t, root), want.Files); problem != "" {
 					t.Errorf("step %d %s: %s", index, step.Op, problem)
+				}
+				if sc.Registry && fmt.Sprint(map[string]string(memory)) != fmt.Sprint(want.Registry) {
+					t.Errorf("step %d %s: registry %v, want %v", index, step.Op, memory, want.Registry)
 				}
 			}
 		})

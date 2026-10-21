@@ -40,10 +40,11 @@ type unitVectors struct {
 	} `json:"certificates"`
 	Policy []struct {
 		outcome
-		Payload *string `json:"payload"`
-		Now     int64   `json:"now"`
-		MaxSeen int64   `json:"max_seen"`
-		Dev     bool    `json:"dev"`
+		Payload   *string `json:"payload"`
+		Now       int64   `json:"now"`
+		MaxSeen   int64   `json:"max_seen"`
+		Dev       bool    `json:"dev"`
+		Tolerance int64   `json:"tolerance"`
 	} `json:"policy"`
 	NormalizeKey []struct {
 		outcome
@@ -69,11 +70,12 @@ type unitVectors struct {
 		TS    *int64 `json:"ts"`
 	} `json:"iso"`
 	Anchor []struct {
-		Runs       string             `json:"runs"`
-		Anchor     *string            `json:"anchor"`
-		MaxSeen    json.Number        `json:"max_seen"`
-		AnchorOnly json.Number        `json:"anchor_only"`
-		Advance    map[string]*string `json:"advance"`
+		Runs       string                `json:"runs"`
+		Anchor     *string               `json:"anchor"`
+		State      *string               `json:"state"`
+		MaxSeen    json.Number           `json:"max_seen"`
+		AnchorOnly json.Number           `json:"anchor_only"`
+		Advance    map[string][2]*string `json:"advance"`
 	} `json:"anchor"`
 	Solve []struct {
 		outcome

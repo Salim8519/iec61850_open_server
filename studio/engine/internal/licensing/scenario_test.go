@@ -25,6 +25,10 @@ type scenarioStep struct {
 	Path string          `json:"path"`
 	Data *string         `json:"data"`
 	Hex  string          `json:"hex"`
+	// Trial steps: start_trial(email, code), verify_online_if_due(trial_only).
+	Email     json.RawMessage `json:"email"`
+	Code      json.RawMessage `json:"code"`
+	TrialOnly bool            `json:"trial_only"`
 }
 
 type scenarioResult struct {
@@ -34,6 +38,8 @@ type scenarioResult struct {
 	Crash string            `json:"crash"`
 	Calls [][]any           `json:"calls"`
 	Files map[string]string `json:"files"`
+	// Registry is the in-memory HKCU\Software\ScadaBench after the step (registry scenarios).
+	Registry map[string]string `json:"registry"`
 }
 
 type scenario struct {
@@ -43,6 +49,7 @@ type scenario struct {
 	Legacy   *string                   `json:"legacy"`
 	Keys     string                    `json:"keys"`
 	Debugger bool                      `json:"debugger"`
+	Registry bool                      `json:"registry"`
 	Expected map[string]string         `json:"expected"`
 	Client   map[string][]cannedAnswer `json:"client"`
 	Steps    []scenarioStep            `json:"steps"`
@@ -71,7 +78,12 @@ func (f *fakeClient) answer(name string, args ...any) (any, error) {
 	return mustDecode(f.t, string(queue[0].Return)), nil
 }
 
-func (f *fakeClient) StartTrial(hwid string) (any, error) { return f.answer("trial", hwid) }
+func (f *fakeClient) StartTrial(hwid string, parts *pyjson.Object, email, code any) (any, error) {
+	return f.answer("trial", hwid, plainJSON(parts), plainJSON(email), plainJSON(code))
+}
+func (f *fakeClient) RequestTrialCode(hwid, email string) (any, error) {
+	return f.answer("email-code", hwid, email)
+}
 func (f *fakeClient) Activate(key, hwid string) (any, error) {
 	return f.answer("activate", key, hwid)
 }
@@ -80,7 +92,26 @@ func (f *fakeClient) Transfer(key, hwid string) (any, error) {
 }
 func (f *fakeClient) Verify(key any, hwid string) (any, error) { return f.answer("verify", key, hwid) }
 
-func newScenarioService(t *testing.T, sc scenario, root string, clock *float64, calls *[][]any) *Service {
+// plainJSON turns a decoded value into what encoding/json decodes from the recorded call
+// (objects become maps), so fmt.Sprint compares Go and Python calls alike.
+func plainJSON(value any) any {
+	if value == nil {
+		return nil
+	}
+	data, _ := pyjson.Compact(value)
+	var plain any
+	json.Unmarshal(data, &plain)
+	return plain
+}
+
+// scenarioParts is scenario_defs.PARTS: what the parts provider answers.
+func scenarioParts() *pyjson.Object {
+	return pyjson.NewObject().Set("guid", strings.Repeat("1", 64)).Set("volume", "").
+		Set("firmware", strings.Repeat("f", 64))
+}
+
+func newScenarioService(t *testing.T, sc scenario, root string, clock *float64, calls *[][]any,
+	registry Registry) *Service {
 	native := filepath.Join(root, "native")
 	os.MkdirAll(native, 0o777)
 	os.WriteFile(filepath.Join(native, "studio_ied.exe"), []byte("worker"), 0o666)
@@ -91,7 +122,8 @@ func newScenarioService(t *testing.T, sc scenario, root string, clock *float64, 
 	options := Options{Home: filepath.Join(root, "home"), DataDir: filepath.Join(root, "data"),
 		Enforce: sc.Enforce == nil || *sc.Enforce, Clock: func() float64 { return *clock },
 		Keys: keysNamed(t, sc.Keys), NativeFolder: native, ExpectedFiles: sc.Expected,
-		Debugger: func() bool { return sc.Debugger }, Logf: t.Logf,
+		Debugger: func() bool { return sc.Debugger }, Logf: t.Logf, Registry: registry,
+		Parts: func() (*pyjson.Object, error) { return scenarioParts(), nil },
 		ClientFactory: func(url string) Client {
 			*calls = append(*calls, []any{"factory", url})
 			return &fakeClient{t: t, answers: answers, calls: calls}
@@ -118,6 +150,14 @@ func stepArg(t *testing.T, raw json.RawMessage) any {
 	return mustDecode(t, string(raw))
 }
 
+// optionalArg is step.get(key): nil when the step has no such field.
+func optionalArg(t *testing.T, raw json.RawMessage) any {
+	if raw == nil {
+		return nil
+	}
+	return mustDecode(t, string(raw))
+}
+
 func runScenarioStep(t *testing.T, service *Service, step scenarioStep, appVersion string) (scenarioResult, error) {
 	var result *pyjson.Object
 	var err error
@@ -129,10 +169,14 @@ func runScenarioStep(t *testing.T, service *Service, step scenarioStep, appVersi
 		licensed, err := service.Licensed()
 		return scenarioResult{Value: json.RawMessage(fmt.Sprint(licensed))}, err
 	case "verify":
-		verdict, err := service.VerifyOnlineIfDue()
+		verdict, err := service.VerifyOnlineIfDue(step.TrialOnly)
 		return scenarioResult{Value: json.RawMessage(compactText(t, verdict))}, err
 	case "trial":
-		result, err = service.StartTrial()
+		result, err = service.StartTrial(optionalArg(t, step.Email), optionalArg(t, step.Code))
+	case "email_code":
+		result, err = service.RequestTrialCode(stepArg(t, step.Arg))
+	case "check":
+		result, err = service.CheckOnlineNow()
 	case "activate":
 		result, err = service.Activate(stepArg(t, step.Arg), step.Move)
 	case "offline":

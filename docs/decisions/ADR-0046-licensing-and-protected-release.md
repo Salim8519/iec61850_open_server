@@ -63,7 +63,7 @@ development keeps working exactly as before. Blueprint: `PROTECTION_AND_LICENSIN
   make it impossible.
 
 **Addendum (2026-10-19, owner: stop trial cheaters, never block honest users — "smart, not
-soft"; change [0106](../changes/2026/0106-trial-hardening.md))**
+soft"; change [0152](../changes/2026/0152-trial-hardening.md))**
 - **Problem.** Trials were keyed only on the combined machine ID, so changing one
   identifier (or cloning a VM) gave a new trial. Deleting `.time_anchor` and setting the
   clock back stretched a running trial.

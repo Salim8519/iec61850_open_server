@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"studio-engine/internal/acquisition/pyv"
 	"studio-engine/internal/licensing/pytext"
 	"studio-engine/internal/pyjson"
 )
@@ -93,6 +94,13 @@ func httpFailure(response *http.Response) error {
 	if !found {
 		code = defaultErrCode
 	}
+	switch code.(type) {
+	case []any, *pyjson.Object:
+		return uncaught("unhashable type: license server error code")
+	}
+	if text, isText := code.(string); isText && ServerErrors[text] != "" {
+		message = ServerErrors[text]
+	}
 	return &ServerError{Message: message, Code: code}
 }
 
@@ -126,8 +134,8 @@ func (c *HTTPClient) proof() (*pyjson.Object, error) {
 		Set("pow_difficulty", rawDifficulty).Set("pow_mac", mac).Set("pow_counter", counter), nil
 }
 
-// certificateRequest posts body plus a solved proof and returns answer["certificate"].
-func (c *HTTPClient) certificateRequest(path string, body *pyjson.Object) (any, error) {
+// proofRequestBody adds a solved proof to body.
+func (c *HTTPClient) proofRequestBody(body *pyjson.Object) (*pyjson.Object, error) {
 	proof, err := c.proof()
 	if err != nil {
 		return nil, err
@@ -136,15 +144,16 @@ func (c *HTTPClient) certificateRequest(path string, body *pyjson.Object) (any, 
 		value, _ := proof.Get(key)
 		body.Set(key, value)
 	}
-	answer, err := c.call("POST", path, body)
+	return body, nil
+}
+
+// proofRequest posts body plus a solved proof and returns the whole answer.
+func (c *HTTPClient) proofRequest(path string, body *pyjson.Object) (any, error) {
+	withProof, err := c.proofRequestBody(body)
 	if err != nil {
 		return nil, err
 	}
-	certificate, found := lookup(answerObject(answer), "certificate")
-	if !found {
-		return nil, uncaught("'certificate'")
-	}
-	return certificate, nil
+	return c.call("POST", path, withProof)
 }
 
 func isASCII(text string) bool {
@@ -161,21 +170,47 @@ func answerObject(answer any) *pyjson.Object {
 	return object
 }
 
-// StartTrial asks for a trial certificate bound to hwid.
-func (c *HTTPClient) StartTrial(hwid string) (any, error) {
-	return c.certificateRequest("/api/v1/trial", pyjson.NewObject().Set("hwid", hwid))
+// StartTrial asks for a trial certificate bound to hwid. Only parts with a value are sent
+// (and none when parts is empty); email and its code only when email is truthy.
+func (c *HTTPClient) StartTrial(hwid string, parts *pyjson.Object, email, code any) (any, error) {
+	proof, err := c.proofRequestBody(pyjson.NewObject().Set("hwid", hwid))
+	if err != nil {
+		return nil, err
+	}
+	if parts != nil && parts.Len() > 0 {
+		known := pyjson.NewObject()
+		for _, kind := range parts.Keys() {
+			if value, _ := parts.Get(kind); truthy(value) {
+				known.Set(kind, value)
+			}
+		}
+		proof.Set("parts", known)
+	}
+	if truthy(email) {
+		text := ""
+		if truthy(code) {
+			text = pyv.PyStr(code)
+		}
+		proof.Set("email", email).Set("email_code", pytext.Strip(text))
+	}
+	return c.call("POST", "/api/v1/trial", proof)
+}
+
+// RequestTrialCode asks the server to email a trial code to email.
+func (c *HTTPClient) RequestTrialCode(hwid, email string) (any, error) {
+	return c.proofRequest("/api/v1/trial/email-code", pyjson.NewObject().Set("hwid", hwid).Set("email", email))
 }
 
 // Activate binds licenseKey to hwid.
 func (c *HTTPClient) Activate(licenseKey, hwid string) (any, error) {
 	body := pyjson.NewObject().Set("license_key", licenseKey).Set("hwid", hwid)
-	return c.certificateRequest("/api/v1/activate", body)
+	return c.proofRequest("/api/v1/activate", body)
 }
 
 // Transfer moves licenseKey to hwid.
 func (c *HTTPClient) Transfer(licenseKey, hwid string) (any, error) {
 	body := pyjson.NewObject().Set("license_key", licenseKey).Set("hwid", hwid)
-	return c.certificateRequest("/api/v1/transfer", body)
+	return c.proofRequest("/api/v1/transfer", body)
 }
 
 // Verify asks whether the license is still valid on hwid.

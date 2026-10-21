@@ -49,7 +49,24 @@ CASES = [
     ("trial", "ftp://license.example", []),
     ("trial", "", []),
     ("verify", "http://localhost:1", [reply("[]")]),
+    ("trial_parts", LOCAL, [CHALLENGE, reply({"certificate": json.loads(signed()), "server_time": {"payload": "p"}})]),
+    ("trial_empty_parts", LOCAL, [CHALLENGE, reply({"certificate": "c"})]),
+    ("trial_email", LOCAL, [CHALLENGE, reply({"certificate": "c"})]),
+    ("trial_email_number", LOCAL, [CHALLENGE, reply({"certificate": "c"})]),
+    ("trial_email_nocode", LOCAL, [CHALLENGE, reply({"certificate": "c"})]),
+    ("trial_no_email", LOCAL, [CHALLENGE, reply({"certificate": "c"})]),
+    ("email_code", LOCAL, [CHALLENGE, reply({"status": "sent"})]),
+    ("email_code", LOCAL, [CHALLENGE, reply([1])]),
+    ("trial", LOCAL, [CHALLENGE, reply({"error": "terse", "code": "trial_used"}, 409)]),
+    ("trial", LOCAL, [CHALLENGE, reply({"error": "terse", "code": "email_required"}, 409)]),
+    ("trial", LOCAL, [CHALLENGE, reply({"code": "bad_code"}, 400)]),
+    ("trial", LOCAL, [CHALLENGE, reply({"error": "x", "code": "email_disposable"}, 400)]),
+    ("email_code", LOCAL, [CHALLENGE, reply({"error": "x", "code": "bad_email"}, 400)]),
+    ("trial", LOCAL, [CHALLENGE, reply({"error": "x", "code": [1]}, 400)]),
+    ("verify", LOCAL, [reply({"error": "x", "code": "email_used"}, 409)]),
+    ("verify", LOCAL, [reply({"error": "x", "code": 5}, 409)]),
 ]
+PARTS = {"guid": "g", "volume": "", "firmware": "f"}
 
 
 class Response(io.BytesIO):
@@ -77,7 +94,14 @@ def run(name, url, answers):
     client = LicenseClient(url, opener=opener_for(list(answers), requests))
     calls = {"trial": lambda: client.start_trial(HWID), "activate": lambda: client.activate(KEY, HWID),
              "transfer": lambda: client.transfer(KEY, HWID), "verify": lambda: client.verify(KEY, HWID),
-             "verify_number_key": lambda: client.verify(5, HWID)}
+             "verify_number_key": lambda: client.verify(5, HWID),
+             "trial_parts": lambda: client.start_trial(HWID, PARTS),
+             "trial_empty_parts": lambda: client.start_trial(HWID, {"guid": "", "volume": "", "firmware": ""}),
+             "trial_email": lambda: client.start_trial(HWID, {}, "me@company.com", " 123456 "),
+             "trial_email_number": lambda: client.start_trial(HWID, None, "me@company.com", 123456),
+             "trial_email_nocode": lambda: client.start_trial(HWID, None, "me@company.com", None),
+             "trial_no_email": lambda: client.start_trial(HWID, None, "", "123"),
+             "email_code": lambda: client.request_trial_code(HWID, "me@company.com")}
     result = outcome(calls[name])
     if "ok" in result:
         result["ok"] = json.dumps(result["ok"], separators=(",", ":"))

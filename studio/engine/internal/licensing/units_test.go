@@ -95,7 +95,7 @@ func TestPolicyMatchesPython(t *testing.T) {
 		if c.Payload != nil {
 			payload = mustDecode(t, *c.Payload).(*pyjson.Object)
 		}
-		status, err := EvaluateCertificate(payload, "ab"+repeat("ab", 31), c.Now, c.MaxSeen, c.Dev)
+		status, err := EvaluateCertificate(payload, "ab"+repeat("ab", 31), c.Now, c.MaxSeen, c.Dev, c.Tolerance)
 		want, ok := c.okString()
 		if ok && (err != nil || compactText(t, status.Object()) != want) {
 			t.Errorf("%v now=%d seen=%d: got %s %v\nwant %s", c.Payload, c.Now, c.MaxSeen,

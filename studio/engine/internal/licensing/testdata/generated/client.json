@@ -33,7 +33,7 @@
 "timeout": 20
 }
 ],
-"ok": "\"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-TEST-TEST-TEST-TEST\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\\\"}\""
+"ok": "{\"certificate\":\"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-TEST-TEST-TEST-TEST\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\\\"}\"}"
 },
 {
 "call": "activate",
@@ -66,7 +66,7 @@
 "timeout": 20
 }
 ],
-"ok": "{\"payload\":\"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\",\"signature\":\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"}"
+"ok": "{\"certificate\":{\"payload\":\"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\",\"signature\":\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"}}"
 },
 {
 "call": "transfer",
@@ -99,7 +99,7 @@
 "timeout": 20
 }
 ],
-"ok": "\"x\""
+"ok": "{\"certificate\":\"x\",\"extra\":[1]}"
 },
 {
 "call": "verify",
@@ -510,7 +510,7 @@
 "timeout": 20
 }
 ],
-"ok": "\"c\""
+"ok": "{\"certificate\":\"c\"}"
 },
 {
 "call": "trial",
@@ -543,9 +543,7 @@
 "timeout": 20
 }
 ],
-"error": "KeyError",
-"message": "'certificate'",
-"code": null
+"ok": "{\"no\":\"certificate\"}"
 },
 {
 "call": "trial",
@@ -578,7 +576,7 @@
 "timeout": 20
 }
 ],
-"ok": "\"bom\""
+"ok": "{\"certificate\":\"bom\"}"
 },
 {
 "call": "trial",
@@ -618,6 +616,526 @@
 }
 ],
 "ok": "[]"
+},
+{
+"call": "trial_parts",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": {\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\", \"signature\": \"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"}, \"server_time\": {\"payload\": \"p\"}}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177, \"parts\": {\"guid\": \"g\", \"firmware\": \"f\"}}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"certificate\":{\"payload\":\"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\",\"signature\":\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"},\"server_time\":{\"payload\":\"p\"}}"
+},
+{
+"call": "trial_empty_parts",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"c\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177, \"parts\": {}}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"certificate\":\"c\"}"
+},
+{
+"call": "trial_email",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"c\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177, \"email\": \"me@company.com\", \"email_code\": \"123456\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"certificate\":\"c\"}"
+},
+{
+"call": "trial_email_number",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"c\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177, \"email\": \"me@company.com\", \"email_code\": \"123456\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"certificate\":\"c\"}"
+},
+{
+"call": "trial_email_nocode",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"c\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177, \"email\": \"me@company.com\", \"email_code\": \"\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"certificate\":\"c\"}"
+},
+{
+"call": "trial_no_email",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"certificate\": \"c\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"certificate\":\"c\"}"
+},
+{
+"call": "email_code",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "{\"status\": \"sent\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial/email-code",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"email\": \"me@company.com\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "{\"status\":\"sent\"}"
+},
+{
+"call": "email_code",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 200,
+"body": "[1]"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial/email-code",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"email\": \"me@company.com\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"ok": "[1]"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 409,
+"body": "{\"error\": \"terse\", \"code\": \"trial_used\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "This computer has already used its free trial. Buy a lifetime license to keep using ScadaBench. If you think this is a mistake, contact support: https://scadabench.com/contact/",
+"code": "trial_used"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 409,
+"body": "{\"error\": \"terse\", \"code\": \"email_required\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "To start the free trial, please confirm your email address. We ask this when this computer or your network has started trials before, for example in a shared office. Help: https://scadabench.com/contact/",
+"code": "email_required"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 400,
+"body": "{\"code\": \"bad_code\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "That code is not right or has expired. Check the latest email from ScadaBench, or ask for a new code. Help: https://scadabench.com/contact/",
+"code": "bad_code"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 400,
+"body": "{\"error\": \"x\", \"code\": \"email_disposable\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "Throwaway email services cannot be used for the free trial. Please use your work or personal email address. Help: https://scadabench.com/contact/",
+"code": "email_disposable"
+},
+{
+"call": "email_code",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 400,
+"body": "{\"error\": \"x\", \"code\": \"bad_email\"}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial/email-code",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"email\": \"me@company.com\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "Please enter a valid email address, for example name@company.com.",
+"code": "bad_email"
+},
+{
+"call": "trial",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 200,
+"body": "{\"nonce\": \"n-61850\", \"timestamp\": 1760000000, \"difficulty\": 8, \"mac\": \"m1\"}"
+},
+{
+"status": 400,
+"body": "{\"error\": \"x\", \"code\": [1]}"
+}
+],
+"requests": [
+{
+"method": "GET",
+"path": "api/v1/challenge",
+"body": null,
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+},
+{
+"method": "POST",
+"path": "api/v1/trial",
+"body": "{\"hwid\": \"abababababababababababababababababababababababababababababababab\", \"pow_nonce\": \"n-61850\", \"pow_ts\": 1760000000, \"pow_difficulty\": 8, \"pow_mac\": \"m1\", \"pow_counter\": 177}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "TypeError",
+"message": "unhashable type: 'list'",
+"code": null
+},
+{
+"call": "verify",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 409,
+"body": "{\"error\": \"x\", \"code\": \"email_used\"}"
+}
+],
+"requests": [
+{
+"method": "POST",
+"path": "api/v1/verify",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "This email address already had a free trial. Buy a lifetime license to keep using ScadaBench, or contact support if you think this is a mistake: https://scadabench.com/contact/",
+"code": "email_used"
+},
+{
+"call": "verify",
+"url": "http://127.0.0.1:1",
+"answers": [
+{
+"status": 409,
+"body": "{\"error\": \"x\", \"code\": 5}"
+}
+],
+"requests": [
+{
+"method": "POST",
+"path": "api/v1/verify",
+"body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"hwid\": \"abababababababababababababababababababababababababababababababab\"}",
+"content_type": "application/json",
+"user_agent": "ScadaBench",
+"timeout": 20
+}
+],
+"error": "LicenseServerError",
+"message": "x",
+"code": 5
 }
 ]
 }

@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"strconv"
 	"strings"
+
+	"studio-engine/internal/pyjson"
 )
 
 // Client constants of licensing/client.py.
@@ -32,10 +34,13 @@ type ServerError struct {
 
 func (e *ServerError) Error() string { return e.Message }
 
-// Client talks to the license server (client.LicenseClient). Results are decoded JSON
-// values: the certificate (a string or an object) and the verify answer.
+// Client talks to the license server (client.LicenseClient). Results are the server's
+// whole decoded JSON answers: trial, activate and transfer carry the certificate plus the
+// signed server time ("server_time") that trials anchor their clock to. parts are the
+// trial part hashes; email and code are sent only when email is truthy.
 type Client interface {
-	StartTrial(hwid string) (any, error)
+	StartTrial(hwid string, parts *pyjson.Object, email, code any) (any, error)
+	RequestTrialCode(hwid, email string) (any, error)
 	Activate(licenseKey, hwid string) (any, error)
 	Transfer(licenseKey, hwid string) (any, error)
 	Verify(licenseKey any, hwid string) (any, error)

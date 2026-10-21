@@ -55,36 +55,45 @@ func writeOrRemove(t *testing.T, path string, data *string) {
 
 func TestTimeAnchorMatchesPython(t *testing.T) {
 	folder := t.TempDir()
-	anchor := TimeAnchor{AnchorFile: filepath.Join(folder, ".time_anchor"), RunsFile: filepath.Join(folder, "runs.jsonl")}
+	value := NewClockValue("time_anchor", folder, nil)
+	anchor := TimeAnchor{Value: value, RunsFile: filepath.Join(folder, "runs.jsonl")}
 	for index, c := range loadUnits(t).Anchor {
 		runs := c.Runs
 		writeOrRemove(t, anchor.RunsFile, &runs)
-		writeOrRemove(t, anchor.AnchorFile, c.Anchor)
+		writeOrRemove(t, value.File, c.Anchor)
+		writeOrRemove(t, value.StateFile, c.State)
 		if got := anchor.MaxSeen(); got != saturated(t, c.MaxSeen) {
 			t.Errorf("case %d: max_seen %d, want %s", index, got, c.MaxSeen)
 		}
-		if got := (TimeAnchor{AnchorFile: anchor.AnchorFile}).MaxSeen(); got != saturated(t, c.AnchorOnly) {
+		if got := (TimeAnchor{Value: value}).MaxSeen(); got != saturated(t, c.AnchorOnly) {
 			t.Errorf("case %d: anchor only %d, want %s", index, got, c.AnchorOnly)
 		}
 		for now, want := range c.Advance {
 			// A fresh folder each time: Windows keeps a just-deleted file "delete pending"
 			// while a scanner holds it, and replacing onto that name then fails.
-			fresh := TimeAnchor{AnchorFile: filepath.Join(folder, fmt.Sprintf("%d-%s", index, now), ".time_anchor")}
-			if c.Anchor != nil {
-				os.MkdirAll(filepath.Dir(fresh.AnchorFile), 0o777)
-				writeOrRemove(t, fresh.AnchorFile, c.Anchor)
-			}
-			value, _ := strconv.ParseInt(now, 10, 64)
-			fresh.Advance(value)
-			data, err := os.ReadFile(fresh.AnchorFile)
-			got := (*string)(nil)
-			if err == nil {
-				text := b64Text(data)
-				got = &text
-			}
-			if !sameText(got, want) {
-				t.Errorf("case %d: advance(%s) left %v, want %v", index, now, got, want)
+			home := filepath.Join(folder, fmt.Sprintf("%d-%s", index, now))
+			os.MkdirAll(home, 0o777)
+			fresh := TimeAnchor{Value: NewClockValue("time_anchor", home, nil)}
+			writeOrRemove(t, fresh.Value.File, c.Anchor)
+			writeOrRemove(t, fresh.Value.StateFile, c.State)
+			moment, _ := strconv.ParseInt(now, 10, 64)
+			fresh.Advance(moment)
+			for place, path := range []string{fresh.Value.File, fresh.Value.StateFile} {
+				if got := readOptional(path); !sameText(got, want[place]) {
+					t.Errorf("case %d: advance(%s) left %s = %v, want %v", index, now, filepath.Base(path),
+						got, want[place])
+				}
 			}
 		}
 	}
+}
+
+// readOptional is a file's bytes as base64, or nil when it does not exist.
+func readOptional(path string) *string {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	text := b64Text(data)
+	return &text
 }

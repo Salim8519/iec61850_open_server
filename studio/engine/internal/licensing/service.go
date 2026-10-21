@@ -35,6 +35,11 @@ type Options struct {
 	ExpectedFiles map[string]string    // integrity.EXPECTED (empty in development)
 	Debugger      func() bool          // nil means DebuggerAttached
 	Logf          func(string, ...any) // nil means log.Printf
+	// Registry is the third place of the clock values: WindowsRegistry{} in the app, a fake
+	// in tests, nil for none (Python's registry=None default).
+	Registry Registry
+	// Parts returns the trial part hashes; nil means this PC (MachineTrialParts).
+	Parts func() (*pyjson.Object, error)
 }
 
 // Service owns this computer's license state (service.LicenseService).
@@ -44,6 +49,7 @@ type Service struct {
 	configFile string
 	stateFile  string
 	anchor     TimeAnchor
+	trialClock TrialClock
 
 	mu         sync.Mutex // cache, machine IDs and bound ID
 	filesMu    sync.Mutex // serialises read-modify-write of the home files, like Python's RLock
@@ -81,14 +87,18 @@ func New(options Options) *Service {
 	if options.Logf == nil {
 		options.Logf = log.Printf
 	}
+	if options.Parts == nil {
+		options.Parts = MachineTrialParts
+	}
 	if options.HWID == nil && options.LegacyHWID == nil {
 		options.HWID, options.LegacyHWID = MachineID, LegacyMachineID
 	}
 	s := &Service{options: options, certFile: filepath.Join(options.Home, "license.cert"),
 		configFile: filepath.Join(options.Home, "client_config.json"),
 		stateFile:  filepath.Join(options.Home, "license_state.json"),
-		anchor: TimeAnchor{AnchorFile: filepath.Join(options.Home, ".time_anchor"),
-			RunsFile: filepath.Join(options.DataDir, "logs", "runs.jsonl")}}
+		anchor: TimeAnchor{Value: NewClockValue("time_anchor", options.Home, options.Registry),
+			RunsFile: filepath.Join(options.DataDir, "logs", "runs.jsonl")},
+		trialClock: NewTrialClock(options.Home, options.Registry, options.Keys)}
 	if options.Enforce {
 		os.Setenv("STUDIO_LICENSE_CERT_PATH", s.certFile)
 	}

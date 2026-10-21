@@ -34,7 +34,7 @@ func TestGoSignedFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	status, _ := EvaluateCertificate(lifetime, fixture.HWID, 1_760_000_060, 0, false)
+	status, _ := EvaluateCertificate(lifetime, fixture.HWID, 1_760_000_060, 0, false, ClockToleranceSeconds)
 	if !status.Licensed || status.Mode != "lifetime" || status.Email != "buyer@example.com" {
 		t.Fatalf("lifetime status %+v", status)
 	}
@@ -42,7 +42,7 @@ func TestGoSignedFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	status, _ = EvaluateCertificate(trial, fixture.HWID, 1_760_000_000+86400+5, 0, false)
+	status, _ = EvaluateCertificate(trial, fixture.HWID, 1_760_000_000+86400+5, 0, false, TrialClockToleranceSeconds)
 	if !status.Licensed || status.DaysRemaining != int64(6) || status.ExpiresAt != int64(1760604800) {
 		t.Fatalf("trial status %+v", status)
 	}

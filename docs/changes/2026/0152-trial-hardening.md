@@ -1,6 +1,7 @@
-# 0106: Free-trial hardening, "smart, not soft"
+# 0152: Free-trial hardening, "smart, not soft"
 
-Date: 2026-10-19. Decision: [ADR-0046](../../decisions/ADR-0046-licensing-and-protected-release.md)
+Date: 2026-10-19; merged and ported to the Go engine 2026-10-21 (first numbered 0106, then 0151; both taken on master
+already used). Decision: [ADR-0046](../../decisions/ADR-0046-licensing-and-protected-release.md)
 (addendum 2026-10-19). Spec: [licensing](../../specs/licensing.md) LIC-22 to LIC-32.
 
 ## Why
@@ -75,6 +76,34 @@ or outages never count against a user. Paid lifetime licenses stay exactly as th
   clipped). With mail unavailable the trial started at once. The server log showed
   `needs_email`/`busy_ip`, `trial_email_unsent` and no address.
 - `verify.py`: PASS.
+
+## Go engine port and merge (2026-10-21)
+
+The branch had stayed unmerged while releases moved to the Go engine. Master was merged
+in (conflicts kept both sides: owner-page/news buckets and commands plus trial buckets
+and commands, update service plus `WindowsRegistry()`). The client rules were ported
+to `studio/engine/internal/licensing` with Python's behaviour byte for byte:
+`trial_policy.go`, `trial_parts.go`, `server_time.go`, `clock_store.go` (+ `_windows`
+real HKCU, `_other`), `trial_clock.go`, `trial_actions.go`, `online_check.go`; trial
+branch in `evaluate.go`, tolerance in `policy.go`, `online_check_required` in the status,
+server-time kept on install, new client calls and friendly texts. Routes in
+`platformapi` and `internal/app`: `POST /license/trial` with email/code,
+`/license/trial/email-code`, `/license/check-online`; the app passes the real registry.
+Test vectors were regenerated from the merged Python (9 new trial scenarios). No other
+licensing rule changed (moves, revocation, server address rule, module signature, v1 ID).
+
+Evidence: `go build`/`vet` incl. `-tags parity`; `go test` licensing, platformapi, app
+pass; `verify.py` all PASS except the Go `internal/gateway` test binary, which Windows
+refused to start ("Access is denied"); built under another name it passes, and that
+package is unchanged from master. Real HKCU round trip Go → Python → Go on a scratch
+key (deleted). Go service against the real Go license server: trial starts and keeps
+the signed time, "Check online now" works, same hardware with a new machine ID keeps the
+same trial end, the third new trial on one network asks for an email, mail outage needs
+no code. License server `go test` pass (one PayPal temp-folder cleanup flake passed on
+rerun). Python license + native enforcement: 88 passed, 1 skipped, against freshly built
+enforced workers incl. the gateway. Python e2e vs the real server: 4 passed. Frontend:
+268 passed, `tsc` clean. Parity harness `test_license_api.py`: 4 passed on Python and Go.
+Not done: no EXE, server not deployed, emailed-code screen still not seen with real mail.
 
 ## Limitations
 

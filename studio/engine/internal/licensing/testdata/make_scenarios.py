@@ -12,7 +12,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vector_common import APP, b64, flask_body, license_signer, write  # noqa: E402
-from scenario_defs import SCENARIOS  # noqa: E402
+from scenario_defs import PARTS, SCENARIOS  # noqa: E402
+from license_fakes import FakeRegistry  # noqa: E402  (in-memory HKCU\Software\ScadaBench)
 from studio_app.api import license as license_api  # noqa: E402
 from studio_app.licensing import integrity  # noqa: E402
 from studio_app.licensing.client import LicenseServerError  # noqa: E402
@@ -34,8 +35,11 @@ class FakeClient:
             raise LicenseServerError(*result["raise"])
         return result["return"]
 
-    def start_trial(self, hwid):
-        return self._answer("trial", hwid)
+    def start_trial(self, hwid, parts=None, email=None, code=None):
+        return self._answer("trial", hwid, parts, email, code)
+
+    def request_trial_code(self, hwid, email):
+        return self._answer("email-code", hwid, email)
 
     def activate(self, key, hwid):
         return self._answer("activate", key, hwid)
@@ -59,8 +63,10 @@ def run_step(service, step):
     if op == "licensed":
         return {"value": service.is_licensed()}
     if op == "verify":
-        return {"value": service.verify_online_if_due()}
-    actions = {"trial": lambda: service.start_trial(),
+        return {"value": service.verify_online_if_due(trial_only=step.get("trial_only", False))}
+    actions = {"trial": lambda: service.start_trial(step.get("email"), step.get("code")),
+               "email_code": lambda: service.request_trial_code(step.get("arg", "")),
+               "check": lambda: service.check_online_now(),
                "activate": lambda: service.activate(step.get("arg", ""), move=bool(step.get("move"))),
                "offline": lambda: service.activate_offline(step.get("arg", "")),
                "config": lambda: service.set_server_url(step.get("arg", ""))}
@@ -98,10 +104,12 @@ def run(scenario):
 
         keys = {} if scenario.get("keys") == "none" else license_signer.keys()
         legacy = scenario.get("legacy")
+        registry = FakeRegistry() if scenario.get("registry") else None
         service = LicenseService(root / "home", root / "data", scenario.get("enforce", True), hwid_provider=provider,
                                  clock=lambda: clock[0], keys=keys, client_factory=factory,
                                  native_folder=native, expected_files=scenario.get("expected"),
-                                 legacy_hwid_provider=(lambda: legacy) if legacy else None)
+                                 legacy_hwid_provider=(lambda: legacy) if legacy else None,
+                                 registry=registry, parts_provider=lambda: dict(PARTS))
         results = []
         for step in scenario["steps"]:
             clock[0] = step.get("now", clock[0])
@@ -118,7 +126,10 @@ def run(scenario):
                 result = run_step(service, step)
             except Exception as error:  # noqa: BLE001 - an uncaught exception is the vector
                 result = {"crash": type(error).__name__}
-            results.append({**result, "calls": [list(call) for call in calls], "files": snapshot(root)})
+            result = {**result, "calls": [list(call) for call in calls], "files": snapshot(root)}
+            if registry is not None:
+                result["registry"] = dict(registry.values)
+            results.append(result)
         return {**scenario, "results": results}
 
 

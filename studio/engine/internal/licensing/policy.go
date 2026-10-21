@@ -6,15 +6,19 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// ClockToleranceSeconds is how far the clock may lag the newest time ScadaBench saw.
+// ClockToleranceSeconds is how far the clock may lag the newest time ScadaBench saw
+// (lifetime licenses; trials pass TrialClockToleranceSeconds).
 const ClockToleranceSeconds = 300
+
+// SupportURL is license_policy.SUPPORT_URL, linked from every trial and clock message.
+const SupportURL = "https://scadabench.com/contact/"
 
 // User-visible reasons, byte-identical to domain/license_policy.py.
 const (
 	NoLicense      = "This computer has no license yet. Start the free trial or enter your license key."
 	WrongMachine   = "This license belongs to a different computer. Enter your license key to move it here, or start a trial."
 	TrialEnded     = "Your free trial has ended. Buy a lifetime license to keep using ScadaBench."
-	ClockRollback  = "System clock rollback detected: the date on this computer is earlier than when ScadaBench last ran. Correct the date and time in Windows, then reopen ScadaBench."
+	ClockRollback  = "System clock rollback detected: the date on this computer is earlier than when ScadaBench last ran. Correct the date and time in Windows (Settings > Time & language > Set time automatically), then reopen ScadaBench. Help: " + SupportURL
 	Damaged        = "The license file is damaged or was changed. Activate again or load a fresh license file."
 	Unsupported    = "This license file is from a newer ScadaBench version. Update ScadaBench, then try again."
 	LicenseExpired = "Your license has expired."
@@ -22,23 +26,25 @@ const (
 
 // Status is license_policy.LicenseStatus. Optional fields hold nil (Python None) or the
 // value Python stores: Plan and Reason strings, DaysRemaining and ExpiresAt int64, and
-// LicenseID and Email exactly as decoded from the signed payload.
+// LicenseID and Email exactly as decoded from the signed payload. OnlineCheckRequired is
+// set only when a trial must confirm its date online (trial_policy.apply).
 type Status struct {
-	Licensed      bool
-	Mode          string
-	Plan          any
-	DaysRemaining any
-	ExpiresAt     any
-	Reason        any
-	LicenseID     any
-	Email         any
+	Licensed            bool
+	Mode                string
+	Plan                any
+	DaysRemaining       any
+	ExpiresAt           any
+	Reason              any
+	LicenseID           any
+	Email               any
+	OnlineCheckRequired bool
 }
 
 // Object returns LicenseStatus.as_dict() with its field order.
 func (s Status) Object() *pyjson.Object {
 	return pyjson.NewObject().Set("licensed", s.Licensed).Set("mode", s.Mode).Set("plan", s.Plan).
 		Set("days_remaining", s.DaysRemaining).Set("expires_at", s.ExpiresAt).Set("reason", s.Reason).
-		Set("license_id", s.LicenseID).Set("email", s.Email)
+		Set("license_id", s.LicenseID).Set("email", s.Email).Set("online_check_required", s.OnlineCheckRequired)
 }
 
 // DevelopmentStatus is what development builds always report.
@@ -71,9 +77,12 @@ func payloadInt(payload *pyjson.Object, key string, optional bool) (value int64,
 }
 
 // EvaluateCertificate is license_policy.evaluate_certificate for an already
-// signature-verified payload (nil payload means no certificate). An error stands for the
-// OverflowError Python does not catch (an infinite number in the payload).
-func EvaluateCertificate(payload *pyjson.Object, currentHWID string, now, maxSeen int64, isDev bool) (Status, error) {
+// signature-verified payload (nil payload means no certificate). tolerance is how far the
+// clock may sit behind the latest time seen: ClockToleranceSeconds for lifetime licenses,
+// TrialClockToleranceSeconds for trials. An error stands for the OverflowError Python does
+// not catch (an infinite number in the payload).
+func EvaluateCertificate(payload *pyjson.Object, currentHWID string, now, maxSeen int64, isDev bool,
+	tolerance int64) (Status, error) {
 	if isDev {
 		return DevelopmentStatus(), nil
 	}
@@ -108,7 +117,7 @@ func EvaluateCertificate(payload *pyjson.Object, currentHWID string, now, maxSee
 	if hwid, ok := scalarText(rawHWID); !ok || hwid != currentHWID {
 		return Unlicensed(WrongMachine, plan, licenseID, nil), nil
 	}
-	if now+ClockToleranceSeconds < max(maxSeen, issuedAt) {
+	if now+tolerance < max(maxSeen, issuedAt) {
 		return Unlicensed(ClockRollback, plan, licenseID, orNone(expiresAt)), nil
 	}
 	if expiresAt > 0 && now >= expiresAt {

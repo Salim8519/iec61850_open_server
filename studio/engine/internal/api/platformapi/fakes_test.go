@@ -35,7 +35,12 @@ func (c *fakeLicenseClient) answer(name string) (any, error) {
 	return value, nil
 }
 
-func (c *fakeLicenseClient) StartTrial(string) (any, error)       { return c.answer("trial") }
+func (c *fakeLicenseClient) StartTrial(string, *pyjson.Object, any, any) (any, error) {
+	return c.answer("trial")
+}
+func (c *fakeLicenseClient) RequestTrialCode(string, string) (any, error) {
+	return c.answer("email-code")
+}
 func (c *fakeLicenseClient) Activate(string, string) (any, error) { return c.answer("activate") }
 func (c *fakeLicenseClient) Transfer(string, string) (any, error) { return c.answer("transfer") }
 func (c *fakeLicenseClient) Verify(any, string) (any, error)      { return c.answer("verify") }

@@ -110,7 +110,8 @@ func (h *harness) newLicense(enforce bool) {
 		DataDir: filepath.Join(h.licenseRoot(), "data"), Enforce: enforce,
 		HWID: func() (string, error) { return hwid, nil }, Clock: func() float64 { return h.clock },
 		Keys: h.keys(), NativeFolder: native, Debugger: func() bool { return false }, Logf: h.t.Logf,
-		ClientFactory: func(string) licensing.Client { return h.client }})
+		ClientFactory: func(string) licensing.Client { return h.client },
+		Parts:         func() (*pyjson.Object, error) { return pyjson.NewObject(), nil }})
 }
 
 func (h *harness) write(path string, data []byte) {

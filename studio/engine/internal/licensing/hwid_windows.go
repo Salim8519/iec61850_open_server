@@ -92,3 +92,16 @@ func firmwareUUID() string {
 	}
 	return SMBIOSSystemUUID(buffer)
 }
+
+// readRawTrialParts is what trial_parts.machine_parts reads; unreadable parts stay nil.
+func readRawTrialParts() RawTrialParts {
+	var raw RawTrialParts
+	if guid, err := machineGUID(); err == nil {
+		raw.MachineGUID = &guid
+	}
+	if serial, err := volumeSerial(); err == nil {
+		raw.VolumeSerial = &serial
+	}
+	raw.FirmwareUUID = firmwareUUID()
+	return raw
+}

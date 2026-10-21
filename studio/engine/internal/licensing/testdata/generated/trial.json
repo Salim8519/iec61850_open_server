@@ -1,0 +1,1387 @@
+{
+"parts": [
+{
+"guid": null,
+"serial": null,
+"uuid": "00112233445566778899AABBCCDDEEFF",
+"junk": false,
+"swap": "33221100554477668899AABBCCDDEEFF",
+"parts": {
+"guid": "",
+"volume": "",
+"firmware": "86701b83098c1b765c96e390a03994e12a839b34bbc57a1f68f03caa32e0f345"
+}
+},
+{
+"guid": "",
+"serial": 0,
+"uuid": "",
+"junk": true,
+"swap": "",
+"parts": {
+"guid": "",
+"volume": "",
+"firmware": ""
+}
+},
+{
+"guid": " 1A2B3C4D-AAAA-BBBB-CCCC-0123456789EF ",
+"serial": 2712847316,
+"uuid": "00000000000000000000000000000000",
+"junk": true,
+"swap": "00000000000000000000000000000000",
+"parts": {
+"guid": "7d7eea414bc5d8fd0d77cdc24aac0408b3a6ec24573eac5173d7ce4fa94b71de",
+"volume": "f014a6f1abddbc1b5301878f78c3bb9884a27191c7a856247cec91771352ed67",
+"firmware": ""
+}
+},
+{
+"guid": "x",
+"serial": 4294967295,
+"uuid": "ffffffffffffffffffffffffffffffff",
+"junk": true,
+"swap": "ffffffffffffffffffffffffffffffff",
+"parts": {
+"guid": "448bfa55daa9c8291f22ac9a1a5a80f80310595e7dc9611f45e87bfc3e3cc9bd",
+"volume": "",
+"firmware": ""
+}
+},
+{
+"guid": "\tGuid\u00a0",
+"serial": 1,
+"uuid": "11111111111111111111111111111111",
+"junk": true,
+"swap": "11111111111111111111111111111111",
+"parts": {
+"guid": "38c574e374791b8062735756e66a521fdb1c97b4b55bf6900ff8bada708139e1",
+"volume": "9cf98c798456674e4bcf435a03ed04cd14c24d5765defa29ec80e195a63b4019",
+"firmware": ""
+}
+},
+{
+"guid": null,
+"serial": null,
+"uuid": "not-hex",
+"junk": true,
+"swap": "not-hex",
+"parts": {
+"guid": "",
+"volume": "",
+"firmware": ""
+}
+},
+{
+"guid": "",
+"serial": 0,
+"uuid": "03000200040005000006000700080009",
+"junk": true,
+"swap": "00020003000400050006000700080009",
+"parts": {
+"guid": "",
+"volume": "",
+"firmware": ""
+}
+},
+{
+"guid": " 1A2B3C4D-AAAA-BBBB-CCCC-0123456789EF ",
+"serial": 2712847316,
+"uuid": "00020003000400050006000700080009",
+"junk": true,
+"swap": "03000200040005000006000700080009",
+"parts": {
+"guid": "7d7eea414bc5d8fd0d77cdc24aac0408b3a6ec24573eac5173d7ce4fa94b71de",
+"volume": "f014a6f1abddbc1b5301878f78c3bb9884a27191c7a856247cec91771352ed67",
+"firmware": ""
+}
+},
+{
+"guid": "x",
+"serial": 4294967295,
+"uuid": "123456781234567890abcddeefaabbcc",
+"junk": true,
+"swap": "785634123412785690abcddeefaabbcc",
+"parts": {
+"guid": "448bfa55daa9c8291f22ac9a1a5a80f80310595e7dc9611f45e87bfc3e3cc9bd",
+"volume": "",
+"firmware": ""
+}
+},
+{
+"guid": "\tGuid\u00a0",
+"serial": 1,
+"uuid": "785634123412785690abcddeefaabbcc",
+"junk": true,
+"swap": "123456781234567890abcddeefaabbcc",
+"parts": {
+"guid": "38c574e374791b8062735756e66a521fdb1c97b4b55bf6900ff8bada708139e1",
+"volume": "9cf98c798456674e4bcf435a03ed04cd14c24d5765defa29ec80e195a63b4019",
+"firmware": ""
+}
+},
+{
+"guid": null,
+"serial": null,
+"uuid": " 4c4c4544004e3510804ab4c04f4e3732\n",
+"junk": false,
+"swap": " 4c4c4544004e3510804ab4c04f4e3732\n",
+"parts": {
+"guid": "",
+"volume": "",
+"firmware": "e200e9d2cb65b2c6fc2ef033b5061b6aed0ba23702858174f2bc723e992961f1"
+}
+},
+{
+"guid": "",
+"serial": 0,
+"uuid": "4c4c4544004e3510804ab4c04f4e373",
+"junk": true,
+"swap": "4c4c4544004e3510804ab4c04f4e373",
+"parts": {
+"guid": "",
+"volume": "",
+"firmware": ""
+}
+},
+{
+"guid": " 1A2B3C4D-AAAA-BBBB-CCCC-0123456789EF ",
+"serial": 2712847316,
+"uuid": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9",
+"junk": true,
+"swap": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9",
+"parts": {
+"guid": "7d7eea414bc5d8fd0d77cdc24aac0408b3a6ec24573eac5173d7ce4fa94b71de",
+"volume": "f014a6f1abddbc1b5301878f78c3bb9884a27191c7a856247cec91771352ed67",
+"firmware": ""
+}
+},
+{
+"guid": "x",
+"serial": 4294967295,
+"uuid": "4C4C4544004E3510804AB4C04F4E3732",
+"junk": false,
+"swap": "44454C4C4E001035804AB4C04F4E3732",
+"parts": {
+"guid": "448bfa55daa9c8291f22ac9a1a5a80f80310595e7dc9611f45e87bfc3e3cc9bd",
+"volume": "",
+"firmware": "e200e9d2cb65b2c6fc2ef033b5061b6aed0ba23702858174f2bc723e992961f1"
+}
+},
+{
+"guid": "\tGuid\u00a0",
+"serial": 1,
+"uuid": "00000000000000000000000000000001",
+"junk": false,
+"swap": "00000000000000000000000000000001",
+"parts": {
+"guid": "38c574e374791b8062735756e66a521fdb1c97b4b55bf6900ff8bada708139e1",
+"volume": "9cf98c798456674e4bcf435a03ed04cd14c24d5765defa29ec80e195a63b4019",
+"firmware": "b6db6b92ece81420bfa3f3d4c467c4d3ec359726085748e31c68adb657c06e1f"
+}
+}
+],
+"stamps": [
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\"}",
+"ok": 1760000000
+},
+{
+"stamp": "\"{\\\"payload\\\": \\\"{\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"purpose\\\\\\\":\\\\\\\"server-time\\\\\\\",\\\\\\\"time\\\\\\\":1760000000,\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\\\"}\"",
+"ok": 1760000000
+},
+{
+"stamp": "{\"certificate\":{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\"}}",
+"ok": 1760000000
+},
+{
+"stamp": "null",
+"ok": null
+},
+{
+"stamp": "\"\"",
+"ok": null
+},
+{
+"stamp": "5",
+"ok": null
+},
+{
+"stamp": "[{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\"}]",
+"ok": null
+},
+{
+"stamp": "\"not json\"",
+"ok": null
+},
+{
+"stamp": "\"[1]\"",
+"ok": null
+},
+{
+"stamp": "\"\\ufeff{\\\"payload\\\": \\\"{\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"purpose\\\\\\\":\\\\\\\"server-time\\\\\\\",\\\\\\\"time\\\\\\\":1760000000,\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\\\"}\"",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"license\\\",\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"dFUEqbh84quxtHOCrlnIX_vqTm2ImwFYfQ_RDsohsiKEv2YfdZKlm__AaFwzmbA14z0OtMcrTrS_NYrcTTStCg\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":null,\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"gl5n6OsWOA2iOoxtA5kb9wlPGX-lr92DM5DxjyfczLq6YsUlfOhNaDwbrNT-1UQWA7N82cpTCTqTQqisAjirCA\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":\\\"1\\\"}\",\"signature\":\"j_0AifyWgqaeiL_vGDAGkeEc5XaC9ZcqWBCKPyu0CKOQw-rPz6IhEK8xt0mGeL1B6AUxVfGqFNDzZ0j3YWeFDA\"}",
+"ok": 1760000000
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":2}\",\"signature\":\"_Ok6LXdQiPm96IcgtSwAquSe6LBLUbJgN3cD8MvYZ1SYSQs_5Wb54rqHFnv-volw7j25s9AbxaO3__tx4C0hBA\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":true}\",\"signature\":\"mJKag8ALrNvarUbPvUAqA2b6BSSFrmV9Xpa3MKgw0Z1ZMRWB4tsnIkAj9uvAUzWKE22J0j0wRhEu9mvulUTODA\"}",
+"ok": 1760000000
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":1.9}\",\"signature\":\"jmxOHD-8ZQUlRVqXuCstd0iT8QkACNGGEhM_DVLa-3FxafayN_m_RKx8CjQT7sf1NdpXzunWxYmMYVmVD2U0Ag\"}",
+"ok": 1760000000
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":[1]}\",\"signature\":\"QrfXnAmYDU09KZLhgybYOPqyDaq0tRpPcM5Ilde9vwQeGmHQcOvsHD6oirjGD4JUMUACmpqKBImkLAJm637tDA\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":0,\\\"version\\\":1}\",\"signature\":\"qo-6b0Lj6sSiMlo_nZ3fuaATN97QLW87oE61XO7Q1zprax-SDNuqniIYG_ucua8VPDJ7MYN1GIgkusSk8Mp0CQ\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":-5,\\\"version\\\":1}\",\"signature\":\"VswXL0MqsqOXWaLas-gMQVkXAKtN8cU8C2zyOnZxJ9-1Hleb99WfdKCt-06JgHKSDwaV3vwIY8jZ3PK7qKIrBw\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":\\\"17\\\",\\\"version\\\":1}\",\"signature\":\"RitAUXHj9Fc_vokiWAw6Ih30Djx7GLl11Av7qc3w__qs8pGxdcZUvKCC_JL03oC8xs_Ii-LeZnUtFcyLWlseBw\"}",
+"ok": 17
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":\\\"x\\\",\\\"version\\\":1}\",\"signature\":\"J_NOoe1yHsdiEtQK2-JP1yiBk0an0osqEyuW_RLTR6cEjuS-HDtDNNFgrLMvqRRwf8gw5FnXr2ZfPlpVSqmuCw\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1.5,\\\"version\\\":1}\",\"signature\":\"QYrR0Spdqf3MjvW1XZ4ncDIi5cEmZQ_AHwU2qHOd9q1czhrGZkCIUONVKeKbTOsiYdXq2JMh9ySbBqYAs9U3Aw\"}",
+"ok": 1
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":null,\\\"version\\\":1}\",\"signature\":\"yMqzdf9PEYFaq54gyHYzl4ahNn18gbuse-rce-ohL2bu2nJBCypLWxTJesyG7rHc9uAhwC3o_KJQCqQ89IIeAA\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1000000000000000000,\\\"version\\\":1}\",\"signature\":\"bDZQ_wMchGfHxczwJLAgSxk2cRYsMHFM5nVvfwSlFeTBB6su5OJplJ2Yhww6q6MLViyfc26_hCKxWwN9WlYHCA\"}",
+"ok": 1000000000000000000
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"version\\\":1}\",\"signature\":\"CvjxqA2TANIpYdYn0bbIrXF5TicHTBDJo4_4oVhRLGriyTf9UumVLHu9Tmy-ZbXRxE7FijLmhYkQD8y98mg_Ag\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1768553600,\\\"version\\\":1}\",\"signature\":\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000}\",\"signature\":\"V3Y5DIsgaf4exTTtrIwv_nGaatCJNFd9868qcOnUf0wNmZS8MVQ5NiLDSkzfr2UCduEc5Uf98hsunsPbLfLmDQ\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":0,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"SUBS-TEST-TEST-TEST-TEST\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"lifetime\\\",\\\"version\\\":1}\",\"signature\":\"TinNnrEPwjckeZZVy9kZuR-yO1Sffsvx-Ddxg01lkrOwtZspO8xmlcFyxeAnFn2YxSvfjKs-OCUntReYIrnHAA\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":[\\\"x\\\"],\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"FzxbmZf8IwunsWE5u2y5JTRUxGNjLQ8YWUq7P2lQ3qI1U9XGrW8wKyDmp0MeMBeEKU3NP43waEsnmr3PFSy3DQ\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"purpose\\\":\\\"server-time\\\"}\",\"signature\":\"!\"}",
+"ok": null
+},
+{
+"stamp": "{\"payload\":\"{\\\"kid\\\":\\\"3097e2de\\\",\\\"purpose\\\":\\\"server-time\\\",\\\"time\\\":1760000000,\\\"version\\\":1}\",\"signature\":\"y-MSWg2BdicxBguG9LyG6KK7ibSEzI2cghE-rNEi1z0tMckGpNInipSOYM5GjaHZfDDUc7S_0TYoV6VhXbcNAQ\"}",
+"no_keys": true,
+"ok": null
+}
+],
+"policy": [
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1759913600,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760000010,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760086400,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604800,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"Your free trial has ended. Buy a lifetime license to keep using ScadaBench.\",\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604801,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"Your free trial has ended. Buy a lifetime license to keep using ScadaBench.\",\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604801,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259199,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172799,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \\\"Check online now\\\". On a company network, ask your IT team to allow license.scadabench.com (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/\",\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":true}",
+"due": true,
+"latest": 1760172800,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1759999995,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \\\"Check online now\\\". On a company network, ask your IT team to allow license.scadabench.com (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/\",\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":true}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000001,
+"suspicious": 1760000000,
+"now": 1760777600,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760691200,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 0,
+"now": 1760000000,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1759913600,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760000010,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760086400,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604800,
+"suspicious": 0,
+"now": 1760000000,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604801,
+"suspicious": 0,
+"now": 1760000000,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604801,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259199,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172799,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \\\"Check online now\\\". On a company network, ask your IT team to allow the license server (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/\",\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":true}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1759999995,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":null,\"reason\":\"ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \\\"Check online now\\\". On a company network, ask your IT team to allow the license server (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/\",\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":true}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000001,
+"suspicious": 1760000000,
+"now": 1760777600,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760691200,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "the license server",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":null,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1759913600,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760000010,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760086400,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604800,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604801,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604801,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259199,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172799,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1759999995,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000001,
+"suspicious": 1760000000,
+"now": 1760777600,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760691200,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":\"TRIAL-abababababab\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 0,
+"now": 1760000000,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1759913600,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760000010,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760086400,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604800,
+"suspicious": 0,
+"now": 1760000000,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604800,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604801,
+"suspicious": 0,
+"now": 1760000000,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604801,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259199,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172799,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1759999995,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000001,
+"suspicious": 1760000000,
+"now": 1760777600,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760691200,
+"missing": false
+},
+{
+"status": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "the license server",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760000000,\"reason\":\"x\",\"license_id\":\"TRIAL-a\",\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1759913600,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760000010,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 0,
+"now": 1760086400,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760000000,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604800,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"Your free trial has ended. Buy a lifetime license to keep using ScadaBench.\",\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760604801,
+"suspicious": 0,
+"now": 1760000000,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"Your free trial has ended. Buy a lifetime license to keep using ScadaBench.\",\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": false,
+"latest": 1760604801,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259199,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172799,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 0,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \\\"Check online now\\\". On a company network, ask your IT team to allow license.scadabench.com (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/\",\"license_id\":null,\"email\":null,\"online_check_required\":true}",
+"due": true,
+"latest": 1760172800,
+"missing": true
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1759999995,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":false,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"days_remaining\":null,\"expires_at\":1760604800,\"reason\":\"ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \\\"Check online now\\\". On a company network, ask your IT team to allow license.scadabench.com (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/\",\"license_id\":null,\"email\":null,\"online_check_required\":true}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000001,
+"suspicious": 1760000000,
+"now": 1760777600,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760691200,
+"missing": false
+},
+{
+"status": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"confirmed": 1760000000,
+"suspicious": 1760000000,
+"now": 1760259200,
+"host": "license.scadabench.com",
+"applied": "{\"licensed\":true,\"mode\":\"trial\",\"plan\":\"trial\",\"days_remaining\":3,\"expires_at\":1760604800,\"reason\":null,\"license_id\":null,\"email\":null,\"online_check_required\":false}",
+"due": true,
+"latest": 1760172800,
+"missing": false
+}
+],
+"clock": [
+{
+"name": "time_anchor",
+"files": {},
+"registry": {},
+"state": null,
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"TimeAnchor": "1760000500"
+}
+}
+},
+{
+"name": "grace_start",
+"files": {},
+"registry": {},
+"state": null,
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"GraceStart": "1760000500"
+}
+}
+},
+{
+"name": "time_anchor",
+"files": {},
+"registry": null,
+"state": null,
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "grace_start",
+"files": {},
+"registry": null,
+"state": null,
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".time_anchor": "IDE3Cg=="
+},
+"registry": {
+"TimeAnchor": "18"
+},
+"state": "eyJ0aW1lX2FuY2hvciI6ICIxOSIsICJhIjogMX0=",
+"read_all": [
+"17",
+"18",
+"19"
+],
+"read_ints": [
+"17",
+"18",
+"19"
+],
+"places": 3,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIiwgImEiOiAxfQ=="
+},
+"registry": {
+"TimeAnchor": "1760000500"
+}
+}
+},
+{
+"name": "grace_start",
+"files": {
+".time_anchor": "IDE3Cg=="
+},
+"registry": {
+"TimeAnchor": "18"
+},
+"state": "eyJ0aW1lX2FuY2hvciI6ICIxOSIsICJhIjogMX0=",
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+".time_anchor": "IDE3Cg==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxOSIsICJhIjogMSwgImdyYWNlX3N0YXJ0IjogIjE3NjAwMDA1MDAifQ=="
+},
+"registry": {
+"TimeAnchor": "18",
+"GraceStart": "1760000500"
+}
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".time_anchor": "IDE3Cg=="
+},
+"registry": null,
+"state": "eyJ0aW1lX2FuY2hvciI6ICIxOSIsICJhIjogMX0=",
+"read_all": [
+"17",
+"19"
+],
+"read_ints": [
+"17",
+"19"
+],
+"places": 2,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIiwgImEiOiAxfQ=="
+},
+"registry": null
+}
+},
+{
+"name": "grace_start",
+"files": {
+".time_anchor": "IDE3Cg=="
+},
+"registry": null,
+"state": "eyJ0aW1lX2FuY2hvciI6ICIxOSIsICJhIjogMX0=",
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+".time_anchor": "IDE3Cg==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxOSIsICJhIjogMSwgImdyYWNlX3N0YXJ0IjogIjE3NjAwMDA1MDAifQ=="
+},
+"registry": null
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".time_anchor": "/w=="
+},
+"registry": {
+"TimeAnchor": ""
+},
+"state": "eyJ0aW1lX2FuY2hvciI6IDIwfQ==",
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"TimeAnchor": "1760000500"
+}
+}
+},
+{
+"name": "grace_start",
+"files": {
+".time_anchor": "/w=="
+},
+"registry": {
+"TimeAnchor": ""
+},
+"state": "eyJ0aW1lX2FuY2hvciI6IDIwfQ==",
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+".time_anchor": "/w==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6IDIwLCAiZ3JhY2Vfc3RhcnQiOiAiMTc2MDAwMDUwMCJ9"
+},
+"registry": {
+"TimeAnchor": "",
+"GraceStart": "1760000500"
+}
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".time_anchor": "/w=="
+},
+"registry": null,
+"state": "eyJ0aW1lX2FuY2hvciI6IDIwfQ==",
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "grace_start",
+"files": {
+".time_anchor": "/w=="
+},
+"registry": null,
+"state": "eyJ0aW1lX2FuY2hvciI6IDIwfQ==",
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+".time_anchor": "/w==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6IDIwLCAiZ3JhY2Vfc3RhcnQiOiAiMTc2MDAwMDUwMCJ9"
+},
+"registry": null
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".time_anchor": "eA=="
+},
+"registry": {
+"TimeAnchor": " 21 "
+},
+"state": "WzFd",
+"read_all": [
+"x",
+" 21 "
+],
+"read_ints": [
+"21"
+],
+"places": 3,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"TimeAnchor": "1760000500"
+}
+}
+},
+{
+"name": "grace_start",
+"files": {
+".time_anchor": "eA=="
+},
+"registry": {
+"TimeAnchor": " 21 "
+},
+"state": "WzFd",
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+".time_anchor": "eA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"TimeAnchor": " 21 ",
+"GraceStart": "1760000500"
+}
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".time_anchor": "eA=="
+},
+"registry": null,
+"state": "WzFd",
+"read_all": [
+"x"
+],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "grace_start",
+"files": {
+".time_anchor": "eA=="
+},
+"registry": null,
+"state": "WzFd",
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+".time_anchor": "eA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "time_anchor",
+"files": {},
+"registry": {},
+"state": "eyJ0aW1lX2FuY2hvciI6ICIyMiJ9",
+"read_all": [
+"22"
+],
+"read_ints": [
+"22"
+],
+"places": 3,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"TimeAnchor": "1760000500"
+}
+}
+},
+{
+"name": "grace_start",
+"files": {},
+"registry": {},
+"state": "eyJ0aW1lX2FuY2hvciI6ICIyMiJ9",
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIyMiIsICJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"GraceStart": "1760000500"
+}
+}
+},
+{
+"name": "time_anchor",
+"files": {},
+"registry": null,
+"state": "eyJ0aW1lX2FuY2hvciI6ICIyMiJ9",
+"read_all": [
+"22"
+],
+"read_ints": [
+"22"
+],
+"places": 2,
+"written": {
+"files": {
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "grace_start",
+"files": {},
+"registry": null,
+"state": "eyJ0aW1lX2FuY2hvciI6ICIyMiJ9",
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJ0aW1lX2FuY2hvciI6ICIyMiIsICJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".grace_start": "MA=="
+},
+"registry": {
+"GraceStart": "-3"
+},
+"state": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwMDAwIn0=",
+"read_all": [],
+"read_ints": [],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MA==",
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwMDAwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwMDA1MDAifQ=="
+},
+"registry": {
+"GraceStart": "-3",
+"TimeAnchor": "1760000500"
+}
+}
+},
+{
+"name": "grace_start",
+"files": {
+".grace_start": "MA=="
+},
+"registry": {
+"GraceStart": "-3"
+},
+"state": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwMDAwIn0=",
+"read_all": [
+"0",
+"-3",
+"1760000000"
+],
+"read_ints": [
+"0",
+"-3",
+"1760000000"
+],
+"places": 3,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": {
+"GraceStart": "1760000500"
+}
+}
+},
+{
+"name": "time_anchor",
+"files": {
+".grace_start": "MA=="
+},
+"registry": null,
+"state": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwMDAwIn0=",
+"read_all": [],
+"read_ints": [],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MA==",
+".time_anchor": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwMDAwIiwgInRpbWVfYW5jaG9yIjogIjE3NjAwMDA1MDAifQ=="
+},
+"registry": null
+}
+},
+{
+"name": "grace_start",
+"files": {
+".grace_start": "MA=="
+},
+"registry": null,
+"state": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwMDAwIn0=",
+"read_all": [
+"0",
+"1760000000"
+],
+"read_ints": [
+"0",
+"1760000000"
+],
+"places": 2,
+"written": {
+"files": {
+".grace_start": "MTc2MDAwMDUwMA==",
+"license_state.json": "eyJncmFjZV9zdGFydCI6ICIxNzYwMDAwNTAwIn0="
+},
+"registry": null
+}
+}
+],
+"support_url": "https://scadabench.com/contact/",
+"texts": {
+"trial_used": "This computer has already used its free trial. Buy a lifetime license to keep using ScadaBench. If you think this is a mistake, contact support: https://scadabench.com/contact/",
+"email_required": "To start the free trial, please confirm your email address. We ask this when this computer or your network has started trials before, for example in a shared office. Help: https://scadabench.com/contact/",
+"email_used": "This email address already had a free trial. Buy a lifetime license to keep using ScadaBench, or contact support if you think this is a mistake: https://scadabench.com/contact/",
+"email_disposable": "Throwaway email services cannot be used for the free trial. Please use your work or personal email address. Help: https://scadabench.com/contact/",
+"bad_email": "Please enter a valid email address, for example name@company.com.",
+"bad_code": "That code is not right or has expired. Check the latest email from ScadaBench, or ask for a new code. Help: https://scadabench.com/contact/",
+"needs_online": "ScadaBench's trial records on this computer were removed, so the date has to be confirmed with the license server once. Connect to the internet and click \"Check online now\". On a company network, ask your IT team to allow h.example (HTTPS, port 443). Paid licenses work offline. Help: https://scadabench.com/contact/",
+"clock_rollback": "System clock rollback detected: the date on this computer is earlier than when ScadaBench last ran. Correct the date and time in Windows (Settings > Time & language > Set time automatically), then reopen ScadaBench. Help: https://scadabench.com/contact/"
+}
+}

@@ -1,5 +1,5 @@
 {
- "app_version": "0.1.14+dev",
+ "app_version": "0.1.18+dev",
  "current": "0.1.13",
  "server_url": "https://license.scadabench.com",
  "hwid": "abababababababababababababababababababababababababababababababab",
@@ -1672,7 +1672,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":false,\"expires_at\":null,\"hwid\":null,\"license_id\":null,\"licensed\":true,\"masked_key\":null,\"mode\":\"development\",\"plan\":\"dev\",\"reason\":null,\"server_url\":\"\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":false,\"expires_at\":null,\"hwid\":null,\"license_id\":null,\"licensed\":true,\"masked_key\":null,\"mode\":\"development\",\"online_check_required\":false,\"plan\":\"dev\",\"reason\":null,\"server_url\":\"\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -1692,6 +1692,28 @@
    "method": "POST",
    "path": "/api/v1/license/activate-offline",
    "body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"buyer@example.com\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-2345-6789-ABCD-EFGH\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\\\"}\"}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "status": 400,
+   "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "{\"email\": \"a@b\"}",
    "content_type": "application/json",
    "status": 400,
    "response": "{\"code\":\"development\",\"error\":\"Development mode does not use licenses.\"}\n",
@@ -1732,7 +1754,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -1742,7 +1764,7 @@
    "method": "GET",
    "path": "/api/v1/license/status?x=1",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":null,\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"online_check_required\":false,\"plan\":null,\"reason\":\"This computer has no license yet. Start the free trial or enter your license key.\",\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -1875,7 +1897,7 @@
    "body": "not json",
    "content_type": "text/plain",
    "status": 200,
-   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -1885,7 +1907,244 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "client",
+   "answers": {
+    "trial": [
+     {
+      "raise": [
+       "Please confirm your email address.",
+       "email_required"
+      ]
+     },
+     {
+      "raise": [
+       "Used.",
+       "email_used"
+      ]
+     },
+     {
+      "raise": [
+       "Bad code.",
+       "bad_code"
+      ]
+     }
+    ],
+    "email-code": [
+     {
+      "return": {
+       "status": "sent"
+      }
+     },
+     {
+      "raise": [
+       "Mail down",
+       "server_error"
+      ]
+     },
+     {
+      "return": {}
+     },
+     {
+      "return": [
+       1
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "body": "{\"email\": \"me@company.com\", \"code\": 123456}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"email_required\",\"error\":\"Please confirm your email address.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "body": "{\"email\": \"\", \"code\": \"1\"}",
+   "content_type": "application/json",
+   "status": 409,
+   "response": "{\"code\":\"email_used\",\"error\":\"Used.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial",
+   "body": "[1]",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_code\",\"error\":\"Bad code.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "{\"email\": \"me@company.com\"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"status\":\"sent\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "status": 400,
+   "response": "{\"code\":\"bad_email\",\"error\":\"Please enter a valid email address, for example name@company.com.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "{\"email\": 5}",
+   "content_type": "application/json",
+   "status": 400,
+   "response": "{\"code\":\"bad_email\",\"error\":\"Please enter a valid email address, for example name@company.com.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "x",
+   "content_type": "text/plain",
+   "status": 400,
+   "response": "{\"code\":\"bad_email\",\"error\":\"Please enter a valid email address, for example name@company.com.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "{\"email\": \"a@b\"}",
+   "content_type": "application/json",
+   "status": 503,
+   "response": "{\"code\":\"server_error\",\"error\":\"Mail down\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "{\"email\": \" a@b \"}",
+   "content_type": "application/json",
+   "status": 200,
+   "response": "{\"status\":\"sent\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/trial/email-code",
+   "body": "{\"email\": \"a@b\"}",
+   "content_type": "application/json",
+   "status": 500,
+   "response": "{\"error\":\"The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "status": 503,
+   "response": "{\"code\":\"offline\",\"error\":\"no canned answer\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "body": "{\"ignored\": true}",
+   "content_type": "application/json",
+   "status": 503,
+   "response": "{\"code\":\"offline\",\"error\":\"no canned answer\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "client",
+   "answers": {
+    "verify": [
+     {
+      "return": {
+       "status": "valid"
+      }
+     },
+     {
+      "return": {
+       "status": "valid",
+       "server_time": {
+        "payload": "{\"kid\":\"3097e2de\",\"purpose\":\"server-time\",\"time\":1760000030,\"version\":1}",
+        "signature": "ysa3vK89HH1D2ixy-MQUPtzU75Oor3G3t2p38CzsUr5YLFdGmdpKDWfAfuBg12cUqQbZirHW1fYE6noxxyUtDg"
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "status": 503,
+   "response": "{\"code\":\"bad_time\",\"error\":\"The license server answered without a valid signed time. Try again later. Help: https://scadabench.com/contact/\"}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "POST",
+   "path": "/api/v1/license/check-online",
+   "status": 200,
+   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "headers": {
+    "Content-Type": "application/json"
+   }
+  },
+  {
+   "op": "request",
+   "method": "GET",
+   "path": "/api/v1/license/status",
+   "status": 200,
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -1899,7 +2158,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2029,7 +2288,7 @@
    "body": "{\"license_key\": \" subs-2345-6789-abcd-efgh \"}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2053,7 +2312,7 @@
    "body": "{\"license_key\": \"SUBS-2345-6789-ABCD-EFGH\", \"move\": \"yes\"}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2103,7 +2362,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2197,7 +2456,7 @@
    "body": "{\"certificate\": {\"certificate\": {\"payload\": \"{\\\"email\\\":\\\"\\\",\\\"expires_at\\\":1760604800,\\\"hwid\\\":\\\"abababababababababababababababababababababababababababababababab\\\",\\\"issued_at\\\":1760000000,\\\"kid\\\":\\\"3097e2de\\\",\\\"license_id\\\":\\\"TRIAL-abababababab\\\",\\\"max_machines\\\":1,\\\"type\\\":\\\"trial\\\",\\\"version\\\":1}\", \"signature\": \"97w6akK0gbhhX4ZmtHA4UuxNoI0sgeJ0lQAG7Y9se7AMTL2OWVs-DQ7FVWXWy88ovTPL4hNNtv9IhdnIrQrACA\"}}}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":7,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2209,7 +2468,7 @@
    "body": "{\"certificate\": \"{\\\"payload\\\": \\\"{\\\\\\\"email\\\\\\\":\\\\\\\"buyer@example.com\\\\\\\",\\\\\\\"expires_at\\\\\\\":0,\\\\\\\"hwid\\\\\\\":\\\\\\\"abababababababababababababababababababababababababababababababab\\\\\\\",\\\\\\\"issued_at\\\\\\\":1760000000,\\\\\\\"kid\\\\\\\":\\\\\\\"3097e2de\\\\\\\",\\\\\\\"license_id\\\\\\\":\\\\\\\"SUBS-2345-6789-ABCD-EFGH\\\\\\\",\\\\\\\"max_machines\\\\\\\":1,\\\\\\\"type\\\\\\\":\\\\\\\"lifetime\\\\\\\",\\\\\\\"version\\\\\\\":1}\\\", \\\"signature\\\": \\\"h0UTnR7lvJ6_rfK4uk-npYYgem8N1oOmJhiByb9JAVCvOA0-n3GoqjZzwEHU_bNGjfHJ7vQaYpRJtLdjjevhDA\\\"}\"}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2221,7 +2480,7 @@
    "body": "{\"server_url\": \" https://lic.example.com// \"}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://lic.example.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://lic.example.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2269,7 +2528,7 @@
    "body": "{\"server_url\": \"http://localhost:8080/\"}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"http://localhost:8080\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"http://localhost:8080\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2281,7 +2540,7 @@
    "body": "x",
    "content_type": "text/plain",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2293,7 +2552,7 @@
    "body": "[\"https://y\"]",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://license.scadabench.com\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2305,7 +2564,7 @@
    "body": "{\"server_url\": \"https://y\"}",
    "content_type": "application/json",
    "status": 200,
-   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "response": "{\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2319,7 +2578,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":null,\"email\":\"buyer@example.com\",\"enforced\":true,\"expires_at\":null,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"SUBS-2345-6789-ABCD-EFGH\",\"licensed\":true,\"masked_key\":\"SUBS-****-****-****-EFGH\",\"mode\":\"lifetime\",\"online_check_required\":false,\"plan\":\"lifetime\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2338,7 +2597,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":4,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":4,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }
@@ -2352,7 +2611,7 @@
    "method": "GET",
    "path": "/api/v1/license/status",
    "status": 200,
-   "response": "{\"app_version\":\"0.1.14+dev\",\"days_remaining\":null,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":false,\"masked_key\":null,\"mode\":\"unlicensed\",\"plan\":\"trial\",\"reason\":\"System clock rollback detected: the date on this computer is earlier than when ScadaBench last ran. Correct the date and time in Windows, then reopen ScadaBench.\",\"server_url\":\"https://y\",\"transfer_available\":false}\n",
+   "response": "{\"app_version\":\"0.1.18+dev\",\"days_remaining\":6,\"email\":null,\"enforced\":true,\"expires_at\":1760604800,\"hwid\":\"abababababababababababababababababababababababababababababababab\",\"license_id\":\"TRIAL-abababababab\",\"licensed\":true,\"masked_key\":null,\"mode\":\"trial\",\"online_check_required\":false,\"plan\":\"trial\",\"reason\":null,\"server_url\":\"https://y\",\"transfer_available\":false}\n",
    "headers": {
     "Content-Type": "application/json"
    }

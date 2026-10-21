@@ -92,7 +92,7 @@ class Session:
         self.app.extensions["license"] = LicenseService(
             self.license_root() / "home", self.license_root() / "data", enforce,
             hwid_provider=lambda: license_signer.HWID, clock=lambda: self.clock[0], keys=license_signer.keys(),
-            client_factory=lambda url: self.license_client, native_folder=native)
+            client_factory=lambda url: self.license_client, native_folder=native, parts_provider=lambda: {})
 
     def setup(self, step):
         kind = step["op"]

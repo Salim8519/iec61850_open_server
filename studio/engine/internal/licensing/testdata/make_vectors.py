@@ -2,7 +2,7 @@
 
 Usage (from the worktree root):
   studio/.venv/Scripts/python.exe -I -B studio/engine/internal/licensing/testdata/make_vectors.py
-Also run make_scenarios.py and make_client.py. The Go tests need only the JSON files.
+Also run make_scenarios.py, make_client.py and make_trial.py. The Go tests need only the JSON files.
 """
 import base64
 import random
@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vector_common import OTHER_SEED, compact, license_signer, outcome, signed, signed_raw, write  # noqa: E402
 from vector_iso import anchor_cases, iso_cases  # noqa: E402
-from studio_app.domain import license_policy  # noqa: E402
+from studio_app.domain import license_policy, trial_policy  # noqa: E402
 from studio_app.licensing import certificate, client, ed25519_verify, hwid, release_key  # noqa: E402
 from studio_app.licensing.service import LicenseService, mask_key  # noqa: E402
 
@@ -88,12 +88,15 @@ def policy_cases():
     cases = []
     for payload in variants:
         for now, max_seen, dev in ((NOW + 60, 0, False), (NOW - 400, 0, False), (NOW + 60, NOW + 1000, False),
-                                   (NOW + 3 * 86400 + 5, 0, False), (NOW, 0, True)):
-            result = outcome(lambda: license_policy.evaluate_certificate(payload, HWID, now, max_seen, dev).as_dict())
-            if "ok" in result:
-                result["ok"] = compact(result["ok"])
-            cases.append({"payload": None if payload is None else compact(payload), "now": now,
-                          "max_seen": max_seen, "dev": dev, **result})
+                                   (NOW + 3 * 86400 + 5, 0, False), (NOW, 0, True), (NOW, NOW + 47 * 3600, False),
+                                   (NOW, NOW + 49 * 3600, False)):
+            for tolerance in (license_policy.CLOCK_TOLERANCE_SECONDS, trial_policy.TRIAL_CLOCK_TOLERANCE_SECONDS):
+                result = outcome(lambda: license_policy.evaluate_certificate(
+                    payload, HWID, now, max_seen, dev, tolerance).as_dict())
+                if "ok" in result:
+                    result["ok"] = compact(result["ok"])
+                cases.append({"payload": None if payload is None else compact(payload), "now": now,
+                              "max_seen": max_seen, "dev": dev, "tolerance": tolerance, **result})
     return cases
 
 

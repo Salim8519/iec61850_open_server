@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"studio-engine/internal/pyjson"
 )
 
 type clientCase struct {
@@ -85,7 +87,21 @@ func TestHTTPClientMatchesPython(t *testing.T) {
 		var err error
 		switch c.Call {
 		case "trial":
-			result, err = client.StartTrial(recorded.HWID)
+			result, err = client.StartTrial(recorded.HWID, nil, nil, nil)
+		case "trial_parts":
+			result, err = client.StartTrial(recorded.HWID, trialParts("g", "", "f"), nil, nil)
+		case "trial_empty_parts":
+			result, err = client.StartTrial(recorded.HWID, trialParts("", "", ""), nil, nil)
+		case "trial_email":
+			result, err = client.StartTrial(recorded.HWID, pyjson.NewObject(), "me@company.com", " 123456 ")
+		case "trial_email_number":
+			result, err = client.StartTrial(recorded.HWID, nil, "me@company.com", int64(123456))
+		case "trial_email_nocode":
+			result, err = client.StartTrial(recorded.HWID, nil, "me@company.com", nil)
+		case "trial_no_email":
+			result, err = client.StartTrial(recorded.HWID, nil, "", "123")
+		case "email_code":
+			result, err = client.RequestTrialCode(recorded.HWID, "me@company.com")
 		case "activate":
 			result, err = client.Activate(recorded.Key, recorded.HWID)
 		case "transfer":
@@ -121,6 +137,10 @@ func TestHTTPClientMatchesPython(t *testing.T) {
 			served++
 		}
 	}
+}
+
+func trialParts(guid, volume, firmware string) *pyjson.Object {
+	return pyjson.NewObject().Set("guid", guid).Set("volume", volume).Set("firmware", firmware)
 }
 
 func countServed(c clientCase) int {

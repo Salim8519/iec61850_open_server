@@ -11,7 +11,8 @@ import (
 var pythonPlatformRoutes = []string{
 	"GET /api/v1/app/update", "PUT /api/v1/app/update", "POST /api/v1/app/update/check",
 	"POST /api/v1/license/activate", "POST /api/v1/license/activate-offline", "PUT /api/v1/license/config",
-	"GET /api/v1/license/status", "POST /api/v1/license/trial",
+	"GET /api/v1/license/status", "POST /api/v1/license/trial", "POST /api/v1/license/trial/email-code",
+	"POST /api/v1/license/check-online",
 	"GET /api/v1/network", "PUT /api/v1/network", "GET /api/v1/network/adapters",
 	"POST /api/v1/network/cleanup/apply", "GET /api/v1/network/cleanup/preview",
 	"GET /api/v1/network/gateway-firewall", "POST /api/v1/network/gateway-firewall",

@@ -1,10 +1,15 @@
-"""datetime.fromisoformat and TimeAnchor vectors (time_anchor.py) for make_vectors.py."""
+"""datetime.fromisoformat and TimeAnchor vectors (time_anchor.py) for make_vectors.py.
+
+The anchor is a ClockValue without a registry: the .time_anchor file plus the
+"time_anchor" field of license_state.json (clock_store.py).
+"""
 import random
 import tempfile
 from datetime import datetime
 from pathlib import Path
 
 from vector_common import b64
+from studio_app.licensing.clock_store import ClockValue
 from studio_app.licensing.time_anchor import TimeAnchor
 
 BASES = ["2026-10-14T09:54:34.341681+00:00", "2026-10-14T09:54:34+00:00", "2026-01-01T00:00:00+00:00",
@@ -63,28 +68,37 @@ def runs_texts():
             b'"at":"2026-10-14T10:00:00+00:00" "at":"2027-10-14T10:00:00-12:00"']
 
 
+def _read(path):
+    return b64(path.read_bytes()) if path.exists() else None
+
+
 def anchor_cases():
     anchors = [None, b"", b"1760000000", b" 1760000000\r\n", b"17_60", b"abc", b"-5", b"\xd9\xa3", b"9" * 40]
+    states = [None, b'{"time_anchor": "1760000100", "last_verify": 1}', b'{"time_anchor": 5}', b"[1]"]
     cases = []
     with tempfile.TemporaryDirectory() as folder:
-        anchor_file, runs_file = Path(folder) / ".time_anchor", Path(folder) / "runs.jsonl"
+        home = Path(folder)
+        anchor_file, state_file, runs_file = home / ".time_anchor", home / "license_state.json", home / "runs.jsonl"
+        value = ClockValue("time_anchor", home)
         for runs in runs_texts():
             for anchor in anchors:
-                for path, data in ((runs_file, runs), (anchor_file, anchor)):
-                    path.unlink(missing_ok=True)
-                    if data is not None:
-                        path.write_bytes(data)
-                case = {"runs": b64(runs), "anchor": None if anchor is None else b64(anchor),
-                        "max_seen": TimeAnchor(anchor_file, runs_file).max_seen(),
-                        "anchor_only": TimeAnchor(anchor_file).max_seen()}
-                advanced = {}
-                for now in (0, 1760000000, 1760000001, 1900000000):
-                    if anchor is None:
-                        anchor_file.unlink(missing_ok=True)
-                    else:
-                        anchor_file.write_bytes(anchor)
-                    TimeAnchor(anchor_file).advance(now)
-                    advanced[str(now)] = b64(anchor_file.read_bytes()) if anchor_file.exists() else None
-                case["advance"] = advanced
-                cases.append(case)
+                for state in states if runs == b"" else states[:1]:
+                    for path, data in ((runs_file, runs), (anchor_file, anchor), (state_file, state)):
+                        path.unlink(missing_ok=True)
+                        if data is not None:
+                            path.write_bytes(data)
+                    case = {"runs": b64(runs), "anchor": None if anchor is None else b64(anchor),
+                            "state": None if state is None else b64(state),
+                            "max_seen": TimeAnchor(value, runs_file).max_seen(),
+                            "anchor_only": TimeAnchor(value).max_seen()}
+                    advanced = {}
+                    for now in (0, 1760000000, 1760000001, 1900000000):
+                        for path, data in ((anchor_file, anchor), (state_file, state)):
+                            path.unlink(missing_ok=True)
+                            if data is not None:
+                                path.write_bytes(data)
+                        TimeAnchor(value).advance(now)
+                        advanced[str(now)] = [_read(anchor_file), _read(state_file)]
+                    case["advance"] = advanced
+                    cases.append(case)
     return cases

@@ -41,6 +41,7 @@ def license_steps():
     return [
         op("license", enforce=False), op("now", value=NOW),
         req("GET", "/license/status"), req("POST", "/license/trial"), req("POST", offline, {"certificate": LIFETIME}),
+        req("POST", "/license/check-online"), req("POST", "/license/trial/email-code", {"email": "a@b"}),
         req("PUT", config, {"server_url": "https://x.example"}), req("POST", act, {"license_key": "SUBS-2345"}),
         op("license", enforce=True),
         req("GET", "/license/status"), req("GET", "/license/status?x=1"),
@@ -51,6 +52,7 @@ def license_steps():
         *[req("POST", "/license/trial") for _ in range(7)],
         req("POST", "/license/trial", raw="not json", ctype="text/plain"),
         req("GET", "/license/status"),
+        *trial_email_steps(),
         op("now", value=NOW + 61), req("GET", "/license/status"),
         op("client", answers={"activate": [ok(LIFETIME), fail("This key is used on another computer.", "bound_elsewhere"),
                                            fail("No such key.", "unknown_key")],
@@ -82,6 +84,25 @@ def license_steps():
         req("GET", "/license/status"),
         op("license_file", path="home/client_config.json", data="[]"), op("now", value=NOW + 10 * DAY),
         req("GET", "/license/status"), req("PUT", config, {"server_url": "https://z"}),
+    ]
+
+
+def trial_email_steps():
+    """The email step and "Check online now" (trial hardening, change 0106)."""
+    code, check = "/license/trial/email-code", "/license/check-online"
+    return [
+        op("client", answers={"trial": [fail("Please confirm your email address.", "email_required"),
+                                        fail("Used.", "email_used"), fail("Bad code.", "bad_code")],
+                              "email-code": [ok({"status": "sent"}), fail("Mail down"), ok({}), ok([1])]}),
+        req("POST", "/license/trial", {"email": "me@company.com", "code": 123456}),
+        req("POST", "/license/trial", {"email": "", "code": "1"}), req("POST", "/license/trial", [1]),
+        req("POST", code, {"email": "me@company.com"}), req("POST", code), req("POST", code, {"email": 5}),
+        req("POST", code, raw="x", ctype="text/plain"), req("POST", code, {"email": "a@b"}),
+        req("POST", code, {"email": " a@b "}), req("POST", code, {"email": "a@b"}),
+        req("POST", check), req("POST", check, {"ignored": True}),
+        op("client", answers={"verify": [ok({"status": "valid"}),
+                                         ok({"status": "valid", "server_time": license_signer.stamp(NOW + 30)})]}),
+        req("POST", check), req("POST", check), req("GET", "/license/status"),
     ]
 
 

@@ -17,7 +17,7 @@ ERRORS = {"RuntimeError": RuntimeError, "ValueError": ValueError, "KeyError": Ke
 
 
 class LicenseClient:
-    """Canned license-server answers per call name (trial, activate, transfer, verify)."""
+    """Canned license-server answers per call name (trial, email-code, activate, transfer, verify)."""
 
     def __init__(self):
         self.answers = {}
@@ -29,8 +29,11 @@ class LicenseClient:
             raise LicenseServerError(*result["raise"])
         return json.loads(json.dumps(result["return"]))
 
-    def start_trial(self, hwid):
+    def start_trial(self, hwid, parts=None, email=None, code=None):
         return self._answer("trial")
+
+    def request_trial_code(self, hwid, email):
+        return self._answer("email-code")
 
     def activate(self, key, hwid):
         return self._answer("activate")

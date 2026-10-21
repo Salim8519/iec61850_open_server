@@ -2,44 +2,21 @@ package licensing
 
 import (
 	"io"
+	"math/big"
 	"os"
-	"strconv"
 	"strings"
 	"unicode/utf8"
-
-	"studio-engine/internal/licensing/pytext"
 )
 
 // runsTailWindow is how much of the end of runs.jsonl time_anchor.py reads.
 const runsTailWindow = 8192
 
-// TimeAnchor remembers the latest wall-clock time ScadaBench has seen, to detect clock
-// rollback (licensing/time_anchor.py). The file holds ASCII decimal epoch seconds.
+// TimeAnchor is the latest wall-clock time ScadaBench has seen, to detect clock rollback
+// (licensing/time_anchor.py): the anchor copies (Value, three places) plus the run log
+// tail. Each copy holds decimal epoch seconds.
 type TimeAnchor struct {
-	AnchorFile string
-	RunsFile   string // "" when there is no run log
-}
-
-// readAnchorInt is time_anchor._read_int: ASCII text, stripped, int(); 0 on any error.
-func readAnchorInt(path string) int64 {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return 0
-	}
-	for _, c := range data {
-		if c >= 0x80 {
-			return 0
-		}
-	}
-	text := pytext.Strip(string(data))
-	if text == "" {
-		return 0
-	}
-	value, err := pytext.ParseInt(text)
-	if err != nil {
-		return 0
-	}
-	return saturate(value)
+	Value    ClockValue
+	RunsFile string // "" when there is no run log
 }
 
 // latestRunTimestamp reads only the tail of runs.jsonl; its "at" fields are ISO-8601 times.
@@ -71,19 +48,40 @@ func latestRunTimestamp(path string) int64 {
 	return latest
 }
 
-// MaxSeen is the newest of the anchor and the run log's latest "at" time.
+// MaxSeen is the newest of the anchor copies (0 without any) and the run log's latest
+// "at" time.
 func (a TimeAnchor) MaxSeen() int64 {
-	latest := readAnchorInt(a.AnchorFile)
-	if a.RunsFile != "" {
-		latest = max(latest, latestRunTimestamp(a.RunsFile))
+	var latest *big.Int
+	for _, copy := range a.Value.ReadInts() {
+		if latest == nil || copy.Cmp(latest) > 0 {
+			latest = copy
+		}
 	}
-	return latest
+	result := int64(0)
+	if latest != nil {
+		result = saturate(latest)
+	}
+	if a.RunsFile != "" {
+		result = max(result, latestRunTimestamp(a.RunsFile))
+	}
+	return result
 }
 
-// Advance moves the anchor forward only, never backwards; write failures are ignored.
+// Advance moves the anchor forward only, and restores any copy that was deleted or
+// lowered; write failures are ignored.
 func (a TimeAnchor) Advance(now int64) {
-	if now <= readAnchorInt(a.AnchorFile) {
-		return
+	copies := a.Value.ReadInts()
+	target := big.NewInt(now)
+	for _, copy := range copies {
+		if copy.Cmp(target) > 0 {
+			target = copy
+		}
 	}
-	_ = pytext.WriteReplace(a.AnchorFile, []byte(strconv.FormatInt(now, 10)))
+	stale := len(copies) < a.Value.Places()
+	for _, copy := range copies {
+		stale = stale || copy.Cmp(target) != 0
+	}
+	if stale {
+		a.Value.Write(target.String())
+	}
 }

@@ -51,14 +51,45 @@ func (s *Service) evaluate() (Status, error) {
 	s.mu.Lock()
 	s.boundHWID = bound
 	s.mu.Unlock()
-	status, err := EvaluateCertificate(payload, bound, now, s.anchor.MaxSeen(), false)
+	var status Status
+	if plan, _ := payload.Get("type"); plan != any("trial") { // lifetime: exactly the original rule
+		status, err = EvaluateCertificate(payload, bound, now, s.anchor.MaxSeen(), false, ClockToleranceSeconds)
+		if err != nil {
+			err = uncaught(err.Error())
+		}
+	} else {
+		status, err = s.evaluateTrial(payload, bound, now)
+	}
 	if err != nil {
-		return Status{}, uncaught(err.Error())
+		return Status{}, err
 	}
 	if status.Licensed {
 		s.anchor.Advance(now)
 	}
 	return status, nil
+}
+
+// evaluateTrial is LicenseService._evaluate_trial: a missing anchor only asks for one
+// quiet online check; the rollback reference includes the signed server time.
+func (s *Service) evaluateTrial(payload *pyjson.Object, bound string, now int64) (Status, error) {
+	confirmed, err := s.trialClock.Confirmed()
+	if err != nil {
+		return Status{}, err
+	}
+	if AnchorMissing(len(s.anchor.Value.ReadInts()), confirmed) {
+		s.trialClock.MarkSuspicious(now) // never blocks now
+	}
+	status, err := EvaluateCertificate(payload, bound, now, LatestSeen(s.anchor.MaxSeen(), confirmed), false,
+		TrialClockToleranceSeconds)
+	if err != nil {
+		return Status{}, uncaught(err.Error())
+	}
+	suspicious := s.trialClock.SuspiciousSince()
+	host, err := s.ServerHost()
+	if err != nil {
+		return Status{}, err
+	}
+	return ApplyTrial(status, confirmed, suspicious, now, host), nil
 }
 
 func (s *Service) verifyText(input any) (*pyjson.Object, error) {
