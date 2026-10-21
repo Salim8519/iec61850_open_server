@@ -5,7 +5,7 @@ import { SITE } from './site';
 export interface Faq { q: string; a: string; }
 export interface FaqGroup { id: string; title: string; items: Faq[]; }
 
-export const ONE_COMPUTER_POLICY = `Each license works on one computer only. It cannot be moved to another computer. Reinstalling Windows on the same computer is fine. A new computer, a new motherboard, or a reset of the computer's security chip (TPM) needs a new license.`;
+export const ONE_COMPUTER_POLICY = `Each license works on one computer only. It cannot be moved to another computer. Reinstalling Windows on the same computer is fine. A new computer or a new motherboard needs a new license.`;
 
 export const REFUND_POLICY = `If you have not activated the license yet, we refund you in full through PayPal within ${SITE.refundDays} days of purchase. Email ${SITE.supportEmail} with your license key; the key is deactivated on refund. No refunds after a license is activated. Use the free ${SITE.trialDays}-day trial to test ScadaBench with your own SCD first.`;
 

@@ -3,6 +3,7 @@ import { buyUrl, checkOnline, isOtherComputer, type LicenseStatus } from '../../
 import { LICENSE_COPY as COPY } from '../../copy/license';
 import { KeyActivation, ServerOptions, useLicenseTask } from './LicenseActions';
 import { TrialStart } from './TrialStart';
+import { VmHostNotice } from './VmHostNotice';
 import './license-gate.css';
 
 /** Full-screen activation shown only by packaged builds that have no valid license. */
@@ -41,6 +42,7 @@ export function LicenseGate({ status, changed }: { status: LicenseStatus; change
         </section>
       </div>
       <ServerOptions status={status} changed={changed} />
+      <VmHostNotice changed={changed} />
       <p className="small muted">{COPY.safeData}</p>
     </div>
   </div>;

@@ -40,7 +40,7 @@ func TestEmailsStateTheOneComputerPolicyAndNeverMentionMoves(t *testing.T) {
 	for _, want := range []string{
 		"Each license works on one computer only. It cannot be moved to another computer.",
 		"Reinstalling Windows on the same computer is fine",
-		"A new computer, a new motherboard, or a reset of the computer's security chip (TPM) needs a new license.",
+		"A new computer or a new motherboard needs a new license.",
 		"No refunds after a license is activated.",
 	} {
 		if !strings.Contains(customer, want) {

@@ -25,6 +25,9 @@ type HTTPClient struct {
 	ServerURL  string
 	Doer       Doer
 	TestServer bool
+	// HostKey is this PC's public VM host key (base64url); activation requests carry it as
+	// "host_key" (ADR-0099). Empty means none is offered.
+	HostKey string
 }
 
 // NewHTTPClient returns a client for serverURL (a trailing "/" is dropped) that talks only
@@ -165,6 +168,9 @@ func (c *HTTPClient) proofRequestBody(body *pyjson.Object) (*pyjson.Object, erro
 
 // proofRequest posts body plus a solved proof and returns the whole answer.
 func (c *HTTPClient) proofRequest(path string, body *pyjson.Object) (any, error) {
+	if c.HostKey != "" && path == "/api/v1/activate" { // the VM host key rides along with an activation
+		body.Set("host_key", c.HostKey)
+	}
 	withProof, err := c.proofRequestBody(body)
 	if err != nil {
 		return nil, err

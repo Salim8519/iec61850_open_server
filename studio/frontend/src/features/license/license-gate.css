@@ -31,3 +31,5 @@
   .license-card { padding: 20px 16px; }
   .license-options .row { flex-wrap: wrap; }
 }
+.activation-code { display: grid; gap: 6px; }
+.activation-code .row input { flex: 1; min-width: 0; }

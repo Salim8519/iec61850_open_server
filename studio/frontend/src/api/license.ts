@@ -2,7 +2,7 @@
 // screen can show the right words. A license works on one computer only: there is no move.
 export type LicenseStatus = {
   licensed: boolean;
-  mode: 'development' | 'trial' | 'lifetime' | 'unlicensed';
+  mode: 'development' | 'trial' | 'lifetime' | 'vm-host' | 'unlicensed';
   plan: string | null;
   days_remaining: number | null;
   expires_at: number | null;
@@ -12,6 +12,8 @@ export type LicenseStatus = {
   enforced: boolean;
   server_url: string;
   masked_key: string | null;
+  /** A virtual machine licensed through its host PC (mode "vm-host", Go engine): the host's masked key. */
+  host_key?: string;
   hwid: string | null;
   /** Always false: licenses never move to another computer. Kept so older screens still read it. */
   transfer_available: boolean;

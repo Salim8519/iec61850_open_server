@@ -161,6 +161,7 @@ func (s *Service) Activate(licenseKey any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.offerHostKey(client) // the VM host key of this PC, made at the first activation (ADR-0099)
 	hwid, err := s.HWID()
 	if err != nil {
 		return nil, err

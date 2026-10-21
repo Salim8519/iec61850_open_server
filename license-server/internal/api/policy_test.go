@@ -29,7 +29,7 @@ func TestCustomerPagesStateTheOneComputerPolicyAndNeverOfferMoves(t *testing.T) 
 			"Each license works on one computer only.",
 			"cannot be moved to another computer",
 			"Reinstalling Windows on the same computer is fine.",
-			"a new motherboard, or a reset of the computer's security chip (TPM) needs a new license.",
+			"a new motherboard needs a new license.",
 		} {
 			if !strings.Contains(text, want) {
 				t.Fatalf("%s misses %q", path, want)

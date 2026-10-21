@@ -101,10 +101,15 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 | `PUT /project/test-panel` | test array | Stopped-only validated panel save |
 | `POST /traces/preview` | CSV multipart `file` | Five-row preview, columns and row count |
 | `GET /events` | `after` or `Last-Event-ID` | SSE replay, heartbeat and `resync` marker |
-| `GET /license/status` | - | `licensed, mode, plan, days_remaining, expires_at, reason, hwid, server_url, masked_key` |
+| `GET /license/status` | - | `licensed, mode, plan, days_remaining, expires_at, reason, hwid, server_url, masked_key`; Go engine only, for a virtual machine licensed by its host PC: `mode: "vm-host"` and the masked `host_key` (ADR-0099) |
 | `POST /license/trial` | - | Start the one trial via the license server; saves `license.cert` |
 | `POST /license/activate` | `license_key` | Activate a lifetime key online; `move: true` answers 400 `moves_disabled` (licenses never move, ADR-0097) |
 | `POST /license/activate-offline` | `certificate` text | Verify and save a pasted/loaded `license.cert` |
+| `GET /license/host-key` | - | Go engine only (ADR-0099): can this PC share its lifetime license with its virtual machines: `available, reason` (plain words when not), `key` (masked), `enabled` (the Run value), `running` (the helper), `helper_found`, `port` (47862) |
+| `PUT /license/host-key` | `enabled` | Switch "Let my virtual machines use this license" on (needs a shareable license, starts the helper) or off (always allowed, the helper ends itself); Go engine only |
+| `GET /license/host-key/firewall` | - | The one Windows Firewall rule the helper needs, as a preview (`items`, `fingerprint`, `open`, `needs_admin`); Go engine only |
+| `POST /license/host-key/firewall` | `fingerprint`, `confirm: true` | Add that rule through the network helper after the reviewed preview (journaled, removed by Clean up); Go engine only |
+| `GET /license/activation-code` | - | `code` = `<machine ID>.<host key>` for the offline activation page; 400 `development` in development mode; Go engine only |
 | `GET /app/update` | - | `current, auto, checked_at, checking, error, available, important, dismissed, latest` (ADR-0071; stored answer, no internet call) |
 | `POST /app/update/check` | - | Ask the license server now (a repeat within 60 s reuses the answer); failures are an `error` code, never a 5xx |
 | `PUT /app/update` | `{auto?: bool, dismissed?: version or null}` | Once-a-day switch; hide the note for one version (not for an important update) |

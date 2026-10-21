@@ -16,8 +16,10 @@ int base64_value(char c) {
     return -1;
 }
 
+}  // namespace
+
 // Decode base64url or standard base64, with or without padding.
-bool decode_base64(const std::string& text, std::vector<std::uint8_t>& out) {
+bool decode_base64url(const std::string& text, std::vector<std::uint8_t>& out) {
     unsigned buffer = 0;
     int bits = 0;
     for (char c : text) {
@@ -33,8 +35,6 @@ bool decode_base64(const std::string& text, std::vector<std::uint8_t>& out) {
     }
     return true;
 }
-
-}  // namespace
 
 std::string key_id(const PublicKey& key) {
     return sha256_hex(std::string(reinterpret_cast<const char*>(key.data()), key.size())).substr(0, 8);
@@ -53,7 +53,7 @@ BundleCheck check_signed_bundle(const nlohmann::json& input, const std::vector<P
     }
     std::vector<std::uint8_t> signature;
     if (!bundle.contains("signature") || !bundle.at("signature").is_string() ||
-        !decode_base64(bundle.at("signature").get<std::string>(), signature) || signature.size() != 64) {
+        !decode_base64url(bundle.at("signature").get<std::string>(), signature) || signature.size() != 64) {
         return BundleCheck::unreadable_signature;
     }
     const std::string kid = payload.is_object() ? payload.value("kid", "") : "";

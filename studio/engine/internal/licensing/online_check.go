@@ -29,6 +29,9 @@ func (s *Service) VerifyOnlineIfDue(trialOnly bool) (any, error) {
 	if err != nil {
 		return nil, err
 	}
+	if status.Mode == ModeVMHost { // the host's license is not this computer's: nothing to ask the server
+		return nil, nil
+	}
 	if status.Plan == "trial" && truthy(status.LicenseID) && (status.Licensed || status.OnlineCheckRequired) {
 		confirmed, err := s.trialClock.Confirmed()
 		if err != nil {

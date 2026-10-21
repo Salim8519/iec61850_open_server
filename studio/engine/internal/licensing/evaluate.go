@@ -8,8 +8,9 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// evaluate is LicenseService._evaluate: integrity, revoked reason, certificate, policy.
-func (s *Service) evaluate() (Status, error) {
+// evaluateOwn is LicenseService._evaluate: integrity, revoked reason, certificate, policy. evaluate
+// (vm_evaluate.go) adds the proof of a licensed host for a virtual machine without a license.
+func (s *Service) evaluateOwn() (Status, error) {
 	if !s.options.Enforce {
 		return DevelopmentStatus(), nil
 	}
@@ -149,7 +150,7 @@ func (s *Service) Status() (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	result := current.Object()
+	result := s.statusObject(current)
 	serverURL, hwid := "", any(nil)
 	if s.options.Enforce {
 		if serverURL, err = s.ServerURL(); err != nil {

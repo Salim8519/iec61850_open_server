@@ -6,6 +6,7 @@ import (
 	"studio-engine/internal/api"
 	"studio-engine/internal/api/platformapi"
 	"studio-engine/internal/licensing"
+	"studio-engine/internal/licensing/hostkey"
 	"studio-engine/internal/netcfg"
 	"studio-engine/internal/updates"
 )
@@ -23,7 +24,9 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	if e.License == nil {
 		e.License = licensing.New(licensing.Options{Home: home, DataDir: o.DataDir, Enforce: o.Enforce,
 			NativeFolder: o.NativeDir, ExpectedFiles: o.NativeSeal, Logf: o.Logf,
-			Registry: licensing.WindowsRegistry{}}) // real trial parts: Parts nil
+			Registry: licensing.WindowsRegistry{}, // real trial parts: Parts nil
+			HostKey: licensing.HostKeyOptions{Protector: hostkey.System(), // VM host key (ADR-0099)
+				VM: &licensing.VMOptions{}}})
 
 	}
 	if e.Updates == nil {
@@ -43,6 +46,7 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	e.Network = network
 	e.wireSNMPNetwork(network, projectNetwork)
 	firewall := netcfg.NewGatewayFirewall(network, e.Gateway.Executable, netcfg.SystemExecutor{})
-	return platformapi.New(platformapi.Deps{License: e.License, Updates: e.Updates, Network: network,
-		Firewall: firewall, Projects: projectNetwork, Runtime: e.Runtime, AppVersion: o.Version}).Routes(), nil
+	routes := platformapi.New(platformapi.Deps{License: e.License, Updates: e.Updates, Network: network,
+		Firewall: firewall, Projects: projectNetwork, Runtime: e.Runtime, AppVersion: o.Version}).Routes()
+	return append(routes, e.hostKeyRoutes(network)...), nil
 }

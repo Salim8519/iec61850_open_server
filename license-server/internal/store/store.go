@@ -54,6 +54,9 @@ type License struct {
 	Reason      string  `json:"reason,omitempty"`
 	OrderID     string  `json:"order_id,omitempty"`
 	Transfers   []int64 `json:"transfers,omitempty"` // legacy: read from old records, never written
+	// HostKey is the newest public VM host key the licensed PC sent at activation (ADR-0099), so a
+	// certificate made again by the owner tool keeps it.
+	HostKey string `json:"host_key,omitempty"`
 	// Note is the owner's own label, for example "Ahmed, friend" (owner page only).
 	Note string `json:"note,omitempty"`
 }

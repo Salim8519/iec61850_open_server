@@ -1,6 +1,7 @@
 // Plain-language wording for licensing. Shown on the license screen and in Settings.
 import type { LicenseStatus } from '../api/license';
 import type { Status } from './status';
+import { vmHostState } from './vmHost.ts';
 
 export const LICENSE_COPY = {
   title: 'Activate ScadaBench',
@@ -29,8 +30,8 @@ export const LICENSE_COPY = {
   serverHint: 'ScadaBench always asks its own license server. This address cannot be changed.',
   offlineTitle: 'Offline activation (computer without internet)',
   offlineSteps: [
-    'Copy the Machine ID above (for example into a text file on a USB stick).',
-    'On any computer with internet, open the offline activation page and enter your key and the Machine ID.',
+    'Copy the activation code above, or the Machine ID if no code is shown (for example into a text file on a USB stick).',
+    'On any computer with internet, open the offline activation page and enter your key and that code.',
     'Bring the downloaded license.cert back to this computer and load it below.',
   ],
   loadFile: 'Load license file',
@@ -43,6 +44,7 @@ export function licenseState(status: LicenseStatus): Status {
   if (status.mode === 'development') {
     return { label: 'Development mode', tone: 'info', hint: 'Licensing is off while developing. Packaged builds check the license.' };
   }
+  if (status.mode === 'vm-host') return vmHostState(status);
   if (status.mode === 'lifetime') {
     return { label: 'Lifetime license', tone: 'good', hint: 'This computer is licensed. No further action is needed.' };
   }

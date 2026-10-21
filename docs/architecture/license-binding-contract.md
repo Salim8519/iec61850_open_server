@@ -32,18 +32,30 @@ user turns on "Let my virtual machines use this license" (Settings > License). I
 - listens on TCP port 47862 only on virtual-switch host adapters (Hyper-V "vEthernet",
   VMware "VMnet1/VMnet8", VirtualBox "Host-Only"), never on physical adapters;
 - request (one JSON line): `{"nonce": 32 hex, "vm_hwid": 64 hex}`; answer (one JSON
-  line): `{"certificate": <host license.cert object>, "signature": base64url Ed25519 over
-  the bytes "scadabench-vm-proof-v1|" + nonce + "|" + vm_hwid}`; rate-limited.
+  line): `{"certificate": <host license.cert object>, "time": <host's Unix seconds, an
+  integer>, "signature": base64url Ed25519 over the bytes "scadabench-vm-proof-v2|" +
+  nonce + "|" + vm_hwid + "|" + time (decimal)}`; rate-limited. The time is signed, so
+  nobody can make a proof younger than the host made it. There is no v1: the unsigned form
+  never shipped.
 The inbound firewall rule for port 47862 on those adapters is added only through the
 existing network helper with its preview (journaled, removable), per AGENTS.md.
 
 VM side (inside a VM without its own valid license): find candidate hosts (default
 gateway and the `.1` of each local IPv4 subnet), send a fresh nonce, accept only when the
 certificate verifies with the release keys, is `lifetime`, not cancelled locally, has a
-`host_key`, and the signature verifies for this nonce and this VM's machine ID. Then the
-status is licensed with plan "lifetime", mode "vm-host" and the masked host key. Proof is
-re-done at every start; the Go backend writes `vm_proof.json` (certificate, nonce,
-vm_hwid, signature, time) for the native guard, which accepts it only for its own machine
-ID and when `time` is within 24 h. A VM with its own license works as any computer.
+`host_key`, the answer's `time` is within 600 s of the VM's own clock (a host or VM with a
+wrong clock is refused, in plain words), and the signature verifies for this nonce, this
+VM's machine ID and exactly that time. Then the status is licensed with plan "lifetime",
+mode "vm-host" and the masked host key. The Go backend writes `vm_proof.json`
+(certificate, nonce, vm_hwid, signature, time = the signed time, an integer) beside
+license.cert. Both the Go backend (which reads the file back at start) and the native
+guard accept the file only when: the certificate is genuine, lifetime, not cancelled (three
+places) and has a `host_key`; `vm_hwid` is this machine's ID; the signature verifies with
+that `host_key` over that exact `time`; and `-600 <= now - time <= 24 h`. Editing `time`
+therefore breaks the signature. The same clock-rollback anchor the license uses
+(`.time_anchor`, three places, run log; max-seen) also applies: a proof is refused when
+`max_seen - time > 24 h`, and the Go backend advances the anchor while it holds a proof (live
+or just expired), so setting the VM clock back cannot revive an old proof. A proof is renewed
+in the background after 6 h. A VM with its own license works as any computer.
 VM detection is not needed for security (a physical PC can also use a host proof only if
 it sits behind a licensed host on a virtual switch, which is harmless).

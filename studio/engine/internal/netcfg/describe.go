@@ -20,6 +20,13 @@ func Describe(item *pyjson.Object) (string, error) {
 			text = "Allow other devices to reach the simulated SNMP devices on UDP port " + f.joined("ports", ", ") +
 				" through Windows Firewall"
 		}
+	case HostKeyKind:
+		if f.text("action") == "keep" {
+			text = "The Windows Firewall rule for virtual machine licensing already exists"
+		} else {
+			text = "Allow virtual machines on this PC to ask it for its ScadaBench license (TCP port " +
+				f.joined("ports", ", ") + ", only from the same virtual network) through Windows Firewall"
+		}
 	case "unblock":
 		text = "Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its " +
 			"'allow access?' question was closed); clean-up switches it on again"
@@ -50,6 +57,8 @@ func DescribeRemoval(item *pyjson.Object) (string, error) {
 		text = "Remove the Windows Firewall rule that ScadaBench added for its gateway"
 	case "snmp_firewall":
 		text = "Remove the Windows Firewall rule that ScadaBench added for the simulated SNMP devices"
+	case HostKeyKind:
+		text = "Remove the Windows Firewall rule that ScadaBench added for virtual machine licensing"
 	case "unblock":
 		text = "Switch the Windows Firewall rule that blocked the gateway on again, as it was before"
 	case "alias":

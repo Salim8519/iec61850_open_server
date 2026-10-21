@@ -68,3 +68,21 @@ Type: filesandordirs; Name: "{app}\_internal"
 
 [Messages]
 FinishedLabel=ScadaBench is installed. Your projects and license are kept in your user folder, so reinstalling or updating never deletes them.
+
+[UninstallRun]
+; The virtual machine helper (ADR-0099) is optional and starts at Windows logon through a per-user
+; Run value that the app writes when "Let my virtual machines use this license" is switched on.
+; Uninstalling ends the helper and removes that value so nothing points at a deleted program.
+Filename: "{sys}\taskkill.exe"; Parameters: "/F /IM scadabench_hostkey.exe"; Flags: runhidden; RunOnceId: "StopVmHelper"
+Filename: "{sys}\reg.exe"; Parameters: "delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v ScadaBenchVMHost /f"; Flags: runhidden; RunOnceId: "RemoveVmHelperRun"
+
+[Code]
+// An update replaces the helper's program file, so a running helper is ended first. It is started
+// again the next time ScadaBench opens (or at the next Windows logon) while sharing stays switched on.
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+var
+  ExitCode: Integer;
+begin
+  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM scadabench_hostkey.exe', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
+  Result := '';
+end;
