@@ -36,6 +36,6 @@ ClockState read_clock_state(const std::string& directory, const std::vector<Publ
 // 3 days only after every anchor copy went missing. Server outages never stop a trial.
 // A genuine certificate whose license ID is in clock.revoked is refused ("cancelled").
 Verdict verify_license(const std::string& text, const std::vector<PublicKey>& keys, const std::string& hwid,
-                       long long now, const ClockState& clock, long long hwid_issued_before = 0);
+                       long long now, const ClockState& clock);
 
 }  // namespace license

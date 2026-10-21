@@ -52,8 +52,10 @@ func (s *Service) requireEnforced() error {
 	return nil
 }
 
-// install is LicenseService._install: verify, check it fits this PC, then store it.
-func (s *Service) install(input any) (*pyjson.Object, error) {
+// install is LicenseService._install: verify, check it fits this PC, then store it. chip is
+// the new attestation key of a chip-bound activation (nil otherwise); install keeps its blob
+// as ak.blob and marks it stored.
+func (s *Service) install(input any, chip *chipEnrollment) (*pyjson.Object, error) {
 	bundle, err := ParseBundle(input)
 	if err != nil {
 		return nil, err
@@ -66,7 +68,7 @@ func (s *Service) install(input any) (*pyjson.Object, error) {
 		return nil, &ActionError{Message: RevokedText, Code: "not_valid_here"}
 	}
 	now := s.now()
-	bound, err := s.machineFor(payload)
+	bound, err := s.HWID()
 	if err != nil {
 		return nil, err
 	}
@@ -81,24 +83,56 @@ func (s *Service) install(input any) (*pyjson.Object, error) {
 		}
 		return nil, &ActionError{Message: reason, Code: "not_valid_here"}
 	}
-	if err := s.storeCertificate(bundle, now, s.trialStamp(input, payload)); err != nil {
+	var previousKey []byte
+	if chip != nil && certAK(payload) != "" {
+		if previousKey, err = s.storeChipKey(chip); err != nil {
+			return nil, err
+		}
+		chip.stored = true
+	}
+	if err := s.storeCertificate(bundle, now, s.afterInstall(input, payload)); err != nil {
+		if chip != nil && chip.stored {
+			s.restoreChipKey(previousKey)
+		}
 		return nil, err
+	}
+	if len(previousKey) > 0 {
+		s.options.Chip.Forget(previousKey) // the key of the license this one replaces
 	}
 	return s.Status()
 }
 
-// trialStamp is the signed server time a trial answer carries (a decoded server answer
-// may have "server_time"); nil when there is none to remember.
-func (s *Service) trialStamp(input any, payload *pyjson.Object) func() error {
+// afterInstall is what is remembered once the certificate is stored: a trial's signed server
+// time, and a lease license's token (a new activation starts a new lease, so the old signed
+// answer goes). It returns nil when there is nothing to remember.
+func (s *Service) afterInstall(input any, payload *pyjson.Object) func() error {
 	answer, isObject := input.(*pyjson.Object)
-	if plan, _ := payload.Get("type"); plan != any("trial") || !isObject {
+	if !isObject {
 		return nil
 	}
+	plan, _ := payload.Get("type")
 	stamp, _ := answer.Get("server_time")
-	return func() error {
-		_, err := s.trialClock.Remember(stamp)
-		return err
+	switch {
+	case plan == any("trial"):
+		return func() error {
+			_, err := s.trialClock.Remember(stamp)
+			return err
+		}
+	case leaseDays(payload) > 0 && certAK(payload) == "":
+		token, _ := lookupString(answer, "lease_token")
+		return func() error {
+			s.lease.ClearReceipt()
+			if ValidLeaseToken(token) {
+				at, _, _ := VerifyServerTime(stamp, s.options.Keys)
+				if at == 0 {
+					at = s.now()
+				}
+				s.lease.SetToken(at, token)
+			}
+			return nil
+		}
 	}
+	return nil
 }
 
 // storeCertificate writes license.cert (indent=2), clears the revoked reason, records
@@ -165,11 +199,19 @@ func (s *Service) Activate(licenseKey any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	bundle, err := client.Activate(key, hwid)
+	bundle, chip, err := s.activateOnline(client, key, hwid)
 	if err != nil {
 		return nil, err
 	}
-	return s.install(bundle)
+	status, err := s.install(bundle, chip)
+	if chip != nil {
+		if err != nil || !chip.stored {
+			chip.enrolled.Discard() // the key is not used: do not leave it in the chip's store
+		} else {
+			chip.enrolled.Close()
+		}
+	}
+	return status, err
 }
 
 // ActivateOffline installs a pasted license.cert (text or decoded object).
@@ -177,7 +219,7 @@ func (s *Service) ActivateOffline(certificate any) (*pyjson.Object, error) {
 	if err := s.requireEnforced(); err != nil {
 		return nil, err
 	}
-	status, err := s.install(certificate)
+	status, err := s.install(certificate, nil)
 	var bad *CertificateError
 	if errors.As(err, &bad) {
 		return nil, &ActionError{Message: bad.Message, Code: "bad_certificate"}

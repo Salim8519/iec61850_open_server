@@ -1,14 +1,14 @@
 // Test-only command line for the native license guard (never packaged).
-//   studio_license_check hwid
-//   studio_license_check compose GUID SERIAL_HEX
-//   studio_license_check legacy-hwid
-//   studio_license_check compose-legacy GUID SERIAL_HEX
-//   studio_license_check verify CERT_FILE PUBLIC_KEY_HEX HWID NOW [ANCHOR] [ISSUED_BEFORE]
+//   studio_license_check hwid                                (this computer's machine ID v3)
+//   studio_license_check compose FIRMWARE_HEX BOARD_SERIAL MACHINE_GUID   (any may be "")
+//   studio_license_check smbios RAW_SMBIOS_HEX               (prints "<system UUID>|<board serial>")
+//   studio_license_check verify CERT_FILE PUBLIC_KEY_HEX HWID NOW [ANCHOR]
 //   studio_license_check verify-clock CERT_FILE PUBLIC_KEY_HEX HWID NOW FOLDER   (no registry)
 //   studio_license_check enforced
 #include "license_guard.hpp"
 #include "integrity.hpp"
 #include "license_clock.hpp"
+#include "machine_id.hpp"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -33,22 +33,21 @@ int main(int argc, char** argv) {
             std::cout << license::compute_hwid() << std::endl;
             return 0;
         }
-        if (command == "legacy-hwid") {
-            std::cout << license::compute_legacy_hwid() << std::endl;
-            return 0;
-        }
-        if (command == "compose-legacy" && argc >= 4) {
-            auto serial = static_cast<std::uint32_t>(std::stoul(argv[3], nullptr, 16));
-            std::cout << license::compose_legacy_hwid(argv[2], serial) << std::endl;
-            return 0;
-        }
         if (command == "enforced") {
             std::cout << (license::enforced() ? 1 : 0) << std::endl;
             return 0;
         }
-        if (command == "compose" && argc >= 4) {
-            auto serial = static_cast<std::uint32_t>(std::stoul(argv[3], nullptr, 16));
-            std::cout << license::compose_hwid(argv[2], serial, argc > 4 ? argv[4] : "") << std::endl;
+        if (command == "compose" && argc == 5) {
+            std::cout << license::compose_hwid(argv[2], argv[3], argv[4]) << std::endl;
+            return 0;
+        }
+        if (command == "smbios" && argc == 3) {
+            const std::string hex = argv[2];
+            std::vector<std::uint8_t> raw;
+            for (std::size_t i = 0; i + 1 < hex.size(); i += 2) {
+                raw.push_back(static_cast<std::uint8_t>(std::stoul(hex.substr(i, 2), nullptr, 16)));
+            }
+            std::cout << license::smbios_system_uuid(raw) << "|" << license::smbios_board_serial(raw) << std::endl;
             return 0;
         }
         if (command == "verify" && argc >= 6) {
@@ -62,9 +61,7 @@ int main(int argc, char** argv) {
                 key[i] = static_cast<std::uint8_t>(std::stoul(hex.substr(i * 2, 2), nullptr, 16));
             }
             long long anchor = argc > 6 ? std::atoll(argv[6]) : 0;
-            long long issued_before = argc > 7 ? std::atoll(argv[7]) : 0;
-            auto verdict = license::verify_certificate_text(text.str(), {key}, argv[4], std::atoll(argv[5]), anchor,
-                                                            issued_before);
+            auto verdict = license::verify_certificate_text(text.str(), {key}, argv[4], std::atoll(argv[5]), anchor);
             std::cout << (verdict.ok ? "ok" : "fail: " + verdict.reason) << std::endl;
             return verdict.ok ? 0 : 1;
         }

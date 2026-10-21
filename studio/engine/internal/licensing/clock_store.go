@@ -20,10 +20,12 @@ import (
 // RegistryKey is the per-user key that holds the registry copies.
 const RegistryKey = `Software\ScadaBench`
 
-// registryNames are the value names of time_anchor, server_time, grace_start and
-// revoked_ids (the cancelled license IDs, see revoked_ids.go).
+// registryNames are the value names of time_anchor, server_time, grace_start,
+// revoked_ids (the cancelled license IDs, see revoked_ids.go) and the lease_token and
+// lease_answer of lease licenses (see lease.go).
 var registryNames = map[string]string{"time_anchor": "TimeAnchor", "server_time": "ServerTime",
-	"grace_start": "GraceStart", "revoked_ids": "RevokedLicenses"}
+	"grace_start": "GraceStart", "revoked_ids": "RevokedLicenses", "lease_token": "LeaseToken",
+	"lease_answer": "LeaseAnswer"}
 
 // Registry is the registry place: string values under one key. Get reports false for a
 // missing, unreadable or non-REG_SZ value; Set ignores every failure.
@@ -133,11 +135,12 @@ func writePatiently(path string, data []byte) {
 		}
 		time.Sleep(writeRetryDelay)
 	}
+	_ = os.Remove(path + ".tmp") // a write that never succeeded leaves no half-written file behind
 }
 
 const (
-	writeAttempts   = 10
-	writeRetryDelay = 30 * time.Millisecond
+	writeAttempts   = 20
+	writeRetryDelay = 40 * time.Millisecond
 )
 
 // universalNewlines is read_text's newline translation ("\r\n" and "\r" become "\n").

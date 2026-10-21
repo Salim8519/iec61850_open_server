@@ -10,8 +10,9 @@ import (
 	"unsafe"
 )
 
-// Read-only Windows calls behind hwid.py: one registry value, the system drive's volume
-// serial and the raw SMBIOS table. Nothing is ever written.
+// Read-only Windows calls behind the machine ID: the raw SMBIOS table, the MachineGuid
+// registry value (only for PCs without firmware identity) and, for trial parts, the system
+// drive's volume serial. Nothing is ever written.
 const (
 	keyWow6464Key = 0x0100
 	rsmbProvider  = 0x52534D42 // 'RSMB' raw SMBIOS firmware table provider
@@ -23,18 +24,15 @@ var (
 	procFirmwareTable     = kernel32.NewProc("GetSystemFirmwareTable")
 )
 
-func readMachineParts(withFirmware bool) (MachineParts, error) {
-	guid, err := machineGUID()
-	if err != nil {
-		return MachineParts{}, err
-	}
-	serial, err := volumeSerial()
-	if err != nil {
-		return MachineParts{}, err
-	}
-	parts := MachineParts{MachineGUID: guid, VolumeSerial: serial}
-	if withFirmware {
-		parts.FirmwareUUID = firmwareUUID()
+func readMachineParts() (MachineParts, error) {
+	table := smbiosTable()
+	parts := MachineParts{FirmwareUUID: SMBIOSSystemUUID(table), BoardSerial: SMBIOSBoardSerial(table)}
+	if CleanFirmwareUUID(parts.FirmwareUUID) == "" && CleanBoardSerial(parts.BoardSerial) == "" {
+		guid, err := machineGUID() // only PCs without firmware identity fall back to this
+		if err != nil {
+			return MachineParts{}, err
+		}
+		parts.MachineGUID = guid
 	}
 	return parts, nil
 }
@@ -77,21 +75,24 @@ func volumeSerial() (uint32, error) {
 	return serial, nil
 }
 
-// firmwareUUID is the SMBIOS system UUID, or "" when the table cannot be read.
-func firmwareUUID() string {
+// smbiosTable is the raw SMBIOS firmware table (RawSMBIOSData), or nil when unreadable.
+func smbiosTable() []byte {
 	if procFirmwareTable.Find() != nil {
-		return ""
+		return nil
 	}
 	size, _, _ := procFirmwareTable.Call(rsmbProvider, 0, 0, 0)
 	if size == 0 {
-		return ""
+		return nil
 	}
 	buffer := make([]byte, size)
 	if got, _, _ := procFirmwareTable.Call(rsmbProvider, 0, uintptr(unsafe.Pointer(&buffer[0])), size); got == 0 {
-		return ""
+		return nil
 	}
-	return SMBIOSSystemUUID(buffer)
+	return buffer
 }
+
+// firmwareUUID is the SMBIOS system UUID, or "" when the table cannot be read.
+func firmwareUUID() string { return SMBIOSSystemUUID(smbiosTable()) }
 
 // readRawTrialParts is what trial_parts.machine_parts reads; unreadable parts stay nil.
 func readRawTrialParts() RawTrialParts {

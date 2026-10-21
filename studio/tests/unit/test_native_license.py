@@ -1,10 +1,11 @@
-"""The native guard verifies the same certificates and machine ID as Python."""
+"""The native guard verifies the same certificates as Python and the same machine ID v3 as the Go engine."""
 import json
 import os
 from pathlib import Path
 import subprocess
 import pytest
 from license_signer import HWID, bundle, public_key
+import hwid_v3
 from studio_app.licensing import hwid
 
 STUDIO = Path(__file__).resolve().parents[2]
@@ -24,22 +25,43 @@ def verify(tmp_path, text, machine=HWID, now=NOW, anchor=0, key=None):
     return run("verify", path, (key or public_key()).hex(), machine, now, anchor)
 
 
-def test_native_machine_id_matches_python():
-    assert run("hwid").stdout.strip() == hwid.machine_id()
-    assert run("compose", " 1A2B-CCCC ", "a1b2c3d4", "aabbcc").stdout.strip() == \
-        hwid.compose(" 1A2B-CCCC ", 0xA1B2C3D4, "aabbcc")
+def test_native_machine_id_v3_matches_the_independent_reference():
+    """ADR-0098: firmware UUID + board serial (MachineGuid only when both are placeholders)."""
+    assert run("hwid").stdout.strip() == hwid_v3.machine_id()
+    assert run("hwid").stdout.strip() != hwid.machine_id()  # nothing of the older v2 ID is left
+    cases = json.loads((STUDIO / "tests/fixtures/licensing/hwid_v3.json").read_text(encoding="utf-8"))["cases"]
+    assert len(cases) >= 10
+    for case in cases:
+        assert hwid_v3.compose(case["firmware"], case["board"], case["guid"]) == case["hwid"], case["name"]
+        native = run("compose", case["firmware"], case["board"], case["guid"]).stdout.strip()
+        assert native == case["hwid"], case["name"]
 
 
-def test_native_legacy_machine_id_and_cutoff_match_python(tmp_path):
-    assert run("legacy-hwid").stdout.strip() == hwid.legacy_machine_id()
-    assert run("compose-legacy", " 1A2B-CCCC ", "a1b2c3d4").stdout.strip() == \
-        hwid.compose_legacy(" 1A2B-CCCC ", 0xA1B2C3D4)
-    path = tmp_path / "license.cert"
-    path.write_text(bundle(), encoding="utf-8")
-    cutoff = hwid.LEGACY_ISSUED_BEFORE
-    assert run("verify", path, public_key().hex(), HWID, NOW, 0, cutoff).stdout.strip() == "ok"
-    path.write_text(bundle(issued_at=cutoff), encoding="utf-8")
-    assert "another computer" in run("verify", path, public_key().hex(), HWID, cutoff + 1, 0, cutoff).stdout
+def test_native_reads_the_system_uuid_and_board_serial_like_the_reference():
+    system = hwid_v3.structure(1, 27, "Maker", "Product", serial_index=2)
+    system = system[:8] + bytes.fromhex("7a1b2c3d4e5f60718293a4b5c6d7e8f9") + system[24:]
+    board = hwid_v3.structure(2, 15, "Board maker", "Board", "SN-4711", serial_index=3)
+    cases = {
+        "both": (hwid_v3.blob(hwid_v3.structure(0, 24, "Vendor"), system, board), "SN-4711"),
+        "serial number 0 means none": (hwid_v3.blob(system, hwid_v3.structure(2, 15, "M", "B", serial_index=0)), ""),
+        "serial number beyond the set": (hwid_v3.blob(hwid_v3.structure(2, 15, "M", serial_index=9)), ""),
+        "baseboard without strings": (hwid_v3.blob(hwid_v3.structure(2, 15, serial_index=1)), ""),
+        "first baseboard wins": (hwid_v3.blob(hwid_v3.structure(2, 15, "FIRST", serial_index=1),
+                                              hwid_v3.structure(2, 15, "SECOND", serial_index=1)), "FIRST"),
+        "no baseboard": (hwid_v3.blob(system), ""),
+        "baseboard too short for a serial": (hwid_v3.blob(hwid_v3.structure(2, 6, "M")), ""),
+        "truncated table": (bytes(8) + bytes([2, 15, 0, 0, 1]), ""),
+    }
+    for name, (raw, serial) in cases.items():
+        expected_uuid = hwid_v3.system_uuid(raw)
+        assert hwid_v3.board_serial(raw) == serial, name
+        assert run("smbios", raw.hex()).stdout.strip() == expected_uuid + "|" + serial, name
+    assert hwid_v3.system_uuid(cases["both"][0]) == "7a1b2c3d4e5f60718293a4b5c6d7e8f9"
+    # The real table of this computer parses the same everywhere.
+    real = hwid_v3.raw_table()
+    if len(real) > 8:
+        out = run("smbios", real.hex()).stdout.strip()
+        assert out == hwid_v3.system_uuid(real) + "|" + hwid_v3.board_serial(real)
 
 
 def test_native_verifies_signed_module_and_rejects_tampering(tmp_path):

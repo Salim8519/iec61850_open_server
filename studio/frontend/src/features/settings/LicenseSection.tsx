@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { buyUrl, getLicenseStatus, type LicenseStatus } from '../../api/license';
-import { licenseState } from '../../copy/license';
+import { bindingText, LICENSE_COPY, licenseState } from '../../copy/license';
 import { StatusPill } from '../../ui/StatusPill';
 import { Spinner } from '../../ui/Spinner';
 import { KeyActivation, ServerOptions } from '../license/LicenseActions';
@@ -19,6 +19,8 @@ export function LicenseSection() {
   if (status.app_version) rows.push(['Version', status.app_version]);
   if (status.masked_key) rows.push(['License key', status.masked_key]);
   if (status.email) rows.push(['Licensed to', status.email]);
+  const binding = bindingText(status);
+  if (binding) rows.push([LICENSE_COPY.bindingLabel, binding]);
   if (status.expires_at) rows.push(['Trial ends', new Date(status.expires_at * 1000).toLocaleString()]);
   return <div className="card">
     <div className="card-heading"><h2>License</h2><StatusPill status={state} /></div>
