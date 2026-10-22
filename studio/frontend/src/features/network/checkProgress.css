@@ -4,3 +4,5 @@
 .check-free { color: var(--success); }
 .check-in_use { color: var(--error); font-weight: 600; }
 .check-checking, .check-not_checked { color: var(--text-2); }
+/* The apply button while the addresses are checked: full colour, spinner and words, not greyed out. */
+button.primary.is-checking:disabled { opacity: 1; cursor: progress; }

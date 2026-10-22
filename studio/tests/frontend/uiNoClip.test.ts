@@ -80,3 +80,10 @@ test('Devices and SLD: sheet buttons wrap, names never go empty, copied and reas
   assert.match(read('features/diagram/SldImport.tsx'), /\[\.\.\.new Set\(item\.reasons\)\]\.join/);
   assert.match(read('features/devices/deviceFilters.ts'), /search: 'Search name or path'/);
 });
+
+test('network apply button shows a spinner and words while addresses are checked, not a grey button', () => {
+  const setup = read('features/network/NetworkSetup.tsx');
+  assert.match(setup, /const waiting = !!guid && !error && \(outdated \|\| checking\) && !applying;/);
+  assert.match(setup, /waiting \? 'Checking the addresses…'/);
+  assert.match(rule(read('features/network/checkProgress.css'), 'button.primary.is-checking:disabled'), /opacity: 1/);
+});

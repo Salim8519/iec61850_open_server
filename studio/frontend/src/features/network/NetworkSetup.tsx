@@ -64,6 +64,8 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     return () => window.clearTimeout(timer);
   }, [guid, loopback, manual, result]);
   const outdated = answered !== manual;
+  // While the addresses are being checked the apply button says so with a spinner, in full colour.
+  const waiting = !!guid && !error && (outdated || checking) && !applying;
   const firstAnswers = useMemo(() => preview ? provisionalChecks(preview.rows, manual, answered, adapters, guid) : {},
     [preview, manual, answered, adapters, guid]);
   // "This PC only": the private loopback addresses; no network card and no Windows change.
@@ -120,9 +122,10 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     <div className="row">
       {loopback ? <button className="primary" disabled={applying} onClick={useLoopback}>
         {applying ? <SpinIcon /> : <Check size={16} />}Use this PC only</button>
-      : <button className="primary" disabled={!preview?.ready || outdated || checking || applying} onClick={apply}>
-        {applying ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
-          : putLabel(count, preview?.adapter.name, snmp)}</button>}
+      : <button className={`primary${waiting ? ' is-checking' : ''}`} aria-busy={waiting || applying}
+        disabled={!preview?.ready || waiting || applying} onClick={apply}>
+        {applying || waiting ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
+          : waiting ? 'Checking the addresses…' : putLabel(count, preview?.adapter.name, snmp)}</button>}
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>
     </div>
     {applying && !loopback && <p className="small muted" style={{ margin: 0 }}>{hint('network.approving')}</p>}
