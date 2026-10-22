@@ -20,6 +20,11 @@ const QUERY: Record<Exclude<PointType, 'command'>, { kinds: string[]; pointKind:
   value: { kinds: POINT_SIGNAL_KINDS.value, pointKind: 'MV', fc: 'MX' },
 };
 const TYPES = ['status', 'double', 'value', 'command'] as const;
+/** Value rows read a measured number (MX) or a whole-number status (ST INT…: tap position, counter). */
+type ValueSource = 'MX' | 'ST';
+const WHOLE_STATUS = { kinds: POINT_SIGNAL_KINDS.value.filter(kind => kind.startsWith('INT')), fc: 'ST' };
+const queryFor = (type: Exclude<PointType, 'command'>, source: ValueSource) =>
+  type === 'value' && source === 'ST' ? WHOLE_STATUS : QUERY[type];
 
 /** Add points of one IED: choose a type, search, tick several (across pages and types), press Add N. */
 export function PointAdder({ ied, extended, points, add, done }: {
@@ -34,19 +39,20 @@ export function PointAdder({ ied, extended, points, add, done }: {
   const [error, setError] = useState('');
   const [ticked, setTicked] = useState<ReadonlyMap<string, Choice>>(new Map());
   const [notice, setNotice] = useState('');
+  const [source, setSource] = useState<ValueSource>('MX');
   const held = pointKeys(points);
   useEffect(() => {
     if (type === 'command') { setSignals([]); setTotal(0); return undefined; }
     let cancelled = false;
     const timer = setTimeout(() => {
       setLoading(true);
-      api<{ items: Signal[]; total: number }>(`/ieds/${encodeURIComponent(ied.id)}/signals?${buildSignalQuery({ q: query, offset, ...QUERY[type] })}`)
+      api<{ items: Signal[]; total: number }>(`/ieds/${encodeURIComponent(ied.id)}/signals?${buildSignalQuery({ q: query, offset, ...queryFor(type, source) })}`)
         .then(data => { if (!cancelled) { setSignals(data.items); setTotal(data.total); setError(''); } })
         .catch(reason => { if (!cancelled) setError(reason.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
     }, 150);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [ied.id, type, query, offset]);
+  }, [ied.id, type, query, offset, source]);
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   const rows: Choice[] = type === 'command'
     ? commandControls(ied, extended).filter(control => words.every(word => control.ref.toLowerCase().includes(word))).map(control => ({
@@ -80,6 +86,10 @@ export function PointAdder({ ied, extended, points, add, done }: {
       options={TYPES.map(value => ({ value, label: POINT_COPY.typeNames[value], title: POINT_COPY.typeHints[value] }))}
       onChange={next => { setType(next); setOffset(0); }} />
     <p className="small muted pp-adder-hint">{POINT_COPY.typeHints[type]}</p>
+    {type === 'value' && <SegmentedControl label="Kind of value" value={source}
+      options={[{ value: 'MX', label: POINT_COPY.valueMeasured, title: POINT_COPY.valueMeasuredHint },
+        { value: 'ST', label: POINT_COPY.valueWhole, title: POINT_COPY.valueWholeHint }]}
+      onChange={next => { setSource(next); setOffset(0); }} />}
     <div className="search-field"><Search size={14} aria-hidden="true" />
       <input aria-label="Search signals" placeholder="Search signals…" value={query}
         onChange={event => { setQuery(event.target.value); setOffset(0); }} /></div>

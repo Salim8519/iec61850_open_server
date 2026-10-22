@@ -134,7 +134,7 @@ func TestPointPanelCrossChecks(t *testing.T) {
 		{PointPanelKind, panelData("ied0", command("a", "ied1", 1)), "sends to another IED"},
 		{PointPanelKind, panelData("ied0", point("status", "a", "ied0", 0)), "needs an on/off (Boolean) signal, but LD0/GGIO0.Ind0.stVal is Dbpos"},
 		{PointPanelKind, panelData("ied0", point("double", "a", "ied0", 1)), "needs a position (Dbpos) signal"},
-		{PointPanelKind, panelData("ied0", point("value", "a", "ied0", 3)), "needs a measured number (functional constraint MX)"},
+		{PointPanelKind, panelData("ied0", point("value", "a", "ied0", 3)), "needs a measured number (MX) or a whole-number status (ST)"},
 		{PointPanelKind, panelData("ied0", point("value", "a", "ied0", 1)), "needs a measured number"},
 		{PointPanelKind, panelData("ied0", point("status", "a", "ied0", 9999)), "uses a signal this IED does not have"},
 		{PointPanelKind, panelData("ied0", command("a", "ied0", 99)), "uses a control this IED does not have"},

@@ -2,6 +2,7 @@ package project
 
 import (
 	"math"
+	"strings"
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/project/pyval"
@@ -101,7 +102,8 @@ func checkPoint(entry, ied *pyjson.Object, iedID string, ieds *Lookup) error {
 	return checkPointSignal(name, kind, signal)
 }
 
-// checkPointSignal checks the signal type: status = BOOLEAN, double = Dbpos, value = numeric MX.
+// checkPointSignal checks the signal type: status = BOOLEAN, double = Dbpos, value = numeric MX or a
+// whole-number status (ST INT…: a tap position or a counter, change 0173).
 func checkPointSignal(name, kind string, signal *pyjson.Object) error {
 	have, ref := text(signal, "kind"), text(signal, "ref")
 	switch kind {
@@ -116,9 +118,12 @@ func checkPointSignal(name, kind string, signal *pyjson.Object) error {
 				" is " + have + ". Choose a double-point status such as stVal of a DPS, or use another point type")
 		}
 	default:
-		if !pyval.InTuple(have, numericKind...) || text(signal, "fc") != "MX" {
-			return apperr.New(name + " is a value point and needs a measured number (functional constraint MX), but " +
-				ref + " is " + have + " (" + text(signal, "fc") + "). Choose a measured value such as mag.f")
+		fc := text(signal, "fc")
+		wholeStatus := fc == "ST" && strings.HasPrefix(have, "INT")
+		if !pyval.InTuple(have, numericKind...) || (fc != "MX" && !wholeStatus) {
+			return apperr.New(name + " is a value point and needs a measured number (MX) or a whole-number status " +
+				"(ST), but " + ref + " is " + have + " (" + fc + "). Choose a measured value such as mag.f or a position " +
+				"such as valWTr.posVal")
 		}
 	}
 	return nil

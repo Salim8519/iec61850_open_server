@@ -53,6 +53,14 @@ station HMI does). "Show Select before Operate step by step" under Command optio
 preference `sld_sbo_steps`, absent from the default document so Python parity holds) brings back
 the countdown with Operate / Cancel for testing. The IED Explorer stays step by step.
 
+## Follow-up in the same change
+
+- Point panel value rows also read a whole-number status (ST INT…: tap position, counter). Add points
+  offers "Measured (MX)" or "Whole-number status (ST)"; whole numbers show without decimals
+  (`validation_point_panel.go`, `point_panel_whole_test.go`, `PointAdder.tsx`).
+- "Enter does not send" from the first browser run was the test browser dropping focus before its
+  key press; Enter on the focused box opens the confirmation (checked in the page).
+
 ## Evidence
 
 - Go build and vet clean; `go test` runtime, project, api, app, typedcmd, scl, gateway, addpoints,
@@ -73,11 +81,16 @@ the countdown with Operate / Cancel for testing. The IED Explorer stays step by 
     as analog input 0; g41 var 3 33.3 (SBO) -> 33.3; CROB trip direct = lower 7 -> 6.
   - Modbus TCP, raw-socket client: FC16 float32 77.25 -> APC 77.25; FC16 9 -> INC 9; FC6 into a
     two-register float point refused with exception 3.
+- Panel whole-number row: ATCC1 tap position added from "Whole-number status (ST)", shown as 5, then
+  7 after two raises of the tap changer.
+- SCADA master (DNP3) against a second ScadaBench as outstation: CROB pulse on with count 3 and
+  200/100 ms times (select-before-operate), latch on (direct), trip/close (select), g41 var 2 1234
+  (select) and float 12.5 (direct) all "accepted by the outstation"; the outstation logged each
+  select and operate and holds 12.5.
 
 ## Limitations
 
-- Panel value rows accept only measured (MX) values: whole-number status such as an INC stVal or a tap
-  position cannot be shown in a panel yet.
-- Enter in a panel number box did not open the confirmation in one browser run; the Send button did.
+- The SCADA master's CROB count and on/off times are accepted by the outstation, but its command log
+  does not show them, so their exact timing is not observed.
 - ENC and BAC commands have no gateway kind yet (IED Explorer, point panel and SLD send them).
 - The master Add points work (0174) is on its own branch and not in this merge yet.

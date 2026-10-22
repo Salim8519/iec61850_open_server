@@ -32,10 +32,12 @@ export function nextPointId(points: readonly PanelPoint[]): string {
 const VALUE_DEFAULTS = { ...MEASUREMENT_DEFAULTS, pinned: false, healthy: null } as const;
 
 /** A new status, double or value row for a chosen signal: its description or short reference as the name. */
-export function newSignalPoint(type: Exclude<PointType, 'command'>, binding: SignalBinding, signal: Pick<Signal, 'ref' | 'description'>,
-  id: string, iedName?: string): PanelPoint {
+export function newSignalPoint(type: Exclude<PointType, 'command'>, binding: SignalBinding,
+  signal: Pick<Signal, 'ref' | 'description'> & { kind?: string }, id: string, iedName?: string): PanelPoint {
   const label = (signal.description.trim() || shortRef(signal.ref, iedName)).slice(0, MAX_POINT_LABEL);
-  return { id, label, group: '', type, source: binding, control: null, ...VALUE_DEFAULTS };
+  // A whole number (a tap position, a counter) shows without decimals (change 0173).
+  const decimals = signal.kind?.startsWith('INT') ? 0 : VALUE_DEFAULTS.decimals;
+  return { id, label, group: '', type, source: binding, control: null, ...VALUE_DEFAULTS, decimals };
 }
 
 /** A new command row for a control of the IED. */
