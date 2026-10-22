@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
-  useReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, ConnectionMode, SelectionMode,
+  useReactFlow, applyNodeChanges, addEdge, ConnectionMode, SelectionMode,
   type NodeChange, type EdgeChange, type Connection, type NodeTypes } from '@xyflow/react';
 import type { Diagram, EquipmentKind, EquipmentNode as NodeType } from '../../api/types';
 import { EquipmentNode } from '../../equipment/EquipmentNode';
@@ -11,6 +11,8 @@ import type { EquipmentValueStore } from '../../equipment/liveValues';
 import type { KeyedStore } from '../../equipment/keyedStore';
 import { energizedEdges, type EdgeCache, type EnergizationStore } from '../../equipment/energization';
 import { EnergizationLegend } from './EnergizationLegend';
+import { edgeStep, hasRemoval, nodeStep } from './canvasChanges';
+import { createRemovalGesture } from './removalGesture';
 import { useZoomTier } from './useZoomTier';
 import { addBay, BAYS, type BayKind } from '../../equipment/bayTemplates';
 import { defaultLabel } from '../../equipment/kindInfo';
@@ -53,6 +55,8 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
   const measured = useRef<MeasuredStore>(new Map());
   const edgeCache = useRef<EdgeCache>(new Map());
   const energy = useSyncExternalStore(energization.subscribe, energization.get, energization.get);
+  // Deleting a wired item reports its wires and then the item in one tick: one gesture, one Undo step.
+  const removals = useMemo(() => createRemovalGesture(), []);
   const edges = useMemo(() => {
     const result = energizedEdges(diagram.edges, energy.edges, edgeCache.current);
     edgeCache.current = result.cache;
@@ -76,14 +80,18 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
         moving.every(change => change.type === 'position' && change.dragging)) {
       draftRef.current = applyNodeChanges(moving, base); setDraft(draftRef.current); return;
     }
-    if (draftRef.current) { draftRef.current = null; setDraft(null); }
-    const nodes = applyNodeChanges(moving, base);
-    const ids = new Set(nodes.map(node => node.id));
-    change({ ...diagram, nodes, edges: diagram.edges.filter(edge => ids.has(edge.source) && ids.has(edge.target)) });
-  }, [diagram, locked, change, setSelection]);
+    const draftNodes = draftRef.current;
+    if (draftNodes) { draftRef.current = null; setDraft(null); }
+    const step = nodeStep(moving, draftNodes);
+    if (hasRemoval(moving)) { const removal = removals.apply(diagram, step); change(removal.diagram, removal.group); }
+    else change(step(diagram));
+  }, [diagram, locked, change, setSelection, removals]);
   const edgesChanged = useCallback((changes: EdgeChange[]) => {
-    if (!locked) change({ ...diagram, edges: applyEdgeChanges(changes, diagram.edges) });
-  }, [diagram, locked, change]);
+    if (locked) return;
+    const step = edgeStep(changes);
+    if (hasRemoval(changes)) { const removal = removals.apply(diagram, step); change(removal.diagram, removal.group); }
+    else change(step(diagram));
+  }, [diagram, locked, change, removals]);
   const connect = useCallback((connection: Connection) => {
     if (!locked) change({ ...diagram, edges: addEdge({ ...connection, type: 'smoothstep' }, diagram.edges) });
   }, [change, diagram, locked]);
