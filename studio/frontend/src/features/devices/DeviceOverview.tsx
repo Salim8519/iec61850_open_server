@@ -2,6 +2,7 @@ import { Check, Copy } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { countOf } from '../../copy/count';
+import { DEVICES_COPY } from '../../copy/devices';
 import type { LiveSession } from '../../api/network';
 import type { Ied, Project } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
@@ -28,7 +29,7 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
   const facts: [string, string][] = [
     ['Data points', ied.signal_count.toLocaleString()], ['Controls', String(ied.controls.length)],
     ['Reports', String(ied.reports.length)], ['GOOSE blocks', String(publishes)],
-    ['Address in the SCD', ied.scl_address?.ip || 'None'],
+    ['Address in the SCD', ied.scl_address?.ip || DEVICES_COPY.noAddress],
   ];
   return <div className="card-body">
     <p className="stats-line" aria-label="Facts about this IED">{facts.map(([label, value]) =>

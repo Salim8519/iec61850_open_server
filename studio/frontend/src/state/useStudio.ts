@@ -13,6 +13,8 @@ import { deliverLive, openEventStream, RELOADS, type StudioStream } from './even
 import { liveData } from './liveData';
 import { useWork } from './workSteps';
 import { fileKind, OLD_PROJECT_MESSAGE } from './projectFile';
+import { friendlyImportError } from '../copy/devices';
+import { rememberIedNames } from '../features/event-log/iedNames';
 
 export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
@@ -37,7 +39,7 @@ export function useStudio() {
   const apply = useCallback((value: Project) => {
     const adopted = adoptProject(session.current, value);
     if (adopted !== session.current) { session.current = adopted; setHistory(adopted.history); }
-    current.current = value; setProject(value);
+    current.current = value; setProject(value); rememberIedNames(value.ieds);  // Activity names IEDs (0177)
   }, []);
   // One GET /project in flight and one waiting at most, however many events ask (speed lane F).
   // When the last project read started (browser clock = the backend's clock: both run on this PC).
@@ -196,7 +198,9 @@ export function useStudio() {
       const form = new FormData();
       form.append('file', importPreview.file);
       form.append('selected_names', JSON.stringify(names));
-      await api('/scl/import', 'POST', form);
+      await api('/scl/import', 'POST', form).catch((reason: Error) => {
+        throw Object.assign(new Error(friendlyImportError(reason.message)), { cause: reason });
+      });
       setImportPreview(null); liveData().values.clear(); steps.next();
     }, 'Importing the IEDs…').finally(steps.end);
   };

@@ -59,6 +59,8 @@
 .reference-block { display: block; padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--border);
   border-radius: var(--radius-small); font-size: 13px; overflow-wrap: anywhere; line-height: 1.5; }
 .signal-input { width: 120px; }
+/* A value list keeps its whole chosen text ("False (false)"), however narrow the table makes the column. */
+.signal-select { min-width: max-content; }
 .search-field { position: relative; width: 320px; max-width: 100%; }
 .search-field input { padding-left: 38px; }
 .search-field svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-3); }

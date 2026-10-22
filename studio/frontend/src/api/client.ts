@@ -1,14 +1,21 @@
 import { rememberAppWindow } from '../app/useExitConfirm';
+import { connectionHealth } from './connectionHealth';
 
 async function send(path: string, method = 'GET', body?: unknown) {
   const form = body instanceof FormData;
-  const response = await fetch(`/api/v1${path}`, {
-    method, credentials: 'same-origin',
-    headers: { 'X-Studio-Frontend': window.location.origin,
-      ...(body && !form ? { 'Content-Type': 'application/json' } : {}) },
-    body: body ? (form ? body : JSON.stringify(body)) : undefined,
-  });
-  return { response, text: await response.text() };
+  let response: Response;
+  let text: string;
+  try {
+    response = await fetch(`/api/v1${path}`, {
+      method, credentials: 'same-origin',
+      headers: { 'X-Studio-Frontend': window.location.origin,
+        ...(body && !form ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? (form ? body : JSON.stringify(body)) : undefined,
+    });
+    text = await response.text();
+  } catch (reason) { connectionHealth.failed(); throw reason; }  // the sidebar says so (change 0177)
+  connectionHealth.answered(response.status);
+  return { response, text };
 }
 
 /** The answer's JSON, or the same errors and session/licence handling for every caller. */

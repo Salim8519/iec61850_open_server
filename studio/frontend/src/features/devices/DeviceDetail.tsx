@@ -4,6 +4,7 @@ import { useLiveFeed } from '../../api/useLiveFeed';
 import type { LiveSession } from '../../api/network';
 import type { Ied, IedRole, Project } from '../../api/types';
 import { ROLE_COPY, ROLE_HELP, ROLE_ORDER } from '../../copy/roles';
+import { DEVICES_COPY } from '../../copy/devices';
 import { HelpTip } from '../../ui/HelpTip';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { TabBar } from '../../ui/TabBar';
@@ -53,7 +54,8 @@ export function DeviceDetail({ ied, project, locked, busy = false, perform, prep
       <RunThisIed ied={ied} project={project} busy={busy} perform={perform} />
       <SegmentedControl<IedRole> label="What ScadaBench does with this device" value={ied.role} disabled={locked}
         onChange={role => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { role }))} options={[
-          ...ROLE_ORDER.map(role => ({ value: role, label: ROLE_COPY[role].label }))]} />
+          ...ROLE_ORDER.map(role => ({ value: role, label: ROLE_COPY[role].label,
+            title: locked ? DEVICES_COPY.roleLocked : undefined }))]} />
       <DeleteIed compact iedId={ied.id} iedName={ied.name} disabled={locked} perform={perform} prepare={prepare} />
     </div>}
     {!full && <RoleLine ied={ied} network={project.network} openNetwork={openNetwork} />}

@@ -1,7 +1,7 @@
 import { Loader2, Radar, Telescope } from 'lucide-react';
 import { useMemo } from 'react';
 import type { ScanStatus } from '../../../api/tools';
-import { FIND_COPY } from '../../../copy/tools';
+import { FIND_COPY, noneFound } from '../../../copy/tools';
 import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
 import { choicesOf, effective } from '../../../ui/filterState';
@@ -47,7 +47,7 @@ export function FindResults({ scan, percent, known, openExplorer }: {
           <td><button disabled={device.identified !== true} onClick={() => openExplorer(device.ip, device.port)}>
             <Telescope size={15} />{FIND_COPY.open}</button></td></tr>)}</tbody></table>
         {shown.length === 0 && <p className="muted watch-empty">{FIND_COPY.noMatch}</p>}</div>
-        : !scanning && <p className="muted watch-empty">{FIND_COPY.none}</p>}
+        : !scanning && <p className="muted watch-empty">{noneFound(scan.range)}</p>}
     </div>
   </div>;
 }

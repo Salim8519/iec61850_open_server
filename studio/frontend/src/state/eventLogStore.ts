@@ -1,14 +1,18 @@
 import type { FrameBatch } from './frameBatch.ts';
 
 /** One Activity row, formatted once when it arrives (not on every render). */
-export type LogEntry<E> = { id: number; kind: string; label: string; time: string; event: E; details?: string };
+/** `count` > 1 when repeated events were folded into this row (change 0177). */
+export type LogEntry<E> = { id: number; kind: string; label: string; time: string; event: E; details?: string; count: number };
 type Logged = { id: number; kind: string; timestamp: number };
 
 /** The Activity log outside React (speed lane F): a ring of the newest `capacity` events, the time
  * text made once per event, a count per kind, and one notification per frame. Before, every event
  * copied a 500-item array into App state and re-rendered the whole app. */
 export function createEventLogStore<E extends Logged>(batch: FrameBatch, options: {
-  capacity?: number; formatTime?: (timestamp: number) => string; describe?: (event: E) => string;
+  capacity?: number; formatTime?: (timestamp: number) => string; describe?: (event: E, count: number) => string;
+  /** A key for events that repeat a lot (for example "report created"): those with the same key in the same
+   *  minute fold into one row with a count, so they never push the rest of Activity out of the ring. */
+  fold?: (event: E) => string | null;
 } = {}) {
   const capacity = options.capacity ?? 500;
   const formatTime = options.formatTime ?? ((timestamp: number) => new Date(timestamp * 1000).toLocaleTimeString());
@@ -19,6 +23,7 @@ export function createEventLogStore<E extends Logged>(batch: FrameBatch, options
   let lastSecond = NaN;
   let lastTime = '';
   const counts = new Map<string, number>();
+  const folds = new Map<string, { entry: LogEntry<E>; slot: number; minute: number }>();
   const listeners = new Set<() => void>();
   const notify = () => { version += 1; listeners.forEach(listener => listener()); };
 
@@ -31,10 +36,20 @@ export function createEventLogStore<E extends Logged>(batch: FrameBatch, options
 
   return {
     add(event: E) {
-      ring[next] = { id: event.id, kind: event.kind, label: event.kind.replaceAll('_', ' '), time: time(event.timestamp), event };
+      counts.set(event.kind, (counts.get(event.kind) ?? 0) + 1);
+      const key = options.fold?.(event) ?? null;
+      const minute = Math.floor(event.timestamp / 60);
+      const folded = key === null ? undefined : folds.get(key);
+      if (folded && folded.minute === minute && ring[folded.slot] === folded.entry) {
+        folded.entry.count += 1; folded.entry.event = event; folded.entry.details = undefined;
+        batch.schedule(notify);
+        return;
+      }
+      const entry: LogEntry<E> = { id: event.id, kind: event.kind, label: event.kind.replaceAll('_', ' '), time: time(event.timestamp), event, count: 1 };
+      ring[next] = entry;
+      if (key !== null) folds.set(key, { entry, slot: next, minute });
       next = (next + 1) % capacity;
       size = Math.min(size + 1, capacity);
-      counts.set(event.kind, (counts.get(event.kind) ?? 0) + 1);
       batch.schedule(notify);
     },
     /** Row `index` counted from the newest (0) to the oldest (size - 1). */
@@ -44,7 +59,7 @@ export function createEventLogStore<E extends Logged>(batch: FrameBatch, options
     },
     /** The details column, worked out the first time the row is shown. */
     details(entry: LogEntry<E>) {
-      if (entry.details === undefined) entry.details = options.describe?.(entry.event) ?? '';
+      if (entry.details === undefined) entry.details = options.describe?.(entry.event, entry.count) ?? '';
       return entry.details;
     },
     size: () => size,

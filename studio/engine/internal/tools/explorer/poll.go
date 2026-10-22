@@ -5,6 +5,7 @@ import (
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/tools/numlog"
 	"studio-engine/internal/tools/pytext"
 )
 
@@ -39,6 +40,11 @@ func (s *Service) SetWatch(items []*pyjson.Object, intervalMS any) (*pyjson.Obje
 	}
 	s.mu.Lock()
 	s.watch = clean
+	for _, item := range clean { // never polled: the row says why at once (change 0177)
+		if SelectsOnRead(get(item, "ref"), get(item, "fc")) {
+			s.values[pytext.Str(get(item, "ref"))] = notRead(numlog.Now())
+		}
+	}
 	s.mu.Unlock()
 	if s.memory != nil {
 		if err := s.remember(); err != nil {

@@ -8,6 +8,8 @@
 .explorer-split { --side-width: 300px; }
 .explorer-tree-filter .filter-bar { padding: 8px 10px; }
 .explorer-tree-filter .filter-search { width: 100%; }
+/* The data object search keeps its whole placeholder at 1366x768 (change 0177). */
+.explorer-detail .filter-bar .filter-search { flex-basis: 280px; min-width: 270px; }
 .tree { list-style: none; margin: 0; padding: 4px 8px 12px; overflow: auto; }
 /* One right panel: tabs switch between the node and the watch list, each with the full height. */
 .explorer-tab { display: flex; flex-direction: column; }

@@ -13,6 +13,7 @@ import { SettingsPage } from '../features/settings/SettingsPage';
 import { ToolsPage } from '../features/tools/ToolsPage';
 import type { ToolId } from '../copy/tools';
 import { Sidebar } from './Sidebar';
+import { ConnectionNotice, useConnection } from './EngineStatus';
 import { TopBar } from './TopBar';
 import { WorkPanel } from './WorkPanel';
 import { TourOverlay } from '../features/tour/TourOverlay';
@@ -53,18 +54,20 @@ export function App() {
   const openDevices = useCallback((iedId?: string) => { setFlowIed(iedId); setCurrent('devices'); }, []);
   const info = place(current);
   const running = useActivity(!!project);
+  const connection = useConnection(!!project);  // follows the real polls, not "loaded once" (change 0177)
   const update = useUpdateStatus();
   return <div className="app">
     <WorkPanel work={studio.importPreview ? null : studio.work} />
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} work={studio.work} />}
-    <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connected={!!project}
+    <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connection={connection}
       openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)}
       update={update.status} dismissUpdate={version => { update.change({ dismissed: version }).catch(() => {}); }} />
     <div className="main">
       <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy} working={studio.working}
         saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save}
         openNetwork={() => setCurrent('settings')} />
+      <ConnectionNotice state={connection} />
       <RecoveryNotice recovery={project?.startup_recovery} />
       <MigrationNotice notice={project?.migration_notice} />
       {studio.error && <div className="error-banner" role="alert"><span>{studio.error}</span>
