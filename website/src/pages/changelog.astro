@@ -7,12 +7,16 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Clearer setup for virtual machines</h2>
+    <h2>{SITE.version} · Clearer VM setup, saves by itself, safer network setup</h2>
     <ul>
       <li>The activation screen has a new "Using a virtual machine?" section next to the offline options, with the three steps to use your PC's license inside a VM. Both options start closed, so the screen stays short.</li>
       <li>A VM keeps looking for your licensed PC by itself and opens ScadaBench as soon as it finds it. Nothing to type in the VM.</li>
       <li>Fixed: right after you turn on "Let my virtual machines use this license", Settings no longer says the helper is not running while it is still starting.</li>
       <li>New picture guide on the tutorials page: Use ScadaBench in a virtual machine.</li>
+      <li>Everything saves by itself: SNMP device settings, the SCADA gateway point list, test sequences and new gateway points no longer need a Save button. A wrong value shows a red line under the field and is not saved until you fix it.</li>
+      <li>Undo in the single-line diagram now works from your very first change, and deleting a wired symbol comes back with its wires in one Undo.</li>
+      <li>Network setup checks the addresses you type: an address another device already uses, or your PC's own address, is shown at once and cannot be applied. The button shows "Checking the addresses…" while it checks.</li>
+      <li>Many small screen fixes at 1366×768: no more cut-off buttons, names or menus in the tools, the diagram side panel, Activity and the sidebar.</li>
     </ul>
     <h2>0.1.20 · Activate once, works forever; virtual machines on your PC</h2>
     <ul>
