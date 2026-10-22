@@ -12,7 +12,7 @@ export const GATEWAY_POINT_FILTER: FilterSpec = {
   groups: [kindGroup()],
   toggles: [
     { key: 'bad', label: 'Bad quality', hint: 'Points SCADA receives as invalid, for example while the IEDs are not running.' },
-    { key: 'unserved', label: 'Not served', hint: 'New rows that SCADA gets only after Save point list.' },
+    { key: 'unserved', label: 'Not served', hint: 'New rows that are not saved yet, so SCADA does not get them yet.' },
     { key: 'own', label: OWN_COPY.filter, hint: OWN_COPY.filterHint }],
 };
 

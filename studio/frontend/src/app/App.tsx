@@ -82,7 +82,7 @@ export function App() {
           perform={studio.perform} prepare={studio.prepare} importFile={openFile} addTemplate={studio.addTemplate}
           flowIed={flowIed} openNetwork={() => setCurrent('settings')} />}
         {project && current === 'test' && <TestPage project={project} locked={locked}
-          perform={studio.perform} prepare={studio.prepare} />}
+          perform={studio.perform} prepare={studio.prepare} refresh={studio.refresh} />}
         {project && current === 'tools' && <ToolsPage project={project} locked={locked} perform={studio.perform}
           tool={tool} openTool={setTool} running={toolActivity(running)} activity={running} runIeds={() => studio.runtime('start')} />}
         {project && current === 'settings' && <SettingsPage project={project} locked={locked} perform={studio.perform}

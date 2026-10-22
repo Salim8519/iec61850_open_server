@@ -11,6 +11,7 @@ import { DeviceSettings } from './DeviceSettings';
 import { PointsTable } from './PointsTable';
 import { RequestLog } from './RequestLog';
 import { TrapPanel } from './TrapPanel';
+import { useDeviceDraft } from './useDeviceDraft';
 
 type Tab = 'values' | 'settings' | 'traps' | 'log';
 
@@ -22,7 +23,9 @@ export function DevicePanel({ device, state, refresh, fail }: {
   const [tab, setTab] = useState<Tab>('values');
   const [full, setFull] = useFullView('snmpSimulate');
   const running = state?.state === 'running';
-  const save = (next: SnmpDevice) => snmpApi.update(next).then(refresh);
+  // The settings and the trap receivers share one draft that stays while you switch tabs, and every valid
+  // change is saved as it is made (no Save button).
+  const settings = useDeviceDraft(device, running, refresh);
   const remove = () => {
     if (!window.confirm(SNMP_COPY.removeConfirm(device.name))) return;
     snmpApi.remove(device.id).then(refresh).catch(reason => fail(reason.message));
@@ -43,8 +46,8 @@ export function DevicePanel({ device, state, refresh, fail }: {
     </div>
     <div className="panel-body">
       {tab === 'values' && <PointsTable device={device} running={running} refresh={refresh} fail={fail} />}
-      {tab === 'settings' && <DeviceSettings device={device} state={state} running={running} save={save} fail={fail} />}
-      {tab === 'traps' && <TrapPanel device={device} running={running} save={save} fail={fail} />}
+      {tab === 'settings' && <DeviceSettings state={state} running={running} settings={settings} />}
+      {tab === 'traps' && <TrapPanel device={device} running={running} settings={settings} fail={fail} />}
       {tab === 'log' && <RequestLog device={device.id} />}
     </div>
   </div>

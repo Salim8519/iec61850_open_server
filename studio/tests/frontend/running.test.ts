@@ -45,6 +45,6 @@ test('gateway commands are sent only from the warning, with the confirmation fla
   assert.deepEqual(commandLabels(row), ['Close', 'Open']);
   assert.deepEqual(commandLabels({ ...row, kind: 'command_single' }), ['On', 'Off']);
   assert.equal(blockedReason(row, false), '');
-  assert.equal(blockedReason(row, true), 'Save the point list first');
+  assert.equal(blockedReason(row, true), 'Wait until the point list is saved');
   assert.ok(blockedReason({ ...row, monitor_only: true }, false).includes('real IEDs are off'));
 });

@@ -1,20 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
 import type { Ied, Scenario, ScenarioStep, Signal } from '../../api/types';
 import { KindSelect } from '../../components/KindSelect';
 import { kindOfSignal } from '../../components/signalKind';
 import { useDataClasses } from '../../points/dataClasses';
+import { NOT_SAVED } from '../../state/autoSave';
+import { useAutoSave } from '../../state/useAutoSave';
 import { KindBadge } from '../../ui/KindBadge';
 import { ALL_KINDS } from '../../ui/kindFilter';
+import { SaveProblem, SaveStatus } from '../../ui/SaveStatus';
+import { canSave, NEW_SEQUENCE_HINT, sequenceProblem, withSequence } from './sequenceSave';
 import { runWords, stepAction, stepCount } from './sequenceWords';
 
-export function SequenceEditor({ ieds, scenarios, running, perform }: {
+/** Timed sequences. The sequence being edited is saved at once whenever it is valid (no Save button): the
+ *  status beside the title says Saving… then Saved, and a wrong value shows one red line under it. */
+export function SequenceEditor({ ieds, scenarios, running, perform, refresh }: {
   ieds: Ied[]; scenarios: Scenario[]; running: boolean;
-  perform: (task: () => Promise<unknown>) => Promise<void>;
+  perform: (task: () => Promise<unknown>) => Promise<void>; refresh: () => Promise<unknown>;
 }) {
   const fresh = (): Scenario => ({ id: crypto.randomUUID(), name: 'New sequence', enabled: false, steps: [] });
   const [draft, setDraft] = useState<Scenario>(fresh);
+  const latest = useRef(scenarios);
+  latest.current = scenarios;
+  const save = useAutoSave<Scenario>(next => api('/scenarios', 'PUT', withSequence(latest.current, next)).then(() => refresh()));
+  const [savedId, setSavedId] = useState('');
+  const isSaved = scenarios.some(item => item.id === draft.id);
+  const problem = sequenceProblem(draft, isSaved);
+  const change = (next: Scenario) => {
+    setDraft(next);
+    if (canSave(next, isSaved)) { setSavedId(next.id); save.push(next); }
+  };
   const [iedId, setIedId] = useState(ieds[0]?.id || '');
   const [query, setQuery] = useState('');
   const [pointKind, setPointKind] = useState(ALL_KINDS);
@@ -54,10 +70,11 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
     }
     const step: ScenarioStep = { id: crypto.randomUUID(), at, ied_id: iedId, ref, action,
       value: signal.kind === 'BOOLEAN' ? value === 'true' : Number(value) };
-    setDraft({ ...draft, steps: [...draft.steps, step].sort((left, right) => left.at - right.at) }); setError('');
+    change({ ...draft, steps: [...draft.steps, step].sort((left, right) => left.at - right.at) }); setError('');
   };
   return <section className="card">
-    <div className="card-heading"><h2>Timed sequences</h2></div>
+    <div className="card-heading"><h2>Timed sequences</h2><span style={{ flex: 1 }} />
+      {savedId === draft.id && <SaveStatus state={problem ? NOT_SAVED : save.state} />}</div>
     <div className="stack" style={{ padding: 20 }}>
       <p className="muted" style={{ margin: 0 }}>A sequence sets or checks values at set times after you press Run.
         A failed check stops the sequence.</p>
@@ -68,14 +85,18 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
         })()}</span>
         <button disabled={running} onClick={() => { setDraft(structuredClone(scenario)); setError(''); }}>Edit</button>
         <button disabled={!running} onClick={() => perform(() => api(`/scenarios/${scenario.id}/start`, 'POST'))}>Run sequence</button>
-        <button disabled={running} onClick={() => perform(() => api('/scenarios', 'PUT', scenarios.filter(item => item.id !== scenario.id)))}>Delete</button>
+        <button disabled={running} onClick={() => {
+          if (draft.id === scenario.id) setDraft(fresh()); // the sequence being edited must not come back with the next change
+          perform(() => api('/scenarios', 'PUT', scenarios.filter(item => item.id !== scenario.id)));
+        }}>Delete</button>
       </div>)}
       <fieldset disabled={running} className="stack" style={{ border: 0, padding: 0, margin: 0 }}>
         <div className="row"><label style={{ flex: 1 }}>Sequence name<input value={draft.name}
-          onChange={event => setDraft({ ...draft, name: event.target.value })} /></label>
+          onChange={event => change({ ...draft, name: event.target.value })} /></label>
           <button onClick={() => setDraft(fresh())}>New sequence</button></div>
+        <SaveProblem text={problem?.field === 'name' ? problem.text : ''} />
         <label className="row"><input type="checkbox" style={{ width: 18, minHeight: 18 }} checked={draft.enabled}
-          onChange={event => setDraft({ ...draft, enabled: event.target.checked })} />Start automatically with Run</label>
+          onChange={event => change({ ...draft, enabled: event.target.checked })} />Start automatically with Run</label>
         <div className="generator-grid">
           <label>Time (seconds)<input type="number" min="0" max="86400" step="0.1" value={at} onChange={e => setAt(Number(e.target.value))} /></label>
           <label>Action<select value={action} onChange={e => setAction(e.target.value as 'set' | 'assert')}>
@@ -94,10 +115,11 @@ export function SequenceEditor({ ieds, scenarios, running, perform }: {
           <label>Value<input value={value} onChange={e => setValue(e.target.value)} /></label><button disabled={!ref} onClick={addStep}>Add step</button></div>
         <div className="table-scroll"><table><thead><tr><th>Seconds</th><th>Action</th><th>Reference</th><th>Value</th><th /></tr></thead>
           <tbody>{draft.steps.map(step => <tr key={step.id}><td>{step.at}</td><td>{stepAction(step.action)}</td><td><code>{step.ref}</code></td>
-            <td>{String(step.value)}</td><td><button onClick={() => setDraft({ ...draft, steps: draft.steps.filter(item => item.id !== step.id) })}>Remove</button></td></tr>)}</tbody></table></div>
+            <td>{String(step.value)}</td><td><button onClick={() => change({ ...draft, steps: draft.steps.filter(item => item.id !== step.id) })}>Remove</button></td></tr>)}</tbody></table></div>
         {error && <p role="alert" style={{ color: 'var(--error)' }}>{error}</p>}
-        <button className="primary" disabled={!draft.steps.length} onClick={() => perform(() => api('/scenarios', 'PUT',
-          [...scenarios.filter(item => item.id !== draft.id), draft]))}>Save sequence</button>
+        <SaveProblem text={problem?.field === 'steps' ? problem.text : ''} />
+        {savedId === draft.id && save.state.phase === 'failed' && !problem && <SaveProblem text={save.state.message} />}
+        {!problem && !draft.steps.length && <p className="small muted" style={{ margin: 0 }}>{NEW_SEQUENCE_HINT}</p>}
       </fieldset>
       {running && <span className="muted small">Stop the simulation to edit sequences.</span>}
     </div>

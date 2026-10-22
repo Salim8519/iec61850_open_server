@@ -43,10 +43,11 @@ test('an active select keeps room for its text: the second border pixel is a sha
   assert.match(rule(read('components/type-cell.css'), '.generator-grid .kind-select'), /width: 100%/);
 });
 
-test('Save is off while the point list is locked and an empty CSV leaves the list alone', () => {
-  assert.match(read('features/tools/gateway/PointToolbar.tsx'), /onClick=\{save\} disabled=\{locked\}/);
+test('the point list is not changed while locked and an empty CSV leaves the list alone', () => {
+  // Save always (the Save button is gone): a locked list shows the "will save" words instead.
+  assert.match(read('features/tools/gateway/PointToolbar.tsx'), /GATEWAY_COPY\.willSave : ''/);
   const table = read('features/tools/gateway/PointTable.tsx');
-  assert.match(table, /if \(value\.points\.length\) edit\(value\.points\)/);
+  assert.match(table, /if \(value\.points\.length\) edit\(value\.points, rows\)/);
   assert.match(table, /the list is unchanged/);
 });
 

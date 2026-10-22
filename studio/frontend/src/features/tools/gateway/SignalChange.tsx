@@ -7,12 +7,12 @@ import { CHANGE_COPY } from '../../../copy/gateway';
 import { NUMERIC_KINDS } from '../../../equipment/measurementDisplay';
 
 const WHOLE = NUMERIC_KINDS.filter(kind => kind.startsWith('INT'));
-/** IEC 61850 value kinds each gateway type may carry (the backend's AllowedKinds, checked again on Save). */
+/** IEC 61850 value kinds each gateway type may carry (the backend's AllowedKinds, checked again when the list is saved). */
 const FITS: Record<PointKind, string[]> = { single: ['BOOLEAN'], double: ['Dbpos'], float: [...NUMERIC_KINDS, 'Enum'],
   integer: [...WHOLE, 'Enum'], command_single: [], command_double: [] };
 
 /** A row under a point that moves it to another IED or path: the signal search for status and
- *  measured points, the controllable objects of an IED for commands. Saved with Save point list.
+ *  measured points, the controllable objects of an IED for commands. The change is saved with the list.
  *  `taken` ("iedId:ref") are signals other points of this type already serve; they cannot be chosen twice. */
 export function SignalChange({ row, ieds, taken, columns, choose, close }: {
   row: GatewayPoint; ieds: Ied[]; taken: Set<string>; columns: number;

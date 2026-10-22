@@ -49,6 +49,7 @@
 .snmp-actions button { min-height: 36px; }
 .snmp-live-note { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
 .snmp-settings { display: grid; gap: 16px; padding: 16px; align-content: start; }
+.snmp-autosave { margin: 0; flex-wrap: wrap; row-gap: 2px; }
 .snmp-fieldset { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-small); padding: 10px 12px; display: grid; gap: 10px; margin: 0; }
 .snmp-fieldset legend { font-weight: 600; padding: 0 4px; }
 .snmp-user { padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
