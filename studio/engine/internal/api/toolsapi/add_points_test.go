@@ -76,7 +76,7 @@ func TestExcelTemplateRoutes(t *testing.T) {
 	}
 	body := `{"protocol":"iec104","points":[],"data":"` + base64.StdEncoding.EncodeToString(book) + `"}`
 	status, text := call(t, srv, "POST", "/tools/gateway/points.xlsx", body)
-	if status != 400 || !strings.Contains(text, "No rows were found") { // the empty template has only its title row
+	if status != 400 || !strings.Contains(text, "No rows were found in the file") || strings.Contains(text, "paste") { // 0178: the empty template has only its title row
 		t.Fatalf("empty upload %d %s", status, text)
 	}
 	status, text = call(t, srv, "POST", "/tools/gateway/points.xlsx", `{"protocol":"iec104","data":"bm90IGEgYm9vaw=="}`)

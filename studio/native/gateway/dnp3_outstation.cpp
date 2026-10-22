@@ -1,6 +1,10 @@
 // DNP3 outstation over TCP on opendnp3: binary, double-bit and analog inputs with
 // events, binary output status for commands, and CROB commands via the backend; with typed
 // commands also tap positions (analog input) and set points (analog output) (ADR-0107).
+// Output statuses (g10/g40) are ONLINE from the start and report changes as events
+// (g11/g42, class 1). A command point added together with its status (the status
+// reference starts with the command reference, e.g. XCBR1.Pos and XCBR1.Pos.stVal)
+// follows that status; any other output status shows the last commanded value.
 #include "dnp3_commands.hpp"
 #include "protocol.hpp"
 #include "traffic.hpp"
@@ -10,6 +14,7 @@
 #include <opendnp3/outstation/DefaultOutstationApplication.h>
 #include <opendnp3/outstation/UpdateBuilder.h>
 #include <algorithm>
+#include <map>
 #include <stdexcept>
 
 using namespace opendnp3;
@@ -28,6 +33,52 @@ uint8_t flags_of(const GatewayPoint& point) {
 
 DNPTime time_of(const GatewayPoint& point) {
     return point.time_ms > 0 ? DNPTime(uint64_t(point.time_ms)) : DNPTime();
+}
+
+// "ied:ref:kind" without ":kind".
+std::string base_of(const std::string& id) {
+    auto colon = id.rfind(':');
+    return colon == std::string::npos ? id : id.substr(0, colon);
+}
+
+// The status kinds an output status can follow.
+bool follows(const std::string& command, const std::string& status) {
+    if (command == "command_single" || command == "command_double") return status == "single" || status == "double";
+    if (command == "command_setpoint") return status == "float" || status == "integer";
+    return false;
+}
+
+// Command points by the id of the status point they follow.
+std::map<std::string, std::vector<GatewayPoint>> links_of(const std::vector<GatewayPoint>& points) {
+    std::map<std::string, std::vector<GatewayPoint>> links;
+    for (const auto& command : points) {
+        if (!is_command(command.kind)) continue;
+        auto prefix = base_of(command.id) + ".";
+        for (const auto& status : points)
+            if (follows(command.kind, status.kind) && base_of(status.id).rfind(prefix, 0) == 0) {
+                links[status.id].push_back(command);
+                break;
+            }
+    }
+    return links;
+}
+
+bool linked(const std::map<std::string, std::vector<GatewayPoint>>& links, const std::string& id) {
+    for (const auto& entry : links)
+        for (const auto& command : entry.second)
+            if (command.id == id) return true;
+    return false;
+}
+
+// The output status of a command point that follows status (a double is ON when closed).
+void output(UpdateBuilder& builder, const GatewayPoint& command, const GatewayPoint& status) {
+    auto index = uint16_t(command.address);
+    Flags flags(flags_of(status));
+    if (command.kind == "command_setpoint")
+        builder.Update(AnalogOutputStatus(status.value * status.scale, flags, time_of(status)), index);
+    else
+        builder.Update(BinaryOutputStatus(status.kind == "double" ? int(status.value) == 2 : status.value != 0.0, flags,
+                                          time_of(status)), index);
 }
 
 class TrafficLog : public ILogHandler {
@@ -78,15 +129,21 @@ public:
                 database.analog_input[index].svariation = StaticAnalogVariation::Group30Var1;
                 database.analog_input[index].evariation = EventAnalogVariation::Group32Var3;
             } else if (point.kind == "command_setpoint") {
-                database.analog_output_status[index].clazz = PointClass::Class0;
+                database.analog_output_status[index].clazz = PointClass::Class1;
+                database.analog_output_status[index].evariation = point.format == "int16"
+                    ? EventAnalogOutputStatusVariation::Group42Var4
+                    : point.format == "int32" ? EventAnalogOutputStatusVariation::Group42Var3
+                                              : EventAnalogOutputStatusVariation::Group42Var7;
                 database.analog_output_status[index].svariation = point.format == "int16"
                     ? StaticAnalogOutputStatusVariation::Group40Var2
                     : point.format == "int32" ? StaticAnalogOutputStatusVariation::Group40Var1
                                               : StaticAnalogOutputStatusVariation::Group40Var3;
             } else {
-                database.binary_output_status[index].clazz = PointClass::Class0;
+                database.binary_output_status[index].clazz = PointClass::Class1;
+                database.binary_output_status[index].evariation = EventBinaryOutputStatusVariation::Group11Var2;
             }
         }
+        links = links_of(table.all());
         manager = std::make_unique<DNP3Manager>(1, std::make_shared<TrafficLog>());
         auto levels = levels::NORMAL | flags::APP_HEADER_RX | flags::APP_HEADER_TX;
         try {
@@ -119,6 +176,13 @@ public:
                 builder.Update(DoubleBitBinary(DoubleBit(std::clamp(int(point.value), 0, 3)), flags, time_of(point)), index);
             else if (point.kind == "float" || point.kind == "integer" || point.kind == "step_position")
                 builder.Update(Analog(point.value * point.scale, flags, time_of(point)), index);
+            else if (point.kind == "command_setpoint" && !linked(links, point.id))
+                builder.Update(AnalogOutputStatus(0.0, Flags(ONLINE)), index);  // start: no command yet
+            else if (is_command(point.kind) && !linked(links, point.id))
+                builder.Update(BinaryOutputStatus(false, Flags(ONLINE)), index);
+            auto followers = links.find(point.id);
+            if (followers != links.end())
+                for (const auto& command : followers->second) output(builder, command, point);
         }
         outstation->Apply(builder.Build());
     }
@@ -134,6 +198,7 @@ public:
 private:
     PointTable& table;
     std::shared_ptr<Dnp3Commands> commands;
+    std::map<std::string, std::vector<GatewayPoint>> links;
     std::unique_ptr<DNP3Manager> manager;
     std::shared_ptr<IChannel> channel;
     std::shared_ptr<IOutstation> outstation;

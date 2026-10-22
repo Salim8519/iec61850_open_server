@@ -170,6 +170,7 @@ export const RANGES_COPY = {
   running: (requests: number, address: number) => `Checking… ${requests} requests so far, at address ${address}`,
   found: (count: number) => count === 0 ? 'No address answered.' : `${count} answering range${count === 1 ? '' : 's'} found:`,
   addFound: 'Read these as', addFoundButton: 'Add to the read list',
+  stop: 'Stop', stopHint: 'Stops after the block being read now. The ranges found so far stay, so you can still add them.',
   refused: (count: number) => `${count} range${count === 1 ? '' : 's'} refused by the device`,
 };
 

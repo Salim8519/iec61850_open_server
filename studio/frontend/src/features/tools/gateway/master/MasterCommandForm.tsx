@@ -1,8 +1,10 @@
 import { Send, TriangleAlert, X } from 'lucide-react';
 import { useState } from 'react';
 import { masterApi, type CommandKind, type CrobCode, type MasterCommand, type MasterProtocol } from '../../../../api/master';
-import { ACTIVATION, ADDRESS_WORD, COMMAND_HINT, COMMAND_NAMES, COMMANDS, CROB_CODES, MASTER_COPY, REG_VALUES, TARGET_WORD } from '../../../../copy/master';
+import { ACTIVATION, ADDRESS_WORD, COMMAND_HINT, COMMAND_NAMES, COMMANDS, CROB_CODES, MASTER_COPY, RANGES_COPY, REG_VALUES, TARGET_WORD }
+  from '../../../../copy/master';
 import { MasterCyclic } from './MasterCyclic';
+import { hasWordOrder } from './wordOrder';
 import '../../../../ui/kind.css';
 
 const ON_OFF = [{ value: 1, label: 'ON (1)' }, { value: 0, label: 'OFF (0)' }];
@@ -62,6 +64,9 @@ export function MasterCommandForm({ draft, host, protocol, close, fail, review =
         defaultValue={command.address ?? ''} onBlur={event => change({ address: event.target.value === '' ? undefined
           : Number(event.target.value) })} /></label>}
       {!clock && <label>{MASTER_COPY.value}{valueField}</label>}
+      {hasWordOrder(command.kind) && <label>{RANGES_COPY.order}<select value={command.word_order ?? 'big'}
+        onChange={event => change({ word_order: event.target.value === 'little' ? 'little' : 'big' })}>
+        <option value="big">{RANGES_COPY.big}</option><option value="little">{RANGES_COPY.little}</option></select></label>}
       {iec104 && !clock && numberField(MASTER_COPY.qualifier, 'qualifier', 0, MASTER_COPY.qualifierHint)}
       {iec104 && !clock && <label title={MASTER_COPY.activationHint}>{MASTER_COPY.activation}
         <select value={command.deactivate ? 1 : 0} onChange={event => change({ deactivate: Number(event.target.value) === 1 })}>

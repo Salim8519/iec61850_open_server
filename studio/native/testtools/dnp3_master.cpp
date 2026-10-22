@@ -29,11 +29,14 @@ void line(const std::string& text) {
     std::fflush(stdout);
 }
 
-template<class T> void emit(const char* kind, const ICollection<Indexed<T>>& values, bool numeric) {
+// "event" is true for an event object (g2, g4, g11, g32, g42), false for a static one.
+template<class T>
+void emit(const char* kind, const HeaderInfo& info, const ICollection<Indexed<T>>& values, bool numeric) {
     values.ForeachItem([&](const Indexed<T>& item) {
         double value = numeric ? double(item.value.value) : double(int(item.value.value));
         line(std::string("{\"kind\":\"") + kind + "\",\"index\":" + std::to_string(item.index) + ",\"value\":"
-             + std::to_string(value) + ",\"flags\":" + std::to_string(int(item.value.flags.value)) + "}");
+             + std::to_string(value) + ",\"flags\":" + std::to_string(int(item.value.flags.value))
+             + ",\"event\":" + (info.isEventVariation ? "true" : "false") + "}");
     });
 }
 
@@ -41,17 +44,23 @@ class Measurements : public ISOEHandler {
 public:
     void BeginFragment(const ResponseInfo&) override {}
     void EndFragment(const ResponseInfo&) override {}
-    void Process(const HeaderInfo&, const ICollection<Indexed<Binary>>& values) override { emit("binary", values, false); }
-    void Process(const HeaderInfo&, const ICollection<Indexed<DoubleBitBinary>>& values) override {
-        emit("double", values, false);
+    void Process(const HeaderInfo& info, const ICollection<Indexed<Binary>>& values) override {
+        emit("binary", info, values, false);
     }
-    void Process(const HeaderInfo&, const ICollection<Indexed<Analog>>& values) override { emit("analog", values, true); }
+    void Process(const HeaderInfo& info, const ICollection<Indexed<DoubleBitBinary>>& values) override {
+        emit("double", info, values, false);
+    }
+    void Process(const HeaderInfo& info, const ICollection<Indexed<Analog>>& values) override {
+        emit("analog", info, values, true);
+    }
     void Process(const HeaderInfo&, const ICollection<Indexed<Counter>>&) override {}
     void Process(const HeaderInfo&, const ICollection<Indexed<FrozenCounter>>&) override {}
-    void Process(const HeaderInfo&, const ICollection<Indexed<BinaryOutputStatus>>& values) override {
-        emit("output", values, false);
+    void Process(const HeaderInfo& info, const ICollection<Indexed<BinaryOutputStatus>>& values) override {
+        emit("output", info, values, false);
     }
-    void Process(const HeaderInfo&, const ICollection<Indexed<AnalogOutputStatus>>&) override {}
+    void Process(const HeaderInfo& info, const ICollection<Indexed<AnalogOutputStatus>>& values) override {
+        emit("analog_output", info, values, true);
+    }
     void Process(const HeaderInfo&, const ICollection<Indexed<OctetString>>&) override {}
     void Process(const HeaderInfo&, const ICollection<Indexed<TimeAndInterval>>&) override {}
     void Process(const HeaderInfo&, const ICollection<Indexed<BinaryCommandEvent>>&) override {}

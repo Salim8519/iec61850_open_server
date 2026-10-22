@@ -48,7 +48,7 @@ export function ModbusRanges({ status, fail }: { status: MasterStatus; fail: (me
       <span className="gateway-spacer" />
       {dirty && <button className="primary" onClick={save}><Save size={16} />{RANGES_COPY.save}</button>}
     </div>
-    {(showFind ?? (ranges?.length === 0 || status.probe.state === 'running')) && <div className="guide-section panel-messages">
+    {(showFind ?? (ranges?.length === 0 || status.probe.state === 'running')) && <div className="guide-section panel-messages find-registers">
       <FindRegisters status={status} added={() => { load(); setShowFind(false); }} fail={fail} /></div>}
     {ranges && ranges.length === 0 ? <p className="muted watch-empty">{RANGES_COPY.empty}</p> :
       <div className="table-scroll"><table className="gateway-points compact-rows"><thead><tr><th>{RANGES_COPY.table}</th>

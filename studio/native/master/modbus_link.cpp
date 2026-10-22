@@ -1,5 +1,6 @@
 // Modbus TCP client link: MBAP framing over one blocking socket with timeouts.
 #include "modbus_link.hpp"
+#include "client.hpp"
 #include <stdexcept>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -37,7 +38,12 @@ void ModbusLink::open(const std::string& host, int port, int timeout_ms) {
     FD_ZERO(&failed); FD_SET(socket, &failed);
     timeval wait{timeout_ms / 1000, (timeout_ms % 1000) * 1000};
     if (select(0, nullptr, &writable, &failed, &wait) <= 0 || FD_ISSET(socket, &failed)) {
+        int error = 0, size = sizeof error;
+        bool refused = FD_ISSET(socket, &failed)
+            && getsockopt(socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error), &size) == 0
+            && error == WSAECONNREFUSED;
         closesocket(socket);
+        if (refused) throw std::runtime_error(refused_text(peer, "Modbus server"));
         throw std::runtime_error("No answer from " + peer + " within " + std::to_string(timeout_ms / 1000)
                                  + " s. Check the address and port, and that the Modbus server accepts this PC.");
     }

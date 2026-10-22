@@ -14,13 +14,15 @@ export type MasterStatus = { state: 'disconnected' | 'connected' | 'lost' | 'fai
   protocol: MasterProtocol; host: string; port: number; points: number; last_interrogation: number | null;
   available: boolean; traffic_last: number; auto_connect: boolean; probe: ProbeState;
   poll_failures: { range: number; text: string }[]; ranges: number };
-export type ProbeState = { state: 'idle' | 'running' | 'done' | 'failed'; table?: string; start?: number; end?: number;
+export type ProbeState = { state: 'idle' | 'running' | 'done' | 'failed' | 'stopped'; table?: string; start?: number; end?: number;
   requests?: number; address?: number; found?: { table: string; start: number; count: number }[]; message?: string };
 export type MasterPoint = { key: string; group: string; group_name: string; type: string; address: number; value: unknown;
   value_text: string; quality_text: string; good: boolean; time_ms: number | null; cause: string; changes: number;
   label: string; ticked: boolean; stale: boolean; command: CommandKind | null };
 export type MasterCommand = { kind: CommandKind; address?: number; value?: number; select?: boolean; code?: CrobCode;
-  qualifier?: number; deactivate?: boolean; count?: number; on_time_ms?: number; off_time_ms?: number };
+  qualifier?: number; deactivate?: boolean; count?: number; on_time_ms?: number; off_time_ms?: number;
+  /** Modbus 2-register writes (FC16): the stored "big" (high word first) or "little"; the engine's default is big. */
+  word_order?: 'big' | 'little' };
 export type CommandAnswer = { ok: boolean; text: string; terminated?: boolean };
 export type CyclicState = { running: boolean; sends: number; interval_ms: number };
 export type CyclicOptions = { interval_ms: number; address_step: number; toggle: boolean };
@@ -56,6 +58,7 @@ export const masterApi = {
   saveRanges: (modbus_ranges: ModbusRange[]) => api<{ modbus_ranges: ModbusRange[] }>('/tools/master/ranges', 'PUT', { modbus_ranges }),
   saveRoutes: (routes: CommandRoute[]) => api<{ routes: CommandRoute[] }>('/tools/master/routes', 'PUT', { routes }),
   probe: (table: string, start: number, end: number) => api<ProbeState>('/tools/master/probe', 'POST', { table, start, end }),
+  stopProbe: () => api<{ probe: ProbeState }>('/tools/master/probe/stop', 'POST', {}),
   addFound: (data_type: string) => api<{ modbus_ranges: ModbusRange[] }>('/tools/master/probe/ranges', 'POST', { data_type }),
   traffic: (after: number) => api<Page<{ seq: number; at: number; dir: string; peer: string; text: string }>>(
     `/tools/master/traffic?after=${after}`),

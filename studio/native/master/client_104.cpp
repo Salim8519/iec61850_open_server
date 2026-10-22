@@ -15,6 +15,7 @@
 extern "C" {
 #include "cs104_connection.h"
 #include "hal_time.h"
+extern int studio_connect_refused;  // socket_60870.c: the last connect was refused
 }
 
 namespace {
@@ -51,6 +52,7 @@ public:
         if (!CS104_Connection_connect(connection)) {
             CS104_Connection_destroy(connection);
             connection = nullptr;
+            if (studio_connect_refused) throw std::runtime_error(refused_text(peer, "device"));
             throw std::runtime_error("No answer from " + peer + " within " + std::to_string(apci.t0) +
                                      " s. Check the address and port, and that the device accepts this PC as its master.");
         }

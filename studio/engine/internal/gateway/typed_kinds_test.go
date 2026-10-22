@@ -82,7 +82,7 @@ func TestModbusSetPointWidthFollowsFormat(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{"Point 2 (Trafo LD/ATCC1.ParOp): address 9001 is already used by point 1",
-		"Point 3 (Trafo LD/ATCC1.ParOp): the word order must be high_first or low_first"}
+		"Point 3 (Trafo LD/ATCC1.ParOp): the word order must be high_first (high word first) or low_first (low word first)"}
 	if strings.Join(problems, "\n") != strings.Join(want, "\n") || len(clean) != 1 {
 		t.Fatalf("problems\n%s", strings.Join(problems, "\n"))
 	}

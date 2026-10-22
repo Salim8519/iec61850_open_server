@@ -19,10 +19,19 @@ public:
     virtual Json poll(const Json&) { throw std::runtime_error("Polling ranges is for Modbus TCP only"); }
     // Modbus only: find which addresses of one table answer, reading in blocks.
     virtual Json probe(const Json&) { throw std::runtime_error("Finding registers is for Modbus TCP only"); }
+    // Modbus only: ask a running probe (on its own thread) to end after the current request.
+    virtual void stop_probe() {}
     // One command; returns the device's answers step by step.
     virtual Json command(const Json& request) = 0;
     virtual void disconnect() = 0;
 };
+
+// The connect error when the device refused the connection at once (TCP reset): unlike
+// "No answer ... within N s", nobody waited, and the cause is a closed port.
+inline std::string refused_text(const std::string& peer, const std::string& device) {
+    return "Nothing is listening on " + peer + " (the connection was refused). Check the port, and that the "
+        + device + " is running.";
+}
 
 std::unique_ptr<ProtocolClient> make_client_104();
 std::unique_ptr<ProtocolClient> make_client_dnp3();

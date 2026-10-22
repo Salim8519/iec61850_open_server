@@ -87,7 +87,8 @@ def test_master_commands_get_confirmation_termination_and_refusals(station):
 def test_master_explains_an_unreachable_device_and_disconnects_cleanly():
     master = Master()
     try:
-        with pytest.raises(RuntimeError, match="No answer from 127.0.0.1:12419"):
+        # 0178 (C15): a refused connect said "No answer ... within t0" although nobody waited.
+        with pytest.raises(RuntimeError, match="Nothing is listening on 127.0.0.1:12419"):
             master.process.request("connect", protocol="iec104",
                                    settings={"host": "127.0.0.1", "port": 12419, "t0": 2})
         with pytest.raises(RuntimeError, match="press Connect first"):
@@ -133,7 +134,9 @@ def test_dnp3_master_integrity_poll_events_and_crob():
 def test_dnp3_master_explains_an_unreachable_outstation():
     master = Master()
     try:
-        with pytest.raises(RuntimeError, match="No answer from 127.0.0.1:20219 within 10 s"):
+        with pytest.raises(RuntimeError, match="Nothing is listening on 127.0.0.1:20219"):
             master.process.request("connect", timeout=20, protocol="dnp3", settings={"host": "127.0.0.1", "port": 20219})
+        with pytest.raises(RuntimeError, match="Nothing is listening on 127.0.0.1:15219"):
+            master.process.request("connect", timeout=20, protocol="modbus", settings={"host": "127.0.0.1", "port": 15219})
     finally:
         master.close()

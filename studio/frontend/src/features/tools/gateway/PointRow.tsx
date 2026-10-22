@@ -43,7 +43,8 @@ export function PointRow({ row, protocol, rows, locked, dirty, picking, picked, 
       : <td className="reference-cell" title={row.ref}><span className="reference-line"><strong>{row.ied_name ?? row.ied}</strong>
         <span className="small mono reference-path">{shortPath(row.ref, row.ied_name)}</span>
         {!locked && <button type="button" className="ghost reference-change" aria-expanded={changing}
-          title={CHANGE_COPY.button} onClick={toggleChange}><Pencil size={13} />{CHANGE_COPY.short}</button>}</span>
+          title={CHANGE_COPY.button} aria-label={CHANGE_COPY.button} onClick={toggleChange}><Pencil size={13} />
+          <span className="reference-change-word">{CHANGE_COPY.short}</span></button>}</span>
         {row.monitor_only && command && <div className="small gateway-warning">Real IED: commands are refused</div>}</td>}
     <td className="scale-cell"><EditableText mono inputMode="decimal" value={String(row.scale)} disabled={locked} label="Scale"
       onSave={text => update({ scale: parseScale(text) })} /></td>

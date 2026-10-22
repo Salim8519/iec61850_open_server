@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { snmpApi, type ValueRow } from '../../../../api/snmp';
-import { READ_COPY } from '../../../../copy/snmpRead';
+import { READ_COPY, refusedWrite } from '../../../../copy/snmpRead';
 
 /** The short confirmation before ScadaBench writes a value into the device it reads (SET). */
 export function WriteValue({ row, close, fail }: { row: ValueRow; close: () => void; fail: (message: string) => void }) {
@@ -12,7 +12,7 @@ export function WriteValue({ row, close, fail }: { row: ValueRow; close: () => v
     fail('');
     snmpApi.write({ oid: row.oid, type: row.type, value, hex: row.hex })
       .then(result => setAnswer(result.values.map(item => `${item.value}${item.meaning ? ` · ${item.meaning}` : ''}`).join(', ')))
-      .catch(reason => fail(reason.message)).finally(() => setBusy(false));
+      .catch(reason => fail(refusedWrite(reason.message))).finally(() => setBusy(false));
   };
   return <div className="guide-section panel-messages snmp-write" role="alertdialog" aria-label={READ_COPY.setTitle(row.name)}>
     <strong>{READ_COPY.setTitle(row.name)}</strong>

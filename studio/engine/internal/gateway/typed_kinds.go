@@ -70,7 +70,7 @@ func typedReason(protocol, kind string, raw, point *pyjson.Object) string {
 		if protocol == "modbus" {
 			order, _ := getOr(raw, "word_order", WordOrders[0]).(string)
 			if !contains(WordOrders, order) {
-				return "the word order must be high_first or low_first"
+				return "the word order must be high_first (high word first) or low_first (low word first)"
 			}
 			point.Set("word_order", order)
 		}

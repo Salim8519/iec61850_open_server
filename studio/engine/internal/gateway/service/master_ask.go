@@ -128,6 +128,17 @@ func (m *Master) Command(request *pyjson.Object, who string) (*pyjson.Object, er
 	return with(answer, "text", said), nil
 }
 
+// StopFindRegisters ends a running Find registers after the request on the wire (Go only,
+// change 0178); the ranges found so far stay and the answer is the probe state.
+func (m *Master) StopFindRegisters() (*pyjson.Object, error) {
+	defer m.changed(ChangeMasterStatus)
+	snapshot, err := m.Probe.Stop()
+	if err != nil {
+		return nil, err
+	}
+	return pyjson.NewObject().Set("probe", snapshot), nil
+}
+
 // FindRegisters starts the bounded Modbus probe in the background.
 func (m *Master) FindRegisters(table string, start, end int64) (*pyjson.Object, error) {
 	defer m.changed(ChangeMasterStatus) // the probe state

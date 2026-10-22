@@ -45,7 +45,9 @@ export function PointTable({ protocol, ieds, locked, fail }: {
   const [picked, setPicked] = useState<Set<string> | null>(null);
   const [changing, setChanging] = useState<string | null>(null);
   const filter = useListFilter('scada-points', GATEWAY_POINT_FILTER);
-  useEffect(() => { setNotes([]); setSkipped([]); setAdding(false); setProposing(false); setPicked(null); setChanging(null); }, [protocol]);
+  // A command note or a pending confirmation belongs to the protocol it was made for (0178, as the master).
+  useEffect(() => { setNotes([]); setSkipped([]); setAdding(false); setProposing(false); setPicked(null); setChanging(null);
+    setSent(null); setPending(null); }, [protocol]);
   useEffect(() => setPage(0), [filter.values]);
   // Propose from IEDs opens the smart preview (ADR-0105): per-IED ticks, "Add only new points" keeps the list as
   // edited, "Replace" keeps own points. Applying hands over the list before, so Undo puts it back.

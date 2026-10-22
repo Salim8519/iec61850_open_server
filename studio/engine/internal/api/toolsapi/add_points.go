@@ -32,7 +32,7 @@ func (a *Area) addRoutes() []api.Route {
 			if err != nil {
 				return nil, err
 			}
-			return a.checkCells(protocol, addpoints.SplitText(pytext.Str(value(data, "text", ""))), data)
+			return a.checkCells(protocol, addpoints.SplitText(pytext.Str(value(data, "text", ""))), data, false)
 		}),
 		route("GET", "/tools/gateway/points.xlsx", false, func(r *http.Request) (any, error) {
 			protocol, err := protocolQuery(r)
@@ -59,7 +59,7 @@ func (a *Area) addRoutes() []api.Route {
 			if err != nil {
 				return nil, apperr.ValueError(err.Error())
 			}
-			return a.checkCells(protocol, cells, data)
+			return a.checkCells(protocol, cells, data, true)
 		}),
 	}
 }
@@ -136,13 +136,17 @@ func (a *Area) fromIED(r *http.Request) (any, error) {
 	return rowsAnswer(results, nil).Set("ied", iedJSON(ied)), nil
 }
 
-// checkCells checks pasted or uploaded rows; points are the new points, only when every row
-// can be added.
-func (a *Area) checkCells(protocol string, cells [][]string, data *pyjson.Object) (any, error) {
+// checkCells checks pasted or uploaded (file) rows; points are the new points, only when
+// every row can be added.
+func (a *Area) checkCells(protocol string, cells [][]string, data *pyjson.Object, file bool) (any, error) {
 	ieds := a.deps.Projects.IEDs()
 	index := addpoints.NewIndex(ieds)
 	rows, numbers, columns := addpoints.ReadTable(cells, protocol, index)
 	current := pointList(data)
+	if len(rows) == 0 && file {
+		return nil, apperr.ValueError("No rows were found in the file. Fill in the rows " +
+			"(below the title row) of the Points sheet, save the file and choose it again.")
+	}
 	if len(rows) == 0 {
 		return nil, apperr.ValueError("No rows were found. Copy the rows in Excel (with or without the title row) " +
 			"and paste them here.")

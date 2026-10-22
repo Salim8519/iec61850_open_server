@@ -4,8 +4,10 @@
 #include "modbus_reads.hpp"
 #include "traffic.hpp"
 #include "value_events.hpp"
+#include <atomic>
 #include <chrono>
 #include <cstring>
+#include <mutex>
 #include <thread>
 
 namespace {
@@ -36,6 +38,7 @@ public:
         for (const auto& range : request.at("ranges")) {
             ++number;
             std::string failure;
+            std::lock_guard<std::mutex> guard(io);
             auto values = guarded([&] { return modbus_range_values(link, unit, range, failure); });
             if (!failure.empty()) failed.push_back({{"range", number}, {"text", failure}});
             for (auto& value : values) all.push_back(std::move(value));
@@ -53,11 +56,18 @@ public:
         traffic("info", peer, "Find registers: " + table + " " + std::to_string(start) + " to " + std::to_string(end));
         found = Json::array();
         requests = 0;
-        for (int first = start; first <= end; first += block) scan(table, first, std::min(block, end - first + 1));
-        traffic("info", peer, "Find registers done: " + std::to_string(found.size()) + " ranges answer, "
-                                  + std::to_string(requests) + " requests");
-        return {{"found", found}, {"requests", requests}};
+        stopping = false;
+        for (int first = start; first <= end && !stopping; first += block)
+            scan(table, first, std::min(block, end - first + 1));
+        traffic("info", peer, std::string(stopping ? "Find registers stopped: " : "Find registers done: ")
+                                  + std::to_string(found.size()) + " ranges answer, " + std::to_string(requests) + " requests");
+        Json answer = {{"found", found}, {"requests", requests}};
+        if (stopping) answer["stopped"] = true;  // only Stop (change 0178) adds it
+        return answer;
     }
+
+    // Ends a running probe after the request on the wire now; what was found stays.
+    void stop_probe() override { stopping = true; }
 
     Json command(const Json& request) override {
         auto kind = request.at("kind").get<std::string>();
@@ -81,7 +91,11 @@ public:
             throw std::runtime_error("Unknown Modbus write " + kind);
         }
         traffic("tx", peer, "FC" + std::to_string(pdu[0]) + " write " + kind + " address " + std::to_string(address));
-        auto answer = guarded([&] { return link.request(unit, pdu); });
+        std::vector<uint8_t> answer;
+        {
+            std::lock_guard<std::mutex> guard(io);
+            answer = guarded([&] { return link.request(unit, pdu); });
+        }
         bool ok = !answer.empty() && answer[0] == pdu[0];
         std::string text = ok ? "the device confirmed the write" : answer.size() >= 2 ? "refused: " + modbus_exception_text(answer[1]) : "no answer";
         traffic("rx", peer, "FC" + std::to_string(pdu[0]) + " " + text);
@@ -100,6 +114,8 @@ private:
     std::string peer;
     Json found = Json::array();
     int requests = 0;
+    std::atomic<bool> stopping{false};
+    std::mutex io;  // one request on the link at a time: a probe runs beside polls and commands
 
     template<class Task> auto guarded(Task task) -> decltype(task()) {
         try {
@@ -114,10 +130,15 @@ private:
     // are known. Small refused blocks are read one address at a time, so a probe never needs
     // many more requests than addresses.
     void scan(const std::string& table, int first, int count) {
+        if (stopping) return;
         if (requests > 0) std::this_thread::sleep_for(std::chrono::milliseconds(PROBE_GAP_MS));
         ++requests;
         emit_frame({{"event", "master_probe"}, {"address", first}, {"requests", requests}});
-        auto answer = guarded([&] { return modbus_read(link, unit, table, first, count); });
+        ModbusAnswer answer;
+        {
+            std::lock_guard<std::mutex> guard(io);
+            answer = guarded([&] { return modbus_read(link, unit, table, first, count); });
+        }
         if (answer.ok) {
             if (!found.empty() && found.back()["start"].get<int>() + found.back()["count"].get<int>() == first)
                 found.back()["count"] = found.back()["count"].get<int>() + count;
