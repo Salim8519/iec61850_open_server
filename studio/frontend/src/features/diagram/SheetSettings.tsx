@@ -2,6 +2,7 @@ import type { EquipmentData } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
 import { AppearanceEditor } from './AppearanceEditor';
 import { Hint } from '../../ui/Hint';
+import { NameField } from './NameField';
 import { advancedFields, basicFields, INFEED_TYPES, polaritySentence, PUSH_MODES } from './equipmentFields';
 
 type Props = {
@@ -13,8 +14,7 @@ type Props = {
 export function BasicSettings({ data, locked, update }: Omit<Props, 'applyColors'>) {
   const fields = basicFields(data.kind);
   return <>
-    <label>Name<input value={data.label} disabled={locked} maxLength={100}
-      onChange={event => update({ ...data, label: event.target.value })} /></label>
+    <NameField value={data.label} disabled={locked} change={label => update({ ...data, label })} />
     {fields.includes('start_position') && <label>When the project starts<select disabled={locked}
       value={data.initial_position || 'open'}
       onChange={event => update({ ...data, initial_position: event.target.value as 'open' | 'closed' })}>

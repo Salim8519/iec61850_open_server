@@ -1,5 +1,5 @@
 import { Check, Copy } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { countOf } from '../../copy/count';
 import type { LiveSession } from '../../api/network';
@@ -19,6 +19,8 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
   perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
+  // "Copied" belongs to this IED and this click only.
+  useEffect(() => setCopied(false), [ied.id]);
   const endpoint = endpointOf(ied, project.network);
   const lab = project.network.mode === 'lab';
   const reachable = onLabNetwork(ied, project.network);
@@ -37,7 +39,8 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
         <p className="small muted" style={{ margin: '4px 0 0' }}>{reachable ? 'On the lab network adapter.'
           : lab ? 'Only programs on this PC can reach it: it has no address on the lab network yet. Use Settings › Network to add it.'
           : 'Only programs on this PC can reach it. Use Settings › Network to put it on a real network.'}</p></div>
-      <button onClick={async () => { await navigator.clipboard.writeText(`${endpoint.host}:${endpoint.port}`); setCopied(true); }}>
+      <button onClick={async () => { await navigator.clipboard.writeText(`${endpoint.host}:${endpoint.port}`); setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000); }}>
         {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? 'Copied' : 'Copy address'}</button>
     </div>}
     {ied.role === 'real' && <DeviceConnection ied={ied} session={session} locked={locked} perform={perform} />}

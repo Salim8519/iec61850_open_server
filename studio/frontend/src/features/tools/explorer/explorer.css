@@ -17,7 +17,7 @@
 .explorer-detail-body { display: block; }
 .watch-interval { width: auto; min-height: 32px; font-size: var(--font-size-small); }
 .explorer-watch .panel-head { gap: 8px; padding: 8px 12px; }
-.explorer-watch .panel-head button, .explorer-watch .panel-head .button { min-height: 32px; padding: 0 10px; }
+.explorer-watch .panel-head button:not(.info-tip-button), .explorer-watch .panel-head .button { min-height: 32px; padding: 0 10px; }
 .tree ul { list-style: none; margin: 0; padding: 0 0 0 22px; }
 /* Flat virtual tree (speed lane F): a logical node row keeps the indent of the old nested list. */
 .tree > .tree-child { padding-left: 22px; }

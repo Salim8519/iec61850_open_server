@@ -60,7 +60,12 @@ export function PointTable({ protocol, ieds, locked, fail }: {
   const propose = () => gatewayApi.propose(protocol, (rows ?? []).filter(isOwn))
     .then(value => { edit(value.points); setNotes(value.notes); }).catch(error => fail(error.message));
   const importFile = (picked: File) => picked.text().then(text => gatewayApi.importCsv(protocol, text))
-    .then(value => { edit(value.points); setProblems(value.problems); setNotes([`${value.points.length} points read from ${picked.name}.`]); })
+    .then(value => {
+      // A file with no usable rows leaves the list as it was; only its problems are shown.
+      if (value.points.length) edit(value.points);
+      setProblems(value.problems); setNotes([value.points.length ? `${value.points.length} points read from ${picked.name}.`
+        : `No points could be read from ${picked.name}; the list is unchanged.`]);
+    })
     .catch(error => fail(error.message));
   // A saved own point changes at once (SCADA sees it while the gateway runs); a draft waits for Save.
   const setOwn = (index: number, row: GatewayPoint, value: number) => liveEdit(row, dirty)

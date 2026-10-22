@@ -47,12 +47,12 @@ export function PointRow({ row, protocol, rows, locked, dirty, picking, picked, 
         {row.monitor_only && command && <div className="small gateway-warning">Real IED: commands are refused</div>}</td>}
     <td className="scale-cell"><EditableText mono inputMode="decimal" value={String(row.scale)} disabled={locked} label="Scale"
       onSave={text => update({ scale: parseScale(text) })} /></td>
-    <td className="small value-cell" title={command && !own ? undefined : row.value_text}>{command
+    <td className={`small value-cell${command ? ' command-cell' : ''}`} title={command && !own ? undefined : row.value_text}>{command
       ? <div className="own-command"><CommandButtons row={row} blocked={blockedReason(row, dirty)} ask={ask} />
         {own && <span className="small muted">{row.value_text ?? 'No command yet'}</span>}</div>
       : own ? <OwnValue row={row} set={setOwn} fail={fail} />
         : <span className={row.online ? '' : 'muted'}>{row.online === false && '⚠ '}{row.value_text ?? '—'}</span>}</td>
-    <td><button className="ghost icon-button" disabled={locked} aria-label={`Remove ${title}`} title="Remove"
+    <td><button className="ghost icon-button" disabled={locked} aria-label={`Remove ${own && !row.description.trim() ? `the point at address ${row.address}` : title}`} title="Remove"
       onClick={remove}><X size={15} /></button></td>
   </tr>;
 }

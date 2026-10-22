@@ -72,7 +72,7 @@ export function WatchList({ status, run }: {
             <td className="mono reference-cell" title={item.ref}>{item.ref}</td>
             <td><KindBadge kind={watchKind(item)} raw={item.type} /></td><td><span className="fc-badge">{item.fc}</span></td>
             <td><ValueText text={item.text} status={item.status} /></td><td className="small muted">{timeOf(item.at)}</td>
-            <td><button className="ghost icon-button" onClick={() => remove(item)} aria-label={`Stop watching ${item.ref}`}
+            <td><button className="ghost icon-button" onClick={() => remove(item)} aria-label={`Remove ${item.ref} from the watch list`}
               title="Remove from watch list"><X size={15} /></button></td></tr>)}
           <SpacerRow height={range.after} columns={6} /></tbody></table>
           {shown.length === 0 && <p className="muted watch-empty">{EXPLORER_COPY.noMatch}</p>}</div>}

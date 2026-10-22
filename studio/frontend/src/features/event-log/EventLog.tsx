@@ -20,7 +20,7 @@ export function EventLog({ session, close }: { session?: string; close: () => vo
     const entry = log.at(index);
     if (!entry) continue;
     rows.push(<tr key={entry.id} data-vrow={entry.id}>
-      <td className="mono" style={{ width: 96 }}>{entry.time}</td>
+      <td className="mono" style={{ width: 96, whiteSpace: 'nowrap' }}>{entry.time}</td>
       <td className="event-kind">{entry.label}</td>
       <td className="mono">{log.details(entry)}</td>
     </tr>);

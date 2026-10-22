@@ -20,6 +20,9 @@ span.type-cell { display: inline-flex; align-items: center; gap: 6px; white-spac
 .gateway-points td.reference-cell .reference-path { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gateway-points .editable-text { white-space: nowrap; flex-wrap: nowrap; }
 .gateway-points td.value-cell { max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Command rows hold buttons, not text: the send buttons wrap and a "why not" line stays whole. */
+.gateway-points td.value-cell.command-cell { overflow: visible; white-space: normal; }
+.gateway-points td.command-cell .gateway-send { flex-wrap: wrap; gap: 4px; }
 .gateway-points td.point-name { min-width: 150px; }
 .gateway-points td.address-cell, .gateway-points td.scale-cell { white-space: nowrap; }
 /* Edit-in-place inputs stay as wide as the value they replace, so the row does not jump. */
@@ -91,3 +94,6 @@ span.type-cell { display: inline-flex; align-items: center; gap: 6px; white-spac
 .side-here-box { padding: 2px 8px; border: 2px solid var(--accent); border-radius: var(--radius-small);
   background: var(--accent-soft); color: var(--accent); }
 @media (max-width: 1599px) { .side-caption .small { display: none; } }
+/* Protocol converter: six tabs and Full view fit 1366 px; on a narrower window the row wraps, never cuts. */
+.converter-panel > .tabbar { flex-wrap: wrap; padding: 0 12px; }
+.converter-panel > .tabbar button { padding: 0 8px; }

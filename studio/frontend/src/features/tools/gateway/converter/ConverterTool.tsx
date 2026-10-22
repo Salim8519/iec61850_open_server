@@ -72,7 +72,7 @@ export function ConverterTool() {
         error={error?.side === 'scada' ? error.text : ''} />
     </aside>
     <FullView full={full} change={setFull} place={FULL_PLACE.converter}>
-    <div className={`card fill-panel gateway-panel${serving ? ' running' : ''}`}>
+    <div className={`card fill-panel gateway-panel converter-panel${serving ? ' running' : ''}`}>
       <TabBar label="Converter views" value={tab} change={setTab} end={<FullViewButton full={full} change={setFull} />}
         tabs={(Object.keys(CONVERTER_COPY.tabs) as Tab[]).map(key => [key, CONVERTER_COPY.tabs[key]])} />
       <div className="panel-body">

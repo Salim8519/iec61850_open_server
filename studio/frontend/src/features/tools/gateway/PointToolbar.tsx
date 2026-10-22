@@ -30,7 +30,7 @@ export function PointToolbar({ protocol, locked, dirty, adding, hasRows, picking
     <span className="gateway-spacer" />
     {dirty && <><span className="small gateway-warning">{GATEWAY_COPY.unsaved}</span>
       <button className="ghost" onClick={discard}><Undo2 size={16} />{GATEWAY_COPY.discard}</button>
-      <button className="primary" onClick={save}><Save size={16} />{GATEWAY_COPY.save}</button></>}
+      <button className="primary" onClick={save} disabled={locked}><Save size={16} />{GATEWAY_COPY.save}</button></>}
     {locked && <span className="small muted row"><Lock size={14} />{GATEWAY_COPY.lockedPoints}</span>}
   </div>;
 }

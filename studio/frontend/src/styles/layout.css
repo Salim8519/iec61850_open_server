@@ -66,6 +66,8 @@
 @media (max-width: 1100px) {
   :root { --sidebar-width: 72px; }
   .brand span, .nav-item span, .sidebar-foot .nav-item span { display: none; }
+  /* Collapsed bar: only the dot; the words stay in its hover text. */
+  .engine-status > span:not(.dot) { display: none; }
   .nav-item { justify-content: center; padding: 0; }
   .brand { justify-content: center; padding-left: 0; padding-right: 0; }
   .topbar { padding: 0 18px; }

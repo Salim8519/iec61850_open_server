@@ -10,6 +10,8 @@ button, .button {
 }
 button:hover:not(:disabled), .button:hover { background: var(--hover); border-color: var(--control-border-hover); }
 button:disabled { cursor: not-allowed; opacity: .45; }
+/* An icon keeps its size when a label wraps or a button is narrow. */
+button svg { flex-shrink: 0; }
 button.primary { color: white; border-color: #1e3a8a; background: var(--accent-hover); }
 button.primary:hover:not(:disabled) { background: #1e40af; border-color: #1e3a8a; }
 button.danger { background: var(--error); color: white; border-color: var(--error); }

@@ -11,24 +11,29 @@
 .snmp-device strong, .snmp-device span { overflow-wrap: anywhere; }
 .snmp-state.state-running { color: var(--success); }
 .snmp-state.state-failed { color: var(--error); }
-.snmp-import { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-small); }
+.snmp-import { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-small); }
+.snmp-import > button { white-space: normal; line-height: 1.25; padding-block: 6px; }
+.snmp-import input { min-width: 0; max-width: 100%; }
 .snmp-problems { margin: 4px 0 0; padding-left: 18px; max-height: 160px; overflow: auto; }
 /* Values lists (ADR-0095): one line per value, the type as a badge, edit pins on what you can change. */
 .snmp-values { table-layout: fixed; width: 100%; }
 .snmp-values td { vertical-align: middle; }
 .snmp-values th { padding-top: 8px; padding-bottom: 8px; }
-.snmp-values .col-oid { width: 190px; }
+.snmp-values .col-oid { width: 176px; }
 .snmp-values .col-type { width: 72px; }
-.snmp-values .col-changes { width: 150px; }
+.snmp-values .col-changes { width: 164px; }
 .snmp-values .col-writable { width: 84px; }
 .snmp-values .col-remove { width: 44px; }
 .snmp-values .col-actions { width: 230px; }
 .snmp-values .icon-button { min-height: 28px; height: 28px; width: 28px; }
 .snmp-values .mono { overflow-wrap: anywhere; }
+/* Names and OIDs wrap inside their fixed columns (the gateway's own rows stay on one line). */
+.gateway-points.snmp-values .editable-text { white-space: normal; max-width: 100%; }
+.gateway-points.snmp-values .editable-text > span { min-width: 0; }
 .snmp-value { overflow-wrap: anywhere; }
 .snmp-value-edit { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 2px 4px; }
 .snmp-behaviour { gap: 6px; flex-wrap: wrap; }
-.snmp-behaviour select { width: 128px; }
+.snmp-behaviour select { width: 100%; max-width: 152px; }
 .snmp-row-actions { gap: 4px; flex-wrap: nowrap; }
 .snmp-important { color: var(--accent-hover); vertical-align: -2px; margin-right: 4px; }
 /* Device header: name, address, tabs and the "..." menu on one row; the tabs rest on its bottom line. */

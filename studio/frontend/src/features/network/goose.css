@@ -15,3 +15,5 @@
 .goose-conflicts .goose-confirm { background: var(--surface); box-shadow: var(--shadow-small); }
 .goose-pill { display: inline-flex; align-items: center; min-height: 32px; padding: 0 8px;
   white-space: nowrap; color: var(--warning); border: 1px dashed var(--warning); background: var(--warning-soft); }
+/* A MAC address never breaks in the middle. */
+.goose-mac { white-space: nowrap; }

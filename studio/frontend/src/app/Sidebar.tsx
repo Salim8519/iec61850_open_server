@@ -47,7 +47,7 @@ export function Sidebar({ current, go, connected, openActivity, openTour, live, 
         ]} />
       <button className="nav-item" onClick={openActivity} title="Activity">
         <Activity size={19} /><span>Activity (<ActivityCount />)</span></button>
-      <span className="small muted" style={{ padding: '4px 12px' }} title={connected ? 'Engine connected' : 'Connecting'}>
+      <span className="small muted engine-status" style={{ padding: '4px 12px' }} title={connected ? 'Engine connected' : 'Connecting'}>
         <span className="dot" style={{ display: 'inline-block', marginRight: 8, color: connected ? 'var(--success)' : 'var(--warning)' }} />
         <span>{connected ? 'Engine connected' : 'Connecting…'}</span></span>
     </div>

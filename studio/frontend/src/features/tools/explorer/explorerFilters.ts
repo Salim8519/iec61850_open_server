@@ -35,7 +35,7 @@ export const WATCH_FILTER: FilterSpec = {
   groups: [kindGroup()],
   toggles: [
     { key: 'recent', label: 'Changed in last minute', hint: 'Values that changed while this page was open, in the last 60 s.' },
-    { key: 'bad', label: 'Bad quality', hint: 'Values whose quality is not good, or that could not be read.' }],
+    { key: 'bad', label: 'Needs attention', hint: 'Values with a warning: quality not good, a breaker between positions, or a value that could not be read.' }],
 };
 
 export const watchKey = (item: Pick<WatchItem, 'ref' | 'fc'>) => `${item.ref}|${item.fc}`;

@@ -27,7 +27,7 @@ export function SignalValueEditor({ signal, value, disabled, variant, update }: 
     update(numeric ? Number(draft) : draft); setDraft(null);
   };
   return <div className="row"><input className="signal-input" aria-label={`Value ${signal.ref}`}
-    type={numeric ? 'number' : 'text'} step="any" value={draft ?? String(value)}
+    type={numeric ? 'number' : 'text'} step={signal.kind.startsWith('INT') ? 1 : 'any'} value={draft ?? String(value)}
     onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') submit(); }} />
     <button disabled={draft === null || (numeric && !draft.trim())} onClick={submit}>Set</button></div>;
 }

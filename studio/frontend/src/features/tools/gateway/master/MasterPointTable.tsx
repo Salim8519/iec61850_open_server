@@ -58,8 +58,8 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
       <button onClick={() => { const kind = COMMANDS[status.protocol][0]; setDraft({ kind, address: undefined,
         value: startValue(kind), select: status.protocol !== 'modbus', code: kind === 'binary_output' ? 'latch' : undefined }); }}
         disabled={!status.link_open || COMMANDS[status.protocol].length === 0}><Send size={16} />{MASTER_COPY.openForm}</button>
-      <button onClick={() => untick([])}>{MASTER_COPY.tickAll}</button>
-      <button onClick={() => untick(rows.map(row => row.key))}>{MASTER_COPY.untickAll}</button>
+      <button onClick={() => untick([])} disabled={!rows.length}>{MASTER_COPY.tickAll}</button>
+      <button onClick={() => untick(rows.map(row => row.key))} disabled={!rows.length}>{MASTER_COPY.untickAll}</button>
       <Menu label={MASTER_COPY.moreLabel} align="left" trigger={<>{GATEWAY_COPY.more}<ChevronDown size={15} aria-hidden /></>} items={[
         { label: MASTER_COPY.exportCsv, icon: <Download size={16} />, onSelect: () => saveFile(masterApi.csvUrl()) },
         { label: MASTER_COPY.importLabels, icon: <Upload size={16} />, onSelect: () => file.current?.click() }]} />

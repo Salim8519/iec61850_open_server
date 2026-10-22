@@ -9,6 +9,7 @@ import { StatusPill } from '../../ui/StatusPill';
 import { gooseStatus } from '../../copy/status';
 import { reachStatus } from '../../copy/gooseReach';
 import { shortBlock } from './endpoints';
+import './goose.css';
 import { noListener, publisherRole, skippedGoose } from './gooseSkipped';
 
 /** Every GOOSE block of the project and what really arrives; GOOSE runs in every network mode (ADR-0073). */
@@ -34,10 +35,10 @@ export function GooseTraffic({ running, revision, ieds }: { running: boolean; re
         <td><strong>{shortBlock(watch.gocb_ref)}</strong><div className="small muted"><code>{watch.gocb_ref}</code></div></td>
         <td>{watch.publisher?.name || 'Unknown'}<div className="small muted">{publisherRole(watch, skipped)}</div></td>
         <td>{watch.subscribers.length ? watch.subscribers.map(item => item.name).join(', ') : <span className="muted">{noListener(watch, skipped)}</span>}</td>
-        <td><code>{`0x${watch.app_id.toString(16).toUpperCase().padStart(4, '0')}`}</code><div className="small"><code>{watch.mac}</code></div></td>
+        <td><code>{`0x${watch.app_id.toString(16).toUpperCase().padStart(4, '0')}`}</code><div className="small"><code className="goose-mac">{watch.mac}</code></div></td>
         <td><StatusPill status={gooseStatus(watch.state, watch.problem)} showHint={watch.state !== 'receiving'} />
           {watch.origin === 'wire' && <div className="small muted">from the network{watch.src_mac ? ` · ${watch.src_mac}` : ''}</div>}</td>
-        <td className="small">{watch.frames ? `${watch.frames} seen · state ${watch.st_num ?? '-'}` : '–'}</td>
+        <td className="small">{watch.frames ? `${watch.frames} seen · state\u00a0${watch.st_num ?? '-'}` : '–'}</td>
       </tr>)}</tbody></table>}
     {!!fromSkipped.length && <div className="guide-section"><Hint id="goose.fromSkipped" />
       <ul className="small">{fromSkipped.map(item => <li key={item.gocb_ref}><code>{item.gocb_ref}</code> · from{' '}

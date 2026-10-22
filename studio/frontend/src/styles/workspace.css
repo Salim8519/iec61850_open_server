@@ -26,6 +26,8 @@
 .sheet-body { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 4px 20px 32px; }
 .sheet-section { padding: 18px 0; border-bottom: 1px solid var(--border); display: grid; gap: 12px; min-width: 0; }
 .sheet-section:last-child { border-bottom: 0; }
+/* Rotate, Duplicate, Show signal flow and Delete wrap in the 380 px sheet instead of running out of it. */
+.sheet-actions { flex-wrap: wrap; }
 .sheet-section > h3 { margin: 0; }
 .sheet-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .sheet-actions button { flex: 1; min-height: var(--control-height-large); }
@@ -64,7 +66,8 @@
   font-size: 14px; border-top: 1px solid #fde68a; }
 .pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px;
   border-top: 1px solid var(--border); font-size: var(--font-size-small); color: var(--text-2); }
-.event-kind { display: inline-block; min-width: 140px; font-weight: 600; }
+/* Stays a table cell, so its row line matches the others. */
+.event-kind { min-width: 140px; font-weight: 600; }
 .popover { position: absolute; z-index: 30; background: var(--surface); border: var(--line) solid var(--border-strong);
   border-radius: 12px; box-shadow: var(--shadow-large); padding: 8px; }
 .menu-item { width: 100%; justify-content: flex-start; border: 0; background: transparent; min-height: 40px; }

@@ -36,7 +36,7 @@ export const POINT_KIND = 'point_kind';
 export const HIDE_HELPERS: FilterToggle = { key: 'helpers', label: KIND_COPY.hideHelpers, hint: KIND_COPY.hideHelpersHint };
 
 export const SIGNAL_FILTER: FilterSpec = {
-  search: 'Search name, logical node or path',
+  search: 'Search name or path',
   selects: [{ key: 'ld', label: 'Only one logical device', all: 'All logical devices' },
     { key: 'report', label: 'Only points of one report', all: 'Any report' }],
   // One point-type list replaces the old "Kind of data" FC chips (ADR-0095), so the filters take one

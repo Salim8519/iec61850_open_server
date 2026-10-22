@@ -81,7 +81,7 @@ export function EquipmentSheet({ node, project, locked, busy, operation, section
       {source && <section className="sheet-section"><h3>How the value changes</h3>
         <SourceEditor point={source} project={project} perform={perform} /></section>}
       <section className="sheet-section"><AdvancedSettings data={data} locked={locked} update={update} applyColors={applyColors} />
-        {!locked && <div className="row">
+        {!locked && <div className="row sheet-actions">
           {!['JUNCTION', 'RELAY', 'MEASUREMENT_LIST'].includes(data.kind) && <button className="ghost" onClick={() =>
             update({ ...data, rotation: (data.rotation + 90) % 360 })}><RotateCw size={16} />Rotate</button>}
           <button className="ghost" onClick={duplicate}><Copy size={16} />Duplicate</button>

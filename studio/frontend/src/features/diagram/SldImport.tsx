@@ -64,7 +64,7 @@ export function SldImport({ disabled, revision, apply, prepare }: {
           {preview.unbound.length > 0 && <Disclosure title={`Needs a link (${preview.unbound.length})`}>
             <Hint id="sld.unbound" compact />
             <ul className="deletion-impact">{preview.unbound.map(item => <li key={item.path}>
-              <strong>{item.path}</strong> ({item.kind}): {item.reasons.join('; ')}</li>)}</ul></Disclosure>}
+              <strong>{item.path}</strong> ({item.kind}): {[...new Set(item.reasons)].join('; ')}</li>)}</ul></Disclosure>}
           {preview.skipped.length > 0 && <Disclosure title={`No symbol yet (${preview.skipped.length})`}>
             <ul className="deletion-impact">{preview.skipped.map(item => <li key={item.path}>
               <strong>{item.path}</strong> ({item.type}): {item.reason}</li>)}</ul></Disclosure>}
