@@ -7,7 +7,17 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Clearer VM setup, saves by itself, safer network setup</h2>
+    <h2>{SITE.version} · Commands everywhere, point panels, tap changers, SCADA point lists</h2>
+    <ul>
+      <li>Every IEC 61850 command type: besides breakers and switches you can now send integer and enum commands, analogue set points, binary step and integer step commands (tap raise / lower), in all four control models, from IED Explorer and the single-line diagram. Tap and set point commands also work through the SCADA gateway.</li>
+      <li>Select before operate is one click on the single-line diagram, like a station HMI: ScadaBench selects and operates for you. Turn on "Show Select before Operate step by step" under Command options to see each step and its countdown.</li>
+      <li>New Point panel in the single-line diagram: many points of one IED in one box. Read statuses, positions, measurements, tap positions and counters, and send commands or set points from a small popup.</li>
+      <li>New tap-changer transformer symbol with tap position, Raise / Lower, Auto / Manual and a simulated voltage regulator.</li>
+      <li>GOOSE on the diagram is clearer: one change shows one note ("Open · 7 of 7 IEDs got it") and one line to each IED that receives it.</li>
+      <li>SCADA gateway: Add points from your IEDs, from an Excel template or by typing them, every row checked first. New point types for tap position, step commands and set points on IEC 104, DNP3 and Modbus.</li>
+      <li>SCADA master: the most used commands of each protocol in one click, "Repeat automatically", and your own point list: add the addresses your SCADA expects (or copy them from the gateway) and see what was received, what is missing and what has the wrong type.</li>
+    </ul>
+    <h2>0.1.21 · Clearer VM setup, saves by itself, safer network setup</h2>
     <ul>
       <li>The activation screen has a new "Using a virtual machine?" section next to the offline options, with the three steps to use your PC's license inside a VM. Both options start closed, so the screen stays short.</li>
       <li>A VM keeps looking for your licensed PC by itself and opens ScadaBench as soon as it finds it. Nothing to type in the VM.</li>
