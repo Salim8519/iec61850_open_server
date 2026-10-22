@@ -88,7 +88,15 @@ public:
         if (events > 0) master->AddClassScan(ClassField::AllEventClasses(), TimeDuration::Seconds(events), values);
         master->Enable();
         auto until = std::chrono::steady_clock::now() + std::chrono::seconds(CONNECT_SECONDS);
-        while (!link->opened && std::chrono::steady_clock::now() < until) std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        bool refused = false;  // a connect attempt failed at once (RST): nothing listens there
+        for (int round = 1; !link->opened && !refused && std::chrono::steady_clock::now() < until; ++round) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            if (round % 4 == 0) refused = channel->GetStatistics().channel.numOpenFail > 0 && !link->opened;
+        }
+        if (refused) {
+            disconnect();
+            throw std::runtime_error(refused_text(peer, "outstation"));
+        }
         if (!link->opened) {
             disconnect();
             throw std::runtime_error("No answer from " + peer + " within " + std::to_string(CONNECT_SECONDS)

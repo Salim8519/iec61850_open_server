@@ -1,21 +1,25 @@
 package service
 
 import (
+	"strconv"
 	"sync"
 	"time"
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/tools/pytext"
 	"studio-engine/internal/tools/worker"
 )
 
 // ProbeTimeout: 10,000 addresses at 10 requests per second fit with margin.
 const ProbeTimeout = 1500 * time.Second
 
-// Probe is ModbusProbe: one bounded 'Find registers' at a time, in the background.
+// Probe is ModbusProbe: one bounded 'Find registers' at a time, in the background. Stop
+// (Go only, change 0178) asks studio_master to end it after the request on the wire.
 type Probe struct {
 	mu      sync.Mutex
 	current *pyjson.Object
+	process worker.Process
 }
 
 // Snapshot is a copy of the probe state ({"state": "idle"} before the first probe).
@@ -40,8 +44,24 @@ func (p *Probe) Start(process worker.Process, table string, start, end int64, do
 	}
 	p.current = pyjson.NewObject().Set("state", "running").Set("table", table).Set("start", start).Set("end", end).
 		Set("requests", int64(0)).Set("address", start).Set("found", []any{}).Set("message", "")
+	p.process = process
 	p.mu.Unlock()
 	go p.run(process, table, start, end, done)
+	return p.Snapshot(), nil
+}
+
+// Stop asks a running probe to end after the request it is waiting for; the ranges found so
+// far stay. It answers the snapshot at once (the probe turns "stopped" when the worker answers).
+func (p *Probe) Stop() (*pyjson.Object, error) {
+	p.mu.Lock()
+	running := p.current != nil && get(p.current, "state") == "running"
+	process := p.process
+	p.mu.Unlock()
+	if running && process != nil {
+		if _, err := process.Request("probe_stop", worker.DefaultTimeout, pyjson.NewObject()); err != nil {
+			return nil, err
+		}
+	}
 	return p.Snapshot(), nil
 }
 
@@ -69,6 +89,10 @@ func (p *Probe) run(process worker.Process, table string, start, end int64, done
 	p.mu.Lock()
 	if err != nil {
 		p.current.Set("state", "failed").Set("message", err.Error())
+	} else if get(answer, "stopped") == true {
+		requests, _ := pytext.Int64(get(answer, "requests"))
+		p.current.Set("state", "stopped").Set("found", get(answer, "found")).Set("requests", get(answer, "requests")).
+			Set("message", "Stopped by you after "+strconv.FormatInt(requests, 10)+" requests.")
 	} else {
 		p.current.Set("state", "done").Set("found", get(answer, "found")).Set("requests", get(answer, "requests"))
 	}

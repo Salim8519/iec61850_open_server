@@ -16,7 +16,7 @@ export function NotInList({ rows, protocol, add }: {
       <span className="small muted">{LIST_COPY.notInListHint}</span><span className="gateway-spacer" />
       <button type="button" disabled={!addable.length} onClick={() => add(addable.map(row => row.key))}>
         <Plus size={16} />{LIST_COPY.addAll(addable.length)}</button></div>
-    <table className="gateway-points master-points compact-rows"><thead><tr><th>{LIST_COPY.columns.type}</th>
+    <table className="gateway-points master-points master-list compact-rows"><thead><tr><th>{LIST_COPY.columns.type}</th>
       <th>{LIST_ADDRESS[protocol]}</th><th>{LIST_COPY.columns.name}</th><th>{LIST_COPY.columns.value}</th><th aria-label="Add" /></tr></thead>
       <tbody>{rows.map(row => {
         const kind = kindOfMasterGroup(row.group);

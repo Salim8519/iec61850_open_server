@@ -27,6 +27,10 @@ typedef struct {
 
 enum { ATTEMPT_CONNECTED = 0, ATTEMPT_TIMEOUT = -1, ATTEMPT_NOT_STARTED = -2 };
 
+/* 1 when the last Socket_connect failed because the device refused it (change 0178), so the
+ * master can say "nothing is listening" instead of "no answer within t0". One connect at a time. */
+int studio_connect_refused = 0;
+
 static bool
 studioIsBound(Socket self)
 {
@@ -99,8 +103,10 @@ Socket_connect(Socket self, const char* address, int port)
 {
     ULONGLONG deadline = GetTickCount64() + self->connectTimeout;
     bool quickAttempt = !studioIsBound(self) && studioSkipSynRetransmissions(self);
+    int result;
 
-    int result = studioAttempt(self, address, port, deadline);
+    studio_connect_refused = 0;
+    result = studioAttempt(self, address, port, deadline);
 
     if (result == ATTEMPT_CONNECTED)
         return true;
@@ -130,6 +136,7 @@ Socket_connect(Socket self, const char* address, int port)
     }
 
     /* Only a refusal is reported early; every other failure keeps the vendor's full connect timeout. */
+    studio_connect_refused = result == WSAECONNREFUSED;
     if (result != WSAECONNREFUSED)
         Sleep(studioRemaining(deadline));
 

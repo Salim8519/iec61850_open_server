@@ -25,6 +25,14 @@ export const READ_COPY = {
   system: 'Device', none: 'No values match the filter.',
 };
 
+/** A refused SET with the reason a beginner can act on (0178): v1/v2c devices usually take writes only with
+ *  the write community, which is not the read community public. */
+export function refusedWrite(message: string): string {
+  if (!/no access|not writable|not authorized|read-only/i.test(message)) return message;
+  return `${message}. Changing values usually needs the write community (often private), or a v3 user that may write. `
+    + 'Connect again with it, then try the change again.';
+}
+
 export const TRAP_RECEIVER_COPY = {
   title: 'Trap receiver', listen: 'Receive traps', stop: 'Stop receiving', where: 'Listen on', port: 'Port',
   thisPc: 'This PC only (127.0.0.1)', allCards: 'All network cards (0.0.0.0)',

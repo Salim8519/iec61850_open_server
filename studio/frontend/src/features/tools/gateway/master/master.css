@@ -19,3 +19,5 @@
 .master-command-fields label.gateway-check { display: flex; }
 .master-cyclic { display: grid; gap: 8px; padding: 10px 0 0; border-top: 1px solid var(--accent-line); }
 .master-cyclic .gateway-number { width: 110px; }
+/* Find registers shows its whole result (the "Read these as" choice too), not a small inner scroll (0178). */
+.panel-messages.find-registers { max-height: none; overflow: visible; flex-shrink: 0; }

@@ -46,6 +46,9 @@ test('IEC 104, gateway, master and SNMP types map onto the same kinds', () => {
   assert.equal(kindOfMasterCommand('setpoint_float'), 'SE');
   assert.equal(kindOfMasterCommand('registers_float'), 'SE');
   assert.equal(kindOfMasterCommand('coil'), 'SC');
+  // 0178 (C6): the master's regulating step has the badge of the gateway's C_RC and command_step.
+  assert.equal(kindOfMasterCommand('regulating'), kindOfIec104('C_RC_NA_1'));
+  assert.equal(kindOfMasterCommand('regulating'), kindOfGatewayPoint('command_step'));
   assert.equal(kindOfSnmp('Gauge32'), 'MV');
   assert.equal(kindOfSnmp('counter64'), 'CT');
   assert.equal(kindOfSnmp('ipaddress'), 'TX');

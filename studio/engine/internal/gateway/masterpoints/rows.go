@@ -117,7 +117,8 @@ func rowPoint(protocol string, row map[string]string) (*pyjson.Object, string) {
 	}
 	entry, known := addpoints.ResolveMasterType(protocol, row["type"])
 	if !known {
-		return raw, "\"" + row["type"] + "\" is not a " + ProtocolName(protocol) + " type; use one of: " + typeNames(protocol)
+		return raw, "\"" + row["type"] + "\" is not " + article(protocol) + " " + ProtocolName(protocol) + " type; use one of: " +
+			typeNames(protocol)
 	}
 	raw.Set("type", entry.Key)
 	address, err := strconv.ParseInt(strings.ReplaceAll(row["address"], " ", ""), 10, 64)
@@ -135,7 +136,8 @@ func rowPoint(protocol string, row map[string]string) (*pyjson.Object, string) {
 		}
 	}
 	raw.Set("unit", row["unit"])
-	if order := strings.ToLower(row["word_order"]); strings.HasPrefix(order, "little") || order == "low word first" {
+	// The gateway CSV writes low_first for the same order (0178: one meaning, both spellings read).
+	if order := strings.ToLower(row["word_order"]); strings.HasPrefix(order, "little") || order == "low word first" || order == "low_first" {
 		raw.Set("word_order", "little")
 	}
 	switch strings.ToLower(row["select"]) {
@@ -154,7 +156,15 @@ func typeNames(protocol string) string {
 			names = append(names, entry.Name)
 		}
 	}
-	return strings.Join(names, ", ") + " (or see the full type list)"
+	return strings.Join(names, "; ") + " (or see the full type list)" // the names hold commas
+}
+
+// article is "an IEC 104" but "a DNP3" and "a Modbus".
+func article(protocol string) string {
+	if protocol == "iec104" {
+		return "an"
+	}
+	return "a"
 }
 
 func cellsJSON(row map[string]string) *pyjson.Object {

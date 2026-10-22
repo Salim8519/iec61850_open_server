@@ -79,8 +79,8 @@ func TestPasteMarksEveryBadRow(t *testing.T) {
 	}
 	results := CheckRows("iec104", rows, numbers, index, ieds, nil)
 	want := []string{"Row 2: address 10001 is already used by another point",
-		"Row 3: \"Analog thing\" is not a type here; use one of: Single point, Double point, Measured value, float, " +
-			"Measured value, scaled, Single command, Double command, Set point command, Regulating step command, Step position (tap)",
+		"Row 3: \"Analog thing\" is not a type here; use one of: Single point; Double point; Measured value, float; " +
+			"Measured value, scaled; Single command; Double command; Set point command; Regulating step command; Step position (tap)",
 		"Row 4: this project has no IED called \"NOPE\"",
 		"Row 5: FEED1LD0/MMXU1.TotW.mag.f is a FLOAT32 MX value and does not fit this type",
 		"Row 6: the address must be a whole number",

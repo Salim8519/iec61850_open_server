@@ -27,7 +27,7 @@ func TestPastedRowsAreCheckedBeforeAnythingIsAdded(t *testing.T) {
 		problems = append(problems, row.Problem)
 	}
 	want := []string{`Row 2: IOA 10001 is already used by "Alarm"`, "Row 3: write the IOA the device uses (a whole number)",
-		`Row 4: "counter of sheep" is not a IEC 104 type`, ""}
+		`Row 4: "counter of sheep" is not an IEC 104 type; use one of: `, ""}
 	for at, prefix := range want {
 		if !strings.HasPrefix(problems[at], prefix) || (prefix == "" && problems[at] != "") {
 			t.Errorf("row %d: got %q want %q", at+2, problems[at], prefix)

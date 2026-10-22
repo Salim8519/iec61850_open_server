@@ -86,12 +86,17 @@ export function rawToInput(point: PanelPoint, raw: unknown): string {
   return (number * point.scale + point.offset).toFixed(digits);
 }
 
-/** The universal point kind of a row (ADR-0095): SP, DP, MV, or SC / DC for a command by its control;
- *  a typed command (INC, ENC, APC, BSC, ISC, ADR-0108) is a set point (SE), its class shown beside it. */
+/** A value row read from a status (ST) attribute: an integer status such as an operation counter's stVal
+ *  or a tap position (valWTr.posVal). Measured (MX) values end in mag.f, cVal, mxVal and the like. */
+const STATUS_VALUE = /\.(stVal|posVal)$/;
+
+/** The universal point kind of a row (ADR-0095): SP, DP, MV, IS for a value read from a status
+ *  (stVal, posVal; change 0178), or SC / DC for a command by its control; a typed command (INC, ENC,
+ *  APC, BSC, ISC, ADR-0108) is a set point (SE), its class shown beside it. */
 export function kindOfPoint(point: PanelPoint, control?: { cdc: string }): Kind {
   if (point.type === 'status') return 'SP';
   if (point.type === 'double') return 'DP';
-  if (point.type === 'value') return 'MV';
+  if (point.type === 'value') return STATUS_VALUE.test(point.source?.ref ?? '') ? 'IS' : 'MV';
   if (control && ['INC', 'ENC', 'APC', 'BAC', 'BSC', 'ISC'].includes(control.cdc)) return 'SE';
   return control?.cdc === 'DPC' ? 'DC' : control?.cdc === 'SPC' ? 'SC' : 'CM';
 }

@@ -55,9 +55,9 @@ export function FromIed({ protocol, ieds, rows, types, add, fail }: {
       {types.length ? <TypeList types={types} value={kind} change={setKind} /> : <Spinner inline label="Loading the types…" />}</section>}
     {ied && kind && <section className="add-step"><h4>{ADD_COPY.step(3, ADD_COPY.chooseSignals)}</h4>
       <CandidateList protocol={protocol} ied={ied.id} kind={kind} rows={rows} ticked={ticked} setTicked={setTicked} fail={fail} />
-      {command && <label className="row add-check" title={ADD_COPY.withStatusHint}>
+      {command && <label className="row add-check" title={ADD_COPY.withStatusHint(protocol)}>
         <input type="checkbox" checked={withStatus} onChange={event => setWithStatus(event.target.checked)} />
-        <span>{ADD_COPY.withStatus}<small className="muted"> · {ADD_COPY.withStatusHint}</small></span></label>}
+        <span>{ADD_COPY.withStatus}<small className="muted"> · {ADD_COPY.withStatusHint(protocol)}</small></span></label>}
     </section>}
     {plan && <section className="add-step"><h4>{ADD_COPY.step(4, ADD_COPY.rowsTitle)}</h4>
       <p className="small muted">{ADD_COPY.rowsHint}</p>

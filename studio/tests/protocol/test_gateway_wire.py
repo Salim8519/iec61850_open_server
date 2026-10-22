@@ -154,6 +154,24 @@ def test_dnp3_integrity_scan_and_crob():
         gateway.close()
 
 
+def test_dnp3_output_statuses_are_online_follow_status_and_report_events():
+    # 0178 (C2): g10 output statuses were RESTART for good and never sent as events.
+    points = [{"id": "bay:B/XCBR1.Pos.stVal:double", "kind": "double", "address": 0},
+              {"id": "bay:B/XCBR1.Pos:command_double", "kind": "command_double", "address": 0},
+              {"id": "bay:B/GGIO1.SPCSO1:command_single", "kind": "command_single", "address": 1}]
+    gateway = Gateway("dnp3", {"bind": "127.0.0.1", "port": 20202, "outstation_address": 10, "master_address": 1}, points)
+    try:
+        gateway.process.request("update", values=[{"id": points[0]["id"], "value": 2, "quality": 0}])
+        lines = run("studio_test_dnp3_master.exe", "127.0.0.1", 20202, 1, 10, "scan", "crob:1:on", "scan")
+        outputs = [item for item in lines if item.get("kind") == "output"]
+        static = {item["index"]: item for item in outputs if not item["event"]}
+        assert static[0]["value"] == 1 and static[0]["flags"] & 1  # follows the closed breaker, ONLINE
+        assert static[1]["flags"] & 1 and not static[1]["flags"] & 2  # ONLINE, not RESTART
+        assert any(item["event"] and item["index"] == 1 and item["value"] == 1 for item in outputs)
+    finally:
+        gateway.close()
+
+
 def test_listen_failure_is_explained():
     first = Gateway("modbus", {"bind": "127.0.0.1", "port": 15021})
     try:

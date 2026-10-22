@@ -3,6 +3,7 @@ and an independent stand-in server written here. Spec: docs/specs/scada-master.m
 import socket
 import struct
 import threading
+import time
 
 import pytest
 from test_gateway_wire import POINTS, Gateway
@@ -95,6 +96,29 @@ def test_modbus_client_finds_registers_on_an_independent_server_and_explains_ref
             master.process.request("probe", table="holding_registers", start=0, end=20000)
         with pytest.raises(RuntimeError, match="no interrogation"):
             master.process.request("interrogate")
+    finally:
+        master.close()
+        server.close()
+
+
+def test_find_registers_stops_on_request_and_commands_still_go_through():
+    # 0178 (C14): Find registers runs on its own thread; probe_stop ends it after the request on the wire.
+    server = StandIn(15033)
+    master = Master()
+    try:
+        master.process.request("connect", protocol="modbus", settings={"host": "127.0.0.1", "port": 15033})
+        result = {}
+        worker = threading.Thread(target=lambda: result.update(master.process.request(
+            "probe", timeout=60, table="holding_registers", start=0, end=9999)))
+        worker.start()
+        time.sleep(1.5)
+        assert master.process.request("command", kind="coil", address=1, value=1)["ok"] and server.coils[1]
+        started = time.time()
+        assert master.process.request("probe_stop") is True
+        worker.join(10)
+        assert not worker.is_alive() and time.time() - started < 2
+        assert result["stopped"] is True and 5 < result["requests"] < 200
+        assert master.process.request("probe_stop") is True  # nothing running: nothing happens
     finally:
         master.close()
         server.close()

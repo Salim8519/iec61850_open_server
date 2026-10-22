@@ -80,7 +80,7 @@ func readKind(protocol, typed string) (string, string) {
 		for _, entry := range Types(protocol) {
 			names = append(names, entry.Name)
 		}
-		return "", "\"" + typed + "\" is not a type here; use one of: " + strings.Join(names, ", ")
+		return "", "\"" + typed + "\" is not a type here; use one of: " + strings.Join(names, "; ") // names hold commas
 	}
 	return kind, ""
 }

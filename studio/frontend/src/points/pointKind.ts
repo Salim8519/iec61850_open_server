@@ -80,7 +80,9 @@ export function kindOfMasterGroup(group: string): Kind {
 /** Commands a master sends to a device (single, double, set points, outputs, register writes). */
 export function kindOfMasterCommand(kind: string): Kind {
   if (kind === 'single' || kind === 'binary_output' || kind === 'coil') return 'SC';
-  if (kind === 'double' || kind === 'regulating') return 'DC';
+  if (kind === 'double') return 'DC';
+  // A regulating step (C_RC) is SE, as the gateway's C_RC and command_step are (change 0178).
+  if (kind === 'regulating') return 'SE';
   if (kind.startsWith('setpoint') || kind.startsWith('analog_output') || kind.startsWith('register')) return 'SE';
   return 'UN';
 }

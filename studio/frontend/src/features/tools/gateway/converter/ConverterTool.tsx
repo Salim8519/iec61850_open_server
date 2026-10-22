@@ -13,14 +13,15 @@ import { CommandLog } from '../CommandLog';
 import { GatewaySettings } from '../GatewaySettings';
 import { MasterConnect } from '../master/MasterConnect';
 import { MasterPointTable } from '../master/MasterPointTable';
+import { ModbusRanges } from '../master/ModbusRanges';
 import { TrafficLog } from '../TrafficLog';
 import { CommandRoutes } from './CommandRoutes';
+import { converterTabs, type ConverterTab } from './converterTabs';
 import { ServedPoints } from './ServedPoints';
 import '../../explorer/explorer.css';
 import '../gateway.css';
 import '../master/master.css';
 
-type Tab = keyof typeof CONVERTER_COPY.tabs;
 const WORDS = { intro: CONVERTER_COPY.intro, realCommands: CONVERTER_COPY.realCommands, start: CONVERTER_COPY.start,
   stop: CONVERTER_COPY.stop, realCommandsOn: CONVERTER_COPY.realCommandsOn, realCommandsOff: CONVERTER_COPY.realCommandsOff,
   startHint: CONVERTER_COPY.startHint };
@@ -28,7 +29,7 @@ const WORDS = { intro: CONVERTER_COPY.intro, realCommands: CONVERTER_COPY.realCo
 /** Protocol converter: ScadaBench reads the device as master and serves the same points upstream.
  *  The column holds "1 · Read the device" above "2 · Serve to SCADA", each with its own status and button. */
 export function ConverterTool() {
-  const [tab, setTab] = useState<Tab>('device');
+  const [chosen, setTab] = useState<ConverterTab>('device');
   const [full, setFull] = useFullView('converter');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ side: 'device' | 'scada'; text: string } | null>(null);
@@ -59,6 +60,8 @@ export function ConverterTool() {
     {error && <p className="explorer-error">{error.text}</p>}</div></div>;
   const connected = master.status.state === 'connected' || master.status.state === 'lost';
   const serving = gateway.status.state === 'running';
+  const modbus = master.config.protocol === 'modbus';
+  const tab: ConverterTab = chosen === 'ranges' && !modbus ? 'device' : chosen;
   return <div className="fill-body fill-split scada-split">
     <aside className="card side-pane" aria-label={CONVERTER_COPY.columnTitle}>
       <MasterConnect config={master.config} status={master.status} busy={busy} title={CONVERTER_COPY.deviceStep}
@@ -74,9 +77,10 @@ export function ConverterTool() {
     <FullView full={full} change={setFull} place={FULL_PLACE.converter}>
     <div className={`card fill-panel gateway-panel converter-panel${serving ? ' running' : ''}`}>
       <TabBar label="Converter views" value={tab} change={setTab} end={<FullViewButton full={full} change={setFull} />}
-        tabs={(Object.keys(CONVERTER_COPY.tabs) as Tab[]).map(key => [key, CONVERTER_COPY.tabs[key]])} />
+        tabs={converterTabs(modbus)} />
       <div className="panel-body">
         {tab === 'device' && <MasterPointTable status={master.status} fail={fail} />}
+        {tab === 'ranges' && <ModbusRanges status={master.status} fail={fail} />}
         {tab === 'served' && <ServedPoints protocol={gateway.config.protocol} fail={fail} />}
         {tab === 'routes' && <CommandRoutes locked={serving} fail={fail} />}
         {tab === 'scada' && <TrafficLog running={serving} />}

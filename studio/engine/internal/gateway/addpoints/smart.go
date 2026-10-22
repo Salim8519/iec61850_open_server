@@ -25,15 +25,17 @@ type IEDSummary struct {
 }
 
 // Smart is Propose from IEDs in smart mode: the same selection as gateway.Propose for the
-// ticked IEDs, with names from the SCL descriptions, every command's status point added and
-// each command's address paired with its status. It answers the new list, notes and the
-// per-IED summary for the preview.
+// ticked IEDs plus their typed step and set point commands (withTypedCommands), with names
+// from the SCL descriptions, every command's status point added and each command's address
+// paired with its status. It answers the new list, notes and the per-IED summary for the
+// preview.
 func Smart(raw []*pyjson.Object, protocol string, options SmartOptions) ([]any, []string, []IEDSummary, error) {
 	all, _, err := gateway.Propose(raw, protocol)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 	index := NewIndex(raw)
+	all = withTypedCommands(protocol, raw, index, all)
 	existing := TakenIDs(options.Current)
 	summary := summarise(index, all, existing, options.Ticked)
 	ticked := []*pyjson.Object{}
@@ -46,7 +48,7 @@ func Smart(raw []*pyjson.Object, protocol string, options SmartOptions) ([]any, 
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	proposal = withStatuses(index, proposal)
+	proposal = withStatuses(index, withTypedCommands(protocol, ticked, index, proposal))
 	if !options.AddNew {
 		addressed := readdress(protocol, index, nil, proposal)
 		kept, moved := gateway.KeepOwn(protocol, addressed, ownOf(options.Current))

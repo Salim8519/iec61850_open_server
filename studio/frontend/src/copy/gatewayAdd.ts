@@ -1,5 +1,11 @@
 // Words of the gateway's "Add points" dialog and the smart Propose preview (ADR-0105). Plain English first.
+import type { Protocol } from '../api/gateway';
 import type { Status } from './status';
+
+/** A status paired with its command, in the addresses of each protocol (0178: no IEC 104 numbers on DNP3). */
+const PAIR_EXAMPLE: Record<Protocol, string> = {
+  iec104: '20003 for command 50003', dnp3: 'input index 3 for command index 3', modbus: 'discrete input or register 3 for coil 3',
+};
 
 export const ADD_COPY = {
   open: 'Add points', title: 'Add points', close: 'Close without adding',
@@ -21,7 +27,8 @@ export const ADD_COPY = {
   inList: 'in the list', tickShown: 'Tick all shown', untickAll: 'Untick all',
   more: (shown: number, total: number) => `Showing ${shown} of ${total}. Type in the search to find the others.`,
   withStatus: 'Also add its status point',
-  withStatusHint: 'SCADA then sees the result of the command. The status gets the matching address, for example 20003 for command 50003.',
+  withStatusHint: (protocol: Protocol) =>
+    `SCADA then sees the result of the command. The status gets the matching address, for example ${PAIR_EXAMPLE[protocol]}.`,
   check: 'Planning the addresses…', rowsTitle: 'What will be added',
   rowsHint: 'Names come from the SCL description. Change any name or address here before adding.',
   statusOf: 'status of the command above',

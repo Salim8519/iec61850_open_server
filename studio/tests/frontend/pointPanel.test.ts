@@ -109,7 +109,11 @@ test('a scale of 0 is refused because the typed value could not be turned back',
 });
 
 test('point kinds follow ADR-0095: SP, DP, MV and SC or DC by the control', () => {
-  assert.deepEqual([kindOfPoint(point('a', 'status')), kindOfPoint(point('d', 'double')), kindOfPoint(point('v', 'value'))], ['SP', 'DP', 'MV']);
+  const measured = point('v', 'value', { source: signal('LD0/MMXU1.TotW.mag.f') });
+  assert.deepEqual([kindOfPoint(point('a', 'status')), kindOfPoint(point('d', 'double')), kindOfPoint(measured)], ['SP', 'DP', 'MV']);
+  // 0178 (B16): an integer read from a status (ST) attribute is an integer status, not a measured value.
+  assert.equal(kindOfPoint(point('n', 'value', { source: signal('LD0/XCBR1.OpCnt.stVal') })), 'IS');
+  assert.equal(kindOfPoint(point('t', 'value', { source: signal('LD0/YLTC1.TapPos.valWTr.posVal') })), 'IS');
   assert.equal(kindOfPoint(point('1', 'command'), { cdc: 'SPC' }), 'SC');
   assert.equal(kindOfPoint(point('1', 'command'), { cdc: 'DPC' }), 'DC');
   assert.equal(kindOfPoint(point('1', 'command')), 'CM');

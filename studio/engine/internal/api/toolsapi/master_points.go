@@ -72,6 +72,9 @@ func (a *Area) masterPointRoutes() []api.Route {
 			}
 			return m.FindRegisters(table, start, end)
 		}),
+		route("POST", "/tools/master/probe/stop", false, func(*http.Request) (any, error) {
+			return m.StopFindRegisters()
+		}),
 		route("POST", "/tools/master/probe/ranges", false, func(r *http.Request) (any, error) {
 			data, err := body(r)
 			if err != nil {

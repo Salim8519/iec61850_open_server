@@ -1,4 +1,4 @@
-import { ListPlus, Radar } from 'lucide-react';
+import { ListPlus, Radar, Square } from 'lucide-react';
 import { useState } from 'react';
 import { masterApi, type MasterStatus } from '../../../../api/master';
 import { DATA_TYPE_NAMES, RANGES_COPY, TABLE_NAMES } from '../../../../copy/master';
@@ -30,12 +30,15 @@ export function FindRegisters({ status, added, fail }: { status: MasterStatus; a
       <button className="primary" disabled={!valid || running || !status.link_open}
         onClick={() => masterApi.probe(table, start, end).catch(error => fail(error.message))}>
         <Radar size={16} />{RANGES_COPY.find}</button>
+      {running && <button onClick={() => masterApi.stopProbe().catch(error => fail(error.message))} title={RANGES_COPY.stopHint}>
+        <Square size={14} />{RANGES_COPY.stop}</button>}
     </div>
     <p className="small muted" style={{ margin: 0 }}>{RANGES_COPY.findHint} {valid
       ? RANGES_COPY.preview(cost.fewest, cost.most) : 'Choose 1 to 10000 addresses.'}</p>
     {running && <p className="small" role="status" style={{ margin: 0 }}>{RANGES_COPY.running(probe.requests ?? 0, probe.address ?? 0)}</p>}
     {probe.state === 'failed' && <p className="small gateway-warning" style={{ margin: 0 }}>{probe.message}</p>}
-    {probe.state === 'done' && <div className="row master-command-fields">
+    {probe.state === 'stopped' && <p className="small" role="status" style={{ margin: 0 }}>{probe.message}</p>}
+    {(probe.state === 'done' || probe.state === 'stopped') && <div className="row master-command-fields">
       <span className="small">{RANGES_COPY.found(probe.found?.length ?? 0)} {(probe.found ?? []).slice(0, 8).map(span =>
         `${span.start}–${span.start + span.count - 1}`).join(', ')}{(probe.found?.length ?? 0) > 8 ? ' …' : ''}</span>
       {(probe.found?.length ?? 0) > 0 && <>
