@@ -117,11 +117,7 @@ func PlanAddresses(ieds []PlanIED, adapter Adapter, all []Adapter, strategy stri
 			state.adapterRow(&row, scd, hasSCD, networks)
 		}
 		state.check(&row)
-		if row.Proposed != "" {
-			if _, found := state.chosen[row.Proposed]; !found {
-				state.chosen[row.Proposed] = row.Name
-			}
-		}
+		state.claim(row)
 		rows = append(rows, row)
 	}
 	return rows, nil

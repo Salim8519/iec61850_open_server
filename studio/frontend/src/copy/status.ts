@@ -51,7 +51,10 @@ export const LIVE_STATES: Record<string, Status> = {
 export const gooseStatus = (state: string, problem = ''): Status =>
   problem && PROBLEMS[problem] ? PROBLEMS[problem] : GOOSE_STATES[state] ?? GOOSE_STATES.waiting;
 export const liveStatus = (state: string): Status => LIVE_STATES[state] ?? LIVE_STATES.starting;
-export const addressStatus = (status: string): Status => PROBLEMS[status] ?? PROBLEMS.invalid_manual;
+/** A typed address the page is still checking: shown at once, never as "Free" before it is checked. */
+const CHECKING_ADDRESS: Status = { label: 'Checking…', tone: 'waiting', hint: 'ScadaBench is checking this address.' };
+export const addressStatus = (status: string): Status =>
+  status === 'checking' ? CHECKING_ADDRESS : PROBLEMS[status] ?? PROBLEMS.invalid_manual;
 
 export const UI_STATUS: Record<string, Status> = {
   equipment_ready: { label: 'Ready', tone: 'good', hint: 'Connected to its IED signals.' },

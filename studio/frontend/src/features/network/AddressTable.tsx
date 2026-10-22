@@ -2,6 +2,7 @@ import type { PlanPreview } from '../../api/network';
 import { addressStatus } from '../../copy/status';
 import { InfoTip } from '../../ui/InfoTip';
 import { StatusPill } from '../../ui/StatusPill';
+import type { Provisional } from './typedAddressCheck';
 
 /** The address the IED's file (CID/SCD) gives, always in view (change 0150), with one click to
  *  go back to it after typing another address or taking a free one. */
@@ -16,9 +17,10 @@ export type Manual = Record<string, { ip: string; prefix: number }>;
 
 /** One row per IED (and SNMP device, ADR-0092) ScadaBench publishes: the address it will answer at and whether
  *  that address is free. The SCD address is used by default; SNMP devices keep their saved address while it is
- *  free; a row with a problem offers one free address to use instead. */
-export function AddressTable({ preview, manual, setManual }: {
-  preview: PlanPreview; manual: Manual; setManual: (value: Manual) => void;
+ *  free; a row with a problem offers one free address to use instead. A row just typed in shows its first answer
+ *  (`provisional`) at once, until the engine's own answer arrives. */
+export function AddressTable({ preview, manual, setManual, provisional = {} }: {
+  preview: PlanPreview; manual: Manual; setManual: (value: Manual) => void; provisional?: Record<string, Provisional>;
 }) {
   const type = (id: string, ip: string, prefix: number) => setManual({ ...manual, [id]: { ip, prefix } });
   return <div className="card"><table className="address-table">
@@ -26,7 +28,8 @@ export function AddressTable({ preview, manual, setManual }: {
     <tbody>{preview.rows.map(row => {
       const typed = manual[row.ied_id];
       const prefix = typed?.prefix ?? row.prefix ?? 24;
-      const status = addressStatus(row.status);
+      const first = provisional[row.ied_id];
+      const status = addressStatus(first?.status ?? row.status);
       return <tr key={row.ied_id}>
         <td><strong>{row.name}</strong></td>
         <td><div className="row" style={{ gap: 8 }}>
@@ -39,8 +42,8 @@ export function AddressTable({ preview, manual, setManual }: {
             use={() => type(row.ied_id, row.scd_ip, prefix)} />}</td>
         <td><div className="address-check">
           <StatusPill status={status} />
-          {(row.hint || status.hint) && <span className="small muted">{row.hint || status.hint}</span>}
-          {row.alternative && <button className="link-button" onClick={() =>
+          {(first?.hint || row.hint || status.hint) && <span className="small muted">{first?.hint || row.hint || status.hint}</span>}
+          {!first && row.alternative && <button className="link-button" onClick={() =>
             type(row.ied_id, row.alternative!.ip, row.alternative!.prefix)}>Use {row.alternative.ip} instead</button>}
         </div></td>
       </tr>;

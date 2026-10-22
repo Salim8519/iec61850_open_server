@@ -1,5 +1,5 @@
 import { Check, RefreshCw, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
 import type { Adapter, ApplyResult, PlanPreview } from '../../api/network';
@@ -12,6 +12,7 @@ import { AddressTable, type Manual } from './AddressTable';
 import { CheckProgressView } from './CheckProgressView';
 import { ResultStep, ReviewStep } from './ReviewStep';
 import { adapterLabel, changeSentence, LOOPBACK_CHOICE, putLabel, setupTitle, usableAdapters } from './setupWords';
+import { cleanManual, provisionalChecks } from './typedAddressCheck';
 
 /** One page, one button (change 0098): pick the network card, check one address per published IED, apply.
  *  Safety is unchanged: the exact Windows changes are listed, Windows asks once, and Undo/restart removes them. */
@@ -20,6 +21,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   const [guid, setGuid] = useState('');
   const [manual, setManual] = useState<Manual>({});
   const [preview, setPreview] = useState<PlanPreview | null>(null);
+  const [answered, setAnswered] = useState<Manual | null>(null);
   const [checking, setChecking] = useState(false);
   const [applying, setApplying] = useState(false);
   const [result, setResult] = useState<ApplyResult | null>(null);
@@ -46,17 +48,24 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     }, 3000);
     return () => { window.clearTimeout(start); stop(); };
   }, [guid, result]);
-  // Check the addresses again by itself shortly after the card or a typed address changes.
+  // Check the addresses again by itself shortly after the card or a typed address changes. Spaces around a typed
+  // address are dropped. `answered` is the typed set the shown answer belongs to: until it matches what is typed,
+  // the answer is old, the typed rows show their own first answer (duplicates and the PC's other cards, found in
+  // memory at once) and the apply button stays off.
   useEffect(() => {
     if (!guid || loopback || result) return;
     const timer = window.setTimeout(() => {
       setChecking(true); setError('');
-      api<PlanPreview>('/network/plan/preview', 'POST', { adapter_guid: guid, strategy: 'scd', manual })
-        .then(setPreview).catch(reason => { setPreview(null); setError(reason.message); })
+      api<PlanPreview>('/network/plan/preview', 'POST', { adapter_guid: guid, strategy: 'scd', manual: cleanManual(manual) })
+        .then(answer => { setPreview(answer); setAnswered(manual); })
+        .catch(reason => { setPreview(null); setError(reason.message); })
         .finally(() => setChecking(false));
-    }, 500);
+    }, 300);
     return () => window.clearTimeout(timer);
   }, [guid, loopback, manual, result]);
+  const outdated = answered !== manual;
+  const firstAnswers = useMemo(() => preview ? provisionalChecks(preview.rows, manual, answered, adapters, guid) : {},
+    [preview, manual, answered, adapters, guid]);
   // "This PC only": the private loopback addresses; no network card and no Windows change.
   const useLoopback = async () => {
     setApplying(true); setError('');
@@ -84,7 +93,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     <h2 style={{ margin: 0 }}>{setupTitle(preview)}</h2>
     <div className="row" style={{ alignItems: 'center' }}>
       <label className="row" style={{ gap: 8 }}><strong style={{ whiteSpace: 'nowrap' }}>Network card</strong>
-        <select value={guid} disabled={!adapters} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); }}
+        <select value={guid} disabled={!adapters} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); setAnswered(null); }}
           aria-label="Network card">
           <option value="">{adapters ? 'Choose the card plugged into the IED or SCADA switch…' : 'Looking for network cards…'}</option>
           <option value={LOOPBACK_CHOICE}>This PC only (loopback): IEDs talk to each other on this PC</option>
@@ -104,14 +113,14 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     {error && <div className="error-banner" role="alert" style={{ borderRadius: 6 }}><span>{error}</span></div>}
     {checking && !preview && <CheckProgressView />}
     {checking && preview && <Spinner inline size={14} label="Checking again…" />}
-    {preview && <AddressTable preview={preview} manual={manual} setManual={setManual} />}
+    {preview && <AddressTable preview={preview} manual={manual} setManual={setManual} provisional={firstAnswers} />}
     {preview && !preview.ready && <Hint id="network.address.fix" compact />}
     {preview && <p className="small" style={{ margin: 0 }}>{changeSentence(preview)}</p>}
     {preview && <Disclosure title="Show the exact Windows changes"><ReviewStep preview={preview} /></Disclosure>}
     <div className="row">
       {loopback ? <button className="primary" disabled={applying} onClick={useLoopback}>
         {applying ? <SpinIcon /> : <Check size={16} />}Use this PC only</button>
-      : <button className="primary" disabled={!preview?.ready || checking || applying} onClick={apply}>
+      : <button className="primary" disabled={!preview?.ready || outdated || checking || applying} onClick={apply}>
         {applying ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
           : putLabel(count, preview?.adapter.name, snmp)}</button>}
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>

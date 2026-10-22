@@ -27,32 +27,24 @@ func manualOverride(manual any, iedID string) (*pyjson.Object, error) {
 	return override, nil
 }
 
-// rows is service._rows: the planner's rows with typed addresses applied.
+// rows is service._rows: the planner's rows with typed addresses applied and checked. Typed
+// addresses get the planner's checks too (typed_addresses.go; a Go-only fix, Python marked
+// every valid typed address "ok"). A planning error is reported before a bad typed shape,
+// as in Python.
 func (s *NetworkService) rows(ieds []PlanIED, adapter Adapter, strategy string, manual any, avoid map[string]bool) ([]Row, error) {
 	all, err := s.Adapters(false)
 	if err != nil {
 		return nil, err
 	}
-	rows, err := PlanAddresses(ieds, adapter, all, strategy, avoid)
+	typed, typedErr := typedAddresses(ieds, manual)
+	rows, err := PlanAddresses(ieds, adapter, all, strategy, avoidTyped(avoid, typed))
 	if err != nil {
 		return nil, err
 	}
-	for index := range rows {
-		override, err := manualOverride(manual, rows[index].IEDID)
-		if err != nil {
-			return nil, err
-		}
-		if override == nil {
-			continue
-		}
-		ip, prefix, err := ValidateManual(get(override, "ip"), get(override, "prefix"))
-		if err != nil {
-			rows[index].Status, rows[index].Hint = "invalid_manual", err.Error()
-		} else {
-			rows[index].Proposed, rows[index].Prefix = ip, intPointer(prefix)
-			rows[index].Status, rows[index].Hint = "ok", "Address typed by you."
-		}
+	if typedErr != nil {
+		return nil, typedErr
 	}
+	newPlanState(adapter, all, nil).applyTyped(rows, typed)
 	return rows, nil
 }
 
