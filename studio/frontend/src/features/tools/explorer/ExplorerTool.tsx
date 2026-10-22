@@ -15,6 +15,7 @@ import { ModelTree } from './ModelTree';
 import { NodeDetail } from './NodeDetail';
 import { WatchList } from './WatchList';
 import './explorer.css';
+import { selectsOnRead } from './readSafety';
 
 const PILL: Record<ExplorerStatus['state'], Status> = {
   disconnected: { label: 'Not connected', tone: 'off', hint: 'Type an address and press Connect.' },
@@ -68,7 +69,8 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
   }, [connected, every]);
   const watched = new Set((status?.watch ?? []).map(item => `${item.ref}|${item.fc}`));
   const addWatch = (items: Attribute[]) => status && run(() =>
-    explorerApi.watch([...status.watch, ...items.map(({ ref, fc, type }) => ({ ref, fc, type }))]));
+    explorerApi.watch([...status.watch, ...items.filter(item => !selectsOnRead(item))
+      .map(({ ref, fc, type }) => ({ ref, fc, type }))]));  // never SBO: reading it selects (0177)
   const pending = busy && status?.state !== 'connected';
   return <>
     <form className="card explorer-bar" onSubmit={event => { event.preventDefault(); connect(host, Number(port)); }}>

@@ -1,5 +1,6 @@
 import type { StudioEvent } from '../api/types';
 import { eventDetails } from '../features/event-log/eventDetails';
+import { reportFoldKey } from '../features/event-log/reportControl';
 import { createEventLogStore } from './eventLogStore';
 import { browserFrameBatch } from './frameBatch';
 import { createValueStore } from './valueStore';
@@ -11,7 +12,7 @@ function make() {
   return {
     batch,
     values: createValueStore(batch),
-    log: createEventLogStore<StudioEvent>(batch, { describe: eventDetails }),
+    log: createEventLogStore<StudioEvent>(batch, { describe: eventDetails, fold: reportFoldKey }),
   };
 }
 

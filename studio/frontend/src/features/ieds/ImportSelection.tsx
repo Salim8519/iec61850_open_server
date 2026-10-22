@@ -33,7 +33,7 @@ export function ImportSelection({ preview, busy, error, confirm, cancel, work }:
   return <dialog ref={dialog} className="import-dialog" aria-labelledby="import-title"
     onCancel={event => { event.preventDefault(); if (!busy) cancel(); }}>
     <h1 id="import-title">Choose IEDs to add</h1>
-    <p className="muted small">{preview.file.name} · {preview.ieds.length} IEDs found.
+    <p className="muted small">{preview.file.name} · {countOf(preview.ieds.length, 'IED')} found.
       Nothing is added until you confirm.</p>
     <input aria-label="Search IEDs in import" placeholder="Search name, manufacturer or description"
       value={query} onChange={event => setQuery(event.target.value)} disabled={busy} />

@@ -21,7 +21,11 @@
 .devices-list .filter-bar { gap: 6px; }
 /* Choosing several IEDs (change 0105): a tick box per row and a footer that stays in view. */
 .devices-list-head { display: flex; gap: 6px; }
-.devices-list-head > .primary { flex: 1; min-width: 0; }
+/* The import button wraps to "Import" over "CID / SCD" when the list's scrollbar takes room, instead of
+   cutting the words (change 0177); 12 px sides keep the two lines roomy. */
+.devices-list-head > .primary { flex: 1; min-width: 0; padding: 0 12px; white-space: normal; line-height: 1.2; }
+/* The Data points search keeps room for its whole placeholder at 1366x768 (change 0177). */
+.device-detail .filter-bar .filter-search { flex-basis: 210px; min-width: 190px; }
 .row-check { width: 20px; height: 20px; flex-shrink: 0; display: grid; place-items: center; align-self: center;
   border: var(--line) solid var(--border-strong); border-radius: 5px; background: var(--surface); color: white; }
 .row-check.on { background: var(--accent); border-color: var(--accent); }

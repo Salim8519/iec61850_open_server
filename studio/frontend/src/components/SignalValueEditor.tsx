@@ -15,7 +15,7 @@ export function SignalValueEditor({ signal, value, disabled, variant, update }: 
     </div>;
   const options = signal.kind === 'BOOLEAN' ? { False: false, True: true } : signal.kind === 'Dbpos' ?
     { Intermediate: 0, Open: 1, Closed: 2, Invalid: 3 } : signal.enums;
-  if (Object.keys(options).length) return <select aria-label={`Value ${signal.ref}`} value={String(value)}
+  if (Object.keys(options).length) return <select className="signal-select" aria-label={`Value ${signal.ref}`} value={String(value)}
     onChange={e => update(signal.kind === 'BOOLEAN' ? e.target.value === 'true' : Number(e.target.value))}>
     {!Object.values(options).some(item => item === value) && <option value={String(value)}>Current: {String(value)}</option>}
     {Object.entries(options).map(([label, item]) => <option key={label} value={String(item)}>{label} ({String(item)})</option>)}

@@ -3,6 +3,7 @@ import type { Attribute, ReadValue } from '../../../api/tools';
 import type { Kind } from '../../../points/pointKind';
 import { InfoTip } from '../../../ui/InfoTip';
 import { KindBadge, kindRow } from '../../../ui/KindBadge';
+import { isCommandField, READ_SAFETY_COPY, selectsOnRead } from './readSafety';
 import { ValueText } from './ValueText';
 
 /** The attributes of one opened data object, one line each: the type badge (what kind of point it is), the FC
@@ -17,14 +18,17 @@ export function ObjectTable({ attributes, kinds, shown, values, reading, watched
       if (!shown[index]) return null;
       const value = values[attribute.ref];
       const key = `${attribute.ref}|${attribute.fc}`;
+      const sbo = selectsOnRead(attribute);  // reading it would select the control (change 0177)
       return <tr key={key} {...kindRow(kinds[index])}>
         <td className="mono">{attribute.path}</td>
         <td><KindBadge kind={kinds[index]} raw={attribute.type} /></td>
         <td><span className="fc-badge">{attribute.fc}</span></td>
-        <td>{value ? <ValueText text={value.text} status={value.status} />
+        <td>{sbo ? <ValueText text={READ_SAFETY_COPY.sbo} status="warning" />
+          : value ? <ValueText text={value.text} status={value.status} />
+          : isCommandField(attribute) ? <span className="small muted" title={READ_SAFETY_COPY.commandHint}>{READ_SAFETY_COPY.command}</span>
           : <span className="small muted">{reading ? 'Reading…' : ''}</span>}</td>
-        <td><button className="ghost icon-button" disabled={watched.has(key)} onClick={() => addWatch([attribute])}
-          title={watched.has(key) ? 'Already watched' : 'Add to watch list'} aria-label={`Watch ${attribute.path}`}>
-          <Plus size={15} /></button></td></tr>;
+        <td><button className="ghost icon-button" disabled={sbo || watched.has(key)} onClick={() => addWatch([attribute])}
+          title={sbo ? READ_SAFETY_COPY.sboWatch : watched.has(key) ? 'Already watched' : 'Add to watch list'}
+          aria-label={`Watch ${attribute.path}`}><Plus size={15} /></button></td></tr>;
     })}</tbody></table>;
 }

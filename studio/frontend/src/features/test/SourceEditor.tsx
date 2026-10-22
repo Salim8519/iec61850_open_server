@@ -6,6 +6,7 @@ import { CsvPlayback } from './CsvPlayback';
 import { ValueControl } from './ValueControl';
 import { configureSource, type Point } from './signalActions';
 import { MODES, NUMERIC } from './sourceModes';
+import { periodProblem } from './sourceCheck';
 import { shortRef } from '../../equipment/relayDisplay';
 import { useSignalValue } from '../../state/useLive';
 
@@ -27,6 +28,7 @@ export function SourceEditor({ point: fixed, project, perform, done }: {
   const [amplitude, setAmplitude] = useState(configured?.amplitude ?? 10);
   const [period, setPeriod] = useState(configured?.period ?? 10);
   const [message, setMessage] = useState('');
+  const problem = periodProblem(mode, period);  // shown under the field; Save waits for a good value (0177)
   useEffect(() => {
     setMode(configured?.mode || (fixed ? 'manual' : 'sine')); setOffset(configured?.offset ?? (fixed ? 0 : 100));
     setAmplitude(configured?.amplitude ?? 10); setPeriod(configured?.period ?? 10);
@@ -69,9 +71,10 @@ export function SourceEditor({ point: fixed, project, perform, done }: {
             onChange={event => setOffset(Number(event.target.value))} /></label>
           {mode !== 'constant' && <><label>Swing (±)<input type="number" step="any" value={amplitude}
             onChange={event => setAmplitude(Number(event.target.value))} /></label>
-          <label>Cycle time (seconds)<input type="number" min="0.1" step="0.1" value={period}
+          <label>Cycle time (seconds)<input type="number" min="0.1" step="0.1" value={period} aria-invalid={!!problem}
             onChange={event => setPeriod(Number(event.target.value))} /></label></>}</div>}
-        <div className="row"><button className="primary" onClick={() => perform(async () => {
+        {problem && <small role="alert" style={{ color: 'var(--error)' }}>{problem}</small>}
+        <div className="row"><button className="primary" disabled={!!problem} title={problem || undefined} onClick={() => perform(async () => {
           await configureSource(point, { mode, offset, amplitude, period });
           setMessage(mode === 'manual' ? 'You now set this value by hand.' : 'Saved. It runs while the project is running.');
           done?.();

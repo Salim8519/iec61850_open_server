@@ -85,19 +85,26 @@ func (s *Service) Read(items []*pyjson.Object) (*pyjson.Object, error) {
 	if len(items) == 0 || len(items) > MaxWatch {
 		return nil, apperr.ValueError("Read between 1 and 200 attributes at a time")
 	}
-	refs := make([]any, len(items))
-	for index, item := range items {
-		refs[index] = pyjson.NewObject().Set("ref", get(item, "ref")).Set("fc", get(item, "fc"))
+	readable, skipped := splitSBO(items) // reading <DO>.SBO would Select the control (change 0177)
+	var answer any
+	if len(readable) > 0 {
+		refs := make([]any, len(readable))
+		for index, item := range readable {
+			refs[index] = pyjson.NewObject().Set("ref", get(item, "ref")).Set("fc", get(item, "fc"))
+		}
+		var err error
+		if answer, err = s.request("read", requestTimeout, pyjson.NewObject().Set("refs", refs)); err != nil {
+			return nil, err
+		}
+		s.mu.Lock()
+		s.reads++
+		s.mu.Unlock()
 	}
-	answer, err := s.request("read", requestTimeout, pyjson.NewObject().Set("refs", refs))
-	if err != nil {
-		return nil, err
-	}
-	s.mu.Lock()
-	s.reads++
-	s.mu.Unlock()
 	now := numlog.Now()
 	results := pyjson.NewObject()
+	for _, ref := range skipped {
+		results.Set(ref, notRead(now))
+	}
 	object, _ := answer.(*pyjson.Object)
 	values, _ := get(object, "values").([]any)
 	for _, raw := range values {

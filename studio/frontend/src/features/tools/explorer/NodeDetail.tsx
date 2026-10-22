@@ -15,6 +15,7 @@ import { objectKinds } from './attributeKind';
 import { CommandPanel } from './CommandPanel';
 import { attributeShown, NODE_FILTER } from './explorerFilters';
 import { ObjectTable } from './ObjectTable';
+import { bulkReadable } from './readSafety';
 
 /** The kinds of point a data object holds (quality and time helpers left out), in the usual order. */
 const summaryOf = (kinds: Kind[]) => KINDS.filter(kind => kind !== 'AT' && kinds.includes(kind));
@@ -40,8 +41,10 @@ export function NodeDetail({ reference, host, watched, addWatch, fail }: {
   }), [node, filter.values]);
   const counts = useMemo(() => ({ kind: countKinds(view.flatMap(item => item.kinds), kind => kind) }), [view]);
   const read = (name: string, attributes: Attribute[]) => {
+    const readable = bulkReadable(attributes).slice(0, 200);  // never a command field: SBO would select (0177)
+    if (!readable.length) return;
     setReading(name);
-    explorerApi.read(attributes.slice(0, 200)).then(answer => setValues(current => ({ ...current, ...answer.values })))
+    explorerApi.read(readable).then(answer => setValues(current => ({ ...current, ...answer.values })))
       .catch(error => fail(error.message)).finally(() => setReading(''));
   };
   const toggle = (name: string, attributes: Attribute[]) => {

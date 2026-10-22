@@ -73,4 +73,8 @@ export const FIND_COPY = {
   addHint: 'To test with one of these devices in a project, import its CID/SCD in Devices and choose "Connect to real device".',
   thisPc: 'This PC: simulated IEDs (127.50.0.x)',
   loopbackHint: 'Simulated IEDs answer on 127.50.0.x addresses while Run is on, so you can practise here without any cable.',
+  noneThisPc: 'No simulated IED answered. Press Run so the simulated IEDs answer on 127.50.0.x, then scan again.',
 };
+
+/** What to do when a scan found nothing: on This PC (127.x) the advice is Run, not the cable (change 0177). */
+export const noneFound = (range: string) => range.trim().startsWith('127.') ? FIND_COPY.noneThisPc : FIND_COPY.none;

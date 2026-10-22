@@ -18,6 +18,8 @@ import { DeviceSelectBar } from './DeviceSelectBar';
 import { DeviceRunSummary } from './DeviceRunSummary';
 import { runGroups } from './runGroups';
 import { runSummary } from '../../copy/runShape';
+import { DEVICES_COPY } from '../../copy/devices';
+import { freeSampleName, shownSelection } from './devicePick';
 
 const FLOW = 'station-flow';
 const HEALTH = 'station-health';
@@ -41,13 +43,21 @@ export function DevicesPage({ project, locked, perform, prepare, importFile, add
     if (selected !== FLOW && selected !== HEALTH && !project.ieds.some(item => item.id === selected)) setSelected(project.ieds[0]?.id || '');
   }, [project.ieds, selected]);
   useEffect(() => { if (flowIed) setSelected(flowIed); }, [flowIed]);
+  // The detail never shows an IED the list filter hides, for example after a reload (change 0177).
+  useEffect(() => {
+    if (selected === FLOW || selected === HEALTH) return;
+    const next = shownSelection(selected, project.ieds.filter(item => deviceMatches(item, filter.values)).map(item => item.id), flowIed);
+    if (next !== selected) setSelected(next);
+  }, [project.ieds, filter.values, selected, flowIed]);
   const ied = project.ieds.find(item => item.id === selected);
   const { modes } = useModes(project.runtime !== 'stopped', project.revision);
   const gooseLinks = useGooseLinks(project.revision, project.runtime !== 'stopped');
   if (!project.ieds.length) return <div className="content"><div className="card"><EmptyState icon={<Cpu size={26} />}
     title="Import your first IED" hintId="devices.empty" action={<div className="row" style={{ justifyContent: 'center' }}>
-      <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD file</button>
-      <button className="large" disabled={locked} onClick={() => addTemplate('Feeder01')}><LayoutTemplate size={18} />Use a sample IED</button>
+      <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}
+        title={locked ? DEVICES_COPY.importLocked : undefined}><Upload size={18} />Import CID / SCD file</button>
+      <button className="large" disabled={locked} title={locked ? DEVICES_COPY.sampleLocked : undefined}
+        onClick={() => addTemplate('Feeder01')}><LayoutTemplate size={18} />Use a sample IED</button>
     </div>} /></div></div>;
   const shown = project.ieds.filter(item => deviceMatches(item, filter.values));
   const run = runSummary(project);
@@ -57,7 +67,9 @@ export function DevicesPage({ project, locked, perform, prepare, importFile, add
     <div className="fill-body fill-split devices-split">
       <aside className="card side-pane devices-list" aria-label="IEDs">
         <div className="devices-list-head">
-          <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}><Upload size={18} />Import CID / SCD</button>
+          <button className="primary large" data-tour="devices-import" disabled={locked} onClick={importFile}
+            title={locked ? DEVICES_COPY.importLocked : undefined}><Upload size={18} />
+            <span>Import <span style={{ whiteSpace: 'nowrap' }}>CID / SCD</span></span></button>
           <button className={picked ? 'large active-toggle' : 'large'} disabled={locked} aria-pressed={!!picked}
             title={locked ? 'Stop the run to delete IEDs' : 'Choose several IEDs to delete'}
             onClick={() => setPicked(picked ? null : [])}><ListChecks size={18} />Select</button>
@@ -71,7 +83,8 @@ export function DevicesPage({ project, locked, perform, prepare, importFile, add
             select={() => picked ? toggle(item.id) : setSelected(item.id)}
             hints={<GooseHint map={gooseLinks} name={item.name} />} />)])}
           {shown.length === 0 && <p className="small muted" style={{ margin: 0 }}>No IED matches. Press Clear to see them all.</p>}</div>
-        <button className="ghost" disabled={locked} onClick={() => addTemplate(`Sample${project.ieds.length + 1}`)}>
+        <button className="ghost" disabled={locked} title={locked ? DEVICES_COPY.sampleLocked : undefined}
+          onClick={() => addTemplate(freeSampleName(project.ieds))}>
           <LayoutTemplate size={16} />Add a sample IED</button>
         <div className="section-label">Whole station</div>
         <button className={`list-row compact${selected === HEALTH ? ' active' : ''}`} onClick={() => setSelected(HEALTH)}>

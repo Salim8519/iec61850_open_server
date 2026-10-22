@@ -1,4 +1,5 @@
 import type { StudioEvent } from '../../api/types';
+import { reportControlDetails } from './reportControl.ts';
 
 function rendered(value: unknown) {
   return typeof value === 'boolean' ? String(value) : String(value ?? 'unknown');
@@ -12,7 +13,9 @@ function feedbackDetails(event: StudioEvent) {
   return `${rendered(event.control_ref)} / ctlVal=${rendered(event.wire_value)} / ${rendered(event.action)} / ${feedback}`;
 }
 
-export function eventDetails(event: StudioEvent) {
+/** `count` is how many repeated events Activity folded into this row (change 0177). */
+export function eventDetails(event: StudioEvent, count = 1) {
+  if (event.kind === 'report_control') return reportControlDetails(event, count);
   if (event.kind === 'project_changed') {
     return `authoritative project revision ${rendered(event.revision)}`;
   }

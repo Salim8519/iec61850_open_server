@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { closesOnAway } from './menuAway';
 import { menuPlace } from './menuPlace';
 import './ui.css';
 
@@ -28,7 +29,9 @@ export function Menu({ trigger, items, label, align = 'right', up = false, trigg
     const close = (event: MouseEvent | KeyboardEvent) => {
       if (event instanceof KeyboardEvent ? event.key === 'Escape' : !inside(event.target)) setOpen(false);
     };
-    const away = (event: Event) => { if (!inside(event.target)) setOpen(false); };
+    const away = (event: Event) => {
+      if (closesOnAway(event.type, event.target, node => !!inside(node))) setOpen(false);
+    };
     window.addEventListener('mousedown', close);
     window.addEventListener('keydown', close);
     window.addEventListener('scroll', away, true);

@@ -25,7 +25,8 @@ export function CommandPanel({ reference, name, host, attributes, values, fail, 
   const [busy, setBusy] = useState(false);
   const [answer, setAnswer] = useState<CommandAnswer | null>(null);
   const [notice, setNotice] = useState('');
-  const select = useSelection(() => setNotice(COMMAND_COPY.expired));
+  // A timed-out selection also drops the old "selected" answer, so the two never contradict (change 0177).
+  const select = useSelection(() => { setNotice(COMMAND_COPY.expired); setAnswer(null); });
   if (!spec) return null;
   const sbo = needsSelect(spec.model);
   const run = async (action: 'select' | 'operate' | 'cancel', label: string, value: unknown) => {
