@@ -40,7 +40,7 @@ export const ADVANCED_SETTINGS: Record<Protocol, string[]> = {
 export const CHANGE_COPY = {
   button: 'Change the IED or path of this point', short: 'Change', cancel: 'Close without changing',
   title: (address: number) => `Change the signal of point ${address}`,
-  hint: 'Only signals that fit this type are listed. Press Save point list afterwards.',
+  hint: 'Only signals that fit this type are listed. The change is saved by itself.',
   noIeds: 'This project has no IEDs yet. Add an IED first.', chooseIed: 'Choose an IED', control: 'Controllable object',
   chooseControl: 'Choose what this command operates', used: 'used by another point', noControls: 'This IED has no controllable objects',
 };
@@ -58,7 +58,7 @@ export const GATEWAY_COPY = {
   iedsOff: 'The IEDs are not running.',
   skipped: (count: number) => count === 1 ? '1 point skipped' : `${count} points skipped`,
   notBuilt: 'The gateway program is not built in this copy of ScadaBench.',
-  saveFirst: 'Save the point list first', commandsOff: 'Commands to real IEDs are off (see the settings)',
+  saveFirst: 'Wait until the point list is saved', commandsOff: 'Commands to real IEDs are off (see the settings)',
   confirmTitle: (label: string, target: string) => `Send "${label}" to ${target}?`,
   realWarning: 'This is a REAL device. The command operates it for real, with its own control model (select before operate when it asks for it). Make sure it is safe to switch and that people on site know.',
   simulatedWarning: 'This operates the simulated IED over IEC 61850 MMS, exactly like a SCADA command. The result appears below and in the Commands tab.',
@@ -73,17 +73,19 @@ export const GATEWAY_COPY = {
   connected: (count: number) => count === 1 ? '1 SCADA connected' : `${count} SCADA connections`,
   none: 'No SCADA connected yet',
   tabs: { points: 'Points', traffic: 'Traffic', commands: 'Commands' },
-  propose: 'Propose from IEDs', importCsv: 'Import CSV', exportCsv: 'Export CSV', save: 'Save point list', discard: 'Discard changes',
+  propose: 'Propose from IEDs', importCsv: 'Import CSV', exportCsv: 'Export CSV', discard: 'Discard unsaved changes',
   pointsHint: 'Each row is one SCADA point. ScadaBench proposes only what SCADA usually needs: positions, alarms and trips, measurements, device health and commands. Change any address so it matches your SCADA point list. Add point makes up your own point with a value you control.',
   emptyPoints: 'No points yet. Start the gateway and ScadaBench proposes them, or press Propose from IEDs, or Add point to make up your own, or import your SCADA point list as CSV (type,address,ied,reference,scale,description).',
   lockedPoints: 'Stop the gateway to change the point list.',
-  unsaved: 'You have unsaved changes.',
+  willSave: 'Will save when the gateway stops',
+  notSaved: 'These changes are not saved yet. Fix the problem below and the list saves by itself, or discard the changes.',
+  proposedNote: 'The list now has the points proposed from the IEDs.', undo: 'Undo',
   trafficHint: 'Decoded messages between SCADA and the gateway, newest at the bottom.',
   commandsHint: 'Every command, from SCADA or from this page, in three steps: what was asked, what the IED did, and what ScadaBench saw afterwards.',
   pause: 'Pause', resume: 'Resume', clear: 'Clear view',
   removeAll: 'Remove all points', select: 'Select', selectHint: 'Choose several points to remove',
   more: 'More', moreLabel: 'More point list actions: import, export, remove all',
-  removedNote: (count: number) => `${count} ${count === 1 ? 'point' : 'points'} removed. Press Save point list to keep this, or Discard changes to undo.`,
+  removedNote: (count: number) => `${count} ${count === 1 ? 'point' : 'points'} removed.`,
   emptyFilter: 'No row matches the filter. Press Clear to see every row.',
 };
 
@@ -102,7 +104,6 @@ export const OWN_COPY = {
   addHint: 'Add a made-up point for simulation. The IED points stay as they are.',
   filter: 'Own points', filterHint: 'Only the points you made up yourself.',
   madeUp: 'you set the value', driving: (name: string) => `drives ${name}`,
-  saveFirst: 'Save the point list to send the value to SCADA.',
   badNumber: 'Type a number, for example 12.5.', badWhole: 'Type a whole number, for example 42.',
   commandWarning: 'This is your own point: no device is operated. ScadaBench logs the command and sets the status it drives.',
   sentResult: (label: string, name: string, ok: boolean, reason: string) =>

@@ -34,7 +34,6 @@ export const SNMP_COPY = {
   deviceMenu: 'More actions for this device',
   tabs: { values: 'Values', settings: 'Settings', traps: 'Traps', log: 'Requests' },
   tabLabel: (tab: string, text: string, count: number) => tab === 'values' ? `${text} (${count.toLocaleString('en-US')})` : text,
-  restartNote: 'Running devices restart with the new settings.',
 };
 
 export const SETTINGS_COPY = {
@@ -52,7 +51,10 @@ export const SETTINGS_COPY = {
   passwordHint: 'At least 8 characters. Passwords are kept in the project file and never written to logs.',
   show: 'Show', hide: 'Hide', removeUser: 'Remove user',
   engineId: 'Engine ID', engineHint: 'The device\'s SNMPv3 identity (hex). Managers learn it by themselves; change it only to match a real device.',
-  save: 'Save settings', saved: 'Saved',
+  autoNote: 'Changes are saved as you make them.',
+  autoRunning: 'Changes are saved as you make them. The devices are running, so each saved change restarts them; typed text is saved when you leave the box.',
+  trapProblem: (text: string) => `Not saved yet. The Traps tab needs attention: ${text}`,
+  settingsProblem: (text: string) => `Not saved yet. The Settings tab needs attention: ${text}`,
 };
 
 export const LEVELS: Record<Level, string> = {

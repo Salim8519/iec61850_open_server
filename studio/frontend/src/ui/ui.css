@@ -87,3 +87,10 @@
 .pick-col { width: 44px; }
 button.active-toggle { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 tr.picked > td { background: var(--accent-soft); }
+/* Save always: the quiet status beside a title and the red line under a field that cannot be saved. */
+.save-status { display: inline-flex; align-items: center; gap: 5px; min-width: 96px; font-size: var(--font-size-small);
+  color: var(--text-2); white-space: nowrap; }
+.save-status.saved { color: var(--success); font-weight: 600; }
+.save-status.failed { color: var(--error); font-weight: 600; }
+.save-status.waiting { color: var(--warning); font-weight: 600; }
+.save-problem { margin: 4px 0 0; color: var(--error); font-weight: 600; line-height: 1.4; }

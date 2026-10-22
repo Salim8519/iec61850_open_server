@@ -7,9 +7,9 @@ import { TestPoints } from './TestPoints';
 
 type View = 'points' | 'generators' | 'sequences';
 
-export function TestPage({ project, locked, perform, prepare }: {
+export function TestPage({ project, locked, perform, prepare, refresh }: {
   project: Project; locked: boolean;
-  perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>;
+  perform: (task: () => Promise<unknown>) => Promise<void>; prepare: () => Promise<void>; refresh: () => Promise<unknown>;
 }) {
   const [view, setView] = useState<View>('points');
   return <div className="content">
@@ -18,6 +18,7 @@ export function TestPage({ project, locked, perform, prepare }: {
       { value: 'sequences', label: 'Sequences' }]} />
     {view === 'points' && <TestPoints project={project} perform={perform} prepare={prepare} />}
     {view === 'generators' && <Generators project={project} perform={perform} />}
-    {view === 'sequences' && <SequenceEditor ieds={project.ieds} scenarios={project.scenarios} running={locked} perform={perform} />}
+    {view === 'sequences' && <SequenceEditor ieds={project.ieds} scenarios={project.scenarios} running={locked} perform={perform}
+      refresh={refresh} />}
   </div>;
 }

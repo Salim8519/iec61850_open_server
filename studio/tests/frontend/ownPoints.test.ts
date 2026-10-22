@@ -53,7 +53,7 @@ test('a saved own point changes at once; a draft or an edited list waits for Sav
   assert.equal(liveEdit(lamp, false), true);
   assert.equal(liveEdit(lamp, true), false);
   assert.equal(liveEdit({ ...lamp, draft: true }, false), false);
-  assert.equal(blockedReason({ ...order, draft: true }, false), 'Save the point list first');
+  assert.equal(blockedReason({ ...order, draft: true }, false), 'Wait until the point list is saved');
   assert.equal(blockedReason({ ...order, monitor_only: false }, false), '', 'an own command is never a real-IED refusal');
 });
 

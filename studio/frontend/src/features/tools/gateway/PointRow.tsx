@@ -15,7 +15,7 @@ const shortPath = (ref: string, ied?: string | null) => (ied && ref.startsWith(i
 
 /** One point on one line (ADR-0095): the type badge gives the coloured left edge; name, address and
  *  scale are text with a ✎ pin that turns into an input on click. Every change goes through `update`,
- *  exactly like the always-open inputs did, so the checks and "Save point list" are unchanged. */
+ *  exactly like the always-open inputs did; the table saves the list after each change. */
 export function PointRow({ row, protocol, rows, locked, dirty, picking, picked, changing, choices, togglePicked, toggleChange,
   update, remove, setOwn, ask, fail }: {
   row: GatewayPoint; protocol: Protocol; rows: GatewayPoint[]; locked: boolean; dirty: boolean; picking: boolean;

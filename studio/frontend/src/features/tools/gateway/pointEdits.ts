@@ -1,5 +1,5 @@
 // Typed text of an editable cell, turned into the number the point list stores (display helpers only;
-// the backend checks every address and scale again on Save point list).
+// the backend checks every address and scale again when the list is saved).
 import type { PointKind, Protocol } from '../../../api/gateway';
 import { KIND_LABELS, KIND_WHERE } from '../../../copy/gateway.ts';
 
