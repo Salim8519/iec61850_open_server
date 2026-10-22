@@ -13,11 +13,14 @@ import { MasterCommandLog } from './MasterCommandLog';
 import { MasterConnect } from './MasterConnect';
 import { MasterPointTable } from './MasterPointTable';
 import { ModbusRanges } from './ModbusRanges';
+import { MasterList } from './list/MasterList';
+import { masterListApi } from '../../../../api/masterList';
+import { LIST_COPY } from '../../../../copy/masterList';
 import '../../explorer/explorer.css';
 import '../gateway.css';
 import './master.css';
 
-type Tab = 'points' | 'ranges' | 'traffic' | 'commands';
+type Tab = 'list' | 'points' | 'ranges' | 'traffic' | 'commands';
 
 /** ScadaBench as SCADA master: connect to a device, discover every point, send confirmed commands.
  *  Connection column on the left, the tabs fill the rest of the window (ADR-0064). */
@@ -31,6 +34,9 @@ export function MasterTool() {
   const refresh = useCallback(() => liveFeed.refresh(MASTER_STATUS), []);
   useEffect(() => {
     masterApi.config().then(setConfig).catch(reason => setError(reason.message));
+    // A saved point list opens My point list first (ADR-0110); without one, Everything received as before.
+    masterListApi.list().then(list => { if (list.points.length) setTab(current => current === 'points' ? 'list' : current); })
+      .catch(() => undefined);
     return liveFeed.subscribe<MasterStatus>(MASTER_STATUS, 1500, setStatus, reason => setError(reason.message));
   }, []);
   const [queue] = useState(createActionQueue);
@@ -46,7 +52,7 @@ export function MasterTool() {
     {error && <p className="explorer-error">{error}</p>}</div></div>;
   const connected = status.state !== 'disconnected' && status.state !== 'failed';
   const modbus = config.protocol === 'modbus';
-  const tabs: [Tab, string][] = [['points', GATEWAY_COPY.tabs.points], ...(modbus ? [['ranges', RANGES_COPY.tab] as [Tab, string]] : []),
+  const tabs: [Tab, string][] = [['list', LIST_COPY.tab], ['points', LIST_COPY.receivedTab], ...(modbus ? [['ranges', RANGES_COPY.tab] as [Tab, string]] : []),
     ['traffic', GATEWAY_COPY.tabs.traffic], ['commands', GATEWAY_COPY.tabs.commands]];
   return <div className="fill-body fill-split scada-split">
     <aside className="card side-pane" aria-label={MASTER_COPY.settingsTitle}>
@@ -58,6 +64,7 @@ export function MasterTool() {
     <div className={`card fill-panel gateway-panel${connected ? ' running' : ''}`}>
       <TabBar label="Master views" value={tab} change={setTab} tabs={tabs} end={<FullViewButton full={full} change={setFull} />} />
       <div className="panel-body">
+        {tab === 'list' && <MasterList status={status} fail={setError} />}
         {tab === 'points' && <MasterPointTable status={status} fail={setError} />}
         {tab === 'ranges' && modbus && <ModbusRanges status={status} fail={setError} />}
         {tab === 'traffic' && <TrafficLog running={connected} load={masterApi.traffic} feedKey="master-traffic" words={TRAFFIC_WORDS}

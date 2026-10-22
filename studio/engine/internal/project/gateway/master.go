@@ -109,7 +109,11 @@ func NormalizeMaster(raw any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result.Set("modbus_ranges", ranges).Set("routes", routes), nil
+	result.Set("modbus_ranges", ranges).Set("routes", routes)
+	if err := keepPointList(stored, result); err != nil { // Go-only, kept only when stored (ADR-0110)
+		return nil, err
+	}
+	return result, nil
 }
 
 // untickedKeys is [key for key in unticked if isinstance(key, str)][:20000].

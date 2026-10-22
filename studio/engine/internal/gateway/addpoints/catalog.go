@@ -13,6 +13,9 @@ type TypeEntry struct {
 	Name     string `json:"name"`
 	TypeID   string `json:"type_id"`
 	MostUsed bool   `json:"most_used"`
+	// Master is the master direction (ADR-0110): the SCADA master type (MasterCatalog key) a
+	// master sees for this gateway kind. Copy from gateway uses it; the gateway answer omits it.
+	Master string `json:"-"`
 }
 
 // Catalog is the one list of point types per protocol. Most used come first, in this order;
@@ -21,36 +24,36 @@ type TypeEntry struct {
 // (iec104_objects.cpp, dnp3_outstation.cpp, modbus_pdu.cpp).
 var Catalog = map[string][]TypeEntry{
 	"iec104": {
-		{Kind: "single", Name: "Single point", TypeID: "M_SP 1/30", MostUsed: true},
-		{Kind: "double", Name: "Double point", TypeID: "M_DP 3/31", MostUsed: true},
-		{Kind: "float", Name: "Measured value, float", TypeID: "M_ME_NC 13/36", MostUsed: true},
-		{Kind: "integer", Name: "Measured value, scaled", TypeID: "M_ME_NB 11/35", MostUsed: true},
-		{Kind: "command_single", Name: "Single command", TypeID: "C_SC 45/58", MostUsed: true},
-		{Kind: "command_double", Name: "Double command", TypeID: "C_DC 46/59", MostUsed: true},
-		{Kind: "command_setpoint", Name: "Set point command", TypeID: "C_SE 48-50/61-63", MostUsed: true},
-		{Kind: "command_step", Name: "Regulating step command", TypeID: "C_RC 47/60"},
-		{Kind: "step_position", Name: "Step position (tap)", TypeID: "M_ST 5/32"},
+		{Kind: "single", Name: "Single point", TypeID: "M_SP 1/30", MostUsed: true, Master: "single"},
+		{Kind: "double", Name: "Double point", TypeID: "M_DP 3/31", MostUsed: true, Master: "double"},
+		{Kind: "float", Name: "Measured value, float", TypeID: "M_ME_NC 13/36", MostUsed: true, Master: "float"},
+		{Kind: "integer", Name: "Measured value, scaled", TypeID: "M_ME_NB 11/35", MostUsed: true, Master: "scaled"},
+		{Kind: "command_single", Name: "Single command", TypeID: "C_SC 45/58", MostUsed: true, Master: "command_single"},
+		{Kind: "command_double", Name: "Double command", TypeID: "C_DC 46/59", MostUsed: true, Master: "command_double"},
+		{Kind: "command_setpoint", Name: "Set point command", TypeID: "C_SE 48-50/61-63", MostUsed: true, Master: "setpoint_float"},
+		{Kind: "command_step", Name: "Regulating step command", TypeID: "C_RC 47/60", Master: "regulating"},
+		{Kind: "step_position", Name: "Step position (tap)", TypeID: "M_ST 5/32", Master: "step"},
 	},
 	"dnp3": {
-		{Kind: "single", Name: "Binary input", TypeID: "g1v2 / g2v2", MostUsed: true},
-		{Kind: "double", Name: "Double-bit binary input", TypeID: "g3v2 / g4v2", MostUsed: true},
-		{Kind: "float", Name: "Analog input, float", TypeID: "g30v5 / g32v7", MostUsed: true},
-		{Kind: "command_single", Name: "Binary output command (CROB)", TypeID: "g12v1", MostUsed: true},
-		{Kind: "integer", Name: "Analog input, 32-bit", TypeID: "g30v1 / g32v3"},
-		{Kind: "command_double", Name: "CROB close / trip", TypeID: "g12v1 close/trip"},
-		{Kind: "command_setpoint", Name: "Analog output (set point)", TypeID: "g41v1-3"},
-		{Kind: "command_step", Name: "CROB raise / lower (tap)", TypeID: "g12v1 close=raise"},
-		{Kind: "step_position", Name: "Analog input, tap position", TypeID: "g30 / g32"},
+		{Kind: "single", Name: "Binary input", TypeID: "g1v2 / g2v2", MostUsed: true, Master: "binary"},
+		{Kind: "double", Name: "Double-bit binary input", TypeID: "g3v2 / g4v2", MostUsed: true, Master: "double_binary"},
+		{Kind: "float", Name: "Analog input, float", TypeID: "g30v5 / g32v7", MostUsed: true, Master: "analog"},
+		{Kind: "command_single", Name: "Binary output command (CROB)", TypeID: "g12v1", MostUsed: true, Master: "crob"},
+		{Kind: "integer", Name: "Analog input, 32-bit", TypeID: "g30v1 / g32v3", Master: "analog"},
+		{Kind: "command_double", Name: "CROB close / trip", TypeID: "g12v1 close/trip", Master: "crob_trip_close"},
+		{Kind: "command_setpoint", Name: "Analog output (set point)", TypeID: "g41v1-3", Master: "ao_float"},
+		{Kind: "command_step", Name: "CROB raise / lower (tap)", TypeID: "g12v1 close=raise", Master: "crob_trip_close"},
+		{Kind: "step_position", Name: "Analog input, tap position", TypeID: "g30 / g32", Master: "analog"},
 	},
 	"modbus": {
-		{Kind: "command_single", Name: "Coil", TypeID: "FC1 read, FC5/FC15 write", MostUsed: true},
-		{Kind: "single", Name: "Discrete input", TypeID: "FC2", MostUsed: true},
-		{Kind: "float", Name: "Holding / input register, float", TypeID: "FC3/FC4, 2 registers", MostUsed: true},
-		{Kind: "integer", Name: "Holding / input register, int32", TypeID: "FC3/FC4, 2 registers", MostUsed: true},
-		{Kind: "double", Name: "Holding / input register, position", TypeID: "FC3/FC4, 1 register"},
-		{Kind: "command_double", Name: "Coil, ON = close", TypeID: "FC5/FC15"},
-		{Kind: "command_setpoint", Name: "Holding register set point", TypeID: "FC6/FC16"},
-		{Kind: "step_position", Name: "Input register, tap position", TypeID: "FC4, int16"},
+		{Kind: "command_single", Name: "Coil", TypeID: "FC1 read, FC5/FC15 write", MostUsed: true, Master: "coil"},
+		{Kind: "single", Name: "Discrete input", TypeID: "FC2", MostUsed: true, Master: "discrete_input"},
+		{Kind: "float", Name: "Holding / input register, float", TypeID: "FC3/FC4, 2 registers", MostUsed: true, Master: "holding_float32"},
+		{Kind: "integer", Name: "Holding / input register, int32", TypeID: "FC3/FC4, 2 registers", MostUsed: true, Master: "holding_int32"},
+		{Kind: "double", Name: "Holding / input register, position", TypeID: "FC3/FC4, 1 register", Master: "holding_uint16"},
+		{Kind: "command_double", Name: "Coil, ON = close", TypeID: "FC5/FC15", Master: "coil"},
+		{Kind: "command_setpoint", Name: "Holding register set point", TypeID: "FC6/FC16", Master: "holding_float32"},
+		{Kind: "step_position", Name: "Input register, tap position", TypeID: "FC4, int16", Master: "input_int16"},
 	},
 }
 

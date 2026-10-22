@@ -179,6 +179,8 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 | `POST /tools/master/command` | `kind`, `address`, `value`, `select`, `code`, `confirm: true` | Command to the device after the REAL-device warning |
 | `PUT /tools/master/ranges`, `/routes`; `POST /tools/master/probe`, `/probe/ranges` | `modbus_ranges`, `routes`, `table`, `start`, `end`, `data_type` | Modbus ranges, converter command routes, Find registers (<= 10,000 addresses) and adding what it found |
 | `GET /tools/master/traffic?after=`, `/commands` | - | Decoded device traffic, master command log |
+| `GET/PUT /tools/master/list`; `PUT /tools/master/list/check-ied`; `GET /tools/master/list/compare` | `points`, `on` | Go only (ADR-0110): the master's own address-only point list, Check against IED switch, expected vs received (Received, Missing, Wrong type, Waiting, Command, Not in your list) |
+| `POST /tools/master/list/new`, `/rows`, `/copy-gateway`, `/from-received`; `GET/POST /tools/master/list.xlsx`; `GET /tools/master/list.csv` | a point or `type, count, from, name`; `text`; `keys`; `data` (base64) | Go only: plan points (one, range, pasted/CSV rows, Excel template, from the gateway list, from what arrived) without saving; template and CSV export |
 
 SNMP devices (ADR-0092), Go engine only, under `/tools/snmp` (the Python engine answers 404):
 

@@ -8,6 +8,7 @@ import { HelpTip } from '../../../../ui/HelpTip';
 import { KindBadge, kindRow } from '../../../../ui/KindBadge';
 import { ChoiceEdit } from '../ChoiceEdit';
 import { FindRegisters } from './FindRegisters';
+import { AutoRanges } from './list/AutoRanges';
 
 const BITS = new Set(['coils', 'discrete_inputs']);
 const TABLE_CHOICES = Object.entries(TABLE_NAMES).map(([value, label]) => ({ value, label }));
@@ -73,5 +74,6 @@ export function ModbusRanges({ status, fail }: { status: MasterStatus; fail: (me
           <td><button className="ghost icon-button" aria-label="Remove range" title="Remove"
             onClick={() => { setRanges(ranges!.filter((_, at) => at !== index)); setDirty(true); }}><X size={15} /></button></td>
         </tr>)}</tbody></table></div>}
+    <AutoRanges refresh={status.ranges} />
   </>;
 }

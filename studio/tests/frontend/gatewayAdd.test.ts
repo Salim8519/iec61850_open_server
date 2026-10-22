@@ -30,7 +30,8 @@ test('the type list is the engine catalog: most used first, the rest under More 
   const list = read('features/tools/gateway/add/TypeList.tsx');
   assert.match(list, /ADD_COPY\.mostUsed[\s\S]*ADD_COPY\.moreTypes/);
   assert.match(list, /<small>\{entry\.type_id\}<\/small>/, 'the protocol type ids show as small secondary text');
-  assert.match(list, /<KindBadge kind=\{kindOfGatewayPoint\(entry\.kind\)\}/);
+  assert.match(list, /badge = kindOfGatewayPoint/, 'the gateway kinds are the default badge (the master passes its own, ADR-0110)');
+  assert.match(list, /<KindBadge kind=\{badge\(entry\.kind\)\}/);
   assert.doesNotMatch(list, /M_SP|g12v1|FC5/, 'no type is written in the frontend: the catalog is one Go file');
 });
 

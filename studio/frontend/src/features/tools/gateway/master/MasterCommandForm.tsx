@@ -17,12 +17,14 @@ const TRIP_CLOSE = [{ value: 1, label: 'Close' }, { value: 0, label: 'Trip' }];
 export const startValue = (kind: CommandKind) =>
   kind === 'double' || kind === 'regulating' ? 2 : kind === 'single' || kind === 'binary_output' || kind === 'coil' ? 1 : 0;
 
-/** Build one command, then confirm it against the strong REAL-device warning before it leaves. */
-export function MasterCommandForm({ draft, host, protocol, close, fail }: {
+/** Build one command, then confirm it against the strong REAL-device warning before it leaves.
+ *  `review` opens straight at that confirmation (a list point's Send button, ADR-0110): one click, then Yes. */
+export function MasterCommandForm({ draft, host, protocol, close, fail, review = false }: {
   draft: MasterCommand; host: string; protocol: MasterProtocol; close: () => void; fail: (message: string) => void;
+  review?: boolean;
 }) {
   const [command, setCommand] = useState<MasterCommand>(draft);
-  const [confirming, setConfirming] = useState(false);
+  const [confirming, setConfirming] = useState(review);
   const [sending, setSending] = useState(false);
   const [answer, setAnswer] = useState<{ ok: boolean; text: string } | null>(null);
   const clock = command.kind === 'clock';

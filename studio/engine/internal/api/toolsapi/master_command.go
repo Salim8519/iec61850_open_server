@@ -10,11 +10,6 @@ import (
 	"studio-engine/internal/tools/pytext"
 )
 
-// MasterGoOnlyRoutes are the SCADA master's Go-only routes (change 0169, "Repeat automatically");
-// the frozen Python engine answers them 404.
-var MasterGoOnlyRoutes = map[string]bool{"GET /api/v1/tools/master/cyclic": true,
-	"POST /api/v1/tools/master/cyclic": true, "POST /api/v1/tools/master/cyclic/stop": true}
-
 // masterCyclic validates a confirmed command and starts the cyclic sender for it. It takes the
 // same command fields as the one-shot route plus interval_ms, address_step and toggle.
 func (a *Area) masterCyclic(r *http.Request) (any, error) {

@@ -1,9 +1,9 @@
 // Display helpers of the Add points dialog (ADR-0105). Pure: the engine plans and checks every point.
-import type { Candidate, Pick, Plan, TypeEntry } from '../../../../api/gatewayAdd';
+import type { Candidate, Pick, Plan } from '../../../../api/gatewayAdd';
 import type { Ied } from '../../../../api/types';
 
 /** The type list in two groups: most used first (catalog order), the rest under "More types". */
-export function splitTypes(types: TypeEntry[]): { most: TypeEntry[]; more: TypeEntry[] } {
+export function splitTypes<T extends { most_used: boolean }>(types: T[]): { most: T[]; more: T[] } {
   return { most: types.filter(entry => entry.most_used), more: types.filter(entry => !entry.most_used) };
 }
 

@@ -56,7 +56,7 @@ func (m *Master) Interrogate() (*pyjson.Object, error) {
 }
 
 func (m *Master) poll(process worker.Process) (*pyjson.Object, error) {
-	ranges, _ := get(m.Config(), "modbus_ranges").([]any)
+	ranges := m.pollRanges(m.Config()) // the user's ranges plus the reads the point list needs (ADR-0110)
 	if len(ranges) == 0 {
 		message := "Add the Modbus ranges to read, or use Find registers (Modbus has no discovery)"
 		m.setMessage(message)

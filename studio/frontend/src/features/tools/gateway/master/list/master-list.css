@@ -1,0 +1,23 @@
+/* The SCADA master's own point list (ADR-0110). Shared tokens only; the result is always words plus a
+   symbol, the colour only repeats it. */
+.master-list td { vertical-align: top; }
+.master-list .list-state { white-space: nowrap; font-weight: 600; }
+.master-list .list-state.received { color: var(--success); }
+.master-list .list-state.missing, .master-list .list-state.wrong_type { color: var(--warning); }
+.master-list .list-state.waiting, .master-list .list-state.command { color: var(--text-2); }
+.master-list .list-reason { display: block; max-width: 210px; white-space: normal; line-height: 1.35; }
+.master-list td:first-child { min-width: 140px; }
+/* Names, types and checks wrap so the list fits 1366 px with the connection column beside it. */
+.master-list td .editable-text { max-width: 190px; white-space: normal; text-align: left; }
+.master-list td:nth-child(2) .type-cell { white-space: normal; min-width: 96px; max-width: 128px; }
+.master-list td:nth-child(2), .master-list td:nth-child(5) { white-space: normal; }
+.master-list .list-scale { white-space: nowrap; }
+.master-list .list-scale .editable-text { display: block; min-width: 0; }
+.master-list .list-scale .editable-input { width: 72px; }
+.master-list .list-check { min-width: 120px; max-width: 200px; white-space: normal; line-height: 1.35; }
+.master-list .list-actions { text-align: right; width: 1%; }
+.master-list .list-actions button { white-space: nowrap; }
+.list-extra-head { gap: 10px; align-items: baseline; padding: 8px 2px; flex-wrap: wrap; }
+.auto-ranges { margin-top: 8px; }
+.auto-ranges ul { margin: 4px 0 0; padding-left: 18px; }
+.master-plan .planned-problem td { white-space: normal; }

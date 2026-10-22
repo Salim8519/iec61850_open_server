@@ -52,6 +52,13 @@ reads to another SCADA.
 - **Repeat automatically (Go engine).** One command may be sent again on a timer (100-600000 ms,
   Stop ends it, disconnecting ends it). Each shot may add one to the address and flip an on/off
   value. Every shot goes through the same confirmed-command path, so each is logged and warned.
+- **My point list (Go engine, ADR-0110).** The master keeps its own address-only point list per protocol
+  (address, type, name, scale/offset/unit; Modbus table, data type, word order, registers; command type, select
+  and value). Add one point, a range, pasted/Excel/CSV rows (every row checked first) or copy the gateway list.
+  The engine compares it with what the device reported: Received, Missing, Wrong type, Waiting or Command,
+  plus Not in your list with one-click Add. Listed Modbus points add their own merged, capped reads. A command
+  point's Send opens the normal confirmation with its saved command. Check against IED is an optional test aid
+  that asks the gateway service, never the master, what the gateway mapping holds.
 - **Find registers.**
   - At most 10,000 addresses, at most 10 requests per second, read only.
   - A preview shows how many requests it sends.
@@ -79,3 +86,5 @@ reads to another SCADA.
 | MASTER-11 | An independent 104 master reads a DNP3 outstation through the converter and its command reaches the outstation. | `studio/tests/protocol/test_converter_runtime.py::test_dnp3_device_is_served_as_iec104_and_scada_commands_reach_it` |
 | MASTER-12 | The master worker refuses to connect without a license and is packaged and sealed. | `studio/tests/unit/test_native_enforcement.py::test_master_refuses_to_connect_without_license`, `studio/tests/unit/test_protected_packaging.py::test_protected_build_refuses_without_release_key_and_dry_run_lists_steps` |
 | MASTER-13 | The Go engine adds the most-used commands (C_RC, QU, Activate/Deactivate, DNP3 CROB options and g41v2, cyclic sending with address step and value toggle), validated and framed without changing the frozen Python routes. | `studio/engine/internal/api/toolsapi/master_commands_extra_test.go::TestMasterExtraCommands`, `studio/engine/internal/gateway/service/master_cyclic_test.go::TestCyclicStepsAddressAndTogglesValue` |
+| MASTER-14 | The master point list is address-only and checked before it is saved (types per protocol, address spaces, ranges, pasted/Excel/CSV rows, copy from gateway without IED links); a stored list survives a project load only when present. | `studio/engine/internal/gateway/masterpoints/contract_test.go::TestValidateKeepsShapeAndRefusesClashes`, `studio/engine/internal/gateway/masterpoints/rows_test.go::TestCSVAndExcelRoundTrip`, `studio/engine/internal/gateway/masterpoints/copy_test.go::TestCopyFromGatewayMapsTypesAndKeepsNoIEDLink`, `studio/engine/internal/project/gateway/master_points_test.go::TestNormalizeMasterKeepsAStoredPointList` |
+| MASTER-15 | Expected vs received is computed by the engine (Received, Missing, Wrong type, Waiting, Command, Not in your list), Modbus reads follow the list, and Check against IED reads the gateway's mapping with plain reasons. | `studio/engine/internal/gateway/masterpoints/compare_test.go::TestCompareClassifiesExpectedAgainstReceived`, `studio/engine/internal/gateway/masterpoints/compare_test.go::TestPollRangesMergeNeighboursAndCapEachRequest`, `studio/engine/internal/gateway/masterpoints/copy_test.go::TestCheckAgainstIEDGivesPlainReasons`, `studio/engine/internal/api/toolsapi/master_list_test.go::TestMasterListRoutes` |
