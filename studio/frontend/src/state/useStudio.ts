@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, connectSession, upload } from '../api/client';
 import type { Diagram, Project, StudioEvent } from '../api/types';
 import type { ImportPreview } from '../features/ieds/ImportSelection';
-import { createHistory, recordDiagram, sameEngineering, undoDiagram, redoDiagram, type DiagramHistory } from './diagramHistory';
+import { sameEngineering, type DiagramHistory } from './diagramHistory';
+import { adoptProject, forgetHistory, NO_HISTORY, recordEdit, stepHistory, type HistorySession } from './historySession';
+import { classifyProjectChange, seenInRead } from './projectChange';
 import { EquipmentValueStore } from '../equipment/liveValues';
 import { EnergizationStore, type Energization } from '../equipment/energization';
 import { SignalLayerStore } from '../equipment/signalLayerStore';
@@ -11,9 +13,6 @@ import { deliverLive, openEventStream, RELOADS, type StudioStream } from './even
 import { liveData } from './liveData';
 import { useWork } from './workSteps';
 import { fileKind, OLD_PROJECT_MESSAGE } from './projectFile';
-
-/** Events this much older than a project read are certainly in it (same PC clock; generous margin). */
-const READ_MARGIN_MS = 250;
 
 export function useStudio() {
   const [project, setProject] = useState<Project | null>(null);
@@ -28,19 +27,16 @@ export function useStudio() {
   const equipmentValues = useMemo(() => new EquipmentValueStore(), []);
   const energization = useMemo(() => new EnergizationStore(), []);
   const signalLayers = useMemo(() => new SignalLayerStore(), []);
-  const historyRef = useRef<DiagramHistory | null>(null);
-  const historyIdentity = useRef('');
+  // The Undo history and the project it belongs to (historySession.ts).
+  const session = useRef<HistorySession>(NO_HISTORY);
   const tabId = useRef(crypto.randomUUID());
   const current = useRef<Project | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveQueue = useRef<Promise<void>>(Promise.resolve());
   const saveGeneration = useRef(0);
   const apply = useCallback((value: Project) => {
-    const identity = `${value.session_id}:${value.id}:${value.ieds.map(ied => ied.id).join(',')}`;
-    if (identity !== historyIdentity.current) {
-      historyIdentity.current = identity;
-      historyRef.current = createHistory(value.diagram); setHistory(historyRef.current);
-    }
+    const adopted = adoptProject(session.current, value);
+    if (adopted !== session.current) { session.current = adopted; setHistory(adopted.history); }
     current.current = value; setProject(value);
   }, []);
   // One GET /project in flight and one waiting at most, however many events ask (speed lane F).
@@ -71,7 +67,7 @@ export function useStudio() {
         }
       } catch (reason) {
         saveGeneration.current += 1;
-        historyIdentity.current = '';
+        session.current = forgetHistory(session.current);
         await refresh();
         throw reason;
       }
@@ -94,7 +90,7 @@ export function useStudio() {
     let opened = 0;
     // An event published well before the last project read started is already in that answer
     // (the backend publishes after applying a change), so replayed history asks for nothing.
-    const seen = (event: StudioEvent) => event.timestamp * 1000 < readAt.current - READ_MARGIN_MS;
+    const seen = (event: StudioEvent) => seenInRead(event, readAt.current);
     connectSession().then(() => {
       if (disposed) return;
       refresh().catch(fail);
@@ -105,16 +101,19 @@ export function useStudio() {
         // Values, Activity, layers and equipment go to stores outside React; App state is untouched.
         deliverLive(event, targets, performance.now());
         if (event.kind === 'project_changed') {
-          if (event.source === tabId.current && current.current) {
+          // The stream replays old changes of earlier tabs on every connect; the project read holds
+          // them, so only a really new change by someone else drops the pending save and the history.
+          const change = classifyProjectChange(event, tabId.current, readAt.current, !!current.current);
+          if (change === 'own' && current.current) {
             const updated = { ...current.current, revision: Number(event.revision) };
             current.current = updated; setProject(updated);
-          } else {
+          } else if (change === 'other') {
             saveGeneration.current += 1;
             if (timer.current) clearTimeout(timer.current);
             timer.current = null;
-            historyIdentity.current = '';
+            session.current = forgetHistory(session.current);
             setSaveState('All changes saved');
-            if (!seen(event)) refresh().catch(fail);
+            refresh().catch(fail);
           }
         }
         if (RELOADS.has(event.kind)) {
@@ -138,24 +137,28 @@ export function useStudio() {
 
   const updateDiagram = useCallback((diagram: Diagram, group?: string, navigating = false) => {
     if (!current.current || current.current.runtime !== 'stopped') return;
-    if (!navigating && historyRef.current) {
-      historyRef.current = recordDiagram(historyRef.current, diagram, group);
-      setHistory(historyRef.current);
+    if (!navigating && session.current.history) {
+      session.current = recordEdit(session.current, diagram, group);
+      setHistory(session.current.history);
     }
     const unchanged = sameEngineering(diagram, current.current.diagram);
-    apply({ ...current.current, diagram });
+    // A local edit never goes through apply(): it cannot change which project this is, so it must
+    // not be able to start a new history (that lost the first edit after opening the page).
+    const edited = { ...current.current, diagram };
+    current.current = edited; setProject(edited);
     if (unchanged) return;
     setSaveState('Saving...');
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => saveDiagram().catch(reason => {
       setSaveState('Not saved'); setError(reason.message);
     }), 400);
-  }, [apply, saveDiagram]);
+  }, [saveDiagram]);
 
   const navigateHistory = useCallback((direction: 'undo' | 'redo') => {
-    if (!historyRef.current || current.current?.runtime !== 'stopped') return;
-    historyRef.current = (direction === 'undo' ? undoDiagram : redoDiagram)(historyRef.current);
-    setHistory(historyRef.current); updateDiagram(historyRef.current.present, undefined, true);
+    if (!session.current.history || current.current?.runtime !== 'stopped') return;
+    session.current = stepHistory(session.current, direction);
+    const stepped = session.current.history;
+    setHistory(stepped); if (stepped) updateDiagram(stepped.present, undefined, true);
   }, [updateDiagram]);
   const undo = useCallback(() => navigateHistory('undo'), [navigateHistory]);
   const redo = useCallback(() => navigateHistory('redo'), [navigateHistory]);
@@ -178,7 +181,7 @@ export function useStudio() {
       await saveDiagram(); steps.next();
       if (project) {
         await upload('/project/open', file); liveData().values.clear(); equipmentValues.clear(); energization.clear();
-        historyIdentity.current = ''; steps.next();
+        session.current = forgetHistory(session.current); steps.next();
       } else {
         const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
         setImportPreview({ ...preview, file }); steps.end();
