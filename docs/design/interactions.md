@@ -87,6 +87,8 @@
 - Show the backend session and project revision in every tab. Synchronize remote
   tab edits automatically and reject a stale diagram save before it can overwrite
   the authoritative project.
+- Save always (ADR-0101): every edit saves by itself the moment it is valid; no Save buttons. A
+  wrong value keeps its text, shows one red line with words under the field and is not sent.
 - Push Button has no wire terminals and is pressed by clicking it on the canvas
   while running (press and select are one gesture); the properties panel stays
   as the detailed view. New buttons default to latching Boolean status.
