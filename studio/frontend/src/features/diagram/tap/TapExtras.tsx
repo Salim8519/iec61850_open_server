@@ -1,11 +1,11 @@
-import type { AvrSettings, Project, TapChanger } from '../../../api/types';
+import type { AvrSettings, ExtendedControl, Ied, Project, TapChanger } from '../../../api/types';
 import { commandReady, MODE_KINDS, tapControls } from '../../../equipment/tapChanger';
 import { NUMERIC_KINDS } from '../../../equipment/measurementDisplay';
 import { TAP_COPY } from '../../../copy/tapChanger';
 import { TapControlField, TapNumber, TapSignalField } from './TapFields';
 
 type Props = { nodeId: string; tap: TapChanger; project: Project; locked: boolean;
-  set: (patch: Partial<TapChanger>) => void };
+  set: (patch: Partial<TapChanger>) => void; typedOf: (ied: Ied | undefined) => readonly ExtendedControl[] };
 
 const AVR_FIELDS: (keyof AvrSettings)[] = ['target_kv', 'bandwidth_pct', 'delay_s', 'step_pct', 'hv_rated_kv',
   'lv_rated_kv', 'source_kv'];
@@ -21,7 +21,7 @@ function avrProblem(key: keyof AvrSettings, value: number): string | null {
 }
 
 /** The optional parts of a tap changer: Auto/Manual, LV voltage and the simulated voltage regulator. */
-export function TapExtras({ nodeId, tap, project, locked, set }: Props) {
+export function TapExtras({ nodeId, tap, project, locked, set, typedOf }: Props) {
   const avr = tap.avr;
   const canRegulate = !!tap.tap_source && commandReady(tap);
   const setAvr = (patch: Partial<AvrSettings>) => set({ avr: { ...avr, ...patch } });
@@ -32,7 +32,7 @@ export function TapExtras({ nodeId, tap, project, locked, set }: Props) {
         ieds={project.ieds} value={tap.mode_source} kinds={MODE_KINDS} fc="ST" memoryKey={`sld-tap-mode-${nodeId}`}
         disabled={locked} change={binding => set({ mode_source: binding })} />
       <TapControlField label={TAP_COPY.modeControlLabel} ieds={project.ieds} value={tap.mode_control}
-        controlsOf={ied => tapControls(ied).mode} empty="This IED has no SPC or ENC control here." disabled={locked}
+        controlsOf={ied => tapControls(ied, typedOf(ied)).mode} empty="This IED has no SPC or ENC control here." disabled={locked}
         change={binding => set({ mode_control: binding })} />
       {(tap.mode_source || tap.mode_control) && <div className="tap-field-grid" style={{ marginTop: 10 }}>
         <TapNumber label={TAP_COPY.autoValueLabel} value={tap.auto_value} whole disabled={locked}

@@ -108,6 +108,7 @@ func TestMeasurementCrossChecks(t *testing.T) {
 	}{
 		{MeasurementKind, o("measurements", []any{row("a", "ied0", 1)}), `needs a number signal (integer or float), but LD0/GGIO0.Ind1.stVal is BOOLEAN`},
 		{MeasurementKind, o("measurements", []any{row("a", "ied0", 2), row("a", "ied0", 3)}), "Measurement identifiers must be unique"},
+		{MeasurementKind, o("measurements", []any{row("a", "ied0", 2, "scale", 0.0)}), `Measurement "Row a" has scale 0`},
 		{MeasurementKind, o("measurements", []any{row("a", "nope", 2)}), "A signal binding references an unknown IED"},
 		{MeasurementKind, o("measurements", []any{row("a", "ied0", 9999)}), "A signal binding references an unknown signal"},
 		{"CB", o("measurements", []any{row("a", "ied0", 2)}), "Only a measurement list accepts measurements"},

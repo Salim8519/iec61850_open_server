@@ -229,9 +229,12 @@ Json TypedSession::cancel(const Json& request) {
     if (ControlObjectClient_cancel(control.handle)) {
         result["canceled"] = true;
         result["ok"] = true;
-    } else {
-        refused(result, control.handle, "Cancel");
+        forget(key);
+        return result;
     }
-    forget(key);
+    refused(result, control.handle, "Cancel");
+    // A refused Cancel leaves the device's selection in place (change 0176): keep the handle so a
+    // later Operate within the window still reuses it; it expires like any other selection.
+    if (Clock::now() >= control.expires) forget(key);
     return result;
 }

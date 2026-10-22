@@ -35,6 +35,9 @@ export function SboCountdown<C>({ flow, what, compact }: Props<C>) {
         <button type="button" disabled={busy} title={SBO_COPY.cancelHint} onClick={() => { void flow.cancel(); }}>
           <X size={14} aria-hidden="true" />{state.phase === 'cancelling' ? SBO_COPY.cancelling : SBO_COPY.cancel}</button>
       </span>
+      {state.phase === 'selected' && state.tone === 'failed' && state.message &&
+        <span className="sbo-note" role="alert"><TriangleAlert size={14} aria-hidden="true" />
+          <span>{SBO_COPY.cancelRefused(state.message)}</span></span>}
     </div>;
   }
   if (state.tone === 'none' || (state.tone === 'done' && !state.message)) return null;

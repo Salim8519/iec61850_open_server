@@ -4,7 +4,7 @@ import {
   avrLine, isAuto, lvText, modeWords, newTapChanger, rangeProblem, stepBlock, tapControls, tapText,
 } from '../../frontend/src/equipment/tapChanger.ts';
 import { defaultLabel, kindInfo, setupItems } from '../../frontend/src/equipment/kindInfo.ts';
-import type { EquipmentData, Ied, TapChanger } from '../../frontend/src/api/types.ts';
+import type { EquipmentData, ExtendedControl, Ied, TapChanger } from '../../frontend/src/api/types.ts';
 
 // Tap-changer transformer (ADR-0109): the browser only turns what the engine publishes into words.
 
@@ -68,15 +68,17 @@ test('the regulator line and LV voltage are words', () => {
 });
 
 test('controls are offered per role: BSC/ISC steps, SPC pairs, SPC/ENC modes', () => {
+  // GET /project sends no extended_controls (change 0176): the typed list comes from GET /controls/typed.
   const ied = { id: 'ied1', name: 'RTCC1', controls: [{ ref: 'LD0/GGIO1.SPCSO1', cdc: 'SPC' }, { ref: 'LD0/CSWI1.Pos', cdc: 'DPC' }],
-    extended_controls: [{ ref: 'LD0/YLTC1.TapChg', cdc: 'BSC' }, { ref: 'LD0/YLTC2.TapPos', cdc: 'ISC' },
-      { ref: 'LD0/ATCC1.Mod', cdc: 'ENC' }, { ref: 'LD0/MMXU1.SetV', cdc: 'APC' }] } as unknown as Ied;
-  const offered = tapControls(ied);
+  } as unknown as Ied;
+  const typed = [{ ref: 'LD0/YLTC1.TapChg', cdc: 'BSC' }, { ref: 'LD0/YLTC2.TapPos', cdc: 'ISC' },
+    { ref: 'LD0/ATCC1.Mod', cdc: 'ENC' }, { ref: 'LD0/MMXU1.SetV', cdc: 'APC' }] as unknown as ExtendedControl[];
+  const offered = tapControls(ied, typed);
   assert.deepEqual(offered.step.map(item => item.cdc), ['BSC', 'ISC']);
   assert.deepEqual(offered.spc.map(item => item.ref), ['LD0/GGIO1.SPCSO1']);
   assert.deepEqual(offered.mode.map(item => item.cdc), ['SPC', 'ENC']);
-  const before = tapControls({ ...ied, extended_controls: undefined });
-  assert.equal(before.step.length, 0, 'without typed controls (before change 0167) only SPC pairs are offered');
+  const before = tapControls(ied);
+  assert.equal(before.step.length, 0, 'without the typed list only SPC pairs are offered');
 });
 
 test('the tap range is checked in plain words', () => {

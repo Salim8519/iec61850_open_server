@@ -1,4 +1,4 @@
-import type { AvrSettings, Ied, TapChanger } from '../api/types.ts';
+import type { AvrSettings, ControlBinding, ExtendedControl, Ied, TapChanger } from '../api/types.ts';
 import { AVR_BLOCKED, AVR_STATE, TAP_COPY } from '../copy/tapChanger.ts';
 
 /** Display helpers of the tap-changer transformer (ADR-0109). The Go engine owns the tap, the regulator and
@@ -76,15 +76,26 @@ export function stepBlock(tap: TapChanger, tapValue: unknown, auto: boolean | un
   return null;
 }
 
-/** Controls an IED offers for each tap changer role. BSC/ISC and ENC come from typed controls (change 0167). */
-export function tapControls(ied: Ied | undefined) {
-  const typed = ied?.extended_controls ?? [];
+/** Controls an IED offers for each tap changer role. BSC/ISC and ENC are typed controls: `GET /project`
+ *  does not send them, so the sheet passes the list of `GET /controls/typed` (changes 0167, 0176). */
+export function tapControls(ied: Ied | undefined, typedList?: readonly ExtendedControl[]) {
+  const typed = typedList ?? ied?.extended_controls ?? [];
   return {
     step: typed.filter(control => control.cdc === 'BSC' || control.cdc === 'ISC'),
     spc: (ied?.controls ?? []).filter(control => control.cdc === 'SPC'),
     mode: [...(ied?.controls ?? []).filter(control => control.cdc === 'SPC'),
       ...typed.filter(control => control.cdc === 'ENC')],
   };
+}
+
+type Choice = { ref: string; cdc: string };
+
+/** The options of one control select: the fitting controls, plus the saved control of this IED when
+ *  the list does not have it (yet), so a saved binding is never shown as "Not mapped" (change 0176). */
+export function controlChoices(controls: readonly Choice[], saved: ControlBinding | null, iedId: string):
+  { choices: Choice[]; savedMissing: boolean } {
+  const savedMissing = !!saved && saved.ied_id === iedId && !controls.some(control => control.ref === saved.ref);
+  return { choices: savedMissing && saved ? [{ ref: saved.ref, cdc: 'saved' }, ...controls] : [...controls], savedMissing };
 }
 
 /** Plain-words check of the tap range before it is saved (the engine checks it again). */

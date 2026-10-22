@@ -130,9 +130,12 @@ func (c *Coordinator) command(nodeID string, plan commandPlan, options CommandOp
 	if item == nil || item.worker == nil {
 		return nil, apperr.ValueError("IED is not running")
 	}
-	result, err := c.sendEquipment(nodeID, plan, options, state, item)
+	result, used, err := c.sendEquipment(nodeID, plan, options, state, item)
 	if err != nil {
 		return nil, err
+	}
+	if used.Test {
+		return c.testCommandDone(nodeID, plan, result, options, sent)
 	}
 	applied, changed, err := c.applyFeedback(plan.planned)
 	if err != nil {

@@ -34,9 +34,10 @@ export function TidyButton({ diagram, selection, locked, apply }: {
     window.setTimeout(() => flow.fitView({ maxZoom: 1, padding: 0.2, duration: still ? 0 : 300,
       nodes: scoped ? selection.map(id => ({ id })) : undefined }), 60);
   };
-  return <>
+  // The note floats under the button, so the toolbar buttons never move when it comes and goes (change 0176).
+  return <span className="tidy-wrap">
     <button className="ghost" disabled={locked || diagram.nodes.length < 2} onClick={run}
       title={tidyTitle(locked, scoped)}><WandSparkles size={17} />{scoped ? 'Tidy selection' : 'Tidy up'}</button>
     {note && <span className="tidy-note" role="status">{note}</span>}
-  </>;
+  </span>;
 }

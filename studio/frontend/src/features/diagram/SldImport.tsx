@@ -6,7 +6,7 @@ import { Disclosure } from '../../ui/Disclosure';
 import { Hint } from '../../ui/Hint';
 import { SpinIcon } from '../../ui/Spinner';
 import { SegmentedControl } from '../../ui/SegmentedControl';
-import { previewIsCurrent, sldAvailability, sldSummary, type SldMode, type SldPreview, type SldSource } from './sldPreview';
+import { previewIsCurrent, skippedReason, sldAvailability, sldSummary, type SldMode, type SldPreview, type SldSource } from './sldPreview';
 import '../ieds/import-selection.css';
 
 /** "Build from SCD": preview the single-line diagram from the SCD, then apply it as one undo step. */
@@ -65,9 +65,9 @@ export function SldImport({ disabled, revision, apply, prepare }: {
             <Hint id="sld.unbound" compact />
             <ul className="deletion-impact">{preview.unbound.map(item => <li key={item.path}>
               <strong>{item.path}</strong> ({item.kind}): {[...new Set(item.reasons)].join('; ')}</li>)}</ul></Disclosure>}
-          {preview.skipped.length > 0 && <Disclosure title={`No symbol yet (${preview.skipped.length})`}>
+          {preview.skipped.length > 0 && <Disclosure title={`Not drawn (${preview.skipped.length})`}>
             <ul className="deletion-impact">{preview.skipped.map(item => <li key={item.path}>
-              <strong>{item.path}</strong> ({item.type}): {item.reason}</li>)}</ul></Disclosure>}
+              <strong>{item.path}</strong> ({item.type}): {skippedReason(item)}</li>)}</ul></Disclosure>}
           {preview.diagnostics.length > 0 && <Disclosure title={`Notes about the file (${preview.diagnostics.length})`}>
             <ul className="deletion-impact">{preview.diagnostics.map(line => <li key={line}>{line}</li>)}</ul></Disclosure>}
           {mode === 'replace' && preview.removed > 0 && <label className="import-choice">

@@ -20,6 +20,8 @@ type Props = {
   problem: (text: string) => void;
 };
 
+const LIST_PLACEHOLDER = 'Choose a value';
+
 /** A typed number (INC whole numbers, APC with the row's unit): Enter or the button picks it. */
 function NumberBox({ point, control, disabled, title, verb, pick, problem }: Pick<Props, 'point' | 'control' | 'problem'> & {
   disabled: boolean; title: string; verb: string; pick: (value: number) => void;
@@ -36,22 +38,26 @@ function NumberBox({ point, control, disabled, title, verb, pick, problem }: Pic
     <input value={text} type="number" inputMode="decimal" disabled={disabled} min={bounds?.min ?? undefined}
       max={bounds?.max ?? undefined} step={bounds?.step ?? 'any'} placeholder={hint.replace(/^from /, '').replace(/,? ?steps of .*$/, '')}
       aria-label={`Value to send: ${point.label}${hint ? ` (${hint})` : ''}`}
-      onChange={event => setText(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') apply(); }} />
+      onChange={event => setText(event.target.value)}
+      // preventDefault: the same Enter must not also press the question's focused Cancel (change 0176).
+      onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); apply(); } }} />
     {control?.cdc === 'APC' && point.unit && <span className="pp-unit">{point.unit}</span>}
     <button type="button" disabled={disabled} onClick={apply}><Send size={13} aria-hidden="true" />{verb}</button>
   </span>;
 }
 
-/** An ENC command: one of the model's labels, then the button. */
+/** An ENC command: one of the model's labels, then the button. Nothing is picked at first: a command
+ *  row has no live value, so the first label ("off") must not look like the present one (change 0176). */
 function ListBox({ point, control, disabled, title, verb, pick }: Pick<Props, 'point' | 'control'> & {
   disabled: boolean; title: string; verb: string; pick: (value: string) => void;
 }) {
   const labels = enumChoices(control);
-  const [chosen, setChosen] = useState(labels[0] ?? '');
+  const [chosen, setChosen] = useState('');
   if (!labels.length) return <span className="small muted">This IED's model gives no values for this list.</span>;
   return <span className="pp-value-box" title={title}>
     <select value={chosen} disabled={disabled} aria-label={`Value to send: ${point.label}`}
       onChange={event => setChosen(event.target.value)}>
+      <option value="" disabled>{LIST_PLACEHOLDER}</option>
       {labels.map(label => <option key={label} value={label}>{label}</option>)}
     </select>
     <button type="button" disabled={disabled || !chosen} onClick={() => pick(chosen)}><Send size={13} aria-hidden="true" />{verb}</button>

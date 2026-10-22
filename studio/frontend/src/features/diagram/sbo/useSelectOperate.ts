@@ -55,7 +55,7 @@ export function useSelectOperate<C>(steps: SelectOperateSteps<C>) {
     if (held.phase !== 'selected' || held.choice === null) return;
     dispatch({ type: 'cancel' });
     try { await stepsRef.current.cancel(held.choice); dispatch({ type: 'cancelled', message: '' }); }
-    catch (error) { dispatch({ type: 'failed', message: messageOf(error) }); }
+    catch (error) { dispatch({ type: 'cancelRefused', message: messageOf(error) }); } // still selected (change 0176)
   }, []);
   const clear = useCallback(() => dispatch({ type: 'clear' }), []);
   return { state, left: secondsLeft(state, now), select, operate, cancel, clear };

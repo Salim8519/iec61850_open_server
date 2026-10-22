@@ -18,11 +18,13 @@ func (c *Coordinator) pointSelection(nodeID string, ied *pyjson.Object, point pa
 	request := pyval.Obj("node_id", nodeID, "point_id", point.id, "ied_id", iedID, "ref", point.ref,
 		"point_type", point.kind, "correlation_id", newHexID(), "origin", "studio_api")
 	if action == "cancel" {
-		held, found := c.selections.drop(key)
+		held, status := c.selections.peek(key) // a refused Cancel keeps the selection (change 0176)
+		found := status == selectionLive
 		if found {
 			if err := c.CancelTyped(held.iedID, held.ref); err != nil {
 				return nil, err
 			}
+			c.selections.drop(key)
 			c.emit("point_panel_select_cancelled", request)
 		}
 		return copyWith(request, "action", action, "row", point.id, "cancelled", found), nil

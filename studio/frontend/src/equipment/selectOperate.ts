@@ -5,7 +5,9 @@ import type { ControlModel } from '../api/types.ts';
  *
  *  idle --select--> selecting --selected--> selected --operate--> operating --done--> idle
  *                        |                      |  \--cancel--> cancelling --done--> idle
- *                        \--failed--> idle      \--tick past the deadline--> idle (expired) */
+ *                        \--failed--> idle      \--tick past the deadline--> idle (expired)
+ *  A Cancel the device refuses goes back to selected with its words: the device and the engine
+ *  still hold the selection (change 0176). */
 export type SboPhase = 'idle' | 'selecting' | 'selected' | 'operating' | 'cancelling';
 /** What the last step said. The words always carry it; tone only picks the icon. */
 export type SboTone = 'none' | 'done' | 'failed' | 'expired' | 'cancelled';
@@ -21,6 +23,7 @@ export type SboEvent<C = unknown> =
   | { type: 'operated'; message: string }
   | { type: 'cancel' }
   | { type: 'cancelled'; message: string }
+  | { type: 'cancelRefused'; message: string }
   | { type: 'clear' };
 
 export const SBO_IDLE: SboState<never> = { phase: 'idle', choice: null, deadline: null, windowMs: 0, tone: 'none', message: '' };
@@ -64,6 +67,8 @@ export function sboReducer<C>(state: SboState<C>, event: SboEvent<C>): SboState<
       return state.phase === 'selected' ? { ...state, phase: 'cancelling' } : state;
     case 'cancelled':
       return state.phase === 'cancelling' ? { ...state, phase: 'idle', deadline: null, tone: 'cancelled', message: event.message } : state;
+    case 'cancelRefused':
+      return state.phase === 'cancelling' ? { ...state, phase: 'selected', tone: 'failed', message: event.message } : state;
     case 'clear':
       return state.phase === 'idle' ? { ...state, tone: 'none', message: '' } : state;
   }

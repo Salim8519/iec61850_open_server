@@ -37,6 +37,11 @@ func checkMeasurements(data *pyjson.Object, kind string, ieds *Lookup) error {
 				"(integer or float), but " + text(signal, "ref") + " is " + signalKind +
 				". Choose a measured value such as mag.f")
 		}
+		// The point panel refuses scale 0 the same way (change 0176).
+		if scale, ok := number(pyval.Lookup(entry, "scale", nil)); ok && scale == 0 {
+			return apperr.New("Measurement \"" + text(entry, "label") + "\" has scale 0, so its shown value could " +
+				"never change. Use a scale such as 1 or 0.001")
+		}
 	}
 	return nil
 }

@@ -19,6 +19,9 @@ import (
 // its file name), so hub and stress tests run without the native build.
 const fakeEnv = "STUDIO_RUNTIME_FAKE_NATIVE"
 
+// fakeNoCancelEnv makes the fake refuse every Cancel as a model without Cancel does.
+const fakeNoCancelEnv = "STUDIO_RUNTIME_FAKE_NO_CANCEL"
+
 func TestMain(m *testing.M) {
 	if os.Getenv(fakeEnv) == "1" {
 		name := strings.ToLower(strings.TrimSuffix(filepath.Base(os.Args[0]), filepath.Ext(os.Args[0])))
@@ -157,7 +160,13 @@ func (w *fakeWorker) answer(name, op string, frame *pyjson.Object) any {
 		return pyval.Obj("value", w.values[pyval.Str(frame, "ref")], "revision", w.revision)
 	case "typed_select": // ADR-0104: the fake selects every SBO control for 10 s
 		return pyval.Obj("ok", true, "ref", pyval.Get(frame, "ref"), "selected", true, "expires_ms", int64(10000))
-	case "typed_operate", "typed_cancel":
+	case "typed_cancel":
+		if os.Getenv(fakeNoCancelEnv) == "1" { // a model without the CO Cancel structure (change 0176)
+			return pyval.Obj("ok", false, "ref", pyval.Get(frame, "ref"), "client_error", int64(22),
+				"error", "Cancel refused by the device: object-does-not-exist")
+		}
+		return pyval.Obj("ok", true, "ref", pyval.Get(frame, "ref"), "canceled", true)
+	case "typed_operate":
 		time.Sleep(time.Millisecond)
 		return pyval.Obj("ok", true, "ref", pyval.Get(frame, "ref"), "operated", op == "typed_operate",
 			"canceled", op == "typed_cancel")

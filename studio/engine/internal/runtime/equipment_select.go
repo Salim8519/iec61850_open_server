@@ -49,17 +49,21 @@ func (c *Coordinator) EquipmentSelect(nodeID, action string, options any) (*pyjs
 }
 
 // EquipmentCancel ends the node's selection; without one it answers that nothing was selected.
+// A Cancel the device refuses keeps the selection (change 0176): the device still holds it, so
+// Operate keeps working and the countdown stays true.
 func (c *Coordinator) EquipmentCancel(nodeID string) (*pyjson.Object, error) {
 	if _, err := c.findNode(nodeID); err != nil {
 		return nil, err
 	}
-	held, found := c.selections.drop(selectionKey{node: nodeID})
-	if !found {
+	key := selectionKey{node: nodeID}
+	held, status := c.selections.peek(key)
+	if status != selectionLive {
 		return pyval.Obj("node_id", nodeID, "cancelled", false), nil
 	}
 	if err := c.CancelTyped(held.iedID, held.ref); err != nil {
 		return nil, err
 	}
+	c.selections.drop(key)
 	c.emit("equipment_select_cancelled", pyval.Obj("node_id", nodeID, "control_ref", held.ref, "action", held.action,
 		"origin", "studio_api"))
 	return pyval.Obj("node_id", nodeID, "cancelled", true, "action", held.action), nil
@@ -81,11 +85,12 @@ func (c *Coordinator) switchPlan(nodeID, action string) (commandPlan, error) {
 	return c.planCommand(data, nil, action)
 }
 
-// sendEquipment sends one planned command. A held selection must still hold and match the
-// action; then the typed Operate carries the selected options. Without a selection, default
-// options use today's canvas path unchanged; other options go through the typed Operate.
+// sendEquipment sends one planned command and says which options went out. A held selection
+// must still hold and match the action; then the typed Operate carries the selected options.
+// Without a selection, default options use today's canvas path unchanged; other options go
+// through the typed Operate.
 func (c *Coordinator) sendEquipment(nodeID string, plan commandPlan, options CommandOptions, state string,
-	run *running) (*pyjson.Object, error) {
+	run *running) (*pyjson.Object, CommandOptions, error) {
 	key := selectionKey{node: nodeID}
 	iedID, ref := pyval.Str(plan.ied, "id"), pyval.Str(plan.control, "ref")
 	held, status := c.selections.peek(key)
@@ -93,20 +98,23 @@ func (c *Coordinator) sendEquipment(nodeID string, plan commandPlan, options Com
 	switch status {
 	case selectionExpired:
 		c.emit("equipment_select_expired", pyval.Obj("node_id", nodeID, "control_ref", ref, "action", held.action))
-		return nil, apperr.ValueError("The selection of " + label + " ran out after " + seconds(held.windowMs) +
+		return nil, options, apperr.ValueError("The selection of " + label + " ran out after " + seconds(held.windowMs) +
 			", so nothing was sent. Press " + title(held.action) + " again to select it.")
 	case selectionLive:
 		if held.action != plan.semantic {
-			return nil, apperr.ValueError(label + " is selected to " + held.action + ". Press Operate to " + held.action +
-				" it, or Cancel first.")
+			return nil, options, apperr.ValueError(label + " is selected to " + held.action + ". Press Operate to " +
+				held.action + " it, or Cancel first.")
 		}
 		c.selections.drop(key)
-		return c.OperateTyped(TypedCommand{IEDID: iedID, Ref: ref, Value: plan.wire, Options: held.options})
+		result, err := c.OperateTyped(TypedCommand{IEDID: iedID, Ref: ref, Value: plan.wire, Options: held.options})
+		return result, held.options, err
 	}
 	if options == (CommandOptions{}) {
-		return c.commands.operate(plan.ied, state, ref, plan.wire, run.host, run.port)
+		result, err := c.commands.operate(plan.ied, state, ref, plan.wire, run.host, run.port)
+		return result, options, err
 	}
-	return c.OperateTyped(TypedCommand{IEDID: iedID, Ref: ref, Value: plan.wire, Options: options})
+	result, err := c.OperateTyped(TypedCommand{IEDID: iedID, Ref: ref, Value: plan.wire, Options: options})
+	return result, options, err
 }
 
 // title is "Close" for "close".

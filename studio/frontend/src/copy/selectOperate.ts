@@ -10,11 +10,13 @@ export const SBO_COPY = {
   cancelled: 'Selection cancelled. Nothing was sent.',
   expired: 'The selection ran out, so nothing was sent. Select again to try once more.',
   failed: (reason: string) => `Not selected: ${reason}`,
+  cancelRefused: (reason: string) => `Still selected: ${reason}`,
   sboHint: 'This device asks for Select before Operate: the first press selects, then press Operate before the time runs out.',
   sboOneClick: 'This device asks for Select before Operate. ScadaBench selects and operates in one go, like a station HMI.',
   stepsLabel: 'Show Select before Operate step by step',
   stepsHint: 'For testing: the first press only selects, then you press Operate or Cancel before the device time runs out. '
     + 'Off (normal): one press selects and operates. Applies to the whole diagram and the point panels.',
+  stepsNotSaved: (reason: string) => `Not saved, so the setting went back: ${reason}`,
   directHint: 'This device operates at once: the button sends the command.',
   operateHint: 'Send the selected command now.',
   cancelHint: 'Give the selection back without sending anything.',

@@ -3,7 +3,7 @@ import type { CommandOptions } from '../../api/types';
 import { changedCount, MAX_ORIDENT } from '../../equipment/commandOptions';
 import { SBO_COPY } from '../../copy/selectOperate';
 import './sbo/sbo.css';
-import { setSboSteps, useSboSteps } from './sbo/useSboSteps';
+import { setSboSteps, useSboSteps, useSboStepsError } from './sbo/useSboSteps';
 
 /** The folded "Command options" of the equipment sheet (ADR-0108): test, interlock check, synchro
  *  check and the originator. Closed by default; the title says how many differ from the defaults. */
@@ -12,6 +12,7 @@ export function CommandOptionsPanel({ options, change, disabled }: {
 }) {
   const changed = changedCount(options);
   const steps = useSboSteps();
+  const stepsError = useSboStepsError();
   const flag = (key: 'test' | 'interlock_check' | 'synchro_check', label: string, hint: string) =>
     <label title={hint}><input type="checkbox" checked={options[key]} disabled={disabled}
       onChange={event => change({ ...options, [key]: event.target.checked })} />{label}</label>;
@@ -25,6 +26,7 @@ export function CommandOptionsPanel({ options, change, disabled }: {
       {flag('synchro_check', SBO_COPY.synchro, SBO_COPY.synchroHint)}
       <label title={SBO_COPY.stepsHint}><input type="checkbox" checked={steps} disabled={disabled}
         onChange={event => setSboSteps(event.target.checked)} />{SBO_COPY.stepsLabel}</label>
+      {stepsError && <p className="small sbo-note" role="alert" style={{ margin: 0 }}>{SBO_COPY.stepsNotSaved(stepsError)}</p>}
       <label className="field">{SBO_COPY.orcat}
         <select value={options.orcat} disabled={disabled} onChange={event => change({ ...options, orcat: Number(event.target.value) })}>
           {SBO_COPY.orcats.map((name, value) => <option key={value} value={value}>{name}</option>)}

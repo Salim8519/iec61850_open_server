@@ -11,7 +11,12 @@
   border: 1px solid var(--accent-line); border-radius: var(--radius-small); background: var(--accent-soft); }
 .react-flow__controls { border: var(--line) solid var(--border-strong); box-shadow: var(--shadow); border-radius: 10px; overflow: hidden; margin: 20px; }
 .react-flow__controls-button { width: 36px; height: 36px; min-height: 36px; border-radius: 0; padding: 0; }
-.tidy-note { max-width: 300px; padding: 0 8px; font-size: 13px; line-height: 1.3; color: var(--text-2); }
+/* The tidy note floats under its button (change 0176): the toolbar keeps its width and nothing moves. */
+.tidy-wrap { position: relative; display: inline-flex; }
+.tidy-note { position: absolute; left: 0; top: calc(100% + 12px); z-index: 7; width: max-content; max-width: 300px;
+  padding: 6px 10px; font-size: 13px; line-height: 1.3; color: var(--text); background: var(--surface);
+  border: var(--line) solid var(--border-strong); border-radius: var(--radius-small); box-shadow: var(--shadow-small);
+  pointer-events: none; }
 /* Equipment test buttons and right-click menu (ADR-0067). */
 .test-menu { z-index: 60; padding: 6px; }
 .test-menu-title, .test-menu-note { margin: 2px 8px 6px; }

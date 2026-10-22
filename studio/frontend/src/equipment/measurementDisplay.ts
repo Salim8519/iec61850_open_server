@@ -102,6 +102,8 @@ export function parseDecimals(text: string): { value?: number; error?: string } 
 
 export type SettingKey = keyof MeasurementPatch;
 
+const SCALE_ZERO = 'Scale cannot be 0, because the shown value could then never change.';
+
 /** Turns one typed setting into a patch, or the sentence that says what to type instead. */
 export function settingFromText(key: SettingKey, text: string): { patch?: MeasurementPatch; error?: string } {
   if (key === 'unit') {
@@ -109,7 +111,10 @@ export function settingFromText(key: SettingKey, text: string): { patch?: Measur
     return unit.length > MAX_UNIT ? { error: `A unit can have at most ${MAX_UNIT} characters.` } : { patch: { unit } };
   }
   const parsed = key === 'decimals' ? parseDecimals(text) : parseNumber(text, key === 'scale' ? 'Scale' : 'Offset');
-  return parsed.error !== undefined ? { error: parsed.error } : { patch: { [key]: parsed.value } };
+  if (parsed.error !== undefined) return { error: parsed.error };
+  // The engine refuses scale 0 for measurement rows as for point panels (change 0176).
+  if (key === 'scale' && parsed.value === 0) return { error: SCALE_ZERO };
+  return { patch: { [key]: parsed.value } };
 }
 
 /** The settings all selected rows share, or undefined for a field where they differ. */

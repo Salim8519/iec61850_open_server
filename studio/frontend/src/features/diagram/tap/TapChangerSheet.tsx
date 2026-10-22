@@ -3,6 +3,7 @@ import { commandReady, newTapChanger, rangeProblem, TAP_KINDS, tapControls } fro
 import { TAP_COPY } from '../../../copy/tapChanger';
 import { TapControlField, TapNumber, TapSignalField } from './TapFields';
 import { TapExtras } from './TapExtras';
+import { useTypedControlsOf } from './useTypedControlsOf';
 import '../../../equipment/tap-transformer.css';
 
 type Props = { nodeId: string; data: EquipmentData; project: Project; locked: boolean;
@@ -12,6 +13,7 @@ type Props = { nodeId: string; data: EquipmentData; project: Project; locked: bo
  *  and lower go, the tap range, then the optional Auto/Manual, LV voltage and simulated regulator. */
 export function TapChangerSheet({ nodeId, data, project, locked, update }: Props) {
   const tap = data.tap_changer ?? newTapChanger();
+  const typedOf = useTypedControlsOf(project.ieds); // BSC/ISC/ENC are not in GET /project (change 0176)
   const set = (patch: Partial<TapChanger>) => {
     const next = { ...tap, ...patch };
     // The engine refuses a regulator without a tap position or a command; switch it off with them.
@@ -35,7 +37,7 @@ export function TapChangerSheet({ nodeId, data, project, locked, update }: Props
           {(Object.keys(TAP_COPY.modes) as TapCommandMode[]).map(mode =>
             <option key={mode} value={mode}>{TAP_COPY.modes[mode]}</option>)}</select></label>
         {tap.command_mode === 'step' && <TapControlField label={TAP_COPY.stepLabel} ieds={project.ieds}
-          value={tap.step_control} controlsOf={ied => tapControls(ied).step} empty={TAP_COPY.stepMissing}
+          value={tap.step_control} controlsOf={ied => tapControls(ied, typedOf(ied)).step} empty={TAP_COPY.stepMissing}
           disabled={locked} change={binding => set({ step_control: binding })} />}
         {tap.command_mode === 'spc_pair' && <>
           <TapControlField label={TAP_COPY.raiseLabel} ieds={project.ieds} value={tap.raise_control}
@@ -55,6 +57,6 @@ export function TapChangerSheet({ nodeId, data, project, locked, update }: Props
         <TapNumber label={TAP_COPY.nominalLabel} value={tap.nominal_tap} whole disabled={locked}
           check={range('nominal_tap')} hint={TAP_COPY.nominalHint} change={value => set({ nominal_tap: value })} />
       </div></section>
-    <TapExtras nodeId={nodeId} tap={tap} project={project} locked={locked} set={set} />
+    <TapExtras nodeId={nodeId} tap={tap} project={project} locked={locked} set={set} typedOf={typedOf} />
   </>;
 }

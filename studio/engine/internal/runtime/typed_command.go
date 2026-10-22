@@ -158,7 +158,8 @@ func (c *Coordinator) OperateTyped(cmd TypedCommand) (*pyjson.Object, error) {
 	return result, nil
 }
 
-// CancelTyped ends a selection before it is operated.
+// CancelTyped ends a selection before it is operated. A Cancel the device refuses keeps the
+// selection (change 0176): the device still holds it until its time runs out.
 func (c *Coordinator) CancelTyped(iedID, ref string) error {
 	target, err := c.typedControl(iedID, ref)
 	if err != nil {
@@ -168,10 +169,25 @@ func (c *Coordinator) CancelTyped(iedID, ref string) error {
 	if err != nil {
 		return err
 	}
-	c.commands.selects.forget(iedID, ref)
 	result, err := process.Typed("typed_cancel", typedFields(target, CommandOptions{}))
 	if err != nil {
 		return err
+	}
+	if err := cancelOutcome(result, ref); err != nil {
+		return err
+	}
+	c.commands.selects.forget(iedID, ref)
+	return nil
+}
+
+// noSuchObject is libiec61850's IED_ERROR_OBJECT_DOES_NOT_EXIST.
+const noSuchObject = 22
+
+// cancelOutcome is the typed outcome, in plain words when the device's model has no Cancel.
+func cancelOutcome(result *pyjson.Object, ref string) error {
+	if code, _ := pyval.Get(result, "client_error").(int64); code == noSuchObject && pyval.Get(result, "ok") != true {
+		return apperr.Coded("This device's model has no Cancel for "+ref+", so the device keeps the selection "+
+			"until its time runs out. Press Operate to send the command, or wait.", "conflict")
 	}
 	return typedcmd.Outcome(result)
 }

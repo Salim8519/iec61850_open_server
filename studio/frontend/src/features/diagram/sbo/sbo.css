@@ -16,6 +16,10 @@
 .sbo.outcome.failed { color: var(--error); font-weight: 600; }
 .sbo.outcome.done { color: var(--success); }
 .sbo.outcome.expired, .sbo.outcome.cancelled { color: var(--text-2); }
+/* A refused Cancel keeps the selection; its reason sits under the countdown (change 0176). */
+.sbo-note { flex-basis: 100%; display: flex; align-items: flex-start; gap: 6px; color: var(--error); font-weight: 600; }
+.sbo-note svg { flex-shrink: 0; margin-top: 2px; }
+.sbo-note span { overflow-wrap: anywhere; }
 .sbo-steps { display: inline-flex; gap: 4px; }
 .sbo-steps button { min-height: 32px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .sbo-model { display: flex; align-items: flex-start; gap: 6px; margin: 0; font-size: 12px; color: var(--text-2); }

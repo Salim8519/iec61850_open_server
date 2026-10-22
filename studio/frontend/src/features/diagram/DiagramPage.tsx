@@ -3,6 +3,7 @@ import { Copy, Cpu, Redo2, Trash2, Undo2 } from 'lucide-react';
 import { api } from '../../api/client';
 import type { CommandOptions, Diagram, EquipmentKind, EquipmentNode, Project } from '../../api/types';
 import { commandBody } from '../../equipment/commandOptions';
+import { operateWords } from '../../equipment/operateWords';
 import { LiveValues } from '../../equipment/liveContext';
 import { sectionSentence } from '../../equipment/energization';
 import type { useStudio } from '../../state/useStudio';
@@ -70,11 +71,11 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   const edit = useCallback((next: Diagram, group?: string) => studio.updateDiagram(next, group), [studio.updateDiagram]);
   const actions = useCanvasShortcuts({ active: !studio.busy, locked, diagram, selection, edit, setSelection,
     undo: studio.undo, redo: studio.redo });
-  const add = useCallback((kind: EquipmentKind) => {
+  // A click adds the symbol at a free spot in the visible middle of the canvas (change 0176).
+  const add = useCallback((kind: EquipmentKind, at: { x: number; y: number }) => {
     const count = diagram.nodes.filter(node => node.data.kind === kind).length + 1;
     const base = { kind, label: defaultLabel(kind, count), rotation: 0 };
-    const item: EquipmentNode = { id: crypto.randomUUID(), type: 'equipment',
-      position: { x: 200 + (diagram.nodes.length % 4) * 140, y: 100 + Math.floor(diagram.nodes.length / 4) * 160 },
+    const item: EquipmentNode = { id: crypto.randomUUID(), type: 'equipment', position: at,
       data: kind === 'INFEED' ? { ...base, infeed_type: 'line', infeed_state: 'live' } :
         kind === 'MEASUREMENT_LIST' ? { ...base, measurements: [] } :
         kind === 'POINT_PANEL' ? { ...base, ied_id: project.ieds.length === 1 ? project.ieds[0].id : null, points: [] } :
@@ -96,10 +97,9 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
     markClick(nodeId);
     setOperation(null);
     return studio.perform(async () => {
-      const result = await api<{ action: string; wire_value: boolean | null }>(
+      const result = await api<{ action: string; wire_value: boolean | null; message?: string }>(
         `/equipment/${encodeURIComponent(nodeId)}/operate`, 'POST', commandBody(action, options));
-      const sent = result.wire_value === null ? '' : ` · sent ${result.wire_value ? 1 : 0}`;
-      setOperation({ nodeId, message: `${result.action[0].toUpperCase() + result.action.slice(1)} done${sent}` });
+      setOperation({ nodeId, message: operateWords(result) });
     });
   }, [studio.perform]);
   const report = useCallback((nodeId: string, message: string) => setOperation({ nodeId, message }), []);

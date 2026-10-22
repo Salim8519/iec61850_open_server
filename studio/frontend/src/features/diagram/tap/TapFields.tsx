@@ -3,6 +3,7 @@ import { Link2 } from 'lucide-react';
 import type { ControlBinding, Ied, Signal, SignalBinding } from '../../../api/types';
 import { SignalSearchPicker } from '../../../components/SignalSearchPicker';
 import { shortRef } from '../../../equipment/relayDisplay';
+import { controlChoices } from '../../../equipment/tapChanger';
 
 type Choice = { ref: string; cdc: string };
 
@@ -37,16 +38,21 @@ export function TapControlField({ label, ieds, value, controlsOf, empty, disable
   useEffect(() => setIed(value?.ied_id || onlyIed), [value?.ied_id, onlyIed]);
   const ied = ieds.find(item => item.id === iedId);
   const controls = controlsOf(ied);
+  const { choices } = controlChoices(controls, value, iedId);
+  // Picking another IED only changes the list; the saved control stays until one is chosen here (change 0176).
+  const elsewhere = value ? ieds.find(item => item.id === value.ied_id) : undefined;
   return <div className="stack">
-    <label>{label} · IED<select disabled={disabled} value={iedId} onChange={event => { setIed(event.target.value); change(null); }}>
+    <label>{label} · IED<select disabled={disabled} value={iedId} onChange={event => setIed(event.target.value)}>
       <option value="">Choose an IED</option>
       {ieds.map(item => <option key={item.id} value={item.id}>{item.name} — {controlsOf(item).length} fitting</option>)}
     </select></label>
     {ied && <label>{label}<select disabled={disabled} value={value?.ied_id === iedId ? value.ref : ''}
       onChange={event => change(event.target.value ? { ied_id: iedId, ref: event.target.value } : null)}>
-      <option value="">Not mapped</option>
-      {controls.map(control => <option key={control.ref} value={control.ref}>
-        {shortRef(control.ref, ied.name)} · {control.cdc}</option>)}</select></label>}
+      <option value="">{value && value.ied_id !== iedId ? 'Choose a control' : 'Not mapped'}</option>
+      {choices.map(control => <option key={control.ref} value={control.ref}>
+        {shortRef(control.ref, ied.name)} · {control.cdc === 'saved' ? 'saved' : control.cdc}</option>)}</select></label>}
+    {value && value.ied_id !== iedId && <p role="status" className="small muted" style={{ margin: 0 }}>
+      Still sent to {shortRef(value.ref, elsewhere?.name)} on {elsewhere?.name ?? value.ied_id} until you choose a control here.</p>}
     {ied && !controls.length && <p role="status" className="small muted" style={{ margin: 0 }}>{empty}</p>}
   </div>;
 }

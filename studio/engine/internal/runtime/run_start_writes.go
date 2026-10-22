@@ -26,6 +26,9 @@ func (c *Coordinator) publishBindings(project *pyjson.Object, only map[string]bo
 		object, _ := entry.(*pyjson.Object)
 		add(plant.Binding{IedID: pyval.Str(object, "ied_id"), Ref: pyval.Str(object, "ref")})
 	}
+	for _, binding := range goOnlyRowBindings(project) {
+		add(binding)
+	}
 	for _, binding := range bindings {
 		target := c.simulatedRun(binding.IedID)
 		if binding.IedID == "" || binding.Ref == "" || target == nil || (only != nil && !only[binding.IedID]) {
@@ -72,6 +75,32 @@ func (c *Coordinator) publishBindings(project *pyjson.Object, only map[string]bo
 	}
 	c.plant.publishAll()
 	return nil
+}
+
+// goOnlyRowBindings are the sources of the Go-only SLD rows (tap changer, point panel and
+// measurement list, change 0176). A worker restarts from its SCL values, so these rows are read
+// back at Run like the mapped states; otherwise the SLD keeps the previous run's values. Relay
+// statuses stay out because the frozen Python engine does not read them back either (parity).
+func goOnlyRowBindings(project *pyjson.Object) []plant.Binding {
+	var bindings []plant.Binding
+	collect := func(_ string, mapping *pyjson.Object) { bindings = append(bindings, plant.BindingKeys(mapping)...) }
+	for _, node := range diagramNodes(project) {
+		data := pyval.Map(node, "data")
+		switch pyval.Str(data, "kind") {
+		case pointPanelKind:
+			addPointPanelRows(pyval.Str(node, "id"), data, collect)
+		case tapTransformerKind:
+			addTapChangerRows(pyval.Str(node, "id"), data, collect)
+		case "MEASUREMENT_LIST":
+			for _, entry := range pyval.List(data, "measurements") {
+				row, _ := entry.(*pyjson.Object)
+				if source := pyval.Map(row, "source"); source != nil && source.Len() > 0 {
+					collect("", pyval.Obj("mode", "direct", "source", source))
+				}
+			}
+		}
+	}
+	return bindings
 }
 
 // applyInitialStates writes each mapped CB/DS/ES start position (initial_state.py).

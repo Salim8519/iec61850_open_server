@@ -4,6 +4,8 @@ import type { EquipmentKind } from '../../api/types';
 import { EquipmentSymbol } from '../../equipment/symbols/EquipmentSymbol';
 import { kindInfo } from '../../equipment/kindInfo';
 import { BAY_ORDER, BAYS, type BayKind } from '../../equipment/bayTemplates';
+import type { Point } from '../../equipment/placeNew';
+import { useVisibleSpot } from './useVisibleSpot';
 
 const GROUPS: { title: string; kinds: EquipmentKind[] }[] = [
   { title: 'Switching', kinds: ['CB', 'DS', 'ES'] },
@@ -14,9 +16,10 @@ const GROUPS: { title: string; kinds: EquipmentKind[] }[] = [
 
 /** Big labelled tiles grouped by purpose; click to add or drag onto the canvas. */
 export function AddMenu({ disabled, add, addBay, attachHint }: {
-  disabled: boolean; add: (kind: EquipmentKind) => void; addBay: (kind: BayKind) => void; attachHint: string;
+  disabled: boolean; add: (kind: EquipmentKind, at: Point) => void; addBay: (kind: BayKind) => void; attachHint: string;
 }) {
   const [open, setOpen] = useState(false);
+  const spot = useVisibleSpot();
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -32,7 +35,7 @@ export function AddMenu({ disabled, add, addBay, attachHint }: {
       {GROUPS.map(group => <div key={group.title}><div className="section-label" style={{ padding: '6px 6px 8px' }}>{group.title}</div>
         <div className="add-tiles">{group.kinds.map(kind => <button key={kind} className="add-tile" draggable
           onDragStart={event => { event.dataTransfer.setData('application/studio-equipment', kind); event.dataTransfer.effectAllowed = 'move'; }}
-          onClick={() => { add(kind); setOpen(false); }}>
+          onClick={() => { add(kind, spot()); setOpen(false); }}>
           <EquipmentSymbol kind={kind} size={40} /><span>{kindInfo(kind).name}</span></button>)}</div></div>)}
       <div><div className="section-label" style={{ padding: '6px 6px 8px' }}>Whole bays</div>
         <p className="small muted" style={{ margin: '0 6px 8px' }}>{attachHint}</p>
