@@ -93,6 +93,9 @@ func (a Area) controlOperate(r *http.Request) (any, int, error) {
 	if err := a.Runtime.KnownIed(text(values[0])); err != nil {
 		return nil, 0, err
 	}
+	if typedRequest(data) { // Go-only (ADR-0104); {ied_id, ref, value: bool} stays the old path
+		return a.typedOperate(data)
+	}
 	ref, err := field(data, "ref")
 	if err != nil {
 		return nil, 0, err

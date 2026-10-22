@@ -73,10 +73,13 @@ type Coordinator struct {
 	pulses    *pulses
 	scenarios *scenarioRunner
 	plant     *plantStates
+	taps      *tapChangers
 	feedback  *feedback
 	access    *mmsAccess
 	commands  *commandClient
-	shutdown  chan struct{}
+	// selections are the held select-before-operate selections (ADR-0108).
+	selections *selections
+	shutdown   chan struct{}
 	ticker    sync.WaitGroup
 }
 
@@ -98,9 +101,11 @@ func New(opt Options) *Coordinator {
 	c.pulses = newPulses(c)
 	c.scenarios = newScenarioRunner(c)
 	c.plant = newPlantStates(c)
+	c.taps = newTapChangers(c)
 	c.feedback = newFeedback(c)
 	c.access = newMmsAccess(c)
 	c.commands = newCommandClient(filepath.Join(opt.NativeDir, "studio_control.exe"), opt.CommandKeep)
+	c.selections = newSelections(time.Now)
 	c.ticker.Add(1)
 	go c.tick()
 	return c

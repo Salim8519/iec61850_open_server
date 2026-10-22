@@ -141,12 +141,21 @@ public:
         std::string line;
         if (kind == "binary_output") {
             auto code = request.value("code", std::string("latch"));
-            auto crob = code == "pulse" ? ControlRelayOutputBlock(OperationType::PULSE_ON)
-                : code == "trip_close" ? ControlRelayOutputBlock(OperationType::PULSE_ON, value ? TripCloseCode::CLOSE : TripCloseCode::TRIP)
-                : ControlRelayOutputBlock(value ? OperationType::LATCH_ON : OperationType::LATCH_OFF);
+            auto opType = code == "pulse" ? (value ? OperationType::PULSE_ON : OperationType::PULSE_OFF)
+                : code == "trip_close" ? OperationType::PULSE_ON
+                : (value ? OperationType::LATCH_ON : OperationType::LATCH_OFF);
+            auto tcc = code == "trip_close" ? (value ? TripCloseCode::CLOSE : TripCloseCode::TRIP) : TripCloseCode::NUL;
+            uint8_t count = uint8_t(request.value("count", 1));
+            uint32_t onTime = request.value("on_time_ms", 100), offTime = request.value("off_time_ms", 100);
+            ControlRelayOutputBlock crob(opType, tcc, false, count, onTime, offTime);
             send(CommandSet({WithIndex(crob, index)}));
             line = "CROB " + words(OperationTypeSpec::to_string(crob.opType))
-                   + (crob.tcc != TripCloseCode::NUL ? " " + words(TripCloseCodeSpec::to_string(crob.tcc)) : "");
+                   + (crob.tcc != TripCloseCode::NUL ? " " + words(TripCloseCodeSpec::to_string(crob.tcc)) : "")
+                   + " count " + std::to_string(count) + " on " + std::to_string(onTime) + " ms off "
+                   + std::to_string(offTime) + " ms";
+        } else if (kind == "analog_output_int16") {
+            send(CommandSet({WithIndex(AnalogOutputInt16(int16_t(value)), index)}));
+            line = "Analog output (16-bit integer) " + std::to_string(int16_t(value));
         } else if (kind == "analog_output_int") {
             send(CommandSet({WithIndex(AnalogOutputInt32(int32_t(value)), index)}));
             line = "Analog output (32-bit integer) " + std::to_string(int32_t(value));

@@ -1,0 +1,30 @@
+/* Select before operate (ADR-0108): the held selection has a dashed accent frame, a timer icon and
+   the seconds in words; outcomes carry an icon and words. Shared tokens only; text wraps, never clips. */
+.sbo { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0; font-size: 13px; min-width: 0; }
+.sbo.held { justify-content: space-between; padding: 6px 10px; border: var(--line) dashed var(--accent-line);
+  border-radius: var(--radius-small); background: var(--accent-soft); }
+.sbo-time { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere; min-width: 0; }
+.sbo-time svg { flex-shrink: 0; color: var(--accent); }
+.sbo-buttons { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.sbo-buttons button { min-height: 32px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.sbo.compact.held { padding: 4px 8px; }
+.pp-row-line > .sbo { flex-basis: 100%; }
+.sbo.outcome { display: flex; align-items: flex-start; gap: 6px; }
+.sbo.outcome svg { flex-shrink: 0; margin-top: 2px; }
+.sbo.outcome span { overflow-wrap: anywhere; }
+.sbo.outcome.failed { color: var(--error); font-weight: 600; }
+.sbo.outcome.done { color: var(--success); }
+.sbo.outcome.expired, .sbo.outcome.cancelled { color: var(--text-2); }
+.sbo-steps { display: inline-flex; gap: 4px; }
+.sbo-steps button { min-height: 32px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.sbo-model { display: flex; align-items: flex-start; gap: 6px; margin: 0; font-size: 12px; color: var(--text-2); }
+.sbo-model svg { flex: none; margin-top: 2px; }
+.command-options { margin: 4px 0 0; }
+.command-options summary { cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.command-options[open] summary { margin-bottom: 6px; }
+.command-options-grid { display: grid; gap: 6px; }
+.command-options-grid label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.command-options-grid .field { display: grid; gap: 3px; font-weight: 600; }
+.command-options-grid .field small { font-weight: 400; color: var(--text-2); }
+.command-options-grid select, .command-options-grid input[type="text"] { width: 100%; min-height: 30px; }

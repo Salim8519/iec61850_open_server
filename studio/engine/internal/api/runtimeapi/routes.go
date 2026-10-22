@@ -28,6 +28,8 @@ func (a Area) Routes() []api.Route {
 		route("GET", "/equipment/states", a.states, false),
 		route("POST", "/equipment/{node_id}/operate", a.operate, false),
 		route("POST", "/equipment/{node_id}/test", a.test, false),
+		route("POST", "/equipment/{node_id}/select", a.selectEquipment, false),
+		route("POST", "/equipment/{node_id}/cancel", a.cancelEquipment, false),
 		route("GET", "/scenarios/runs", a.runs, true),
 		route("POST", "/scenarios/{key}/start", a.startScenario, false),
 		route("POST", "/signals/update", a.update, false),
@@ -35,6 +37,10 @@ func (a Area) Routes() []api.Route {
 		route("POST", "/signals/pulse", a.pulse, false),
 		route("POST", "/signals/release-override", a.release, false),
 		route("POST", "/controls/operate", a.controlOperate, false),
+		route("POST", "/controls/select", a.controlSelect, false), // Go-only typed commands (ADR-0104)
+		route("POST", "/controls/cancel", a.controlCancel, false),
+		route("POST", "/controls/checks", a.controlChecks, false),
+		route("GET", "/controls/typed", a.controlList, false),
 		route("GET", "/project/test-panel", a.testPanel, true),
 	}
 }
@@ -105,7 +111,7 @@ func (a Area) operate(r *http.Request) (any, int, error) {
 	if value, present := data.Get("action"); present && value != nil {
 		action = text(value)
 	}
-	result, err := a.Runtime.Operate(r.PathValue("node_id"), pyval.Get(data, "value"), action)
+	result, err := a.Runtime.OperateWith(r.PathValue("node_id"), pyval.Get(data, "value"), action, pyval.Get(data, "options"))
 	if err != nil {
 		return nil, 0, err
 	}

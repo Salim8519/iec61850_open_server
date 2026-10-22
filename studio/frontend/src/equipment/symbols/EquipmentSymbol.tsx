@@ -25,6 +25,9 @@ export function EquipmentSymbol({ kind, closed = false, size = 54, position, ani
     {kind === 'RELAY' && <><rect x="11" y="12" width="38" height="36" rx="3" /><path d="M19 23H41M19 30H32M19 37H36" /></>}
     {kind === 'MEASUREMENT_LIST' && <><rect x="11" y="9" width="38" height="42" rx="3" />
       <path d="M19 27A11 11 0 0 1 41 27M30 27L36 20" /><path d="M18 35H27M33 35H42M18 43H27M33 43H42" /></>}
+    {kind === 'POINT_PANEL' && <><rect x="11" y="9" width="38" height="42" rx="3" />
+      <path d="M17 19H27M17 30H27M17 41H27" /><rect x="32" y="16" width="11" height="6" rx="3" />
+      <rect x="32" y="27" width="11" height="6" rx="3" /><rect x="32" y="38" width="11" height="6" rx="3" /></>}
     {kind === 'TRIP_RELAY' &&<><path d="M30 0V10M30 50V60" />
       <rect x="12" y="10" width="36" height="40" rx="4" fill={paint?.fill || 'none'}
         stroke={paint?.outline || 'currentColor'} />
@@ -38,6 +41,8 @@ export function EquipmentSymbol({ kind, closed = false, size = 54, position, ani
         strokeDasharray={operated === undefined ? '2 2' : undefined} /></>}
     {kind === 'JUNCTION' && <circle cx="30" cy="30" r="9" fill="currentColor" stroke="none" />}
     {kind === 'INFEED' && <InfeedGlyph type={infeed} />}
+    {kind === 'TAP_TRANSFORMER' && <><path d="M30 0V9M30 51V60" /><circle cx="30" cy="22" r="13" />
+      <circle cx="30" cy="38" r="13" /><path d="M12 50L47 11M47 11L39 12M47 11L46 19" /></>}
   </svg>;
 }
 

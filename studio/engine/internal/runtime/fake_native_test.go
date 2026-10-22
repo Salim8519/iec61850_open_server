@@ -127,7 +127,7 @@ func (w *fakeWorker) write(frame *pyjson.Object) {
 func (w *fakeWorker) answer(name, op string, frame *pyjson.Object) any {
 	switch op {
 	case "hello":
-		return pyval.Obj("capabilities", []any{native.MuxCapability})
+		return pyval.Obj("capabilities", []any{native.MuxCapability, native.TypedCapability})
 	case "start":
 		w.controls = pyval.List(frame, "controls")
 		capabilities := make([]any, len(native.IedRequired))
@@ -155,6 +155,12 @@ func (w *fakeWorker) answer(name, op string, frame *pyjson.Object) any {
 		return w.values[pyval.Str(frame, "ref")]
 	case "read_versioned":
 		return pyval.Obj("value", w.values[pyval.Str(frame, "ref")], "revision", w.revision)
+	case "typed_select": // ADR-0104: the fake selects every SBO control for 10 s
+		return pyval.Obj("ok", true, "ref", pyval.Get(frame, "ref"), "selected", true, "expires_ms", int64(10000))
+	case "typed_operate", "typed_cancel":
+		time.Sleep(time.Millisecond)
+		return pyval.Obj("ok", true, "ref", pyval.Get(frame, "ref"), "operated", op == "typed_operate",
+			"canceled", op == "typed_cancel")
 	case "canvas_operate":
 		time.Sleep(time.Millisecond) // an association and one control round trip
 		return pyval.Obj("ok", true)

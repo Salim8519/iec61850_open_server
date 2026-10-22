@@ -59,3 +59,14 @@ a.button.disabled { pointer-events: none; opacity: 0.5; }
 .command-confirm p { margin: 0 0 6px; }
 .command-confirm .row { gap: 8px; }
 .command-result { display: grid; gap: 4px; padding: 6px 0; }
+/* Typed commands (ADR-0104): value pick, select countdown and the folded options. */
+.command-pick { width: auto; min-width: 150px; }
+.command-model { margin: 0; }
+.command-selected { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--accent); border-radius: 6px;
+  background: var(--accent-soft); }
+.command-selected .row { gap: 8px; flex-wrap: wrap; }
+.command-notice { margin: 0; color: var(--warning); font-weight: 600; }
+.command-options { display: grid; gap: 6px; }
+.command-options p { margin: 0; }
+.command-option { display: flex; gap: 8px; align-items: center; font-weight: 500; }
+.command-field { display: grid; gap: 4px; font-weight: 600; max-width: 320px; }

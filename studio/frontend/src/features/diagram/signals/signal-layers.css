@@ -14,9 +14,6 @@
 .signal-link-line { fill: none; stroke: var(--accent); stroke-width: calc(1.5px * var(--signal-scale, 1)); opacity: 0;
   animation: signal-link-fade 2s ease-out 1; pointer-events: none; }
 .signal-link.expected .signal-link-line { stroke-dasharray: 5 4; }
-.signal-link-label { font-size: calc(11px * var(--signal-scale, 1)); font-weight: 600; fill: var(--text); paint-order: stroke;
-  stroke: var(--canvas-bg); stroke-width: calc(3px * var(--signal-scale, 1)); text-anchor: middle; opacity: 0;
-  animation: signal-link-fade 2s ease-out 1; pointer-events: none; }
 .pulse-dot { fill: var(--accent); stroke: var(--accent); stroke-width: calc(1.5px * var(--signal-scale, 1)); pointer-events: none; }
 .pulse-dot.expected { fill: var(--surface); stroke-width: 2px; }
 @keyframes signal-link-fade { 0% { opacity: 0.9; } 70% { opacity: 0.6; } 100% { opacity: 0; } }
@@ -39,8 +36,27 @@
 .ied-tag-operated, .ied-tag-received { font-weight: 700; color: var(--accent-hover); opacity: 0; animation: signal-operated 2s ease-out 1; }
 @keyframes signal-operated { 0% { opacity: 1; transform: translateY(-2px); } 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
 
+/* Smart lines (ADR-0103): one change = an outline on its symbol, one chip and one orthogonal line
+   per receiving IED. Solid = a real stNum increase, dashed = expected only; the chip says it in words.
+   The line reveals itself through a mask whose stroke-dashoffset is set per frame with the dot. */
+.signal-route { opacity: 1; animation: signal-route-fade 1.6s ease-in 1 forwards; }
+.signal-route-line { fill: none; stroke: var(--accent); stroke-width: calc(2px * var(--signal-scale, 1));
+  stroke-linejoin: round; pointer-events: none; }
+.signal-route.expected .signal-route-line { stroke-dasharray: 6 5; }
+.signal-route-reveal { fill: none; stroke: #fff; stroke-width: calc(14px * var(--signal-scale, 1)); }
+.signal-origin { fill: none; stroke: var(--accent); stroke-width: calc(2.5px * var(--signal-scale, 1)); pointer-events: none;
+  animation: signal-route-fade 1.6s ease-in 1 forwards; }
+.signal-change.expected .signal-origin { stroke-dasharray: 6 4; }
+.signal-chip { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px;
+  border: 1.5px solid var(--accent); border-radius: 7px; background: var(--surface); color: var(--text); font: inherit;
+  font-size: 11.5px; font-weight: 700; line-height: 1.35; white-space: nowrap; box-shadow: var(--shadow-small);
+  transform-origin: 0 0; pointer-events: auto; cursor: pointer; animation: signal-route-fade 1.8s ease-in 1 forwards; }
+.signal-chip.expected { border-style: dashed; color: var(--text-2); }
+.signal-chip > span { color: var(--accent-hover); }
+@keyframes signal-route-fade { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .signal-link-line, .signal-link-label, .ied-tag-operated, .ied-tag-received { animation: none; opacity: 0.9; }
+  .signal-link-line, .ied-tag-operated, .ied-tag-received, .signal-route, .signal-origin, .signal-chip { animation: none; opacity: 0.9; }
 }
 
 .signal-sheet table { width: 100%; border-collapse: collapse; font-size: 13px; }

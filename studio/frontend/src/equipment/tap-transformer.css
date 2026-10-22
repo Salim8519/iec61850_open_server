@@ -1,0 +1,20 @@
+/* Tap-changer transformer (ADR-0109): a wider card so "Tap 17 / 1–17" and both buttons fit without
+   clipping; long words wrap. Auto and Manual differ by icon, word and border (solid / dashed). */
+.equipment-node.tap { width: 132px; }
+.tap-side { display: block; font-size: 10px; font-weight: 700; line-height: 12px; color: var(--text-2, #1f2937);
+  letter-spacing: .04em; }
+.tap-mode { display: inline-flex; align-items: center; gap: 3px; margin-top: 4px; padding: 0 7px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; line-height: 16px; overflow-wrap: anywhere; }
+.tap-mode.auto { color: var(--primary); border: 1.5px solid var(--primary); background: var(--primary-soft, #eff6ff); }
+.tap-mode.manual { color: #374151; border: 1.5px dashed #6b7280; background: white; }
+.tap-line { margin-top: 3px; font-size: 10.5px; line-height: 14px; color: var(--text-2, #1f2937); overflow-wrap: anywhere; }
+.tap-steps { display: flex; gap: 4px; justify-content: center; margin-top: 5px; }
+.tap-step { display: inline-flex; align-items: center; gap: 1px; min-height: 26px; height: auto; padding: 2px 6px;
+  font-size: 11px; font-weight: 700; border-radius: 6px; }
+.tap-step:disabled { border-style: dashed; }
+.sheet-section .tap-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.tap-field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.tap-field-grid label small { display: block; font-weight: 400; }
+.tap-binding { display: grid; gap: 6px; margin-bottom: 10px; }
+.tap-binding-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.tap-binding-head strong { font-size: 13px; }

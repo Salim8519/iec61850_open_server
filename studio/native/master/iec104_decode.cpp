@@ -87,7 +87,8 @@ const char* iec104_name(int type_id) {
     case M_ME_NC_1: return "M_ME_NC_1"; case M_ME_TF_1: return "M_ME_TF_1";
     case M_IT_NA_1: return "M_IT_NA_1"; case M_IT_TB_1: return "M_IT_TB_1";
     case M_EI_NA_1: return "M_EI_NA_1";
-    case C_SC_NA_1: return "C_SC_NA_1"; case C_DC_NA_1: return "C_DC_NA_1";
+    case C_SC_NA_1: return "C_SC_NA_1"; case C_DC_NA_1: return "C_DC_NA_1"; case C_RC_NA_1: return "C_RC_NA_1";
+    case C_RC_TA_1: return "C_RC_TA_1";
     case C_SE_NA_1: return "C_SE_NA_1"; case C_SE_NB_1: return "C_SE_NB_1"; case C_SE_NC_1: return "C_SE_NC_1";
     case C_IC_NA_1: return "C_IC_NA_1"; case C_CI_NA_1: return "C_CI_NA_1"; case C_CS_NA_1: return "C_CS_NA_1";
     case C_SC_TA_1: return "C_SC_TA_1"; case C_DC_TA_1: return "C_DC_TA_1";
@@ -105,6 +106,7 @@ std::string iec104_cause(int cot) {
     case CS101_COT_REQUEST: return "requested";
     case CS101_COT_ACTIVATION: return "activation";
     case CS101_COT_ACTIVATION_CON: return "activation confirmed";
+    case CS101_COT_DEACTIVATION: return "deactivation";
     case CS101_COT_DEACTIVATION_CON: return "deactivation confirmed";
     case CS101_COT_ACTIVATION_TERMINATION: return "activation terminated";
     case CS101_COT_RETURN_INFO_REMOTE: return "return (remote command)";

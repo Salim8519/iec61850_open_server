@@ -13,12 +13,12 @@ func NewOwnPoint(protocol, kind string, points any) (*pyjson.Object, error) {
 	if !contains(Protocols, protocol) {
 		return nil, valueError("Choose IEC 104, Modbus TCP or DNP3")
 	}
-	if !contains(Kinds, kind) {
+	if !KnownKind(kind) {
 		return nil, valueError("Choose a point type")
 	}
 	list, _ := points.([]any)
 	block := kind
-	if IsCommandKind(kind) {
+	if IsCommandKind(kind) && kind != KindSetpoint {
 		block = "command"
 	}
 	at, free := freeAddress(protocol, kind, startAddress[protocol][block], usedCells(protocol, list))
@@ -47,7 +47,7 @@ func KeepOwn(protocol string, proposal []any, keep any) ([]any, []string) {
 		point := copyObject(raw)
 		kind, _ := get(point, "kind").(string)
 		if at, isInt := pytext.Int64(get(point, "address")); isInt && pytext.IsInt(get(point, "address")) &&
-			contains(Kinds, kind) {
+			KnownKind(kind) {
 			if anyUsed(used, cells(protocol, kind, at)) {
 				if moved, free := freeAddress(protocol, kind, at, used); free {
 					notes = append(notes, ownName(point)+" moved from address "+strconv.FormatInt(at, 10)+" to "+
@@ -82,10 +82,11 @@ func usedCells(protocol string, list []any) map[Cell]bool {
 		}
 		kind, _ := get(point, "kind").(string)
 		at, isInt := pytext.Int64(get(point, "address"))
-		if !contains(Kinds, kind) || !isInt || !pytext.IsInt(get(point, "address")) {
+		if !KnownKind(kind) || !isInt || !pytext.IsInt(get(point, "address")) {
 			continue
 		}
-		for _, cell := range cells(protocol, kind, at) {
+		format, _ := getOr(point, "format", "").(string)
+		for _, cell := range cellsOf(protocol, kind, format, at) {
 			used[cell] = true
 		}
 	}

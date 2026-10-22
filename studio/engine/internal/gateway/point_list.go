@@ -33,7 +33,7 @@ func ValidatePoints(protocol string, points any, ieds []*pyjson.Object) ([]any, 
 		number := index + 1
 		label := "Point " + itoa(number)
 		raw, isDict := value.(*pyjson.Object)
-		if !isDict || !contains(Kinds, get(raw, "kind")) {
+		if !isDict || !KnownKind(get(raw, "kind")) {
 			problems = append(problems, label+": choose a type ("+strings.Join(Kinds, ", ")+")")
 			continue
 		}
@@ -71,11 +71,15 @@ func ValidatePoints(protocol string, points any, ieds []*pyjson.Object) ([]any, 
 			}
 			label += named
 		}
+		if reason == "" && IsTypedKind(kind) { // Go only (ADR-0107)
+			reason = typedReason(protocol, kind, raw, point)
+		}
 		if reason != "" {
 			problems = append(problems, label+": "+reason)
 			continue
 		}
-		taken := cells(protocol, kind, at)
+		format, _ := getOr(point, "format", "").(string)
+		taken := cellsOf(protocol, kind, format, at)
 		if clash := firstClash(used, taken); clash != 0 {
 			problems = append(problems, label+": address "+strconv.FormatInt(at, 10)+
 				" is already used by point "+itoa(clash))

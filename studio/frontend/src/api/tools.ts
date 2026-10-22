@@ -13,6 +13,11 @@ export type ExplorerStatus = { state: 'disconnected' | 'connecting' | 'connected
 
 export type OperateAnswer = { summary: string; observed: ReadValue | null;
   result: { ok: boolean; model?: string; add_cause_text?: string; error?: string } };
+/** Typed command options (ADR-0104): test flag, check conditions and the originator. */
+export type CommandOptions = { test: boolean; interlock_check: boolean; synchro_check: boolean; orcat: number; orident: string };
+export type CommandAnswer = { summary: string;
+  result: { ok: boolean; model?: string; selected?: boolean; canceled?: boolean; expires_ms?: number;
+    add_cause_text?: string; error?: string } };
 export type ToolMemory = { explorer: { host: string; port: number; interval_ms: number };
   find: { range: string; port: number; choice: string } };
 
@@ -38,6 +43,9 @@ export const explorerApi = {
     api<ExplorerStatus>('/tools/explorer/watch', 'PUT', { items, interval_ms }),
   operate: (ref: string, value: boolean | number) =>
     api<OperateAnswer>('/tools/explorer/operate', 'POST', { ref, value, confirm: true }),
+  /** Typed Select / Operate / Cancel; select and operate carry the confirmation the user just gave. */
+  command: (action: 'select' | 'operate' | 'cancel', ref: string, kind: string, value: unknown, options: CommandOptions) =>
+    api<CommandAnswer>('/tools/explorer/command', 'POST', { action, ref, kind, value, options, confirm: action !== 'cancel' }),
   polling: (on: boolean) => api<ExplorerStatus>('/tools/explorer/polling', 'POST', { on }),
   csvUrl: '/api/v1/tools/explorer/watch.csv',
 };

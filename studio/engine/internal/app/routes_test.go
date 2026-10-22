@@ -17,9 +17,11 @@ import (
 	"studio-engine/internal/api/hostkeyapi"
 	"studio-engine/internal/api/platformapi"
 	"studio-engine/internal/api/projectapi"
+	"studio-engine/internal/api/runtimeapi"
 	"studio-engine/internal/api/snmpapi"
 	"studio-engine/internal/api/toolsapi"
 	"studio-engine/internal/testutil"
+	"studio-engine/internal/tools/explorer"
 )
 
 // composeForTest builds the engine on temp folders with no native programs and no
@@ -95,8 +97,9 @@ func TestEveryPythonRouteServed(t *testing.T) {
 		}
 	}
 	for key := range served {
-		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] && !snmpapi.GoOnly(key) && !hostkeyapi.GoOnly(key) &&
-			!platformapi.GoOnlyRoutes[key] && !projectapi.GoOnlyRoutes[key] {
+		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] && !toolsapi.MasterGoOnlyRoutes[key] && !snmpapi.GoOnly(key) && !hostkeyapi.GoOnly(key) &&
+			!platformapi.GoOnlyRoutes[key] && !projectapi.GoOnlyRoutes[key] && !runtimeapi.GoOnlyRoutes[key] &&
+			key != explorer.CommandRoute {
 			extra = append(extra, key)
 		}
 	}

@@ -151,6 +151,7 @@ func (c *Coordinator) start(ids []string) error {
 	c.mu.Unlock()
 	c.access.reset()
 	c.plant.reset(diagram)
+	c.taps.reset(diagram)
 	c.feedback.reset(diagram)
 	if err := c.startRun(project, items, simulated); err != nil {
 		c.opt.Live.Stop()

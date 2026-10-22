@@ -2,6 +2,7 @@
 #include "server/timer_policy.hpp"
 #include "updates/values.hpp"
 #include "controls/controls.hpp"
+#include "controls/typed_binding.hpp"
 #include "license_guard.hpp"
 #include <cstdio>
 #include <iostream>
@@ -47,6 +48,9 @@ int main() {
                         }
                     }
                     if (!found) throw std::runtime_error("Unknown control binding");
+                    result = true;
+                } else if (op == "control_checks") {
+                    set_typed_checks(server, message);
                     result = true;
                 } else if (op == "stop") {
                     server.stop(); emit_frame({{"id", id}, {"ok", true}}); break;

@@ -64,12 +64,15 @@ func ExportCSV(points []any, ieds []*pyjson.Object) (string, error) {
 		return cmpInt(rows[i].address, rows[j].address) < 0
 	})
 	writer := pycsv.NewWriter()
-	own := hasOwn(points)
+	own, typed := hasOwn(points), hasFormats(points)
+	header := anyStrings(csvColumns)
 	if own {
-		writer.Row(append(anyStrings(csvColumns), anyStrings(ownColumns)...)...)
-	} else {
-		writer.Row(anyStrings(csvColumns)...)
+		header = append(header, anyStrings(ownColumns)...)
 	}
+	if typed { // Go only (ADR-0107)
+		header = append(header, anyStrings(typedColumns)...)
+	}
+	writer.Row(header...)
 	for _, row := range rows {
 		ied, err := subscript(row.point, "ied")
 		if err != nil {
@@ -95,6 +98,9 @@ func ExportCSV(points []any, ieds []*pyjson.Object) (string, error) {
 		cells := []any{row.kind, row.address, name, ref, scale, getOr(row.point, "description", "")}
 		if own {
 			cells = append(cells, ownCells(row.point)...)
+		}
+		if typed {
+			cells = append(cells, typedCells(row.point)...)
 		}
 		writer.Row(cells...)
 	}
@@ -151,7 +157,7 @@ func ImportCSV(text string, ieds []*pyjson.Object) ([]any, []string, error) {
 			byName[text] = id
 		}
 	}
-	points, problems, extra := []any{}, []string{}, ownColumnsAt(rows[0])
+	points, problems, extra, formats := []any{}, []string{}, ownColumnsAt(rows[0]), typedColumnsAt(rows[0])
 	for index, row := range rows[1:] {
 		line := "Line " + itoa(index+2)
 		cells := make([]string, len(csvColumns))
@@ -167,7 +173,7 @@ func ImportCSV(text string, ieds []*pyjson.Object) ([]any, []string, error) {
 			continue
 		}
 		kind, address, iedName, reference, scale, description := cells[0], cells[1], cells[2], cells[3], cells[4], cells[5]
-		if !contains(Kinds, kind) {
+		if !KnownKind(kind) {
 			problems = append(problems, line+": unknown type '"+kind+"'. Use one of: "+strings.Join(Kinds, ", "))
 			continue
 		}
@@ -177,6 +183,7 @@ func ImportCSV(text string, ieds []*pyjson.Object) ([]any, []string, error) {
 				problems = append(problems, line+": address must be a whole number, scale and value numbers")
 				continue
 			}
+			applyTypedCells(point, row, formats)
 			points = append(points, point)
 			continue
 		}
@@ -194,8 +201,10 @@ func ImportCSV(text string, ieds []*pyjson.Object) ([]any, []string, error) {
 			problems = append(problems, line+": address must be a whole number and scale a number")
 			continue
 		}
-		points = append(points, pyjson.NewObject().Set("kind", kind).Set("address", number).Set("ied", id).
-			Set("ref", reference).Set("scale", factor).Set("description", description))
+		point := pyjson.NewObject().Set("kind", kind).Set("address", number).Set("ied", id).
+			Set("ref", reference).Set("scale", factor).Set("description", description)
+		applyTypedCells(point, row, formats)
+		points = append(points, point)
 	}
 	return points, problems, nil
 }

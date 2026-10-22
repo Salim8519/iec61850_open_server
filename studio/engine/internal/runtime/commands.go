@@ -29,6 +29,8 @@ type commandClient struct {
 	mu         sync.Mutex
 	process    *native.Control
 	warming    sync.WaitGroup // a warm-up start close waits for
+	typedOK    bool           // the process serves typed Select/Operate/Cancel (ADR-0104)
+	selects    typedSelects   // Go-only: open selections of typed commands
 }
 
 func newCommandClient(executable string, keep time.Duration) *commandClient {
@@ -57,6 +59,7 @@ func (m *commandClient) client() (*native.Control, error) {
 		return nil, apperr.RuntimeError("Bundled MMS client is unavailable")
 	}
 	m.process = process
+	m.typedOK = native.HasCapabilities(hello, []string{native.TypedCapability})
 	return process, nil
 }
 

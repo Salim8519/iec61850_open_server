@@ -7,6 +7,7 @@ import (
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/gateway"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/tools/pytext"
 )
 
 // Own points (lane G, Go-only): values the user makes up. The page changes them at any
@@ -27,6 +28,12 @@ func (m *Manager) ownRow(point *pyjson.Object) *pyjson.Object {
 func commandText(kind string, value any) string {
 	if value == nil {
 		return "No command yet"
+	}
+	switch kind { // ADR-0107
+	case gateway.KindStep:
+		return map[bool]string{true: "Last command: raise", false: "Last command: lower"}[value == "higher"]
+	case gateway.KindSetpoint:
+		return "Last set point: " + pytext.Str(value)
 	}
 	number, _ := dictKey(value)
 	if kind == "command_double" {

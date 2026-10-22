@@ -111,6 +111,21 @@ func (a *Area) explorerRoutes() []api.Route {
 			return service.Operate(reference, value(data, "value", nil), value(data, "options", nil),
 				value(data, "confirm", nil) == true)
 		}),
+		// Go-only typed Select / Operate / Cancel (ADR-0104).
+		route("POST", "/tools/explorer/command", false, func(r *http.Request) (any, error) {
+			data, err := body(r)
+			if err != nil {
+				return nil, err
+			}
+			reference, isText := value(data, "ref", nil).(string)
+			action, isAction := value(data, "action", nil).(string)
+			kind, _ := value(data, "kind", "bool").(string)
+			if !isText || !isAction {
+				return nil, apperr.ValueError("Send the action (select, operate or cancel) and the control reference")
+			}
+			return service.Command(action, reference, kind, value(data, "value", nil), value(data, "options", nil),
+				value(data, "confirm", nil) == true)
+		}),
 	}
 }
 

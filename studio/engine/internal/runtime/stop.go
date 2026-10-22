@@ -33,6 +33,7 @@ func (c *Coordinator) Stop(ids []string) error {
 	c.mu.Unlock()
 	c.opt.Live.Stop()
 	c.feedback.clear()
+	c.selections.clear()
 	c.scenarios.stop()
 	c.stopWorkers(simulatedOf(items))
 	c.markAllStopped(c.opt.Project.Current())

@@ -6,13 +6,18 @@ import (
 	"studio-engine/internal/api"
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/gateway"
+	"studio-engine/internal/gateway/addpoints"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/tools/pytext"
 )
 
-// OwnPointRoutes are the Go-only routes of the gateway's own points (lane G); the frozen
-// Python engine has no own points and answers them 404.
+// OwnPointRoutes are the Go-only routes of the gateway's own points (lane G) and of Add points
+// (ADR-0105, add_points.go); the frozen Python engine has neither and answers them 404.
 var OwnPointRoutes = map[string]bool{"POST /api/v1/tools/gateway/points/new": true,
-	"PUT /api/v1/tools/gateway/points/value": true}
+	"PUT /api/v1/tools/gateway/points/value": true, "GET /api/v1/tools/gateway/types": true,
+	"POST /api/v1/tools/gateway/candidates": true, "POST /api/v1/tools/gateway/points/from-ied": true,
+	"POST /api/v1/tools/gateway/points/rows": true, "GET /api/v1/tools/gateway/points.xlsx": true,
+	"POST /api/v1/tools/gateway/points.xlsx": true}
 
 func (a *Area) ownRoutes() []api.Route {
 	d := a.deps
@@ -28,6 +33,12 @@ func (a *Area) ownRoutes() []api.Route {
 				return nil, err
 			}
 			kind, _ := value(data, "kind", nil).(string)
+			if count, isRange := value(data, "count", nil).(int64); isRange { // "Add a range" (ADR-0105)
+				from, _ := value(data, "from", nil).(int64)
+				points, _ := value(data, "points", []any{}).([]any)
+				name := pytext.Str(value(data, "name", ""))
+				return rowsAnswer(addpoints.OwnRange(protocol, kind, int(count), from, name, points), nil), nil
+			}
 			point, err := gateway.NewOwnPoint(protocol, kind, value(data, "points", []any{}))
 			if err != nil {
 				return nil, err

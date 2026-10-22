@@ -1,4 +1,4 @@
-// Modbus function codes 1-5 and 15 over the gateway point table.
+// Modbus function codes 1-6, 15 and 16 over the gateway point table.
 #include "modbus_pdu.hpp"
 #include <cmath>
 #include <cstring>
@@ -27,7 +27,7 @@ std::vector<uint8_t> ModbusApplication::handle(const std::vector<uint8_t>& reque
                                                std::string& summary) {
     if (request.empty()) return modbus_exception(0, ILLEGAL_FUNCTION);
     uint8_t function = request[0];
-    if ((function >= 1 && function <= 6 && request.size() < 5) || (function == 15 && request.size() < 6)) {
+    if ((function >= 1 && function <= 6 && request.size() < 5) || ((function == 15 || function == 16) && request.size() < 6)) {
         summary = "FC" + std::to_string(function) + " too short";
         return modbus_exception(function, ILLEGAL_VALUE);
     }
@@ -53,6 +53,20 @@ std::vector<uint8_t> ModbusApplication::handle(const std::vector<uint8_t>& reque
         std::vector<bool> values;
         for (int index = 0; index < count; ++index) values.push_back((request[6 + index / 8] >> (index % 8)) & 1);
         auto response = write_coils(function, start, values, peer, summary);
+        if (response.size() == 2) return response;
+        return std::vector<uint8_t>(request.begin(), request.begin() + 5);
+    }
+    case 6: case 16: {  // set points (ADR-0107)
+        int start = word(request, 1), count = function == 6 ? 1 : word(request, 3);
+        if (function == 16 && (count < 1 || count > 123 || request[5] != count * 2
+                               || request.size() < size_t(6 + count * 2))) {
+            summary = "FC16 bad length";
+            return modbus_exception(function, ILLEGAL_VALUE);
+        }
+        std::vector<uint16_t> values;
+        for (int index = 0; index < count; ++index)
+            values.push_back(uint16_t(function == 6 ? word(request, 3) : word(request, 6 + index * 2)));
+        auto response = write_registers(function, start, values, peer, summary);
         if (response.size() == 2) return response;
         return std::vector<uint8_t>(request.begin(), request.begin() + 5);
     }
@@ -110,7 +124,13 @@ std::vector<uint8_t> ModbusApplication::read_registers(uint8_t function, int sta
             auto value = uint32_t(int32_t(std::lround(point.value * point.scale)));
             registers[point.address] = uint16_t(value >> 16);
             registers[point.address + 1] = uint16_t(value & 0xFFFF);
+        } else if (point.kind == "step_position") {
+            registers[point.address] = uint16_t(int16_t(std::lround(point.value * point.scale)));
         }
+    }
+    if (function == 3) {  // set points read back as last written
+        std::lock_guard<std::mutex> guard(coil_lock);
+        for (const auto& item : holding) registers[item.first] = item.second;
     }
     std::vector<uint8_t> out = {function, uint8_t(count * 2)};
     bool any = false;

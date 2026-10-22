@@ -1,7 +1,9 @@
 // Test-only DNP3 master (never packaged): an independent opendnp3 master used to check
 // the gateway simulator. Usage:
 //   studio_test_dnp3_master HOST PORT MASTER_ADDR OUTSTATION_ADDR STEP...
-// Steps: scan | crob:INDEX:on|off[:direct] | wait:MS. Results are JSON lines.
+// Steps: scan | crob:INDEX:on|off|pulse_on|pulse_off|trip|close[:direct]
+//        | ao:INDEX:VALUE[:v1|v2|v3][:direct] | wait:MS. Without :direct a command is
+// select-before-operate. Results are JSON lines.
 #include <opendnp3/DNP3Manager.h>
 #include <opendnp3/channel/IChannelListener.h>
 #include <opendnp3/logging/ILogHandler.h>
@@ -14,6 +16,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <vector>
 
 using namespace opendnp3;
 
@@ -61,6 +64,33 @@ public:
     void log(ModuleId, const char*, LogLevel, char const*, char const*) override {}
 };
 
+std::vector<std::string> split(const std::string& text) {
+    std::vector<std::string> parts;
+    size_t start = 0, found;
+    while ((found = text.find(':', start)) != std::string::npos) {
+        parts.push_back(text.substr(start, found - start));
+        start = found + 1;
+    }
+    parts.push_back(text.substr(start));
+    return parts;
+}
+
+// on/off = latch on/off; pulse_on, pulse_off; trip and close = pulse on with the trip-close code.
+ControlRelayOutputBlock crob(const std::string& code) {
+    if (code == "pulse_on") return ControlRelayOutputBlock(OperationType::PULSE_ON);
+    if (code == "pulse_off") return ControlRelayOutputBlock(OperationType::PULSE_OFF);
+    if (code == "trip") return ControlRelayOutputBlock(OperationType::PULSE_ON, TripCloseCode::TRIP);
+    if (code == "close") return ControlRelayOutputBlock(OperationType::PULSE_ON, TripCloseCode::CLOSE);
+    return ControlRelayOutputBlock(code == "on" ? OperationType::LATCH_ON : OperationType::LATCH_OFF);
+}
+
+// g41 var 1 (int32), var 2 (int16) or var 3 (float32).
+CommandSet analog(const std::string& value, const std::string& variation, uint16_t index) {
+    if (variation == "v1") return CommandSet({WithIndex(AnalogOutputInt32(int32_t(std::atoi(value.c_str()))), index)});
+    if (variation == "v2") return CommandSet({WithIndex(AnalogOutputInt16(int16_t(std::atoi(value.c_str()))), index)});
+    return CommandSet({WithIndex(AnalogOutputFloat32(float(std::atof(value.c_str()))), index)});
+}
+
 class Channel : public IChannelListener {
 public:
     void OnStateChange(ChannelState state) override {
@@ -95,20 +125,20 @@ int main(int argc, char** argv) {
         } else if (step.rfind("wait:", 0) == 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(std::atoi(step.c_str() + 5)));
             continue;
-        } else if (step.rfind("crob:", 0) == 0) {
-            auto rest = step.substr(5);
-            auto point = uint16_t(std::atoi(rest.c_str()));
-            bool on = rest.find(":on") != std::string::npos;
-            bool direct = rest.find(":direct") != std::string::npos;
-            ControlRelayOutputBlock crob(on ? OperationType::LATCH_ON : OperationType::LATCH_OFF);
+        } else if (step.rfind("crob:", 0) == 0 || step.rfind("ao:", 0) == 0) {
+            auto parts = split(step);
+            auto point = uint16_t(std::atoi(parts[1].c_str()));
+            bool direct = step.find(":direct") != std::string::npos;
             auto done = [point](const ICommandTaskResult& result) {
                 std::string status = "none";
                 result.ForeachItem([&](const CommandPointResult& item) { status = CommandStatusSpec::to_string(item.status); });
                 line("{\"command\":" + std::to_string(point) + ",\"summary\":\""
                      + TaskCompletionSpec::to_string(result.summary) + "\",\"status\":\"" + status + "\"}");
             };
-            if (direct) master->DirectOperate(CommandSet({WithIndex(crob, point)}), done);
-            else master->SelectAndOperate(CommandSet({WithIndex(crob, point)}), done);
+            CommandSet commands = parts[0] == "crob" ? CommandSet({WithIndex(crob(parts[2]), point)})
+                                                     : analog(parts[2], parts.size() > 3 ? parts[3] : "v3", point);
+            if (direct) master->DirectOperate(std::move(commands), done);
+            else master->SelectAndOperate(std::move(commands), done);
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             continue;
         }

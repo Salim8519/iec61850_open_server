@@ -85,8 +85,9 @@ func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
 	return m.Status(), nil
 }
 
-// Send runs a command typed on the page like a SCADA command and logs it the same way.
-func (m *Manager) Send(pointID string, value bool) *pyjson.Object {
+// Send runs a command typed on the page like a SCADA command and logs it the same way. The
+// value is a bool (single, double), "higher"/"lower" (step) or a number (set point).
+func (m *Manager) Send(pointID string, value any) *pyjson.Object {
 	ok, reason := m.executor.run(pyjson.NewObject().Set("point_id", pointID).Set("value", value).
 		Set("protocol", "manual").Set("peer", "this page"))
 	return pyjson.NewObject().Set("ok", ok).Set("reason", reason)

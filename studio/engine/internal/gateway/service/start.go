@@ -132,9 +132,7 @@ func (m *Manager) launch() (*pyjson.Object, string, int, error) {
 		point := raw.(*pyjson.Object)
 		typed[index] = point
 		ied := ieds[text(point, "ied")]
-		native[index] = pyjson.NewObject().Set("id", get(point, "id")).Set("kind", get(point, "kind")).
-			Set("address", get(point, "address")).Set("scale", get(point, "scale")).
-			Set("monitor_only", m.MonitorOnly(point, config, ied))
+		native[index] = nativePoint(point, m.MonitorOnly(point, config, ied))
 	}
 	process, err := m.spawn(m.Executable, m.event)
 	if err != nil {
@@ -177,8 +175,11 @@ func (m *Manager) open(process worker.Process, protocol string, settings *pyjson
 			return nil, apperr.RuntimeError("The gateway program is outdated; rebuild the native programs")
 		}
 	}
-	answer, err := process.Request("start", 15*time.Second,
-		pyjson.NewObject().Set("protocol", protocol).Set("settings", settings).Set("points", native))
+	typed := control.HasCapability(hello, typedCapability)
+	if !typed && hasTypedPoints(native) {
+		return nil, apperr.RuntimeError("The gateway program is too old for tap position, step and set point points; rebuild the native programs")
+	}
+	answer, err := process.Request("start", 15*time.Second, startRequest(protocol, settings, native, typed))
 	if err != nil {
 		return nil, err
 	}

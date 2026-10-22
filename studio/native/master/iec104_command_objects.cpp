@@ -22,6 +22,14 @@ CommandObject iec104_command_object(const std::string& kind, int ioa, double val
         result.object = time_tagged
             ? (InformationObject)DoubleCommandWithCP56Time2a_create(nullptr, ioa, state, select, qualifier, &now)
             : (InformationObject)DoubleCommand_create(nullptr, ioa, state, select, qualifier);
+    } else if (kind == "regulating") {
+        int step = int(value);
+        if (step != 1 && step != 2) throw std::runtime_error("A regulating step command is 1 (Lower) or 2 (Raise)");
+        auto command = step == 2 ? IEC60870_STEP_HIGHER : IEC60870_STEP_LOWER;
+        result.type = time_tagged ? C_RC_TA_1 : C_RC_NA_1;
+        result.object = time_tagged
+            ? (InformationObject)StepCommandWithCP56Time2a_create(nullptr, ioa, command, select, qualifier, &now)
+            : (InformationObject)StepCommand_create(nullptr, ioa, command, select, qualifier);
     } else if (kind == "setpoint_float") {
         result.type = time_tagged ? C_SE_TC_1 : C_SE_NC_1;
         result.object = time_tagged

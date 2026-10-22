@@ -75,13 +75,17 @@ test('live values merge into own rows by id, never into drafts', () => {
   assert.equal(merged[2].value_text, 'ON (closed)');
 });
 
-test('the point list offers Add point next to Propose from IEDs, which keeps own points', () => {
-  assert.match(read('features/tools/gateway/PointToolbar.tsx'), /GATEWAY_COPY\.propose[\s\S]*OWN_COPY\.add/);
-  assert.match(read('features/tools/gateway/PointTable.tsx'), /gatewayApi\.propose\(protocol, \(rows \?\? \[\]\)\.filter\(isOwn\)\)/);
+test('the point list offers Add points next to Propose from IEDs, which keeps own points', () => {
+  // ADR-0105: "Add point" became the one "Add points" dialog; Propose opens the smart preview, whose
+  // Replace mode keeps the own points of the list it is given (Go addpoints.Smart -> KeepOwn).
+  assert.match(read('features/tools/gateway/PointToolbar.tsx'), /GATEWAY_COPY\.propose[\s\S]*ADD_COPY\.open/);
+  assert.match(read('features/tools/gateway/add/SmartPropose.tsx'), /addApi\.smart\(protocol, mode, rows/);
+  assert.match(read('features/tools/gateway/add/AddPointsDialog.tsx'), /<AddOwnPoint bare/);
   assert.match(read('features/tools/gateway/PointRow.tsx'), /<OwnValue row=\{row\}/);
   const cells = read('features/tools/gateway/OwnCells.tsx');
   assert.ok(!/OwnValue[\s\S]*disabled=\{locked\}/.test(cells), 'own values stay changeable while the gateway runs');
-  assert.deepEqual(Object.keys(OWN_KIND_LABELS), ['single', 'double', 'float', 'integer', 'command_single', 'command_double']);
+  assert.deepEqual(Object.keys(OWN_KIND_LABELS), ['single', 'double', 'float', 'integer', 'command_single', 'command_double',
+    'step_position', 'command_step', 'command_setpoint']); // ADR-0107 kinds follow the six
   assert.match(OWN_COPY.hint, /made-up value you control/);
   assert.match(OWN_COPY.hint, /SCADA sees it like any other point/);
 });

@@ -70,6 +70,9 @@ func (a *Area) pointRoutes() []api.Route {
 			if err != nil {
 				return nil, err
 			}
+			if _, smart := data.Get("mode"); smart { // Go-only smart mode with preview (ADR-0105)
+				return a.smartPropose(data, protocol)
+			}
 			proposal, notes, err := gateway.Propose(d.Projects.IEDs(), protocol)
 			if err != nil {
 				return nil, err

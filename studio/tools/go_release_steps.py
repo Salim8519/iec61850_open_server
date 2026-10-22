@@ -29,6 +29,9 @@ LICENSES = {
     "studio/packaging/libiconv-NOTICE.txt": "licenses/libiconv",
     "studio/packaging/snmp-mibs-NOTICE.txt": "licenses/snmp-mibs",
 }
+# Go modules linked into studio_server.exe (go.mod; excelize and its imports since ADR-0105).
+LICENSES.update({f"studio/packaging/third_party/go-licenses/{name}/LICENSE": f"licenses/go-{name}" for name in (
+    "excelize", "efp", "nfp", "mscfb", "msoleps", "go-deepcopy", "x-crypto", "x-net", "x-text", "x-sys")})
 PORTABLE_PAYLOAD = ENGINE / "cmd/scadabench_portable/payload"
 # The workers' VC++ runtime (MSVCP140, VCRUNTIME140, VCRUNTIME140_1), shipped app-locally
 # beside them so a clean PC needs no Visual C++ Redistributable install; the Universal CRT

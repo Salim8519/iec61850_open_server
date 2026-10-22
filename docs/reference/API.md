@@ -50,9 +50,51 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | `POST /equipment/{node}/operate` | `{action}` or `{value}` | Typed mapped equipment command/feedback |
 | `GET /equipment/states` | - | Authoritative mapped canvas state snapshot |
 | `POST /equipment/{node}/test` | `{action, value?, row?}` | Test button on a running simulated IED: writes the bound point via the sample writer, sends no command; real IEDs refused (ADR-0067) |
+| `POST /equipment/{node}/test` (point panel) | `{action:"set", row, value}` (status true/false, double 0-3, value number), `{action:"send", row, value}` (command true/false), `{action:"healthy"}` | Point panel (ADR-0102, Go only): set a status, double or value point of a simulated IED, send a command point through Operate, or write every healthy value; answers `{ref,value,type,ied_id,correlation_id}` or the batch summary `{requested,applied,failed,results}`; real IEDs refused |
+| `POST /equipment/{node}/select` | `{action:"open"\|"close", options?}` | Go only (ADR-0108): select a CB/DS/ES whose control is `sbo-*`; `{node_id,action,model,selected,expires_ms}` (window = sboTimeout minus margin); direct models refused in words |
+| `POST /equipment/{node}/cancel` | any | Go only (ADR-0108): end the node's selection; `{node_id,cancelled,action?}` |
+| `POST /equipment/{node}/test` (point panel, ADR-0108) | `{action:"select"\|"cancel", row, value?}`; `send` values also a whole number (INC), number (APC), enum label (ENC), `"higher"`/`"lower"` (BAC, BSC, ISC) | Select before operate of an SBO command row (`send` must repeat the selected value); typed values checked against `min`/`max`/`step` and the keys of `labels` |
+| `GET /controls/typed?ied_id=` (ADR-0104 list, served on this branch by an adapter) | none | `{controls, extended_controls}`: the SPC/DPC list and the typed controls read from the stored SCL, each `{ref, status, cdc, ctl_val_kind, ctl_val_ref, value_kind (int\|enum\|float\|step), model (ctlModel 0..4), sbo_timeout_ms, min, max, step, labels {label: number}, trans_ind}`; Go-only |
 
 Equipment actions are Open/Close for CB/DS/ES, Operate/Reset for Trip Relay and
 Press for a Push Button. The server rejects mixed `action` and `value`.
+A tap-changer transformer (ADR-0109, Go only) takes `raise`, `lower`, `auto` and `manual`: raise/lower
+route to a BSC/ISC step control (typed command path, ADR-0104) or an SPC pair (canvas command path), then
+write the new tap as control feedback for a simulated tap position; it answers
+`{node_id, action, wire_value, tap, feedback, correlation_id}`; real IEDs are refused. Events
+`tap_command_requested|applied|failed` and `avr_decision` (`event`: `out_of_band`, `step`, `back_in_band`,
+`at_max_tap`, `at_min_tap`, `no_position`, `manual`, `blocked`, `mode_auto`, `mode_manual`) carry
+`node_id`, `ied_id`, `correlation_id` and `origin` (`studio_api` or `avr`). `GET /equipment/states` and
+`equipment_state` add `<node>:tap`, `<node>:mode`, `<node>:lv` and `<node>:avr`
+(`{auto, regulator, state, remaining_s, deviation_pct, lv_kv}`).
+
+### Typed commands (Go engine only, ADR-0104)
+
+Simulated IEDs of the running project only (the same rule as `/controls/operate`). `options` is
+`{test?, interlock_check?, synchro_check?, orcat? (0-8; 0 or absent sends 3 remote), orident? (<= 64)}`.
+`value` is a boolean (SPC/DPC), a whole number (INC/ISC), a label or ord (ENC), a number (APC),
+`"higher"`/`"lower"`/`"stop"` (BSC/BAC; ISC higher/lower moves one position from the present one).
+Device refusals answer 409 with the device's reason in plain English; bad input 400.
+
+| Method/path | Input | Result / invariant |
+| --- | --- | --- |
+| `POST /controls/operate` | `{ied_id,ref,value,options?}` | `{ied_id,ref,value:bool}` keeps the old path byte for byte; `options` or a non-boolean `value` goes typed: `{ref, model, selected, operated, canceled, terminated, add_cause, add_cause_text, expires_ms, ok}`. After an expired Select: 409 "Select expired after N s. Press Select again." Without a Select, SBO models select and operate in one step |
+| `POST /controls/select` | `{ied_id,ref,value?,options?}` | `{ok, model (direct-normal\|sbo-normal\|direct-enhanced\|sbo-enhanced), expires_ms}`; direct models answer `expires_ms: 0`; SBO enhanced needs `value` |
+| `POST /controls/cancel` | `{ied_id,ref}` | `{ok}`; nothing selected is not an error |
+| `POST /controls/checks` | `{ied_id,ref,blocked?,interlock_blocked?,synchro_blocked?}` | Simulated blocks of one typed control (AddCause 9, 10, 11 when the command asks for that check) |
+| `GET /controls/typed?ied_id=` | - | `{controls, extended_controls}`; each extended entry is `{ref, status, cdc, ctl_val_kind, ctl_val_ref, value_kind, model, sbo_timeout_ms, min, max, step, labels, trans_ind}` |
+| `POST /tools/explorer/command` | `{action: select\|operate\|cancel, ref, kind: bool\|int\|enum\|float\|step, value, options, confirm}` | IED Explorer typed step on the connected device; `confirm: true` for select/operate; `{result, summary}` with the device's answer |
+
+Worker IPC: the start request may carry `extended_controls` (the entries above); the worker lists
+`typed_controls` and accepts `control_checks`. `studio_control` lists `typed_commands` and serves
+`typed_select`, `typed_operate`, `typed_cancel`. Typed control events add `cdc`, `or_cat`,
+`or_ident`, `ctl_num` (and `typed: true` on `control_applied`).
+Press for a Push Button. The server rejects mixed `action` and `value`. Operate takes an
+optional `options` `{test, interlock_check, synchro_check, orcat 0..8, orident ≤ 64}` (Go only,
+ADR-0108); without it and without a selection the request and native call are unchanged. A
+held selection must match the action; an expired one answers "… ran out after 27 s, so nothing
+was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipment_select_expired`,
+`equipment_select_cancelled`, `point_panel_selected`, `point_panel_select_cancelled`.
 
 ## Network, GOOSE and real IEDs
 
@@ -122,11 +164,12 @@ off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`i
 | `POST /tools/explorer/operate` | `ref`, `value`, `confirm: true`, `options` | Operate a control via studio_control (ADR-0057); refused without `confirm` |
 | `GET /tools/memory`, `PUT /tools/memory/find` | `choice` | Remembered tool settings |
 | `GET /activity` | - | What runs outside the IED Run: gateway, master, Explorer, scan, sequences (running dots) |
-| `POST /tools/gateway/command` | `point_id`, `value` (bool), `confirm: true` | Page command, run and logged like a SCADA command (ADR-0059) |
+| `POST /tools/gateway/command` | `point_id`, `value` (bool; Go engine also `"higher"`/`"lower"` for a step, a number for a set point, ADR-0107), `confirm: true` | Page command, run and logged like a SCADA command (ADR-0059) |
 | `POST /tools/scan/preview`, `/start`, `/stop`; `GET /tools/scan` | `range`, `port` | Find IEDs (<= 256 addresses) |
 | `GET/PUT /tools/gateway/config` | `protocol`, `listen`, `settings`, `real_commands` | Gateway settings (stopped only) |
 | `GET/PUT /tools/gateway/points?protocol=`, `POST /tools/gateway/propose` | `points` | Point list with live values; smart proposal |
 | `GET/POST /tools/gateway/points.csv` | CSV text (POST) | CSV point list with line diagnostics |
+| `GET /tools/gateway/types`; `POST /tools/gateway/candidates`, `/points/from-ied`, `/points/rows`; `GET/POST /tools/gateway/points.xlsx` | see [ADR-0105](../decisions/ADR-0105-gateway-add-points.md) | Go only: type catalog, fitting IED signals, planned/checked rows `{rows, points, ok}` (nothing saved), Excel template and its upload; `points/new` adds `count`/`from`/`name` (a range), `propose` adds `mode`/`current`/`ieds` (smart preview with `summary`) |
 | `POST /tools/gateway/start`, `/stop`; `GET /tools/gateway`, `/traffic?after=`, `/commands` | - | Start (points; never Run), status, decoded traffic, command log |
 | `POST /tools/gateway/role` | `role` (`gateway`, `master`, `converter`) | Act as station gateway, SCADA master or protocol converter (ADR-0061); refused while running |
 | `GET/PUT /tools/master/config`; `GET /tools/master` | `protocol`, `host`, `settings` | SCADA master settings (disconnected only) and status (link, points, probe, poll failures) |

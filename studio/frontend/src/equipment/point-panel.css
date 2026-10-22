@@ -1,0 +1,34 @@
+/* Canvas point panel card (ADR-0102): one small fixed-width card per bay; text wraps, nothing is cut. */
+.equipment-node.points { width: 232px; padding: 0; text-align: left; overflow: hidden;
+  border-color: var(--kind-cmd); border-radius: 8px; background: white; }
+.equipment-node.points.selected { border-color: var(--primary); background: white; }
+.point-card { display: grid; gap: 6px; padding: 0 0 8px; cursor: pointer; outline-offset: -3px; }
+.point-card:focus-visible { outline: 3px solid var(--accent); }
+.point-card:hover .point-card-head { background: var(--kind-cmd-soft); }
+.point-card-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--kind-cmd-soft);
+  border-bottom: 1px solid var(--kind-cmd); }
+.point-card-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: white;
+  color: var(--kind-cmd); flex-shrink: 0; }
+.point-card-title { display: grid; min-width: 0; }
+.point-card-title strong { font-size: 13px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; line-height: 1.3; }
+.point-card-title small { font-size: 12px; color: var(--text-2); overflow-wrap: anywhere; }
+.point-card-counts { display: flex; flex-wrap: wrap; gap: 3px 10px; padding: 0 10px; font-size: 12px; color: var(--text-2); }
+.point-card-count b { color: var(--text); font-variant-numeric: tabular-nums; }
+.point-card-empty { margin: 0; padding: 0 10px; font-size: 12px; color: var(--text-2); }
+.point-card-pinned { list-style: none; margin: 0; padding: 4px 0 0; display: grid; border-top: 1px solid #dfe4ec; }
+.point-card-pinned li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 10px; font-size: 12px; }
+.point-card-pinned li + li { border-top: 1px solid #eef0f4; }
+.point-card-name { min-width: 0; overflow-wrap: anywhere; color: var(--text); line-height: 1.3; }
+.point-card-more { color: var(--text-2); justify-content: flex-start !important; }
+.point-card-unhealthy { display: flex; align-items: center; gap: 6px; margin: 0 10px; padding: 3px 8px; font-size: 12px; font-weight: 600;
+  color: var(--warning-text); background: var(--warning-soft); border: 1.5px dashed var(--warning); border-radius: 8px; }
+.point-card-unhealthy svg { flex-shrink: 0; color: var(--warning); }
+
+/* The value chip of the card and the popup: the words say the state; the shape repeats it. */
+.point-chip { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; padding: 1px 8px; border-radius: 999px;
+  border: 1.5px solid var(--frame); background: #f4f6f9; font-family: 'Cascadia Code', Consolas, monospace; font-size: 12px;
+  font-weight: 600; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.point-chip.on::before, .point-chip.position::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.point-chip.off::before { content: ''; width: 8px; height: 8px; border-radius: 50%; border: 2px solid currentColor; box-sizing: border-box; }
+.point-chip.none, .point-chip.stopped { border-style: dashed; color: var(--text-2); background: transparent; font-weight: 500; }
+.point-chip.text { border-style: dotted; }

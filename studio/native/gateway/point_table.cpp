@@ -4,10 +4,15 @@
 #include <stdexcept>
 
 namespace {
-const std::set<std::string> KINDS = {"single", "double", "float", "integer", "command_single", "command_double"};
+const std::set<std::string> KINDS = {"single", "double", "float", "integer", "command_single", "command_double",
+                                     "step_position", "command_step", "command_setpoint"};
 }
 
 bool is_command(const std::string& kind) { return kind.rfind("command_", 0) == 0; }
+std::string table_of(const std::string& kind) {
+    if (kind == "command_setpoint") return "setpoint";
+    return is_command(kind) ? std::string("command") : kind;
+}
 bool quality_invalid(const GatewayPoint& point) { return !point.source_ok || (point.quality & 3) == 2; }
 bool quality_questionable(const GatewayPoint& point) { return (point.quality & 3) == 3; }
 
@@ -21,8 +26,10 @@ void PointTable::load(const Json& items) {
         point.address = item.at("address").get<int>();
         point.monitor_only = item.value("monitor_only", false);
         point.scale = item.value("scale", 1.0);
+        point.format = item.value("format", std::string());
+        point.low_word_first = item.value("word_order", std::string()) == "low_first";
         if (!KINDS.count(point.kind)) throw std::runtime_error("Unknown point kind " + point.kind);
-        auto table = is_command(point.kind) ? std::string("command") : point.kind;
+        auto table = table_of(point.kind);
         if (!addresses.emplace(std::make_pair(table, point.address), point.id).second)
             throw std::runtime_error("Two points use address " + std::to_string(point.address) + " (" + table + ")");
         loaded[point.id] = point;

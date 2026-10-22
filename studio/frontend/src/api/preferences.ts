@@ -3,7 +3,7 @@ import { api } from './client';
 export type ListFilters = Record<string, Record<string, string | boolean>>;
 export type Preferences = {
   tour_seen_version: number; tour_version: number; list_filters: ListFilters;
-  sld_goose_layer?: number; sld_readers_layer?: number;
+  sld_goose_layer?: number; sld_readers_layer?: number; sld_sbo_steps?: number;
 };
 
 export const getPreferences = () => api<Preferences>('/preferences');

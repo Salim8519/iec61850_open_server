@@ -11,7 +11,8 @@
 // quality keeps IEC 61850 bits so each protocol maps them in one place.
 struct GatewayPoint {
     std::string id;
-    std::string kind;  // single, double, float, integer, command_single, command_double
+    std::string kind;  // single, double, float, integer, command_single, command_double,
+                       // step_position, command_step, command_setpoint (ADR-0107)
     int address = 0;
     bool monitor_only = false;
     double scale = 1.0;
@@ -19,9 +20,14 @@ struct GatewayPoint {
     int quality = 0;          // IEC 61850 quality bits (validity in bits 0-1)
     bool source_ok = false;   // false until a value arrives, or while the IED is stopped
     int64_t time_ms = 0;
+    std::string format;           // set points: float, scaled, normalized, int16, uint16, int32
+    bool low_word_first = false;  // Modbus 32-bit set points: low register first
 };
 
 bool is_command(const std::string& kind);
+// The address table of a kind: the kind itself, "command" for single/double/step commands,
+// "setpoint" for set points (a separate index space in DNP3 and Modbus).
+std::string table_of(const std::string& kind);
 // IEC 61850 validity: 0 good, 2 invalid, 3 questionable. No source counts as invalid.
 bool quality_invalid(const GatewayPoint& point);
 bool quality_questionable(const GatewayPoint& point);
@@ -33,7 +39,7 @@ public:
     std::vector<std::string> update(const Json& values);
     std::vector<GatewayPoint> all() const;
     std::optional<GatewayPoint> find(const std::string& id) const;
-    // table is the point kind for monitoring points and "command" for both command kinds.
+    // table is table_of(kind): the point kind for monitoring points, "command" or "setpoint".
     std::optional<GatewayPoint> at(const std::string& table, int address) const;
 private:
     mutable std::mutex lock;

@@ -82,6 +82,11 @@
   invert either setting. Never auto-reset or copy raw `ctlVal` into feedback.
 - Enhanced-SBO selection displays "selected; waiting for Oper" with its imported
   timeout. Selection alone never changes switching position.
+- Select before operate (ADR-0108): on an SBO control, Open/Close (and a point panel command)
+  first selects; one shared countdown box says "Selected: Close. Operate within 27 s" with a
+  timer icon, *Operate Close* and *Cancel*; when the time runs out it says so and nothing is
+  sent. Direct controls send at once as before. *Command options* (test, interlock, synchro,
+  originator) stay folded on the sheet and are sent only once used.
 - Commands have no per-client mode (ADR-0069). When an outside client seems to send
   an unexpected value, diagnose it with a complete capture; never adapt the value.
 - Show the backend session and project revision in every tab. Synchronize remote
@@ -120,6 +125,8 @@
   hollow "(expected)" dots when no listener runs; a problem is one small ⚠ on the subscriber tag.
   A sender outside the project is one dot flying in beside the receiver for ~2 s, then nothing remains;
   dots and words keep their screen size and the receiver tag says "← sender · change" (ADR-0070).
+  Smart lines (ADR-0103): one change (both contacts of a breaker) is one chip at its symbol and one
+  line per receiving IED, drawn behind the dot; clicking a line opens that link, the chip the publisher.
   Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Receiving");
   clicking a link opens its details. GOOSE and MMS traffic must not
   re-render equipment nodes.
@@ -128,6 +135,10 @@
 - Test buttons (ADR-0067): only while running, only for simulated IEDs, in the equipment sheet
   and the right-click menu. They set the bound point as if the plant changed by itself; no command
   is sent. "Set value" needs a number, so the right-click menu opens the sheet for it.
+- Tap-changer transformer (ADR-0109): while running, ▲ Raise / ▼ Lower on the card and Raise, Lower,
+  Auto, Manual in the sheet send one command each (direct operate until the shared SBO hook of change
+  0171); a button that cannot act now is disabled and its hint says why (top/bottom tap, in Auto, no
+  command). In Auto only the simulated regulator moves the tap; it never commands a real IED.
 
 Guided network and real-IED work (ADR-0028, ADR-0029, ADR-0031):
 - Windows changes are listed in plain sentences before Apply; nothing changes until

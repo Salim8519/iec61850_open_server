@@ -21,7 +21,8 @@ int main() {
     };
     const std::map<std::string, std::function<Json(const Json&)>> operations = {
         {"hello", [](const Json&) {
-            return Json{{"capabilities", {"gateway_iec104", "gateway_modbus", "gateway_dnp3", "commands_via_backend"}}};
+            return Json{{"capabilities", {"gateway_iec104", "gateway_modbus", "gateway_dnp3", "commands_via_backend",
+                                             "typed_commands"}}};
         }},
         {"start", [&](const Json& request) {
             license::require_valid_license();
@@ -29,6 +30,7 @@ int main() {
             auto found = factories.find(request.at("protocol").get<std::string>());
             if (found == factories.end()) throw std::runtime_error("Unknown gateway protocol");
             table.load(request.at("points"));
+            bridge.typed = request.value("typed_commands", false);  // ADR-0107; absent = the Python-era channel
             auto candidate = found->second();
             auto opened = candidate->start(request.value("settings", Json::object()));
             server = std::move(candidate);

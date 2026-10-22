@@ -105,8 +105,7 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 	item.worker = worker
 	item.startActor()
 	point := effectiveEndpoint(item.ied, network)
-	request := pyval.Obj("cfg", absolute, "ip", point.host, "port", point.port, "controls", item.model.controls(),
-		"edition", pyval.Get(item.ied, "edition"), "goose", gooseRequest(item.ied, bus))
+	request := startRequest(item, absolute, point, gooseRequest(item.ied, bus))
 	started, err := worker.StartModel(request)
 	if err != nil {
 		return err

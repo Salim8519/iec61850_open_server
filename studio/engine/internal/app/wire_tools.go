@@ -4,9 +4,11 @@ import (
 	"studio-engine/internal/api"
 	"studio-engine/internal/api/snmpapi"
 	"studio-engine/internal/api/toolsapi"
+	"studio-engine/internal/gateway"
 	"studio-engine/internal/gateway/service"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/ports"
+	"studio-engine/internal/scl"
 	snmpservice "studio-engine/internal/snmp/service"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/explorer"
@@ -31,6 +33,8 @@ func (e *Engine) wireTools() []api.Route {
 		o.native("studio_gateway.exe"), nil)
 	e.Master = service.NewMaster(e.Projects, e.Runtime.Emit, o.native("studio_master.exe"), nil)
 	e.Gateway.Converter = &service.Converter{Master: e.Master}
+	e.Gateway.Typed = ports.GatewayTyped(e.Runtime) // SCADA select / execute / cancel (ADR-0107)
+	gateway.ExtendedControls = typedControlsOf      // BSC/APC/INC links and Add points (ADR-0104)
 	// Python's gateway diffed every point each 100 ms and so saw converter values; the Go
 	// gateway is change-driven, so new device values mark the converter's points.
 	e.Master.OnValues = e.Gateway.MarkRemote
@@ -39,4 +43,15 @@ func (e *Engine) wireTools() []api.Route {
 	routes := toolsapi.New(toolsapi.Deps{Explorer: e.Explorer, Scanner: e.Scanner, Memory: store,
 		Gateway: e.Gateway, Master: e.Master, Projects: e.Projects, Runtime: e.Runtime}).Routes()
 	return append(routes, snmpapi.New(e.SNMP).Routes()...)
+}
+
+// typedControlsOf is an IED's typed control list from its stored SCL (ADR-0104); none when the
+// SCL cannot be read, so a link to a typed control is refused in words instead.
+func typedControlsOf(ied *pyjson.Object) []any {
+	text := func(key string) string { value, _ := ied.Get(key); result, _ := value.(string); return result }
+	list, err := scl.CachedExtendedControls(text("id"), text("name"), text("source"))
+	if err != nil {
+		return nil
+	}
+	return list
 }

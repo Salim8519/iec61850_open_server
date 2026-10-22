@@ -6,6 +6,7 @@ import (
 	"studio-engine/internal/api"
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/gateway"
+	"studio-engine/internal/gateway/service"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/numlog"
 )
@@ -53,11 +54,15 @@ func (a *Area) gatewayRoutes() []api.Route {
 				return nil, apperr.ValueError("Confirm the command first")
 			}
 			pointID, isText := value(data, "point_id", nil).(string)
-			on, isBool := value(data, "value", nil).(bool)
-			if !isText || !isBool {
+			sent := value(data, "value", nil) // also "higher"/"lower" or a number (ADR-0107)
+			kind := ""
+			if point := d.Gateway.Point(pointID); isText && point != nil {
+				kind, _ = value(point, "kind", nil).(string)
+			}
+			if !isText || !service.CommandInput(kind, sent) {
 				return nil, apperr.ValueError("Send point_id and value (true = ON / close, false = OFF / open)")
 			}
-			return d.Gateway.Send(pointID, on), nil
+			return d.Gateway.Send(pointID, sent), nil
 		}),
 		route("GET", "/tools/gateway/traffic", true, func(r *http.Request) (any, error) { return after(r, d.Gateway.Traffic, 300) }),
 		route("GET", "/tools/gateway/commands", true, func(r *http.Request) (any, error) { return after(r, d.Gateway.Commands, 200) }),

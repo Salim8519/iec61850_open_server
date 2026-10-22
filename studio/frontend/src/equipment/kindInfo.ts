@@ -1,4 +1,5 @@
 import type { EquipmentData, EquipmentKind } from '../api/types';
+import { commandReady } from './tapChanger.ts';
 
 /** Library category; describes the equipment family, never energized or protection state. */
 export type Category = 'switchgear' | 'instrument' | 'source' | 'protection' | 'control' | 'drawing';
@@ -18,6 +19,8 @@ const INFO: Record<EquipmentKind, KindInfo> = {
   JUNCTION: { name: 'Junction', code: 'Drawing point', category: 'drawing', state: '' },
   INFEED: { name: 'Infeed', code: 'Where power enters', category: 'source', state: '' },
   MEASUREMENT_LIST: { name: 'Measurement list', code: 'Values panel', category: 'instrument', state: 'Measurements' },
+  POINT_PANEL: { name: 'Point panel', code: 'Set / operate points', category: 'control', state: 'Points' },
+  TAP_TRANSFORMER: { name: 'Tap-changer transformer', code: 'YPTR · YLTC · ATCC', category: 'source', state: 'Tap position' },
 };
 
 export function kindInfo(kind: EquipmentKind): KindInfo {
@@ -26,7 +29,8 @@ export function kindInfo(kind: EquipmentKind): KindInfo {
 
 /** Name of the n-th new item of a kind, e.g. "CB-2" or "Measurements-1". */
 export function defaultLabel(kind: EquipmentKind, count: number): string {
-  return `${kind === 'MEASUREMENT_LIST' ? 'Measurements' : kind}-${count}`;
+  return `${kind === 'MEASUREMENT_LIST' ? 'Measurements' : kind === 'POINT_PANEL' ? 'Points' :
+    kind === 'TAP_TRANSFORMER' ? 'T' : kind}-${count}`;
 }
 
 /** `optional`: a command link only adds SCADA-like operation; test buttons work without it (change 0097). */
@@ -42,6 +46,9 @@ export function setupItems(data: EquipmentData): SetupItem[] {
     case 'PUSH_BUTTON': return data.push_mode === 'spc_momentary' ? [command] : [state];
     case 'RELAY': return [{ label: 'At least one signal', done: !!data.relay_statuses?.length }];
     case 'MEASUREMENT_LIST': return [{ label: 'At least one measurement', done: !!data.measurements?.length }];
+    case 'POINT_PANEL': return [{ label: 'At least one point', done: !!data.points?.length }];
+    case 'TAP_TRANSFORMER': return [{ label: 'Tap position', done: !!data.tap_changer?.tap_source },
+      { label: 'Raise/Lower command', done: !!data.tap_changer && commandReady(data.tap_changer), optional: true }];
     default: return [];
   }
 }

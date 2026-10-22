@@ -77,7 +77,7 @@ func storedPoints(section *pyjson.Object, name string) ([]any, error) {
 	points := make([]any, len(list))
 	for index, item := range list {
 		point, isDict := item.(*pyjson.Object)
-		if !isDict || !contains(Kinds, get(point, "kind")) || !intLike(get(point, "address")) {
+		if !isDict || !KnownKind(get(point, "kind")) || !intLike(get(point, "address")) {
 			return nil, valueError("A stored " + name + " gateway point has no valid type or address")
 		}
 		copied := copyObject(point)

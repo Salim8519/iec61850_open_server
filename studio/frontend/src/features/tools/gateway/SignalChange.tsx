@@ -9,7 +9,8 @@ import { NUMERIC_KINDS } from '../../../equipment/measurementDisplay';
 const WHOLE = NUMERIC_KINDS.filter(kind => kind.startsWith('INT'));
 /** IEC 61850 value kinds each gateway type may carry (the backend's AllowedKinds, checked again when the list is saved). */
 const FITS: Record<PointKind, string[]> = { single: ['BOOLEAN'], double: ['Dbpos'], float: [...NUMERIC_KINDS, 'Enum'],
-  integer: [...WHOLE, 'Enum'], command_single: [], command_double: [] };
+  integer: [...WHOLE, 'Enum'], command_single: [], command_double: [], step_position: WHOLE, command_step: [],
+  command_setpoint: [] };
 
 /** A row under a point that moves it to another IED or path: the signal search for status and
  *  measured points, the controllable objects of an IED for commands. The change is saved with the list.

@@ -4,7 +4,8 @@ import { OWN_COPY } from '../../../copy/gateway.ts';
 
 export const isOwn = (row: GatewayPoint) => row.source === 'manual';
 export const isCommand = (kind: PointKind) => kind.startsWith('command');
-export const isMeasured = (kind: PointKind) => kind === 'float' || kind === 'integer';
+export const isMeasured = (kind: PointKind) => kind === 'float' || kind === 'integer' || kind === 'step_position';
+const isWhole = (kind: PointKind) => kind === 'integer' || kind === 'step_position';
 
 /** What a person calls an own point: its name, else its id. */
 export const ownName = (row: GatewayPoint) => row.description.trim() || row.id || OWN_COPY.newPoint;
@@ -30,14 +31,21 @@ export function statusNumber(kind: PointKind, value: GatewayPoint['value']): num
 export function parseOwnNumber(text: string, kind: PointKind): { value: number } | { error: string } {
   const trimmed = text.trim().replace(',', '.');
   const value = Number(trimmed);
-  if (trimmed === '' || !Number.isFinite(value)) return { error: kind === 'integer' ? OWN_COPY.badWhole : OWN_COPY.badNumber };
+  if (trimmed === '' || !Number.isFinite(value)) return { error: isWhole(kind) ? OWN_COPY.badWhole : OWN_COPY.badNumber };
   if (kind === 'integer' && (!Number.isInteger(value) || Math.abs(value) > 2147483647)) return { error: OWN_COPY.badWhole };
+  if (kind === 'step_position' && (!Number.isInteger(value) || value < -64 || value > 63)) return { error: OWN_COPY.badTap };
   return { value };
 }
 
-/** The own status points a command can drive (single or double, with an id). */
-export function ownTargets(rows: GatewayPoint[]): Choice[] {
-  return rows.filter(row => isOwn(row) && row.id && (row.kind === 'single' || row.kind === 'double'))
+/** The own points each own command may drive (the backend's targetKinds, ADR-0107). */
+const DRIVES: Partial<Record<PointKind, PointKind[]>> = {
+  command_step: ['step_position', 'integer'], command_setpoint: ['float', 'integer', 'step_position'],
+};
+
+/** The own points a command can drive (single or double for ON/OFF commands), with an id. */
+export function ownTargets(rows: GatewayPoint[], kind?: PointKind): Choice[] {
+  const fits = (kind && DRIVES[kind]) ?? ['single', 'double'];
+  return rows.filter(row => isOwn(row) && row.id && fits.includes(row.kind))
     .map(row => ({ value: row.id!, label: `${ownName(row)} · ${row.address}` }));
 }
 

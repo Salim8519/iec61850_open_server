@@ -29,6 +29,7 @@ type Master struct {
 	Traffic    *numlog.Log
 	Commands   *numlog.Log
 	Probe      *Probe
+	cyclic     *cyclicSender
 	// OnValues runs after device values were merged (the converter pushes them upstream).
 	OnValues func()
 	changes  // OnChange: what the push stream re-reads
@@ -59,10 +60,25 @@ func NewMaster(projects Projects, emit func(string, *pyjson.Object), executable 
 	m := &Master{projects: projects, emit: emit, Executable: executable, spawn: spawn, state: "disconnected",
 		Traffic: numlog.New(numlog.TrafficLines), Commands: numlog.New(numlog.CommandLines), Probe: &Probe{},
 		failures: []any{}, table: pyjson.NewObject(), stopping: make(chan struct{})}
+	m.cyclic = newCyclic(m)
 	m.Traffic.Watch(func() { m.changed(ChangeMasterTraffic); m.changed(ChangeMasterStatus) }) // traffic_last
 	m.Commands.Watch(func() { m.changed(ChangeMasterCommands) })
 	return m
 }
+
+// StartCyclic repeats a command on a timer (address step and value toggle optional).
+func (m *Master) StartCyclic(command *pyjson.Object, interval, step int64, toggle bool) (*pyjson.Object, error) {
+	return m.cyclic.Start(command, interval, step, toggle)
+}
+
+// StopCyclic ends the running cycle.
+func (m *Master) StopCyclic() *pyjson.Object {
+	m.cyclic.Stop()
+	return m.cyclic.Snapshot()
+}
+
+// CyclicState is the cyclic sender's current state for the page (Go-only route).
+func (m *Master) CyclicState() *pyjson.Object { return m.cyclic.Snapshot() }
 
 func (m *Master) gatewaySection() *pyjson.Object {
 	if section := m.projects.Gateway(); section != nil {

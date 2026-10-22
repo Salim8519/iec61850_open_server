@@ -12,6 +12,11 @@ import (
 // preferenceKeys are the stored whole-number preferences in DEFAULTS order.
 var preferenceKeys = []string{"tour_seen_version", "sld_goose_layer", "sld_readers_layer"}
 
+// goOnlyPreferenceKeys are stored only once set (the frozen Python engine has none, so its
+// default document stays byte-identical): sld_sbo_steps 1 shows select before operate as two
+// steps on the SLD and point panels instead of one click (change 0173).
+var goOnlyPreferenceKeys = []string{"sld_sbo_steps"}
+
 // TourVersion is the guided tour version the frontend compares with tour_seen_version.
 const TourVersion = 1
 
@@ -31,6 +36,11 @@ func Preferences(stored any) *pyjson.Object {
 	var filters any
 	if isDict {
 		filters = pyval.Lookup(table, "list_filters", nil)
+		for _, key := range goOnlyPreferenceKeys {
+			if value := pyval.Lookup(table, key, nil); pyval.IsInt(value) {
+				result.Set(key, value)
+			}
+		}
 	}
 	return result.Set("list_filters", CleanListFilters(filters)).Set("tour_version", int64(TourVersion))
 }
@@ -46,7 +56,7 @@ func UpdatePreferences(stored, changes any) (*pyjson.Object, error) {
 	sort.Strings(keys)
 	unknown := []string{}
 	for _, key := range keys {
-		if key != "list_filters" && !pyval.InTuple(key, preferenceKeys...) {
+		if key != "list_filters" && !pyval.InTuple(key, preferenceKeys...) && !pyval.InTuple(key, goOnlyPreferenceKeys...) {
 			unknown = append(unknown, key)
 		}
 	}

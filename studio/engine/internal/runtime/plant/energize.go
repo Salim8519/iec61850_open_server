@@ -8,7 +8,8 @@ import (
 // Energisation of the drawing (domain/energization.py): which parts are live, dead or earthed.
 var (
 	joining = map[string]bool{"JUNCTION": true, "CT": true, "INFEED": true}
-	power   = map[string]bool{"CB": true, "DS": true, "ES": true, "JUNCTION": true, "CT": true, "INFEED": true, "VT": true}
+	power   = map[string]bool{"CB": true, "DS": true, "ES": true, "JUNCTION": true, "CT": true, "INFEED": true, "VT": true,
+		TapTransformerKind: true} // ADR-0109: two sides, power passes through (energize_transformer.go)
 	order   = []string{"earth_fault", "live", "maybe_live", "earthed", "dead"}
 )
 
@@ -133,6 +134,7 @@ func NewSections(diagram *pyjson.Object, positions map[string]any) *Sections {
 		s.live[s.certain.find(id)] = true
 		s.maybe[s.possible.find(id)] = true
 	}
+	s.feedThroughTransformers()
 	for _, node := range s.Nodes {
 		if s.positions[node.ID] == closedPosition && node.Kind == "ES" {
 			s.earthed[s.certain.find(node.ID+":a")] = true

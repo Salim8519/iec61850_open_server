@@ -26,6 +26,9 @@ func (c *Coordinator) EquipmentTest(nodeID string, action, value, row any) (*pyj
 	if node == nil {
 		return nil, apperr.New("Unknown equipment")
 	}
+	if pyval.Str(pyval.Map(node, "data"), "kind") == pointPanelKind { // ADR-0102
+		return c.pointPanelRequest(nodeID, node, action, value, row)
+	}
 	if !c.isLive() {
 		return nil, apperr.New("Run the IED before using a test button")
 	}

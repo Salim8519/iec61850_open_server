@@ -1,7 +1,8 @@
 import { ChevronDown, Download, ListChecks, Lock, Plus, Sparkles, Trash2, Upload } from 'lucide-react';
 import { useRef } from 'react';
 import { gatewayApi, type Protocol } from '../../../api/gateway';
-import { GATEWAY_COPY, OWN_COPY } from '../../../copy/gateway';
+import { GATEWAY_COPY } from '../../../copy/gateway';
+import { ADD_COPY } from '../../../copy/gatewayAdd';
 import type { SaveState } from '../../../state/autoSave';
 import { HelpTip } from '../../../ui/HelpTip';
 import { Menu } from '../../../ui/Menu';
@@ -21,7 +22,7 @@ export function PointToolbar({ protocol, locked, dirty, adding, hasRows, picking
   const file = useRef<HTMLInputElement>(null);
   return <div className="panel-toolbar">
     <button className={dirty ? '' : 'primary'} onClick={propose} disabled={locked}><Sparkles size={16} />{GATEWAY_COPY.propose}</button>
-    <button onClick={add} disabled={locked || adding} title={OWN_COPY.addHint}><Plus size={16} />{OWN_COPY.add}</button>
+    <button onClick={add} disabled={locked || adding} title={ADD_COPY.openHint}><Plus size={16} />{ADD_COPY.open}</button>
     {!locked && hasRows && <button className={picking ? 'active-toggle' : ''} aria-pressed={picking}
       title={GATEWAY_COPY.selectHint} onClick={togglePicking}><ListChecks size={16} />{GATEWAY_COPY.select}</button>}
     <Menu label={GATEWAY_COPY.moreLabel} align="left" trigger={<>{GATEWAY_COPY.more}<ChevronDown size={15} aria-hidden /></>} items={[

@@ -27,7 +27,9 @@ test('dot, line and words keep their screen size; the receiver tag names the sen
   assert.match(overlay, /radius=\{5 \* scale\}/);
   assert.match(overlay, /--signal-scale/);
   assert.match(overlay, /received=\{received &&/);
-  assert.match(read('features/diagram/signals/signal-layers.css'), /font-size: calc\(11px \* var\(--signal-scale, 1\)\)/);
+  // Per-link canvas words were replaced by one chip per change, scaled like the tags (ADR-0103).
+  assert.match(read('features/diagram/signals/signal-layers.css'), /\.signal-route-line \{[^}]*stroke-width: calc\(2px \* var\(--signal-scale, 1\)\)/);
+  assert.match(read('features/diagram/signals/ChangeChip.tsx'), /scale\(\$\{scale\}\)/);
   assert.match(read('features/diagram/signals/IedTag.tsx'), /ied-tag-received/);
   assert.equal(receivedLabel('FEED1', 'stNum 8', 'observed'), '← FEED1 · stNum 8');
   assert.equal(receivedLabel('FEED1', '', 'expected'), '← FEED1 · new state (expected)');

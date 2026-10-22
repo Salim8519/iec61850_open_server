@@ -1,4 +1,7 @@
 import type { GooseLink, MmsClient } from '../api/signalLayers';
+import type { ChangeGroup } from '../equipment/signalChanges.ts';
+import { symbolName } from '../equipment/signalOrigin.ts';
+import { valueWords } from '../equipment/signalPulses.ts';
 import { gooseStatus, type Status } from './status.ts';
 
 /** Words for the SLD signal layers and the Devices GOOSE tables (spec signal-layers). */
@@ -88,4 +91,44 @@ export function clientLine(client: MmsClient): string {
   const more = client.reads.length > 3 || client.more_nodes ? ' …' : '';
   const reports = client.rcbs.length ? `; reports on ${client.rcbs.join(', ')}` : '';
   return `${client.ip}${where}: ${reads ? `reads ${reads}${more}` : 'connected'}${reports}`;
+}
+
+/** Backend equipment state (Dbpos) in plain words; 0 is a switch between positions. */
+const SWITCH_WORDS = ['moving', 'open', 'closed', 'invalid'];
+const SWITCHES = new Set(['CB', 'DS', 'ES']);
+const STATE_ROLES = new Set(['direct', 'single', 'open', 'closed']);
+/** A receiver's short line after a real stNum increase from a sender on the drawing. */
+export const GOT_IT = '✓ got it';
+const plural = (count: number) => `${count} IED${count === 1 ? '' : 's'}`;
+
+/** What one change did, in plain words (ADR-0103): "open" for a breaker from the backend's own
+ * equipment state, "Trip on" for a relay row, else the signal's own words. */
+export function changeWhat(group: ChangeGroup, equipment: Record<string, { value: unknown; at: number }> = {}): string {
+  const origin = group.origin;
+  const last = group.signals.at(-1);
+  // Only a new stNum is known (no publisher value seen): say so plainly; the stNum is in the sheet.
+  const change = group.lines[0]?.pulse.change || '';
+  if (!last) return !change || change.startsWith('stNum') ? 'new state' : change;
+  const state = origin ? equipment[origin.nodeId] : undefined;
+  if (origin && SWITCHES.has(origin.kind) && STATE_ROLES.has(origin.role) && state && state.at >= group.start - 500
+    && typeof state.value === 'number' && SWITCH_WORDS[state.value]) return SWITCH_WORDS[state.value];
+  if (origin?.row) return `${origin.row} ${valueWords(last.value)}`.trim();
+  const refs = new Set(group.signals.map(signal => signal.ref));
+  return refs.size > 1 ? `${refs.size} signals changed` : last.text || 'new state';
+}
+
+const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+/** The one chip at the origin: "Open · sent to 4 IEDs" or "Open · 4 of 4 IEDs got it"; never
+ * "received" without a real stNum increase. Its hover says who and why. */
+export function changeChip(group: ChangeGroup, equipment: Record<string, { value: unknown; at: number }> = {}) {
+  const what = changeWhat(group, equipment);
+  const total = group.receivers.length;
+  const reach = group.kind === 'observed' ? `${group.got.length} of ${plural(total)} got it` : `sent to ${plural(total)}`;
+  const full = group.origin ? `${symbolName(group.origin)} ${what}` : `${group.publisher}: ${what}`;
+  const title = [`${capital(full)} (GOOSE from ${group.publisher})`,
+    group.kind === 'observed' ? `New state seen on the network for: ${group.got.join(', ')}`
+      : `Expected to reach: ${group.receivers.join(', ')}. No GOOSE check has confirmed it yet.`,
+    'Click a line for that link, or here for all GOOSE of this IED'].join('\n');
+  return { text: `${capital(what)} · ${reach}`, full, title };
 }

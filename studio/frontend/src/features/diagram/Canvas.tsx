@@ -5,6 +5,8 @@ import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
 import type { Diagram, EquipmentKind, EquipmentNode as NodeType } from '../../api/types';
 import { EquipmentNode } from '../../equipment/EquipmentNode';
 import { IedNames, LiveValues, ModeBadges, StoppedIeds } from '../../equipment/liveContext';
+import { CanvasLocked } from '../../equipment/pointPanelContext';
+import { newTapChanger } from '../../equipment/tapChanger';
 import { stableFlowNodes, type FlowNodeCache } from '../../equipment/flowNodes';
 import { rememberMeasured, type MeasuredStore } from '../../equipment/measured';
 import type { EquipmentValueStore } from '../../equipment/liveValues';
@@ -117,6 +119,8 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
       data: { kind, label: defaultLabel(kind, diagram.nodes.filter(n => n.data.kind === kind).length + 1), rotation: 0,
         ...(kind === 'PUSH_BUTTON' ? { push_mode: 'latching_status' as const } : {}),
         ...(kind === 'MEASUREMENT_LIST' ? { measurements: [] } : {}),
+        ...(kind === 'POINT_PANEL' ? { ied_id: null, points: [] } : {}),
+        ...(kind === 'TAP_TRANSFORMER' ? { tap_changer: newTapChanger() } : {}),
         ...(kind === 'INFEED' ? { infeed_type: 'line' as const, infeed_state: 'live' as const } : {}) } };
     change({ ...diagram, nodes: [...diagram.nodes, node] }); setSelection([node.id]);
   }, [change, diagram, flow, locked, setSelection]);
@@ -134,7 +138,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
     if (locked && nodeMenu) nodeMenu(node.id, event.clientX, event.clientY);
   }, [locked, nodeMenu]);
   return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}><ModeBadges.Provider value={modeBadges}>
-    <StoppedIeds.Provider value={stoppedIeds}>
+    <StoppedIeds.Provider value={stoppedIeds}><CanvasLocked.Provider value={locked}>
     <div className={`canvas zoom-${zoomTier}`} onDragOver={dragOver} onDrop={drop}>
       {toolbar}
       {locked && <div className={`canvas-lock${lockNote ? ' partial' : ''}`} role="status">{lockNote ?? 'Running · drawing is locked'}</div>}
@@ -156,7 +160,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
       {!diagram.nodes.length && <div className="canvas-empty"><h2>Start your single-line diagram</h2>
         <p>Press <strong>Add</strong> and pick a circuit breaker. Then connect it to an IED signal on the right.</p></div>}
     </div>
-  </StoppedIeds.Provider></ModeBadges.Provider></IedNames.Provider></LiveValues.Provider>;
+  </CanvasLocked.Provider></StoppedIeds.Provider></ModeBadges.Provider></IedNames.Provider></LiveValues.Provider>;
 }
 
 export const Canvas = memo(function Canvas(props: Props) {

@@ -1,5 +1,6 @@
 // Wording for the gateway simulator (Tools). Plain words first, protocol terms explained.
 import type { PointKind, Protocol } from '../api/gateway';
+import { typedColumn } from './gatewayTypedKinds.ts';
 
 export const PROTOCOL_NAMES: Record<Protocol, string> = { iec104: 'IEC 60870-5-104', modbus: 'Modbus TCP', dnp3: 'DNP3' };
 
@@ -11,19 +12,23 @@ export const PROTOCOL_HINTS: Record<Protocol, string> = {
 
 export const KIND_LABELS: Record<PointKind, string> = {
   single: 'Single point', double: 'Double point', float: 'Measurement', integer: 'Integer measurement',
-  command_single: 'Single command', command_double: 'Double command',
+  command_single: 'Single command', command_double: 'Double command', ...typedColumn(info => info.label),
 };
 
 export const ADDRESS_LABEL: Record<Protocol, string> = { iec104: 'IOA', modbus: 'Register / coil', dnp3: 'Index' };
 
 export const KIND_WHERE: Record<Protocol, Record<PointKind, string>> = {
   iec104: { single: 'M_SP', double: 'M_DP', float: 'M_ME_NC (float)', integer: 'M_ME_NB (scaled)',
-    command_single: 'C_SC', command_double: 'C_DC' },
+    command_single: 'C_SC', command_double: 'C_DC', ...typedColumn(info => info.where.iec104) },
   modbus: { single: 'Discrete input', double: 'Input/holding register', float: '2 registers, float', integer: '2 registers, int32',
-    command_single: 'Coil', command_double: 'Coil (ON = close)' },
+    command_single: 'Coil', command_double: 'Coil (ON = close)', ...typedColumn(info => info.where.modbus) },
   dnp3: { single: 'Binary input', double: 'Double-bit input', float: 'Analog input', integer: 'Analog input',
-    command_single: 'Binary output (CROB)', command_double: 'Binary output (CROB, close/trip)' },
+    command_single: 'Binary output (CROB)', command_double: 'Binary output (CROB, close/trip)',
+    ...typedColumn(info => info.where.dnp3) },
 };
+
+/** Plain hints of the typed kinds (ADR-0107), shown with the type. */
+export const KIND_HINTS: Partial<Record<PointKind, string>> = typedColumn(info => info.hint);
 
 export const SETTING_LABELS: Record<string, string> = {
   port: 'TCP port', common_address: 'Common address (ASDU)', unit_id: 'Unit ID', outstation_address: 'Outstation address',
@@ -74,8 +79,8 @@ export const GATEWAY_COPY = {
   none: 'No SCADA connected yet',
   tabs: { points: 'Points', traffic: 'Traffic', commands: 'Commands' },
   propose: 'Propose from IEDs', importCsv: 'Import CSV', exportCsv: 'Export CSV', discard: 'Discard unsaved changes',
-  pointsHint: 'Each row is one SCADA point. ScadaBench proposes only what SCADA usually needs: positions, alarms and trips, measurements, device health and commands. Change any address so it matches your SCADA point list. Add point makes up your own point with a value you control.',
-  emptyPoints: 'No points yet. Start the gateway and ScadaBench proposes them, or press Propose from IEDs, or Add point to make up your own, or import your SCADA point list as CSV (type,address,ied,reference,scale,description).',
+  pointsHint: 'Each row is one SCADA point. ScadaBench proposes only what SCADA usually needs: positions, alarms and trips, measurements, device health and commands. Change any address so it matches your SCADA point list. Add points adds points from an IED, made-up points with values you control, or rows pasted from Excel.',
+  emptyPoints: 'No points yet. Start the gateway and ScadaBench proposes them, or press Propose from IEDs, or Add points (from an IED, made up, or pasted from Excel), or import your SCADA point list as CSV (type,address,ied,reference,scale,description).',
   lockedPoints: 'Stop the gateway to change the point list.',
   willSave: 'Will save when the gateway stops',
   notSaved: 'These changes are not saved yet. Fix the problem below and the list saves by itself, or discard the changes.',
@@ -92,7 +97,7 @@ export const GATEWAY_COPY = {
 // Own points (lane G): values the user makes up, served next to the IED points.
 export const OWN_KIND_LABELS: Record<PointKind, string> = {
   single: 'Status (ON / OFF)', double: 'Position (open / closed)', float: 'Measured value', integer: 'Whole number',
-  command_single: 'Command (ON / OFF)', command_double: 'Command (open / close)',
+  command_single: 'Command (ON / OFF)', command_double: 'Command (open / close)', ...typedColumn(info => info.own),
 };
 export const OWN_COPY = {
   add: 'Add point', title: 'Add your own point', name: 'Name', namePlaceholder: 'e.g. Pump running', type: 'Type',
@@ -105,6 +110,7 @@ export const OWN_COPY = {
   filter: 'Own points', filterHint: 'Only the points you made up yourself.',
   madeUp: 'you set the value', driving: (name: string) => `drives ${name}`,
   badNumber: 'Type a number, for example 12.5.', badWhole: 'Type a whole number, for example 42.',
+  badTap: 'Type a tap position from -64 to 63, for example 5.',
   commandWarning: 'This is your own point: no device is operated. ScadaBench logs the command and sets the status it drives.',
   sentResult: (label: string, name: string, ok: boolean, reason: string) =>
     ok ? `"${label}" sent to ${name}. The Commands tab shows it.` : `"${label}" was not carried out: ${reason}`,

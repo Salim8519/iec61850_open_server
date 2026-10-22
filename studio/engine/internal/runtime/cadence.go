@@ -102,5 +102,6 @@ func (c *Coordinator) advance(elapsed float64) (err error) {
 	}()
 	c.scenarios.advance(elapsed)
 	c.automate(elapsed)
+	c.taps.advance() // simulated voltage regulators (ADR-0109)
 	return nil
 }

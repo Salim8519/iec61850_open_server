@@ -8,7 +8,11 @@ import (
 // IedRequired are the capabilities a studio_ied start reply must list
 // (runtime/worker_settings.py REQUIRED_CAPABILITIES).
 var IedRequired = []string{"versioned_updates", "atomic_control_feedback", "control_selection_events",
-	"standard_controls", "goose_aware", "goose_bus"}
+	"standard_controls", "goose_aware", "goose_bus", TypedControlsCapability}
+
+// TypedControlsCapability: the worker installs "extended_controls" (INC, ENC, APC, BAC, BSC,
+// ISC; ADR-0104). Go-only: the Python engine never sends that key and does not require it.
+const TypedControlsCapability = "typed_controls"
 
 // StaleIed is the refusal text for an outdated studio_ied.exe.
 const StaleIed = "Native engine is outdated. Use the rebuilt portable application or rebuild the native worker before Run"

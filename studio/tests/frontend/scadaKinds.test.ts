@@ -123,7 +123,8 @@ test('typed address and scale are turned into numbers as before', () => {
   assert.equal(parseScale('-1'), -1);
   assert.equal(parseScale('abc'), 0, 'not a number becomes 0, which Save refuses');
   const choices = typeChoices('iec104');
-  assert.deepEqual(choices.map(choice => choice.value), ['single', 'double', 'float', 'integer', 'command_single', 'command_double']);
+  assert.deepEqual(choices.map(choice => choice.value), ['single', 'double', 'float', 'integer', 'command_single', 'command_double',
+    'step_position', 'command_step', 'command_setpoint']); // ADR-0107 kinds follow the six
   assert.equal(choices[1].label, 'Double point · M_DP');
   assert.match(typeChoices('modbus')[0].label, /Discrete input/);
 });

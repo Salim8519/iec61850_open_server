@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "controls/controls.hpp"
+#include "controls/typed_binding.hpp"
 #include "goose/publishing.hpp"
 #include "read_hook.h"
 #include "schedule.h"
@@ -62,6 +63,9 @@ Json Server::start(const Json& config) {
     for (const auto& entry : config.value("controls", Json::array())) {
         install_control(*this, entry);
     }
+    for (const auto& entry : config.value("extended_controls", Json::array())) {
+        install_typed_control(*this, entry);
+    }
     auto goose = prepare_goose(*this, config);
     int port = config.value("port", 102);
     // Same single-threaded MMS server, driven by the worker's event loop (workstream G).
@@ -74,7 +78,7 @@ Json Server::start(const Json& config) {
     start_goose(*this);
     access.start();
     auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
-                                     "control_selection_events", "standard_controls", "goose_aware", "goose_bus"});
+                                     "control_selection_events", "standard_controls", "goose_aware", "goose_bus", "typed_controls"});
     if (observing) capabilities.push_back("mms_access");
     return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
 }
@@ -100,6 +104,7 @@ void Server::stop() {
     goose_interface.clear();
     if (handle) { studio_server_stop(handle); IedServer_destroy(handle); handle = nullptr; }
     controls.clear();
+    typed_controls.clear();
     revisions.clear();
     attributes.clear();
     if (model) { IedModel_destroy(model); model = nullptr; }

@@ -8,8 +8,8 @@ import { BAY_ORDER, BAYS, type BayKind } from '../../equipment/bayTemplates';
 const GROUPS: { title: string; kinds: EquipmentKind[] }[] = [
   { title: 'Switching', kinds: ['CB', 'DS', 'ES'] },
   { title: 'Measuring', kinds: ['CT', 'VT', 'SOURCE', 'MEASUREMENT_LIST'] },
-  { title: 'Protection & control', kinds: ['RELAY', 'TRIP_RELAY', 'PUSH_BUTTON'] },
-  { title: 'Power in and drawing', kinds: ['INFEED', 'JUNCTION'] },
+  { title: 'Protection & control', kinds: ['RELAY', 'TRIP_RELAY', 'PUSH_BUTTON', 'POINT_PANEL'] },
+  { title: 'Power in and drawing', kinds: ['INFEED', 'TAP_TRANSFORMER', 'JUNCTION'] },
 ];
 
 /** Big labelled tiles grouped by purpose; click to add or drag onto the canvas. */

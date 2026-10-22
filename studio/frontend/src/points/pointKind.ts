@@ -60,6 +60,8 @@ export function kindOfIec104(typeId: string): Kind {
 export function kindOfGatewayPoint(kind: string): Kind {
   const map: Record<string, Kind> = {
     single: 'SP', double: 'DP', float: 'MV', integer: 'MV', command_single: 'SC', command_double: 'DC',
+    // ADR-0107: a tap position is an integer status (M_ST); step and set point commands are set points.
+    step_position: 'IS', command_step: 'SE', command_setpoint: 'SE',
   };
   return map[kind] ?? 'UN';
 }
@@ -78,7 +80,7 @@ export function kindOfMasterGroup(group: string): Kind {
 /** Commands a master sends to a device (single, double, set points, outputs, register writes). */
 export function kindOfMasterCommand(kind: string): Kind {
   if (kind === 'single' || kind === 'binary_output' || kind === 'coil') return 'SC';
-  if (kind === 'double') return 'DC';
+  if (kind === 'double' || kind === 'regulating') return 'DC';
   if (kind.startsWith('setpoint') || kind.startsWith('analog_output') || kind.startsWith('register')) return 'SE';
   return 'UN';
 }

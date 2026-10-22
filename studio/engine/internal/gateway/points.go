@@ -20,9 +20,11 @@ const MaxPoints = 5000
 
 // startAddress is the first address of each block per protocol (gateway_points.START).
 var startAddress = map[string]map[string]int64{
-	"iec104": {"single": 10001, "double": 20001, "float": 30001, "integer": 40001, "command": 50001},
-	"modbus": {"single": 0, "double": 0, "float": 1000, "integer": 5000, "command": 0},
-	"dnp3":   {"single": 0, "double": 0, "float": 0, "integer": 0, "command": 0},
+	"iec104": {"single": 10001, "double": 20001, "float": 30001, "integer": 40001, "command": 50001,
+		KindStepPosition: 45001, KindSetpoint: 55001},
+	"modbus": {"single": 0, "double": 0, "float": 1000, "integer": 5000, "command": 0,
+		KindStepPosition: 8000, KindSetpoint: 9000},
+	"dnp3": {"single": 0, "double": 0, "float": 0, "integer": 0, "command": 0, KindStepPosition: 0, KindSetpoint: 0},
 }
 
 // PointID is point_id: "<ied>:<ref>:<kind>".
@@ -33,8 +35,10 @@ func pointIDOf(ied, ref, kind any) string {
 	return pytext.Str(ied) + ":" + pytext.Str(ref) + ":" + pytext.Str(kind)
 }
 
-// IsCommandKind reports kind in COMMAND_KINDS.
-func IsCommandKind(kind string) bool { return kind == "command_single" || kind == "command_double" }
+// IsCommandKind reports kind in COMMAND_KINDS, or a typed command kind (ADR-0107).
+func IsCommandKind(kind string) bool {
+	return kind == "command_single" || kind == "command_double" || kind == KindStep || kind == KindSetpoint
+}
 
 // Cell is one (space, address) pair a point occupies.
 type Cell struct {
@@ -47,6 +51,9 @@ func space(protocol, kind string) string {
 	if protocol == "iec104" {
 		return "ioa"
 	}
+	if kind == KindSetpoint { // Modbus holding registers share the register view; DNP3 analog outputs
+		return map[string]string{"modbus": "register", "dnp3": "analog_output"}[protocol]
+	}
 	if IsCommandKind(kind) {
 		return "command"
 	}
@@ -56,24 +63,32 @@ func space(protocol, kind string) string {
 		}
 		return "register"
 	}
-	if kind == "float" || kind == "integer" {
+	if kind == "float" || kind == "integer" || kind == KindStepPosition {
 		return "analog"
 	}
 	return kind
 }
 
-// width is the number of Modbus registers per value (1 for other protocols).
-func width(protocol, kind string) int64 {
+// width is the number of Modbus registers per value (1 for other protocols); a set point's
+// width follows its format ("" is the protocol's default, float).
+func width(protocol, kind string) int64 { return widthOf(protocol, kind, "") }
+
+func widthOf(protocol, kind, format string) int64 {
 	if protocol == "modbus" && (kind == "float" || kind == "integer") {
+		return 2
+	}
+	if protocol == "modbus" && kind == KindSetpoint && format != "int16" && format != "uint16" {
 		return 2
 	}
 	return 1
 }
 
 // cells is occupied() for a kind and an integer address.
-func cells(protocol, kind string, address int64) []Cell {
+func cells(protocol, kind string, address int64) []Cell { return cellsOf(protocol, kind, "", address) }
+
+func cellsOf(protocol, kind, format string, address int64) []Cell {
 	name := space(protocol, kind)
-	count := width(protocol, kind)
+	count := widthOf(protocol, kind, format)
 	result := make([]Cell, 0, count)
 	for offset := int64(0); offset < count; offset++ {
 		result = append(result, Cell{Space: name, Address: address + offset})
@@ -86,5 +101,6 @@ func cells(protocol, kind string, address int64) []Cell {
 func Occupied(protocol string, point *pyjson.Object) []Cell {
 	kind, _ := get(point, "kind").(string)
 	address, _ := pytext.Int64(get(point, "address"))
-	return cells(protocol, kind, address)
+	format, _ := getOr(point, "format", "").(string)
+	return cellsOf(protocol, kind, format, address)
 }

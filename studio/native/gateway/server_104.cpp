@@ -1,5 +1,5 @@
 // IEC 60870-5-104 slave (controlled station) on lib60870: interrogation, spontaneous
-// changes with time tags, clock sync, read and single/double commands.
+// changes with time tags, clock sync, read and commands (single, double, step, set point).
 #include "iec104_commands.hpp"
 #include "iec104_objects.hpp"
 #include "protocol.hpp"
@@ -120,7 +120,7 @@ private:
         IMasterConnection_sendACT_CON(connection, asdu, false);
         auto parameters = IMasterConnection_getApplicationLayerParameters(connection);
         int sent = 0;
-        for (const char* kind : {"single", "double", "float", "integer"}) {
+        for (const char* kind : {"single", "double", "float", "integer", "step_position"}) {
             CS101_ASDU answer = nullptr;
             for (const auto& point : self.table.all()) {
                 if (point.kind != kind) continue;
@@ -177,7 +177,7 @@ private:
 
     static bool on_asdu(void* parameter, IMasterConnection connection, CS101_ASDU asdu) {
         auto& self = *static_cast<Iec104Server*>(parameter);
-        if (!Iec104Commands::handles(CS101_ASDU_getTypeID(asdu))) return false;
+        if (!Iec104Commands::handles(CS101_ASDU_getTypeID(asdu), self.commands.typed())) return false;
         if (self.wrong_address(connection, asdu)) return true;
         self.commands.handle(connection, asdu, peer_of(connection));
         return true;

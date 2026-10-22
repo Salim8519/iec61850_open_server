@@ -1,19 +1,24 @@
 import type { GooseLinkMap, MmsClient } from '../api/signalLayers';
 import { changeText, expectedLinks, LINK_FADE_MS, observedLinks, PulseGate, pulseLabel, receivedLabel,
-  type GooseState, type PulseKind } from './signalPulses.ts';
+  type GooseState, type PulseKind, type SignalChange } from './signalPulses.ts';
 
-export type Pulse = { key: number; linkId: string; kind: PulseKind; label: string; short: string; start: number };
+/** `cause`: key of the publisher signal change that raised it (ADR-0103), when known. */
+export type Pulse = { key: number; linkId: string; kind: PulseKind; label: string; short: string; change: string;
+  start: number; cause?: number };
 export type ControlPulse = { key: number; iedId: string; peer: string; label: string; start: number };
 export type Layers = { goose: boolean; readers: boolean };
 export type SignalLayerState = {
   layers: Layers; map: GooseLinkMap; goose: Record<string, GooseState>;
   listening: boolean; pulses: Pulse[]; controls: ControlPulse[]; clients: Record<string, MmsClient[]>;
+  /** Recent publisher changes that belong to a sent dataset, and the backend's latest equipment states
+   * (`equipment_state`), so one change can be worded "CB Y130 open" (ADR-0103). View data only. */
+  signals: SignalChange[]; equipment: Record<string, { value: unknown; at: number }>;
 };
 type Event = { kind: string; ied_id?: string; ref?: string; value?: unknown; [key: string]: unknown };
 
 export const EMPTY_MAP: GooseLinkMap = { ieds: [], blocks: [], links: [], diagnostics: [], summary: {}, running: false };
 const EMPTY: SignalLayerState = { layers: { goose: false, readers: false }, map: EMPTY_MAP, goose: {},
-  listening: false, pulses: [], controls: [], clients: {} };
+  listening: false, pulses: [], controls: [], clients: {}, signals: [], equipment: {} };
 
 /** One snapshot for the SLD signal layers, fed by live events. Only the overlay subscribes,
  * so GOOSE and MMS traffic never re-renders the equipment nodes (interaction contract). */
@@ -22,7 +27,7 @@ export class SignalLayerStore {
   private listeners = new Set<() => void>();
   private gate = new PulseGate();
   private counter = 0;
-  private recent = new Map<string, { text: string; at: number }>();
+  private recent = new Map<string, { text: string; at: number; cause: number }>();
 
   get = () => this.value;
 
@@ -61,14 +66,14 @@ export class SignalLayerStore {
   /** Stop clears everything live; the declared map stays. */
   stopped() {
     this.gate.clear(); this.recent.clear();
-    this.update({ goose: {}, listening: false, pulses: [], controls: [], clients: {} });
+    this.update({ goose: {}, listening: false, pulses: [], controls: [], clients: {}, signals: [], equipment: {} });
   }
 
   private pulse(links: { id: string; publisher: string; subscriber: string; gocb_ref: string | null }[],
-    kind: PulseKind, change: string, now: number) {
+    kind: PulseKind, change: string, now: number, cause?: number) {
     // Full IED names everywhere on the SLD (change 0097): "C03_Y1105", never "C03".
     const fresh = links.filter(link => this.gate.allow(link.id, now)).map(link => ({
-      key: ++this.counter, linkId: link.id, kind, start: now,
+      key: ++this.counter, linkId: link.id, kind, start: now, change, ...(cause === undefined ? {} : { cause }),
       label: pulseLabel(link.publisher, link.subscriber, change, kind),
       short: receivedLabel(link.publisher, change, kind) }));
     if (fresh.length) this.update({ pulses: [...this.value.pulses.filter(item => now - item.start < LINK_FADE_MS), ...fresh] },
@@ -82,8 +87,9 @@ export class SignalLayerStore {
         st_num: typeof event.st_num === 'number' ? event.st_num : undefined };
       this.update({ goose: { ...this.value.goose, [event.gocb_ref]: state }, listening: true }, !this.value.layers.goose);
       const recent = this.recent.get(event.gocb_ref);
-      const change = recent && now - recent.at < 3000 ? recent.text : state.st_num !== undefined ? `stNum ${state.st_num}` : '';
-      this.pulse(observedLinks(this.value.map, event.gocb_ref, previous?.st_num, state.st_num), 'observed', change, now);
+      const known = recent && now - recent.at < 3000 ? recent : undefined;
+      const change = known ? known.text : state.st_num !== undefined ? `stNum ${state.st_num}` : '';
+      this.pulse(observedLinks(this.value.map, event.gocb_ref, previous?.st_num, state.st_num), 'observed', change, now, known?.cause);
     } else if (event.kind === 'signal' && event.ied_id && event.ref) {
       const publisher = this.value.map.ieds.find(ied => ied.ied_id === event.ied_id)?.name;
       if (!publisher) return;
@@ -92,8 +98,16 @@ export class SignalLayerStore {
       const node = event.ref.split('/').pop() || event.ref;
       const text = describe?.(event.ied_id, event.ref, event.value) || changeText(node.replace(/\.stVal$/, ''), event.value,
         /\.Pos\.stVal$/.test(event.ref));
-      for (const link of links) if (link.gocb_ref) this.recent.set(link.gocb_ref, { text, at: now });
-      if (!this.value.listening) this.pulse(links, 'expected', text, now);
+      // Every change is kept, even one the per-link gate silences, so its partner contact joins it.
+      const signal: SignalChange = { key: ++this.counter, iedId: event.ied_id, publisher, ref: event.ref, value: event.value,
+        text, start: now, linkIds: links.map(link => link.id) };
+      this.update({ signals: [...this.value.signals.filter(item => now - item.start < LINK_FADE_MS), signal] },
+        !this.value.layers.goose || !this.value.pulses.length);
+      for (const link of links) if (link.gocb_ref) this.recent.set(link.gocb_ref, { text, at: now, cause: signal.key });
+      if (!this.value.listening) this.pulse(links, 'expected', text, now, signal.key);
+    } else if (event.kind === 'equipment_state' && typeof event.node_id === 'string') {
+      const equipment = { ...this.value.equipment, [event.node_id]: { value: event.value, at: now } };
+      this.update({ equipment }, !this.value.layers.goose || !this.value.pulses.length);
     } else if (event.kind === 'mms_access' && event.ied_id && Array.isArray(event.clients)) {
       this.update({ clients: { ...this.value.clients, [event.ied_id]: event.clients as MmsClient[] } }, !this.value.layers.readers);
     } else if (event.kind === 'control_applied' && event.external === true && event.ied_id) {
@@ -109,7 +123,9 @@ export class SignalLayerStore {
   prune(now: number): number | null {
     const pulses = this.value.pulses.filter(item => now - item.start < LINK_FADE_MS);
     const controls = this.value.controls.filter(item => now - item.start < LINK_FADE_MS);
-    if (pulses.length !== this.value.pulses.length || controls.length !== this.value.controls.length) this.update({ pulses, controls });
+    const signals = this.value.signals.filter(item => now - item.start < LINK_FADE_MS);
+    if (pulses.length !== this.value.pulses.length || controls.length !== this.value.controls.length) this.update({ pulses, controls, signals });
+    else if (signals.length !== this.value.signals.length) this.update({ signals }, true);
     const starts = [...pulses, ...controls].map(item => item.start + LINK_FADE_MS - now);
     return starts.length ? Math.max(16, Math.min(...starts)) : null;
   }

@@ -3,6 +3,8 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { gatewayApi, type GatewayPoint, type PointKind, type Protocol } from '../../../api/gateway';
 import type { Ied } from '../../../api/types';
 import { ADDRESS_LABEL, GATEWAY_COPY, OWN_COPY } from '../../../copy/gateway';
+import { ADD_COPY } from '../../../copy/gatewayAdd';
+import type { SmartAnswer } from '../../../api/gatewayAdd';
 import { kindOfGatewayPoint } from '../../../points/pointKind';
 import { useListFilter } from '../../../state/useListFilter';
 import { FilterBar } from '../../../ui/FilterBar';
@@ -10,7 +12,8 @@ import { choicesOf, effective } from '../../../ui/filterState';
 import { stillThere, toggleShown, togglePick } from '../../../ui/pickRows';
 import { SaveProblem } from '../../../ui/SaveStatus';
 import { SelectBar } from '../../../ui/SelectBar';
-import { AddOwnPoint } from './AddOwnPoint';
+import { AddPointsDialog } from './add/AddPointsDialog';
+import { SmartPropose } from './add/SmartPropose';
 import { CommandWarning, type PendingCommand } from './CommandSend';
 import { kindCounts } from './kindCounts';
 import { isOwn, liveEdit, ownName } from './ownPoints';
@@ -35,18 +38,26 @@ export function PointTable({ protocol, ieds, locked, fail }: {
   const [skipped, setSkipped] = useState<string[]>([]); // lines of an imported file that could not be used (not a save problem)
   const [page, setPage] = useState(0);
   const [adding, setAdding] = useState(false);
+  const [proposing, setProposing] = useState(false);
   const [pending, setPending] = useState<PendingCommand | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState<{ ok: boolean; text: string } | null>(null);
   const [picked, setPicked] = useState<Set<string> | null>(null);
   const [changing, setChanging] = useState<string | null>(null);
   const filter = useListFilter('scada-points', GATEWAY_POINT_FILTER);
-  useEffect(() => { setNotes([]); setSkipped([]); setAdding(false); setPicked(null); setChanging(null); }, [protocol]);
+  useEffect(() => { setNotes([]); setSkipped([]); setAdding(false); setProposing(false); setPicked(null); setChanging(null); }, [protocol]);
   useEffect(() => setPage(0), [filter.values]);
-  // Own points stay when the IED points are proposed again.
-  const propose = () => gatewayApi.propose(protocol, (rows ?? []).filter(isOwn))
-    .then(value => { edit(value.points, rows); setSkipped([]); setNotes(value.notes.length ? value.notes : [GATEWAY_COPY.proposedNote]); })
-    .catch(error => fail(error.message));
+  // Propose from IEDs opens the smart preview (ADR-0105): per-IED ticks, "Add only new points" keeps the list as
+  // edited, "Replace" keeps own points. Applying hands over the list before, so Undo puts it back.
+  const applyProposal = (value: SmartAnswer) => {
+    edit(value.points, rows); setSkipped([]); setProposing(false);
+    setNotes(value.notes.length ? value.notes : [GATEWAY_COPY.proposedNote]);
+  };
+  // Add points: the new points join the list and save at once; Undo removes them again.
+  const addPoints = (points: GatewayPoint[]) => {
+    if (!rows) return;
+    edit([...rows, ...points], rows); setAdding(false); setSkipped([]); setNotes([ADD_COPY.added(points.length)]);
+  };
   const importFile = (picked: File) => picked.text().then(text => gatewayApi.importCsv(protocol, text))
     .then(value => {
       // A file with no usable rows leaves the list as it was; only its problems are shown.
@@ -96,10 +107,12 @@ export function PointTable({ protocol, ieds, locked, fail }: {
     <Undo2 size={14} />{GATEWAY_COPY.undo}</button>;
   return <>
     <PointToolbar protocol={protocol} locked={locked} dirty={dirty} adding={adding} hasRows={!!rows?.length} picking={!!picked}
-      propose={propose} add={() => setAdding(true)} togglePicking={() => setPicked(picked ? null : new Set())}
+      propose={() => setProposing(true)} add={() => setAdding(true)} togglePicking={() => setPicked(picked ? null : new Set())}
       removeAll={() => removeRows(() => false)} importFile={importFile} state={state} waiting={locked && dirty} />
-    {adding && rows && <AddOwnPoint protocol={protocol} rows={rows} fail={fail} close={() => setAdding(false)}
-      add={point => { edit([...rows, point]); setAdding(false); }} />}
+    {adding && rows && <AddPointsDialog protocol={protocol} ieds={ieds} rows={rows} fail={fail} close={() => setAdding(false)}
+      add={addPoints} />}
+    {proposing && rows && <SmartPropose protocol={protocol} rows={rows} fail={fail} close={() => setProposing(false)}
+      apply={applyProposal} />}
     <FilterBar label="Filter points" spec={GATEWAY_POINT_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
       shown={shown.length} total={rows?.length ?? 0} options={options} counts={counts} />
     {picked && !locked && <SelectBar count={chosen.length} shown={shown.length} noun="point" cancel={() => setPicked(null)}

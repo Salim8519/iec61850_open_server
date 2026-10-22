@@ -1,0 +1,62 @@
+/* Add points dialog and smart Propose preview (ADR-0105): the app's modal <dialog> (.import-dialog), wider, with
+   its body scrolling on its own; shared tokens only; fits 1366x768 without clipping. */
+.import-dialog.add-points { width: min(1040px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 16px 20px;
+  overflow: hidden; box-shadow: var(--shadow-large); }
+.import-dialog.add-points[open] { display: flex; flex-direction: column; gap: 10px; }
+.add-points-head { align-items: center; gap: 10px; }
+.add-points-head h3 { margin: 0; }
+.add-points-hint { margin: 0; }
+.add-points-body { flex: 1; min-height: 0; overflow: auto; display: grid; gap: 12px; align-content: start; padding-right: 4px; }
+.add-points .segmented-control { flex-wrap: wrap; }
+.add-steps { display: grid; gap: 12px; }
+.add-step { display: grid; gap: 8px; }
+.add-step h4, .add-points-body h4 { margin: 0; font-size: 15px; }
+.add-actions { gap: 10px; align-items: center; flex-wrap: wrap; }
+.add-check { gap: 8px; align-items: center; font-weight: 600; }
+.add-check small { font-weight: 400; }
+.add-blocked { color: var(--warning-text); }
+.add-real { border: 2px dashed var(--warning); background: var(--warning-soft); color: var(--warning-text); }
+.add-real p { margin: 0 0 6px; display: flex; gap: 8px; align-items: center; }
+/* The type list: most used first, more types below; each choice shows badge, name and the protocol's type ids. */
+.type-list { display: grid; gap: 8px; }
+.type-group { display: grid; gap: 4px; }
+.type-group-title { font-weight: 600; }
+.type-choices { display: flex; flex-wrap: wrap; gap: 6px; }
+.type-choice { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 12px; text-align: left; }
+.type-choice.active { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent); }
+.type-choice-text { display: grid; line-height: 1.25; }
+.type-choice-text small { color: var(--text-2); font-size: 12px; white-space: nowrap; }
+/* The IED chooser: one button per IED with its Simulated / Real badge; wraps, never cuts a name. */
+.ied-chooser { display: grid; gap: 6px; }
+.ied-chooser .search-field { max-width: 320px; }
+.ied-choices { display: flex; flex-wrap: wrap; gap: 6px; max-height: 168px; overflow: auto; }
+.ied-choice { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 10px; }
+.ied-choice.active { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent); }
+/* Fitting signals with ticks. */
+.candidate-list { display: grid; gap: 6px; }
+.candidate-tools { gap: 8px; flex-wrap: wrap; }
+.candidate-tools .search-field { flex: 1 1 260px; max-width: 420px; }
+.candidate-rows { display: grid; gap: 2px; max-height: 260px; overflow: auto; border: 1px solid var(--border);
+  border-radius: var(--radius-small); padding: 4px; }
+.candidate-row { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 10px; cursor: pointer; }
+.candidate-row:hover { background: var(--surface-2); }
+.candidate-row.taken { cursor: default; color: var(--text-2); }
+.candidate-text { display: grid; min-width: 0; flex: 1; line-height: 1.3; }
+.candidate-text small { color: var(--text-2); overflow-wrap: anywhere; }
+.candidate-row .badge { flex-shrink: 0; }
+/* Planned rows: a bad row has a ⚠ line with its reason under it (words, not colour only). */
+.planned-rows { max-height: 300px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-small); }
+.planned-rows td { padding: 4px 6px; vertical-align: middle; }
+.planned-rows .planned-name input { width: 220px; }
+.planned-rows .planned-ref { max-width: 420px; overflow-wrap: anywhere; }
+.planned-rows tr.planned-bad > td { background: var(--error-soft); }
+.planned-rows tr.planned-problem > td { padding: 2px 8px 6px 14px; color: var(--error); font-size: var(--font-size-small);
+  border-left: 3px double var(--error); background: var(--error-soft); }
+/* Paste box. */
+.paste-label { display: grid; gap: 4px; font-weight: 600; }
+.paste-box { width: 100%; min-height: 120px; font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; resize: vertical; }
+.own-form.bare { padding: 0; border-bottom: 0; background: transparent; }
+/* Smart Propose preview. */
+.import-dialog.smart-propose { width: min(760px, calc(100vw - 32px)); }
+.smart-ieds { display: grid; gap: 4px; }
+.smart-ied { gap: 10px; align-items: center; flex-wrap: wrap; padding: 4px 0; }

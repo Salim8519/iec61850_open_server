@@ -12,13 +12,15 @@ const GROUP_GAP = 120;
 const PARK_GAP_Y = 40;
 const MIN_PARK_HEIGHT = 480;
 /** Unwired items are parked beside the drawing in this order: panels first. */
-const PARK_ORDER: EquipmentKind[] = ['RELAY', 'MEASUREMENT_LIST', 'TRIP_RELAY', 'PUSH_BUTTON', 'SOURCE', 'INFEED', 'CT', 'VT', 'CB', 'DS', 'ES', 'JUNCTION'];
+const PARK_ORDER: EquipmentKind[] = ['RELAY', 'MEASUREMENT_LIST', 'POINT_PANEL', 'TRIP_RELAY', 'PUSH_BUTTON', 'SOURCE', 'INFEED', 'TAP_TRANSFORMER', 'CT', 'VT', 'CB', 'DS', 'ES', 'JUNCTION'];
 
 /** Size used when the canvas has not measured an item yet (matches the stylesheet). */
 export function defaultSize(node: EquipmentNode): Size {
   if (node.data.kind === 'JUNCTION') return { width: 40, height: 40 };
   if (node.data.kind === 'RELAY') return { width: 216, height: 60 + 34 * (node.data.relay_statuses?.length ?? 0) };
   if (node.data.kind === 'MEASUREMENT_LIST') return { width: 248, height: 60 + 33 * (node.data.measurements?.length ?? 0) };
+  if (node.data.kind === 'POINT_PANEL') return { width: 220, height: 132 };
+  if (node.data.kind === 'TAP_TRANSFORMER') return { width: 132, height: 200 };
   return { width: 108, height: 120 };
 }
 

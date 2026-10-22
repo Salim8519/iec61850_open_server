@@ -32,6 +32,11 @@ func (c *Coordinator) validateTarget(binding plant.Binding) (*running, error) {
 
 // Operate is POST /equipment/<node>/operate (EquipmentControl.operate). action "" is None.
 func (c *Coordinator) Operate(nodeID string, value any, action string) (*pyjson.Object, error) {
+	return c.OperateWith(nodeID, value, action, nil)
+}
+
+// OperateWith is Operate with the request's "options" (nil when it sent none, ADR-0108).
+func (c *Coordinator) OperateWith(nodeID string, value any, action string, options any) (*pyjson.Object, error) {
 	if !c.isLive() {
 		return nil, apperr.ValueError("Run the IEDs before operating equipment")
 	}
@@ -41,37 +46,61 @@ func (c *Coordinator) Operate(nodeID string, value any, action string) (*pyjson.
 	}
 	data := pyval.Map(node, "data")
 	switch {
+	case pyval.Str(data, "kind") == tapTransformerKind: // raise, lower, auto, manual (ADR-0109)
+		return c.tapOperate(node, action)
 	case pyval.Str(data, "kind") == "PUSH_BUTTON" && pyval.Get(data, "push_mode") == "latching_status":
 		return c.toggle(node, action)
 	case pyval.Str(data, "kind") == "PUSH_BUTTON" && pyval.Get(data, "push_mode") == "self_resetting":
 		return c.momentary(node, action)
 	}
-	semantic, wire, err := plant.SemanticCommand(data, action, value)
+	plan, err := c.planCommand(data, value, action)
 	if err != nil {
 		return nil, err
 	}
+	opts, sent, err := commandOptionsFrom(options)
+	if err != nil {
+		return nil, err
+	}
+	return c.command(nodeID, plan, opts, sent)
+}
+
+// commandPlan is a checked equipment command: the node data, IED and control, the semantic
+// action and wire value, and the feedback targets the native status change does not cover.
+type commandPlan struct {
+	data, ied, control *pyjson.Object
+	semantic           string
+	wire               bool
+	planned            []plant.Target
+}
+
+// planCommand is EquipmentControl.operate's checks, in Python's order, for one non-push command.
+func (c *Coordinator) planCommand(data *pyjson.Object, value any, action string) (commandPlan, error) {
+	semantic, wire, err := plant.SemanticCommand(data, action, value)
+	if err != nil {
+		return commandPlan{}, err
+	}
 	binding := pyval.Map(data, "control_binding")
 	if binding == nil || binding.Len() == 0 {
-		return nil, apperr.ValueError("Equipment has no command mapping")
+		return commandPlan{}, apperr.ValueError("Equipment has no command mapping")
 	}
 	ied := findIed(c.opt.Project.Current(), pyval.Str(binding, "ied_id"))
 	if ied == nil {
-		return nil, apperr.Coded("Unknown IED", "not_found")
+		return commandPlan{}, apperr.Coded("Unknown IED", "not_found")
 	}
 	if refusal := commandRefusal(ied); refusal != "" {
-		return nil, apperr.ValueError(refusal)
+		return commandPlan{}, apperr.ValueError(refusal)
 	}
 	control := newIedModel(ied).control(pyval.Str(binding, "ref"))
 	expected, cdcErr := plant.ExpectedCDC(pyval.Str(data, "kind"))
 	if control == nil || cdcErr != nil || pyval.Get(control, "cdc") != expected {
 		if control != nil && cdcErr != nil {
-			return nil, cdcErr
+			return commandPlan{}, cdcErr
 		}
-		return nil, apperr.ValueError("Equipment command mapping is incompatible")
+		return commandPlan{}, apperr.ValueError("Equipment command mapping is incompatible")
 	}
 	targets, err := plant.FeedbackTargets(data, pyval.Map(data, "state_mapping"), semantic)
 	if err != nil {
-		return nil, err
+		return commandPlan{}, err
 	}
 	iedID, statusRef := pyval.Str(ied, "id"), pyval.Str(control, "status")
 	var planned []plant.Target
@@ -82,17 +111,17 @@ func (c *Coordinator) Operate(nodeID string, value any, action string) (*pyjson.
 	}
 	for _, target := range planned {
 		if _, err := c.validateTarget(target.Binding); err != nil {
-			return nil, err
+			return commandPlan{}, err
 		}
 	}
-	return c.command(nodeID, data, ied, control, planned, semantic, wire)
+	return commandPlan{data: data, ied: ied, control: control, semantic: semantic, wire: wire, planned: planned}, nil
 }
 
-func (c *Coordinator) command(nodeID string, data, ied, control *pyjson.Object, planned []plant.Target,
-	semantic string, wire bool) (*pyjson.Object, error) {
+func (c *Coordinator) command(nodeID string, plan commandPlan, options CommandOptions, sent bool) (*pyjson.Object, error) {
 	c.commandMu.Lock()
 	defer c.commandMu.Unlock()
-	iedID, controlRef := pyval.Str(ied, "id"), pyval.Str(control, "ref")
+	data, ied, semantic, wire := plan.data, plan.ied, plan.semantic, plan.wire
+	iedID, controlRef := pyval.Str(ied, "id"), pyval.Str(plan.control, "ref")
 	c.plant.markOwn(nodeID)
 	c.access.markOwn(iedID, controlRef)
 	c.mu.Lock()
@@ -101,11 +130,11 @@ func (c *Coordinator) command(nodeID string, data, ied, control *pyjson.Object, 
 	if item == nil || item.worker == nil {
 		return nil, apperr.ValueError("IED is not running")
 	}
-	result, err := c.commands.operate(ied, state, controlRef, wire, item.host, item.port)
+	result, err := c.sendEquipment(nodeID, plan, options, state, item)
 	if err != nil {
 		return nil, err
 	}
-	applied, changed, err := c.applyFeedback(planned)
+	applied, changed, err := c.applyFeedback(plan.planned)
 	if err != nil {
 		c.emit("equipment_feedback_failed", pyval.Obj("node_id", nodeID, "control_ref", controlRef, "message", errorText(err)))
 		return nil, apperr.RuntimeError("MMS command was applied, but simulated equipment feedback failed")
@@ -117,7 +146,11 @@ func (c *Coordinator) command(nodeID string, data, ied, control *pyjson.Object, 
 	if plant.Switches[pyval.Str(data, "kind")] && semantic == "close" {
 		position = "closed"
 	}
-	if err := c.opt.Project.NodeData(nodeID, pyval.Obj("initial_position", position)); err != nil {
+	changes := pyval.Obj("initial_position", position)
+	if remembered := optionChanges(data, options, sent); remembered != nil {
+		changes.Set("command_options", pyval.Get(remembered, "command_options"))
+	}
+	if err := c.opt.Project.NodeData(nodeID, changes); err != nil {
 		return nil, err
 	}
 	c.plant.publishNode(nodeID)

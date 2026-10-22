@@ -68,6 +68,10 @@ func (lookup *pointLookup) target(kind, iedID, ref string) (*pyjson.Object, stri
 		return nil, "its IED is not in the project", nil
 	}
 	if IsCommandKind(kind) {
+		if IsTypedKind(kind) { // a typed control (ADR-0104) and its class (ADR-0107)
+			reason, err := typedControlReason(kind, ied, ref)
+			return ied, reason, err
+		}
 		reason, err := controlReason(ied, ref)
 		return ied, reason, err
 	}
@@ -86,6 +90,9 @@ func (lookup *pointLookup) target(kind, iedID, ref string) (*pyjson.Object, stri
 	valueKind, err := subscript(signal, "kind")
 	if err != nil {
 		return nil, "", err
+	}
+	if kind == KindStepPosition { // Go only (ADR-0107)
+		return ied, stepPositionReason(ref, valueKind), nil
 	}
 	allowed, err := allowedKindsOf(valueKind)
 	if err != nil {

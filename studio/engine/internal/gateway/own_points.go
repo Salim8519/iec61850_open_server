@@ -52,7 +52,7 @@ func DefaultOwnValue(kind string) any {
 		return int64(1)
 	case "float":
 		return 0.0
-	case "single", "integer":
+	case "single", "integer", KindStepPosition:
 		return int64(0)
 	}
 	return nil
@@ -93,7 +93,7 @@ func OwnValue(kind string, raw any) (any, string) {
 		}
 		return nil, "the value must be a whole number from -2147483648 to 2147483647"
 	}
-	return nil, "choose a type"
+	return typedOwnValue(kind, raw)
 }
 
 func boolInt(flag bool, off, on int64) int64 {
@@ -173,19 +173,20 @@ type ownEntry struct {
 
 // checkTargets drops a command's target that is not an own status point of the list.
 func checkTargets(owned []ownEntry) []string {
-	status := map[string]bool{}
+	kinds := map[string]string{}
 	for _, entry := range owned {
-		if kind := get(entry.point, "kind"); kind == "single" || kind == "double" {
-			status[get(entry.point, "id").(string)] = true
-		}
+		kinds[get(entry.point, "id").(string)] = get(entry.point, "kind").(string)
 	}
 	problems := []string{}
 	for _, entry := range owned {
 		target, has := getOr(entry.point, "target", "").(string)
-		if has && target != "" && !status[target] {
+		if !has || target == "" {
+			continue
+		}
+		command := get(entry.point, "kind").(string)
+		if reason := targetReason(command, kinds[target], target); reason != "" {
 			entry.point.Delete("target")
-			problems = append(problems, entry.label+": the status point it changes ("+target+
-				") is not an own single or double point of this list")
+			problems = append(problems, entry.label+": "+reason)
 		}
 	}
 	return problems

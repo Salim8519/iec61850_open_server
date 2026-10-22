@@ -14,7 +14,7 @@ export function OwnReference({ row, rows, locked, change }: {
       ? <select className="own-target" value={row.target ?? ''} aria-label={OWN_COPY.drives}
         onChange={event => change(event.target.value || undefined)}>
         <option value="">{OWN_COPY.drivesNone}</option>
-        {ownTargets(rows).map(choice => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
+        {ownTargets(rows, row.kind).map(choice => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
       </select>
       : <span className="small muted own-note">{drives ? OWN_COPY.driving(drives) : OWN_COPY.madeUp}</span>}</span></td>;
 }

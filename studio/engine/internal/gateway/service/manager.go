@@ -27,6 +27,7 @@ type Manager struct {
 	Traffic    *numlog.Log
 	Commands   *numlog.Log
 	Converter  *Converter // protocol converter role; set by the composition
+	Typed      TypedCommands // typed IEC 61850 commands (ADR-0104/0107); set by the composition
 	changes               // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // Start/Stop one at a time (Python's RLock around them)
@@ -42,6 +43,7 @@ type Manager struct {
 	sync      *syncer
 	executor  *executor
 	own       ownStore // values of the own points the running gateway serves (lane G)
+	selected  selections // IED selections a SCADA select made, until execute or cancel (ADR-0107)
 }
 
 // NewManager returns a stopped gateway for studio_gateway at executable.

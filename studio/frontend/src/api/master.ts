@@ -2,8 +2,9 @@ import { api } from './client';
 
 export type Role = 'gateway' | 'master' | 'converter';
 export type MasterProtocol = 'iec104' | 'dnp3' | 'modbus';
-export type CommandKind = 'single' | 'double' | 'setpoint_float' | 'setpoint_scaled' | 'setpoint_normalized' | 'clock'
-  | 'binary_output' | 'analog_output_int' | 'analog_output_float' | 'coil' | 'register' | 'registers_int32' | 'registers_float';
+export type CommandKind = 'single' | 'double' | 'regulating' | 'setpoint_float' | 'setpoint_scaled' | 'setpoint_normalized'
+  | 'clock' | 'binary_output' | 'analog_output_int16' | 'analog_output_int' | 'analog_output_float'
+  | 'coil' | 'register' | 'registers_int32' | 'registers_float';
 export type CrobCode = 'latch' | 'pulse' | 'trip_close';
 export type CommandRoute = { upstream: number; upstream_kind: string; kind: string; address: number; select: boolean };
 export type ModbusRange = { table: string; start: number; count: number; data_type: string; word_order: string };
@@ -18,8 +19,11 @@ export type ProbeState = { state: 'idle' | 'running' | 'done' | 'failed'; table?
 export type MasterPoint = { key: string; group: string; group_name: string; type: string; address: number; value: unknown;
   value_text: string; quality_text: string; good: boolean; time_ms: number | null; cause: string; changes: number;
   label: string; ticked: boolean; stale: boolean; command: CommandKind | null };
-export type MasterCommand = { kind: CommandKind; address?: number; value?: number; select?: boolean; code?: CrobCode };
+export type MasterCommand = { kind: CommandKind; address?: number; value?: number; select?: boolean; code?: CrobCode;
+  qualifier?: number; deactivate?: boolean; count?: number; on_time_ms?: number; off_time_ms?: number };
 export type CommandAnswer = { ok: boolean; text: string; terminated?: boolean };
+export type CyclicState = { running: boolean; sends: number; interval_ms: number };
+export type CyclicOptions = { interval_ms: number; address_step: number; toggle: boolean };
 export type MasterCommandEntry = { seq: number; at: number; who: string; kind: CommandKind; address: number | null;
   value: number | null; select: boolean; state: 'sent' | 'confirmed' | 'refused'; text: string };
 type Page<T> = { entries: T[]; last: number; dropped: number };
@@ -45,6 +49,10 @@ export const masterApi = {
   csvUrl: () => '/api/v1/tools/master/points.csv',
   importLabels: (text: string) => api<{ imported: number; problems: string[] }>('/tools/master/labels.csv', 'POST', { text }),
   command: (command: MasterCommand) => api<CommandAnswer>('/tools/master/command', 'POST', { ...command, confirm: true }),
+  cyclic: () => api<CyclicState>('/tools/master/cyclic'),
+  startCyclic: (command: MasterCommand, options: CyclicOptions) =>
+    api<CyclicState>('/tools/master/cyclic', 'POST', { ...command, ...options, confirm: true }),
+  stopCyclic: () => api<CyclicState>('/tools/master/cyclic/stop', 'POST', {}),
   saveRanges: (modbus_ranges: ModbusRange[]) => api<{ modbus_ranges: ModbusRange[] }>('/tools/master/ranges', 'PUT', { modbus_ranges }),
   saveRoutes: (routes: CommandRoute[]) => api<{ routes: CommandRoute[] }>('/tools/master/routes', 'PUT', { routes }),
   probe: (table: string, start: number, end: number) => api<ProbeState>('/tools/master/probe', 'POST', { table, start, end }),

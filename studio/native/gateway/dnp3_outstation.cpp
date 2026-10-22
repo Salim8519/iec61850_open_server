@@ -1,12 +1,13 @@
 // DNP3 outstation over TCP on opendnp3: binary, double-bit and analog inputs with
-// events, binary output status for commands, and CROB commands via the backend.
+// events, binary output status for commands, and CROB commands via the backend; with typed
+// commands also tap positions (analog input) and set points (analog output) (ADR-0107).
+#include "dnp3_commands.hpp"
 #include "protocol.hpp"
 #include "traffic.hpp"
 #include <opendnp3/DNP3Manager.h>
 #include <opendnp3/channel/IChannelListener.h>
 #include <opendnp3/logging/LogLevels.h>
 #include <opendnp3/outstation/DefaultOutstationApplication.h>
-#include <opendnp3/outstation/ICommandHandler.h>
 #include <opendnp3/outstation/UpdateBuilder.h>
 #include <algorithm>
 #include <stdexcept>
@@ -46,68 +47,10 @@ public:
     }
 };
 
-class Commands : public ICommandHandler {
-public:
-    Commands(PointTable& table, CommandBridge& bridge) : table(table), bridge(bridge) {}
-    void Begin() override {}
-    void End() override {}
-
-    CommandStatus Select(const ControlRelayOutputBlock& command, uint16_t index) override {
-        auto status = check(command, index);
-        traffic("rx", "master", "CROB select index " + std::to_string(index) + ": " + CommandStatusSpec::to_string(status));
-        return status;
-    }
-
-    CommandStatus Operate(const ControlRelayOutputBlock& command, uint16_t index, IUpdateHandler& handler,
-                          OperateType) override {
-        auto status = check(command, index);
-        if (status != CommandStatus::SUCCESS) {
-            traffic("rx", "master", "CROB operate index " + std::to_string(index) + ": "
-                    + CommandStatusSpec::to_string(status));
-            return status;
-        }
-        bool value = target(command);
-        auto point = table.at("command", index);
-        auto answer = bridge.ask(point->id, value, "dnp3", "master");
-        traffic("rx", "master", "CROB operate index " + std::to_string(index) + (value ? " CLOSE/ON" : " TRIP/OFF")
-                + (answer.ok ? ": operated" : ": failed, " + answer.reason));
-        if (!answer.ok) return CommandStatus::HARDWARE_ERROR;
-        handler.Update(BinaryOutputStatus(value, Flags(ONLINE)), index);
-        return CommandStatus::SUCCESS;
-    }
-
-#define STUDIO_NOT_SUPPORTED(TYPE) \
-    CommandStatus Select(const TYPE&, uint16_t) override { return CommandStatus::NOT_SUPPORTED; } \
-    CommandStatus Operate(const TYPE&, uint16_t, IUpdateHandler&, OperateType) override { \
-        return CommandStatus::NOT_SUPPORTED; }
-    STUDIO_NOT_SUPPORTED(AnalogOutputInt16)
-    STUDIO_NOT_SUPPORTED(AnalogOutputInt32)
-    STUDIO_NOT_SUPPORTED(AnalogOutputFloat32)
-    STUDIO_NOT_SUPPORTED(AnalogOutputDouble64)
-#undef STUDIO_NOT_SUPPORTED
-
-private:
-    PointTable& table;
-    CommandBridge& bridge;
-
-    static bool target(const ControlRelayOutputBlock& command) {
-        if (command.tcc == TripCloseCode::CLOSE) return true;
-        if (command.tcc == TripCloseCode::TRIP) return false;
-        return command.opType == OperationType::LATCH_ON || command.opType == OperationType::PULSE_ON;
-    }
-
-    CommandStatus check(const ControlRelayOutputBlock& command, uint16_t index) {
-        auto point = table.at("command", index);
-        if (!point) return CommandStatus::NOT_SUPPORTED;
-        if (point->monitor_only) return CommandStatus::NOT_AUTHORIZED;
-        if (command.opType == OperationType::NUL && command.tcc == TripCloseCode::NUL) return CommandStatus::FORMAT_ERROR;
-        return CommandStatus::SUCCESS;
-    }
-};
-
 class Dnp3Outstation : public ProtocolServer {
 public:
-    Dnp3Outstation(PointTable& table, CommandBridge& bridge) : table(table), commands(std::make_shared<Commands>(table, bridge)) {}
+    Dnp3Outstation(PointTable& table, CommandBridge& bridge)
+        : table(table), commands(std::make_shared<Dnp3Commands>(table, bridge)) {}
     ~Dnp3Outstation() override { stop(); }
 
     Json start(const Json& settings) override {
@@ -130,6 +73,16 @@ public:
                                                                                  : StaticAnalogVariation::Group30Var1;
                 database.analog_input[index].evariation = point.kind == "float" ? EventAnalogVariation::Group32Var7
                                                                                 : EventAnalogVariation::Group32Var3;
+            } else if (point.kind == "step_position") {
+                database.analog_input[index].clazz = PointClass::Class2;
+                database.analog_input[index].svariation = StaticAnalogVariation::Group30Var1;
+                database.analog_input[index].evariation = EventAnalogVariation::Group32Var3;
+            } else if (point.kind == "command_setpoint") {
+                database.analog_output_status[index].clazz = PointClass::Class0;
+                database.analog_output_status[index].svariation = point.format == "int16"
+                    ? StaticAnalogOutputStatusVariation::Group40Var2
+                    : point.format == "int32" ? StaticAnalogOutputStatusVariation::Group40Var1
+                                              : StaticAnalogOutputStatusVariation::Group40Var3;
             } else {
                 database.binary_output_status[index].clazz = PointClass::Class0;
             }
@@ -164,7 +117,7 @@ public:
             if (point.kind == "single") builder.Update(Binary(point.value != 0.0, flags, time_of(point)), index);
             else if (point.kind == "double")
                 builder.Update(DoubleBitBinary(DoubleBit(std::clamp(int(point.value), 0, 3)), flags, time_of(point)), index);
-            else if (point.kind == "float" || point.kind == "integer")
+            else if (point.kind == "float" || point.kind == "integer" || point.kind == "step_position")
                 builder.Update(Analog(point.value * point.scale, flags, time_of(point)), index);
         }
         outstation->Apply(builder.Build());
@@ -180,7 +133,7 @@ public:
 
 private:
     PointTable& table;
-    std::shared_ptr<Commands> commands;
+    std::shared_ptr<Dnp3Commands> commands;
     std::unique_ptr<DNP3Manager> manager;
     std::shared_ptr<IChannel> channel;
     std::shared_ptr<IOutstation> outstation;

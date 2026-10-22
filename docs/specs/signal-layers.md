@@ -2,7 +2,8 @@
 
 Decisions: [ADR-0065](../decisions/ADR-0065-sld-signal-layers.md),
 [ADR-0066](../decisions/ADR-0066-goose-inputs-and-mms-access-events.md).
-Change: [0094](../changes/2026/0094-goose-mms-signal-layers.md).
+Change: [0094](../changes/2026/0094-goose-mms-signal-layers.md); smart lines:
+[ADR-0103](../decisions/ADR-0103-goose-smart-lines.md), [0166](../changes/2026/0166-goose-smart-lines.md).
 Owner request (2026-10-18): see GOOSE and IEC 61850 client activity on the single-line diagram
 without distraction.
 
@@ -45,8 +46,18 @@ IED, as quiet IED tags and one dot per real change. Devices shows the same partn
   the toolbar shows "N senders outside project ▾" next to the switches, a small list with each
   name and *Import its CID*. Tags are never saved. Name tags scale 1–3× against zoom, corner marks 1–1.5×.
 - Pulse: only when a listener frame raises stNum (never the first frame, never a
-  retransmission), at most one per link per second, ~0.7 s dot then a ~2 s fading link and a
-  label "PUB → SUB · change" (full names). A GOOSE from a sender outside the project moves one
+  retransmission), at most one per link per second. Smart lines (ADR-0103): publisher changes that
+  land on the same SLD symbol within 400 ms (a breaker's open and closed contacts) are **one change**.
+  It starts at that symbol (the equipment whose state, command, relay or measurement binding names
+  the changed reference; else the publisher's IED mark), which gets a brief outline, and one plain
+  chip above it: "Open · sent to 4 IEDs" (expected, dashed) or "Open · 4 of 4 IEDs got it" (seen).
+  Switch words come from the backend's `equipment_state`, never computed in the browser. One
+  orthogonal line with rounded corners goes to each receiving IED's mark: sideways into the nearest
+  free gap, up to one shared lane above the drawing, along it and down the receiver's free gap,
+  never through an equipment box. Each line draws itself behind a ~0.7 s dot, lines of one change
+  start 80 ms apart (at most 400 ms), then fade by 2 s; at most 16 lines move at once. The receiver
+  mark says "✓ got it" only after a real stNum increase. No per-link words on the canvas; a click
+  on a line still opens that link, a click on the chip the publisher's links. A GOOSE from a sender outside the project moves one
   dot from a fixed screen distance beside the receiver tag into it for ~2 s, with a fading line,
   then nothing remains. Dot, line and label scale like the tags, so they stay readable when
   zoomed out, and the receiver tag shows "← PUB · change" for ~2 s (ADR-0070). Without a listener, a publisher value that is a dataset member of
@@ -94,6 +105,11 @@ Sampled Values on the SLD, counting data-attribute writes (SP/CF/DC), R-GOOSE.
 | LAYER-20 | A GOOSE from a sender outside the project is one dot that starts beside its receiver for ~2 s. | `studio/tests/frontend/signalLayers.test.ts::a GOOSE from a sender outside the project pulses once beside its receiver for ~2 s` |
 | LAYER-22 | An outside sender's dot starts 130-440 px from its receiver at any zoom; dot, line and words keep their screen size; the receiver tag names the sender for ~2 s. | `studio/tests/frontend/gooseVisibility.test.ts::an outside sender starts beside its receiver at every zoom, never off the drawing edge`, `studio/tests/frontend/gooseVisibility.test.ts::dot, line and words keep their screen size; the receiver tag names the sender for ~2 s` |
 | LAYER-23 | A receiving sender outside the project shows its live state in GOOSE partners; a silent one says "Outside project". | `studio/tests/frontend/gooseVisibility.test.ts::a receiving sender outside the project shows its live state, a silent one says Outside project` |
+| LAYER-24 | Publisher changes on the same symbol within 400 ms are one change, even when the per-link gate silences the second contact. | `studio/tests/frontend/gooseSmartLines.test.ts::both contacts of one breaker inside 400 ms are one change; later or elsewhere is another`, `studio/tests/frontend/gooseSmartLines.test.ts::the store keeps a gated partner contact so one change reads "CB Q1 open · sent to 2 IEDs"` |
+| LAYER-25 | A change starts at the symbol whose own bindings name the changed reference (state over command over panel rows), else at the publisher's IED mark. | `studio/tests/frontend/gooseSmartLines.test.ts::a symbol is found from its own bindings; state beats command beats panel rows`, `studio/tests/frontend/gooseSmartLines.test.ts::the plan starts at the symbol, staggers lines a little and caps the moving ones` |
+| LAYER-26 | Smart lines are orthogonal with rounded corners, share the climb and the lane above the drawing, and never pass through an equipment box. | `studio/tests/frontend/gooseSmartLines.test.ts::a smart line leaves sideways, climbs a free gap to the lane and drops onto the badge, never through a box`, `studio/tests/frontend/gooseSmartLines.test.ts::receivers of one change share the climb and the lane` |
+| LAYER-27 | One chip per change: "sent to N IEDs" when expected (never "received"), "k of N IEDs got it" only after a real stNum increase; one line per receiving IED. | `studio/tests/frontend/gooseSmartLines.test.ts::the store keeps a gated partner contact so one change reads "CB Q1 open · sent to 2 IEDs"`, `studio/tests/frontend/gooseSmartLines.test.ts::observed changes count who really got a new stNum; one line per receiver` |
+| LAYER-28 | No per-link words on the canvas; a line draws itself behind its dot (paint only) and shows at once with reduced motion. | `studio/tests/frontend/gooseSmartLines.test.ts::the canvas has no per-link words; lines draw behind the dot and respect reduced motion` |
 | LAYER-21 | GOOSE status uses plain words ("Not checked yet", "Outside project"), never "Not watched" or "Needs lab network". | `studio/tests/frontend/signalLayers.test.ts::GOOSE status uses plain words instead of "Not watched"` |
 | LAYER-16 | MMS reads are counted per client per logical node and summarised for the live view only. | `studio/tests/unit/test_mms_access.py::test_reads_are_counted_per_logical_node_and_clients_by_address`, `studio/tests/unit/test_mms_access.py::test_summaries_go_to_the_live_view_only` |
 | LAYER-17 | Observing reads never changes the MMS answer; the worker summarises at most once per second. | `studio/tests/unit/test_mms_access.py::test_worker_observes_reads_without_changing_the_answer`, `studio/tests/protocol/test_mms_access_wire.py::test_reads_are_counted_per_client_and_answers_are_unchanged` |

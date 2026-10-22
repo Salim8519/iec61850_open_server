@@ -74,8 +74,8 @@ export function NodeDetail({ reference, host, watched, addWatch, fail }: {
             onClick={() => read(object.name, object.attributes)}>
             {reading === object.name ? <Loader2 size={15} className="spin" /> : <RefreshCw size={15} />}</button>}
         </div>
-        {isOpen && <CommandPanel reference={`${node.ref}.${object.name}`} host={host} attributes={object.attributes}
-          fail={fail} operated={() => read(object.name, object.attributes)} />}
+        {isOpen && <CommandPanel reference={`${node.ref}.${object.name}`} name={object.name} host={host}
+          attributes={object.attributes} values={values} fail={fail} operated={() => read(object.name, object.attributes)} />}
         {isOpen && <ObjectTable attributes={object.attributes} kinds={kinds} shown={shown} values={values}
           reading={reading === object.name} watched={watched} addWatch={addWatch} />}
       </div>;

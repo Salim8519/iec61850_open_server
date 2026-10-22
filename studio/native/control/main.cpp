@@ -3,6 +3,7 @@
 // stay open between commands so SCADA commands are answered quickly.
 #include "canvas_mux.hpp"
 #include "control_session.hpp"
+#include "typed_session.hpp"
 #include "license_guard.hpp"
 #include <functional>
 #include <iostream>
@@ -12,12 +13,16 @@ int main() {
     protect_frame_output();
     ControlSession session;
     CanvasMux canvas;
+    TypedSession typed;  // Select / Operate / Cancel steps of the Go engine (ADR-0104)
     const std::map<std::string, std::function<Json(const Json&)>> operations = {
         {"hello", [](const Json&) {
-             return Json{{"capabilities", {"control_operate", "control_models_all", "control_mux_v1"}}};
+             return Json{{"capabilities", {"control_operate", "control_models_all", "control_mux_v1", "typed_commands"}}};
          }},
         {"operate", [&](const Json& request) { license::require_valid_license(); return session.operate(request); }},
-        {"close_all", [&](const Json&) { session.close_all(); return Json(true); }},
+        {"typed_select", [&](const Json& request) { license::require_valid_license(); return typed.select(request); }},
+        {"typed_operate", [&](const Json& request) { license::require_valid_license(); return typed.operate(request); }},
+        {"typed_cancel", [&](const Json& request) { license::require_valid_license(); return typed.cancel(request); }},
+        {"close_all", [&](const Json&) { session.close_all(); typed.close_all(); return Json(true); }},
     };
     Json message;
     try {
@@ -33,6 +38,7 @@ int main() {
                 if (op == "stop") {
                     canvas.stop();
                     session.close_all();
+                    typed.close_all();
                     emit_frame({{"id", id}, {"ok", true}});
                     break;
                 }

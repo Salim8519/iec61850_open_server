@@ -57,6 +57,8 @@ func WatchedPoints(project, ied *pyjson.Object) []any {
 			add(BindingKeys(pyv.O("mode", "direct", "source", pyv.Get(entry, "source"))))
 		}
 	}
+	add(pointPanelKeys(nodes)) // point panel points (ADR-0102)
+	add(tapChangerKeys(nodes)) // tap-changer transformers (ADR-0109)
 	for _, entry := range pyv.Objects(pyv.GetList(project, "test_panel")) {
 		add([]PointKey{{IED: pyv.GetStr(entry, "ied_id"), Ref: pyv.GetStr(entry, "ref")}})
 	}

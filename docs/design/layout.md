@@ -37,7 +37,9 @@ white symbol cards outlined #7D8796, with a floating toolbar (Add, Undo, Redo) a
 zoom controls bottom-left. Add opens large labelled tiles grouped Switching,
 Measuring, Protection & control, Drawing. The 380 px right sheet appears only when
 something is selected: status pill, Operate (while running), name and start position,
-"comes from" / "goes to" connections, then Advanced and object actions.
+"comes from" / "goes to" connections, then Advanced and object actions. For a CB/DS/ES the
+Operate section holds Open/Close, the SBO hint and countdown box under them (dashed accent
+frame, wrapping words) and the folded *Command options* (ADR-0108).
 
 Devices: 280 px list column with its own scroll (Import with *Select* beside it, filter bar, compact rows: name, data
 points, then the role/status pills on their own line so they are never cut, change 0097) beside one
@@ -76,7 +78,10 @@ and a confirmed position change pulses a blue ring twice; Unknown/Invalid never
 resemble Open; reduced motion disables interpolation and holds a static ring. Trip relay states Reset/Operated/Awaiting/Invalid; push button
 has no terminals and is pressed by clicking it. Relay panels show one row per signal
 with a value chip (filled 1, hollow 0, dashed —). State fills (ADR-0026) colour only
-the moving part; Intermediate is dashed amber and Invalid dashed red.
+the moving part; Intermediate is dashed amber and Invalid dashed red. The tap-changer transformer
+(ADR-0109) is a 132 px card: "HV", two circles with a diagonal tap arrow, "LV", the name, a tap pill
+("Tap 9 / 1–17"), an Auto badge (solid accent border, robot icon) or Manual badge (dashed grey border,
+hand icon) and, while running, the LV voltage, the regulator line and ▲ Raise / ▼ Lower (26 px).
 
 Signal layers (ADR-0065): two toolbar switches with On/Off words. An IED bound to equipment is one
 18 px "G" mark (accent outline, 5 px radius) inside the top-right corner of that equipment, never
@@ -85,4 +90,8 @@ keep small grey name tags (11.5 px, 1 px #A9B1BD border, 7 px radius) left of th
 scale up when zoomed out (marks at most 1.5×); a stopped IED's tag is dotted with "not running"; a problem adds one small ⚠ and a dashed
 amber border (words on hover). IEDs outside the project have no canvas tag: one toolbar button
 "N senders outside project ▾" opens a 340 px list (change 0097). A pulse is one
-5 px accent dot (hollow and dashed when expected) on a faint 1.5 px curve that fades in 2 s.
+5 px accent dot (hollow and dashed when expected). From a sender in the project (ADR-0103) one change
+is a 2.5 px accent outline on its symbol, one chip above it (11.5 px bold, 1.5 px accent border, 7 px
+radius, dashed when expected, "✓"/"→" before the words) and one 2 px orthogonal line per receiver with
+8 px rounded corners via a shared lane 36 px above the drawing; all fade by 2 s. An outside sender keeps
+a faint 1.5 px curve beside the receiver.

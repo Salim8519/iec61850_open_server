@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Copy, Cpu, Redo2, Trash2, Undo2 } from 'lucide-react';
 import { api } from '../../api/client';
-import type { Diagram, EquipmentKind, EquipmentNode, Project } from '../../api/types';
+import type { CommandOptions, Diagram, EquipmentKind, EquipmentNode, Project } from '../../api/types';
+import { commandBody } from '../../equipment/commandOptions';
 import { LiveValues } from '../../equipment/liveContext';
 import { sectionSentence } from '../../equipment/energization';
 import type { useStudio } from '../../state/useStudio';
@@ -9,6 +10,11 @@ import { AddMenu } from './AddMenu';
 import { addBay as placeBay, type BayKind } from '../../equipment/bayTemplates';
 import { defaultLabel } from '../../equipment/kindInfo';
 import { Canvas } from './Canvas';
+import { OpenPointPanel } from '../../equipment/pointPanelContext';
+import { TapBusy, TapCommand } from '../../equipment/tapContext';
+import { newTapChanger } from '../../equipment/tapChanger';
+import { useTapCommands } from './tap/useTapCommands';
+import { PointPanelDialog } from './points/PointPanelDialog';
 import { EquipmentSheet } from './EquipmentSheet';
 import { SldImport } from './SldImport';
 import { TidyButton } from './TidyButton';
@@ -37,6 +43,7 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   const [signal, setSignal] = useState<SignalSelection>(null);
   const [menu, setMenu] = useState<MenuAt | null>(null);
   const [tested, setTested] = useState<{ nodeId: string; message: string } | null>(null);
+  const [panelId, setPanelId] = useState<string | null>(null);
   const runningKey = (project.running_ieds || []).join(',');
   const running = useMemo(() => new Set(runningKey ? runningKey.split(',') : []), [runningKey]);
   const diagram = project.diagram;
@@ -70,10 +77,12 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
       position: { x: 200 + (diagram.nodes.length % 4) * 140, y: 100 + Math.floor(diagram.nodes.length / 4) * 160 },
       data: kind === 'INFEED' ? { ...base, infeed_type: 'line', infeed_state: 'live' } :
         kind === 'MEASUREMENT_LIST' ? { ...base, measurements: [] } :
+        kind === 'POINT_PANEL' ? { ...base, ied_id: project.ieds.length === 1 ? project.ieds[0].id : null, points: [] } :
+        kind === 'TAP_TRANSFORMER' ? { ...base, tap_changer: newTapChanger() } :
         kind === 'JUNCTION' || kind === 'RELAY' ? base : { ...base, trip_command_polarity: 'operate_false',
         trip_state_polarity: 'operated_true', push_mode: 'latching_status', push_value: true, initial_position: 'open' } };
     edit({ ...diagram, nodes: [...diagram.nodes, item] }); setSelection([item.id]);
-  }, [diagram, edit]);
+  }, [diagram, edit, project.ieds]);
   const junctionKey = selection.filter(id => diagram.nodes.find(node => node.id === id)?.data.kind === 'JUNCTION').join(',');
   const junctions = useMemo(() => junctionKey ? junctionKey.split(',') : [], [junctionKey]);
   const addBay = useCallback((kind: BayKind) => {
@@ -82,16 +91,19 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   }, [diagram, edit, junctions]);
   const attachHint = junctions.length ? `New bays connect to the ${junctions.length} selected busbar point${junctions.length > 1 ? 's' : ''}.`
     : 'Tip: select a busbar junction first and the bay connects to it.';
-  const operate = useCallback((nodeId: string, action: string) => {
+  // Without options the body stays { action } exactly as before (ADR-0108).
+  const operate = useCallback((nodeId: string, action: string, options?: CommandOptions) => {
     markClick(nodeId);
     setOperation(null);
-    studio.perform(async () => {
+    return studio.perform(async () => {
       const result = await api<{ action: string; wire_value: boolean | null }>(
-        `/equipment/${encodeURIComponent(nodeId)}/operate`, 'POST', { action });
+        `/equipment/${encodeURIComponent(nodeId)}/operate`, 'POST', commandBody(action, options));
       const sent = result.wire_value === null ? '' : ` · sent ${result.wire_value ? 1 : 0}`;
       setOperation({ nodeId, message: `${result.action[0].toUpperCase() + result.action.slice(1)} done${sent}` });
     });
   }, [studio.perform]);
+  const report = useCallback((nodeId: string, message: string) => setOperation({ nodeId, message }), []);
+  const tap = useTapCommands(studio.perform, report); // tap-changer transformers (ADR-0109)
   // Test buttons write the bound point in the simulated IED through the backend; no command is sent (ADR-0067).
   const test = useCallback((nodeId: string, action: string, extra?: { value?: number; row?: string }) => {
     setTested(null);
@@ -124,7 +136,9 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   const summaryKey = partial ? `${summary.running.map(ied => ied.id)}|${summary.stopped.map(ied => ied.id)}` : '';
   const lockNote = useMemo(() => partial ? <RunStrip summary={summary} busy={busy} runAll={() => runtime('start')} /> : undefined,
     [partial, summaryKey, busy]);
-  return <div className="diagram">
+  const panel = panelId ? diagram.nodes.find(item => item.id === panelId && item.data.kind === 'POINT_PANEL') : undefined;
+  return <div className="diagram"><OpenPointPanel.Provider value={setPanelId}>
+    <TapCommand.Provider value={tap.send}><TapBusy.Provider value={tap.busy}>
     <Canvas diagram={diagram} change={edit} locked={locked} selection={selection} setSelection={setSelection}
       valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={badges} operate={operate} toolbar={toolbar} overlay={overlay} nodeMenu={openMenu}
       stoppedIeds={stoppedIeds} lockNote={lockNote} />
@@ -140,6 +154,9 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
         item.data.kind === selected.data.kind ? { ...item, data: { ...item.data, active_color: active, inactive_color: inactive } } : item) })}
       remove={actions.remove} duplicate={actions.duplicate} showFlow={openDevices}
       running={running} test={test} testMessage={tested?.nodeId === selected.id ? tested.message : undefined} /></LiveValues.Provider>}
+    {panel && <LiveValues.Provider value={studio.equipmentValues}><PointPanelDialog key={panel.id} node={panel} project={project}
+      locked={locked} running={running} close={() => setPanelId(null)}
+      update={data => edit({ ...diagram, nodes: diagram.nodes.map(item => item.id === panel.id ? { ...item, data } : item) })} /></LiveValues.Provider>}
     {selection.length > 1 && <aside className="sheet"><div className="sheet-head"><div className="sheet-title">
       <h2>{selection.length} selected</h2><p>Drag to move them together</p></div></div>
       <div className="sheet-body"><div className="sheet-section"><div className="sheet-actions">
@@ -147,5 +164,5 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
         <button className="danger-outline" disabled={locked} onClick={actions.remove}><Trash2 size={16} />Delete</button>
       </div><p className="small muted" style={{ margin: 0 }}>Shortcuts: Ctrl+C copy, Ctrl+V paste, Ctrl+D duplicate, arrows nudge.</p>
       </div></div></aside>}
-  </div>;
+  </TapBusy.Provider></TapCommand.Provider></OpenPointPanel.Provider></div>;
 }

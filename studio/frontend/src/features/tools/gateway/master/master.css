@@ -17,3 +17,5 @@
 .master-command-fields { gap: 12px; align-items: flex-end; flex-wrap: wrap; }
 .master-command-fields label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
 .master-command-fields label.gateway-check { display: flex; }
+.master-cyclic { display: grid; gap: 8px; padding: 10px 0 0; border-top: 1px solid var(--accent-line); }
+.master-cyclic .gateway-number { width: 110px; }

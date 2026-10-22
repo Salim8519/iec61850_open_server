@@ -40,13 +40,18 @@ reads to another SCADA.
   "not current (link lost)" and is never shown as good. A repeated interrogation of the same
   value is not counted as a change.
 - **Commands.** Commands are sent only after the REAL-device warning, with `confirm: true`.
-  - 104: C_SC, C_DC, C_SE (float, scaled, normalised), C_CS; select/execute; ACT_CON and
-    ACT_TERM.
-  - DNP3: CROB and analog outputs; select-and-operate or direct.
+  - 104: C_SC, C_DC, C_RC (regulating step, Lower/Raise), C_SE (float, scaled, normalised),
+    C_CS; select/execute; a command qualifier (QU 0-31); Activate or Deactivate (COT 6/8);
+    ACT_CON and ACT_TERM.
+  - DNP3: CROB (latch on/off, pulse on/off, trip/close, with count and on/off times) and
+    analog outputs (16-bit, 32-bit, float); select-and-operate or direct.
   - Modbus: FC5, FC6 and FC16.
 
   Refusals are explained in words: negative confirmation, the DNP3 status, or the Modbus
   exception.
+- **Repeat automatically (Go engine).** One command may be sent again on a timer (100-600000 ms,
+  Stop ends it, disconnecting ends it). Each shot may add one to the address and flip an on/off
+  value. Every shot goes through the same confirmed-command path, so each is logged and warned.
 - **Find registers.**
   - At most 10,000 addresses, at most 10 requests per second, read only.
   - A preview shows how many requests it sends.
@@ -73,3 +78,4 @@ reads to another SCADA.
 | MASTER-10 | Command routes need a free upstream address; values are invalid upstream while the device is bad or away. | `studio/tests/unit/test_passthrough.py::test_command_routes_need_a_free_upstream_address`, `studio/tests/unit/test_passthrough.py::test_remote_values_are_invalid_upstream_while_the_device_is_bad_or_away` |
 | MASTER-11 | An independent 104 master reads a DNP3 outstation through the converter and its command reaches the outstation. | `studio/tests/protocol/test_converter_runtime.py::test_dnp3_device_is_served_as_iec104_and_scada_commands_reach_it` |
 | MASTER-12 | The master worker refuses to connect without a license and is packaged and sealed. | `studio/tests/unit/test_native_enforcement.py::test_master_refuses_to_connect_without_license`, `studio/tests/unit/test_protected_packaging.py::test_protected_build_refuses_without_release_key_and_dry_run_lists_steps` |
+| MASTER-13 | The Go engine adds the most-used commands (C_RC, QU, Activate/Deactivate, DNP3 CROB options and g41v2, cyclic sending with address step and value toggle), validated and framed without changing the frozen Python routes. | `studio/engine/internal/api/toolsapi/master_commands_extra_test.go::TestMasterExtraCommands`, `studio/engine/internal/gateway/service/master_cyclic_test.go::TestCyclicStepsAddressAndTogglesValue` |

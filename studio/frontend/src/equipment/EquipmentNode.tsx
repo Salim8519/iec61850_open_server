@@ -6,6 +6,8 @@ import { EquipmentSymbol } from './symbols/EquipmentSymbol';
 import { switchPosition, tripRelayState } from './position';
 import { RelayPanel } from './RelayPanel';
 import { MeasurementPanel } from './MeasurementPanel';
+import { PointPanelCard } from './PointPanelCard';
+import { TapTransformerBody } from './TapTransformerBody';
 import { JunctionBody } from './JunctionBody';
 import { kindInfo, stateTone } from './kindInfo';
 import { colorScheme, paintFor, stateFill } from './stateColors';
@@ -63,6 +65,12 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
     <RelayPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
   if (data.kind === 'MEASUREMENT_LIST') return <div className={`equipment-node measure ${selected ? 'selected' : ''}`}>
     <MeasurementPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
+  if (data.kind === 'POINT_PANEL') return <div className={`equipment-node points ${selected ? 'selected' : ''}`}>
+    <PointPanelCard nodeId={id} data={data} iedNames={iedNames} /></div>;
+  if (data.kind === 'TAP_TRANSFORMER') return <div className={`equipment-node cat-${category} tap ${selected ? 'selected' : ''}`}>
+    <Terminal id="north" position={Position.Top} /><Terminal id="west" position={Position.Left} />
+    <TapTransformerBody nodeId={id} data={data} />
+    <Terminal id="east" position={Position.Right} /><Terminal id="south" position={Position.Bottom} /></div>;
   const scheme = colorScheme(data);
   const fill = stateFill(data, position, value, linked);
   const fillColor = scheme && (fill === 'active' ? scheme.active : fill === 'inactive' ? scheme.inactive : null);

@@ -22,6 +22,7 @@ type builder struct {
 	controls        []any
 	controlWarnings []string
 	lines           []string
+	extended        []any // Go-only typed controls (ADR-0104); never part of the IED model
 }
 
 func newBuilder(types map[typeKey]*xmldoc.Element) *builder {
@@ -113,6 +114,7 @@ func (b *builder) objectContent(definition *xmldoc.Element, ref string, instance
 		}
 	}
 	b.control(definition, ref)
+	b.extendedControl(definition, ref)
 	return nil
 }
 

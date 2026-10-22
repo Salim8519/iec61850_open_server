@@ -58,6 +58,12 @@ func (p *plantStates) reset(diagram *pyjson.Object) {
 		case "RELAY":
 		case "MEASUREMENT_LIST": // raw values; the panel scales them (ADR-0090)
 			rows = "measurements"
+		case pointPanelKind: // raw values of the status, double and value points (ADR-0102)
+			addPointPanelRows(pyval.Str(node, "id"), data, add)
+			continue
+		case tapTransformerKind: // tap position, Auto/Manual and LV voltage (ADR-0109)
+			addTapChangerRows(pyval.Str(node, "id"), data, add)
+			continue
 		default:
 			continue
 		}
@@ -210,6 +216,9 @@ func (c *Coordinator) EquipmentStates() (states []any, energization *pyjson.Obje
 		for _, id := range p.order {
 			states = append(states, pyval.Obj("node_id", id, "value", p.evaluate(id)))
 		}
+	}
+	if c.isLive() {
+		states = append(states, c.taps.states()...) // regulator states (ADR-0109)
 	}
 	energization = p.plan()
 	if energization == nil {

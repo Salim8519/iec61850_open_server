@@ -9,6 +9,9 @@ export const EDGE_PULSE_MS = 2000;
 
 export type GooseState = { state: string; problem?: string; st_num?: number };
 export type PulseKind = 'observed' | 'expected';
+/** A publisher value that belongs to a sent dataset, kept by the store for wording (ADR-0103). */
+export type SignalChange = { key: number; iedId: string; publisher: string; ref: string; value: unknown; text: string;
+  start: number; linkIds: string[] };
 
 /** At most one pulse per link per second; later changes inside that second are coalesced. */
 export class PulseGate {

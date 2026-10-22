@@ -198,6 +198,7 @@ func (m *Master) reconnect(config *pyjson.Object) {
 func (m *Master) Disconnect(remember bool) (*pyjson.Object, error) {
 	defer m.changed(ChangeMasterPoints)
 	defer m.changed(ChangeMasterStatus)
+	m.cyclic.Stop() // never keep sending once the link is going away
 	if config := m.Config(); remember && pytext.Truthy(get(config, "auto_connect")) {
 		if err := m.Save(with(config, "auto_connect", false)); err != nil {
 			return nil, err

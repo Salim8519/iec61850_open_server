@@ -52,6 +52,14 @@ ScadaBench is the controlled station (104 slave), DNP3 outstation or Modbus serv
   - IEC 104 single and double commands, with select/execute.
   - Modbus coils (FC5/FC15).
   - DNP3 CROB.
+  - Go engine only ([ADR-0107](../decisions/ADR-0107-gateway-step-setpoint-commands.md)): tap
+    positions (`step_position`: 104 M_ST, DNP3 analog input, Modbus input register), regulating
+    step commands (`command_step`: 104 C_RC 47/60, DNP3 CROB) to BSC/ISC controls and set points
+    (`command_setpoint`: 104 C_SE 48-50/61-63, DNP3 g41 var 1-3, Modbus FC6/FC16 holding
+    registers with format and word order) to APC/INC controls. Every IEC 104 and DNP3 command
+    step goes to the engine: select, execute and (104) deactivation each get their own positive
+    or negative confirmation; unknown IOAs and wrong types are refused with a plain line in
+    Traffic.
 
   The page offers the same commands in command rows (Close/Open or On/Off). Each one is sent
   only after a warning that names the IED and object (stronger for a real device), with
@@ -65,6 +73,11 @@ ScadaBench is the controlled station (104 slave), DNP3 outstation or Modbus serv
   - a raw-socket Modbus TCP client.
 
   Third-party SCADA masters are not yet recorded.
+- **Add points (Go engine, [ADR-0105](../decisions/ADR-0105-gateway-add-points.md)).** One dialog: from an IED
+  (only signals that fit the type, names from the SCL, next free addresses, commands linked to the IED with their
+  status at the paired address, a real device needs "I understand"), simulated (one point or a range), or rows
+  pasted from Excel / an engine-made Excel template with drop-downs. Every row is checked first; nothing is added
+  while one is wrong. Propose from IEDs shows a per-IED preview and can add only new points, keeping the user's edits.
 
 | ID | Rule | Enforced by |
 | --- | --- | --- |
@@ -79,3 +92,8 @@ ScadaBench is the controlled station (104 slave), DNP3 outstation or Modbus serv
 | GW-09 | A remembered gateway starts again by itself and never raises. | `studio/tests/unit/test_tool_autonomy.py::test_autostart_only_when_remembered_and_never_raises` |
 | GW-10 | Commands from the page are sent only after the warning, with confirmation, and run and log like SCADA commands. | `studio/tests/frontend/running.test.ts::gateway commands are sent only from the warning, with the confirmation flag`, `studio/tests/unit/test_tool_autonomy.py::test_saved_points_are_found_while_stopped_and_manual_commands_explain_refusals`, `studio/tests/protocol/test_gateway_runtime.py::test_iec104_master_operates_a_simulated_breaker` |
 | GW-11 | "All network adapters" is reachable from other computers only through a reviewed, journaled firewall change: an allow rule for the gateway worker only, Block rules switched off (never deleted) and re-enabled by clean-up. | `studio/tests/unit/test_gateway_firewall.py::test_plan_allows_the_gateway_port_and_switches_off_block_rules`, `studio/tests/unit/test_gateway_firewall.py::test_helper_accepts_only_the_gateway_worker_and_plain_rule_names`, `studio/tests/unit/test_gateway_firewall.py::test_cleanup_finds_the_gateway_changes_in_the_journal`, `studio/tests/unit/test_gateway_firewall.py::test_preview_then_apply_sends_only_what_was_reviewed` |
+| GW-12 | Add points from an IED lists only fitting signals, pairs a command's address with its status, and a command added that way operates the IED (also from an independent 104 master). | `studio/engine/internal/gateway/addpoints/plan_test.go::TestCandidatesFitTheType`, `studio/engine/internal/gateway/addpoints/plan_test.go::TestPlanPairsCommandWithStatus`, `studio/engine/internal/gateway/addpoints/plan_test.go::TestPlanRefusesWhatDoesNotFit`, `studio/engine/internal/gateway/service/linked_command_test.go::TestLinkedCommandPointOperatesTheIED`, `studio/engine/internal/gateway/service/linked_command_test.go::TestLinkedCommandOverIEC104` |
+| GW-13 | Pasted rows and the filled Excel template are checked row by row with reasons; nothing is added while one row is wrong; the template has Type, IED and Point drop-downs. | `studio/engine/internal/gateway/addpoints/rows_test.go::TestPasteMarksEveryBadRow`, `studio/engine/internal/gateway/addpoints/xlsx_test.go::TestTemplateHasDropDowns`, `studio/engine/internal/gateway/addpoints/xlsx_test.go::TestTemplateRoundTrip`, `studio/tests/frontend/gatewayAdd.test.ts::Add N points stays off until every row is right, and a real device needs I understand` |
+| GW-14 | Smart Propose "Add only new points" keeps every point as edited and adds only missing ones; without the new fields Propose answers as before. | `studio/engine/internal/gateway/addpoints/smart_test.go::TestSmartAddOnlyNew`, `studio/engine/internal/api/toolsapi/add_points_test.go::TestSmartProposeRoute` |
+| GW-15 | Step and set point commands and tap positions reach independent masters over IEC 104 (select, execute, cancel, time tags, wrong type, unknown IOA), DNP3 (CROB codes, SBO, direct, g41 var 1-3) and Modbus (FC6/FC16 with format and word order); without the typed start flag the outstation keeps the old local select and cancel. | `studio/tests/protocol/test_gateway_typed_wire.py::test_iec104_step_set_points_select_execute_cancel`, `studio/tests/protocol/test_gateway_typed_wire.py::test_iec104_without_typed_commands_keeps_local_select_and_ignores_new_types`, `studio/tests/protocol/test_gateway_typed_wire.py::test_dnp3_crob_codes_sbo_direct_and_analog_outputs`, `studio/tests/protocol/test_gateway_typed_wire.py::test_modbus_set_point_registers_and_tap_position` |
+| GW-16 | The new kinds are listed with their name, type IDs and hint wherever kinds are, and the command test row sends Raise/Lower and typed set points. | `studio/tests/frontend/gatewayTypedKinds.test.ts::every typed kind has a name, type IDs per protocol and a hint`, `studio/tests/frontend/gatewayTypedKinds.test.ts::the command test buttons send raise/lower and set point numbers` |

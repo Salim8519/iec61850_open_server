@@ -7,13 +7,14 @@ import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { Spinner } from '../../../ui/Spinner';
 import { isCommand, isMeasured, ownTargets, parseOwnNumber, statusChoices, statusNumber } from './ownPoints';
 
-/** The small form behind "Add point": a made-up point with its own value. The backend suggests
+/** The small form for one made-up point with its own value (Add points › Simulated › One point; `bare` leaves
+ *  out its own title row inside that dialog). The backend suggests
  *  the next own id and the next free address. "Add to the list" adds the point and the list is saved at once,
  *  so SCADA gets it right away (there is no draft step any more). A wrong number keeps its text and shows
  *  one red line under the fields. */
-export function AddOwnPoint({ protocol, rows, add, close, fail }: {
+export function AddOwnPoint({ protocol, rows, add, close, fail, bare }: {
   protocol: Protocol; rows: GatewayPoint[]; add: (point: GatewayPoint) => void; close: () => void;
-  fail: (message: string) => void;
+  fail: (message: string) => void; bare?: boolean;
 }) {
   const [point, setPoint] = useState<GatewayPoint | null>(null);
   const [number, setNumber] = useState('0');
@@ -36,9 +37,9 @@ export function AddOwnPoint({ protocol, rows, add, close, fail }: {
       monitor_only: false, draft: true });
   };
   const targets = ownTargets(rows);
-  return <div className="own-form" role="group" aria-label={OWN_COPY.title}>
-    <div className="row gateway-toolbar"><strong>{OWN_COPY.title}</strong><span className="gateway-spacer" />
-      <button className="ghost icon-button" onClick={close} aria-label={OWN_COPY.cancel}><X size={16} /></button></div>
+  return <div className={bare ? 'own-form bare' : 'own-form'} role="group" aria-label={OWN_COPY.title}>
+    {!bare && <div className="row gateway-toolbar"><strong>{OWN_COPY.title}</strong><span className="gateway-spacer" />
+      <button className="ghost icon-button" onClick={close} aria-label={OWN_COPY.cancel}><X size={16} /></button></div>}
     <p className="small muted own-hint">{isCommand(point.kind) ? OWN_COPY.commandHint : OWN_COPY.hint}</p>
     <div className="row own-form-fields">
       <label>{OWN_COPY.name}<input value={point.description} placeholder={OWN_COPY.namePlaceholder} maxLength={120}
@@ -67,7 +68,7 @@ export function AddOwnPoint({ protocol, rows, add, close, fail }: {
         {targets.map(choice => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
       </select></label>}
       <button className="primary" onClick={confirm}><Plus size={16} />{OWN_COPY.confirm}</button>
-      <button className="ghost" onClick={close}>{OWN_COPY.cancel}</button>
+      {!bare && <button className="ghost" onClick={close}>{OWN_COPY.cancel}</button>}
     </div>
     <SaveProblem text={problem} />
   </div>;

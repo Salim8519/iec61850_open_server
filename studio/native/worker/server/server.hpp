@@ -15,10 +15,12 @@ extern "C" {
 #include <unordered_map>
 
 struct ControlBinding;
+struct TypedBinding;
 struct Server {
     IedModel* model = nullptr;
     IedServer handle = nullptr;
     std::vector<std::unique_ptr<ControlBinding>> controls;
+    std::vector<std::unique_ptr<TypedBinding>> typed_controls;  // ADR-0104
     std::unordered_map<DataAttribute*, uint64_t> revisions;
     // Resolved object references (IPC thread only; the model is fixed while running).
     std::unordered_map<std::string, DataAttribute*> attributes;

@@ -55,11 +55,15 @@ test('explorer sends a command only through the confirmation step and never writ
   for (const word of ['writeObject', '/write', 'setValue(']) {
     assert.ok(!sources.includes(word), `explorer must not mention ${word}`);
   }
-  const callers = files('features/tools').filter(path => read(path).includes('explorerApi.operate('));
+  // ADR-0104: the panel sends typed Select / Operate / Cancel; the old operate call has no caller.
+  const callers = files('features/tools').filter(path => read(path).includes('explorerApi.command('));
   assert.deepEqual(callers, ['features/tools/explorer/CommandPanel.tsx']);
+  assert.deepEqual(files('features/tools').filter(path => read(path).includes('explorerApi.operate(')), []);
   const panel = read('features/tools/explorer/CommandPanel.tsx');
-  assert.ok(/onClick=\{\(\) => send\(pending\)\}/.test(panel), 'operate runs only from the confirm button');
+  assert.ok(/onClick=\{\(\) => send\(pending\)\}/.test(panel), 'select/operate start only from the confirm button');
+  assert.ok(/setPending\(\{ action: sbo \? 'select' : 'operate'/.test(panel), 'every first step asks for confirmation');
   assert.ok(read('api/tools.ts').includes("confirm: true"), 'the API call carries the confirmation');
+  assert.ok(read('api/tools.ts').includes("confirm: action !== 'cancel'"), 'typed select/operate carry it too');
 });
 
 test('command choices follow the MMS types Explorer shows', async () => {

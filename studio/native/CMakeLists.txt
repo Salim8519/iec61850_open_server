@@ -41,6 +41,7 @@ add_executable(studio_license_check testtools/license_check.cpp)
 target_link_libraries(studio_license_check PRIVATE studio_license)
 add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/server/server.cpp worker/updates/values.cpp worker/controls/controls.cpp
+    worker/controls/typed_controls.cpp worker/controls/typed_values.cpp
     worker/goose/publishing.cpp worker/server/access_log.cpp worker/server/read_hook.c
     worker/server/event_loop.cpp worker/server/schedule.c worker/server/timer_policy.cpp)
 target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker worker/server hal)
@@ -62,7 +63,8 @@ add_executable(studio_probe probe/main.cpp probe/reports.cpp common/browse.cpp
 target_include_directories(studio_probe PRIVATE ${STUDIO_HEADERS})
 # Control client of the Tools place (ADR-0057): the only tools program that operates IEDs.
 add_executable(studio_control control/main.cpp control/control_session.cpp control/control_texts.cpp
-    control/canvas_mux.cpp control/canvas_command.cpp worker/ipc/framing.cpp)
+    control/canvas_mux.cpp control/canvas_command.cpp control/typed_session.cpp control/typed_value.cpp
+    worker/ipc/framing.cpp)
 target_include_directories(studio_control PRIVATE ${STUDIO_HEADERS} worker control)
 # Test-only Sampled Values publisher (never packaged): the only target with SV publishing code.
 add_executable(studio_sv_test_publisher testtools/sv_test_publisher.cpp worker/ipc/framing.cpp
@@ -89,7 +91,8 @@ if(STUDIO_GATEWAY)
     include(cmake/master_socket_support.cmake)
     add_executable(studio_gateway gateway/main.cpp gateway/point_table.cpp gateway/command_bridge.cpp
         gateway/traffic.cpp gateway/iec104_objects.cpp gateway/iec104_commands.cpp gateway/server_104.cpp
-        gateway/modbus_pdu.cpp gateway/modbus_server.cpp gateway/dnp3_outstation.cpp worker/ipc/framing.cpp)
+        gateway/iec104_command_decode.cpp gateway/modbus_pdu.cpp gateway/modbus_writes.cpp gateway/modbus_server.cpp
+        gateway/dnp3_outstation.cpp gateway/dnp3_commands.cpp worker/ipc/framing.cpp)
     target_include_directories(studio_gateway PRIVATE gateway worker ${LIB60870_HEADERS} "${JSON_SOURCE}/single_include")
     target_compile_definitions(studio_gateway PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
     target_link_libraries(studio_gateway PRIVATE lib60870 opendnp3 studio_license ws2_32)

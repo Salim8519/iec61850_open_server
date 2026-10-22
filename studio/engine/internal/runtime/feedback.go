@@ -27,6 +27,7 @@ type feedbackItem struct {
 	generation int
 	iedID      string
 	event      *pyjson.Object
+	typed      bool // an INC, ENC, APC, BSC or ISC control (ADR-0104): no switch symbol to drive
 }
 
 func newFeedback(c *Coordinator) *feedback {
@@ -59,7 +60,9 @@ func (f *feedback) clear() {
 }
 
 func (f *feedback) enqueue(iedID string, event *pyjson.Object) {
-	if _, ok := pyval.Get(event, "ctl_value").(bool); !ok {
+	value := pyval.Get(event, "ctl_value")
+	_, isBool := value.(bool)
+	if !isBool && value == nil {
 		f.c.emit("equipment_feedback_failed", pyval.Obj("ied_id", iedID, "control_ref", pyval.Get(event, "ref"),
 			"message", "Native control event has no Boolean ctlVal"))
 		return
@@ -67,7 +70,7 @@ func (f *feedback) enqueue(iedID string, event *pyjson.Object) {
 	f.mu.Lock()
 	generation := f.generation
 	f.mu.Unlock()
-	f.queue.Push(feedbackItem{generation, iedID, pyval.Copy(event).(*pyjson.Object)})
+	f.queue.Push(feedbackItem{generation, iedID, pyval.Copy(event).(*pyjson.Object), !isBool})
 }
 
 func (f *feedback) run() {
@@ -103,7 +106,9 @@ func (f *feedback) process(entry feedbackItem) {
 		return
 	}
 	for _, node := range nodes {
-		f.applyNode(node, entry.iedID, entry.event)
+		if !entry.typed { // a typed value only moves its status, already in the table
+			f.applyNode(node, entry.iedID, entry.event)
+		}
 	}
 	statusRef, _ := pyval.Get(entry.event, "status_ref").(string)
 	f.c.plant.publishChanged([]bindingKey{{entry.iedID, statusRef}})

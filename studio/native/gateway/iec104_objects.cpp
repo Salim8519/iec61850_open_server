@@ -23,7 +23,7 @@ QualityDescriptor iec104_quality(const GatewayPoint& point) {
         flags |= IEC60870_QUALITY_NON_TOPICAL;
     if (point.quality & SUBSTITUTED) flags |= IEC60870_QUALITY_SUBSTITUTED;
     if (point.quality & OPERATOR_BLOCKED) flags |= IEC60870_QUALITY_BLOCKED;
-    if ((point.quality & OVERFLOW_BIT) && (point.kind == "float" || point.kind == "integer"))
+    if ((point.quality & OVERFLOW_BIT) && (point.kind == "float" || point.kind == "integer" || point.kind == "step_position"))
         flags |= IEC60870_QUALITY_OVERFLOW;
     return QualityDescriptor(flags);
 }
@@ -41,6 +41,12 @@ InformationObject iec104_object(const GatewayPoint& point, bool with_time) {
         auto state = DoublePointValue(std::clamp(int(point.value), 0, 3));
         return with_time ? (InformationObject)DoublePointWithCP56Time2a_create(nullptr, point.address, state, quality, &time)
                          : (InformationObject)DoublePointInformation_create(nullptr, point.address, state, quality);
+    }
+    if (point.kind == "step_position") {  // M_ST: the tap position, -64..63 (ADR-0107)
+        int step = int(std::clamp(std::lround(point.value * point.scale), -64L, 63L));
+        return with_time ? (InformationObject)StepPositionWithCP56Time2a_create(nullptr, point.address, step, false,
+                                                                               quality, &time)
+                         : (InformationObject)StepPositionInformation_create(nullptr, point.address, step, false, quality);
     }
     if (point.kind == "integer") {
         int scaled = int(std::clamp(std::lround(point.value * point.scale), -32768L, 32767L));
@@ -77,6 +83,11 @@ const char* iec104_type_name(int type_id) {
     case M_ME_NC_1: return "M_ME_NC_1"; case M_ME_TF_1: return "M_ME_TF_1";
     case C_SC_NA_1: return "C_SC_NA_1"; case C_SC_TA_1: return "C_SC_TA_1";
     case C_DC_NA_1: return "C_DC_NA_1"; case C_DC_TA_1: return "C_DC_TA_1";
+    case M_ST_NA_1: return "M_ST_NA_1"; case M_ST_TB_1: return "M_ST_TB_1";
+    case C_RC_NA_1: return "C_RC_NA_1"; case C_RC_TA_1: return "C_RC_TA_1";
+    case C_SE_NA_1: return "C_SE_NA_1"; case C_SE_TA_1: return "C_SE_TA_1";
+    case C_SE_NB_1: return "C_SE_NB_1"; case C_SE_TB_1: return "C_SE_TB_1";
+    case C_SE_NC_1: return "C_SE_NC_1"; case C_SE_TC_1: return "C_SE_TC_1";
     case C_IC_NA_1: return "C_IC_NA_1"; case C_CS_NA_1: return "C_CS_NA_1";
     case C_RD_NA_1: return "C_RD_NA_1"; case C_TS_TA_1: return "C_TS_TA_1";
     default: return "other";

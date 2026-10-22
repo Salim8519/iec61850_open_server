@@ -47,6 +47,24 @@ type Runtime interface {
 	Subscribe(notify func(Change)) (cancel func())
 }
 
+// TypedRequest is one typed IEC 61850 command (runtime.TypedCommand of ADR-0104). Value is
+// a bool, an int64, a float64 or "higher"/"lower".
+type TypedRequest struct {
+	IEDID, Ref string
+	Value      any
+	Test       bool
+	OrCat      int
+	OrIdent    string
+}
+
+// TypedCommands is what the gateway needs from the typed IEC 61850 commands (ADR-0107).
+// An error with apperr code "not_available" means the engine cannot do this yet.
+type TypedCommands interface {
+	Select(request TypedRequest) (expiresMs int, err error)
+	Operate(request TypedRequest) (*pyjson.Object, error)
+	Cancel(iedID, ref string) error
+}
+
 func get(o *pyjson.Object, key string) any {
 	if o == nil {
 		return nil

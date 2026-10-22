@@ -58,6 +58,7 @@ func (a *Area) Routes() []api.Route {
 	routes = append(routes, a.gatewayRoutes()...)
 	routes = append(routes, a.pointRoutes()...)
 	routes = append(routes, a.ownRoutes()...)
+	routes = append(routes, a.addRoutes()...)
 	routes = append(routes, a.masterRoutes()...)
 	routes = append(routes, a.masterPointRoutes()...)
 	routes = append(routes, a.panelRoutes()...)

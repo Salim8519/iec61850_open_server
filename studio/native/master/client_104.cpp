@@ -81,11 +81,19 @@ public:
         if (kind == "clock") return clock_sync();
         int ioa = request.at("address").get<int>();
         double value = request.at("value").get<double>();
+        int qualifier = request.value("qualifier", 0);
+        if (qualifier < 0 || qualifier > 31) throw std::runtime_error("The command qualifier (QU) is a whole number from 0 to 31");
+        // "deactivate" sends one object with cause 8; the device answers deactivation confirmed,
+        // never a termination. Otherwise it is an activation (cause 6) with the usual select/execute.
+        bool deactivate = request.value("deactivate", false);
+        int cot = deactivate ? CS101_COT_DEACTIVATION : CS101_COT_ACTIVATION;
         Json steps = Json::array();
-        if (request.value("select", false) && !step(kind, ioa, value, true, steps)) return {{"ok", false}, {"steps", steps}};
+        if (!deactivate && request.value("select", false) && !step(kind, ioa, value, true, qualifier, cot, steps))
+            return {{"ok", false}, {"steps", steps}};
         long executed = 0;
         int type = 0;
-        if (!step(kind, ioa, value, false, steps, &executed, &type)) return {{"ok", false}, {"steps", steps}};
+        if (!step(kind, ioa, value, false, qualifier, cot, steps, &executed, &type)) return {{"ok", false}, {"steps", steps}};
+        if (deactivate) return {{"ok", true}, {"steps", steps}, {"terminated", false}};
         bool terminated = wait(type, ioa, executed, CS101_COT_ACTIVATION_TERMINATION, 5000).has_value();
         steps.push_back({{"step", "termination"}, {"ok", terminated},
                          {"text", terminated ? "activation terminated" : "no termination within 5 s"}});
@@ -134,21 +142,24 @@ private:
         return found;
     }
 
-    bool step(const std::string& kind, int ioa, double value, bool select, Json& steps, long* sent = nullptr,
-              int* sent_type = nullptr) {
-        auto built = iec104_command_object(kind, ioa, value, select, time_tagged, 0);
+    bool step(const std::string& kind, int ioa, double value, bool select, int qualifier, int cot, Json& steps,
+              long* sent = nullptr, int* sent_type = nullptr) {
+        auto built = iec104_command_object(kind, ioa, value, select, time_tagged, qualifier);
         auto before = mark();
         if (sent) *sent = before;
         if (sent_type) *sent_type = built.type;
-        CS104_Connection_sendProcessCommandEx(connection, CS101_COT_ACTIVATION, ca, built.object);
+        CS104_Connection_sendProcessCommandEx(connection, (CS101_CauseOfTransmission)cot, ca, built.object);
         InformationObject_destroy(built.object);
-        traffic("tx", peer, std::string(iec104_name(built.type)) + (select ? " select" : " execute") + " IOA "
-                + std::to_string(ioa) + " value " + number(value));
-        auto answer = wait(built.type, ioa, before, CS101_COT_ACTIVATION_CON, t1_ms);
-        bool ok = answer && !answer->negative && answer->cot == CS101_COT_ACTIVATION_CON;
+        bool deactivate = cot == CS101_COT_DEACTIVATION;
+        std::string action = deactivate ? " deactivate" : select ? " select" : " execute";
+        traffic("tx", peer, std::string(iec104_name(built.type)) + action + " IOA " + std::to_string(ioa)
+                + " value " + number(value) + (qualifier ? " QU " + std::to_string(qualifier) : ""));
+        int confirm = deactivate ? CS101_COT_DEACTIVATION_CON : CS101_COT_ACTIVATION_CON;
+        auto answer = wait(built.type, ioa, before, confirm, t1_ms);
+        bool ok = answer && !answer->negative && answer->cot == confirm;
         std::string text = !answer ? "no confirmation within t1"
-            : ok ? "confirmed" : refusal_text(*answer, select);
-        steps.push_back({{"step", select ? "select" : "execute"}, {"ok", ok}, {"text", text}});
+            : ok ? (deactivate ? "deactivation confirmed" : "confirmed") : refusal_text(*answer, select);
+        steps.push_back({{"step", deactivate ? "deactivate" : select ? "select" : "execute"}, {"ok", ok}, {"text", text}});
         return ok;
     }
 

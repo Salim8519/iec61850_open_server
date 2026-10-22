@@ -50,21 +50,28 @@ export const MASTER_ADVANCED: Record<MasterProtocol, string[]> = {
 };
 
 export const COMMAND_NAMES: Record<CommandKind, string> = {
-  single: 'Single command (C_SC)', double: 'Double command (C_DC)', setpoint_float: 'Setpoint, float (C_SE_NC)',
+  single: 'Single command (C_SC)', double: 'Double command (C_DC)', regulating: 'Regulating step (C_RC)',
+  setpoint_float: 'Setpoint, float (C_SE_NC)',
   setpoint_scaled: 'Setpoint, scaled (C_SE_NB)', setpoint_normalized: 'Setpoint, normalised (C_SE_NA)',
   clock: 'Clock synchronisation (C_CS)', binary_output: 'Binary output (CROB)',
-  analog_output_int: 'Analog output, integer (g41v1)', analog_output_float: 'Analog output, float (g41v3)',
+  analog_output_int16: 'Analog output, 16-bit integer (g41v2)',
+  analog_output_int: 'Analog output, 32-bit integer (g41v1)', analog_output_float: 'Analog output, float (g41v3)',
   coil: 'Write coil (FC5)', register: 'Write register (FC6)', registers_float: 'Write float, 2 registers (FC16)',
   registers_int32: 'Write 32-bit integer, 2 registers (FC16)',
 };
+// Most used on top (change 0169): breaker commands first, then step and setpoints, clock last.
 export const COMMANDS: Record<MasterProtocol, CommandKind[]> = {
-  iec104: ['double', 'single', 'setpoint_float', 'setpoint_scaled', 'setpoint_normalized', 'clock'],
-  dnp3: ['binary_output', 'analog_output_float', 'analog_output_int'],
+  iec104: ['double', 'single', 'regulating', 'setpoint_float', 'setpoint_scaled', 'setpoint_normalized', 'clock'],
+  dnp3: ['binary_output', 'analog_output_float', 'analog_output_int', 'analog_output_int16'],
   modbus: ['coil', 'register', 'registers_float', 'registers_int32'],
 };
 export const CROB_CODES: Record<CrobCode, string> = {
-  latch: 'Latch on / off', pulse: 'Pulse on', trip_close: 'Trip / close (pulse)',
+  latch: 'Latch on / off', pulse: 'Pulse on / off', trip_close: 'Trip / close (pulse)',
 };
+/** Regulating-step value choices: a tap changer or similar steps one position down or up. */
+export const REG_VALUES = [{ value: 1, label: '1 = Lower (step down)' }, { value: 2, label: '2 = Raise (step up)' }];
+/** Activate (operate, COT 6) or Deactivate (cancel a select or a running command, COT 8). */
+export const ACTIVATION = [{ value: 0, label: 'Activate (operate)' }, { value: 1, label: 'Deactivate (cancel)' }];
 export const ADDRESS_WORD: Record<MasterProtocol, string> = {
   iec104: 'Command address (IOA)', dnp3: 'Output index', modbus: 'Register or coil address',
 };
@@ -113,6 +120,12 @@ export const MASTER_COPY = {
   labelPlaceholder: 'add a name', stale: 'Not connected: these are the last values received.',
   sendTo: 'Command…', commandTitle: 'Send a command to the device',
   value: 'Value', code: 'Control code', select: 'Select before operate', kind: 'Command type',
+  qualifier: 'Qualifier (QU)',
+  qualifierHint: 'IEC 104 command qualifier: 0 = no extra definition, 1 short pulse, 2 long pulse, 3 persistent. Leave 0 unless the device needs it.',
+  activation: 'Send as',
+  activationHint: 'Activate operates the point. Deactivate cancels a select or a running command (cause 8).',
+  crobCount: 'Repeat count', crobOn: 'On time (ms)', crobOff: 'Off time (ms)',
+  crobTimingHint: 'DNP3 pulse train: how many times, and the on/off milliseconds. Defaults suit most outstations.',
   doubleValues: { 1: '1 = OFF / open', 2: '2 = ON / close' } as Record<number, string>,
   confirmTitle: (name: string, address: number | undefined, host: string, word = 'address') =>
     `Send ${name}${address !== undefined ? ` to ${word} ${address}` : ''} on ${host}?`,
@@ -122,6 +135,15 @@ export const MASTER_COPY = {
   commandsHint: 'Every command you sent: what was asked and how the device answered (confirmation, refusal, termination).',
   trafficHint: 'Decoded messages between ScadaBench and the device, newest at the bottom.',
   states_command: { sent: 'waiting…', confirmed: 'confirmed', refused: 'refused' },
+};
+
+export const CYCLIC_COPY = {
+  title: 'Repeat automatically',
+  hint: 'Sends this command again and again on a timer: good for pulsing a point or sweeping a range of addresses. Stop ends it, and disconnecting ends it too.',
+  every: 'Repeat every (ms)', step: 'Add 1 to the address after each send', toggle: 'Flip the value each send (on/off)',
+  start: 'Start repeating', stop: 'Stop repeating',
+  running: (sends: number) => sends === 1 ? 'Repeating… 1 command sent' : `Repeating… ${sends} commands sent`,
+  warn: 'This repeats a REAL command to real equipment until you press Stop. Make sure it is safe.',
 };
 
 export const TABLE_NAMES: Record<string, string> = {

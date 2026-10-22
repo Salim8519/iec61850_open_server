@@ -97,11 +97,22 @@ func crossCheck(diagram *pyjson.Object, ieds *Lookup, fresh map[int]bool, onlyFr
 		if err := checkMeasurements(data, kind, ieds); err != nil {
 			return nil, err
 		}
+		if err := checkPointPanel(data, kind, ieds); err != nil {
+			return nil, err
+		}
+		if err := checkTapChanger(data, kind, ieds); err != nil {
+			return nil, err
+		}
+		if err := checkCommandOptions(data, kind); err != nil {
+			return nil, err
+		}
 		if isFresh {
 			if err := settleInfeed(data, kind); err != nil {
 				return nil, err
 			}
 			settleMeasurements(data, kind)
+			settlePointPanel(data, kind)
+			settleTapChanger(data, kind)
 		}
 		if err := validateState(data, kind, ieds); err != nil {
 			return nil, err

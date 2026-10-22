@@ -61,6 +61,12 @@ func (e *executor) execute(event *pyjson.Object) (bool, string, error) {
 	m := e.manager
 	pointID := get(event, "point_id")
 	point := m.Point(pointID)
+	wire, _ := get(event, "wire").(*pyjson.Object)
+	phase, refused := PhaseOf(text(event, "protocol"), wire)
+	if point != nil && (refused != "" || phase != PhaseExecute || gateway.IsTypedKind(text(point, "kind")) ||
+		m.selected.has(text(point, "id"))) {
+		return e.typed(event, point, phase, refused) // ADR-0107
+	}
 	value := pytext.Truthy(get(event, "value"))
 	var name any
 	if point != nil && (get(point, "source") == "remote" || gateway.IsOwn(point)) {
@@ -145,7 +151,8 @@ func (e errorText) Error() string { return string(e) }
 
 func findControl(ied *pyjson.Object, ref any) *pyjson.Object {
 	controls, _ := get(ied, "controls").([]any)
-	for _, raw := range controls {
+	// Typed controls (BSC, ISC, APC, INC; ADR-0104) live in the stored SCL, not in "controls".
+	for _, raw := range append(controls, gateway.TypedControlsOf(ied)...) {
 		if item, ok := raw.(*pyjson.Object); ok && get(item, "ref") == ref {
 			return item
 		}
@@ -182,7 +189,7 @@ func Refusal(point, ied *pyjson.Object, realCommands bool) string {
 	if point == nil {
 		return "this point is not in the gateway point list"
 	}
-	if kind := text(point, "kind"); kind != "command_single" && kind != "command_double" {
+	if !gateway.IsCommandKind(text(point, "kind")) {
 		return "this point is not a command"
 	}
 	if ied == nil {

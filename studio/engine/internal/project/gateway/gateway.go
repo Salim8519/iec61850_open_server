@@ -12,6 +12,10 @@ var Protocols = []string{"iec104", "modbus", "dnp3"}
 // Kinds are the gateway point kinds (monitor kinds, then command kinds).
 var Kinds = []string{"single", "double", "float", "integer", "command_single", "command_double"}
 
+// TypedKinds are the Go-only kinds of ADR-0107 (internal/gateway.TypedKinds): stored like the
+// others; the frozen Python engine refuses them at Start.
+var TypedKinds = []string{"step_position", "command_step", "command_setpoint"}
+
 // MaxPoints is the largest point list per protocol.
 const MaxPoints = 5000
 
@@ -124,7 +128,7 @@ func storedPoints(stored *pyjson.Object, name string) (any, error) {
 	}
 	for _, item := range list {
 		point, isDict := item.(*pyjson.Object)
-		if !isDict || !pyval.InTuple(pyval.Lookup(point, "kind", nil), Kinds...) ||
+		if !isDict || !pyval.InTuple(pyval.Lookup(point, "kind", nil), append(Kinds, TypedKinds...)...) ||
 			!pyval.IsIntOrBool(pyval.Lookup(point, "address", nil)) {
 			return nil, apperr.ValueError("A stored " + name + " gateway point has no valid type or address")
 		}
