@@ -1,54 +1,109 @@
 package signalindex
 
-import (
-	"regexp"
-	"strings"
+import "strings"
 
-	"studio-engine/internal/pyjson"
-)
+// Point kinds (ADR-0095, completed by ADR-0113), the same rules as the frontend's
+// points/pointKind.ts kindOf61850: functional constraint + basic type, refined by the data
+// object's class (cdc) where the type alone cannot tell (commands, counters, histograms,
+// settings and description objects). Both implementations are checked against one shared
+// table, studio/tests/fixtures/point_kinds/iec61850.json. A request without the Go-only
+// parameters is answered exactly as Flask does.
 
-// Point kinds (ADR-0095), the same rules as the frontend's points/pointKind.ts kindOf61850:
-// FC + basic type, refined by the data object's class (cdc) when it is known. They back the
-// Go-only point_kind and helpers=hide filters of GET /ieds/<id>/signals; a request without them
-// is answered exactly as Flask does.
+// kindNames is the display order of the kinds; a kind's code is its position here.
+var kindNames = [...]string{"SP", "DP", "IS", "MV", "CT", "SC", "DC", "SE", "CM", "CF", "TX", "AT", "UN"}
+
+var kindCodes = func() map[string]uint8 {
+	codes := make(map[string]uint8, len(kindNames))
+	for code, name := range kindNames {
+		codes[name] = uint8(code)
+	}
+	return codes
+}()
+
+const kindUN = uint8(len(kindNames) - 1)
 
 var (
-	numericKind = regexp.MustCompile(`^(INT(8|16|32|64|128)U?|FLOAT(32|64))$`)
-	textualKind = regexp.MustCompile(`^(VisString|Unicode|Octet)`)
+	// numericTypes are the IEC 61850-7-2 integer and floating point types (INT24 and the
+	// unsigned forms as SCL writes them; INT64U/INT128U were accepted before and still are).
+	numericTypes = setOf("INT8", "INT16", "INT24", "INT32", "INT64", "INT128", "INT8U", "INT16U", "INT24U",
+		"INT32U", "INT64U", "INT128U", "FLOAT32", "FLOAT64")
+	// otherTextTypes are standard types that are not a process value: object references,
+	// currencies, bit strings of control blocks and checks, entry ids and network addresses.
+	otherTextTypes = setOf("ObjRef", "Currency", "Check", "PhyComAddr", "TrgOps", "OptFlds", "SvOptFlds",
+		"LogOptFlds", "EntryID")
+	helperTypes  = setOf("Quality", "Timestamp", "EntryTime")
+	settingFCs   = setOf("SP", "SG", "SE", "CF")
+	describingFC = setOf("DC", "EX")
+	// serviceFCs are service tracking and the control block attributes (7-2 FCs SR, BR, RP, LG,
+	// GO, MS, US): configuration of a service, never a process value.
+	serviceFCs  = setOf("SR", "BR", "RP", "LG", "GO", "MS", "US")
 	commandKind = map[string]string{"SPC": "SC", "DPC": "DC", "APC": "SE", "BAC": "SE", "INC": "SE",
 		"ENC": "SE", "BSC": "SE", "ISC": "SE"}
+	settingClasses    = setOf("SPG", "ING", "ENG", "ORG", "TSG", "CUG", "VSG", "ASG", "CURVE", "CSG")
+	describingClasses = setOf("DPL", "LPL", "CSD")
 )
 
-// pointKind is kindOf61850(fc, basicType, dataClass).
+func setOf(items ...string) map[string]bool {
+	set := make(map[string]bool, len(items))
+	for _, item := range items {
+		set[item] = true
+	}
+	return set
+}
+
+// isTextType is a visible, Unicode or octet string or another non-value standard type.
+func isTextType(basic string) bool {
+	return strings.HasPrefix(basic, "VisString") || strings.HasPrefix(basic, "Unicode") ||
+		strings.HasPrefix(basic, "Octet") || otherTextTypes[basic]
+}
+
+// pointKind is kindOf61850(fc, basicType, dataClass); the rules apply in this order.
 func pointKind(fc, basic, class string) string {
 	switch {
-	case basic == "Quality" || basic == "Timestamp":
+	case fc == "SV" || fc == "BL": // substitution and blocking are set by an operator
+		return "CF"
+	case helperTypes[basic]:
 		return "AT"
 	case fc == "CO":
 		if kind, ok := commandKind[class]; ok {
 			return kind
 		}
-		if numericKind.MatchString(basic) {
+		if numericTypes[basic] {
 			return "SE"
 		}
 		return "CM"
-	case fc == "SP" || fc == "SG" || fc == "SE" || fc == "CF":
+	case settingFCs[fc]:
 		return "CF"
-	case fc == "DC" || fc == "EX" || textualKind.MatchString(basic):
+	case describingFC[fc] || serviceFCs[fc]:
+		return "TX"
+	case fc != "ST" && fc != "MX" && fc != "OR": // not a 7-2 functional constraint
+		return "UN"
+	case settingClasses[class]:
+		return "CF"
+	case describingClasses[class] || isTextType(basic):
 		return "TX"
 	case basic == "Dbpos":
 		return "DP"
-	case basic == "BOOLEAN" && fc == "ST":
+	case basic == "BOOLEAN":
 		return "SP"
-	case fc == "MX" && numericKind.MatchString(basic):
-		return "MV"
-	case fc == "ST" && (basic == "Enum" || numericKind.MatchString(basic)):
-		if class == "BCR" {
-			return "CT"
-		}
+	case numericTypes[basic]:
+		return numericKind(fc, class)
+	case basic == "Enum" || basic == "Tcmd":
 		return "IS"
 	}
 	return "UN"
+}
+
+// numericKind is the kind of a number in ST, MX or OR: measured in MX; in status a counter
+// (BCR, SEC) or a histogram value (HST) by its class, otherwise an integer status.
+func numericKind(fc, class string) string {
+	switch {
+	case fc == "MX" || class == "HST":
+		return "MV"
+	case class == "BCR" || class == "SEC":
+		return "CT"
+	}
+	return "IS"
 }
 
 // dataClassOf is the class of the longest object reference that equals ref or is followed by
@@ -62,39 +117,10 @@ func dataClassOf(classes map[string]string, ref string) string {
 	return ""
 }
 
-// kindOf is the point kind of one indexed signal for this query's classes.
-func (q Query) kindOf(item *signal) string {
+// kindCode is the kind code of one indexed signal for these classes.
+func kindCode(item *signal, classes map[string]string) uint8 {
 	if !item.fcOK || !item.kindOK {
-		return "UN"
+		return kindUN
 	}
-	return pointKind(item.fc, item.kind, dataClassOf(q.Classes, item.ref))
-}
-
-// keepKind applies point_kind and helpers=hide.
-func (q Query) keepKind(item *signal) bool {
-	if q.PointKind == "" && !q.HideHelpers {
-		return true
-	}
-	kind := q.kindOf(item)
-	if q.HideHelpers && kind == "AT" {
-		return false
-	}
-	return q.PointKind == "" || kind == q.PointKind
-}
-
-// kindCounts counts the signals of every kind that pass all the other filters (point_kind
-// itself left out), so the type chips can hide kinds with no rows.
-func (ix *Index) kindCounts(q Query, report *memberSet, values ValueReader) *pyjson.Object {
-	q.PointKind = ""
-	counts := map[string]int64{}
-	for _, position := range ix.filter(q, report, values) {
-		counts[q.kindOf(&ix.signals[position])]++
-	}
-	result := pyjson.NewObject()
-	for _, kind := range []string{"SP", "DP", "IS", "MV", "CT", "SC", "DC", "SE", "CM", "CF", "TX", "AT", "UN"} {
-		if counts[kind] > 0 {
-			result.Set(kind, counts[kind])
-		}
-	}
-	return result
+	return kindCodes[pointKind(item.fc, item.kind, dataClassOf(classes, item.ref))]
 }

@@ -13,7 +13,7 @@
 - [Fixed layout](design/layout.md)
 - [Interactions](design/interactions.md)
 - [Append-only engineering history](history/INDEX.md)
-- [Feature specifications](specs/README.md) (tool pages: [tool layout](specs/tool-layout.md); [SLD signal layers](specs/signal-layers.md); newest: [run one IED, test buttons](specs/run-single-ied.md))
+- [Feature specifications](specs/README.md) (tool pages: [tool layout](specs/tool-layout.md); [SLD signal layers](specs/signal-layers.md); newest: [point picker](specs/point-picker.md))
 - Clipped-text browser check: `studio/tools/clip_check.js` (run at 1366×768, change 0097)
 - [Decisions](decisions/INDEX.md)
 - [Changes](changes/INDEX.md)

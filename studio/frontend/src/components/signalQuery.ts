@@ -3,6 +3,14 @@ export type SignalQuery = {
   kinds?: string[]; fc?: string; writableOnly?: boolean;
   /** Universal point type (SP, DP, MV …) the engine filters by; "all" or empty sends nothing (ADR-0095). */
   pointKind?: string;
+  /** Go only (ADR-0113): hide the q/t helpers, count per type and per object, give each row its type. */
+  smart?: boolean;
+  /** Show the quality and time helpers (smart pickers hide them by default). */
+  helpers?: boolean;
+  /** One object (logical node "LD/LN"); empty means every object. */
+  ln?: string;
+  /** The component's name: the engine suggests the points that mention it. */
+  near?: string;
 };
 
 export const SIGNAL_PAGE = 50;
@@ -19,6 +27,14 @@ export function buildSignalQuery(query: SignalQuery): string {
   if (query.fc) params.set('fc', query.fc);
   if (query.writableOnly) params.set('writable', 'true');
   if (query.pointKind && query.pointKind !== 'all') params.set('point_kind', query.pointKind);
+  if (query.smart) {
+    if (!query.helpers) params.set('helpers', 'hide');
+    params.set('kind_counts', '1');
+    params.set('ln_counts', '1');
+    params.set('annotate', '1');
+    if (query.ln) params.set('ln', query.ln);
+    if (query.near?.trim()) params.set('near', query.near.trim());
+  }
   return params.toString();
 }
 

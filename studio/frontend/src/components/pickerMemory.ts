@@ -1,6 +1,10 @@
 /** Remembers where each signal picker was (IED, search, report, page) for this browser tab,
  *  so closing and reopening a picker, or picking a wrong point, never starts the search over. */
-export type PickerView = { iedId: string; query: string; reportRef: string; offset: number; pointKind?: string };
+export type PickerView = { iedId: string; query: string; reportRef: string; offset: number; pointKind?: string;
+  /** The type the slot opened with when pointKind was chosen: another slot under the same name starts on its own. */
+  kindFor?: string;
+  /** Object (logical node) and the quality/time switch of the smart picker (ADR-0113). */
+  ln?: string; helpers?: boolean };
 
 const views = new Map<string, PickerView>();
 

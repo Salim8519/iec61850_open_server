@@ -46,6 +46,7 @@ changed, dropped or invented by accident.
 | [Tools](tools-page.md) | Tools place: cards for built tools only, GOOSE & SV traffic |
 | [Tool layout](tool-layout.md) | Tool pages and Devices fill the window; one remembered filter bar on every list |
 | [Fit to window](display-fit.md) | Small windows show the big-window layout evenly smaller; Settings › Display |
+| [Point picker](point-picker.md) | One IEC 61850 kind table for Go and the browser; picker type chips, objects, suggestions |
 | [Run one IED, test buttons](run-single-ied.md) | Run/connect a single IED from Devices; equipment test buttons on simulated IEDs |
 | [IED Explorer](ied-explorer.md) | Browse any IED, autonomous watch list, commands after confirmation |
 | [Find IEDs](find-ieds.md) | Scan a previewed range for IEC 61850 devices and identify them |

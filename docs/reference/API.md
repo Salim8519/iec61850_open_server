@@ -42,6 +42,7 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | Method/path | Input | Result / invariant |
 | --- | --- | --- |
 | `GET /ieds/{id}/signals` | `q,fc,kind,writable,report,ref,ld,bad_quality,in_dataset,offset,limit` | Filtered/paged typed signals and the IED's logical `devices` (read-only filters, change 0093) |
+| `GET /ieds/{id}/signals` (Go only) | `point_kind`, `helpers=hide`, `kind_counts=1` ([ADR-0095](../decisions/ADR-0095-universal-point-kinds.md)); `annotate=1`, `ln=<LD/LN>`, `ln_counts=1`, `near=<text>` ([ADR-0113](../decisions/ADR-0113-smart-point-picker.md)) | Adds keys only: `kind_counts` {kind: n} without `point_kind`; items get `point_kind`; `ln_counts` {"LD/LN": n} without `ln`; `suggested` (at most 8 items mentioning `near` as a whole word, description first, each with `suggested_by`). Without them the answer is byte-identical |
 | `POST /signals/update` | `{ied_id,ref,value,quality?}` | Acknowledged typed update |
 | `POST /signals/source` | `{ied_id,ref,spec}` | Configure validated source |
 | `POST /signals/pulse` | `{ied_id,ref,active_value?,duration_ms?}` | Guarded Boolean pulse |

@@ -28,8 +28,14 @@ type Query struct {
 	HideHelpers bool
 	KindCounts  bool // kind_counts == "1": add {kind: n} counted without point_kind
 	Classes     map[string]string
-	offset     intArg
-	limit      intArg
+	// Go only (ADR-0113): the smart point picker.
+	LN       string // ln: one logical node "LD/LN"; "" means no filter
+	LNCounts bool   // ln_counts == "1": add {"LD/LN": n} counted without ln
+	Annotate bool   // annotate == "1": each item gets "point_kind"
+	Near     string // near: the component's name; "suggested" lists points that mention it
+	NearSet  bool   // near was given (even empty): the answer has "suggested"
+	offset   intArg
+	limit    intArg
 }
 
 // intArg is an offset/limit argument; its int() error is reported only after the report
@@ -61,9 +67,14 @@ func ParseQuery(args url.Values) Query {
 	pointKind, _ := get("point_kind")
 	helpers, _ := get("helpers")
 	counts, _ := get("kind_counts")
+	ln, _ := get("ln")
+	lnCounts, _ := get("ln_counts")
+	annotate, _ := get("annotate")
+	near, nearSet := get("near")
 	query := Query{Text: pyv.Casefold(text), FC: fc, Writable: writable == "true", Report: report, Ref: ref,
 		LD: ld, BadQuality: bad == "true", InDataset: inDataset == "true",
-		PointKind: pointKind, HideHelpers: helpers == "hide", KindCounts: counts == "1"}
+		PointKind: pointKind, HideHelpers: helpers == "hide", KindCounts: counts == "1",
+		LN: ln, LNCounts: lnCounts == "1", Annotate: annotate == "1", Near: near, NearSet: nearSet}
 	for _, kind := range strings.Split(kindText, ",") {
 		if kind == "" {
 			continue

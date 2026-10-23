@@ -34,7 +34,7 @@ func (s *Service) listSignals(w http.ResponseWriter, r *http.Request) {
 		values = runtimeValues{values: s.Deps.Values, iedID: id}
 	}
 	query := signalindex.ParseQuery(signalindex.ParseArgs(r.URL.RawQuery))
-	if query.PointKind != "" || query.KindCounts { // Go only (ADR-0095): counters and commands need the data classes
+	if query.NeedsClasses() { // Go only (ADR-0095, ADR-0113): counters and commands need the data classes
 		source, _ := pyv.Get(ied, "source").(string)
 		query.Classes, _ = scl.CachedDataClasses(pyv.GetStr(ied, "id"), pyv.GetStr(ied, "name"), source)
 	}
@@ -45,6 +45,7 @@ func (s *Service) listSignals(w http.ResponseWriter, r *http.Request) {
 	}
 	if values != nil {
 		s.overlay(id, pyv.GetList(result, "items"))
+		s.overlay(id, pyv.GetList(result, "suggested")) // Go only (ADR-0113); nil when not asked
 	}
 	writeJSON(w, http.StatusOK, result)
 }

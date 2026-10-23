@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import { api } from '../../../api/client';
 import type { ExtendedControl, Ied, PanelPoint, PointType, Signal } from '../../../api/types';
 import { buildSignalQuery, SIGNAL_PAGE } from '../../../components/signalQuery';
+import { ObjectSelect } from '../../../components/signalPicker/ObjectSelect';
 import { KindBadge, kindRow } from '../../../ui/KindBadge';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { Spinner } from '../../../ui/Spinner';
@@ -40,19 +41,23 @@ export function PointAdder({ ied, extended, points, add, done }: {
   const [ticked, setTicked] = useState<ReadonlyMap<string, Choice>>(new Map());
   const [notice, setNotice] = useState('');
   const [source, setSource] = useState<ValueSource>('MX');
+  // Object (logical node) filter with counts from the Go engine (ADR-0113); absent on older engines.
+  const [ln, setLn] = useState('');
+  const [lnCounts, setLnCounts] = useState<Record<string, number>>();
   const held = pointKeys(points);
   useEffect(() => {
     if (type === 'command') { setSignals([]); setTotal(0); return undefined; }
     let cancelled = false;
     const timer = setTimeout(() => {
       setLoading(true);
-      api<{ items: Signal[]; total: number }>(`/ieds/${encodeURIComponent(ied.id)}/signals?${buildSignalQuery({ q: query, offset, ...queryFor(type, source) })}`)
-        .then(data => { if (!cancelled) { setSignals(data.items); setTotal(data.total); setError(''); } })
+      api<{ items: Signal[]; total: number; ln_counts?: Record<string, number> }>(`/ieds/${encodeURIComponent(ied.id)}/signals?${
+        buildSignalQuery({ q: query, offset, ...queryFor(type, source), smart: true, ln })}`)
+        .then(data => { if (!cancelled) { setSignals(data.items); setTotal(data.total); setLnCounts(data.ln_counts); setError(''); } })
         .catch(reason => { if (!cancelled) setError(reason.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
     }, 150);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [ied.id, type, query, offset, source]);
+  }, [ied.id, type, query, offset, source, ln]);
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   const rows: Choice[] = type === 'command'
     ? commandControls(ied, extended).filter(control => words.every(word => control.ref.toLowerCase().includes(word))).map(control => ({
@@ -90,9 +95,11 @@ export function PointAdder({ ied, extended, points, add, done }: {
       options={[{ value: 'MX', label: POINT_COPY.valueMeasured, title: POINT_COPY.valueMeasuredHint },
         { value: 'ST', label: POINT_COPY.valueWhole, title: POINT_COPY.valueWholeHint }]}
       onChange={next => { setSource(next); setOffset(0); }} />}
-    <div className="search-field"><Search size={14} aria-hidden="true" />
+    <div className="pp-adder-search"><div className="search-field"><Search size={14} aria-hidden="true" />
       <input aria-label="Search signals" placeholder="Search signals…" value={query}
         onChange={event => { setQuery(event.target.value); setOffset(0); }} /></div>
+      {type !== 'command' && lnCounts && <ObjectSelect counts={lnCounts} value={ln}
+        total={Object.values(lnCounts).reduce((sum, count) => sum + count, 0)} onChange={next => { setLn(next); setOffset(0); }} />}</div>
     {error && <p role="alert" className="relay-error">{error}</p>}
     <div className="pp-adder-list" aria-busy={loading}>
       {loading && !rows.length && <Spinner label="Loading signals…" />}

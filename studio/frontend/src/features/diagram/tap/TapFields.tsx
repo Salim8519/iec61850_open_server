@@ -9,9 +9,9 @@ type Choice = { ref: string; cdc: string };
 
 /** One signal of the tap changer: what is chosen, then Change / Remove; Change opens the shared search picker
  *  limited to the kinds and functional constraint that fit. */
-export function TapSignalField({ title, hint, ieds, value, kinds, fc, memoryKey, disabled, change }: {
+export function TapSignalField({ title, hint, ieds, value, kinds, fc, memoryKey, near, disabled, change }: {
   title: string; hint: string; ieds: Ied[]; value: SignalBinding | null; kinds: string[]; fc: string;
-  memoryKey: string; disabled: boolean; change: (binding: SignalBinding | null, signal?: Signal) => void;
+  memoryKey: string; near?: string; disabled: boolean; change: (binding: SignalBinding | null, signal?: Signal) => void;
 }) {
   const [picking, setPicking] = useState(false);
   const ied = value ? ieds.find(item => item.id === value.ied_id) : undefined;
@@ -24,6 +24,7 @@ export function TapSignalField({ title, hint, ieds, value, kinds, fc, memoryKey,
       <span className="signal-search-text" title={value.ref}><strong>{shortRef(value.ref, ied?.name)}</strong>
         <small>{ied?.name ?? value.ied_id}</small></span></div> : <p className="small muted" style={{ margin: 0 }}>{hint}</p>}
     {picking && !disabled && <SignalSearchPicker ieds={ieds} allowedKinds={kinds} allowedFc={fc} memoryKey={memoryKey}
+      near={near} slot={title}
       chosen={value ?? undefined} choose={(binding, signal) => { change(binding, signal); setPicking(false); }} />}
   </div>;
 }

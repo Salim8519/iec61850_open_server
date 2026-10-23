@@ -61,7 +61,7 @@ export function MeasurementEditor({ nodeId, data, project, locked, update }: Pro
         <span className="small muted">{entries.length}/{MAX_MEASUREMENTS}</span>
         <button className="ghost" onClick={() => setAdding(false)}>Done</button></div>
       <SignalSearchPicker ieds={project.ieds} allowedKinds={NUMERIC_KINDS} chooseLabel="Add"
-        memoryKey={`sld-measurements-${nodeId}`}
+        memoryKey={`sld-measurements-${nodeId}`} near={data.label} slot="Measurement list"
         exclude={new Set(entries.map(entry => `${entry.source.ied_id}:${entry.source.ref}`))}
         choose={(binding, signal) => add([{ binding, signal }])} chooseAll={add} /></div> :
       <button className="relay-add" onClick={() => setAdding(true)}><Plus size={15} />Add measurements</button>)}

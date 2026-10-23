@@ -100,13 +100,16 @@ export function StateMappingEditor({ data, ieds, disabled, update }: {
   const sourceFc = data.kind === 'SOURCE' ? 'MX' : undefined;
   const iedName = (binding?: SignalBinding) => ieds.find(ied => ied.id === binding?.ied_id)?.name;
   const keeping = !!data.state_mapping && !(choice === 'contacts' ? contacts : one);
+  // The note that says why a type is chosen names the slot (ADR-0113).
+  const slotName = (key: Slot) => key === 'open' ? 'Open contact' : key === 'closed' ? 'Closed contact' :
+    isSwitch ? 'Position' : data.kind === 'SOURCE' ? 'Value' : 'Point';
   const slot = (key: Slot, binding: SignalBinding | undefined, kinds: string[] | undefined,
     choose: (binding: SignalBinding, signal: Signal) => void) => <>
     {binding && <Pick binding={binding} iedName={iedName(binding)} disabled={disabled}
       open={changing === key} toggle={toggle(key)} undo={changing === key ? undo : undefined} />}
     {(!binding || changing === key) && <SignalSearchPicker ieds={ieds} allowedKinds={kinds}
       allowedFc={key === 'one' ? sourceFc : undefined} writableOnly disabled={disabled}
-      memoryKey={`sld-state-${key}`} chosen={binding} choose={choose} />}
+      memoryKey={`sld-state-${key}`} chosen={binding} near={data.label} slot={slotName(key)} choose={choose} />}
   </>;
   return <div className="stack">
     <label>Connection<select disabled={disabled} value={choice}
