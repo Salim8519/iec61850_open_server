@@ -17,6 +17,7 @@ import { newTapChanger } from '../../equipment/tapChanger';
 import { useTapCommands } from './tap/useTapCommands';
 import { PointPanelDialog } from './points/PointPanelDialog';
 import { EquipmentSheet } from './EquipmentSheet';
+import { convertiblePushButtons, convertPushButtons } from '../../equipment/pushToPanel';
 import { SldImport } from './SldImport';
 import { TidyButton } from './TidyButton';
 import { useCanvasShortcuts } from './useCanvasShortcuts';
@@ -153,6 +154,8 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
       applyColors={(active, inactive) => edit({ ...diagram, nodes: diagram.nodes.map(item =>
         item.data.kind === selected.data.kind ? { ...item, data: { ...item.data, active_color: active, inactive_color: inactive } } : item) })}
       remove={actions.remove} duplicate={actions.duplicate} showFlow={openDevices}
+      pushToPanels={selected.data.kind === 'PUSH_BUTTON' ? { count: convertiblePushButtons(diagram),
+        convert: () => { edit(convertPushButtons(diagram, iedNames).diagram); setSelection([]); } } : undefined}
       running={running} test={test} testMessage={tested?.nodeId === selected.id ? tested.message : undefined} /></LiveValues.Provider>}
     {panel && <LiveValues.Provider value={studio.equipmentValues}><PointPanelDialog key={panel.id} node={panel} project={project}
       locked={locked} running={running} close={() => setPanelId(null)}

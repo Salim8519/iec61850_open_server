@@ -17,6 +17,8 @@ import { edgeStep, hasRemoval, nodeStep } from './canvasChanges';
 import { createRemovalGesture } from './removalGesture';
 import { useZoomTier } from './useZoomTier';
 import { addBay, BAYS, type BayKind } from '../../equipment/bayTemplates';
+import { fitOptionsFor } from '../../equipment/strayNodes';
+import { StrayNotice } from './StrayNotice';
 import { defaultLabel } from '../../equipment/kindInfo';
 import './energization.css';
 
@@ -102,6 +104,8 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
     nodeCache.current = result.cache;
     return result.nodes;
   }, [diagram.nodes, draft, selection]);
+  // Far-away strays stay out of Fit view, so the drawing is always what you see first (change 0180).
+  const fit = useMemo(() => fitOptionsFor(diagram.nodes, fitOptions), [diagram.nodes]);
   const dragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault(); event.dataTransfer.dropEffect = 'move';
   }, []);
@@ -151,10 +155,11 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
         selectionOnDrag panOnDrag={panButtons} selectionMode={SelectionMode.Partial}
         multiSelectionKeyCode={multiKeys} nodeDragThreshold={3}
         nodesDraggable={!locked} nodesConnectable={!locked} deleteKeyCode={locked ? null : deleteKeys}
-        snapToGrid snapGrid={snapGrid} minZoom={0.2} maxZoom={2} fitView fitViewOptions={fitOptions}
+        snapToGrid snapGrid={snapGrid} minZoom={0.2} maxZoom={2} fitView fitViewOptions={fit}
         defaultEdgeOptions={defaultEdgeOptions}>
         <Background variant={BackgroundVariant.Dots} gap={20} size={1.6} color="#b4bcc8" />
-        <Controls showInteractive={false} position="bottom-left" />
+        <Controls showInteractive={false} position="bottom-left" fitViewOptions={fit} />
+        <StrayNotice diagram={diagram} locked={locked} change={change} />
         {overlay}
       </ReactFlow>
       {!diagram.nodes.length && <div className="canvas-empty"><h2>Start your single-line diagram</h2>

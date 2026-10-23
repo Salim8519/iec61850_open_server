@@ -12,6 +12,7 @@ import { PointPanelSheet } from './points/PointPanelSheet';
 import { TapChangerSheet } from './tap/TapChangerSheet';
 import { TapOperate } from './tap/TapOperate';
 import { AdvancedSettings, BasicSettings } from './SheetSettings';
+import { PushToPanels } from './PushToPanels';
 import { StateMappingEditor } from './StateMappingEditor';
 import { SwitchHints } from './SwitchHints';
 import { SwitchOperate, type Operate } from './SwitchOperate';
@@ -27,10 +28,12 @@ type Props = {
   perform: (task: () => Promise<unknown>) => Promise<void>;
   showFlow?: (iedId: string) => void;
   running: Set<string>; test: RunTest; testMessage?: string;
+  /** Push buttons only (change 0180): how many can move into point panels, and the move. */
+  pushToPanels?: { count: number; convert: () => void };
 };
 
 export function EquipmentSheet({ node, project, locked, busy, operation, section, hints, update, remove, duplicate,
-  operate, close, applyColors, perform, showFlow, running, test, testMessage }: Props) {
+  operate, close, applyColors, perform, showFlow, running, test, testMessage, pushToPanels }: Props) {
   const data = node.data;
   const info = kindInfo(data.kind);
   const switching = ['CB', 'DS', 'ES'].includes(data.kind);
@@ -86,6 +89,7 @@ export function EquipmentSheet({ node, project, locked, busy, operation, section
       {data.kind === 'POINT_PANEL' && <section className="sheet-section"><h3>Points in this panel</h3>
         <PointPanelSheet nodeId={node.id} data={data} project={project} locked={locked} update={update} /></section>}
       {tapChanger && <TapChangerSheet nodeId={node.id} data={data} project={project} locked={locked} update={update} />}
+      {push && !locked && pushToPanels && <PushToPanels count={pushToPanels.count} convert={pushToPanels.convert} />}
       {source && <section className="sheet-section"><h3>How the value changes</h3>
         <SourceEditor point={source} project={project} perform={perform} /></section>}
       <section className="sheet-section"><AdvancedSettings data={data} locked={locked} update={update} applyColors={applyColors} />
