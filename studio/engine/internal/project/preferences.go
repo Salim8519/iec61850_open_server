@@ -14,8 +14,9 @@ var preferenceKeys = []string{"tour_seen_version", "sld_goose_layer", "sld_reade
 
 // goOnlyPreferenceKeys are stored only once set (the frozen Python engine has none, so its
 // default document stays byte-identical): sld_sbo_steps 1 shows select before operate as two
-// steps on the SLD and point panels instead of one click (change 0173).
-var goOnlyPreferenceKeys = []string{"sld_sbo_steps"}
+// steps on the SLD and point panels instead of one click (change 0173); display_size 0 fits
+// the app to the window (default) and 1 always shows it at 100%.
+var goOnlyPreferenceKeys = []string{"sld_sbo_steps", "display_size"}
 
 // TourVersion is the guided tour version the frontend compares with tour_seen_version.
 const TourVersion = 1
@@ -72,7 +73,7 @@ func UpdatePreferences(stored, changes any) (*pyjson.Object, error) {
 			return nil, apperr.ValueError("Preference " + key + " must be a whole number")
 		}
 		high := 1000.0
-		if strings.HasPrefix(key, "sld_") {
+		if strings.HasPrefix(key, "sld_") || key == "display_size" {
 			high = 1
 		}
 		if !pyval.Between(value, 0, high) {
