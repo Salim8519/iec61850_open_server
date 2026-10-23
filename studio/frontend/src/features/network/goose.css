@@ -10,7 +10,7 @@
 .goose-confirm.real { border-width: 2px; border-color: var(--error); }
 .goose-confirm p { margin: 0 0 6px; display: flex; gap: 8px; align-items: flex-start; }
 .goose-confirm ul { margin: 0 0 6px; padding-left: 22px; }
-.goose-conflicts { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: min(460px, calc(100vw - 40px));
+.goose-conflicts { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: min(460px, calc(100vw / var(--fit, 1) - 40px));
   display: flex; flex-direction: column; gap: 10px; }
 .goose-conflicts .goose-confirm { background: var(--surface); box-shadow: var(--shadow-small); }
 .goose-pill { display: inline-flex; align-items: center; min-height: 32px; padding: 0 8px;

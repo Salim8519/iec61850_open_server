@@ -27,3 +27,7 @@
 .react-flow__nodesselection-rect { background: #1d4ed80a; border: 1px dashed #1d4ed899; pointer-events: none; }
 .react-flow__node.dragging .equipment-node { box-shadow: 0 6px 18px #16324f2e; }
 @media (prefers-reduced-motion: reduce) { .react-flow__handle { transition: none; } }
+/* Fit to window: React Flow measures with getBoundingClientRect and does not know CSS zoom, so the canvas
+   cancels the page zoom (the drawing keeps its own zoom); its floating panels scale back with the page. */
+.react-flow { zoom: calc(1 / var(--fit, 1)); }
+.react-flow__panel, .stray-notice { zoom: var(--fit, 1); }

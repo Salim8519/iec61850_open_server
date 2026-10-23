@@ -10,7 +10,8 @@
 (() => {
   const SELECTORS = [
     '.status-pill', '.pill', '.chip', '.partner-chip', '.ied-tag', '.ied-tag-name', '.list-pills > *',
-    '.layer-switch', '.run-state', 'label', '.tab', '.segmented button', '.outside-senders button',
+    '.layer-switch', '.run-state', 'label', '.outside-senders button',
+    '.segmented-control button', '.tabbar button', '.nav-item', '.filter-select', '.topbar-title p', '.notice-text',
   ];
   const clipped = [];
   let checked = 0;

@@ -1,5 +1,5 @@
 /* Point panel popup (ADR-0102): a modal dialog like the other dialogs (shared tokens, 1.5 px frames). */
-.pp-dialog { width: min(980px, calc(100vw - 48px)); height: min(720px, calc(100vh - 48px)); padding: 0; border: var(--line) solid var(--frame);
+.pp-dialog { width: min(980px, calc(100vw / var(--fit, 1) - 48px)); height: min(720px, calc(100vh / var(--fit, 1) - 48px)); padding: 0; border: var(--line) solid var(--frame);
   border-radius: var(--radius); color: var(--text); background: var(--surface); overflow: hidden; }
 .pp-dialog[open] { display: flex; flex-direction: column; }
 .pp-dialog::backdrop { background: rgb(23 43 77 / 35%); }

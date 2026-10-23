@@ -93,15 +93,13 @@ span.type-cell { display: inline-flex; align-items: center; gap: 6px; white-spac
 .side-caption-step { display: inline-flex; align-items: center; gap: 6px; }
 .side-here-box { padding: 2px 8px; border: 2px solid var(--accent); border-radius: var(--radius-small);
   background: var(--accent-soft); color: var(--accent); }
-@media (max-width: 1599px) { .side-caption .small { display: none; } }
+:where(:root[data-max~="w1599"]) .side-caption .small { display: none; }
 /* Protocol converter: six tabs and Full view fit 1366 px; on a narrower window the row wraps, never cuts. */
 .converter-panel > .tabbar { flex-wrap: wrap; padding: 0 12px; }
 .converter-panel > .tabbar button { padding: 0 8px; }
 /* At 1366 px the stopped list (pencils and Change) was 90 px too wide and cut Raise…/Lower… and × off (0178).
    Up to 1440 px Change is its ✎ pin like the other cells' (the word stays in its hover text and name), and the
    path (full path on hover) and the value text (full text on hover) give way; the buttons and × stay whole. */
-@media (max-width: 1440px) {
-  .gateway-points td.reference-cell { max-width: 270px; }
-  .gateway-points td.value-cell { max-width: 120px; }
-  .gateway-points .reference-change-word { display: none; }
-}
+:where(:root[data-max~="w1440"]) .gateway-points td.reference-cell { max-width: 270px; }
+:where(:root[data-max~="w1440"]) .gateway-points td.value-cell { max-width: 120px; }
+:where(:root[data-max~="w1440"]) .gateway-points .reference-change-word { display: none; }

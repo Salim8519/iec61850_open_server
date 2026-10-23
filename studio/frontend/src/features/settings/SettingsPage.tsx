@@ -7,6 +7,8 @@ import { StatusPill } from '../../ui/StatusPill';
 import { UI_STATUS } from '../../copy/status';
 import { NetworkSettings } from './NetworkSettings';
 import { LicenseSection } from './LicenseSection';
+import { DisplaySection } from './DisplaySection';
+import { DISPLAY_COPY } from '../../copy/display';
 import { UpdateSection } from './UpdateSection';
 import type { useUpdateStatus } from '../../api/updates';
 import './settings.css';
@@ -15,7 +17,7 @@ export function SettingsPage({ project, locked, perform, openTraffic, update }: 
   project: Project; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>; openTraffic: () => void;
   update: ReturnType<typeof useUpdateStatus>;
 }) {
-  const [view, setView] = useState<'network' | 'license' | 'about'>('network');
+  const [view, setView] = useState<'network' | 'display' | 'license' | 'about'>('network');
   const [npcap, setNpcap] = useState<NpcapStatus | null>(null);
   useEffect(() => { api<{ npcap: NpcapStatus }>('/network').then(value => setNpcap(value.npcap)).catch(() => {}); }, []);
   const rows: [string, string][] = [
@@ -25,10 +27,11 @@ export function SettingsPage({ project, locked, perform, openTraffic, update }: 
   ];
   return <div className="content">
     <SegmentedControl label="Settings sections" value={view} onChange={setView}
-      options={[{ value: 'network', label: 'Network & GOOSE' }, { value: 'license', label: 'License' },
-        { value: 'about', label: 'About' }]} />
+      options={[{ value: 'network', label: 'Network & GOOSE' }, { value: 'display', label: DISPLAY_COPY.section },
+        { value: 'license', label: 'License' }, { value: 'about', label: 'About' }]} />
     {view === 'network' && <NetworkSettings project={project} locked={locked} perform={perform}
       openTraffic={openTraffic} />}
+    {view === 'display' && <DisplaySection />}
     {view === 'license' && <LicenseSection />}
     {view === 'about' && <div className="card"><div className="card-heading"><h2>About this app</h2>
       {npcap && <StatusPill status={npcap.installed ? UI_STATUS.npcap_ready : UI_STATUS.npcap_missing} />}</div>

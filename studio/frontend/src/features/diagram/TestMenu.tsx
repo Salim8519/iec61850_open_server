@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { EquipmentNode, Project } from '../../api/types';
 import { TEST_COPY, testAvailability } from '../../equipment/testButtons';
+import { pointIn, viewIn, zoomOf } from '../../ui/zoomSpace';
 import type { RunTest } from './EquipmentTest';
 
 export type MenuAt = { nodeId: string; x: number; y: number };
@@ -22,8 +23,13 @@ export function TestMenu({ at, node, project, running, test, openSheet, close }:
   }, [close]);
   const { buttons, reason } = testAvailability(node.data, project.ieds, running);
   const note = reason === 'real' ? TEST_COPY.real : reason === 'not_running' ? TEST_COPY.notRunning : '';
+  // The click point and window are screen pixels; the menu sits in the page's zoom (fit to window),
+  // outside the canvas that cancels it.
+  const zoom = zoomOf();
+  const point = pointIn(at.x, at.y, zoom);
+  const view = viewIn(zoom);
   return <div ref={root} className="popover test-menu" role="menu" aria-label={`Test ${node.data.label}`}
-    style={{ position: 'fixed', left: Math.min(at.x, innerWidth - 240), top: Math.min(at.y, innerHeight - 300), minWidth: 200 }}>
+    style={{ position: 'fixed', left: Math.min(point.x, view.width - 240), top: Math.min(point.y, view.height - 300), minWidth: 200 }}>
     <p className="small muted test-menu-title">{TEST_COPY.title} · {node.data.label}</p>
     {buttons.map(button => <button key={`${button.row || ''}:${button.action}`} role="menuitem" className="menu-item"
       onClick={() => { close(); if (button.action === 'set') openSheet(); else test(node.id, button.action, button.row ? { row: button.row } : undefined); }}>

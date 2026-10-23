@@ -1,5 +1,6 @@
 import { CircleHelp } from 'lucide-react';
 import { useId, useRef, useState, type CSSProperties } from 'react';
+import { boxIn, viewIn, zoomOf } from './zoomSpace';
 import './ui.css';
 
 const WIDTH = 300;
@@ -13,11 +14,14 @@ export function HelpTip({ text, label = 'More about this' }: { text: string; lab
   const id = useId();
   if (!text) return null;
   const show = () => {
-    const box = button.current?.getBoundingClientRect();
-    if (!box) return;
-    const left = Math.max(8, Math.min(box.left - 12, window.innerWidth - WIDTH - 8));
-    const below = box.bottom + 8 + 160 < window.innerHeight;
-    setPlace(below ? { left, top: box.bottom + 8, width: WIDTH } : { left, top: 'auto', bottom: window.innerHeight - box.top + 8, width: WIDTH });
+    if (!button.current) return;
+    // The bubble shares the button's zoom (fit to window): screen values are converted into it.
+    const zoom = zoomOf(button.current);
+    const box = boxIn(button.current.getBoundingClientRect(), zoom);
+    const view = viewIn(zoom);
+    const left = Math.max(8, Math.min(box.left - 12, view.width - WIDTH - 8));
+    const below = box.bottom + 8 + 160 < view.height;
+    setPlace(below ? { left, top: box.bottom + 8, width: WIDTH } : { left, top: 'auto', bottom: view.height - box.top + 8, width: WIDTH });
   };
   const hide = () => setPlace(null);
   return <span className="info-tip help-tip" onMouseLeave={hide}>

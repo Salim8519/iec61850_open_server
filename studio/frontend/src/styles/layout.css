@@ -1,5 +1,5 @@
 /* App shell: left sidebar with the places, a top bar, and one page (tool pages fill it, ADR-0064). */
-.app { height: 100vh; display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); overflow: hidden; }
+.app { height: calc(100vh / var(--fit, 1)); display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); overflow: hidden; }
 .sidebar { background: #f7f8fa; border-right: 2px solid var(--frame); display: flex; flex-direction: column;
   padding: 18px 12px; gap: 6px; min-width: 0; }
 .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 18px; font-weight: 700; font-size: 16px; }
@@ -50,12 +50,12 @@
 .notice.compact.problem { background: var(--error-soft); color: var(--error); border-bottom-color: #fecaca; }
 .notice-icon { flex-shrink: 0; }
 .notice-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.notice-details { position: absolute; z-index: 35; top: calc(100% + 4px); left: 28px; right: 16px; max-height: 50vh; overflow: auto;
+.notice-details { position: absolute; z-index: 35; top: calc(100% + 4px); left: 28px; right: 16px; max-height: calc(50vh / var(--fit, 1)); overflow: auto;
   display: grid; gap: 8px; padding: 12px 16px; background: var(--surface); color: var(--text); font-size: 14px;
   border: var(--line) solid var(--border-strong); border-radius: var(--radius); box-shadow: var(--shadow-large); }
 .notice-details ul { margin: 0; padding-left: 20px; }
 .notice-details code { overflow-wrap: anywhere; }
-.activity { position: fixed; right: 0; top: 0; bottom: 0; width: min(560px, 100vw); background: var(--surface);
+.activity { position: fixed; right: 0; top: 0; bottom: 0; width: min(560px, calc(100vw / var(--fit, 1))); background: var(--surface);
   border-left: 1px solid var(--border); box-shadow: var(--shadow-large); z-index: 40; display: flex; flex-direction: column; }
 .activity header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;
   border-bottom: 1px solid var(--border); }
@@ -63,16 +63,15 @@
 .activity-body { flex: 1; overflow: auto; }
 .activity td { font-size: 13px; }
 .scrim { position: fixed; inset: 0; background: rgb(17 24 39 / 20%); z-index: 39; }
-@media (max-width: 1100px) {
-  :root { --sidebar-width: 72px; }
-  .brand span, .nav-item span, .sidebar-foot .nav-item span { display: none; }
-  /* Collapsed bar: only the dot; the words stay in its hover text. */
-  .engine-status > span:not(.dot) { display: none; }
-  .nav-item { justify-content: center; padding: 0; }
-  .brand { justify-content: center; padding-left: 0; padding-right: 0; }
-  .topbar { padding: 0 18px; }
-  .content { padding: 20px; }
-}
+/* Narrow layout: data-max tokens (installFit) judge the fitted layout size; :where() keeps the old specificity. */
+:root:where([data-max~="w1100"]) { --sidebar-width: 72px; }
+:where(:root[data-max~="w1100"]) .brand span, :where(:root[data-max~="w1100"]) .nav-item span, :where(:root[data-max~="w1100"]) .sidebar-foot .nav-item span { display: none; }
+/* Collapsed bar: only the dot; the words stay in its hover text. */
+:where(:root[data-max~="w1100"]) .engine-status > span:not(.dot) { display: none; }
+:where(:root[data-max~="w1100"]) .nav-item { justify-content: center; padding: 0; }
+:where(:root[data-max~="w1100"]) .brand { justify-content: center; padding-left: 0; padding-right: 0; }
+:where(:root[data-max~="w1100"]) .topbar { padding: 0 18px; }
+:where(:root[data-max~="w1100"]) .content { padding: 20px; }
 .live-dot { width: 9px; height: 9px; flex-shrink: 0; margin-left: auto; border-radius: 50%; background: var(--success);
   box-shadow: 0 0 0 3px #bbf7d0; }
 .live-dot.paused { background: var(--warning); box-shadow: 0 0 0 3px #fde68a; }
@@ -85,4 +84,4 @@
   text-decoration: none; white-space: nowrap; }
 .update-note.important .nav-item { font-weight: 700; }
 .update-note-close { min-height: 28px; width: 28px; flex-shrink: 0; }
-@media (max-width: 1100px) { .update-note-close { display: none; } }
+:where(:root[data-max~="w1100"]) .update-note-close { display: none; }

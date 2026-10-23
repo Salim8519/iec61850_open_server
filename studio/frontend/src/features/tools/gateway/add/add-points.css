@@ -1,6 +1,6 @@
 /* Add points dialog and smart Propose preview (ADR-0105): the app's modal <dialog> (.import-dialog), wider, with
    its body scrolling on its own; shared tokens only; fits 1366x768 without clipping. */
-.import-dialog.add-points { width: min(1040px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 16px 20px;
+.import-dialog.add-points { width: min(1040px, calc(100vw / var(--fit, 1) - 32px)); max-height: calc(100vh / var(--fit, 1) - 32px); padding: 16px 20px;
   overflow: hidden; box-shadow: var(--shadow-large); }
 .import-dialog.add-points[open] { display: flex; flex-direction: column; gap: 10px; }
 .add-points-head { align-items: center; gap: 10px; }
@@ -57,6 +57,6 @@
 .paste-box { width: 100%; min-height: 120px; font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px; resize: vertical; }
 .own-form.bare { padding: 0; border-bottom: 0; background: transparent; }
 /* Smart Propose preview. */
-.import-dialog.smart-propose { width: min(760px, calc(100vw - 32px)); }
+.import-dialog.smart-propose { width: min(760px, calc(100vw / var(--fit, 1) - 32px)); }
 .smart-ieds { display: grid; gap: 4px; }
 .smart-ied { gap: 10px; align-items: center; flex-wrap: wrap; padding: 4px 0; }

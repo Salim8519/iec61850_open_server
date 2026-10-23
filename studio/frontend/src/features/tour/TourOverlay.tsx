@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import type { PlaceId } from '../../app/places';
 import { TOUR_COPY as COPY, TOUR_STEPS as STEPS } from '../../copy/tour';
+import { boxIn, viewIn, zoomOf } from '../../ui/zoomSpace';
 import './tour.css';
 
 type Box = { top: number; left: number; width: number; height: number };
@@ -13,13 +14,14 @@ function targetBox(target?: string): Box | null {
   const element = document.querySelector<HTMLElement>(`[data-tour="${target}"]`);
   if (!element) return null;
   element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  const rect = element.getBoundingClientRect();
+  // The ring sits in the page's zoom (fit to window); the target's screen box is converted into it.
+  const rect = boxIn(element.getBoundingClientRect(), zoomOf());
   if (!rect.width && !rect.height) return null;
   return { top: rect.top - PAD, left: rect.left - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2 };
 }
 
 function cardPosition(box: Box | null): { top: number; left: number } {
-  const width = window.innerWidth, height = window.innerHeight;
+  const { width, height } = viewIn(zoomOf());
   if (!box) return { top: Math.max(24, height / 2 - 140), left: Math.max(16, width / 2 - CARD_WIDTH / 2) };
   const right = box.left + box.width + 16;
   if (right + CARD_WIDTH < width) return { top: Math.min(Math.max(16, box.top), height - 260), left: right };
