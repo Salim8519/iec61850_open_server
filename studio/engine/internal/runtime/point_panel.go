@@ -18,7 +18,7 @@ import (
 const pointPanelKind = "POINT_PANEL"
 
 // panelBatch is how many points one native write carries: each point may add a quality and a
-// time attribute, and the native batch holds at most 256 attributes.
+// time attribute; 64 points stay well inside one native batch (nativeBatchLimit).
 const panelBatch = 64
 
 const panelRealOnly = "{name} is a real device. A point panel only changes IEDs that ScadaBench simulates; " +

@@ -39,7 +39,8 @@ func (c *Control) Operate(fields *pyjson.Object) (*pyjson.Object, error) {
 }
 
 // CanvasOperate sends one canvas command with exactly what `studio_probe IP PORT control
-// REF true|false` sends on the wire (no originator set, interlock/synchro/test off, SBO or
+// REF true|false` sends on the wire except the originator (orCat 3, "ScadaBench", change 0186;
+// the probe sets none), with interlock/synchro/test off, SBO or
 // enhanced by the device's ctlModel, up to 100x20 ms for CommandTermination). keep is how long
 // the association stays open for the next command to the same endpoint: 0 closes it after
 // every command like the probe process did. The result is the probe's {"ok": bool}.

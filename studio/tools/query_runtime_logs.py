@@ -26,7 +26,8 @@ def matches(item, args):
         return False
     if args.ied and item.get("ied_id") != args.ied:
         return False
-    if args.ref and args.ref not in (item.get("ref"), item.get("control_ref"), item.get("status_ref")):
+    if args.ref and args.ref not in (item.get("ref"), item.get("control_ref"), item.get("status_ref")) \
+            and not (item.get("kind") == "signal_summary" and args.ref in item.get("values", {})):  # ADR-0115
         return False
     if args.text and args.text.casefold() not in json.dumps(item).casefold():
         return False

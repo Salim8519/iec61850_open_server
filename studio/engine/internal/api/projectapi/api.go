@@ -4,11 +4,13 @@
 package projectapi
 
 import (
+	"io"
 	"net/http"
 	"sync"
 
 	"studio-engine/internal/api"
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/httpapi"
 	"studio-engine/internal/project/service"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/store/settings"
@@ -49,7 +51,18 @@ type handler func(w http.ResponseWriter, r *http.Request) error
 
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := h(w, r); err != nil {
+		drainBody(r)
 		writeError(w, err)
+	}
+}
+
+// drainBody reads what is left of a refused request (up to Flask's 100 MiB limit) before the
+// answer is written. Go's server reads at most 256 KiB of an unread body and then closes the
+// connection, so a client still sending a large upload got a TCP reset instead of the JSON
+// error (change 0186); Werkzeug read the body to the end.
+func drainBody(r *http.Request) {
+	if r.Body != nil {
+		_, _ = io.Copy(io.Discard, io.LimitReader(r.Body, httpapi.MaxContentLength))
 	}
 }
 

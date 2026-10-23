@@ -20,7 +20,7 @@ func (e *Engine) wireRuntime(bus *events.Bus) *liveAdapter {
 	live := &liveAdapter{}
 	e.Runtime = runtime.New(runtime.Options{NativeDir: o.NativeDir, DataDir: o.DataDir,
 		Bus: runtimeBus{bus: bus, logf: o.Logf}, Project: e.Projects, Live: live,
-		LabAddresses: labAddresses, CommandKeep: o.CommandKeep})
+		LabAddresses: labAddresses, CommandKeep: o.CommandKeep, Version: o.Version})
 	return live
 }
 

@@ -36,11 +36,9 @@ func (a *Area) validator() scl.SchemaValidator {
 	return nil
 }
 
-// previewSCL is POST /scl/preview: the file's IEDs, marking names already present.
+// previewSCL is POST /scl/preview: the file's IEDs, marking names already present. It
+// imports nothing, so it also works while running (change 0186; Python refused it).
 func (a *Area) previewSCL(w http.ResponseWriter, r *http.Request) error {
-	if err := a.requireStopped(); err != nil {
-		return err
-	}
 	source, _, err := upload(r, "file")
 	if err != nil {
 		return err

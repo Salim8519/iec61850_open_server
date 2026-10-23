@@ -134,17 +134,23 @@ func (c *Coordinator) writeTestMode(ied *pyjson.Object) (int, error) {
 	return len(writes), nil
 }
 
-// applyTestModes writes every simulated IED's saved modes at Run start (apply_test_modes).
+// applyTestModes writes every simulated IED's saved modes at Run start (apply_test_modes),
+// then derives each Beh from the Mods the IED now holds (ADR-0115).
 func (c *Coordinator) applyTestModes(project *pyjson.Object, only map[string]bool) error {
 	for _, ied := range projectIeds(project) {
-		if only != nil && !only[pyval.Str(ied, "id")] {
+		id := pyval.Str(ied, "id")
+		if only != nil && !only[id] {
 			continue
 		}
+		importedModes(c.simulatedRun(id)) // what the restarted worker holds
 		settings := pyval.Map(ied, "test_mode")
 		if pyval.Truthy(pyval.Get(settings, "devices")) || pyval.Truthy(pyval.Get(settings, "simulation")) {
 			if _, err := c.writeTestMode(ied); err != nil {
 				return err
 			}
+		}
+		if err := c.syncBehaviour(id); err != nil {
+			return err
 		}
 	}
 	return nil

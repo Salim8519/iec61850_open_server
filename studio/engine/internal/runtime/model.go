@@ -28,7 +28,8 @@ func newIedModel(raw *pyjson.Object) *iedModel {
 		}
 		writable, _ := pyval.Get(object, "writable").(bool)
 		entry := signal.Signal{Ref: pyval.Str(object, "ref"), Kind: pyval.Str(object, "kind"), FC: pyval.Str(object, "fc"),
-			Writable: writable, QualityRef: pyval.Str(object, "quality_ref"), TimestampRef: pyval.Str(object, "timestamp_ref")}
+			Writable: writable, QualityRef: pyval.Str(object, "quality_ref"), TimestampRef: pyval.Str(object, "timestamp_ref"),
+			Enums: enumChoices(object)}
 		if _, seen := model.index[entry.Ref]; !seen {
 			model.index[entry.Ref] = int32(len(model.signals))
 		} else {
@@ -38,6 +39,21 @@ func newIedModel(raw *pyjson.Object) *iedModel {
 		model.rawSignals = append(model.rawSignals, object)
 	}
 	return model
+}
+
+// enumChoices are a signal's "enums" ({label: ord}, SCL order) for the EnumType write check.
+func enumChoices(object *pyjson.Object) []signal.EnumChoice {
+	enums := pyval.Map(object, "enums")
+	if enums == nil || enums.Len() == 0 {
+		return nil
+	}
+	choices := make([]signal.EnumChoice, 0, enums.Len())
+	for _, label := range enums.Keys() {
+		if ord, ok := pyval.Get(enums, label).(int64); ok {
+			choices = append(choices, signal.EnumChoice{Label: label, Ord: ord})
+		}
+	}
+	return choices
 }
 
 // roleOf is ied.get("role", "simulated").

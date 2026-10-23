@@ -22,6 +22,9 @@ void connection(IedServer, ClientConnection client, bool connected, void* parame
 }
 void report(void* parameter, ReportControlBlock* rcb, ClientConnection client,
         IedServer_RCBEventType event, const char* name, MmsDataAccessError error) {
+    // A buffered RCB keeps buffering while no client has enabled it, raising "report created"
+    // for every data change; nobody receives those reports, so they are not events (ADR-0115).
+    if (event == RCB_EVENT_REPORT_CREATED && !ReportControlBlock_getRptEna(rcb)) return;
     auto peer = peer_of(client);
     auto parent = ReportControlBlock_getParent(rcb);
     std::string block = std::string(parent ? parent->name : "") + "." + ReportControlBlock_getName(rcb);
@@ -32,6 +35,23 @@ void report(void* parameter, ReportControlBlock* rcb, ClientConnection client,
 }
 void observed_read(void* context, const char* domain, const char* item, const char* peer) {
     static_cast<AccessLog*>(context)->read(domain, item, peer);
+}
+// Every timestamp attribute "t" starts at the Run start time with the IED's TimeQuality, so
+// no client reads 1970 with good quality before the first change (ADR-0115).
+int stamp_times(ModelNode* node, uint64_t now, uint8_t quality) {
+    int stamped = 0;
+    for (auto child = node->firstChild; child; child = child->sibling) {
+        if (child->modelType == DataAttributeModelType) {
+            auto attribute = reinterpret_cast<DataAttribute*>(child);
+            if (attribute->type == IEC61850_TIMESTAMP && attribute->mmsValue && child->name &&
+                std::string(child->name) == "t" && MmsValue_getType(attribute->mmsValue) == MMS_UTC_TIME) {
+                MmsValue_setUtcTimeMsEx(attribute->mmsValue, now, quality);
+                ++stamped;
+            }
+        }
+        stamped += stamp_times(child, now, quality);
+    }
+    return stamped;
 }
 }
 
@@ -53,6 +73,11 @@ Json Server::start(const Json& config) {
     handle = IedServer_createWithConfig(model, nullptr, options);
     IedServerConfig_destroy(options);
     if (!handle) throw std::runtime_error("Unable to construct MMS server");
+    IedServer_setTimeQuality(handle, true, false, true, 10);  // == time_quality, for vendor-set times
+    started_at = Hal_getTimeInMs();
+    int stamped = 0;
+    for (auto device = model->firstChild; device; device = reinterpret_cast<LogicalDevice*>(device->sibling))
+        stamped += stamp_times(reinterpret_cast<ModelNode*>(device), started_at, time_quality);
     auto ip = config.at("ip").get<std::string>();
     IedServer_setLocalIpAddress(handle, ip.c_str());
     // What clients and Find IEDs see: the product name and that this IED is simulated (change 0089).
@@ -80,7 +105,8 @@ Json Server::start(const Json& config) {
     auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
                                      "control_selection_events", "standard_controls", "goose_aware", "goose_bus", "typed_controls"});
     if (observing) capabilities.push_back("mms_access");
-    return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities}};
+    return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities},
+            {"started_at", started_at}, {"stamped_times", stamped}, {"time_quality", time_quality}};
 }
 
 // The model tree walk costs microseconds per reference; update_batch and reads resolve the

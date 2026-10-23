@@ -22,6 +22,13 @@ const fakeEnv = "STUDIO_RUNTIME_FAKE_NATIVE"
 // fakeNoCancelEnv makes the fake refuse every Cancel as a model without Cancel does.
 const fakeNoCancelEnv = "STUDIO_RUNTIME_FAKE_NO_CANCEL"
 
+// fakeValuesEnv holds JSON {ref: value} a fake worker holds at start, as a real one holds its
+// SCL values after every restart.
+const fakeValuesEnv = "STUDIO_RUNTIME_FAKE_VALUES"
+
+// fakeStartedAt is the Run start time the fake worker reports (ms since 1970).
+const fakeStartedAt = int64(1792800000000)
+
 func TestMain(m *testing.M) {
 	if os.Getenv(fakeEnv) == "1" {
 		name := strings.ToLower(strings.TrimSuffix(filepath.Base(os.Args[0]), filepath.Ext(os.Args[0])))
@@ -133,12 +140,19 @@ func (w *fakeWorker) answer(name, op string, frame *pyjson.Object) any {
 		return pyval.Obj("capabilities", []any{native.MuxCapability, native.TypedCapability})
 	case "start":
 		w.controls = pyval.List(frame, "controls")
+		if seeded, err := pyjson.Decode([]byte(os.Getenv(fakeValuesEnv))); err == nil {
+			if values, ok := seeded.(*pyjson.Object); ok {
+				for _, ref := range values.Keys() {
+					w.values[ref], _ = values.Get(ref)
+				}
+			}
+		}
 		capabilities := make([]any, len(native.IedRequired))
 		for i, capability := range native.IedRequired {
 			capabilities[i] = capability
 		}
 		return pyval.Obj("capabilities", capabilities, "ip", pyval.Get(frame, "ip"), "port", pyval.Get(frame, "port"),
-			"goose", pyjson.NewObject())
+			"goose", pyjson.NewObject(), "started_at", fakeStartedAt)
 	case "update":
 		w.values[pyval.Str(frame, "ref")] = pyval.Get(frame, "value")
 		return pyval.Get(frame, "value")

@@ -10,6 +10,12 @@ import (
 func (c *Coordinator) Stop(ids []string) error {
 	c.lifeMu.Lock()
 	defer c.lifeMu.Unlock()
+	project := c.opt.Project.Current()
+	for _, id := range ids {
+		if findIed(project, id) == nil { // not "This IED is not running" (change 0186)
+			return apperr.Coded("Unknown IED", "not_found")
+		}
+	}
 	c.mu.Lock()
 	live := c.live()
 	partial := false

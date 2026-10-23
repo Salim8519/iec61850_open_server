@@ -28,6 +28,10 @@ struct Server {
     std::thread goose_thread;
     AccessLog access;
     EventLoop loop;
+    // One TimeQuality for every timestamp this IED writes (ADR-0115): leap seconds known,
+    // clock not synchronised (the PC clock is no IEC 61850 time source), 10-bit accuracy.
+    static constexpr uint8_t time_quality = 0x80 | 0x20 | 10;
+    uint64_t started_at = 0;  // Run start (ms since 1970): every "t" holds it until it changes
     Server();
     ~Server();
     Json start(const Json& config);

@@ -1,5 +1,7 @@
 """studio_control operates IEC 61850 controls the way a real client does (ADR-0057)."""
+import json
 import os
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -81,3 +83,31 @@ def test_gateway_commands_a_real_role_ied_and_respects_the_switch(device):
         assert device.request("read", ref="CtlTestCTRL/XCBR1.Pos.stVal") == 2  # nothing was sent
     finally:
         manager.control.close()
+
+
+def test_canvas_command_names_its_origin(tmp_path):
+    """Change 0186: SLD and plain commands carry orCat 3 (remote control) and orIdent "ScadaBench"
+    like typed commands. The DPC gets an ST origin, which the vendor stack fills from each Oper."""
+    text = make_template("CtlTest").replace(
+        b'<DA name="t" bType="Timestamp" fc="ST" /><DA name="ctlModel"',
+        b'<DA name="t" bType="Timestamp" fc="ST" /><DA name="origin" bType="Struct" fc="ST" type="StudioOrigin" />'
+        b'<DA name="ctlModel"')
+    model = import_scl(text)[0]
+    config = tmp_path / "origin.cfg"
+    config.write_text(model["cfg"], encoding="utf-8")
+    worker = WorkerProcess(BIN / "studio_ied.exe", lambda event: None)
+    control = WorkerProcess(BIN / "studio_control.exe", lambda event: None)
+    try:
+        worker.request("start", cfg=str(config), ip="127.50.0.240", port=18140, controls=model["controls"], edition=2)
+        ref = "CtlTestCTRL/XCBR1.Pos"
+        assert worker.request("read", ref=ref + ".origin.orCat") == 0
+        result = control.request("canvas_operate", timeout=20, ip="127.50.0.240", port=18140, ref=ref,
+                                 value=True, keep_ms=0)
+        assert result["ok"], result
+        assert worker.request("read", ref=ref + ".origin.orCat") == 3
+        observed = subprocess.run([str(BIN / "studio_probe.exe"), "127.50.0.240", "18140", "read",
+                                   ref + ".origin.orIdent", "ST"], capture_output=True, text=True, timeout=10)
+        assert json.loads(observed.stdout)["value"].lower() in (b"ScadaBench".hex(), "scadabench")
+    finally:
+        control.close()
+        worker.close()

@@ -65,6 +65,12 @@ type Update struct {
 // time) and its companions. quality nil means "not given".
 func MakeSample(item Signal, lookup Lookup, value any, timestamp int64, quality any) ([]Update, Companions, error) {
 	checked, err := Validate(item.Kind, value)
+	if err == nil {
+		err = checkEnum(item, checked)
+	}
+	if err == nil {
+		err = checkVisible(item, checked)
+	}
 	if err != nil {
 		return nil, Companions{}, err
 	}
@@ -77,7 +83,7 @@ func MakeSample(item Signal, lookup Lookup, value any, timestamp int64, quality 
 		if !related.HasQ {
 			return nil, related, apperr.ValueError("This attribute has no associated SCL quality")
 		}
-		q, err := Validate(related.Q.Kind, quality)
+		q, err := checkQuality(related.Q.Kind, quality)
 		if err != nil {
 			return nil, related, err
 		}
