@@ -65,7 +65,9 @@ func (c *Coordinator) writeSample(target *running, items []item, source string, 
 	}
 	updates := pyjson.NewObject()
 	var samples []sample
+	var groups [][]string // the references each point adds: one native batch never splits them
 	timestamp := time.Now().UnixMilli()
+	items = withBehaviour(target, items) // a Mod and the Beh it implies change together
 	for _, entry := range items {
 		info, ok := target.model.lookup(entry.ref)
 		if !ok || !info.Writable || info.FC == "CF" {
@@ -84,33 +86,20 @@ func (c *Coordinator) writeSample(target *running, items []item, source string, 
 		if err != nil {
 			return nil, nil, err
 		}
+		var refs []string
 		for _, update := range batch {
+			if _, seen := updates.Get(update.Ref); !seen {
+				refs = append(refs, update.Ref)
+			}
 			updates.Set(update.Ref, update.Value)
 		}
+		groups = append(groups, refs)
 		samples = append(samples, sample{info, related})
 	}
 	if updates.Len() == 0 {
 		return pyjson.NewObject(), nil, nil
 	}
-	if updates.Len() > 256 {
-		return nil, nil, apperr.ValueError("Sample batch exceeds the native 256-attribute limit")
-	}
-	batch := make([]any, 0, updates.Len())
-	for _, ref := range updates.Keys() {
-		value, _ := updates.Get(ref)
-		batch = append(batch, pyval.Obj("ref", ref, "value", value))
-	}
-	var result, guarded *pyjson.Object
-	var err error
-	if guard != nil {
-		guarded, err = target.worker.UpdateGuarded(batch, guard)
-		result = pyval.Map(guarded, "values")
-		if result == nil {
-			result = pyjson.NewObject()
-		}
-	} else {
-		result, err = target.worker.UpdateBatch(batch)
-	}
+	result, guarded, err := sendBatches(target, updates, groups, guard)
 	if err != nil {
 		return nil, nil, err
 	}

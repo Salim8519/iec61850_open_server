@@ -4,7 +4,9 @@ All application routes use `/api/v1`. Administration is loopback-only and requir
 the launcher session cookie or bearer token. Development requests also identify the
 authoritative frontend with `X-Studio-Frontend`; a stale Vite origin receives 403
 with `active_frontend`. JSON errors use `error`, optional `code`, and optional
-`details`. Runtime failures return 503; revision conflict returns 409.
+`details`. Runtime failures return 503; revision conflict returns 409. An unknown id answers 400 with
+code `not_found` (Flask parity; not 404). A refused upload is read to the end before its JSON answer,
+so large files never end in a connection reset (Go, change 0186).
 
 ## Session, project and runtime
 
@@ -20,14 +22,14 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | `POST /runtime/stop` | - | Stop workers and flush append-only run log |
 | `POST /runtime/pause` | - | Toggle automation pause; MMS remains active |
 | `POST /runtime/ieds/{id}/start` | - | Run (simulated) or connect (real) one IED; joins a running run (ADR-0067); returns `{state, running}` |
-| `POST /runtime/ieds/{id}/stop` | - | Stop or disconnect one IED; the others keep running; the last one stops the run |
+| `POST /runtime/ieds/{id}/stop` | - | Stop or disconnect one IED; the others keep running; the last one stops the run; an id not in the project: 400 `not_found` "Unknown IED" (Go, change 0186) |
 
 ## SCL and IEDs
 
 | Method/path | Input | Result / invariant |
 | --- | --- | --- |
 | `POST /scl/validate` | multipart `file` | Offline schema result |
-| `POST /scl/preview` | multipart `file` | Selectable IEDs; imports nothing |
+| `POST /scl/preview` | multipart `file` | Selectable IEDs; imports nothing, so the Go engine also answers while running (change 0186) |
 | `POST /scl/import` | file + JSON `selected_names` form field | Preserve source; import selected IEDs |
 | `POST /ieds/template` | `{name}` | Add laboratory IED template |
 | `GET /ieds/{id}/source` | - | Exact retained XML download |
@@ -43,7 +45,7 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | --- | --- | --- |
 | `GET /ieds/{id}/signals` | `q,fc,kind,writable,report,ref,ld,bad_quality,in_dataset,offset,limit` | Filtered/paged typed signals and the IED's logical `devices` (read-only filters, change 0093) |
 | `GET /ieds/{id}/signals` (Go only) | `point_kind`, `helpers=hide`, `kind_counts=1` ([ADR-0095](../decisions/ADR-0095-universal-point-kinds.md)); `annotate=1`, `ln=<LD/LN>`, `ln_counts=1`, `near=<text>` ([ADR-0113](../decisions/ADR-0113-smart-point-picker.md)) | Adds keys only: `kind_counts` {kind: n} without `point_kind`; items get `point_kind`; `ln_counts` {"LD/LN": n} without `ln`; `suggested` (at most 8 items mentioning `near` as a whole word, description first, each with `suggested_by`). Without them the answer is byte-identical |
-| `POST /signals/update` | `{ied_id,ref,value,quality?}` | Acknowledged typed update |
+| `POST /signals/update` | `{ied_id,ref,value,quality?}` | Acknowledged typed update; Go refuses an Enum ord outside its EnumType and non-ASCII VisString text in plain words; a Mod write also writes the Beh it implies in the same batch (ADR-0115) |
 | `POST /signals/source` | `{ied_id,ref,spec}` | Configure validated source |
 | `POST /signals/pulse` | `{ied_id,ref,active_value?,duration_ms?}` | Guarded Boolean pulse |
 | `POST /signals/release-override` | `{ied_id,ref}` | Resume configured automatic source |

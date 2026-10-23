@@ -126,17 +126,22 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 	c.endpoints[id] = endpoint{item.host, item.port}
 	c.hub.notify(Change{IEDID: id})
 	c.mu.Unlock()
+	previousStart := item.table.startTime()
 	for i, entry := range item.model.signals {
 		if !startKinds[entry.Kind] {
 			continue
 		}
 		value, _ := item.table.get(item.model.signals[i].Ref)
+		if entry.Kind == "Timestamp" && previousStart != nil && pyval.Equal(value, previousStart) {
+			continue // never changed in the last run: stampStartTimes gives it this run's start
+		}
 		if pyval.Truthy(value) {
 			if _, err := worker.Update(entry.Ref, value); err != nil {
 				return err
 			}
 		}
 	}
+	stampStartTimes(item, pyval.Get(started, "started_at"))
 	c.mu.Lock()
 	c.setIedStateLocked(id, "running")
 	c.mu.Unlock()

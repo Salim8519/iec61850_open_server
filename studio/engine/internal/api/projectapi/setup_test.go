@@ -82,9 +82,15 @@ func loadSeed(t *testing.T) seedValidator {
 type fakeRuntime struct {
 	lock   sync.Mutex
 	events []string
+	state  string // "" reads as stopped
 }
 
-func (f *fakeRuntime) State() string          { return "stopped" }
+func (f *fakeRuntime) State() string {
+	if f.state == "" {
+		return "stopped"
+	}
+	return f.state
+}
 func (f *fakeRuntime) RunningIEDs() []string  { return nil }
 func (f *fakeRuntime) CycleLock() sync.Locker { return &f.lock }
 func (f *fakeRuntime) Emit(kind string, payload *pyjson.Object) {

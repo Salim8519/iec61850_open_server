@@ -87,7 +87,8 @@ static MmsValue* prepare_value(Server& server, DataAttribute* attribute, const J
             break;
         case MMS_VISIBLE_STRING:
             MmsValue_setVisibleString(candidate, value.get<std::string>().c_str()); break;
-        case MMS_UTC_TIME: MmsValue_setUtcTimeMs(candidate, value.get<uint64_t>()); break;
+        case MMS_UTC_TIME:  // the same TimeQuality as command timestamps (ADR-0115)
+            MmsValue_setUtcTimeMsEx(candidate, value.get<uint64_t>(), Server::time_quality); break;
         default: supported = false;
         }
     } catch (...) { MmsValue_delete(candidate); throw; }
@@ -96,8 +97,8 @@ static MmsValue* prepare_value(Server& server, DataAttribute* attribute, const J
 }
 
 Json update_batch(Server& server, const Json& updates, const Json& guard) {
-    if (!updates.is_array() || updates.empty() || updates.size() > 256)
-        throw std::runtime_error("Update batch must contain 1 to 256 attributes");
+    if (!updates.is_array() || updates.empty() || updates.size() > 4096)
+        throw std::runtime_error("Update batch must contain 1 to 4096 attributes");
     using Value = std::unique_ptr<MmsValue, decltype(&MmsValue_delete)>;
     struct Candidate {
         std::string reference;

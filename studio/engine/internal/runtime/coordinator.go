@@ -17,17 +17,19 @@ import (
 
 // Options wires a Coordinator to its surroundings.
 type Options struct {
-	NativeDir    string // folder with studio_ied.exe, studio_control.exe, ...
-	DataDir      string // runtime/<ied>.cfg and logs/ live here
-	Bus          Bus
-	Project      Project
-	Live         Live
+	NativeDir string // folder with studio_ied.exe, studio_control.exe, ...
+	DataDir   string // runtime/<ied>.cfg and logs/ live here
+	Bus       Bus
+	Project   Project
+	Live      Live
 	// LabAddresses lists the IPv4 addresses on the lab adapter (ip_helper.addresses_on); its
 	// error fails the Run like the OSError Python raised.
 	LabAddresses func(adapterGUID string) ([]string, error)
 	// CommandKeep is how long a canvas command's MMS association stays open for the next
 	// command to the same IED; 0 closes it after each command like studio_probe did.
 	CommandKeep time.Duration
+	// Version is the app version written into each run log's run_started record.
+	Version string
 }
 
 type sourceKey struct{ ied, ref string }
@@ -80,7 +82,7 @@ type Coordinator struct {
 	// selections are the held select-before-operate selections (ADR-0108).
 	selections *selections
 	shutdown   chan struct{}
-	ticker    sync.WaitGroup
+	ticker     sync.WaitGroup
 }
 
 // New creates a stopped coordinator and starts its cadence goroutine.

@@ -1,7 +1,8 @@
 // The canvas command, step for step the `control` operation of studio_probe (probe/main.cpp),
-// so the Go engine's canvas operate sends the same PDUs as the Python engine's probe call.
-// Only the wait for CommandTermination differs: the probe polls 100 x 20 ms; here the handler
-// wakes the command at once, with the same 2 s limit.
+// so the Go engine's canvas operate sends the same PDUs as the Python engine's probe call,
+// except two things: the wait for CommandTermination (the probe polls 100 x 20 ms; here the
+// handler wakes the command at once, with the same 2 s limit) and the origin (orCat 3 and
+// orIdent "ScadaBench" as every other app command, change 0186; the probe sends orCat 0).
 #include "canvas_mux.hpp"
 #include <chrono>
 #include <condition_variable>
@@ -31,6 +32,8 @@ Json canvas_command(IedConnection connection, const std::string& reference, bool
     Termination done;
     if (control && ControlObjectClient_getCtlValType(control) == MMS_BOOLEAN) {
         ControlObjectClient_setCommandTerminationHandler(control, terminated, &done);
+        // Every app command names its origin like the typed path (ADR-0115): remote control, "ScadaBench".
+        ControlObjectClient_setOrigin(control, "ScadaBench", CONTROL_ORCAT_REMOTE_CONTROL);
         auto value = MmsValue_newBoolean(requested);
         auto model = ControlObjectClient_getControlModel(control);
         bool selected = true;

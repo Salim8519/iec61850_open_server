@@ -173,7 +173,7 @@ func (c *Coordinator) start(ids []string) error {
 }
 
 func (c *Coordinator) startRun(project *pyjson.Object, items, simulated []*running) error {
-	log, err := OpenRunLog(filepath.Join(c.opt.DataDir, "logs"))
+	log, err := OpenRunLog(filepath.Join(c.opt.DataDir, "logs"), c.opt.Version)
 	if err != nil {
 		return apperr.RuntimeError(err.Error())
 	}

@@ -51,7 +51,7 @@ func (c *Ied) Update(ref string, value any) (any, error) {
 	return c.call("update", pyjson.NewObject().Set("ref", ref).Set("value", value), DefaultTimeout)
 }
 
-// UpdateBatch writes up to 256 {ref, value} items and returns {ref: value read back}.
+// UpdateBatch writes up to 4096 {ref, value} items (one data-model lock, ADR-0115) and returns {ref: value read back}.
 func (c *Ied) UpdateBatch(updates []any) (*pyjson.Object, error) {
 	result, err := c.call("update_batch", pyjson.NewObject().Set("updates", updates), DefaultTimeout)
 	return objectResult(result, err)

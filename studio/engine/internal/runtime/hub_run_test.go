@@ -1,9 +1,11 @@
 package runtime
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
+	"studio-engine/internal/apperr"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/pyval"
 	"studio-engine/internal/testutil"
@@ -121,5 +123,28 @@ func TestStoppedRefusesWhileRunning(t *testing.T) {
 	}
 	if got := c.RunningIEDs(); len(got) != 1 || got[0] != a {
 		t.Fatalf("running %v", got)
+	}
+}
+
+// Stopping an IED that is not in the project names the real problem (change 0186).
+func TestStoppingAnUnknownIEDSaysSo(t *testing.T) {
+	folder := fakeNativeDir(t)
+	project, a, _ := fakeProject(t, 3, 22300, false)
+	c := New(Options{NativeDir: folder, DataDir: testutil.TempDir(t), Bus: &MemoryBus{}, Project: NewMemoryProject(project)})
+	defer c.Close()
+	for _, running := range []bool{false, true} {
+		if running {
+			if err := c.Start([]string{a}); err != nil {
+				t.Fatal(err)
+			}
+		}
+		err := c.Stop([]string{"no-such-ied"})
+		var coded *apperr.Error
+		if !errors.As(err, &coded) || coded.Message != "Unknown IED" || coded.Code != "not_found" {
+			t.Fatalf("running=%v: %v", running, err)
+		}
+	}
+	if got := c.RunningIEDs(); len(got) != 1 || got[0] != a {
+		t.Fatalf("the running IED must keep running: %v", got)
 	}
 }

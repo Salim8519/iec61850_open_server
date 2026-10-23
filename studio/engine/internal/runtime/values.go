@@ -1,10 +1,12 @@
 package runtime
 
 import (
+	"slices"
 	"sync"
 
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/pyval"
+	"studio-engine/internal/runtime/signal"
 )
 
 // slot is the latest runtime value of one signal and its quality/time companions as the
@@ -25,6 +27,7 @@ type valueTable struct {
 	origin  *pyjson.Object // the IED object the table was built from
 	signals int
 	hub     *hub
+	started any // the last Run start time stamped into untouched timestamps (start_times.go)
 }
 
 func newValueTable(model *iedModel, hub *hub) *valueTable {
@@ -192,6 +195,11 @@ func (s *tables) forModel(model *iedModel) *valueTable {
 	return table
 }
 
+func sameSignal(a, b signal.Signal) bool {
+	return a.Ref == b.Ref && a.Kind == b.Kind && a.FC == b.FC && a.Writable == b.Writable &&
+		a.QualityRef == b.QualityRef && a.TimestampRef == b.TimestampRef && slices.Equal(a.Enums, b.Enums)
+}
+
 func sameModel(table *valueTable, model *iedModel) bool {
 	if table.origin == model.raw {
 		return true
@@ -200,7 +208,7 @@ func sameModel(table *valueTable, model *iedModel) bool {
 		return false
 	}
 	for i, entry := range model.signals {
-		if table.model.signals[i] != entry {
+		if !sameSignal(table.model.signals[i], entry) {
 			return false
 		}
 	}

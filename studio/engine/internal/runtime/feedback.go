@@ -112,6 +112,11 @@ func (f *feedback) process(entry feedbackItem) {
 	}
 	statusRef, _ := pyval.Get(entry.event, "status_ref").(string)
 	f.c.plant.publishChanged([]bindingKey{{entry.iedID, statusRef}})
+	if isModRef(statusRef) { // a client changed a Mod: its Beh follow (ADR-0115)
+		if err := f.c.syncBehaviour(entry.iedID); err != nil {
+			f.c.emit("behaviour_failed", pyval.Obj("ied_id", entry.iedID, "ref", statusRef, "message", errorText(err)))
+		}
+	}
 }
 
 func (f *feedback) applyNode(node *pyjson.Object, iedID string, event *pyjson.Object) {

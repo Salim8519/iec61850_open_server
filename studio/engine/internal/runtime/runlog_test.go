@@ -15,7 +15,7 @@ import (
 // lifecycle lines, and compact event records prefixed with run_id.
 func TestRunLogFormat(t *testing.T) {
 	root := testutil.TempDir(t)
-	log, err := OpenRunLog(root)
+	log, err := OpenRunLog(root, "9.8.7")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func TestRunLogFormat(t *testing.T) {
 	}
 	stamp := `\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d{6})?\+00:00`
 	manifest, _ := os.ReadFile(filepath.Join(root, log.RunID, "manifest.jsonl"))
-	pattern := regexp.MustCompile(`^\{"kind":"run_started","run_id":"` + log.RunID + `","at":"` + stamp + `","application":"0\.1\.0"\}\n` +
+	pattern := regexp.MustCompile(`^\{"kind":"run_started","run_id":"` + log.RunID + `","at":"` + stamp + `","application":"9\.8\.7"\}\n` +
 		`\{"kind":"segment_opened","run_id":"` + log.RunID + `","at":"` + stamp + `","file":"events-0000\.jsonl"\}\n` +
 		`\{"kind":"run_closed","run_id":"` + log.RunID + `","at":"` + stamp + `"\}\n$`)
 	if !pattern.Match(manifest) {

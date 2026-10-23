@@ -19,6 +19,7 @@ type Signal struct {
 	Ref, Kind, FC            string
 	Writable                 bool
 	QualityRef, TimestampRef string
+	Enums                    []EnumChoice // an Enum's EnumType values in SCL order; nil when unknown
 }
 
 // Validate is domain/signal.validate_value: it returns the value Python would send to the

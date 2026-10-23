@@ -23,7 +23,8 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | MMS controls/selection | `native/worker/controls/controls.cpp` |
 | Native server/tasks | `native/worker/server/server.cpp` |
 | Native typed updates | `native/worker/updates/values.cpp` |
-| Runtime evidence | `observability/log_writer.py`, `tools/query_runtime_logs.py` |
+| Runtime evidence | `observability/log_writer.py`, `tools/query_runtime_logs.py`; Go: `engine/internal/runtime/runlog.go`, `runlog_summary.go` (generator `signal_summary`, ADR-0115) |
+| Simulated IED Beh, batches, start times (ADR-0115) | Go: `engine/internal/runtime/behaviour.go` (Beh from Mod), `test_modes.go`, `sample_batches.go` (native batch limit), `start_times.go`, `signal/sample_rules.go` (Enum, VisString, quality checks); native: `worker/server/server.cpp` (start times, TimeQuality, idle RCB events), `worker/updates/values.cpp`, `control/canvas_command.cpp` (origin) |
 | Frontend API/contracts | `frontend/src/api/client.ts`, `api/types.ts` |
 | Shared tab/state flow | `frontend/src/state/useStudio.ts` |
 | Equipment sheet | `frontend/src/features/diagram/EquipmentSheet.tsx`, `SheetSettings.tsx`, `equipmentFields.ts` |
