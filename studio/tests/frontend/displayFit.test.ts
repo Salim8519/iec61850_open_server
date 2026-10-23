@@ -34,6 +34,7 @@ test('layoutLimits: the old @media thresholds on the fitted layout size', () => 
   assert.match(layoutLimits(1280, 600, fitScale(1280, 600, 1)), /\bh620\b/, 'always 100% keeps today\'s short-window rule');
   assert.equal(layoutLimits(1000, 500, 0.8), 'w1599 w1440', '1250×625 layout');
   assert.equal(layoutLimits(1000, 480, 0.8), 'w1599 w1440 h620', '1250×600 layout');
+  assert.equal(layoutLimits(0, 0, 1), '', 'an unmeasured (hidden) window gets no narrow rules');
   assert.equal(layoutLimits(500, 400, 1), 'w1599 w1440 w1100 w1000 w520 h620');
 });
 

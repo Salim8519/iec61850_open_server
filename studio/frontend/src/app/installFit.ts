@@ -6,7 +6,6 @@ export type FitState = { fit: number; width: number; height: number; setting: Di
 
 let state: FitState = { fit: 1, width: 0, height: 0, setting: 0, supported: false };
 let limits: string | null = null;
-let frame = 0;
 let installed = false;
 let chosen = false;
 const listeners = new Set<() => void>();
@@ -16,7 +15,6 @@ const zoomWorks = () => typeof Element !== 'undefined' && 'currentCSSZoom' in El
 
 /** Measure the real window (CSS zoom on <html> does not change innerWidth or visualViewport) and apply. */
 function apply() {
-  frame = 0;
   const root = document.documentElement;
   const width = window.innerWidth, height = window.innerHeight;
   const view = window.visualViewport;
@@ -32,8 +30,9 @@ function apply() {
   listeners.forEach(listener => listener());
 }
 
-/** One update per frame while the window is being resized. */
-const soon = () => { if (!frame) frame = requestAnimationFrame(apply); };
+/** Resize events already come at most once per frame; apply at once (a minimized or hidden window
+ *  gets no animation frames, and the layout must be right when it shows again). */
+const soon = () => apply();
 
 /** Start fit to window; called once in main.tsx before the first render, so nothing jumps. */
 export function installFit() {

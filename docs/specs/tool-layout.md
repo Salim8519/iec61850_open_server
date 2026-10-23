@@ -17,7 +17,8 @@ remember every choice; beginner hints everywhere, but not as blocks that push li
   - `fill-panel` + `panel-body`: a card whose last part (table, log, tree) takes the rest of the
     height. `.table-scroll` inside it has no fixed `max-height`.
   - `fill-column` / `fill-grow`: panes stacked in one column (Explorer: node over watch list).
-- **Breakpoints.** Targets 1366×768 and 1920×1080. Below 1000 px wide or 620 px high the panes
+- **Breakpoints.** Targets 1366×768 and 1920×1080. Sizes are the fitted layout (ADR-0111, `data-max`
+  tokens on `<html>`). Below 1000 px wide or 620 px high the panes
   stack, the page scrolls and tables are capped at 70 vh.
 - **Hints.** A paragraph longer than one line moves behind a `HelpTip` "?" next to the thing it
   explains. Empty states keep their explanation as text.

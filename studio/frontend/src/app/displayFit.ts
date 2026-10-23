@@ -25,6 +25,7 @@ const HEIGHT_LIMITS = [620];
 /** data-max tokens for the layout size (window ÷ fit): 'w1100' means the layout is at most 1100 px wide.
  *  At fit 1 these are exactly today's @media thresholds on the same window size. */
 export function layoutLimits(width: number, height: number, fit: number): string {
+  if (!(width > 0) || !(height > 0)) return '';  // not measured yet (hidden or minimized window)
   const layoutWidth = width / fit;
   const layoutHeight = height / fit;
   return [...WIDTH_LIMITS.filter(limit => layoutWidth <= limit).map(limit => `w${limit}`),

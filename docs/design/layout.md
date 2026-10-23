@@ -20,7 +20,9 @@ means everything runs (change 0106).
 Pages scroll inside a centred 1440 px column with 20 px gaps between cards, except open tools
 and Devices, which fill the window (ADR-0064): a side column and panes that scroll on their own,
 the page itself never scrolls; below 1000×620 they stack and the page scrolls again.
-Targets: 1366×768 and 1920×1080.
+Targets: 1366×768 and 1920×1080. Fit to window (ADR-0111): below 1440×800 the whole app is this
+layout evenly smaller (never below 80%, Settings › Display can keep 100%); the 1100 px and 1000×620
+limits apply to the fitted layout, so a 14-inch laptop (about 1280×640) shows the 1600×800 view at 80%.
 
 Waiting (change 0105): every wait a person would notice shows the shared Spinner (turning ring and
 words saying what is happening; a calm "still working" line after 8 s); a slow project action shows
