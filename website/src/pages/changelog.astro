@@ -7,7 +7,18 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Commands everywhere, point panels, tap changers, SCADA point lists</h2>
+    <h2>{SITE.version} · Many fixes from a full test of the app</h2>
+    <ul>
+      <li>IED Explorer no longer selects a control just because you opened it. Reading a select-before-operate control could reserve it on the device; that field is now never read.</li>
+      <li>A command sent with the Test option no longer moves the breaker on the diagram when the IED is in service and ignores it.</li>
+      <li>Tap-changer transformer: its settings list the tap changer controls of your IEDs again, and changing the IED never removes a working setup.</li>
+      <li>After Stop and Run, the diagram shows the values the IEDs really start with, not the ones from the last run.</li>
+      <li>When a device refuses Cancel, the selection is kept so Operate still works, and the reason is explained.</li>
+      <li>DNP3 gateway: output statuses are reported as good and command results arrive at once as events.</li>
+      <li>SCADA tools: Find registers has a Stop button, a refused connection says nothing is listening, Modbus writes from the master can choose the word order, and the protocol converter has the What to read tab for Modbus devices.</li>
+      <li>Activity is no longer filled with empty "report created" rows, menus close properly, Enter keeps the confirm question open, and many texts are clearer and no longer cut off at 1366×768.</li>
+    </ul>
+    <h2>0.1.22 · Commands everywhere, point panels, tap changers, SCADA point lists</h2>
     <ul>
       <li>Every IEC 61850 command type: besides breakers and switches you can now send integer and enum commands, analogue set points, binary step and integer step commands (tap raise / lower), in all four control models, from IED Explorer and the single-line diagram. Tap and set point commands also work through the SCADA gateway.</li>
       <li>Select before operate is one click on the single-line diagram, like a station HMI: ScadaBench selects and operates for you. Turn on "Show Select before Operate step by step" under Command options to see each step and its countdown.</li>
