@@ -3,6 +3,7 @@ package xsd
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -43,7 +44,21 @@ func (w *workFiles) write(source []byte) (string, error) {
 		_ = os.Remove(file.Name())
 		return "", errWorkFile(err)
 	}
-	return path, nil
+	return extendedPath(path), nil
+}
+
+// extendedPath gives the helper a Windows extended-length path (`\\?\C:\...` or
+// `\\?\UNC\server\share\...`) so a data folder deeper than MAX_PATH (260) still opens: the
+// helper opens the file with _wfopen, which refuses longer plain paths (change 0185). The
+// path is absolute and clean (filepath.Abs). Other systems get the path unchanged.
+func extendedPath(path string) string {
+	if runtime.GOOS != "windows" || strings.HasPrefix(path, `\\?\`) {
+		return path
+	}
+	if strings.HasPrefix(path, `\\`) {
+		return `\\?\UNC\` + path[2:]
+	}
+	return `\\?\` + path
 }
 
 func (w *workFiles) remove(path string) {

@@ -24,10 +24,18 @@ func usableGoID(value string) bool {
 	return value != "" && len([]rune(value)) <= 129 && !pyrules.HasSpace(value) && !strings.ContainsAny(value, "();{}")
 }
 
+// gooseGaps are what an earlier step already explained (ADR-0114): GSE addresses present but
+// unusable, and datasets left out. A block using one is not published, without a second,
+// contradictory warning.
+type gooseGaps struct {
+	rejected map[[2]string]bool
+	datasets map[string]bool
+}
+
 // gooseControls is goose_controls.goose_controls for one LN0; datasets are the LN0's
 // compiled datasets ({name, members}).
 func gooseControls(ln0 *xmldoc.Element, domain, ldInst string, gse []*pyjson.Object,
-	datasets []*pyjson.Object, iedName string, warnings *[]string) []*pyjson.Object {
+	datasets []*pyjson.Object, iedName string, warnings *[]string, gaps gooseGaps) []*pyjson.Object {
 	var controls []*pyjson.Object
 	addresses := map[[2]string]*pyjson.Object{}
 	for _, item := range gse {
@@ -56,12 +64,18 @@ func gooseControls(ln0 *xmldoc.Element, domain, ldInst string, gse []*pyjson.Obj
 		}
 		dataset := element.GetOr("datSet", "")
 		if names[dataset] == nil {
-			warn(where + " has no dataset in this logical device, so it is not published")
+			if gaps.datasets[dataset] {
+				warn(where + " uses dataset " + dataset + ", which could not be used (see the dataset note), so it is not published")
+			} else {
+				warn(where + " has no dataset in this logical device, so it is not published")
+			}
 			continue
 		}
 		address := addresses[[2]string{ldInst, name}]
 		if address == nil {
-			warn(where + " has no network address (GSE) in the SCD Communication section, so it is not published")
+			if !gaps.rejected[[2]string{ldInst, name}] || !adr0114() {
+				warn(where + " has no network address (GSE) in the SCD Communication section, so it is not published")
+			}
 			continue
 		}
 		reference := domain + "/LLN0$GO$" + name

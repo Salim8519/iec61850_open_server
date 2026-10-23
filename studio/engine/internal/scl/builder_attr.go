@@ -24,10 +24,13 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 	value, present := e.Get("name")
 	name, err := Identifier(value, present, "data attribute")
 	if err != nil {
-		return err
+		return located(err, reference)
 	}
 	kind, hasKind := e.Get("bType")
 	typeNumber, known := basicTypes[kind]
+	if !hasKind && adr0114() {
+		return located(apperr.New("the attribute has no bType"), reference+"."+name)
+	}
 	if !hasKind || !known {
 		return apperr.New("Unsupported basic type " + noneOr(kind, hasKind) + " at " + reference + "." + name)
 	}
@@ -36,12 +39,15 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 		fc, hasFC = inheritedFC, hasInheritedFC
 	}
 	fcNumber, knownFC := functionalConstraints[fc]
+	if !hasFC && adr0114() {
+		return located(apperr.New("the attribute has no functional constraint (fc)"), reference+"."+name)
+	}
 	if !hasFC || !knownFC {
-		return apperr.New("Unknown functional constraint " + noneOr(fc, hasFC))
+		return located(apperr.New("Unknown functional constraint "+noneOr(fc, hasFC)), reference+"."+name)
 	}
 	count, err := pyCount(e)
 	if err != nil {
-		return err
+		return located(err, reference+"."+name)
 	}
 	if count != 0 {
 		return apperr.New("Array attribute " + reference + "." + name + " needs array-attribute support")
@@ -49,6 +55,10 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 	ref := reference + "." + name
 	description = firstTruthy(instanceDesc(instance), e.GetOr("desc", ""), description)
 	triggers := triggerBits(e.Get) | inheritedTriggers
+	if standard := defaultTriggers(e, name, fc); standard != 0 {
+		triggers |= standard
+		b.notes.defaultTriggers++
+	}
 	header := "DA(" + name + " 0 " + strconv.Itoa(typeNumber) + " " + strconv.Itoa(fcNumber) + " " +
 		strconv.Itoa(triggers) + " 0)"
 	if kind == "Struct" {
@@ -56,7 +66,7 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 		typeID, hasType := e.Get("type")
 		definition, err := b.declaration("DAType", typeID, hasType)
 		if err != nil {
-			return err
+			return located(err, ref)
 		}
 		for _, child := range definition.Children {
 			if child.Tag != "BDA" {
@@ -74,7 +84,7 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 	enums := pyjson.NewObject()
 	if kind == "Enum" {
 		if enums, err = b.enumValues(e); err != nil {
-			return err
+			return located(err, ref)
 		}
 	}
 	text, found := "", false
@@ -86,11 +96,17 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 	}
 	initial, err := initialValue(kind, text, found, enums)
 	if err != nil {
-		return err
+		return located(err, ref)
+	}
+	if value, isText := initial.(string); isText {
+		if simulated, changed := simulatedText(value); changed {
+			initial = simulated
+			b.notes.textReplaced = append(b.notes.textReplaced, ref)
+		}
 	}
 	suffix, err := configInitial(kind, initial)
 	if err != nil {
-		return err
+		return located(err, ref)
 	}
 	b.lines = append(b.lines, header+suffix+";")
 	signal := pyjson.NewObject().Set("ref", ref).Set("fc", fc).Set("kind", kind).Set("value", initial).
@@ -107,6 +123,9 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 // enumValues is {EnumVal text.strip(): int(ord)} for the DA's EnumType.
 func (b *builder) enumValues(e *xmldoc.Element) (*pyjson.Object, error) {
 	typeID, hasType := e.Get("type")
+	if !hasType && adr0114() {
+		return nil, apperr.New("bType is Enum but the attribute names no EnumType (type attribute missing)")
+	}
 	definition, err := b.declaration("EnumType", typeID, hasType)
 	if err != nil {
 		return nil, err
@@ -121,8 +140,11 @@ func (b *builder) enumValues(e *xmldoc.Element) (*pyjson.Object, error) {
 			continue
 		}
 		ord, present := item.Get("ord")
-		if !present {
+		if !present && !adr0114() {
 			return nil, errTypeError
+		}
+		if !present {
+			return nil, apperr.New("EnumType " + typeID + " value " + pyrules.Repr(label) + " has no ord")
 		}
 		number, err := pyrules.IntBig(ord, 10)
 		if err != nil {

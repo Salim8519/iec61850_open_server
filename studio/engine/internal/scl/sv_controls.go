@@ -64,7 +64,8 @@ func pairedChannels(split []*xmldoc.Element) bool {
 }
 
 // svControls is sv_controls.sv_controls for one LN0.
-func svControls(ln0 *xmldoc.Element, domain, inst string, smv []*pyjson.Object, iedName string, warnings *[]string) []*pyjson.Object {
+func svControls(ln0 *xmldoc.Element, domain, inst string, smv []*pyjson.Object, iedName string, warnings *[]string,
+	rejected map[[2]string]bool) []*pyjson.Object {
 	addresses := map[[2]string]*pyjson.Object{}
 	for _, item := range smv {
 		addresses[[2]string{get(item, "ld_inst").(string), get(item, "cb_name").(string)}] = item
@@ -81,7 +82,9 @@ func svControls(ln0 *xmldoc.Element, domain, inst string, smv []*pyjson.Object, 
 		where := "Sampled Values block " + iedName + "/" + inst + "/" + name
 		address := addresses[[2]string{inst, name}]
 		if address == nil {
-			*warnings = append(*warnings, where+" has no network address (SMV) in the SCD; it is not listened to")
+			if !rejected[[2]string{inst, name}] || !adr0114() { // an unusable SMV address was already explained (ADR-0114)
+				*warnings = append(*warnings, where+" has no network address (SMV) in the SCD; it is not listened to")
+			}
 			continue
 		}
 		var numbers []any

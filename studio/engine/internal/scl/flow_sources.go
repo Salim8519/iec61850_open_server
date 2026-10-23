@@ -30,8 +30,13 @@ func ReadFlow(source string) (*Flow, error) {
 	root := parsed.Root
 	cat := publisherCatalogue(root)
 	flow := &Flow{Subscriptions: map[string]FlowSubscriptions{}}
+	known := map[string]bool{}
+	for _, ied := range root.FindAll("IED") {
+		known[ied.GetOr("name", "")] = true
+	}
 	for _, ied := range root.FindAll("IED") {
 		found, problems := gooseSubscriptions(ied, cat)
+		problems = append(problems, outsideSources(ied, known)...)
 		flow.Subscriptions[ied.GetOr("name", "")] = FlowSubscriptions{found, problems}
 		flow.IEDs = append(flow.IEDs, pyjson.NewObject().Set("name", ied.GetOr("name", "")).
 			Set("desc", ied.GetOr("desc", "")).Set("manufacturer", ied.GetOr("manufacturer", "")))

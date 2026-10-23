@@ -2,6 +2,7 @@ package scl
 
 import (
 	"math"
+	"strconv"
 	"strings"
 	"time"
 
@@ -81,7 +82,21 @@ func requireValid(validation *pyjson.Object) error {
 		return nil
 	}
 	first := get(validation, "errors").([]any)[0].(*pyjson.Object)
-	return apperr.New("Verified SCL export requires a supported, schema-valid document: " + get(first, "message").(string))
+	detail := get(first, "message").(string)
+	if !adr0114() {
+		return apperr.New("Verified SCL export requires a supported, schema-valid document: " + detail)
+	}
+	if line, ok := get(first, "line").(int64); ok && line > 0 {
+		detail = "line " + strconv.FormatInt(line, 10) + ": " + detail
+	}
+	// ADR-0114: plain words first, the raw XSD message after "Detail".
+	if get(validation, "status") == "unsupported" {
+		return apperr.New("This file cannot be exported: no bundled IEC 61850 schema (XSD) matches its SCL " +
+			"version, so ScadaBench cannot check that the exported file is correct. Detail: " + detail)
+	}
+	return apperr.New("This file cannot be exported: it does not pass the IEC 61850 schema check (XSD), so " +
+		"ScadaBench cannot prove the exported file is correct. Fix the file in the engineering tool and import " +
+		"it again. Detail: " + detail)
 }
 
 func applyOverride(nodes map[[2]string]path, signals map[string]*pyjson.Object, reference string,

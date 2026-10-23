@@ -22,7 +22,8 @@ type builder struct {
 	controls        []any
 	controlWarnings []string
 	lines           []string
-	extended        []any // Go-only typed controls (ADR-0104); never part of the IED model
+	extended        []any       // Go-only typed controls (ADR-0104); never part of the IED model
+	notes           importNotes // Go-only import notes (ADR-0114)
 }
 
 func newBuilder(types map[typeKey]*xmldoc.Element) *builder {
@@ -33,7 +34,13 @@ func (b *builder) declaration(tag string, id string, present bool) (*xmldoc.Elem
 	if found := b.types[typeKey{tag, id, present}]; found != nil {
 		return found, nil
 	}
-	return nil, apperr.New("Unresolved " + tag + " " + noneOr(id, present))
+	if !adr0114() {
+		return nil, apperr.New("Unresolved " + tag + " " + noneOr(id, present))
+	}
+	if !present {
+		return nil, apperr.New("Unresolved " + tag + ": the type attribute is missing")
+	}
+	return nil, apperr.New("Unresolved " + tag + " " + id + " (not in DataTypeTemplates)")
 }
 
 // noneOr formats an optional attribute the way an f-string formats None.
@@ -64,20 +71,20 @@ func (b *builder) dataObject(e *xmldoc.Element, reference string, instance *xmld
 	value, present := e.Get("name")
 	name, err := Identifier(value, present, "data object")
 	if err != nil {
-		return err
-	}
-	count, err := pyCount(e)
-	if err != nil {
-		return err
-	}
-	if count < 0 || count > 256 {
-		return apperr.New("Array element count must be between 0 and 256")
+		return located(err, reference)
 	}
 	ref := reference + "." + name
+	count, err := pyCount(e)
+	if err != nil {
+		return located(err, ref)
+	}
+	if count < 0 || count > 256 {
+		return located(apperr.New("Array element count must be between 0 and 256"), ref)
+	}
 	typeID, hasType := e.Get("type")
 	definition, err := b.declaration("DOType", typeID, hasType)
 	if err != nil {
-		return err
+		return located(err, ref)
 	}
 	b.lines = append(b.lines, "DO("+name+" "+strconv.FormatInt(count, 10)+"){")
 	description := e.GetOr("desc", "")
@@ -122,15 +129,25 @@ func (b *builder) objectContent(definition *xmldoc.Element, ref string, instance
 func (b *builder) control(definition *xmldoc.Element, ref string) {
 	model := b.byReference[ref+".ctlModel"]
 	feedback := b.byReference[ref+".stVal"]
-	if model == nil || feedback == nil || !truthy(get(model, "value")) {
+	if model == nil || !truthy(get(model, "value")) {
+		return
+	}
+	cdc, _ := definition.Get("cdc")
+	switchClass := cdc == "SPC" || cdc == "DPC"
+	if feedback == nil {
+		if switchClass {
+			b.notes.commandOnly = append(b.notes.commandOnly, ref) // ADR-0114: never silent
+		}
 		return
 	}
 	feedbackKind := get(feedback, "kind")
 	if feedbackKind != "BOOLEAN" && feedbackKind != "Dbpos" {
+		if switchClass {
+			b.notes.odd(ref, cdc, "stVal", feedbackKind)
+		}
 		return
 	}
 	ctlVal := b.byReference[ref+".Oper.ctlVal"]
-	cdc, _ := definition.Get("cdc")
 	expectedOK := cdc == "SPC" || cdc == "DPC"
 	feedbackOK := cdc == "SPC" && feedbackKind == "BOOLEAN" || cdc == "DPC" && feedbackKind == "Dbpos"
 	if expectedOK && feedbackOK && ctlVal != nil && get(ctlVal, "kind") == "BOOLEAN" {
@@ -146,6 +163,7 @@ func (b *builder) control(definition *xmldoc.Element, ref string) {
 	}
 	b.controlWarnings = append(b.controlWarnings,
 		"Control "+ref+" is not exposed: expected a consistent SPC/DPC Boolean control model")
+	b.notes.markReported(ref)
 }
 
 func get(o *pyjson.Object, key string) any {

@@ -39,13 +39,16 @@ func publisherCatalogue(root *xmldoc.Element) *catalogue {
 			var datasets []*pyjson.Object
 			fcdas := map[string][]*xmldoc.Element{}
 			for _, item := range ln0.FindAll("DataSet") {
+				if missingDoName(item) != nil {
+					continue // not published by the importer (ADR-0114)
+				}
 				dsName := item.GetOr("name", "")
 				datasets = append(datasets, pyjson.NewObject().Set("name", dsName).Set("members", []any{}))
 				if _, seen := fcdas[dsName]; !seen {
 					fcdas[dsName] = item.FindAll("FCDA")
 				}
 			}
-			for _, control := range gooseControls(ln0, domain, inst, comm.gse, datasets, name, nil) {
+			for _, control := range gooseControls(ln0, domain, inst, comm.gse, datasets, name, nil, gooseGaps{}) {
 				entry := pyjson.NewObject()
 				for _, key := range control.Keys() {
 					if key != "members" {
@@ -110,11 +113,32 @@ func lgosTargets(ied *xmldoc.Element) map[string]string {
 				continue
 			}
 			if value, ok := setSrcRef(ln); ok && pyrules.Strip(value) != "" {
-				targets[pyrules.Strip(value)] = domain + "/" + lnName(ln)
+				target := domain + "/" + lnName(ln)
+				targets[pyrules.Strip(value)] = target
+				if mms := gocbMMSRef(pyrules.Strip(value)); mms != "" && adr0114() {
+					if _, taken := targets[mms]; !taken {
+						targets[mms] = target
+					}
+				}
 			}
 		}
 	}
 	return targets
+}
+
+// gocbMMSRef turns the ObjectReference form of a GoCB ("LD/LLN0.gocb0", as SCD tools write
+// setSrcRef) into the MMS form the GOOSE blocks use ("LD/LLN0$GO$gocb0"); "" when the value
+// is not that form (ADR-0114).
+func gocbMMSRef(value string) string {
+	slash := strings.IndexByte(value, '/')
+	if slash <= 0 || strings.Contains(value, "$") {
+		return ""
+	}
+	rest := value[slash+1:]
+	if !strings.HasPrefix(rest, "LLN0.") || strings.Count(rest, ".") != 1 || len(rest) == len("LLN0.") {
+		return ""
+	}
+	return value[:slash] + "/LLN0$GO$" + rest[len("LLN0."):]
 }
 
 // setSrcRef is findtext("DOI[@name='GoCBRef']/DAI[@name='setSrcRef']/Val").

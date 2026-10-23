@@ -12,6 +12,7 @@ import (
 // TestCorpusMatchesPython replays every public fixture and corpus case through preview,
 // validate and import and compares bytes with the goldens CPython produced.
 func TestCorpusMatchesPython(t *testing.T) {
+	asPythonTwin(t)
 	manifest := readGoldenList(t, "manifest.json")
 	importer := &Importer{Validator: loadSeed(t)}
 	compared := 0

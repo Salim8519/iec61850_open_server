@@ -53,7 +53,11 @@ func PreviewDiagram(project *pyjson.Object, revision int64, sourceID, mode strin
 		return nil, apperr.New(err.Error())
 	}
 	ieds := projectIEDs(project)
-	drawn, unbound := bindBuilt(built, ieds, topology.Domains)
+	unloadable, err := scl.UnloadableIEDs(entry.Text)
+	if err != nil {
+		return nil, err
+	}
+	drawn, unbound := bindBuilt(built, ieds, topology.Domains, unloadable)
 	current := object(valueOf(project, "diagram"))
 	merged, present := mergeDiagram(current, built, mode)
 	diagram, err := ValidateDiagram(merged, ieds)
@@ -71,7 +75,8 @@ func PreviewDiagram(project *pyjson.Object, revision int64, sourceID, mode strin
 
 // bindBuilt is _bind: bindings written into the built switch nodes, the drawn list and the
 // reasons of what stayed unbound.
-func bindBuilt(built *sld.Built, ieds []*pyjson.Object, domains map[[2]string]string) ([]any, []any) {
+func bindBuilt(built *sld.Built, ieds []*pyjson.Object, domains map[[2]string]string,
+	unloadable map[string]string) ([]any, []any) {
 	drawn, unbound := []any{}, []any{}
 	for _, raw := range built.Nodes {
 		node := object(raw)
@@ -81,7 +86,7 @@ func bindBuilt(built *sld.Built, ieds []*pyjson.Object, domains map[[2]string]st
 		}
 		data := object(valueOf(node, "data"))
 		kind := text(data, "kind")
-		state, control, reasons := sld.Bind(kind, item.LNodes, ieds, domains)
+		state, control, reasons := sld.Bind(kind, item.LNodes, ieds, domains, unloadable)
 		if state != nil {
 			data.Set("state_mapping", state)
 		}

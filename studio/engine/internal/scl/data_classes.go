@@ -1,9 +1,7 @@
 package scl
 
 import (
-	"hash/fnv"
 	"strconv"
-	"sync"
 
 	"studio-engine/internal/scl/xmldoc"
 )
@@ -86,21 +84,16 @@ func objectClasses(types map[typeKey]*xmldoc.Element, e *xmldoc.Element, parent 
 	}
 }
 
-var classCache sync.Map // "<ied id>|<source hash>" -> map[string]string
+var classCache sourceCache
 
 // CachedDataClasses is DataClasses remembered per IED id and source text, so a list that asks
-// again (or a filter on every page) does not parse the SCL again.
+// again (or a filter on every page) neither parses nor hashes the SCL again (ADR-0114).
 func CachedDataClasses(iedID, iedName, source string) (map[string]string, error) {
-	hash := fnv.New64a()
-	_, _ = hash.Write([]byte(source))
-	key := iedID + "|" + iedName + "|" + strconv.FormatUint(hash.Sum64(), 16)
-	if found, ok := classCache.Load(key); ok {
-		return found.(map[string]string), nil
-	}
-	classes, err := DataClasses([]byte(source), iedName)
+	value, err := classCache.get(iedID, iedName, source, func() (any, error) {
+		return DataClasses([]byte(source), iedName)
+	})
 	if err != nil {
 		return nil, err
 	}
-	classCache.Store(key, classes)
-	return classes, nil
+	return value.(map[string]string), nil
 }

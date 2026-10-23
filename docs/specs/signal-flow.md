@@ -38,7 +38,9 @@ It does not write a second ExtRef resolver.
   Running the same SCD always gives the same graph.
 
 **Diagnostics** (shown, never auto-fixed)
-- **Problem:** an `ExtRef` whose source can't be resolved.
+- **Problem:** an `ExtRef` whose source can't be resolved. This includes inputs without
+  `serviceType` that name an IED with no section in the file: one problem per source IED,
+  with the count and the first input (Go engine, ADR-0114).
 - **Problem:** an `ExtRef` naming a block that doesn't exist.
 - **Problem:** a block whose dataset is missing.
 - **Info:** a GoCB or SvCB with no subscriber in the file. This is normal when the
@@ -87,6 +89,7 @@ It does not write a second ExtRef resolver.
 | FLOW-09 | A declared edge without live evidence never shows a "received" state. | `studio/tests/frontend/signalFlow.test.ts::declared edge is not shown as received` |
 | FLOW-10 | The signal list of an edge can be downloaded as CSV with the same rows shown. | `studio/tests/integration/test_signal_flow_api.py::test_edge_csv_matches_rows` |
 | FLOW-11 | The IED view keeps only links touching that IED, plus diagnostics on it or naming it as a whole word. | `studio/tests/unit/test_signal_flow.py::test_single_ied_view_keeps_only_its_links` |
+| FLOW-12 | Inputs without `serviceType` from an IED that is not in the file are a problem, never silent (Go engine). | `studio/engine/internal/scl/vendor_station_test.go::TestFlowFlagsInputsFromIedsOutsideTheFile` |
 
 ## Acceptance evidence
 

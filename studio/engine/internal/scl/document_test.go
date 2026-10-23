@@ -36,6 +36,7 @@ func text(o *pyjson.Object, key string) string {
 // TestParseDocumentMatchesPython replays parse_document over the hand-written malformed
 // inputs and the 3000 random mutations recorded from CPython (expat 2.6.3, defusedxml).
 func TestParseDocumentMatchesPython(t *testing.T) {
+	asPythonTwin(t)
 	cases := readGoldenList(t, "xml_errors.json")
 	failures := 0
 	for index, item := range cases {

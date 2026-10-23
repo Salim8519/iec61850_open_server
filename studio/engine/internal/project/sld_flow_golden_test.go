@@ -83,7 +83,7 @@ func TestSLDAndFlowMatchPython(t *testing.T) {
 				for _, node := range built.Nodes {
 					if item := built.Equipment[text(object(node), "id")]; item != nil {
 						kind := text(object(get(object(node), "data")), "kind")
-						state, control, reasons := sld.Bind(kind, item.LNodes, ieds, topology.Domains)
+						state, control, reasons := sld.Bind(kind, item.LNodes, ieds, topology.Domains, nil)
 						listed := []any{}
 						for _, reason := range reasons {
 							listed = append(listed, reason)

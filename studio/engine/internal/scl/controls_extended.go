@@ -45,7 +45,7 @@ var extendedShapes = map[string]extendedShape{
 }
 
 // extendedControl records a commandable INC/ENC/APC/BAC/BSC/ISC object. Objects that do not
-// match their class shape are left out silently: the IED's warnings stay exactly Python's.
+// match their class shape are left out with an import note (ADR-0114).
 func (b *builder) extendedControl(definition *xmldoc.Element, ref string) {
 	cdc, _ := definition.Get("cdc")
 	shape, known := extendedShapes[cdc]
@@ -55,12 +55,26 @@ func (b *builder) extendedControl(definition *xmldoc.Element, ref string) {
 	model := b.byReference[ref+".ctlModel"]
 	feedback := b.byReference[ref+shape.feedback]
 	ctlVal := b.byReference[ref+shape.ctlVal]
-	if model == nil || feedback == nil || ctlVal == nil || !truthy(get(model, "value")) {
+	if model == nil || !truthy(get(model, "value")) {
+		return
+	}
+	// ADR-0114: an object that cannot be commanded is noted on the import, never dropped silently.
+	switch {
+	case feedback == nil:
+		b.notes.commandOnly = append(b.notes.commandOnly, ref)
+		return
+	case ctlVal == nil:
+		b.notes.odd(ref, cdc, shape.ctlVal[1:], "missing")
 		return
 	}
 	feedbackKind, _ := get(feedback, "kind").(string)
 	ctlKind, _ := get(ctlVal, "kind").(string)
-	if !shape.feedbackKinds[feedbackKind] || !shape.ctlKinds[ctlKind] {
+	if !shape.feedbackKinds[feedbackKind] {
+		b.notes.odd(ref, cdc, shape.feedback[1:], feedbackKind)
+		return
+	}
+	if !shape.ctlKinds[ctlKind] {
+		b.notes.odd(ref, cdc, shape.ctlVal[1:], ctlKind)
 		return
 	}
 	timeout := any(int64(0))

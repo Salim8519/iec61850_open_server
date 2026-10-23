@@ -63,12 +63,22 @@ func pyIntAttr(e *xmldoc.Element, key, fallback string) (int64, error) {
 // and report dicts.
 func compileReports(ln *xmldoc.Element, ldInst string, lines *[]string, warnings *[]string) ([]*pyjson.Object, []*pyjson.Object, error) {
 	var datasets, reports []*pyjson.Object
-	names := map[string]bool{}
+	names, unusable := map[string]bool{}, map[string]bool{}
+	warn := func(text string) {
+		if warnings != nil {
+			*warnings = append(*warnings, text)
+		}
+	}
 	for _, dataset := range ln.FindAll("DataSet") {
 		value, present := dataset.Get("name")
 		name, err := Identifier(value, present, "dataset")
 		if err != nil {
 			return nil, nil, err
+		}
+		if gap := missingDoName(dataset); gap != nil {
+			warn(datasetGapWarning(ldInst, lnName(ln), name, gap))
+			unusable[name] = true
+			continue
 		}
 		*lines = append(*lines, "DS("+name+"){")
 		members := []any{}
@@ -90,6 +100,11 @@ func compileReports(ln *xmldoc.Element, ldInst string, lines *[]string, warnings
 			"skipped. Ask the IED engineer to fix the CID.", skipped, ldInst, ln.GetOr("lnClass", "LLN0")))
 	}
 	for _, report := range usable {
+		if datSet := report.GetOr("datSet", ""); unusable[datSet] {
+			warn("Report block " + ldInst + "/" + lnName(ln) + "." + report.GetOr("name", "") + " uses dataset " +
+				datSet + ", which could not be used (see the dataset note), so it is not published.")
+			continue
+		}
 		compiled, err := compileReport(report, names, lines)
 		if err != nil {
 			return nil, nil, err
@@ -101,7 +116,7 @@ func compileReports(ln *xmldoc.Element, ldInst string, lines *[]string, warnings
 
 func datasetMember(item *xmldoc.Element, ldInst string, lines *[]string) (string, error) {
 	ldValue := item.GetOr("ldInst", ldInst)
-	memberLD, err := Identifier(ldValue, true, "dataset logical device")
+	memberLD, err := LDInst(ldValue, true, "dataset logical device")
 	if err != nil {
 		return "", err
 	}

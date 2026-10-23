@@ -37,13 +37,21 @@ func WithLive(linkMap *pyjson.Object, watches []*pyjson.Object, running bool) *p
 		}
 		links = append(links, pyv.Merge(link).Set("live", live))
 	}
+	outside := map[string]bool{}
+	for _, ied := range pyv.Objects(pyv.GetList(linkMap, "ieds")) {
+		if pyv.Equal(pyv.Get(ied, "in_project"), false) {
+			outside[pyv.PyStr(pyv.Get(ied, "name"))] = true
+		}
+	}
 	result := pyv.Merge(linkMap)
-	return result.Set("links", links).Set("running", running).Set("summary", Summary(pyv.Objects(links)))
+	return result.Set("links", links).Set("running", running).Set("summary", Summary(pyv.Objects(links), outside))
 }
 
 // Summary returns, per IED name in first-seen order, how many links it sends, whom it
-// gets GOOSE from, and what is not sent, remote, not heard or in problem.
-func Summary(links []*pyjson.Object) *pyjson.Object {
+// gets GOOSE from, and what is not sent, remote, not heard or in problem. A link whose
+// publisher is outside the project (in the file but not imported) that is not heard counts
+// as remote, not as "not heard": nothing in the project sends it (ADR-0114).
+func Summary(links []*pyjson.Object, outside map[string]bool) *pyjson.Object {
 	result := pyjson.NewObject()
 	entry := func(name any) *pyjson.Object {
 		key := pyv.PyStr(name)
@@ -71,7 +79,9 @@ func Summary(links []*pyjson.Object) *pyjson.Object {
 			increment(subscriber, "not_sent")
 		}
 		state := pyv.Get(pyv.Obj(pyv.Get(link, "live")), "state")
-		if equalsAny(state, "waiting", "timeout") {
+		if equalsAny(state, "waiting", "timeout") && outside[pyv.PyStr(publisherName)] && pyv.Equal(status, "declared") {
+			increment(subscriber, "remote")
+		} else if equalsAny(state, "waiting", "timeout") {
 			increment(subscriber, "not_heard")
 		} else if pyv.Equal(state, "problem") {
 			increment(subscriber, "problems")

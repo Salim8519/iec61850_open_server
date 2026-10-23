@@ -84,8 +84,10 @@ func get(object *pyjson.Object, key string) any {
 }
 
 // Bind is sld_bindings.bind: (state_mapping, control_binding, reasons) for one piece of
-// equipment, from the LNodes written on it only; nil mappings are None.
-func Bind(kind string, lnodes []scl.LNode, ieds []*pyjson.Object, domains map[[2]string]string) (*pyjson.Object, *pyjson.Object, []string) {
+// equipment, from the LNodes written on it only; nil mappings are None. unloadable says why
+// an IED of the file can never be loaded (scl.UnloadableIEDs, ADR-0114); nil keeps Python's words.
+func Bind(kind string, lnodes []scl.LNode, ieds []*pyjson.Object, domains map[[2]string]string,
+	unloadable map[string]string) (*pyjson.Object, *pyjson.Object, []string) {
 	wanted, isSwitch := switchClass[kind]
 	if !isSwitch {
 		return nil, nil, []string{}
@@ -113,7 +115,11 @@ func Bind(kind string, lnodes []scl.LNode, ieds []*pyjson.Object, domains map[[2
 	}
 	for _, lnode := range []*scl.LNode{sw, command} {
 		if lnode != nil && byName[lnode.IEDName] == nil {
-			reasons = append(reasons, "IED "+lnode.IEDName+" is in the SCD but not loaded in this project")
+			if why := unloadable[lnode.IEDName]; why != "" {
+				reasons = append(reasons, "IED "+lnode.IEDName+" is in the SCD but cannot be loaded: "+why)
+			} else {
+				reasons = append(reasons, "IED "+lnode.IEDName+" is in the SCD but not loaded in this project")
+			}
 		}
 	}
 	var mapping, binding *pyjson.Object
