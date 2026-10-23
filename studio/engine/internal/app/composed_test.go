@@ -15,12 +15,13 @@ import (
 )
 
 // clickProject imports one BayController template through the routes, moves it to a
-// loopback address of this test (127.67.0.x, port >= 20000) and draws one bound CB.
+// loopback address of this test (127.67.0.x, a port that is free there, >= 20000) and draws one bound CB.
 func clickProject(t testing.TB, engine *Engine) string {
 	t.Helper()
 	ids := field(mustCall(t, engine, "POST", "/api/v1/ieds/template", obj("name", "BayController")), "ieds").([]any)
 	id := ids[0].(string)
-	address, port := "127.67.0."+itoa(10+rand.Intn(200)), int64(20000+rand.Intn(20000))
+	address := "127.67.0." + itoa(10+rand.Intn(200))
+	port := int64(freePortBase(t, 1, address) + 1) // checked: random picks hit reserved ranges (WinError 10013)
 	if _, err := engine.Projects.Update(func(draft *pyjson.Object) (*pyjson.Object, error) {
 		ied, err := project.FindIED(draft, id)
 		if err == nil {

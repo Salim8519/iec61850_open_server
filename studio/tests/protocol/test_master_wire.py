@@ -125,7 +125,8 @@ def test_dnp3_master_integrity_poll_events_and_crob():
         missing = master.process.request("command", timeout=20, kind="binary_output", address=99, value=1)
         text = missing["steps"][0]["text"]  # change 0089: was "refused: not supported (success)"
         assert not missing["ok"] and "no such control point" in text and "success" not in text
-        assert any("CROB latch on index 4" in line for line in master.traffic)
+        # change 0169 added count and on/off times to the CROB line before the index
+        assert any("CROB latch on count" in line and " index 4 " in line for line in master.traffic)
     finally:
         master.close()
         gateway.close()

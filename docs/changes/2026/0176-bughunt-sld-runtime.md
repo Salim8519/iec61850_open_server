@@ -78,3 +78,14 @@ SampleTyped.scd + the demo SCD):
   in the browser.
 - Not in this group or not fixed by plan: B11 (parity texts), B8 (known 0097 limitation), B9, B14,
   B18, B19 (not bugs / not reproduced), B5 and B16 (other groups).
+
+## Integration (with 0177 and 0178)
+
+Merged on branch `bughunt-0176` with groups 2 and 3 without conflicts. Two test-only fixes found while checking the
+merge: `app/composed_test.go` picked a random IED port that could fall in a Windows-reserved range (Hyper-V
+excluded ports 30940-31039 and 31640-31739 here), failing `TestComposedGatewaySeesRunningIEDs` with WinError 10013;
+it now takes a port that is free on that address (`freePortBase`). `tests/protocol/test_master_wire.py` still expected
+the CROB traffic line from before 0169 ("CROB latch on index 4"); it now checks the line with count and times.
+Evidence after the merge: native build 0 errors, frontend 450/450, tsc, `verify.py` and the protocol wire tests (see
+the ledger entry), and a browser check on the merged build: IED Explorer read of SampleTyped GGIO2.AnOut1.SBO (ctlModel
+2) answered "Not read: reading SBO would select the control" and the IED's Read by clients table showed no command.
