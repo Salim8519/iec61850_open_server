@@ -21,6 +21,7 @@ const INFO: Record<EquipmentKind, KindInfo> = {
   MEASUREMENT_LIST: { name: 'Measurement list', code: 'Values panel', category: 'instrument', state: 'Measurements' },
   POINT_PANEL: { name: 'Point panel', code: 'Set / operate points', category: 'control', state: 'Points' },
   TAP_TRANSFORMER: { name: 'Tap-changer transformer', code: 'YPTR · YLTC · ATCC', category: 'source', state: 'Tap position' },
+  IED: { name: 'IED', code: 'Whole IED · GOOSE', category: 'control', state: 'IED' },
 };
 
 export function kindInfo(kind: EquipmentKind): KindInfo {
@@ -47,6 +48,7 @@ export function setupItems(data: EquipmentData): SetupItem[] {
     case 'RELAY': return [{ label: 'At least one signal', done: !!data.relay_statuses?.length }];
     case 'MEASUREMENT_LIST': return [{ label: 'At least one measurement', done: !!data.measurements?.length }];
     case 'POINT_PANEL': return [{ label: 'At least one point', done: !!data.points?.length }];
+    case 'IED': return [{ label: 'An IED', done: !!data.ied_id }];
     case 'TAP_TRANSFORMER': return [{ label: 'Tap position', done: !!data.tap_changer?.tap_source },
       { label: 'Raise/Lower command', done: !!data.tap_changer && commandReady(data.tap_changer), optional: true }];
     default: return [];

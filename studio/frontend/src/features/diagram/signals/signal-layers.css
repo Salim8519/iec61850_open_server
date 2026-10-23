@@ -1,4 +1,4 @@
-/* SLD signal layers (spec signal-layers, ADR-0065): quiet tags, one dot per real change.
+/* SLD signal layers (spec signal-layers, ADR-0065, ADR-0112): IED components hold the words, one dot per real change.
    State is always in words; borders repeat it (dashed = problem or outside the project,
    dotted = waiting). Animations use transform and opacity only. */
 .layer-switch { gap: 6px; }
@@ -18,23 +18,20 @@
 .pulse-dot.expected { fill: var(--surface); stroke-width: 2px; }
 @keyframes signal-link-fade { 0% { opacity: 0.9; } 70% { opacity: 0.6; } 100% { opacity: 0; } }
 
-.ied-tag { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: flex-start;
-  gap: 1px; min-height: 26px; padding: 3px 8px; border: 1px solid var(--border-strong);
-  border-radius: 7px; background: #f4f5f8; color: var(--text-2); font: inherit; font-size: 11.5px;
-  line-height: 1.3; text-align: left; box-shadow: var(--shadow-small); pointer-events: auto; cursor: pointer;
-  transform-origin: 0 0; white-space: nowrap; }
-.ied-tag:hover, .ied-tag.selected { border-color: var(--accent); color: var(--text); }
-.ied-tag-name { font-weight: 700; }
-.ied-tag-line { display: flex; align-items: center; gap: 6px; }
-.ied-tag.stopped { border-style: dotted; background: var(--surface); }
-.ied-tag-note { font-size: 10.5px; color: var(--text-3); }
-.ied-tag-readers { font-weight: 700; color: var(--teal); }
-.ied-tag.problem { border: 1.5px dashed var(--warning); background: var(--warning-soft); }
-.ied-tag.waiting { border-style: dotted; }
-.ied-tag-warn { font-weight: 700; color: #92400e; }
-.ied-tag-warn.waiting { color: var(--text-2); }
-.ied-tag-operated, .ied-tag-received { font-weight: 700; color: var(--accent-hover); opacity: 0; animation: signal-operated 2s ease-out 1; }
+/* Short words over an IED component (ADR-0112): "✓ got it", "← FEED1 · Open", an outside client's
+   command. They fade in ~2 s; the card itself is never re-rendered by traffic. */
+.ied-flash { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  padding: 0; border: 0; background: none; font: inherit; transform-origin: 0 0; pointer-events: auto; cursor: pointer; }
+.ied-flash-line { padding: 1px 7px; border: 1px solid var(--accent); border-radius: 6px; background: var(--surface);
+  color: var(--accent-hover); font-size: 11.5px; font-weight: 700; line-height: 1.35; white-space: nowrap;
+  box-shadow: var(--shadow-small); opacity: 0; animation: signal-operated 2s ease-out 1; }
 @keyframes signal-operated { 0% { opacity: 1; transform: translateY(-2px); } 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+/* Receivers with no IED component: dashed, because nothing on the drawing shows they got it. */
+.signal-missing { position: absolute; left: 0; top: 0; padding: 1px 7px; border: 1.5px dashed var(--border-strong);
+  border-radius: 6px; background: var(--surface); color: var(--text-2); font: inherit; font-size: 11.5px; font-weight: 700;
+  line-height: 1.35; white-space: nowrap; transform-origin: 0 0; pointer-events: auto; cursor: pointer;
+  animation: signal-route-fade 1.8s ease-in 1 forwards; }
+.signal-missing:hover { border-color: var(--accent); color: var(--text); }
 
 /* Smart lines (ADR-0103): one change = an outline on its symbol, one chip and one orthogonal line
    per receiving IED. Solid = a real stNum increase, dashed = expected only; the chip says it in words.
@@ -56,7 +53,7 @@
 @keyframes signal-route-fade { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .signal-link-line, .ied-tag-operated, .ied-tag-received, .signal-route, .signal-origin, .signal-chip { animation: none; opacity: 0.9; }
+  .signal-link-line, .ied-flash-line, .signal-missing, .signal-route, .signal-origin, .signal-chip { animation: none; opacity: 0.9; }
 }
 
 .signal-sheet table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -74,18 +71,3 @@
 .outside-popover p { margin: 0; }
 .outside-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .outside-row strong { overflow-wrap: anywhere; }
-
-/* Corner mark (change 0105): one small "G" inside the bound equipment's top-right corner, so the
-   SLD keeps its space; full IED name on hover. Problem/stopped keep the dashed/dotted borders. */
-.ied-tag.ied-mark { min-height: 18px; min-width: 18px; padding: 0 3px; border-radius: 5px; font-size: 11px;
-  line-height: 16px; align-items: center; justify-content: center; box-shadow: none; background: var(--accent-soft);
-  border-color: var(--accent); color: var(--accent-hover); transform-origin: 0 0; }
-.ied-tag.ied-mark .ied-tag-line { gap: 3px; }
-.ied-mark-letter { font-weight: 800; }
-.ied-tag.ied-mark .ied-tag-readers { font-size: 10.5px; }
-.ied-tag.ied-mark.stopped { background: var(--surface); color: var(--text-3); border-color: var(--border-strong); }
-.ied-tag.ied-mark.problem { color: #92400e; }
-.ied-tag.ied-mark .ied-tag-operated, .ied-tag.ied-mark .ied-tag-received { position: absolute; right: 0; bottom: calc(100% + 3px);
-  padding: 1px 6px; border-radius: 5px; background: var(--surface); box-shadow: var(--shadow-small); white-space: nowrap; }
-.ied-tag.ied-mark.problem { background: var(--warning-soft); border-color: var(--warning); }
-.ied-tag.ied-mark.selected, .ied-tag.ied-mark:hover { box-shadow: 0 0 0 2px var(--accent-line); }

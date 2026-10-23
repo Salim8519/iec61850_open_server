@@ -123,14 +123,29 @@
 
 - Signal layers (ADR-0065): *GOOSE messages* and *Who is reading* are remembered view switches;
   they never edit the diagram. One dot per real stNum change, at most one per link per second;
-  hollow "(expected)" dots when no listener runs; a problem is one small ⚠ on the subscriber tag.
-  A sender outside the project is one dot flying in beside the receiver for ~2 s, then nothing remains;
-  dots and words keep their screen size and the receiver tag says "← sender · change" (ADR-0070).
-  Smart lines (ADR-0103): one change (both contacts of a breaker) is one chip at its symbol and one
-  line per receiving IED, drawn behind the dot; clicking a line opens that link, the chip the publisher.
-  Clicking a tag opens one line per link in the sheet ("← C11_Y120 · GoCB01 · Receiving");
-  clicking a link opens its details. GOOSE and MMS traffic must not
-  re-render equipment nodes.
+  hollow "(expected)" dots when no listener runs; a problem is words on the receiving IED component.
+  A sender with no place on the drawing is one dot flying into the receiving component for ~2 s,
+  then nothing remains; dots and words keep their screen size (ADR-0070).
+  IED components (ADR-0112): one change starts at the component the user acted on (a GOOSE send,
+  a point panel row, an operate/test/button/tap command, within 1.5 s), passes the top of the
+  sender's IED component and ends on every receiving IED component; without a user action it
+  starts at the sender's component. Lines never end on equipment; receivers without a component
+  are named in one chip and listed under "N IEDs not on the drawing ▾" with *Add* (stopped only).
+  Clicking a line opens that link, the chip or a component flash the publisher's links; clicking
+  an IED component selects it and opens its sheet. GOOSE and MMS traffic must not re-render
+  equipment nodes; a component card re-renders only when its own words change.
+- IED components (ADR-0112): Add › *IEDs and GOOSE* › *IED* adds one with no IED chosen (choose it
+  in the sheet; IEDs already on the drawing are disabled); *Add all GOOSE IEDs* adds every missing
+  GOOSE IED in one row above the drawing, selects them, fits the view and says how many, one Undo.
+  Choosing the IED is locked while running. Tidy up never moves IED components; pasting one clears
+  its IED. Sheet: *Messages it sends* lists each message, who receives it and its values in dataset
+  order with FC; while running each changeable value has On/Off, Open/Closed or a number box with
+  *Send*; a real device says "Watch only"; otherwise the reason ("Run the IEDs to send GOOSE…").
+- GOOSE from equipment (ADR-0112): the optional *GOOSE* section of an equipment sheet chooses IED,
+  message and value (a switch: one position/BOOLEAN or open and closed as two BOOLEANs); only a
+  whole choice is saved; editing is locked while running, when *Send Open / Send Closed* (*On/Off*,
+  or a number and *Send value*) appear. One click is one batch: the message's stNum rises once.
+  Point panel rows whose value is in a message show a "GOOSE" tag; setting them sends GOOSE.
 - Run one IED (ADR-0067): Devices *Run this IED* / *Connect* changes only that IED; the top bar
   says "Running 1 of 2 IEDs". Any running IED locks the drawing and roles like a full Run.
 - Test buttons (ADR-0067): only while running, only for simulated IEDs, in the equipment sheet

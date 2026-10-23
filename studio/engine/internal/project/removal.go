@@ -35,7 +35,8 @@ func usesIED(data *pyjson.Object, ids map[string]bool) bool {
 			return true
 		}
 	}
-	if measurementUsesIED(data, ids) || pointPanelUsesIED(data, ids) || tapChangerUsesIED(data, ids) {
+	if measurementUsesIED(data, ids) || pointPanelUsesIED(data, ids) || tapChangerUsesIED(data, ids) ||
+		gooseUsesIED(data, ids) {
 		return true
 	}
 	control := pyval.Lookup(data, "control_binding", nil)
@@ -82,7 +83,8 @@ func Impacts(project *pyjson.Object, ids map[string]bool) *pyjson.Object {
 }
 
 // WithoutIEDs is removal.without_ieds: a deep copy without the IEDs and everything that
-// referred to them; diagram equipment stays, only its bindings are cleared.
+// referred to them; diagram equipment stays, only its bindings are cleared. The Go-only IED
+// component of a removed IED is removed with it (ADR-0112).
 func WithoutIEDs(project *pyjson.Object, ids map[string]bool) *pyjson.Object {
 	result := pyval.CopyObject(project)
 	keep := func(key string) []any {
@@ -121,9 +123,13 @@ func WithoutIEDs(project *pyjson.Object, ids map[string]bool) *pyjson.Object {
 		dropMeasurementsOf(data, ids)
 		dropPointPanelOf(data, ids)
 		dropTapChangerOf(data, ids)
+		dropGooseLinkOf(data, ids)
 		if control := pyval.Lookup(data, "control_binding", nil); pyval.Truthy(control) && ids[text(object(control), "ied_id")] {
 			data.Set("control_binding", nil)
 		}
+	}
+	if diagram := object(pyval.Lookup(result, "diagram", nil)); diagram != nil {
+		withoutIEDComponents(diagram, ids) // ADR-0112: an IED's component goes with it
 	}
 	scenarios := []any{}
 	for _, item := range items(pyval.Lookup(result, "scenarios", nil)) {

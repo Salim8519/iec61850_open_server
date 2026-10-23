@@ -1,0 +1,16 @@
+/* IED component sheet and GOOSE sections (ADR-0112). Words first; buttons say what they send. */
+.goose-messages { display: grid; gap: 10px; }
+.goose-message { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-small); }
+.goose-message-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.goose-message-head strong { overflow-wrap: anywhere; }
+.goose-members { display: grid; gap: 6px; margin: 0; padding-left: 20px; font-size: 13px; }
+.goose-member-text { overflow-wrap: anywhere; }
+.goose-send { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; margin-top: 4px; }
+.goose-send-name { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.goose-send-name small { font-weight: 400; color: var(--text-2); }
+.goose-send-actions { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.goose-send-actions input { width: 96px; }
+.goose-receives { display: grid; gap: 4px; margin: 0; padding-left: 18px; font-size: 13px; }
+.goose-receives li { overflow-wrap: anywhere; }
+.goose-link-summary { margin: 0; overflow-wrap: anywhere; }
+.goose-link-fields { display: grid; gap: 8px; }

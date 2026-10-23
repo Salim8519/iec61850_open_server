@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 import type { GooseLinkMap } from '../../frontend/src/api/signalLayers.ts';
 import type { EquipmentNode } from '../../frontend/src/api/types.ts';
 import { SignalLayerStore } from '../../frontend/src/equipment/signalLayerStore.ts';
-import { edgePoint, equipmentByIed, linkCurve, MARK_SIZE, markScale, placeTags, tagCentre } from '../../frontend/src/equipment/signalLayout.ts';
+import { componentBoxes, edgePoint, linkCurve, tagScale } from '../../frontend/src/equipment/signalLayout.ts';
+import { iedLiveWords } from '../../frontend/src/equipment/iedStatus.ts';
 import { EDGE_PULSE_MS, observedLinks, PulseGate, problemWords, reducedMotion } from '../../frontend/src/equipment/signalPulses.ts';
 import { linkLine, linkStatus } from '../../frontend/src/copy/signalLayers.ts';
 
@@ -88,39 +89,41 @@ test('reduced motion turns pulses into a static highlight; animation uses transf
   assert.match(css, /prefers-reduced-motion/);
 });
 
-test('problems persist as a small ⚠ with words on hover and a dashed border, never colour alone', () => {
+test('problems persist on the receiving IED component in words with a dashed border, never colour alone', () => {
   assert.deepEqual(problemWords('C09', { state: 'timeout' }), { text: '⚠ GOOSE lost from C09', tone: 'problem' });
   assert.match(problemWords('C09', { state: 'problem', problem: 'conf_rev_mismatch' })!.text, /revision differs/);
   assert.equal(problemWords('C09', { state: 'receiving' }), null);
-  const css = read('features/diagram/signals/signal-layers.css');
-  assert.match(css, /\.ied-tag\.problem[^}]*dashed/);
-  assert.match(css, /\.ied-tag\.stopped[^}]*dotted/);
-  const tag = read('features/diagram/signals/IedTag.tsx');
-  assert.match(tag, /⚠/);
-  assert.match(tag, /\{tag\.name\}/, 'the tag shows the full IED name');
+  const store = new SignalLayerStore();
+  store.setLayers({ goose: true, readers: false });
+  store.setMap(map);
+  store.handle({ kind: 'goose_status', gocb_ref: REF, state: 'timeout', st_num: 3 }, 0);
+  const words = JSON.parse(iedLiveWords(store.get()).s);
+  assert.deepEqual(words.problems, [{ text: '⚠ GOOSE lost from PUB_BAY0001', tone: 'problem' }]);
+  assert.equal(iedLiveWords(store.get()).p, undefined, 'the sender itself has nothing to say');
+  const css = read('equipment/ied-card.css');
+  assert.match(css, /\.ied-card-problem \{[^}]*dashed/);
+  assert.match(css, /\.ied-card-state\.stopped \{[^}]*dotted/);
+  const card = read('equipment/IedCard.tsx');
+  assert.match(card, /\{record\.name\}/, 'the card shows the full IED name');
+  assert.match(card, /problem\.text/);
 });
 
-test('a bound IED is a corner mark inside its equipment, outside senders get no tag, and tags are never saved (changes 0097, 0105)', () => {
-  const nodes = [{ id: 'q1', type: 'equipment', position: { x: 100, y: 200 }, data: { kind: 'CB', label: 'Q1', rotation: 0,
-    control_binding: { ied_id: 's', ref: 'x' } } }] as unknown as EquipmentNode[];
-  const bound = equipmentByIed(nodes);
-  assert.deepEqual(bound.get('s'), ['q1']);
-  const tags = placeTags([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], bound, [
-    { name: 'SUB_BAY0002', iedId: 's', outside: false, remote: false },
-    { name: 'FAR', iedId: null, outside: true, remote: true }, { name: 'LOOSE', iedId: 'x', outside: false, remote: false }]);
-  // The mark's right edge sits 4 px inside the equipment's right edge (100 + 80 - 4), 4 px below its top.
-  assert.deepEqual(tags.map(tag => [tag.name, tag.x, tag.y, tag.corner]), [['LOOSE', -70, 200, false], ['SUB_BAY0002', 176, 204, true]]);
-  const mark = tags[1];
-  assert.ok(mark.x - MARK_SIZE >= 100 && mark.x <= 180 && mark.y + MARK_SIZE <= 260, 'the mark stays inside its equipment');
-  const two = placeTags([{ id: 'q1', x: 100, y: 200, width: 80, height: 60 }], new Map([['a', ['q1']], ['b', ['q1']]]), [
-    { name: 'A', iedId: 'a', outside: false, remote: false }, { name: 'B', iedId: 'b', outside: false, remote: false }]);
-  assert.deepEqual(two.map(tag => tag.x), [176, 154], 'a second IED on the same equipment steps left, no overlap');
-  assert.equal(markScale(0.1), 1.5);
-  assert.deepEqual(tagCentre(mark, 1, 1), { x: 167, y: 213 });
+test('IEDs are drawn only as IED components: no corner marks, no name tags, nothing saved (ADR-0112)', () => {
+  const node = (id: string, data: Record<string, unknown>) => ({ id, type: 'equipment', position: { x: 0, y: 0 },
+    data: { kind: 'CB', label: id, rotation: 0, ...data } }) as unknown as EquipmentNode;
+  const nodes = [node('q1', { control_binding: { ied_id: 's', ref: 'x' } }), node('i1', { kind: 'IED', ied_id: 's' }),
+    node('i2', { kind: 'IED', ied_id: 's' }), node('i3', { kind: 'IED', ied_id: null })];
+  const boxes = nodes.map((item, index) => ({ id: item.id, x: index * 300, y: 0, width: 200, height: 120 }));
+  const components = componentBoxes(nodes, boxes, { s: 'SUB_BAY0002' });
+  assert.deepEqual([...components.byId.keys()], ['s'], 'equipment bound to an IED is not its component');
+  assert.equal(components.byName.get('SUB_BAY0002')?.id, 'i1', 'one component per IED: the first one counts');
+  assert.equal(tagScale(0.1), 3);
   assert.deepEqual(edgePoint({ x: 190, y: 213 }), { x: -30, y: 173 });
   assert.match(linkCurve({ x: 0, y: 0 }, { x: 100, y: 0 }).path, /^M 0 0 Q 50 -25 100 0$/);
+  assert.equal(existsSync(new URL('../../frontend/src/features/diagram/signals/IedTag.tsx', import.meta.url)), false);
+  assert.doesNotMatch(read('features/diagram/signals/signal-layers.css'), /ied-mark|ied-tag/);
   const overlay = read('features/diagram/signals/SignalOverlay.tsx');
-  assert.doesNotMatch(overlay, /updateDiagram|change\(/);
+  assert.doesNotMatch(overlay, /updateDiagram|change\(|placeTags|IedTag/);
 });
 
 test('a GOOSE from a sender outside the project pulses once beside its receiver for ~2 s', () => {
@@ -128,9 +131,8 @@ test('a GOOSE from a sender outside the project pulses once beside its receiver 
   assert.equal(observedLinks(remote, REF, 1, 2).length, 1);
   assert.equal(observedLinks(remote, REF, 2, 2).length, 0, 'no pulse without a new stNum');
   assert.equal(EDGE_PULSE_MS, 2000);
-  const overlay = read('features/diagram/signals/SignalOverlay.tsx');
-  assert.match(overlay, /edgePoint/);
-  assert.doesNotMatch(read('features/diagram/signals/IedTag.tsx'), /outside project/);
+  assert.match(read('features/diagram/signals/FlyLines.tsx'), /edgePoint/);
+  assert.match(read('features/diagram/signals/OutsideSenders.tsx'), /OUTSIDE_COPY\.button/, 'listed in the toolbar, not drawn');
 });
 
 test('GOOSE status uses plain words instead of "Not watched"', () => {

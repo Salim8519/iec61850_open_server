@@ -33,11 +33,15 @@ export function observedLinks(map: GooseLinkMap, gocbRef: string, previous?: num
   return map.links.filter(link => link.gocb_ref === gocbRef && (link.status === 'declared' || link.status === 'remote'));
 }
 
-/** Without a listener: a changed publisher value that belongs to a sent block's dataset is
- * expected to raise stNum. These pulses are hollow and say "expected", never "received". */
-export function expectedLinks(map: GooseLinkMap, publisher: string, ref: string): GooseLink[] {
-  const refs = new Set(map.blocks.filter(block => block.publisher === publisher && block.status === 'sendable'
-    && block.member_refs.some(member => ref === member || ref.startsWith(`${member}.`))).map(block => block.gocb_ref));
+/** Without a listener: a changed publisher value that is one of a sent block's values is expected
+ * to raise stNum. `exact` are the gocbRefs Go lists for that exact leaf (GET /goose/members, ADR-0112,
+ * functional constraint aware: Pos.ctlModel [CF] is never a member of Pos [ST]); without Go's list
+ * the dataset members are matched by prefix as before. These pulses are hollow and say "expected". */
+export function expectedLinks(map: GooseLinkMap, publisher: string, ref: string, exact?: readonly string[]): GooseLink[] {
+  const sendable = map.blocks.filter(block => block.publisher === publisher && block.status === 'sendable');
+  const chosen = exact ? sendable.filter(block => exact.includes(block.gocb_ref))
+    : sendable.filter(block => block.member_refs.some(member => ref === member || ref.startsWith(`${member}.`)));
+  const refs = new Set(chosen.map(block => block.gocb_ref));
   return map.links.filter(link => link.gocb_ref !== null && refs.has(link.gocb_ref) && link.status === 'declared');
 }
 

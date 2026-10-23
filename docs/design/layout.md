@@ -88,15 +88,19 @@ the moving part; Intermediate is dashed amber and Invalid dashed red. The tap-ch
 ("Tap 9 / 1–17"), an Auto badge (solid accent border, robot icon) or Manual badge (dashed grey border,
 hand icon) and, while running, the LV voltage, the regulator line and ▲ Raise / ▼ Lower (26 px).
 
-Signal layers (ADR-0065): two toolbar switches with On/Off words. An IED bound to equipment is one
-18 px "G" mark (accent outline, 5 px radius) inside the top-right corner of that equipment, never
-beside it, so it covers no neighbour or wire (change 0105); its full name is on hover. Unbound IEDs
-keep small grey name tags (11.5 px, 1 px #A9B1BD border, 7 px radius) left of the drawing; tags
-scale up when zoomed out (marks at most 1.5×); a stopped IED's tag is dotted with "not running"; a problem adds one small ⚠ and a dashed
-amber border (words on hover). IEDs outside the project have no canvas tag: one toolbar button
-"N senders outside project ▾" opens a 340 px list (change 0097). A pulse is one
-5 px accent dot (hollow and dashed when expected). From a sender in the project (ADR-0103) one change
-is a 2.5 px accent outline on its symbol, one chip above it (11.5 px bold, 1.5 px accent border, 7 px
-radius, dashed when expected, "✓"/"→" before the words) and one 2 px orthogonal line per receiver with
-8 px rounded corners via a shared lane 36 px above the drawing; all fade by 2 s. An outside sender keeps
-a faint 1.5 px curve beside the receiver.
+Signal layers (ADR-0065, ADR-0112): two toolbar switches with On/Off words. IEDs are IED components:
+a 200 px card (white, 1 px accent border, 3 px accent top, 8 px radius, no terminals) with a soft
+accent header (22 px IED icon, full name 13 px bold, wrapped), a state pill (green filled dot and
+border "Simulated · running"; dotted "stopped"; dashed "Real device" or "Skipped in runs"), the GOOSE
+line ("Sends 2 messages · gets 1", grey "No GOOSE") and, with the layers on, problem lines (dashed
+amber "⚠ GOOSE lost from …", dotted while waiting) and "◉ n read". No "G" marks or name tags.
+Toolbar: "N senders outside project ▾" and "N IEDs not on the drawing ▾" (340 px lists, *Add* per
+IED); Add › *IEDs and GOOSE*: *IED* tile and *Add all GOOSE IEDs* tile. A pulse is one 5 px accent dot
+(hollow and dashed when expected). One change (ADR-0103) is a 2.5 px accent outline on its origin,
+one chip at its top-left (11.5 px bold, 1.5 px accent border, 7 px radius, dashed when expected,
+"✓"/"→" before the words) and one 2 px orthogonal line per receiving component with 8 px rounded
+corners via a shared lane 36 px above the drawing, passing the top of the sender's component; above
+each receiving component a small 11.5 px bold accent line ("✓ got it", "← FEED1 · Open") for 2 s;
+under the sender one dashed grey chip "also TR5 · not on drawing"; all fade by 2 s. A sender with no
+place keeps a faint 1.5 px curve flying into the receiving component. Point panel rows in a GOOSE
+message carry an 11 px "GOOSE" pill (accent outline, soft accent fill).

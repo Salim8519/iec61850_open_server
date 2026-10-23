@@ -1,12 +1,12 @@
 import type { GooseLink, MmsClient } from '../api/signalLayers';
 import type { ChangeGroup } from '../equipment/signalChanges.ts';
 import { symbolName } from '../equipment/signalOrigin.ts';
-import { valueWords } from '../equipment/signalPulses.ts';
+import { changeText } from '../equipment/signalPulses.ts';
 import { gooseStatus, type Status } from './status.ts';
 
 /** Words for the SLD signal layers and the Devices GOOSE tables (spec signal-layers). */
 export const LAYER_COPY = {
-  goose: { label: 'GOOSE messages', hint: 'Show which IEDs send GOOSE to which, with one quiet dot when a message carries a new state.' },
+  goose: { label: 'GOOSE messages', hint: 'Show GOOSE between the IED components: a line from where it was sent, through the sender, to every IED that receives it.' },
   readers: { label: 'Who is reading', hint: 'Show which SCADA or test programs read each simulated IED over MMS, by their IP address.' },
 };
 
@@ -57,7 +57,7 @@ export const outsideNames = (ieds: { name: string; in_project: boolean }[]) =>
 
 export const OUTSIDE_COPY = {
   button: (count: number) => `${count} sender${count === 1 ? '' : 's'} outside project`,
-  intro: 'These IEDs send GOOSE to IEDs in this project, but their files are not imported. Each new state they send appears as one dot flying into the IED that receives it.',
+  intro: 'These IEDs send GOOSE to IEDs in this project, but their files are not imported. Each new state they send appears as one dot flying into the IED component that receives it.',
   importCid: 'Import its CID',
   importHint: 'Import the CID (or the station SCD) of this IED so ScadaBench can simulate it, or connect the real device on the lab network.',
 };
@@ -101,18 +101,21 @@ const STATE_ROLES = new Set(['direct', 'single', 'open', 'closed']);
 export const GOT_IT = '✓ got it';
 const plural = (count: number) => `${count} IED${count === 1 ? '' : 's'}`;
 
-/** What one change did, in plain words (ADR-0103): "open" for a breaker from the backend's own
- * equipment state, "Trip on" for a relay row, else the signal's own words. */
+/** What one change did, in plain words (ADR-0103): what a GOOSE link sent, "open" for a breaker
+ * from the backend's own equipment state, "Trip on" for a relay or point panel row, else the
+ * signal's own words. */
 export function changeWhat(group: ChangeGroup, equipment: Record<string, { value: unknown; at: number }> = {}): string {
   const origin = group.origin;
   const last = group.signals.at(-1);
   // Only a new stNum is known (no publisher value seen): say so plainly; the stNum is in the sheet.
   const change = group.lines[0]?.pulse.change || '';
   if (!last) return !change || change.startsWith('stNum') ? 'new state' : change;
+  if (origin?.words) return origin.words; // what a GOOSE link sent: "open", "on" (ADR-0112)
   const state = origin ? equipment[origin.nodeId] : undefined;
   if (origin && SWITCHES.has(origin.kind) && STATE_ROLES.has(origin.role) && state && state.at >= group.start - 500
     && typeof state.value === 'number' && SWITCH_WORDS[state.value]) return SWITCH_WORDS[state.value];
-  if (origin?.row) return `${origin.row} ${valueWords(last.value)}`.trim();
+  // A panel row or relay row: its own name and the value in words (a position says Open/Closed).
+  if (origin?.row) return changeText(origin.row, last.value, /\.Pos\.stVal$/.test(last.ref));
   const refs = new Set(group.signals.map(signal => signal.ref));
   return refs.size > 1 ? `${refs.size} signals changed` : last.text || 'new state';
 }

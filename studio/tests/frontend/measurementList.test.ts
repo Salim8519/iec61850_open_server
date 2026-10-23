@@ -6,8 +6,7 @@ import {
 } from '../../frontend/src/equipment/measurementDisplay.ts';
 import { defaultLabel, kindInfo, setupItems } from '../../frontend/src/equipment/kindInfo.ts';
 import { measurementBindings } from '../../frontend/src/equipment/stateBindings.ts';
-import { equipmentByIed } from '../../frontend/src/equipment/signalLayout.ts';
-import type { EquipmentData, EquipmentNode, Measurement, Signal } from '../../frontend/src/api/types.ts';
+import type { EquipmentData, Measurement, Signal } from '../../frontend/src/api/types.ts';
 
 const plain = { scale: 1, offset: 0, unit: '', decimals: 2 };
 const row = (id: string, extra: Partial<Measurement> = {}): Measurement => ({ id, label: id,
@@ -84,7 +83,4 @@ test('signal layers see every IED a measurement list reads from', () => {
   const data: EquipmentData = { kind: 'MEASUREMENT_LIST', label: 'M', rotation: 0,
     measurements: [row('a'), { ...row('b'), source: { ied_id: 'ied2', report_ref: null, ref: 'X/MMXU1.A.mag.f' } }] };
   assert.deepEqual(measurementBindings(data).map(item => item.ied_id), ['ied1', 'ied2']);
-  const node = { id: 'm1', type: 'equipment', position: { x: 0, y: 0 }, data } as EquipmentNode;
-  const bound = equipmentByIed([node]);
-  assert.deepEqual([bound.get('ied1'), bound.get('ied2')], [['m1'], ['m1']]);
 });

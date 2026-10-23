@@ -5,11 +5,14 @@
  * when a pill, chip, tag or label is cut: its content is wider than its box (scrollWidth >
  * clientWidth). Record the result in the change record.
  *
- * Run it on Devices, on the SLD with both signal-layer switches on, and on the tool pages.
+ * Run it on Devices, on the SLD with both signal-layer switches on (IED components, change 0183),
+ * and on the tool pages.
  */
 (() => {
   const SELECTORS = [
-    '.status-pill', '.pill', '.chip', '.partner-chip', '.ied-tag', '.ied-tag-name', '.list-pills > *',
+    '.status-pill', '.pill', '.chip', '.partner-chip', '.list-pills > *',
+    '.ied-card-name', '.ied-card-state', '.ied-card-line', '.ied-card-problem', '.ied-card-readers',
+    '.signal-chip', '.signal-missing', '.ied-flash-line', '.pp-goose', '.goose-send-name', '.goose-member-text',
     '.layer-switch', '.run-state', 'label', '.outside-senders button',
     '.segmented-control button', '.tabbar button', '.nav-item', '.filter-select', '.topbar-title p', '.notice-text',
   ];

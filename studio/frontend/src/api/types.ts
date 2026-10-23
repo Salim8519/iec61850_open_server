@@ -1,7 +1,7 @@
 import type { Node, Edge } from '@xyflow/react';
 
 export type EquipmentKind = 'CB' | 'DS' | 'ES' | 'CT' | 'VT' | 'SOURCE' | 'RELAY' | 'TRIP_RELAY' | 'PUSH_BUTTON' | 'JUNCTION' | 'INFEED'
-  | 'MEASUREMENT_LIST' | 'POINT_PANEL' | 'TAP_TRANSFORMER';
+  | 'MEASUREMENT_LIST' | 'POINT_PANEL' | 'TAP_TRANSFORMER' | 'IED';
 export type InfeedType = 'line' | 'transformer' | 'grid';
 export type SignalBinding = { ied_id: string; report_ref: string | null; ref: string };
 export type StateMapping =
@@ -36,8 +36,11 @@ export type EquipmentData = {
   relay_statuses?: RelayStatus[];
   /** Measurement list only; other kinds never carry it. */
   measurements?: Measurement[];
-  /** Point panel only: the one IED and its points (up to 300); other kinds never carry them. */
+  /** Point panel: the one IED and its points (up to 300). IED component (ADR-0112): the IED it shows
+   *  (no points). Other kinds never carry them. */
   ied_id?: string | null; points?: PanelPoint[];
+  /** Optional GOOSE link (ADR-0112): the simulated IED message this equipment sends from its sheet. */
+  goose_link?: GooseLinkSetting | null;
   /** Tap-changer transformer only (ADR-0109). */
   tap_changer?: TapChanger;
   trip_command_polarity?: 'operate_false' | 'operate_true';
@@ -51,6 +54,10 @@ export type EquipmentData = {
   /** Infeed only (drawing; never sent to an IED or SCL). */
   infeed_type?: InfeedType; infeed_state?: 'live' | 'dead';
 };
+/** One GOOSE message of one IED and the values an equipment sends (ADR-0112): `one` value, or for a
+ *  breaker, disconnector or earth switch `open` and `closed` as two on/off values sent together. */
+export type GooseLinkSetting = { ied_id: string; gocb_ref: string; mode: 'one' | 'contacts';
+  one: string | null; open: string | null; closed: string | null };
 export type EquipmentNode = Node<EquipmentData, 'equipment'>;
 export type Diagram = { nodes: EquipmentNode[]; edges: Edge[] };
 export type Signal = {

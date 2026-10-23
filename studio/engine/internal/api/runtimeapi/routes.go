@@ -30,6 +30,7 @@ func (a Area) Routes() []api.Route {
 		route("POST", "/equipment/{node_id}/test", a.test, false),
 		route("POST", "/equipment/{node_id}/select", a.selectEquipment, false),
 		route("POST", "/equipment/{node_id}/cancel", a.cancelEquipment, false),
+		route("POST", "/equipment/{node_id}/goose", a.sendGoose, false), // Go-only GOOSE send (ADR-0112)
 		route("GET", "/scenarios/runs", a.runs, true),
 		route("POST", "/scenarios/{key}/start", a.startScenario, false),
 		route("POST", "/signals/update", a.update, false),

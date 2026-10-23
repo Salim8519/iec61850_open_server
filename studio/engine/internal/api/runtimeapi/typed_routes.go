@@ -13,11 +13,13 @@ import (
 // Go-only typed command routes (ADR-0104, docs/reference/API.md "Typed commands"). They act on
 // simulated IEDs of the running project only, exactly like POST /controls/operate.
 
-// GoOnlyRoutes are the routes the frozen Python app does not have: typed commands (ADR-0104) and
-// select before operate for a breaker, disconnector or earth switch (ADR-0108).
+// GoOnlyRoutes are the routes the frozen Python app does not have: typed commands (ADR-0104),
+// select before operate for a breaker, disconnector or earth switch (ADR-0108) and the GOOSE
+// send of SLD components (ADR-0112).
 var GoOnlyRoutes = map[string]bool{"POST /api/v1/controls/select": true, "POST /api/v1/controls/cancel": true,
 	"POST /api/v1/controls/checks": true, "GET /api/v1/controls/typed": true,
-	"POST /api/v1/equipment/{node_id}/select": true, "POST /api/v1/equipment/{node_id}/cancel": true} // ADR-0108
+	"POST /api/v1/equipment/{node_id}/select": true, "POST /api/v1/equipment/{node_id}/cancel": true, // ADR-0108
+	"POST /api/v1/equipment/{node_id}/goose": true} // GOOSE send from the SLD (ADR-0112)
 
 // typedRequest reports whether a /controls/operate body asks for the typed path: command
 // options, or a value that is not on/off. {ied_id, ref, value: bool} keeps the old path.
