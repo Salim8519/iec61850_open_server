@@ -19,7 +19,8 @@ test('open tools and Devices use the fill-the-window page, only lists scroll', (
   assert.match(css, /grid-template-rows: minmax\(0, 1fr\)/, 'the split row is the window height, not the content height');
   assert.match(css, /\.panel-body > \.table-scroll[^{]*\{\s*flex: 1 1 0; min-height: 0; max-height: none/);
   assert.match(css, /\.side-pane \{ position: relative; \}|\.side-pane \{ position: relative/);
-  assert.match(css, /@media \(max-width: 1000px\), \(max-height: 620px\)/, 'narrow windows fall back to page scrolling');
+  assert.match(css, /:where\(:root:is\(\[data-max~="w1000"\], \[data-max~="h620"\]\)\) \.content\.fill-page \{ height: auto;/,
+    'narrow or short layouts (judged on the fitted size) fall back to page scrolling');
   assert.match(read('main.tsx'), /import '\.\/styles\/fill\.css';/);
 });
 

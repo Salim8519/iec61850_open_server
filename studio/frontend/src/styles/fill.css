@@ -42,13 +42,13 @@
 .panel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px;
   border-bottom: 1px solid var(--border); background: var(--surface-2); }
 .panel-head h3 { margin: 0; }
-@media (max-width: 1000px), (max-height: 620px) {
-  .content.fill-page { height: auto; overflow: visible; }
-  .content.fill-page > .fill-body, .fill-column > .fill-grow, .fill-panel > .panel-body { flex: none; }
-  .fill-split { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
-  .fill-split > * { min-height: auto; }
-  .side-pane { overflow: visible; }
-  .side-foot { position: static; box-shadow: none; }
-  .fill-panel { min-height: 480px; }
-  .panel-body > .table-scroll, .panel-body > .fill-scroll, .panel-body > .gateway-traffic { flex: none; max-height: 70vh; }
-}
+/* Narrow or short layout (data-max from installFit, judged on the fitted size): pages scroll instead of filling. */
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .content.fill-page { height: auto; overflow: visible; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .content.fill-page > .fill-body, :where(:root:is([data-max~="w1000"], [data-max~="h620"])) .fill-column > .fill-grow, :where(:root:is([data-max~="w1000"], [data-max~="h620"])) .fill-panel > .panel-body { flex: none; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .fill-split { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .fill-split > * { min-height: auto; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .side-pane { overflow: visible; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .side-foot { position: static; box-shadow: none; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .fill-panel { min-height: 480px; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .panel-body > .table-scroll, :where(:root:is([data-max~="w1000"], [data-max~="h620"])) .panel-body > .fill-scroll, :where(:root:is([data-max~="w1000"], [data-max~="h620"])) .panel-body > .gateway-traffic {
+  flex: none; max-height: calc(70vh / var(--fit, 1)); }

@@ -80,6 +80,8 @@
   --canvas-dot: #b4bcc8;
   --wire: #1f2937;
 }
+/* Fit to window (installFit): small windows show the big-window layout evenly smaller; no --fit means 100%. */
+:root { zoom: var(--fit, 1); }
 
 /* Category colours describe the equipment family only; they never encode state. */
 .cat-switchgear { --cat: var(--teal); --cat-soft: var(--teal-soft); }

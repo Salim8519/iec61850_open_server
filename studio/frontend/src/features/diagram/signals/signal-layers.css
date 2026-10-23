@@ -68,7 +68,7 @@
 .signal-sheet .link-row { width: 100%; justify-content: space-between; gap: 8px; text-align: left; }
 .signal-sheet .link-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
 .outside-senders { position: relative; }
-.outside-popover { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 340px; max-width: 80vw;
+.outside-popover { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 340px; max-width: calc(80vw / var(--fit, 1));
   padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-small);
   background: var(--surface); box-shadow: var(--shadow-small); display: grid; gap: 8px; }
 .outside-popover p { margin: 0; }

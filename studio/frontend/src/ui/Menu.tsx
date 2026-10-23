@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type 
 import { createPortal } from 'react-dom';
 import { closesOnAway } from './menuAway';
 import { menuPlace } from './menuPlace';
+import { boxIn, viewIn, zoomOf } from './zoomSpace';
 import './ui.css';
 
 export type MenuItem = { label: string; icon?: ReactNode; onSelect: () => void; disabled?: boolean };
@@ -18,9 +19,11 @@ export function Menu({ trigger, items, label, align = 'right', up = false, trigg
   const list = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     if (!open || !root.current || !list.current) return setPlace(null);
-    const menu = list.current.getBoundingClientRect();
-    setPlace(menuPlace(root.current.getBoundingClientRect(), { width: menu.width, height: menu.height },
-      { width: window.innerWidth, height: window.innerHeight }, align, up));
+    // The list is placed in its own zoom space (fit to window), so screen values are converted into it.
+    const zoom = zoomOf(list.current);
+    const menu = boxIn(list.current.getBoundingClientRect(), zoom);
+    setPlace(menuPlace(boxIn(root.current.getBoundingClientRect(), zoom), { width: menu.width, height: menu.height },
+      viewIn(zoom), align, up));
   }, [open, align, up]);
   useEffect(() => {
     if (!open) return;

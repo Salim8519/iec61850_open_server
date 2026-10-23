@@ -54,7 +54,8 @@ a.button.disabled { pointer-events: none; opacity: 0.5; }
 .spin { animation: tool-spin 0.9s linear infinite; }
 @keyframes tool-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
-@media (max-width: 1000px), (max-height: 620px) { .explorer-tree { max-height: 360px; } .explorer-watch { min-height: 320px; } }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .explorer-tree { max-height: 360px; }
+:where(:root:is([data-max~="w1000"], [data-max~="h620"])) .explorer-watch { min-height: 320px; }
 .command-panel { margin: 0 12px 8px; display: grid; gap: 8px; }
 .command-row { gap: 8px; align-items: center; flex-wrap: wrap; }
 .command-step { width: 90px; }

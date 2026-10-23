@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { sameRange, virtualRange, type VirtualRange } from './virtualRange';
+import { zoomOf } from './zoomSpace';
 
 type Key = string | number;
 
@@ -18,12 +19,14 @@ export function useVirtualRows(box: RefObject<HTMLElement | null>, count: number
   const measure = useCallback(() => {
     const element = box.current;
     if (!element) return;
+    // Screen heights are converted into layout units (fit to window zoom), like scrollTop and clientHeight.
+    const zoom = zoomOf(element);
     element.querySelectorAll<HTMLElement>('[data-vrow]').forEach(row => {
-      heights.current.set(row.dataset.vrow!, row.getBoundingClientRect().height);
+      heights.current.set(row.dataset.vrow!, row.getBoundingClientRect().height / zoom);
     });
     // Where the list starts inside the scrolling element (a header or toolbar may come first).
     const offset = spacer.current
-      ? spacer.current.getBoundingClientRect().top - element.getBoundingClientRect().top + element.scrollTop : 0;
+      ? (spacer.current.getBoundingClientRect().top - element.getBoundingClientRect().top) / zoom + element.scrollTop : 0;
     const next = virtualRange({ count, rowHeight, overscan, scrollTop: element.scrollTop - offset,
       viewport: element.clientHeight, heightOf: index => heights.current.get(String(keyOf(index))) });
     setRange(current => sameRange(current, next) ? current : next);

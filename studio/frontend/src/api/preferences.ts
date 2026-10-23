@@ -4,6 +4,8 @@ export type ListFilters = Record<string, Record<string, string | boolean>>;
 export type Preferences = {
   tour_seen_version: number; tour_version: number; list_filters: ListFilters;
   sld_goose_layer?: number; sld_readers_layer?: number; sld_sbo_steps?: number;
+  /** Settings › Display: 0 = fit to window (default), 1 = always 100%. Go engine only. */
+  display_size?: number;
 };
 
 export const getPreferences = () => api<Preferences>('/preferences');
