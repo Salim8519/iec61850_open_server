@@ -28,7 +28,7 @@ func (r *importRun) ied(ied *xmldoc.Element, name string, server *xmldoc.Element
 	comm, warnings := readCommunication(r.root, name)
 	for _, ld := range server.FindAll("LDevice") {
 		value, present := ld.Get("inst")
-		inst, err := Identifier(value, present, "logical device")
+		inst, err := LDInst(value, present, "logical device")
 		if err != nil {
 			return nil, err
 		}
@@ -52,12 +52,12 @@ func (r *importRun) ied(ied *xmldoc.Element, name string, server *xmldoc.Element
 			}
 			node := lnName(ln)
 			if _, err := Identifier(node, true, "logical node"); err != nil {
-				return nil, err
+				return nil, located(err, domain)
 			}
 			typeID, hasType := ln.Get("lnType")
 			definition, err := b.declaration("LNodeType", typeID, hasType)
 			if err != nil {
-				return nil, err
+				return nil, located(err, domain+"/"+node)
 			}
 			b.lines = append(b.lines, "LN("+node+"){")
 			for _, object := range definition.FindAll("DO") {
@@ -75,17 +75,18 @@ func (r *importRun) ied(ied *xmldoc.Element, name string, server *xmldoc.Element
 			}
 			ds, rs, err := compileReports(ln, inst, &b.lines, &warnings)
 			if err != nil {
-				return nil, err
+				return nil, located(err, domain+"/"+node)
 			}
 			datasets = append(datasets, ds...)
 			reports = append(reports, rs...)
 			if ln.Tag == "LN0" {
-				controls := gooseControls(ln, domain, inst, comm.gse, ds, name, &warnings)
+				gaps := gooseGaps{rejected: comm.rejected, datasets: unusableDatasets(ln)}
+				controls := gooseControls(ln, domain, inst, comm.gse, ds, name, &warnings, gaps)
 				for _, control := range controls {
 					b.lines = append(b.lines, gooseCfgLines(control)...)
 				}
 				publishes = append(publishes, controls...)
-				streams = append(streams, svControls(ln, domain, inst, comm.smv, name, &warnings)...)
+				streams = append(streams, svControls(ln, domain, inst, comm.smv, name, &warnings, comm.rejectedSMV)...)
 			}
 			b.lines = append(b.lines, "}")
 		}
@@ -97,6 +98,7 @@ func (r *importRun) ied(ied *xmldoc.Element, name string, server *xmldoc.Element
 		attachCompanions(item.(*pyjson.Object), b.byReference)
 	}
 	warnings = append(warnings, b.controlWarnings...)
+	warnings = append(warnings, b.notes.warnings()...)
 	if r.catalogue == nil {
 		r.catalogue = publisherCatalogue(r.root)
 	}

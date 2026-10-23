@@ -17,8 +17,22 @@ func TestLinkMapMatchesPython(t *testing.T) {
 
 func TestWithLiveMatchesPython(t *testing.T) {
 	run(t, "links_live.json", map[string]func(goldentest.Case) any{
-		"with_live": func(c goldentest.Case) any { return WithLive(c.Obj(0), objs(c.Args[1]), c.Args[2] == true) },
+		"with_live": func(c goldentest.Case) any {
+			// ADR-0114: Python counts an unheard link from a publisher outside the project as
+			// "not_heard"; Go counts it as "remote". Compare the summary Python would give.
+			result := WithLive(c.Obj(0), objs(c.Args[1]), c.Args[2] == true)
+			return result.Set("summary", Summary(objectsOf(result), nil))
+		},
 	})
+}
+
+func objectsOf(result *pyjson.Object) []*pyjson.Object {
+	links, _ := result.Get("links")
+	var out []*pyjson.Object
+	for _, item := range links.([]any) {
+		out = append(out, item.(*pyjson.Object))
+	}
+	return out
 }
 
 func TestWithLiveKeepsInput(t *testing.T) {

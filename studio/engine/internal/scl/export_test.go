@@ -14,6 +14,7 @@ import (
 // TestExportMatchesPython replays export_ied for every recorded override set: payload
 // bytes (lxml serialisation) or the exact error.
 func TestExportMatchesPython(t *testing.T) {
+	asPythonTwin(t)
 	importer := &Importer{Validator: loadSeed(t)}
 	compared, failures := 0, 0
 	check := func(label, got, want string) {

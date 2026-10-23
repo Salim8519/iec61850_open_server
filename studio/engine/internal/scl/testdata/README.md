@@ -60,3 +60,9 @@ twice must leave `git status` clean.
 Error objects are `{"type", "message", "code", "details"}` (`code`/`details` are `null` for
 non-`StudioError` exceptions). Every JSON golden is `json.dumps(value)` with Python defaults,
 ASCII, no trailing newline. Not covered here: the 20 MB `MAX_XML` limit (test it directly).
+
+The Go engine's own import rules (ADR-0114: 100 MB limit, text kinds, enum defaults, standard
+trigger options, notes, error locations, preview flags) differ from Python on purpose. The golden
+tests run with them switched off (`asPythonTwin`, `python_twin.go`), so these files stay exactly
+what CPython wrote; the rules are tested in `vendor_*_test.go`. Never regenerate a golden to match
+a Go-only rule.

@@ -27,8 +27,8 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | Method/path | Input | Result / invariant |
 | --- | --- | --- |
 | `POST /scl/validate` | multipart `file` | Offline schema result |
-| `POST /scl/preview` | multipart `file` | Selectable IEDs; imports nothing |
-| `POST /scl/import` | file + JSON `selected_names` form field | Preserve source; import selected IEDs |
+| `POST /scl/preview` | multipart `file` | Selectable IEDs; imports nothing. Go: an IED whose import would fail has `unavailable_reason` "Cannot be imported at <LD/LN.DO.DA>: …" so it can be left out (ADR-0114) |
+| `POST /scl/import` | file + JSON `selected_names` form field | Preserve source; import selected IEDs. Go: up to 100 MB; an error names the IED and the SCL path ("IED X at LD/LN.DO.DA: …"); what the import adapted is listed in the IED's `warnings` (ADR-0114) |
 | `POST /ieds/template` | `{name}` | Add laboratory IED template |
 | `GET /ieds/{id}/source` | - | Exact retained XML download |
 | `POST /ieds/{id}/export-scl` | `{overrides}` | Validate/re-import edited copy; project unchanged |

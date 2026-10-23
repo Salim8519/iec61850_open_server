@@ -15,8 +15,17 @@ var macPattern = regexp.MustCompile(`^([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2}$`)
 
 // communication is read_communication's result for one IED.
 type communication struct {
-	address  any // nil or the address object
-	gse, smv []*pyjson.Object
+	address     any // nil or the address object
+	gse, smv    []*pyjson.Object
+	rejected    map[[2]string]bool // GSE (ldInst, cbName) present but unusable; already warned
+	rejectedSMV map[[2]string]bool // the same for SMV
+}
+
+func reject(set *map[[2]string]bool, element *xmldoc.Element) {
+	if *set == nil {
+		*set = map[[2]string]bool{}
+	}
+	(*set)[[2]string{element.GetOr("ldInst", ""), element.GetOr("cbName", "")}] = true
 }
 
 // readParameters is _parameters: {P type: stripped text}, later duplicates win.
@@ -103,6 +112,10 @@ func gseAddress(e *xmldoc.Element, warnings *[]string, iedName, kind string) *py
 	if priorityText == "" {
 		priorityText = "4"
 	}
+	if _, given := values["APPID"]; adr0114() && (!given || appText == "") {
+		*warnings = append(*warnings, where+" has no APPID, so its block is not published")
+		return nil
+	}
 	appID, ok1 := hexInt(appText)
 	vlanID, ok2 := hexInt(vlanText)
 	priority, err := pyrules.IntBig(priorityText, 10)
@@ -150,11 +163,15 @@ func readCommunication(root *xmldoc.Element, iedName string) (communication, []s
 			for _, element := range access.FindAll("GSE") {
 				if parsed := gseAddress(element, &warnings, iedName, "GOOSE"); parsed != nil {
 					result.gse = append(result.gse, parsed)
+				} else {
+					reject(&result.rejected, element)
 				}
 			}
 			for _, element := range access.FindAll("SMV") {
 				if parsed := gseAddress(element, &warnings, iedName, "Sampled Values"); parsed != nil {
 					result.smv = append(result.smv, parsed)
+				} else {
+					reject(&result.rejectedSMV, element)
 				}
 			}
 		}

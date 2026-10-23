@@ -10,10 +10,25 @@ import (
 	"studio-engine/internal/scl/xmldoc"
 )
 
-// MaxXML is scl/document.py MAX_XML.
-const MaxXML = 20 * 1024 * 1024
+// MaxXML is the import size limit: 100 MB (ADR-0114; Python's MAX_XML is 20 MB).
+const MaxXML = 100 * 1024 * 1024
 
 var identifierPattern = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
+
+// ldInstPattern is the SCL XSD tLDInst: a digit may come first ("1", "252L2"), at most 64.
+var ldInstPattern = regexp.MustCompile(`^[A-Za-z0-9][0-9A-Za-z_]{0,63}$`)
+
+// LDInst is Identifier for LDevice@inst and FCDA@ldInst widened to the XSD tLDInst rule
+// (ADR-0114): everything Identifier accepted stays accepted.
+func LDInst(value string, present bool, context string) (string, error) {
+	if !adr0114() {
+		return Identifier(value, present, context)
+	}
+	if !present || !ldInstPattern.MatchString(value) && !identifierPattern.MatchString(value) {
+		return "", apperr.New("Invalid " + context + ": " + pyrules.ReprOrNone(value, present))
+	}
+	return value, nil
+}
 
 // Identifier is type_resolver.identifier: the value or StudioError "Invalid <context>: <repr>".
 func Identifier(value string, present bool, context string) (string, error) {
@@ -27,7 +42,7 @@ func Identifier(value string, present bool, context string) (string, error) {
 // unique IED names. keepNodes keeps comments and mixed content for the exporter.
 func ParseDocument(source []byte, keepNodes bool) (*xmldoc.Document, error) {
 	if len(source) > MaxXML {
-		return nil, apperr.New("SCL exceeds the 20 MB import limit")
+		return nil, apperr.New("SCL exceeds the 100 MB import limit")
 	}
 	doc, err := xmldoc.Parse(source, xmldoc.Options{Nodes: keepNodes})
 	if err != nil {

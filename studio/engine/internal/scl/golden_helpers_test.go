@@ -16,6 +16,13 @@ import (
 
 const repoRoot = "../../../.."
 
+// asPythonTwin runs a golden test with the ADR-0114 import rules off: every byte must then
+// match what the frozen Python engine recorded. The rules themselves have their own tests.
+func asPythonTwin(t *testing.T) {
+	pythonTwin = true
+	t.Cleanup(func() { pythonTwin = false })
+}
+
 // seedValidator answers from the XSD verdicts Python recorded (golden/xsd_seed.json).
 type seedValidator map[string]SchemaVerdict
 

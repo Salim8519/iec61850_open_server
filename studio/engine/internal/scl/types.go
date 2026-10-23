@@ -32,8 +32,31 @@ var functionalConstraints = func() map[string]int {
 	return result
 }()
 
+// isTextKind: VisString*, Unicode* and Octet* hold text, never numbers (ADR-0114; Python
+// treated Unicode/Octet values as integers and refused real files).
 func isTextKind(kind string) bool {
-	return strings.Contains(kind, "String") || kind == "Currency" || kind == "ObjRef"
+	return strings.Contains(kind, "String") || kind == "Currency" || kind == "ObjRef" ||
+		adr0114() && (strings.HasPrefix(kind, "Unicode") || strings.HasPrefix(kind, "Octet"))
+}
+
+// namedCodes are the standard value names of the two-bit enumerations (IEC 61850-7-2
+// Dbpos and Tcmd; SCL writes the names in Val). ADR-0114.
+var namedCodes = map[string]map[string]int64{
+	"Dbpos": {"intermediate-state": 0, "off": 1, "on": 2, "bad-state": 3},
+	"Tcmd":  {"stop": 0, "lower": 1, "higher": 2, "reserved": 3},
+}
+
+// lowestOrd is the smallest ord of an EnumType: the value of an Enum without Val (ADR-0114),
+// so Mod/Beh read on(1) and Health Ok(1) instead of the invalid 0. 0 when there is none.
+func lowestOrd(enums *pyjson.Object) int64 {
+	lowest, found := int64(0), false
+	for _, key := range enums.Keys() {
+		value, _ := enums.Get(key)
+		if number, ok := value.(int64); ok && (!found || number < lowest) {
+			lowest, found = number, true
+		}
+	}
+	return lowest
 }
 
 // initialValue is type_resolver.initial_value: bool, string, int64/*big.Int or float64.
@@ -44,6 +67,8 @@ func initialValue(kind string, text string, present bool, enums *pyjson.Object) 
 			return false, nil
 		case isTextKind(kind):
 			return "", nil
+		case kind == "Enum" && enums != nil && adr0114():
+			return lowestOrd(enums), nil
 		}
 		return int64(0), nil
 	}
@@ -70,6 +95,15 @@ func initialValue(kind string, text string, present bool, enums *pyjson.Object) 
 			return value, nil
 		}
 	}
+	if names := namedCodes[kind]; names != nil && adr0114() {
+		if value, ok := names[text]; ok {
+			return value, nil
+		}
+		if _, err := pyrules.IntBig(text, 10); err != nil {
+			return nil, apperr.New("Unsupported " + kind + " initial value " + pyrules.Repr(text) +
+				"; the standard names are " + standardNames(kind))
+		}
+	}
 	if strings.HasPrefix(kind, "FLOAT") {
 		number, err := pyrules.Float(text)
 		if err != nil {
@@ -85,6 +119,13 @@ func initialValue(kind string, text string, present bool, enums *pyjson.Object) 
 		return nil, apperr.New("Unsupported " + kind + " initial value " + pyrules.Repr(text))
 	}
 	return intValue(number), nil
+}
+
+func standardNames(kind string) string {
+	if kind == "Tcmd" {
+		return "stop, lower, higher, reserved"
+	}
+	return "intermediate-state, off, on, bad-state"
 }
 
 // intValue returns an int64 when it fits, else the big integer (Python ints are unbounded).

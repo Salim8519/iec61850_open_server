@@ -135,9 +135,9 @@ func (e *env) http(index int, step *pyjson.Object) {
 	e.handler.ServeHTTP(recorder, request)
 	name := pyv.GetStr(step, "method") + " " + pyv.GetStr(step, "path")
 	wantStatus, _ := pyv.Int64(pyv.Get(step, "status"))
-	if int64(recorder.Code) != wantStatus || recorder.Body.String() != pyv.GetStr(step, "response") {
+	if int64(recorder.Code) != wantStatus || recorder.Body.String() != goExpected(pyv.GetStr(step, "path"), pyv.GetStr(step, "response")) {
 		e.t.Errorf("step %d %s: status %d want %d\n got: %s\nwant: %s", index, name, recorder.Code, wantStatus,
-			clip(recorder.Body.String()), clip(pyv.GetStr(step, "response")))
+			clip(recorder.Body.String()), clip(goExpected(pyv.GetStr(step, "path"), pyv.GetStr(step, "response"))))
 	}
 	if got, want := recorder.Header().Get("Content-Type"), pyv.GetStr(step, "type"); got != want {
 		e.t.Errorf("step %d %s: Content-Type %q want %q", index, name, got, want)

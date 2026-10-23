@@ -45,13 +45,20 @@ func enrichReports(server *xmldoc.Element, iedName string, datasets, reports []*
 			}
 			owner := domains[inst] + "/" + lnName(ln)
 			local := map[string]*pyjson.Object{}
+			unusable := unusableDatasets(ln)
 			for _, declaration := range ln.FindAll("DataSet") {
+				if missingDoName(declaration) != nil {
+					continue // left out by compileReports (ADR-0114)
+				}
 				dataset := datasets[nextDataset]
 				nextDataset++
 				enrichDataset(dataset, declaration, inst, owner, domains, byFC)
 				local[get(dataset, "name").(string)] = dataset
 			}
 			for _, declaration := range usableReports(ln) {
+				if unusable[declaration.GetOr("datSet", "")] {
+					continue
+				}
 				count := int64(1)
 				if enabled := declaration.Find("RptEnabled"); enabled != nil {
 					count, _ = pyIntAttr(enabled, "max", "1")

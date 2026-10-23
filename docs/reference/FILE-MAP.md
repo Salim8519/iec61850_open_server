@@ -12,6 +12,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Autosave/recovery/revisions | `projects/service.py`, `startup_recovery.py`, `migration_backup.py` |
 | SCL preservation/model | `scl/document.py`, `importer.py`, `model_builder.py`, `type_resolver.py` |
 | SCL validation/export | `scl/schema_validation.py`, `exporter.py` |
+| SCL import robustness (ADR-0114, Go only) | `engine/internal/scl/`: `types.go` (text kinds, Dbpos/Tcmd names, Enum default), `trigger_defaults.go` (IEC 61850-7-3 trigger options), `import_notes.go` (notes, error locations), `dataset_gaps.go` (FCDA without doName), `preview.go` (`ImportFailures`, `UnloadableIEDs`), `flow_outside.go`, `source_cache.go` (picker caches), `python_twin.go` (golden tests only); `store/xsd/workfile.go` (long data folders) |
 | Simulation lifecycle | `simulation/coordinator.py`, `simulation/run_selection.py` (run/stop single IEDs, ADR-0067) |
 | Studio equipment operations | `simulation/equipment_control.py` |
 | Equipment test buttons (ADR-0067) | `domain/equipment_test.py`, `simulation/equipment_test.py`, `equipment/testButtons.ts`, `features/diagram/EquipmentTest.tsx`, `TestMenu.tsx` |

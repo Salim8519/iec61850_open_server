@@ -57,18 +57,9 @@ func (im *Importer) ImportNamed(source []byte, filename any, selection Selection
 			return nil, err
 		}
 	}
-	declarations := root.Find("DataTypeTemplates")
-	if declarations == nil {
-		return nil, apperr.New("Missing DataTypeTemplates")
-	}
-	types := map[typeKey]*xmldoc.Element{}
-	for _, declaration := range declarations.Children {
-		id, present := declaration.Get("id")
-		key := typeKey{declaration.Tag, id, present}
-		if types[key] != nil {
-			return nil, apperr.New("Duplicate type declaration " + noneOr(id, present))
-		}
-		types[key] = declaration
+	types, err := declaredTypes(root)
+	if err != nil {
+		return nil, err
 	}
 	newID := im.NewID
 	if newID == nil {
@@ -102,7 +93,7 @@ func (im *Importer) ImportNamed(source []byte, filename any, selection Selection
 		}
 		model, err := run.ied(ied, name, servers[0])
 		if err != nil {
-			return nil, err
+			return nil, forIED(err, name)
 		}
 		result = append(result, model)
 	}
@@ -110,6 +101,24 @@ func (im *Importer) ImportNamed(source []byte, filename any, selection Selection
 		return nil, apperr.New("No IED servers found in SCL")
 	}
 	return result, nil
+}
+
+// declaredTypes indexes DataTypeTemplates by (tag, id); a duplicate id is refused.
+func declaredTypes(root *xmldoc.Element) (map[typeKey]*xmldoc.Element, error) {
+	declarations := root.Find("DataTypeTemplates")
+	if declarations == nil {
+		return nil, apperr.New("Missing DataTypeTemplates")
+	}
+	types := map[typeKey]*xmldoc.Element{}
+	for _, declaration := range declarations.Children {
+		id, present := declaration.Get("id")
+		key := typeKey{declaration.Tag, id, present}
+		if types[key] != nil {
+			return nil, apperr.New("Duplicate type declaration " + noneOr(id, present))
+		}
+		types[key] = declaration
+	}
+	return types, nil
 }
 
 func checkSelection(root *xmldoc.Element, names []any, selected map[string]bool) error {

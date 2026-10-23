@@ -53,6 +53,8 @@ never modified.
   (`validate_diagram`).
 - When a binding can't be created, the equipment is drawn unbound, with a plain reason
   such as "IED P1 is in the SCD but not loaded" or "No Pos signal found under XCBR1".
+  An IED the project can never load (no server, several servers, or its import fails) says
+  why instead: "IED P1 is in the SCD but cannot be loaded: …" (Go engine, ADR-0114).
 - `iedName="None"` (an unassigned `LNode`) never produces a binding.
 
 **Layout**
@@ -127,6 +129,7 @@ never modified.
 | SLD-14 | The action is disabled with a plain hint when no source has a `Substation` section. | `studio/tests/frontend/sldImport.test.ts::disabled without substation section` |
 | SLD-15 | No `CSWI` is guessed from naming; control comes only from `LNode`s written on the equipment. | `studio/tests/unit/test_sld_bindings.py::test_csw_is_never_guessed_from_naming` |
 | SLD-16 | Partial drawing coordinates switch the whole station to the automatic layout, with a note. | `studio/tests/unit/test_sld_layout.py::test_partial_coordinates_use_automatic_layout` |
+| SLD-17 | An IED that can never be loaded is named with the reason, not as "not loaded" (Go engine). | `studio/engine/internal/project/sld/bindings_test.go::TestBindSaysWhyAnIedCannotBeLoaded`, `studio/engine/internal/scl/vendor_station_test.go::TestUnloadableIedsSayWhy` |
 
 ## Acceptance evidence
 

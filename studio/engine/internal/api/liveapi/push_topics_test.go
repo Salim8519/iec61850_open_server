@@ -40,7 +40,7 @@ func TestPushFullFramesMatchPython(t *testing.T) {
 			}
 			e.events.take()
 			status, _ := pyv.Int64(pyv.Get(step, "status"))
-			want := topic.ExpectedFullFrame(1, int(status), []byte(pyv.GetStr(step, "response")))
+			want := topic.ExpectedFullFrame(1, int(status), []byte(goExpected(pyv.GetStr(step, "path"), pyv.GetStr(step, "response"))))
 			if got := topic.FullFrame(nil, 1); string(got) != string(want) {
 				t.Errorf("step %d %s: full frame differs\n got: %s\nwant: %s", at, topic.Name, clip(string(got)), clip(string(want)))
 			}

@@ -94,6 +94,9 @@ and guessing what a vendor-specific `intAddr` means.
 | GOOSE-26 | `udp:` interface ids go to the engine; numeric ids keep the vendor Npcap HAL (Sampled Values unchanged). | `studio/tests/unit/test_native_build_config.py::test_ethernet_hal_routes_udp_to_the_engine_and_numbers_to_npcap` |
 | GOOSE-27 | The backend refuses a missing or stale engine and opens it before any worker starts. | `studio/tests/unit/test_goose_engine_process.py::test_missing_or_stale_engine_is_refused`, `studio/tests/unit/test_goose_engine_process.py::test_supervisor_asks_the_engine_before_any_worker_starts` |
 | GOOSE-28 | One SLD GOOSE send is one batch: two values change together and the receiver sees stNum rise exactly once. | `studio/tests/protocol/test_goose_send_batch.py::test_two_values_in_one_batch_raise_st_num_once`, `studio/engine/internal/runtime/goose_send_test.go::TestGooseSendWritesOneBatchPerAction` |
+| GOOSE-29 | LGOS supervision binds whether `setSrcRef` uses the MMS form (`LD/LLN0$GO$cb`) or the ObjectReference form (`LD/LLN0.cb`) (Go engine). | `studio/engine/internal/scl/vendor_station_test.go::TestLGOSAcceptsTheObjectReferenceForm` |
+| GOOSE-30 | A link from a publisher in the file but not in the project counts as outside the project, never as "not heard" (Go engine). | `studio/engine/internal/acquisition/goosedom/link_outside_test.go::TestUnheardPublisherOutsideTheProjectIsRemote` |
+| GOOSE-31 | A `GSE` without APPID gives one "has no APPID" warning, not a second "no network address" one (Go engine). | `studio/engine/internal/scl/vendor_blocks_test.go::TestGSEWithoutAPPIDIsOneWarning` |
 
 The GOOSE-18, GOOSE-20, GOOSE-21 and GOOSE-22 wire tests need Npcap and a lab adapter. Set
 `STUDIO_GOOSE_ADAPTER` to its GUID; otherwise they are skipped, and the change record must say so.

@@ -13,6 +13,7 @@ import (
 // read_goose_sources over single files, pairs and synthetic multi-file stations, and
 // _with_members for every declared subscription, compared byte for byte.
 func TestGooseSourcesMatchPython(t *testing.T) {
+	asPythonTwin(t)
 	data, err := os.ReadFile(filepath.Join("testdata", "golden", "goose_sources.json"))
 	if err != nil {
 		t.Skip("goose_sources golden missing")

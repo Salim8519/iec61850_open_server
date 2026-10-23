@@ -1,10 +1,6 @@
 package scl
 
 import (
-	"hash/fnv"
-	"strconv"
-	"sync"
-
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/scl/xmldoc"
 )
@@ -83,21 +79,17 @@ func walkObjects(b *builder, server *xmldoc.Element, iedName string) error {
 	return nil
 }
 
-var extendedCache sync.Map // "<ied id>|<name>|<source hash>" -> []any
+var extendedCache sourceCache
 
-// CachedExtendedControls is ExtendedControls remembered per IED id, name and source text.
-// The list is shared: callers must not change it.
+// CachedExtendedControls is ExtendedControls remembered per IED id, name and source text
+// without hashing the text again on each request (ADR-0114). The list is shared: callers must
+// not change it.
 func CachedExtendedControls(iedID, iedName, source string) ([]any, error) {
-	hash := fnv.New64a()
-	_, _ = hash.Write([]byte(source))
-	key := iedID + "|" + iedName + "|" + strconv.FormatUint(hash.Sum64(), 16)
-	if found, ok := extendedCache.Load(key); ok {
-		return found.([]any), nil
-	}
-	controls, err := ExtendedControls([]byte(source), iedName)
+	value, err := extendedCache.get(iedID, iedName, source, func() (any, error) {
+		return ExtendedControls([]byte(source), iedName)
+	})
 	if err != nil {
 		return nil, err
 	}
-	extendedCache.Store(key, controls)
-	return controls, nil
+	return value.([]any), nil
 }
