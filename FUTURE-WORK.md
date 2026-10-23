@@ -33,6 +33,24 @@ the existing API (answers must stay byte-identical); bounded, size-aware caches;
 Stop; add a memory benchmark gate (import, browse, Run, Stop) to `verify.py` so it cannot regress.
 Needs its own ADR, because it touches the core signal model.
 
+**Quick tests (2026-10-24, master 12094ec2, 20-IED vendor project, `studio_server.exe`).** Private
+memory of the server; the 20 native IED programs add about 0.5 GB (25 MB each) while running.
+
+| Setting | After open | Running | After Stop | Run start | Steady CPU |
+|---|---|---|---|---|---|
+| Today (Go default, GOGC=100) | 1.0 GB | 2.2-2.4 GB | 2.3 GB | 3.3-3.9 s | under 1 % of a core |
+| GOGC=50 | 0.81-0.88 GB | 1.1-2.0 GB | same as running | 3.5-3.7 s | same |
+| GOGC=25 | 0.75 GB | 0.98 GB | 0.98 GB | 4.3 s | about 8 % of a core (costs CPU) |
+| GOMEMLIMIT=512MiB | 0.6 GB | 0.8 GB | 0.8 GB | 8.1 s | about 10 cores: never use a limit below the live data |
+| Give memory back after Stop (`debug.FreeOSMemory`) | 1.0 GB | 2.2 GB | 0.9 GB | 3.3 s | same |
+| GOGC=50 + give back after Stop | 0.81 GB | 1.1 GB | 0.85 GB | 3.6 s | same |
+
+The GC trace shows the real (live) data: about 0.5 GB after open (the point storage), a short peak of
+1.35 GB live while Run starts, and 0.67 GB after Stop. So Stop already frees the run; the memory is
+only not returned to Windows. Quick wins with no behaviour change: GOGC=50 set inside the engine (same
+in development and the package) and give memory back after Stop. Then find what Run start builds all at
+once (the 1.35 GB peak), then compact point storage. Owner decision: the website keeps "4 GB RAM".
+
 ## 2. Attribute arrays (`DA count`) are refused
 
 **Problem.** 11 IEDs (Schneider PM8000/ION meters, WAGO DSCH, BINOM, Schneider Easergy P5) are
@@ -46,6 +64,13 @@ reports, datasets and GOOSE members that point into arrays correct, and prove it
 MMS client reading the array. Needs an ADR (model and protocol change). An interim option, if wanted
 earlier: import the IED and leave only the array attributes out, with a warning naming each one.
 
+**SCADA view (checked 2026-10-24).** In the 12 vendor files with arrays (harmonics `MHAI.HA/HPhV/HPPV`,
+schedules `DSCH.SchdAbsTm`, curves `crvPts`), no report or GOOSE dataset uses an array point, except
+one demo file (`PDIF0.TmASt.crvPts`, FC DC). A SCADA that imports the SCD needs the IED (breakers,
+measurements, reports), not the arrays. So the interim option is enough for SCADA testing; an IED whose
+dataset uses an array point should stay refused with a clear reason, because the SCADA expects the
+exact dataset.
+
 ## 3. IEDs with several access points (NR / NARI layout)
 
 **Problem.** NR and NARI relays (for example PCS-921S, PCS-9705, NSR-3641; also the owner's
@@ -57,10 +82,11 @@ user choose (`scl/importer.go`, `scl/preview.go`).
 and M1 (they are the same IED), and say clearly in the preview which access point supplies what.
 Needs an ADR and protocol evidence that GOOSE published from the G1 definitions is identical.
 
-## Also noted (smaller, not scheduled)
+## Also noted (smaller)
 
-- No way to simulate an interlock or synchro-check refusal on SPC/DPC breakers and disconnectors
-  (`runtime/typed_checks.go` refuses them; CILO.EnaOpn/EnaCls is not used).
-- Deadbands (`db`, `zeroDb`) are not modelled: a 10 Hz source sends 10 reports per second.
+- Deadbands (`db`, `zeroDb`) are not modelled: a 10 Hz source sends 10 reports per second. The owner
+  put this and item 3 (NR/NARI access points) in the next round on 2026-10-24.
+- Interlock or synchro-check refusal simulation (CILO.EnaOpn/EnaCls): **not part of ScadaBench**
+  (owner, 2026-10-24: not in the next 10 versions at least). Do not plan or propose it.
 - Commands ignore Beh and the Test flag (IEC 61850-7-4 Annex A). Kept on purpose by the owner on
   2026-10-24 (ADR-0104); revisit only if the owner asks.
