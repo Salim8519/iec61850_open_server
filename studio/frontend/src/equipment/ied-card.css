@@ -1,0 +1,28 @@
+/* IED component (ADR-0112): one fixed 200 px card per IED, no terminals. Text wraps, nothing is cut.
+   State is words first; the border repeats it (solid running, dotted stopped, dashed real or skipped). */
+.equipment-node.ied { width: 200px; padding: 0; text-align: left; overflow: hidden; border-radius: 8px;
+  border-color: var(--accent); background: white; }
+.equipment-node.ied:not(.draw):not(.relay) { border-top: 3px solid var(--accent); }
+.equipment-node.ied.selected { border-color: var(--primary); }
+.ied-card { display: grid; gap: 4px; padding: 0 0 8px; }
+.ied-card-head { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--accent-soft);
+  border-bottom: 1px solid var(--accent-line); }
+.ied-card-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: white;
+  color: var(--accent-hover); flex-shrink: 0; }
+.ied-card-name { min-width: 0; font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--text); overflow-wrap: anywhere; }
+.ied-card-state, .ied-card-line, .ied-card-problem, .ied-card-readers { margin: 0 10px; font-size: 12px; line-height: 1.35;
+  overflow-wrap: anywhere; }
+.ied-card-state { display: flex; align-items: center; gap: 6px; width: max-content; max-width: calc(100% - 20px);
+  padding: 1px 8px; border-radius: 999px; font-weight: 650; color: var(--text-2); border: 1px solid var(--border-strong); }
+.ied-card-state.running { color: var(--success); border-color: var(--success); background: var(--success-soft); }
+.ied-card-state.stopped { border-style: dotted; }
+.ied-card-state.real, .ied-card-state.off { border-style: dashed; }
+.ied-card-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid currentColor; flex-shrink: 0; box-sizing: border-box; }
+.ied-card-state.running .ied-card-dot { background: currentColor; }
+.ied-card-line { color: var(--text-2); font-weight: 600; }
+.ied-card-line.muted, .ied-card .muted { color: var(--text-3); font-weight: 500; }
+.ied-card-problem { padding: 2px 8px; border: 1.5px dashed var(--warning); border-radius: 7px; background: var(--warning-soft);
+  color: var(--warning-text); font-weight: 650; }
+.ied-card-problem.waiting { border-style: dotted; border-color: var(--border-strong); background: white; color: var(--text-2); }
+.ied-card-readers { font-weight: 700; color: var(--teal); }
+.ied-card.empty .ied-card-head { background: var(--surface-2); }

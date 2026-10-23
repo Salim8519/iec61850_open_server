@@ -5,9 +5,10 @@ import type { PulseKind, SignalChange } from './signalPulses.ts';
 
 export type { SignalChange };
 
-/** One real change on the SLD (ADR-0103): publisher signal changes that land on the same symbol
- * within COALESCE_MS (a breaker's open and closed contacts) are one change with one line per
- * receiving IED, not one line per link and per contact. Pure grouping of store data. */
+/** One real change on the SLD (ADR-0103): publisher signal changes from the same origin (the
+ * component that triggered them, ADR-0112, or none) within COALESCE_MS (a breaker's open and
+ * closed contacts) are one change with one line per receiving IED, not one line per link and per
+ * contact. Pure grouping of store data. */
 export const COALESCE_MS = 400;
 
 export type OriginSignal = SignalChange & { origin: Origin | null };
@@ -23,7 +24,7 @@ const nodeOf = (origin: Origin | null) => origin?.nodeId ?? null;
 export function coalesceSignals(signals: SignalChange[], originOf: OriginLookup, window = COALESCE_MS): Coalesced[] {
   const groups: Coalesced[] = [];
   for (const signal of [...signals].sort((a, b) => a.start - b.start || a.key - b.key)) {
-    const origin = originOf(signal.iedId, signal.ref);
+    const origin = originOf(signal.iedId, signal.ref, signal.start);
     const group = groups.find(item => item.publisher === signal.publisher && nodeOf(item.origin) === nodeOf(origin)
       && signal.start - item.start <= window);
     const entry = { ...signal, origin };

@@ -79,6 +79,9 @@ func crossCheck(diagram *pyjson.Object, ieds *Lookup, fresh map[int]bool, onlyFr
 			return nil, apperr.New("A wire references missing equipment")
 		}
 	}
+	if err := checkUniqueIEDComponents(nodes, ieds); err != nil {
+		return nil, err
+	}
 	for index, node := range nodes {
 		isFresh := fresh == nil || fresh[index]
 		if onlyFresh && !isFresh {
@@ -103,6 +106,12 @@ func crossCheck(diagram *pyjson.Object, ieds *Lookup, fresh map[int]bool, onlyFr
 		if err := checkTapChanger(data, kind, ieds); err != nil {
 			return nil, err
 		}
+		if err := checkIedComponent(data, kind, ieds); err != nil {
+			return nil, err
+		}
+		if err := checkGooseLink(data, kind, ieds); err != nil {
+			return nil, err
+		}
 		if err := checkCommandOptions(data, kind); err != nil {
 			return nil, err
 		}
@@ -113,6 +122,7 @@ func crossCheck(diagram *pyjson.Object, ieds *Lookup, fresh map[int]bool, onlyFr
 			settleMeasurements(data, kind)
 			settlePointPanel(data, kind)
 			settleTapChanger(data, kind)
+			settleGooseLink(data)
 		}
 		if err := validateState(data, kind, ieds); err != nil {
 			return nil, err

@@ -124,6 +124,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
         ...(kind === 'PUSH_BUTTON' ? { push_mode: 'latching_status' as const } : {}),
         ...(kind === 'MEASUREMENT_LIST' ? { measurements: [] } : {}),
         ...(kind === 'POINT_PANEL' ? { ied_id: null, points: [] } : {}),
+        ...(kind === 'IED' ? { ied_id: null } : {}),
         ...(kind === 'TAP_TRANSFORMER' ? { tap_changer: newTapChanger() } : {}),
         ...(kind === 'INFEED' ? { infeed_type: 'line' as const, infeed_state: 'live' as const } : {}) } };
     change({ ...diagram, nodes: [...diagram.nodes, node] }); setSelection([node.id]);

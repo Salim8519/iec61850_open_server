@@ -29,6 +29,9 @@ import { SignalOverlay, type SignalSelection } from './signals/SignalOverlay';
 import { SignalSheet } from './signals/SignalSheet';
 import { useSignalLayers } from './signals/useSignalLayers';
 import { OutsideSenders } from './signals/OutsideSenders';
+import { GooseIedsTool } from './ied/GooseIedsTool';
+import { IedProviders } from './ied/IedProviders';
+import { useGooseIeds } from './ied/useGooseIeds';
 import { TestMenu, type MenuAt } from './TestMenu';
 import { RunStrip } from './RunStrip';
 import { runSummary } from '../../copy/runShape';
@@ -80,6 +83,7 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
       data: kind === 'INFEED' ? { ...base, infeed_type: 'line', infeed_state: 'live' } :
         kind === 'MEASUREMENT_LIST' ? { ...base, measurements: [] } :
         kind === 'POINT_PANEL' ? { ...base, ied_id: project.ieds.length === 1 ? project.ieds[0].id : null, points: [] } :
+        kind === 'IED' ? { ...base, ied_id: null } :
         kind === 'TAP_TRANSFORMER' ? { ...base, tap_changer: newTapChanger() } :
         kind === 'JUNCTION' || kind === 'RELAY' ? base : { ...base, trip_command_polarity: 'operate_false',
         trip_state_polarity: 'operated_true', push_mode: 'latching_status', push_value: true, initial_position: 'open' } };
@@ -118,9 +122,10 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   // The toolbar and lock note are made only when what they show changes, so Canvas (memo) skips
   // re-rendering when this page renders for an unrelated reason (speed lane F).
   const { canUndo, canRedo, undo, redo, prepare, runtime, busy } = studio;
+  const gooseIeds = useGooseIeds({ diagram, edit, select: setSelection, prepare, revision: project.revision, watch: layers.layers.goose });
   const noIeds = !project.ieds.length;
   const toolbar = useMemo(() => <div className="canvas-toolbar" role="toolbar" aria-label="Diagram tools">
-    <AddMenu disabled={locked} add={add} addBay={addBay} attachHint={attachHint} />
+    <AddMenu disabled={locked} add={add} addBay={addBay} attachHint={attachHint} addAllIeds={gooseIeds.addAll} />
     <SldImport disabled={locked} revision={project.revision} apply={(next: Diagram) => edit(next)} prepare={prepare} />
     <TidyButton diagram={diagram} selection={selection} locked={locked} apply={(next: Diagram) => edit(next)} />
     <span className="divider" />
@@ -129,16 +134,19 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
     <span className="divider" />
     <SignalLayerSwitches layers={layers.layers} toggle={layers.toggle} />
     <OutsideSenders store={studio.signalLayers} importFile={openFile} />
+    <GooseIedsTool missing={gooseIeds.missing} note={gooseIeds.note} clearNote={gooseIeds.clearNote} addOne={gooseIeds.addOne}
+      addAll={gooseIeds.addAll} locked={locked} show={layers.layers.goose} />
     {noIeds && <><span className="divider" />
       <button className="ghost" onClick={() => openDevices()}><Cpu size={17} />Import an IED first</button></>}
   </div>, [locked, add, addBay, attachHint, project.revision, edit, prepare, diagram, selection, canUndo, canRedo, undo, redo,
-    layers.layers, layers.toggle, studio.signalLayers, openFile, noIeds, openDevices]);
+    layers.layers, layers.toggle, studio.signalLayers, openFile, noIeds, openDevices, gooseIeds]);
   const partial = summary.shape === 'partial';
   const summaryKey = partial ? `${summary.running.map(ied => ied.id)}|${summary.stopped.map(ied => ied.id)}` : '';
   const lockNote = useMemo(() => partial ? <RunStrip summary={summary} busy={busy} runAll={() => runtime('start')} /> : undefined,
     [partial, summaryKey, busy]);
   const panel = panelId ? diagram.nodes.find(item => item.id === panelId && item.data.kind === 'POINT_PANEL') : undefined;
-  return <div className="diagram"><OpenPointPanel.Provider value={setPanelId}>
+  return <div className="diagram"><IedProviders store={studio.signalLayers} ieds={project.ieds} revision={project.revision}>
+    <OpenPointPanel.Provider value={setPanelId}>
     <TapCommand.Provider value={tap.send}><TapBusy.Provider value={tap.busy}>
     <Canvas diagram={diagram} change={edit} locked={locked} selection={selection} setSelection={setSelection}
       valueStore={studio.equipmentValues} energization={studio.energization} iedNames={iedNames} modeBadges={badges} operate={operate} toolbar={toolbar} overlay={overlay} nodeMenu={openMenu}
@@ -167,5 +175,5 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
         <button className="danger-outline" disabled={locked} onClick={actions.remove}><Trash2 size={16} />Delete</button>
       </div><p className="small muted" style={{ margin: 0 }}>Shortcuts: Ctrl+C copy, Ctrl+V paste, Ctrl+D duplicate, arrows nudge.</p>
       </div></div></aside>}
-  </TapBusy.Provider></TapCommand.Provider></OpenPointPanel.Provider></div>;
+  </TapBusy.Provider></TapCommand.Provider></OpenPointPanel.Provider></IedProviders></div>;
 }

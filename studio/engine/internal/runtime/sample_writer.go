@@ -19,7 +19,8 @@ type item struct {
 // overriding are the write sources that pause an automatic source (sample_writer.py:48).
 var overriding = map[string]bool{"manual": true, "scenario": true, "pulse": true, "pulse_return": true,
 	"control_feedback": true, "equipment_button": true, "equipment_test": true,
-	"tap_changer": true} // the simulated LV voltage of a regulated transformer (ADR-0109)
+	"tap_changer": true, // the simulated LV voltage of a regulated transformer (ADR-0109)
+	"goose_send":  true} // a value sent as GOOSE from the SLD (ADR-0112)
 
 // simulatedRun returns the running simulated IED (Python: sample_writer.locks[ied_id]).
 func (c *Coordinator) simulatedRun(iedID string) *running {

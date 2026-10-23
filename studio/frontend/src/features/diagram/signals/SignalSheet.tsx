@@ -6,7 +6,7 @@ import type { SignalLayerStore } from '../../../equipment/signalLayerStore';
 import { StatusPill } from '../../../ui/StatusPill';
 import type { SignalSelection } from './SignalOverlay';
 
-/** Side sheet for a clicked GOOSE link or IED tag: the declared signal-flow details plus the live verdict. */
+/** Side sheet for a clicked GOOSE link, chip or IED component flash: the declared signal-flow details plus the live verdict. */
 export function SignalSheet({ store, selection, select, showFlow }: {
   store: SignalLayerStore; selection: NonNullable<SignalSelection>;
   select: (selection: SignalSelection) => void; showFlow: (iedId?: string) => void;

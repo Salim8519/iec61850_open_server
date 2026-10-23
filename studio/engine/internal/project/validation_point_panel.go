@@ -23,7 +23,10 @@ func checkPointPanel(data *pyjson.Object, kind string, ieds *Lookup) error {
 	rows := items(pyval.Lookup(data, "points", nil))
 	iedID := text(data, "ied_id")
 	if kind != PointPanelKind {
-		if len(rows) > 0 || iedID != "" {
+		if kind == IEDComponentKind && len(rows) > 0 {
+			return apperr.New("An IED component has no points. Add a point panel for points")
+		}
+		if len(rows) > 0 || (iedID != "" && kind != IEDComponentKind) {
 			return apperr.New(panelRefusal)
 		}
 		return nil
@@ -221,7 +224,7 @@ func checkHealthy(healthy any, name, kind string) error {
 }
 
 // settlePointPanel gives a fresh point panel its empty list and no IED, and drops the panel
-// fields of other kinds, so their saved bytes never change.
+// fields of other kinds (an IED component keeps its ied_id), so their saved bytes never change.
 func settlePointPanel(data *pyjson.Object, kind string) {
 	if kind == PointPanelKind {
 		if _, present := data.Get("points"); !present {
@@ -230,6 +233,10 @@ func settlePointPanel(data *pyjson.Object, kind string) {
 		if _, present := data.Get("ied_id"); !present {
 			data.Set("ied_id", nil)
 		}
+		return
+	}
+	if kind == IEDComponentKind { // ADR-0112: the component keeps its own ied_id
+		settleIedComponent(data)
 		return
 	}
 	data.Delete("points")

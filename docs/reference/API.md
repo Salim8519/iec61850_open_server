@@ -53,6 +53,8 @@ with `active_frontend`. JSON errors use `error`, optional `code`, and optional
 | `POST /equipment/{node}/test` (point panel) | `{action:"set", row, value}` (status true/false, double 0-3, value number), `{action:"send", row, value}` (command true/false), `{action:"healthy"}` | Point panel (ADR-0102, Go only): set a status, double or value point of a simulated IED, send a command point through Operate, or write every healthy value; answers `{ref,value,type,ied_id,correlation_id}` or the batch summary `{requested,applied,failed,results}`; real IEDs refused |
 | `POST /equipment/{node}/select` | `{action:"open"\|"close", options?}` | Go only (ADR-0108): select a CB/DS/ES whose control is `sbo-*`; `{node_id,action,model,selected,expires_ms}` (window = sboTimeout minus margin); direct models refused in words |
 | `POST /equipment/{node}/cancel` | any | Go only (ADR-0108): end the node's selection; `{node_id,cancelled,action?}` |
+| `POST /equipment/{node}/goose` | equipment: `{action:"open"\|"closed"\|"on"\|"off"\|"value", value?}`; IED component: `{gocb_ref, ref, value}` | Go only (ADR-0112): send GOOSE through the node's `goose_link` or one value of the IED component's own message, written in ONE sample batch (stNum rises once); `{node_id,ied_id,gocb_ref,action,applied,correlation_id}`; refused in words for real, skipped, GOOSE-off or stopped IEDs, a missing link or a wrong value; events `goose_send_requested`, `goose_send_applied` / `goose_send_failed` |
+| `GET /diagram/goose-ieds` | - | Go only (ADR-0112): IED components "Add all GOOSE IEDs" would add: `{nodes:[{ied_id,name,position{x,y}}]}` (every GOOSE IED without one, one row above the drawing); nothing saved |
 | `POST /equipment/{node}/test` (point panel, ADR-0108) | `{action:"select"\|"cancel", row, value?}`; `send` values also a whole number (INC), number (APC), enum label (ENC), `"higher"`/`"lower"` (BAC, BSC, ISC) | Select before operate of an SBO command row (`send` must repeat the selected value); typed values checked against `min`/`max`/`step` and the keys of `labels` |
 | `GET /controls/typed?ied_id=` (ADR-0104 list, served on this branch by an adapter) | none | `{controls, extended_controls}`: the SPC/DPC list and the typed controls read from the stored SCL, each `{ref, status, cdc, ctl_val_kind, ctl_val_ref, value_kind (int\|enum\|float\|step), model (ctlModel 0..4), sbo_timeout_ms, min, max, step, labels {label: number}, trans_ind}`; Go-only |
 
@@ -116,6 +118,8 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `PUT /goose/share` | `{reach, uplink_guid?, adapter_guid?, confirm?}` | Allowed while running. `outside` needs `confirm:true`, Npcap and the `adapter_guid` shown (GOOSE-19) |
 | `POST /goose/conflicts` | `{ied_id, choice: stop\|continue, confirm?}` | Answer a conflict for this Run; `continue` needs `confirm:true` |
 | `GET /goose/links` | - | GOOSE link map (ADR-0065): `ieds`, `blocks` (status, `member_refs`), `links` (status, inputs, `live`), `diagnostics`, `summary` |
+| `GET /ieds/{id}/goose/messages` | - | Go only (ADR-0112): `{ied_id,name,role,running,can_send,why_not,messages[{gocb_ref,name,dataset,go_id,app_id,conf_rev,subscribers,complete,members[{position,text,fc,refs[{ref,kind,fc,value_type (onoff\|position\|number\|null),writable,sendable,description,value}]}]}],receives[{gocb_ref,publisher,block,status}]}`; members FC-aware from the stored dataset |
+| `GET /goose/members` | - | Go only (ADR-0112): `{ieds:{ied_id:{gocb_ref:[exact leaf refs]}}}` for expected pulses and the panel "GOOSE" tag |
 | `GET /mms/access` | - | MMS clients per simulated IED (ADR-0066): address, nodes read, report blocks, commands |
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
 | `GET /live/{id}/comparison` | - | SCD vs device categories, dataset and report diffs |
@@ -131,6 +135,9 @@ ADR-0066 adds `goose_input` (`applied` refs, `problems`, `st_num`), `goose_input
 `control_applied` carries `external`. Signal events from GOOSE inputs have source `goose_input`.
 ADR-0073 adds `goose_conflict` (`ied_id`, `gocb_ref`, `src_mac`, `sharing`), `goose_share` (`state`
 off/checking/sharing), `goose_uplink` (`state`, `message`) and `goose_storm` (`ied_id`, `limit_per_second`).
+ADR-0112 adds `goose_send_requested` (`node_id`, `ied_id`, `gocb_ref`, `action`, `refs`, `values`,
+`correlation_id`, `origin`), then `goose_send_applied` (+ `applied`) or `goose_send_failed` (+ `message`);
+the written values are `signal` events with source `goose_send`.
 
 ## Scenarios, tests and events
 

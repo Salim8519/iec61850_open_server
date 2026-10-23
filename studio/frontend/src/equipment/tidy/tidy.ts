@@ -21,6 +21,7 @@ export function defaultSize(node: EquipmentNode): Size {
   if (node.data.kind === 'MEASUREMENT_LIST') return { width: 248, height: 60 + 33 * (node.data.measurements?.length ?? 0) };
   if (node.data.kind === 'POINT_PANEL') return { width: 220, height: 132 };
   if (node.data.kind === 'TAP_TRANSFORMER') return { width: 132, height: 200 };
+  if (node.data.kind === 'IED') return { width: 200, height: 120 };
   return { width: 108, height: 120 };
 }
 
@@ -73,7 +74,9 @@ type Options = { scope?: ReadonlySet<string>; sizes?: ReadonlyMap<string, Size> 
 
 /** One layout pass; returns the input object when nothing would change. */
 function arrangeOnce(diagram: Diagram, options: Options) {
-  const scope = options.scope && options.scope.size > 1 ? options.scope : new Set(diagram.nodes.map(node => node.id));
+  // IED components (ADR-0112) keep their row above the drawing: Tidy up never moves them.
+  const movable = new Set(diagram.nodes.filter(node => node.data.kind !== 'IED').map(node => node.id));
+  const scope = new Set([...(options.scope && options.scope.size > 1 ? options.scope : movable)].filter(id => movable.has(id)));
   const graph = wireGraph(diagram, scope);
   const size = (id: string) => options.sizes?.get(id) ?? defaultSize(graph.node.get(id)!);
   const groups = components(graph);

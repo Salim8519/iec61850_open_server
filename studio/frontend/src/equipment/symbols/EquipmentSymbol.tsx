@@ -43,6 +43,8 @@ export function EquipmentSymbol({ kind, closed = false, size = 54, position, ani
     {kind === 'INFEED' && <InfeedGlyph type={infeed} />}
     {kind === 'TAP_TRANSFORMER' && <><path d="M30 0V9M30 51V60" /><circle cx="30" cy="22" r="13" />
       <circle cx="30" cy="38" r="13" /><path d="M12 50L47 11M47 11L39 12M47 11L46 19" /></>}
+    {kind === 'IED' && <><rect x="8" y="13" width="44" height="34" rx="4" /><circle cx="16" cy="22" r="2.5" />
+      <circle cx="24" cy="22" r="2.5" /><path d="M15 31H45M15 39H36" /></>}
   </svg>;
 }
 

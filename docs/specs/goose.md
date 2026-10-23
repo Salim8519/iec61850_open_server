@@ -20,6 +20,10 @@ whether GOOSE is really being received, with a plain explanation of any problem.
 
 - libiec61850 owns GoCB state, retransmission and frame encoding. Studio selects the
   adapter, reports what the stack did, and never fabricates frames or values.
+- A GOOSE send from the SLD (ADR-0112: IED component, equipment `goose_link`, point panel row)
+  changes the simulated IED's values, never the frame: all values of one send are written in one
+  sample batch under one data model lock, so libiec61850 raises stNum exactly once. Real devices
+  are never sent for.
 - Publishing parameters come only from the SCD: `GSEControl` (name, dataset,
   `appID` as goID, `confRev`) and the matching `Communication/.../GSE` address
   (MAC, APPID, VLAN-ID, VLAN-PRIORITY, MinTime, MaxTime).
@@ -89,6 +93,7 @@ and guessing what a vendor-specific `intAddr` means.
 | GOOSE-25 | The share warning is stronger when real devices may act on the GOOSE; Cancel has the focus. | `studio/tests/frontend/gooseReach.test.ts::GOOSE-25: the share warning is stronger when real devices may act on it`, `studio/tests/unit/test_goose_reach.py::test_share_risk_is_high_when_real_devices_may_act_on_it` |
 | GOOSE-26 | `udp:` interface ids go to the engine; numeric ids keep the vendor Npcap HAL (Sampled Values unchanged). | `studio/tests/unit/test_native_build_config.py::test_ethernet_hal_routes_udp_to_the_engine_and_numbers_to_npcap` |
 | GOOSE-27 | The backend refuses a missing or stale engine and opens it before any worker starts. | `studio/tests/unit/test_goose_engine_process.py::test_missing_or_stale_engine_is_refused`, `studio/tests/unit/test_goose_engine_process.py::test_supervisor_asks_the_engine_before_any_worker_starts` |
+| GOOSE-28 | One SLD GOOSE send is one batch: two values change together and the receiver sees stNum rise exactly once. | `studio/tests/protocol/test_goose_send_batch.py::test_two_values_in_one_batch_raise_st_num_once`, `studio/engine/internal/runtime/goose_send_test.go::TestGooseSendWritesOneBatchPerAction` |
 
 The GOOSE-18, GOOSE-20, GOOSE-21 and GOOSE-22 wire tests need Npcap and a lab adapter. Set
 `STUDIO_GOOSE_ADAPTER` to its GUID; otherwise they are skipped, and the change record must say so.

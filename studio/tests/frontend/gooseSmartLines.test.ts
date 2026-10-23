@@ -1,4 +1,5 @@
-// ADR-0103 / change 0166: one GOOSE change is one chip at its symbol and one smart line per receiving IED.
+// ADR-0103 / change 0166, ADR-0112: one GOOSE change is one chip at the component that triggered it and one
+// smart line per receiving IED component, through the sender's IED component.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
@@ -7,8 +8,9 @@ import type { EquipmentNode } from '../../frontend/src/api/types.ts';
 import { changeChip, GOT_IT } from '../../frontend/src/copy/signalLayers.ts';
 import { changeGroups, coalesceSignals } from '../../frontend/src/equipment/signalChanges.ts';
 import { SignalLayerStore, type Pulse } from '../../frontend/src/equipment/signalLayerStore.ts';
-import { equipmentByIed, placeTags, tagCentre, type Box } from '../../frontend/src/equipment/signalLayout.ts';
-import { originIndex, refMatches, symbolName } from '../../frontend/src/equipment/signalOrigin.ts';
+import { triggeredOrigins, triggerOf } from '../../frontend/src/equipment/gooseTriggers.ts';
+import { componentBoxes, type Box } from '../../frontend/src/equipment/signalLayout.ts';
+import { originCandidates, refMatches, symbolName } from '../../frontend/src/equipment/signalOrigin.ts';
 import { animatedLines, MAX_STAGGER_MS, planChanges } from '../../frontend/src/equipment/signalPlan.ts';
 import { crossings, laneY, roundedPath, routeFan, routeLine } from '../../frontend/src/equipment/signalRoute.ts';
 
@@ -36,25 +38,41 @@ const map: GooseLinkMap = { running: true, diagnostics: [], summary: {},
     members: [], member_refs: [OPEN, CLOSED] }],
   links: [link('L1', 'SUB_BAY0002'), link('L2', 'SUB_BAY0003')] };
 
-test('a symbol is found from its own bindings; state beats command beats panel rows', () => {
-  const originOf = originIndex(nodes);
+// Q1 and Q2 were operated just now (node-only trigger events); every lookup below is near them.
+const acted = triggeredOrigins(nodes, [{ key: 1, nodeId: 'Q1', at: 0 }, { key: 2, nodeId: 'Q2', at: 100 }]);
+
+test('a symbol is an origin only when it was acted on; its own bindings say which value', () => {
+  const candidates = originCandidates(nodes);
   assert.equal(refMatches('LD/XCBR1.Pos', 'LD/XCBR1.Pos.stVal'), true);
   assert.equal(refMatches('LD/XCBR1.Pos', 'LD/XCBR1.PosX.stVal'), false, 'only whole name parts match');
-  assert.deepEqual(originOf('p', OPEN), { nodeId: 'Q1', role: 'open', kind: 'CB', label: 'Q1' });
-  assert.equal(originOf('p', CLOSED)?.role, 'closed');
-  assert.equal(originOf('p', 'PUBCTRL/CSWI1.Pos.stVal')?.nodeId, 'Q2');
-  assert.equal(originOf('s2', 'SUBPROT/PTRC1.Tr.general')?.row, 'Trip');
-  assert.equal(originOf('p', 'PUBCTRL/GGIO9.Ind9.stVal'), null, 'unbound signal: fall back to the IED mark');
+  assert.deepEqual(candidates('p', OPEN), [{ nodeId: 'Q1', role: 'open', kind: 'CB', label: 'Q1' }]);
+  assert.deepEqual(acted('p', OPEN, 50), { nodeId: 'Q1', role: 'open', kind: 'CB', label: 'Q1' });
+  assert.equal(acted('p', CLOSED, 50)?.role, 'closed');
+  assert.equal(acted('p', 'PUBCTRL/CSWI1.Pos.stVal', 120)?.nodeId, 'Q2');
+  assert.equal(triggeredOrigins(nodes, [])('p', OPEN, 0), null, 'no trigger: the change starts at the sender IED');
+  assert.equal(acted('p', OPEN, 5000), null, 'a trigger counts only for 1.5 s');
+  assert.equal(acted('s2', 'SUBPROT/PTRC1.Tr.general', 0), null, 'Q4 was not acted on');
   assert.equal(symbolName({ kind: 'CB', label: 'Y130' }), 'CB Y130');
   assert.equal(symbolName({ kind: 'CB', label: 'CB-2' }), 'CB-2');
   assert.equal(symbolName({ kind: 'TRIP_RELAY', label: 'K1' }), 'Trip relay K1');
+});
+
+test('a GOOSE send or a panel row names its exact value and wins over a bound symbol', () => {
+  const sent = triggerOf({ kind: 'goose_send_requested', node_id: 'Q3', ied_id: 'p', refs: [OPEN, CLOSED], action: 'open' }, 10, 7);
+  assert.deepEqual(sent, { key: 7, nodeId: 'Q3', at: 10, iedId: 'p', refs: [OPEN, CLOSED], words: 'open' });
+  const lookup = triggeredOrigins(nodes, [{ key: 1, nodeId: 'Q1', at: 0 }, sent!]);
+  assert.deepEqual(lookup('p', OPEN, 20), { nodeId: 'Q3', role: 'trigger', kind: 'CB', label: 'Q3', words: 'open' });
+  const row = triggerOf({ kind: 'point_panel_requested', node_id: 'Q4', ied_id: 's2', ref: 'SUBPROT/PTRC1.Tr', point_id: 'p1' }, 0, 8);
+  assert.deepEqual(row?.refs, ['SUBPROT/PTRC1.Tr']);
+  assert.equal(triggerOf({ kind: 'signal', node_id: 'Q1' }, 0, 9), null, 'a value change is not a user action');
+  assert.equal(triggerOf({ kind: 'equipment_feedback_applied' }, 0, 9), null, 'no component, no trigger');
 });
 
 test('both contacts of one breaker inside 400 ms are one change; later or elsewhere is another', () => {
   const sig = (key: number, ref: string, start: number, publisher = 'PUB_BAY0001') =>
     ({ key, iedId: 'p', publisher, ref, value: true, text: ref, start, linkIds: ['L1', 'L2'] });
   const groups = coalesceSignals([sig(1, OPEN, 0), sig(2, CLOSED, 150), sig(3, OPEN, 900),
-    sig(4, 'PUBCTRL/CSWI1.Pos.stVal', 100), sig(5, OPEN, 50, 'OTHER_BAY0009')], originIndex(nodes));
+    sig(4, 'PUBCTRL/CSWI1.Pos.stVal', 100), sig(5, OPEN, 50, 'OTHER_BAY0009')], acted);
   assert.deepEqual(groups.map(group => group.signals.map(signal => signal.key)), [[1, 2], [5], [4], [3]]);
 });
 
@@ -70,7 +88,7 @@ test('the store keeps a gated partner contact so one change reads "CB Q1 open ·
   assert.equal(state.signals.length, 2, 'but both contacts are kept for the wording');
   assert.ok(state.pulses.every(pulse => pulse.cause === state.signals[0].key));
   const links = new Map(map.links.map(item => [item.id, item]));
-  const [group] = changeGroups(state.pulses, state.signals, links, originIndex(nodes));
+  const [group] = changeGroups(state.pulses, state.signals, links, acted);
   assert.equal(group.origin?.nodeId, 'Q1');
   assert.deepEqual(group.receivers, ['SUB_BAY0002', 'SUB_BAY0003']);
   const chip = changeChip(group, state.equipment);
@@ -89,12 +107,12 @@ test('observed changes count who really got a new stNum; one line per receiver',
   const state = store.get();
   const links = new Map(map.links.map(item => [item.id, item]));
   const twice: Pulse[] = [...state.pulses, { ...state.pulses[0], key: 999, kind: 'expected' }];
-  const [group] = changeGroups(twice, state.signals, links, originIndex(nodes));
+  const [group] = changeGroups(twice, state.signals, links, acted);
   assert.equal(group.kind, 'observed');
   assert.equal(group.lines.length, 2, 'a second pulse to the same IED adds no line');
   assert.match(changeChip(group).text, /· 2 of 2 IEDs got it$/);
   assert.equal(GOT_IT, '✓ got it');
-  const loose = changeGroups([{ ...state.pulses[0], cause: undefined, change: 'stNum 2' }], [], links, originIndex(nodes));
+  const loose = changeGroups([{ ...state.pulses[0], cause: undefined, change: 'stNum 2' }], [], links, acted);
   assert.equal(changeChip(loose[0]).text, 'New state · 1 of 1 IED got it', 'only a stNum: plain words');
 });
 
@@ -131,29 +149,36 @@ test('receivers of one change share the climb and the lane', () => {
   for (const route of [a, b]) assert.equal(route.clear, true);
 });
 
-test('the plan starts at the symbol, staggers lines a little and caps the moving ones', () => {
+test('the plan runs from the symbol through the sender IED component to each receiver component', () => {
   const store = new SignalLayerStore();
   store.setLayers({ goose: true, readers: false });
   store.setMap(map);
   store.handle({ kind: 'signal', ied_id: 'p', ref: OPEN, value: true }, 0);
   const links = new Map(map.links.map(item => [item.id, item]));
-  const groups = changeGroups(store.get().pulses, store.get().signals, links, originIndex(nodes));
-  const drawn = nodes.map(item => ({ id: item.id, x: item.position.x, y: item.position.y, width: 60, height: 60 }));
-  const placed = placeTags(drawn, equipmentByIed(nodes), map.ieds.map(item => ({ name: item.name, iedId: item.ied_id,
-    outside: false, remote: false })));
-  const centre = new Map(placed.map(tag => [tag.name, tagCentre(tag, 1, 1)]));
-  const [plan] = planChanges(groups, drawn, placed, centre);
-  assert.equal(plan.box?.id, 'Q1', 'origin = the breaker, not the IED corner mark');
+  const groups = changeGroups(store.get().pulses, store.get().signals, links, acted);
+  const cards = [node('IP', 100, 20, { kind: 'IED', ied_id: 'p' }), node('IS1', 400, 20, { kind: 'IED', ied_id: 's1' }),
+    node('IS2', 700, 20, { kind: 'IED', ied_id: 's2' })];
+  const all = [...nodes, ...cards];
+  const drawn = all.map(item => ({ id: item.id, x: item.position.x, y: item.position.y,
+    width: item.data.kind === 'IED' ? 200 : 60, height: item.data.kind === 'IED' ? 120 : 60 }));
+  const components = componentBoxes(all, drawn, { p: 'PUB_BAY0001', s1: 'SUB_BAY0002', s2: 'SUB_BAY0003' });
+  const [plan] = planChanges(groups, drawn, components);
+  assert.equal(plan.box?.id, 'Q1', 'origin = the breaker that was operated');
+  assert.equal(plan.sender?.id, 'IP');
   assert.deepEqual(plan.chip, { x: 100, y: 296 });
   assert.deepEqual(plan.lines.map(line => line.start), [0, 80]);
-  assert.ok(plan.lines.every(line => line.start <= MAX_STAGGER_MS && line.route.clear));
+  assert.ok(plan.lines.every(line => line.start <= MAX_STAGGER_MS));
+  for (const line of plan.lines) {
+    assert.ok(line.route.points.some(point => point.x === 200 && point.y === 20), 'passes the sender component top');
+  }
+  assert.deepEqual(plan.lines.map(line => line.route.points.at(-1)), [{ x: 500, y: 20 }, { x: 800, y: 20 }]);
   assert.equal(animatedLines([plan], 1).size, 1);
 });
 
 test('the canvas has no per-link words; lines draw behind the dot and respect reduced motion', () => {
   const overlay = read('features/diagram/signals/SignalOverlay.tsx');
   assert.doesNotMatch(overlay, /signal-link-label|pulse\.label\}<\/text>/);
-  assert.match(overlay, /edgePoint/, 'senders outside the project keep their dot beside the receiver');
+  assert.match(read('features/diagram/signals/FlyLines.tsx'), /edgePoint/, 'senders with no place keep their dot beside the receiver');
   const line = read('features/diagram/signals/RouteLine.tsx');
   assert.match(line, /reducedMotion\(\)/);
   assert.match(line, /strokeDashoffset/);

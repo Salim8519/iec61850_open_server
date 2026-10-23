@@ -25,6 +25,9 @@
   overflow-wrap: anywhere; }
 .pp-flag { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px; font-size: 12px; font-weight: 600; color: var(--warning-text);
   border: var(--line) dashed var(--warning); border-radius: 6px; background: var(--warning-soft); }
+/* A row whose value is part of a GOOSE message (ADR-0112): the word, an outline, never colour alone. */
+.pp-goose { padding: 0 6px; border: 1px solid var(--accent); border-radius: 999px; font-size: 11px; font-weight: 700;
+  line-height: 16px; color: var(--accent-hover); background: var(--accent-soft); white-space: nowrap; }
 .pp-actions { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .pp-choice { min-height: 32px; padding: 0 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
 .pp-choice.current { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 700; }

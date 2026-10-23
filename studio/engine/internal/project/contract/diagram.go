@@ -6,8 +6,8 @@ const hexColor = `^#[0-9a-fA-F]{6}$`
 
 // Equipment kinds; TRANSFORMER/LOAD/BUSBAR were retired in format 12 (ADR-0033),
 // INFEED is drawing-only (ADR-0041) and MEASUREMENT_LIST is a Go-only panel (ADR-0090). The
-// Go-only POINT_PANEL (ADR-0102) and TAP_TRANSFORMER (ADR-0109) are accepted by kindChoice,
-// not listed here.
+// Go-only POINT_PANEL (ADR-0102), TAP_TRANSFORMER (ADR-0109) and IED (ADR-0112) are accepted
+// by kindChoice, not listed here.
 var equipmentKinds = []string{"CB", "DS", "ES", "CT", "VT", "SOURCE", "RELAY", "TRIP_RELAY",
 	"PUSH_BUTTON", "JUNCTION", "INFEED", "MEASUREMENT_LIST"}
 
@@ -26,6 +26,7 @@ var equipmentData = model("EquipmentData", true,
 	omittable("points", list(PointPanelLimit, pointRow)),
 	omittable("tap_changer", tapChanger),
 	omittable("command_options", commandOptions),
+	omittable("goose_link", optional(gooseLink)),
 	defaulted("trip_command_polarity", literal("operate_false", "operate_true"), "operate_false"),
 	defaulted("trip_state_polarity", literal("operated_false", "operated_true"), "operated_true"),
 	defaulted("push_mode", literal("spc_momentary", "latching_status", "self_resetting"), "spc_momentary"),

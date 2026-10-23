@@ -1,13 +1,18 @@
 import type { EquipmentKind, EquipmentNode } from '../api/types';
 
-/** Which SLD symbol a changed IED signal belongs to (ADR-0103): the equipment whose own bindings
- * name that reference. A view lookup only; the bindings themselves are the project's. */
-export type OriginRole = 'direct' | 'single' | 'open' | 'closed' | 'control' | 'relay' | 'measurement';
-export type Origin = { nodeId: string; role: OriginRole; kind: EquipmentKind; label: string; row?: string };
-export type OriginLookup = (iedId: string, ref: string) => Origin | null;
+/** Which SLD component triggered a changed IED signal (ADR-0112, refining ADR-0103): only a
+ * component the user acted on, never a guess. `candidates` are the equipment whose own bindings
+ * name that reference (state, command, panel rows); a node-only trigger event picks one of them.
+ * A view lookup only; the bindings themselves are the project's. */
+export type OriginRole = 'direct' | 'single' | 'open' | 'closed' | 'control' | 'relay' | 'measurement' | 'trigger';
+/** `words`: what was sent ("open", "on"); `row`: the point panel row or relay/measurement row. */
+export type Origin = { nodeId: string; role: OriginRole; kind: EquipmentKind; label: string; row?: string; words?: string };
+/** `at`: when the signal changed; an origin only counts near a trigger event. */
+export type OriginLookup = (iedId: string, ref: string, at: number) => Origin | null;
 
 /** State bindings win over a command binding, which wins over panel rows. */
-const PRIORITY: Record<OriginRole, number> = { direct: 0, single: 0, open: 0, closed: 0, control: 1, relay: 2, measurement: 2 };
+const PRIORITY: Record<OriginRole, number> = { direct: 0, single: 0, open: 0, closed: 0, control: 1, relay: 2, measurement: 2,
+  trigger: 0 };
 
 /** Same data, or one is a part of the other ("LD/XCBR1.Pos" and "LD/XCBR1.Pos.stVal"). */
 export function refMatches(bound: string, changed: string): boolean {
@@ -34,19 +39,18 @@ function entries(node: EquipmentNode): [string, Entry][] {
   return result;
 }
 
-/** A lookup built once per drawing; ties go to the topmost, then leftmost symbol. */
-export function originIndex(nodes: EquipmentNode[]): OriginLookup {
+/** Every symbol whose bindings name the reference, best first (state, then command, then rows;
+ * ties to the topmost, then leftmost). Built once per drawing. */
+export function originCandidates(nodes: EquipmentNode[]): (iedId: string, ref: string) => Origin[] {
   const byIed = new Map<string, Entry[]>();
   for (const node of nodes) for (const [iedId, entry] of entries(node)) byIed.set(iedId, [...(byIed.get(iedId) || []), entry]);
-  return (iedId, ref) => {
-    const found = (byIed.get(iedId) || []).filter(entry => refMatches(entry.ref, ref))
-      .sort((a, b) => a.rank - b.rank || a.y - b.y || a.x - b.x)[0];
-    return found ? found.origin : null;
-  };
+  return (iedId, ref) => (byIed.get(iedId) || []).filter(entry => refMatches(entry.ref, ref))
+    .sort((a, b) => a.rank - b.rank || a.y - b.y || a.x - b.x).map(entry => entry.origin);
 }
 
 const SHORT: Partial<Record<EquipmentKind, string>> = { SOURCE: 'Source', RELAY: 'Relay', TRIP_RELAY: 'Trip relay',
-  PUSH_BUTTON: 'Button', JUNCTION: 'Junction', INFEED: 'Infeed', MEASUREMENT_LIST: 'Measurements' };
+  PUSH_BUTTON: 'Button', JUNCTION: 'Junction', INFEED: 'Infeed', MEASUREMENT_LIST: 'Measurements', POINT_PANEL: 'Panel',
+  TAP_TRANSFORMER: 'Transformer' };
 
 /** Short symbol name for words: "CB Y130"; a label that already starts with its kind stays as it is. */
 export function symbolName(origin: Pick<Origin, 'kind' | 'label'>): string {

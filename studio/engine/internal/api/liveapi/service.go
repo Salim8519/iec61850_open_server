@@ -52,6 +52,8 @@ func (s *Service) Routes() []api.Route {
 		route("GET", "/health/report.html", false, s.healthReport),
 		route("GET", "/ieds/{ied_id}/signals", false, s.listSignals),
 		route("PUT", "/ieds/{key}/test-mode", false, s.testMode),
+		route("GET", "/ieds/{ied_id}/goose/messages", false, s.gooseMessages), // Go-only (ADR-0112)
+		route("GET", "/goose/members", false, s.gooseMembers),
 	}
 }
 

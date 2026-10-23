@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Send, SlidersHorizontal, TriangleAlert } from 'lucide-react';
 import type { ExtendedControl, Ied, PanelPoint } from '../../../api/types';
 import { useLiveValue } from '../../../equipment/liveContext';
@@ -11,6 +11,9 @@ import { shortRef } from '../../../equipment/relayDisplay';
 import { EditableText } from '../../../ui/EditableText';
 import { KindBadge, kindRow } from '../../../ui/KindBadge';
 import { POINT_COPY } from '../../../copy/pointPanel';
+import { GOOSE_TAG } from '../../../copy/iedComponent';
+import { messagesOfRef } from '../../../equipment/gooseLeaves';
+import { GooseLeaves } from '../../../equipment/iedContext';
 import { PointRowEdit } from './PointRowEdit';
 import { PointRowRun } from './PointRowRun';
 import type { Outcome } from './usePointActions';
@@ -36,12 +39,15 @@ export function PointRow({ nodeId, point, ied, extended, locked, available, why,
   const shown = point.type === 'command' ? null : showPoint(point, raw, stopped);
   const unhealthy = locked && point.type !== 'command' && point.healthy !== null && !stopped && !isHealthy(point, raw);
   const name = point.label === pointRef(point) ? shortRef(point.label, ied?.name) : point.label;
+  // A command row's value is the status of its control object.
+  const goose = messagesOfRef(useContext(GooseLeaves), ied?.id, point.type === 'command' ? control?.status : point.source?.ref);
   return <div className="pp-row kind-edge" {...kindRow(kind)} title={pointRef(point)}>
     <div className="pp-row-line">
       <KindBadge kind={kind} raw={control?.cdc} />
       <span className="pp-name">
         {locked ? name : <EditableText value={name} label={`Name of ${point.label}`} placeholder="Name this point"
           onSave={text => change(point.id, { label: text.trim().slice(0, 100) || pointRef(point) })} />}
+        {goose.length > 0 && <small className="pp-goose" title={GOOSE_TAG.title(goose.length)}>{GOOSE_TAG.text}</small>}
         {unhealthy && <small className="pp-flag"><TriangleAlert size={11} aria-hidden="true" /> {POINT_COPY.notHealthyOne}</small>}
       </span>
       {shown && <span className={`point-chip ${shown.state}`}>{shown.text}</span>}

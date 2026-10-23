@@ -18,10 +18,10 @@ const PointPanelLimit = 300
 // golden vectors record (ADR-0102 lists this as a limitation).
 var knownKind = literal(equipmentKinds...)
 
-// kindChoice accepts every kind of equipmentKinds, the point panel and the tap-changer
-// transformer (ADR-0109).
+// kindChoice accepts every kind of equipmentKinds, the point panel, the tap-changer
+// transformer (ADR-0109) and the IED component (ADR-0112).
 func kindChoice(c *collector, at loc, input any) (any, bool) {
-	if input == pointPanelKind || input == tapTransformerKind {
+	if input == pointPanelKind || input == tapTransformerKind || input == iedComponentKind {
 		return input, true
 	}
 	return knownKind(c, at, input)

@@ -22,15 +22,15 @@ test('an outside sender starts beside its receiver at every zoom, never off the 
   }
 });
 
-test('dot, line and words keep their screen size; the receiver tag names the sender for ~2 s', () => {
+test('dot, line and words keep their screen size; the receiving IED component names the sender for ~2 s', () => {
   const overlay = read('features/diagram/signals/SignalOverlay.tsx');
-  assert.match(overlay, /radius=\{5 \* scale\}/);
+  assert.match(read('features/diagram/signals/FlyLines.tsx'), /radius=\{5 \* scale\}/);
   assert.match(overlay, /--signal-scale/);
-  assert.match(overlay, /received=\{received &&/);
-  // Per-link canvas words were replaced by one chip per change, scaled like the tags (ADR-0103).
+  assert.match(overlay, /received=\{flashes\.get\(name\)\}/);
+  // Per-link canvas words were replaced by one chip per change, scaled like the chips (ADR-0103, ADR-0112).
   assert.match(read('features/diagram/signals/signal-layers.css'), /\.signal-route-line \{[^}]*stroke-width: calc\(2px \* var\(--signal-scale, 1\)\)/);
   assert.match(read('features/diagram/signals/ChangeChip.tsx'), /scale\(\$\{scale\}\)/);
-  assert.match(read('features/diagram/signals/IedTag.tsx'), /ied-tag-received/);
+  assert.match(read('features/diagram/signals/IedFlash.tsx'), /ied-flash-line/);
   assert.equal(receivedLabel('FEED1', 'stNum 8', 'observed'), '← FEED1 · stNum 8');
   assert.equal(receivedLabel('FEED1', '', 'expected'), '← FEED1 · new state (expected)');
 });

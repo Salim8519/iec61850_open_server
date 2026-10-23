@@ -9,7 +9,7 @@ export function relayBindings(data: EquipmentData): SignalBinding[] {
   return (data.relay_statuses || []).map(entry => entry.source);
 }
 
-/** Measurement list rows (ADR-0090), so signal layers and IED tags see the list. */
+/** Measurement list rows (ADR-0090): the IEDs and points a measurement list reads. */
 export function measurementBindings(data: EquipmentData): SignalBinding[] {
   return (data.measurements || []).map(entry => entry.source);
 }

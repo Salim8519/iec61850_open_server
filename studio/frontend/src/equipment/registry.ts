@@ -15,4 +15,5 @@ export const equipment: { kind: EquipmentKind; label: string; subtitle: string }
   { kind: 'JUNCTION', label: 'Junction', subtitle: 'Drawing connection point' },
   { kind: 'INFEED', label: 'Infeed', subtitle: 'Line, transformer or grid feeding the station' },
   { kind: 'TAP_TRANSFORMER', label: 'Tap-changer transformer', subtitle: 'Power transformer · Raise/Lower · Auto/Manual' },
+  { kind: 'IED', label: 'IED', subtitle: 'One whole IED · its GOOSE messages · no wires' },
 ];

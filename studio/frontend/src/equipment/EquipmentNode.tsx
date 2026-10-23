@@ -7,6 +7,7 @@ import { switchPosition, tripRelayState } from './position';
 import { RelayPanel } from './RelayPanel';
 import { MeasurementPanel } from './MeasurementPanel';
 import { PointPanelCard } from './PointPanelCard';
+import { IedCard } from './IedCard';
 import { TapTransformerBody } from './TapTransformerBody';
 import { JunctionBody } from './JunctionBody';
 import { kindInfo, stateTone } from './kindInfo';
@@ -67,6 +68,8 @@ function EquipmentNodeView({ id, data, selected }: NodeProps<NodeType>) {
     <MeasurementPanel nodeId={id} data={data} iedNames={iedNames} /></div>;
   if (data.kind === 'POINT_PANEL') return <div className={`equipment-node points ${selected ? 'selected' : ''}`}>
     <PointPanelCard nodeId={id} data={data} iedNames={iedNames} /></div>;
+  if (data.kind === 'IED') return <div className={`equipment-node ied ${selected ? 'selected' : ''}`}>
+    <IedCard data={data} /></div>; // ADR-0112: no terminals, one whole IED
   if (data.kind === 'TAP_TRANSFORMER') return <div className={`equipment-node cat-${category} tap ${selected ? 'selected' : ''}`}>
     <Terminal id="north" position={Position.Top} /><Terminal id="west" position={Position.Left} />
     <TapTransformerBody nodeId={id} data={data} />

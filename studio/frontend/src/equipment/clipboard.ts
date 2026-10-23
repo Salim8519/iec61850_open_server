@@ -38,9 +38,9 @@ export function pasteClip(diagram: Diagram, clip: Clip, offset: number,
     idMap.set(node.id, id);
     const label = uniqueLabel(node.data.label, taken);
     taken.add(label);
-    return { ...structuredClone(node), id,
-      position: { x: node.position.x + offset, y: node.position.y + offset },
-      data: { ...structuredClone(node.data), label } };
+    // A copied IED component starts without its IED: one component per IED (ADR-0112).
+    const data = node.data.kind === 'IED' ? { ...structuredClone(node.data), label, ied_id: null } : { ...structuredClone(node.data), label };
+    return { ...structuredClone(node), id, position: { x: node.position.x + offset, y: node.position.y + offset }, data };
   });
   const edges = clip.edges.map(edge => ({ ...edge, id: `e-${newId()}`,
     source: idMap.get(edge.source)!, target: idMap.get(edge.target)! }));

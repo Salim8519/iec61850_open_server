@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Network, Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { EquipmentKind } from '../../api/types';
 import { EquipmentSymbol } from '../../equipment/symbols/EquipmentSymbol';
@@ -6,17 +6,20 @@ import { kindInfo } from '../../equipment/kindInfo';
 import { BAY_ORDER, BAYS, type BayKind } from '../../equipment/bayTemplates';
 import type { Point } from '../../equipment/placeNew';
 import { useVisibleSpot } from './useVisibleSpot';
+import { GOOSE_IEDS_COPY } from '../../copy/iedComponent';
 
 const GROUPS: { title: string; kinds: EquipmentKind[] }[] = [
   { title: 'Switching', kinds: ['CB', 'DS', 'ES'] },
   { title: 'Measuring', kinds: ['CT', 'VT', 'SOURCE', 'MEASUREMENT_LIST'] },
   { title: 'Protection & control', kinds: ['RELAY', 'TRIP_RELAY', 'PUSH_BUTTON', 'POINT_PANEL'] },
   { title: 'Power in and drawing', kinds: ['INFEED', 'TAP_TRANSFORMER', 'JUNCTION'] },
+  { title: 'IEDs and GOOSE', kinds: ['IED'] },
 ];
 
 /** Big labelled tiles grouped by purpose; click to add or drag onto the canvas. */
-export function AddMenu({ disabled, add, addBay, attachHint }: {
+export function AddMenu({ disabled, add, addBay, attachHint, addAllIeds }: {
   disabled: boolean; add: (kind: EquipmentKind, at: Point) => void; addBay: (kind: BayKind) => void; attachHint: string;
+  addAllIeds: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const spot = useVisibleSpot();
@@ -36,7 +39,11 @@ export function AddMenu({ disabled, add, addBay, attachHint }: {
         <div className="add-tiles">{group.kinds.map(kind => <button key={kind} className="add-tile" draggable
           onDragStart={event => { event.dataTransfer.setData('application/studio-equipment', kind); event.dataTransfer.effectAllowed = 'move'; }}
           onClick={() => { add(kind, spot()); setOpen(false); }}>
-          <EquipmentSymbol kind={kind} size={40} /><span>{kindInfo(kind).name}</span></button>)}</div></div>)}
+          <EquipmentSymbol kind={kind} size={40} /><span>{kindInfo(kind).name}</span></button>)}
+          {/* One click: a component for every GOOSE IED, one row above the drawing, one Undo (ADR-0112). */}
+          {group.kinds.includes('IED') && <button className="add-tile" title={GOOSE_IEDS_COPY.addAllHint}
+            onClick={() => { addAllIeds(); setOpen(false); }}><Network size={36} aria-hidden /><span>{GOOSE_IEDS_COPY.addAll}</span></button>}
+        </div></div>)}
       <div><div className="section-label" style={{ padding: '6px 6px 8px' }}>Whole bays</div>
         <p className="small muted" style={{ margin: '0 6px 8px' }}>{attachHint}</p>
         <div className="add-tiles">{BAY_ORDER.map(kind => <button key={kind} className="add-tile" draggable title={BAYS[kind].hint}

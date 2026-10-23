@@ -5,9 +5,10 @@ import type { Box } from './signalLayout.ts';
  * to one shared lane above the drawing, runs along it and drops down the receiver's free gap.
  * Every receiver of one change shares the climb and the lane, so they read as one trunk. */
 export type Point = { x: number; y: number };
-/** `box`: the equipment the end belongs to; a route may touch only its own two end boxes.
- * `edge`: start on the box's side (the symbol itself), not at `point`. */
-export type RouteEnd = { point: Point; box: Box | null; edge?: boolean };
+/** `box`: the equipment the end belongs to; a route may touch only its own end boxes.
+ * `edge`: start on the box's side (the symbol itself), not at `point`.
+ * `up`: leave straight up from `point` when that is free (an IED component's top, ADR-0112). */
+export type RouteEnd = { point: Point; box: Box | null; edge?: boolean; up?: boolean };
 export type Route = { points: Point[]; path: string; length: number; clear: boolean; at: (t: number) => Point };
 export type RouteOptions = { clearance?: number; margin?: number; radius?: number };
 
@@ -54,7 +55,7 @@ export function exitPath(from: RouteEnd, boxes: Box[], lane: number, toward = 1,
   const pad = clearance / 2;
   const starts = (gap: number): Point => !box || !from.edge ? from.point
     : { x: gap < box.x + box.width / 2 ? box.x : box.x + box.width, y: box.y + box.height / 2 };
-  if (!box && free(from.point, { x: from.point.x, y: lane }, boxes, skip, pad)) return [from.point, { x: from.point.x, y: lane }];
+  if ((!box || from.up) && free(from.point, { x: from.point.x, y: lane }, boxes, skip, pad)) return [from.point, { x: from.point.x, y: lane }];
   const origin = box ? { x: box.x + box.width / 2, y: from.point.y } : from.point;
   for (const gap of columns(origin.x, boxes, clearance, toward)) {
     if (box && inside(gap, box.x - clearance + 0.5, box.x + box.width + clearance - 0.5)) continue;
@@ -83,13 +84,15 @@ export function dropPath(to: RouteEnd, boxes: Box[], lane: number, clearance = R
   return [{ x: end.x, y: lane }, end];
 }
 
-/** Drop repeated points and middle points of straight runs. */
+/** Drop repeated points and middle points of straight runs; a turn back (down into an IED
+ * component and up again) is kept, so the route really passes that component. */
 export function simplify(points: Point[]): Point[] {
   const unique = points.filter((point, index) => index === 0 || point.x !== points[index - 1].x || point.y !== points[index - 1].y);
   return unique.filter((point, index) => {
     if (index === 0 || index === unique.length - 1) return true;
     const a = unique[index - 1], b = unique[index + 1];
-    return !((a.x === point.x && point.x === b.x) || (a.y === point.y && point.y === b.y));
+    return !((a.x === point.x && point.x === b.x && (point.y - a.y) * (b.y - point.y) >= 0)
+      || (a.y === point.y && point.y === b.y && (point.x - a.x) * (b.x - point.x) >= 0));
   });
 }
 
@@ -145,4 +148,17 @@ export function routeFan(from: RouteEnd, targets: RouteEnd[], boxes: Box[], opti
 
 export function routeLine(from: RouteEnd, to: RouteEnd, boxes: Box[], options: RouteOptions = {}): Route {
   return routeFan(from, [to], boxes, options)[0];
+}
+
+/** The middle of a box's top edge: where a line ends on, or leaves, an IED component (ADR-0112). */
+export const topOf = (box: Box): Point => ({ x: box.x + box.width / 2, y: box.y });
+
+/** From the origin into the sender's IED component, then out of it to every receiver: one route per
+ * receiver, sharing the first leg (ADR-0112: origin -> sender IED -> receiving IEDs). */
+export function routeVia(from: RouteEnd, via: Box, targets: RouteEnd[], boxes: Box[], options: RouteOptions = {}): Route[] {
+  const first = routeLine(from, { point: topOf(via), box: via }, boxes, options);
+  const fan = routeFan({ point: topOf(via), box: via, up: true }, targets, boxes, options);
+  const clearance = options.clearance ?? ROUTE_CLEARANCE;
+  return fan.map((route, index) => build([...first.points, ...route.points], boxes,
+    [from.box?.id, via.id, targets[index].box?.id], options.radius ?? CORNER_RADIUS, clearance / 2 - 0.5));
 }

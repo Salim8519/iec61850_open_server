@@ -18,6 +18,8 @@ import { SwitchHints } from './SwitchHints';
 import { SwitchOperate, type Operate } from './SwitchOperate';
 import { EquipmentTest, type RunTest } from './EquipmentTest';
 import { TEST_COPY } from '../../equipment/testButtons';
+import { GooseLinkSection } from './ied/GooseLinkSection';
+import { IedSheet } from './ied/IedSheet';
 import type { SwitchHints as Hints } from '../../equipment/energization';
 
 type Props = {
@@ -41,7 +43,8 @@ export function EquipmentSheet({ node, project, locked, busy, operation, section
   const push = data.kind === 'PUSH_BUTTON';
   const statusButton = push && data.push_mode !== 'spc_momentary';
   const tapChanger = data.kind === 'TAP_TRANSFORMER';
-  const showState = !['JUNCTION', 'RELAY', 'INFEED', 'MEASUREMENT_LIST', 'POINT_PANEL', 'TAP_TRANSFORMER'].includes(data.kind) &&
+  const iedComponent = data.kind === 'IED';
+  const showState = !['JUNCTION', 'RELAY', 'INFEED', 'MEASUREMENT_LIST', 'POINT_PANEL', 'TAP_TRANSFORMER', 'IED'].includes(data.kind) &&
     (!push || statusButton);
   const showControl = switching || trip || (push && !statusButton);
   const canAct = statusButton ? !!data.state_mapping : !!data.control_binding;
@@ -73,7 +76,8 @@ export function EquipmentSheet({ node, project, locked, busy, operation, section
         {operation && <p className="small" role="status" style={{ margin: 0 }}>{operation}</p>}</section>}
       {locked && tapChanger && <TapOperate nodeId={node.id} data={data} message={operation} />}
       {locked && <EquipmentTest node={node} project={project} running={running} busy={busy} test={test} message={testMessage} />}
-      <section className="sheet-section"><BasicSettings data={data} locked={locked} update={update} /></section>
+      {iedComponent ? <IedSheet node={node} project={project} locked={locked} perform={perform} update={update} />
+        : <section className="sheet-section"><BasicSettings data={data} locked={locked} update={update} /></section>}
       {showState && <section className="sheet-section"><h3>{info.state} comes from</h3>
         <StateMappingEditor key={`${node.id}:state:${data.push_mode}`} data={data} ieds={project.ieds}
           disabled={locked} update={update} /></section>}
@@ -89,12 +93,13 @@ export function EquipmentSheet({ node, project, locked, busy, operation, section
       {data.kind === 'POINT_PANEL' && <section className="sheet-section"><h3>Points in this panel</h3>
         <PointPanelSheet nodeId={node.id} data={data} project={project} locked={locked} update={update} /></section>}
       {tapChanger && <TapChangerSheet nodeId={node.id} data={data} project={project} locked={locked} update={update} />}
+      <GooseLinkSection node={node} project={project} locked={locked} perform={perform} update={update} />
       {push && !locked && pushToPanels && <PushToPanels count={pushToPanels.count} convert={pushToPanels.convert} />}
       {source && <section className="sheet-section"><h3>How the value changes</h3>
         <SourceEditor point={source} project={project} perform={perform} /></section>}
       <section className="sheet-section"><AdvancedSettings data={data} locked={locked} update={update} applyColors={applyColors} />
         {!locked && <div className="row sheet-actions">
-          {!['JUNCTION', 'RELAY', 'MEASUREMENT_LIST', 'POINT_PANEL'].includes(data.kind) && <button className="ghost" onClick={() =>
+          {!['JUNCTION', 'RELAY', 'MEASUREMENT_LIST', 'POINT_PANEL', 'IED'].includes(data.kind) && <button className="ghost" onClick={() =>
             update({ ...data, rotation: (data.rotation + 90) % 360 })}><RotateCw size={16} />Rotate</button>}
           <button className="ghost" onClick={duplicate}><Copy size={16} />Duplicate</button>
           {linkedIed && showFlow && <button className="ghost" onClick={() => showFlow(linkedIed)}>
