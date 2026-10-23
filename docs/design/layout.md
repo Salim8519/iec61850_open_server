@@ -59,7 +59,10 @@ bar (search, chips with a tick when on, "N of M · Clear"). Long explanations si
 Point types (ADR-0095): every list of points shows one type badge (SP, DP, IS, MV, CT, SC, DC, SE,
 CM, CF, TX, AT, UN: letters and symbol, colour from the `--kind-*` tokens) and a 5 px left edge in
 the same colour; commands have a double border, helpers and unknown types a dotted one. Every point
-list filters by one "All types" list with counts, and rows take one line (`compact-rows`). A value
+list filters by one "All types" list with counts, and rows take one line (`compact-rows`). Signal
+pickers (ADR-0113) show the types as chips instead (badge, name, count; two columns in a sheet, the
+chosen one ticked), the slot's type chosen with a one-line reason, an object select with counts and a
+dashed accent box of suggestions above the list. A value
 that can be changed shows a ✎ pin and a dashed line; values that change by themselves show "⟳ auto".
 Full view: the big lists (Devices data points, gateway, master, converter, SNMP, Explorer) have a
 *Full view* button at the end of the tab row; the list then fills the window under a slim dark bar

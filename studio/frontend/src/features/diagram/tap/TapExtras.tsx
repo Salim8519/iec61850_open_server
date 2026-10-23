@@ -4,7 +4,7 @@ import { NUMERIC_KINDS } from '../../../equipment/measurementDisplay';
 import { TAP_COPY } from '../../../copy/tapChanger';
 import { TapControlField, TapNumber, TapSignalField } from './TapFields';
 
-type Props = { nodeId: string; tap: TapChanger; project: Project; locked: boolean;
+type Props = { nodeId: string; name: string; tap: TapChanger; project: Project; locked: boolean;
   set: (patch: Partial<TapChanger>) => void; typedOf: (ied: Ied | undefined) => readonly ExtendedControl[] };
 
 const AVR_FIELDS: (keyof AvrSettings)[] = ['target_kv', 'bandwidth_pct', 'delay_s', 'step_pct', 'hv_rated_kv',
@@ -21,7 +21,7 @@ function avrProblem(key: keyof AvrSettings, value: number): string | null {
 }
 
 /** The optional parts of a tap changer: Auto/Manual, LV voltage and the simulated voltage regulator. */
-export function TapExtras({ nodeId, tap, project, locked, set, typedOf }: Props) {
+export function TapExtras({ nodeId, name, tap, project, locked, set, typedOf }: Props) {
   const avr = tap.avr;
   const canRegulate = !!tap.tap_source && commandReady(tap);
   const setAvr = (patch: Partial<AvrSettings>) => set({ avr: { ...avr, ...patch } });
@@ -29,7 +29,7 @@ export function TapExtras({ nodeId, tap, project, locked, set, typedOf }: Props)
     <section className="sheet-section"><h3>{TAP_COPY.modeTitle}</h3>
       <p className="small muted" style={{ marginTop: 0 }}>{TAP_COPY.modeHint}</p>
       <TapSignalField title={TAP_COPY.modeSourceLabel} hint="Not chosen: the simulated regulator's own switch is used."
-        ieds={project.ieds} value={tap.mode_source} kinds={MODE_KINDS} fc="ST" memoryKey={`sld-tap-mode-${nodeId}`}
+        ieds={project.ieds} value={tap.mode_source} kinds={MODE_KINDS} fc="ST" memoryKey={`sld-tap-mode-${nodeId}`} near={name}
         disabled={locked} change={binding => set({ mode_source: binding })} />
       <TapControlField label={TAP_COPY.modeControlLabel} ieds={project.ieds} value={tap.mode_control}
         controlsOf={ied => tapControls(ied, typedOf(ied)).mode} empty="This IED has no SPC or ENC control here." disabled={locked}
@@ -42,7 +42,7 @@ export function TapExtras({ nodeId, tap, project, locked, set, typedOf }: Props)
     </section>
     <section className="sheet-section"><h3>{TAP_COPY.voltageTitle}</h3>
       <TapSignalField title="LV voltage" hint={TAP_COPY.voltageHint} ieds={project.ieds} value={tap.voltage_source}
-        kinds={NUMERIC_KINDS} fc="MX" memoryKey={`sld-tap-lv-${nodeId}`} disabled={locked}
+        kinds={NUMERIC_KINDS} fc="MX" memoryKey={`sld-tap-lv-${nodeId}`} near={name} disabled={locked}
         change={binding => set({ voltage_source: binding })} /></section>
     <section className="sheet-section"><h3>{TAP_COPY.avrTitle}</h3>
       <p className="small muted" style={{ marginTop: 0 }}>{TAP_COPY.avrHint}</p>

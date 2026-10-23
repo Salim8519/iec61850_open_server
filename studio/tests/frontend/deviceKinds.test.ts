@@ -90,7 +90,7 @@ test('every point list of the area shows the kind badge and the shared row edge'
     assert.match(source(file), /TypeCell|KindBadge/, `${file} shows the badge`);
     assert.match(source(file) + source('features/test/TestPoints.tsx'), /compact-rows/, 'rows are compact');
   }
-  for (const file of ['components/SignalSearchPicker.tsx', 'features/diagram/MeasurementRow.tsx', 'features/diagram/RelayStatusRow.tsx']) {
+  for (const file of ['components/signalPicker/SignalPickRow.tsx', 'features/diagram/MeasurementRow.tsx', 'features/diagram/RelayStatusRow.tsx']) {
     assert.match(source(file), /<KindBadge /, `${file} shows the badge`);
     assert.match(source(file), /kindRow\(/, `${file} gets the edge`);
   }

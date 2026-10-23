@@ -12,6 +12,8 @@ import (
 // "devices": [...]}. values gives the current point values; nil reads the model's own
 // "value" keys (Stored). Errors come in Python's order: an unknown report
 // (StudioError "Unknown report reference"), then int() of offset, then of limit (ValueError).
+// The Go-only parameters (ADR-0095, ADR-0113) add keys after these and never change them for a
+// request that does not use them.
 func (ix *Index) Search(q Query, values ValueReader) (*pyjson.Object, error) {
 	if values == nil {
 		values = ix.Stored()
@@ -24,60 +26,40 @@ func (ix *Index) Search(q Query, values ValueReader) (*pyjson.Object, error) {
 		}
 		report = &set
 	}
-	matches := ix.filter(q, report, values)
-	start, end, err := q.window(len(matches))
+	found := ix.scan(q, report, values)
+	start, end, err := q.window(len(found.matches))
 	if err != nil {
 		return nil, err
 	}
 	items := make([]any, 0, end-start)
-	for _, position := range matches[start:end] {
-		item := ix.signals[position]
-		object := pyv.Shallow(item.object)
-		object.Set("quality", pointValue(values, item.qualityRef))
-		object.Set("timestamp", pointValue(values, item.timeRef))
-		items = append(items, object)
+	for _, position := range found.matches[start:end] {
+		items = append(items, ix.item(position, values, found.codes, q.Annotate))
 	}
 	devices := pyv.Strings(ix.devices)
-	result := pyv.O("total", int64(len(matches)), "items", items, "devices", devices)
+	result := pyv.O("total", int64(len(found.matches)), "items", items, "devices", devices)
 	if q.KindCounts { // Go only (ADR-0095)
-		result.Set("kind_counts", ix.kindCounts(q, report, values))
+		result.Set("kind_counts", found.kindCounts())
+	}
+	if q.LNCounts { // Go only (ADR-0113)
+		result.Set("ln_counts", found.lnCounts())
+	}
+	if q.NearSet {
+		result.Set("suggested", ix.suggested(q, found, values))
 	}
 	return result, nil
 }
 
-// filter returns the positions of the matching signals in model order. It starts from the
-// smallest known candidate list (exact reference, report or dataset members, q) instead of
-// scanning every signal, and skips the per-signal checks entirely when nothing filters.
-func (ix *Index) filter(q Query, report *memberSet, values ValueReader) []int {
-	candidates, all := ix.candidates(q, report)
-	if all && q.noFilter() {
-		positions := make([]int, len(ix.signals))
-		for index := range positions {
-			positions[index] = index
-		}
-		return positions
+// item is one listed signal: a copy of the model's signal with its current quality and time,
+// and its point kind when annotate=1 asked for it.
+func (ix *Index) item(position int, values ValueReader, codes []uint8, annotate bool) *pyjson.Object {
+	item := &ix.signals[position]
+	object := pyv.Shallow(item.object)
+	object.Set("quality", pointValue(values, item.qualityRef))
+	object.Set("timestamp", pointValue(values, item.timeRef))
+	if annotate {
+		object.Set("point_kind", kindNames[codes[position]])
 	}
-	var matches []int
-	check := func(position int) {
-		item := &ix.signals[position]
-		if !ix.keep(q, report, item) {
-			return
-		}
-		if q.BadQuality && !badQuality(values, item.qualityRef) {
-			return
-		}
-		matches = append(matches, position)
-	}
-	if all {
-		for position := range ix.signals {
-			check(position)
-		}
-	} else {
-		for _, position := range candidates {
-			check(position)
-		}
-	}
-	return matches
+	return object
 }
 
 // candidates picks the positions to check; all is true when every signal is a candidate.
@@ -100,10 +82,11 @@ func (ix *Index) candidates(q Query, report *memberSet) ([]int, bool) {
 // noFilter is true when every condition of the route's comprehension holds for any signal.
 func (q Query) noFilter() bool {
 	return q.Text == "" && q.FC == "" && q.Ref == "" && q.Kinds == nil && !q.Writable && q.Report == "" &&
-		q.LD == "" && !q.BadQuality && !q.InDataset && q.PointKind == "" && !q.HideHelpers
+		q.LD == "" && !q.BadQuality && !q.InDataset && q.PointKind == "" && !q.HideHelpers && q.LN == ""
 }
 
-// keep applies the value-independent conditions of the comprehension.
+// keep applies the value-independent conditions of the comprehension (the point kind and the
+// logical node are checked by scan, which also counts them).
 func (ix *Index) keep(q Query, report *memberSet, item *signal) bool {
 	switch {
 	case q.Text != "" && !strings.Contains(item.haystack, q.Text):
@@ -121,8 +104,6 @@ func (ix *Index) keep(q Query, report *memberSet, item *signal) bool {
 	case q.InDataset && !ix.inDataset.refs[item.ref]:
 		return false
 	case q.LD != "" && item.ld != q.LD:
-		return false
-	case !q.keepKind(item):
 		return false
 	}
 	return true

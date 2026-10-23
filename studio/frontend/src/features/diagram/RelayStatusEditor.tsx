@@ -107,7 +107,7 @@ export function RelayStatusEditor({ nodeId, data, project, locked, update, perfo
       <div className="relay-adder-head"><strong>Add from {relayIed.name}</strong>
         <span className="small muted">{entries.length}/{MAX_STATUSES}</span>
         <button className="ghost" onClick={() => setAdding(false)}>Done</button></div>
-      <RelaySignalAdder ied={relayIed}
+      <RelaySignalAdder ied={relayIed} near={data.label}
         existing={new Set(entries.map(item => `${item.source.ied_id}:${item.source.ref}`))}
         disabled={switching} onAdd={addSignal} /></div> :
       <button className="relay-add" onClick={() => setAdding(true)}><Plus size={15} />Add signals</button>)}

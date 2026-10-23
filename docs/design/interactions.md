@@ -111,7 +111,8 @@
   drawing equipment/wires, and saves one recovery archive before changing the project.
   Devices › *Select* puts tick boxes on the rows and a footer "N selected · Select all · Cancel ·
   Delete N IEDs" (up to 20); the device header has a *Delete* button (change 0105).
-- Signal pickers remember IED, search, report and page for the browser tab. After a choice the
+- Signal pickers remember IED, search, report, type, object and page for the browser tab (ADR-0113:
+  a slot opens on the type it takes, says why, and lists points that mention the component first). After a choice the
   list stays open with the chosen row marked and the others offering *Use this*; *Undo* restores
   the previous point and *Done* closes it. Switching between one point and two contacts keeps the
   saved connection until the new one is complete (change 0105).

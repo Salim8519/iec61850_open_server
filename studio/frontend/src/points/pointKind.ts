@@ -11,39 +11,59 @@ const COMMANDS = new Set<Kind>(['SC', 'DC', 'SE', 'CM']);
 
 export const isCommandKind = (kind: Kind) => COMMANDS.has(kind);
 
-const NUMERIC = /^(INT(8|16|32|64|128)U?|FLOAT(32|64))$/;
-const TEXTUAL = /^(VisString|Unicode|Octet)/;
+// The IEC 61850 table (ADR-0113) is the Go engine's signalindex/point_kind.go rule for rule; both are
+// checked against studio/tests/fixtures/point_kinds/iec61850.json, so a list and the engine agree.
+const NUMERIC = new Set(['INT8', 'INT16', 'INT24', 'INT32', 'INT64', 'INT128', 'INT8U', 'INT16U', 'INT24U', 'INT32U',
+  'INT64U', 'INT128U', 'FLOAT32', 'FLOAT64']);
+/** Standard types that are no process value: references, currency, control-block bit strings, checks, entry ids. */
+const OTHER_TEXT = new Set(['ObjRef', 'Currency', 'Check', 'PhyComAddr', 'TrgOps', 'OptFlds', 'SvOptFlds', 'LogOptFlds', 'EntryID']);
+const HELPERS = new Set(['Quality', 'Timestamp', 'EntryTime']);
+const SETTING_FC = new Set(['SP', 'SG', 'SE', 'CF']);
+/** Description, extension, service tracking and control-block constraints: never a process value. */
+const TEXT_FC = new Set(['DC', 'EX', 'SR', 'BR', 'RP', 'LG', 'GO', 'MS', 'US']);
+const SETTING_CLASSES = new Set(['SPG', 'ING', 'ENG', 'ORG', 'TSG', 'CUG', 'VSG', 'ASG', 'CURVE', 'CSG']);
+const DESCRIBING_CLASSES = new Set(['DPL', 'LPL', 'CSD']);
+const isText = (type: string) => /^(VisString|Unicode|Octet)/.test(type) || OTHER_TEXT.has(type);
+const classKind = (dataClass: string): Kind | undefined =>
+  Object.prototype.hasOwnProperty.call(BY_CLASS, dataClass) ? BY_CLASS[dataClass] : undefined;
 
-/** Data classes that decide the kind on their own (from the SCL DOType, when the engine sends it). */
+/** The kind each standard data class (IEC 61850-7-3 Ed2/Ed2.1) stands for, when a list only knows the class. */
 const BY_CLASS: Record<string, Kind> = {
-  SPS: 'SP', ACT: 'SP', ACD: 'SP', DPS: 'DP', INS: 'IS', ENS: 'IS', BCR: 'CT',
+  SPS: 'SP', ACT: 'SP', ACD: 'SP', DPS: 'DP', INS: 'IS', ENS: 'IS', BCR: 'CT', SEC: 'CT', HST: 'MV', VSS: 'TX',
   MV: 'MV', CMV: 'MV', SAV: 'MV', WYE: 'MV', DEL: 'MV', SEQ: 'MV', HMV: 'MV', HWYE: 'MV', HDEL: 'MV',
   SPC: 'SC', DPC: 'DC', APC: 'SE', BAC: 'SE', INC: 'SE', ENC: 'SE', BSC: 'SE', ISC: 'SE',
+  SPG: 'CF', ING: 'CF', ENG: 'CF', ORG: 'CF', TSG: 'CF', CUG: 'CF', VSG: 'CF', ASG: 'CF', CURVE: 'CF', CSG: 'CF',
+  DPL: 'TX', LPL: 'TX', CSD: 'TX',
 };
 
-/** IEC 61850 data attribute: functional constraint + basic type, refined by the data class when known.
- *  Without a data class a Boolean command stays a plain command (CM): SPC and DPC both use BOOLEAN. */
+/** IEC 61850 data attribute: functional constraint + basic type, refined by the data class where the type
+ *  cannot tell (commands, counters, histograms, settings and descriptions). Without a data class a Boolean
+ *  command stays a plain command (CM): SPC and DPC both use BOOLEAN. The rules apply in this order. */
 export function kindOf61850(fc: string, basicType: string, dataClass?: string | null): Kind {
-  if (basicType === 'Quality' || basicType === 'Timestamp') return 'AT';
+  const cls = dataClass ?? '';
+  if (fc === 'SV' || fc === 'BL') return 'CF'; // substitution and blocking are set by an operator
+  if (HELPERS.has(basicType)) return 'AT';
   if (fc === 'CO') {
-    const known = dataClass ? BY_CLASS[dataClass] : undefined;
+    const known = classKind(cls);
     if (known && COMMANDS.has(known)) return known;
-    return NUMERIC.test(basicType) ? 'SE' : 'CM';
+    return NUMERIC.has(basicType) ? 'SE' : 'CM';
   }
-  if (['SP', 'SG', 'SE', 'CF'].includes(fc)) return 'CF';
-  if (fc === 'DC' || fc === 'EX' || TEXTUAL.test(basicType)) return 'TX';
+  if (SETTING_FC.has(fc)) return 'CF';
+  if (TEXT_FC.has(fc)) return 'TX';
+  if (fc !== 'ST' && fc !== 'MX' && fc !== 'OR') return 'UN';
+  if (SETTING_CLASSES.has(cls)) return 'CF';
+  if (DESCRIBING_CLASSES.has(cls) || isText(basicType)) return 'TX';
   if (basicType === 'Dbpos') return 'DP';
-  if (basicType === 'BOOLEAN' && fc === 'ST') return 'SP';
-  if (fc === 'MX' && NUMERIC.test(basicType)) return 'MV';
-  if (fc === 'ST' && (basicType === 'Enum' || NUMERIC.test(basicType))) {
-    const known = dataClass ? BY_CLASS[dataClass] : undefined;
-    return known === 'CT' ? 'CT' : 'IS';
+  if (basicType === 'BOOLEAN') return 'SP';
+  if (NUMERIC.has(basicType)) {
+    if (fc === 'MX' || cls === 'HST') return 'MV';
+    return cls === 'BCR' || cls === 'SEC' ? 'CT' : 'IS';
   }
-  return 'UN';
+  return basicType === 'Enum' || basicType === 'Tcmd' ? 'IS' : 'UN';
 }
 
 /** Data class of a data object (SPS, DPC …) when that is all a list knows. */
-export const kindOfDataClass = (dataClass: string): Kind => BY_CLASS[dataClass] ?? 'UN';
+export const kindOfDataClass = (dataClass: string): Kind => classKind(dataClass) ?? 'UN';
 
 /** IEC 60870-5-104 / -101 type identifier name such as M_DP_TB_1 or C_SE_NC_1. */
 export function kindOfIec104(typeId: string): Kind {

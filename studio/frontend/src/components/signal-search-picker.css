@@ -5,6 +5,8 @@
 /* Report and point type side by side; each takes half of a narrow sheet, so neither is cut. */
 .signal-search-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; min-width: 0; }
 .signal-search-filters select { width: 100%; min-width: 0; }
+/* An active object filter keeps room for its text: the second border pixel is a shadow. */
+.signal-search-filters select.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .signal-search-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; max-height: 260px; overflow: auto; }
 .signal-search-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; min-width: 0;
   border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
@@ -30,3 +32,19 @@
 .signal-pick-actions { display: flex; gap: 4px; flex-shrink: 0; }
 /* One click adds every listed signal that is not added yet (measurement lists). */
 .signal-search-all { justify-self: start; }
+/* Smart picker (ADR-0113): type chips wrap into even columns inside a narrow sheet instead of being
+   cut; a long type name breaks onto a second line inside its chip. */
+.picker-kinds { display: grid; gap: 4px; min-width: 0; }
+.picker-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 2px; min-width: 0; }
+.picker-chip { min-height: 32px; min-width: 0; padding: 2px 4px; gap: 3px; justify-content: flex-start; white-space: normal;
+  text-align: left; font-size: 12px; }
+.picker-chip .kind-badge { gap: 3px; padding: 0 4px; }
+.picker-chip-name { flex: 1; line-height: 1.2; overflow-wrap: break-word; }
+.picker-chip .chip-count { flex-shrink: 0; min-width: 0; padding: 0 4px; }
+.picker-why { margin: 0; line-height: 1.35; }
+.picker-helpers { justify-self: start; min-height: 32px; white-space: normal; }
+/* Suggestions: points that mention the component's name, before the search results. */
+.signal-suggested { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 8px;
+  border: 1.5px dashed var(--accent-line); border-radius: 10px; background: var(--accent-soft); }
+.signal-suggested h5 { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 12px; color: var(--text-2); }
+.signal-search-text small.signal-search-note { color: var(--accent-hover); font-weight: 600; }

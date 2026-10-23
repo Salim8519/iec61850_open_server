@@ -27,7 +27,7 @@ export function TapChangerSheet({ nodeId, data, project, locked, update }: Props
     <section className="sheet-section"><h3>{TAP_COPY.tapTitle}</h3>
       <p className="small muted" style={{ marginTop: 0 }}>{TAP_COPY.intro}</p>
       <TapSignalField title="Tap position" hint={TAP_COPY.tapHint} ieds={project.ieds} value={tap.tap_source}
-        kinds={TAP_KINDS} fc="ST" memoryKey={`sld-tap-${nodeId}`} disabled={locked}
+        kinds={TAP_KINDS} fc="ST" memoryKey={`sld-tap-${nodeId}`} near={data.label} disabled={locked}
         change={binding => set({ tap_source: binding })} /></section>
     <section className="sheet-section"><h3>{TAP_COPY.commandTitle}</h3>
       <p className="small muted" style={{ marginTop: 0 }}>{TAP_COPY.commandHint}</p>
@@ -57,6 +57,6 @@ export function TapChangerSheet({ nodeId, data, project, locked, update }: Props
         <TapNumber label={TAP_COPY.nominalLabel} value={tap.nominal_tap} whole disabled={locked}
           check={range('nominal_tap')} hint={TAP_COPY.nominalHint} change={value => set({ nominal_tap: value })} />
       </div></section>
-    <TapExtras nodeId={nodeId} tap={tap} project={project} locked={locked} set={set} typedOf={typedOf} />
+    <TapExtras nodeId={nodeId} name={data.label} tap={tap} project={project} locked={locked} set={set} typedOf={typedOf} />
   </>;
 }

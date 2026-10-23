@@ -28,8 +28,9 @@ type signal struct {
 	timeRef    any
 }
 
-// Index is the per-IED search index. It never changes after Build and is safe for
-// concurrent use; it shares (and never modifies) the model's signal objects.
+// Index is the per-IED search index. It never changes after Build (only the point kinds and
+// logical nodes of the Go-only parameters are filled in once, on first use, under a lock) and is
+// safe for concurrent use; it shares (and never modifies) the model's signal objects.
 type Index struct {
 	ied       *pyjson.Object
 	signals   []signal
@@ -39,6 +40,8 @@ type Index struct {
 	reports   map[string]memberSet      // report_members of each report reference
 	inDataset memberSet                 // refs of every dataset's signal_refs
 	text      textIndex                 // all haystacks for the q filter
+	kindCache kindCache                 // point kinds per data-class version (ADR-0113)
+	nodes     nodeTable                 // logical nodes, made on first use (ADR-0113)
 }
 
 // memberSet is a set of signal references with the positions of the signals it selects.
