@@ -19,7 +19,7 @@ func blockInventory(root *xmldoc.Element) *catalogue {
 		for _, item := range comm.gse {
 			addresses[[2]string{get(item, "ld_inst").(string), get(item, "cb_name").(string)}] = item
 		}
-		for _, ld := range ied.FindAll("AccessPoint/Server/LDevice") {
+		for _, ld := range stationDevices(root, ied) {
 			ln0 := ld.Find("LN0")
 			if ln0 == nil {
 				continue

@@ -142,10 +142,14 @@ func gseAddress(e *xmldoc.Element, warnings *[]string, iedName, kind string) *py
 func readCommunication(root *xmldoc.Element, iedName string) (communication, []string) {
 	warnings := []string{}
 	var result communication
+	station := stationName(root, iedName) // "" for one server: every ConnectedAP, as before
 	for _, subnetwork := range root.FindAll("Communication/SubNetwork") {
 		for _, access := range subnetwork.FindAll("ConnectedAP") {
 			if name, ok := access.Get("iedName"); !ok || name != iedName {
 				continue
+			}
+			if station != "" && access.GetOr("apName", "") != station {
+				continue // ADR-0117: addresses of the simulated access point only
 			}
 			values := readParameters(access.Find("Address"))
 			raw, hasIP := lookup(values, "IP", "")

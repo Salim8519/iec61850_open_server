@@ -30,8 +30,8 @@ func DataClasses(source []byte, iedName string) (map[string]string, error) {
 		if ied.GetOr("name", "") != iedName {
 			continue
 		}
-		for _, server := range ied.FindAll("AccessPoint/Server") {
-			for _, ld := range server.FindAll("LDevice") {
+		{
+			for _, ld := range stationDevices(doc.Root, ied) {
 				domain := ld.GetOr("ldName", "")
 				if domain == "" {
 					domain = iedName + ld.GetOr("inst", "")

@@ -35,8 +35,8 @@ func ReadFlow(source string) (*Flow, error) {
 		known[ied.GetOr("name", "")] = true
 	}
 	for _, ied := range root.FindAll("IED") {
-		found, problems := gooseSubscriptions(ied, cat)
-		problems = append(problems, outsideSources(ied, known)...)
+		found, problems := gooseSubscriptions(root, ied, cat)
+		problems = append(problems, outsideSources(root, ied, known)...)
 		flow.Subscriptions[ied.GetOr("name", "")] = FlowSubscriptions{found, problems}
 		flow.IEDs = append(flow.IEDs, pyjson.NewObject().Set("name", ied.GetOr("name", "")).
 			Set("desc", ied.GetOr("desc", "")).Set("manufacturer", ied.GetOr("manufacturer", "")))
@@ -74,7 +74,7 @@ func reportBlocks(root *xmldoc.Element) []*pyjson.Object {
 	var blocks []*pyjson.Object
 	for _, ied := range root.FindAll("IED") {
 		name := ied.GetOr("name", "")
-		for _, device := range ied.FindAll("AccessPoint/Server/LDevice") {
+		for _, device := range stationDevices(root, ied) {
 			domain := device.GetOr("ldName", "")
 			if domain == "" {
 				domain = name + device.GetOr("inst", "")

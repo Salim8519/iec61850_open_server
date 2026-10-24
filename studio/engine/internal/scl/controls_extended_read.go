@@ -29,12 +29,12 @@ func ExtendedControls(source []byte, iedName string) ([]any, error) {
 		if ied.GetOr("name", "") != iedName {
 			continue
 		}
-		servers := ied.FindAll("AccessPoint/Server")
-		if len(servers) != 1 {
+		server := stationOf(doc.Root, ied).server
+		if server == nil {
 			return []any{}, nil
 		}
 		b := newBuilder(types)
-		if err := walkObjects(b, servers[0], iedName); err != nil {
+		if err := walkObjects(b, server, iedName); err != nil {
 			return nil, err
 		}
 		if b.extended == nil {

@@ -6,12 +6,12 @@ import (
 )
 
 // gooseSubscriptions is goose_links.goose_subscriptions for one subscriber IED.
-func gooseSubscriptions(ied *xmldoc.Element, cat *catalogue) ([]any, []any) {
-	lgos := lgosTargets(ied)
+func gooseSubscriptions(root, ied *xmldoc.Element, cat *catalogue) ([]any, []any) {
+	lgos := lgosTargets(root, ied)
 	var order []string
 	entries := map[string]*pyjson.Object{}
 	var diagnostics []string
-	for _, ld := range ied.FindAll("AccessPoint/Server/LDevice") {
+	for _, ld := range stationDevices(root, ied) {
 		ldDomain := ld.GetOr("ldName", "")
 		if ldDomain == "" {
 			ldDomain = ied.GetOr("name", "") + ld.GetOr("inst", "")

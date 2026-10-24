@@ -11,10 +11,10 @@ import (
 // signal-flow, "an ExtRef whose source can't be resolved"; ADR-0114). One problem per source
 // IED, in document order; ExtRefs with serviceType GOOSE or srcCBName already get one from
 // gooseSubscriptions.
-func outsideSources(ied *xmldoc.Element, known map[string]bool) []any {
+func outsideSources(root, ied *xmldoc.Element, known map[string]bool) []any {
 	var order []string
 	counts, first := map[string]int{}, map[string]string{}
-	for _, ld := range ied.FindAll("AccessPoint/Server/LDevice") {
+	for _, ld := range stationDevices(root, ied) {
 		for _, ln := range ld.Children {
 			for _, extref := range ln.FindAll("Inputs/ExtRef") {
 				source := extref.GetOr("iedName", "")

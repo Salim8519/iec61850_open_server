@@ -102,7 +102,7 @@ func (r *importRun) ied(ied *xmldoc.Element, name string, server *xmldoc.Element
 	if r.catalogue == nil {
 		r.catalogue = publisherCatalogue(r.root)
 	}
-	subscribes, diagnostics := gooseSubscriptions(ied, r.catalogue)
+	subscribes, diagnostics := gooseSubscriptions(r.root, ied, r.catalogue)
 	if status := get(r.validation, "status").(string); status != "valid" {
 		first := get(r.validation, "errors").([]any)[0].(*pyjson.Object)
 		warnings = append(warnings, "Source document XSD validation: "+status+". "+get(first, "message").(string))

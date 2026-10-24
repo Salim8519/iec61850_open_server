@@ -42,14 +42,14 @@ func extendedForDocument(source []byte) (map[string]extendedResult, error) {
 		if _, done := results[name]; done {
 			continue // ExtendedControls answers from the first IED of a name
 		}
-		servers := ied.FindAll("AccessPoint/Server")
-		if len(servers) != 1 {
+		server := stationOf(doc.Root, ied).server
+		if server == nil {
 			results[name] = extendedResult{list: []any{}}
 			continue
 		}
 		b := newBuilder(types)
 		b.skipObject = holds.skip
-		if err := walkObjects(b, servers[0], name); err != nil {
+		if err := walkObjects(b, server, name); err != nil {
 			results[name] = extendedResult{err: err}
 			continue
 		}

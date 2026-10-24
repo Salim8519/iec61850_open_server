@@ -64,12 +64,12 @@ func ReadGooseSources(documents []GooseDocument) (*pyjson.Object, error) {
 	sort.Strings(names)
 	ieds, subscriptions, problems, remote := pyjson.NewObject(), pyjson.NewObject(), pyjson.NewObject(), pyjson.NewObject()
 	for _, name := range names {
-		ied := owners[name].ied
+		ied, root := owners[name].ied, parts[owners[name].index].root
 		ieds.Set(name, pyjson.NewObject().Set("desc", ied.GetOr("desc", "")).
 			Set("manufacturer", ied.GetOr("manufacturer", "")).Set("type", ied.GetOr("type", "")).
 			Set("loaded", loaded[name]))
-		found, diagnostics := gooseSubscriptions(ied, blocks)
-		inputs := remoteInputs(ied, known)
+		found, diagnostics := gooseSubscriptions(root, ied, blocks)
+		inputs := remoteInputs(root, ied, known)
 		subscriptions.Set(name, found)
 		problems.Set(name, withoutOutside(diagnostics, inputs))
 		remote.Set(name, inputs)

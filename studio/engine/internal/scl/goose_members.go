@@ -30,7 +30,7 @@ func SubscriptionMembers(ied, subscription *pyjson.Object) (*pyjson.Object, erro
 	var found []any
 	for _, element := range parsed.Root.FindAll("IED") {
 		if value, present := element.Get("name"); present && value == name {
-			found, _ = gooseSubscriptions(element, publisherCatalogue(parsed.Root))
+			found, _ = gooseSubscriptions(parsed.Root, element, publisherCatalogue(parsed.Root))
 			break
 		}
 	}

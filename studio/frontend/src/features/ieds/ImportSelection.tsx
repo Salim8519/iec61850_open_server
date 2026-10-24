@@ -7,7 +7,9 @@ import './import-selection.css';
 export type ImportPreview = {
   file: File; available_slots: number;
   ieds: { name: string; description: string; manufacturer: string; type: string;
-    logical_devices: number; unavailable_reason: string }[];
+    logical_devices: number; unavailable_reason: string;
+    /** Go only (ADR-0117): an IED with several access points, which one is simulated. */
+    access_point_note?: string }[];
 };
 
 export function ImportSelection({ preview, busy, error, confirm, cancel, work }: {
@@ -46,6 +48,7 @@ export function ImportSelection({ preview, busy, error, confirm, cancel, work }:
         <span><strong>{ied.name}</strong><small>{[ied.manufacturer, ied.type].filter(Boolean).join(' · ') || 'Manufacturer not specified'}
           {' · '}{countOf(ied.logical_devices, 'logical device')}</small>
           {ied.description && <small>{ied.description}</small>}
+          {ied.access_point_note && <small className="import-access-point">{ied.access_point_note}</small>}
           {ied.unavailable_reason && <small className="import-unavailable">{ied.unavailable_reason}</small>}
         </span>
       </label>)}
