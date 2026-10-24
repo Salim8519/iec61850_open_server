@@ -19,13 +19,30 @@ func (m *iedModel) extendedControls() []any {
 	return controls
 }
 
-// startRequest is the worker start request; "extended_controls" is added only when the IED
-// has typed controls, so every other start request stays exactly what it was.
+// writableDeadbands is the Go-only start key "writable_deadbands" (ADR-0118): the db/zeroDb
+// references a client may change, those the SCD marks valKind Set or leaves unmarked.
+func (m *iedModel) writableDeadbands() []any {
+	refs, err := scl.CachedDeadbandWrites(m.id, m.name, pyval.Str(m.raw, "source"))
+	if err != nil {
+		return nil
+	}
+	list := make([]any, len(refs))
+	for i, ref := range refs {
+		list[i] = ref
+	}
+	return list
+}
+
+// startRequest is the worker start request; "extended_controls" and "writable_deadbands" are
+// added only when the IED has them, so every other start request stays exactly what it was.
 func startRequest(item *running, cfg string, point endpoint, goose *pyjson.Object) *pyjson.Object {
 	request := pyval.Obj("cfg", cfg, "ip", point.host, "port", point.port, "controls", item.model.controls(),
 		"edition", pyval.Get(item.ied, "edition"), "goose", goose)
 	if extended := item.model.extendedControls(); len(extended) > 0 {
 		request.Set("extended_controls", extended)
+	}
+	if deadbands := item.model.writableDeadbands(); len(deadbands) > 0 {
+		request.Set("writable_deadbands", deadbands)
 	}
 	return request
 }

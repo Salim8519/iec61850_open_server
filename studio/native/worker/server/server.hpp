@@ -32,9 +32,13 @@ struct Server {
     // clock not synchronised (the PC clock is no IEC 61850 time source), 10-bit accuracy.
     static constexpr uint8_t time_quality = 0x80 | 0x20 | 10;
     uint64_t started_at = 0;  // Run start (ms since 1970): every "t" holds it until it changes
+    std::vector<std::unique_ptr<std::string>> deadband_refs;  // ADR-0118 write handler names
     Server();
     ~Server();
     Json start(const Json& config);
     DataAttribute* attribute(const std::string& reference);
     void stop();
 };
+
+// Write handlers for the db/zeroDb references a client may change (deadband_writes.cpp).
+int install_deadband_writes(Server& server, const Json& references);

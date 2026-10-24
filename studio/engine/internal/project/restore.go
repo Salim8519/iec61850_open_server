@@ -55,6 +55,9 @@ func PrepareRestore(in RestoreInput) (*Restored, error) {
 			return nil, err
 		}
 		appendAll(model, settings)
+		if pyval.Lookup(item, "scd_deadbands", nil) == true { // "Use SCD deadbands" (ADR-0118)
+			model.Set("scd_deadbands", true)
+		}
 		imported = append(imported, model)
 	}
 	names, ids := map[string]bool{}, map[string]bool{}

@@ -7,9 +7,10 @@ import (
 	"studio-engine/internal/scl"
 )
 
-// GoOnlyRoutes are the routes this area adds beyond Flask's (ADR-0095, ADR-0112).
+// GoOnlyRoutes are the routes this area adds beyond Flask's (ADR-0095, ADR-0112, ADR-0118).
 var GoOnlyRoutes = map[string]bool{"GET /api/v1/ieds/{ied_id}/data-classes": true,
-	"GET /api/v1/diagram/goose-ieds": true}
+	"GET /api/v1/diagram/goose-ieds":      true,
+	"GET /api/v1/ieds/{ied_id}/deadbands": true, "PUT /api/v1/ieds/{ied_id}/deadbands": true}
 
 // dataClasses is GET /ieds/{ied_id}/data-classes: {"classes": {object ref: cdc}} read from the
 // IED's stored SCL. The frontend refines point kinds with it; older engines answer 404 and the

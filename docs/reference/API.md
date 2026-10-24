@@ -29,10 +29,12 @@ so large files never end in a connection reset (Go, change 0186).
 | Method/path | Input | Result / invariant |
 | --- | --- | --- |
 | `POST /scl/validate` | multipart `file` | Offline schema result |
-| `POST /scl/preview` | multipart `file` | Selectable IEDs; imports nothing, so the Go engine also answers while running (change 0186). Go: an IED whose import would fail has `unavailable_reason` "Cannot be imported at <LD/LN.DO.DA>: …" so it can be left out (ADR-0114) |
+| `POST /scl/preview` | multipart `file` | Selectable IEDs; imports nothing, so the Go engine also answers while running (change 0186). Go: an IED whose import would fail has `unavailable_reason` "Cannot be imported at <LD/LN.DO.DA>: …" so it can be left out (ADR-0114). An IED with several access points is simulated on the station one and has `access_point_note` naming what is not simulated (ADR-0117) |
 | `POST /scl/import` | file + JSON `selected_names` form field | Preserve source; import selected IEDs. Go: up to 100 MB; an error names the IED and the SCL path ("IED X at LD/LN.DO.DA: …"); what the import adapted is listed in the IED's `warnings` (ADR-0114) |
 | `POST /ieds/template` | `{name}` | Add laboratory IED template |
 | `GET /ieds/{id}/source` | - | Exact retained XML download |
+| `GET /ieds/{id}/deadbands` | - | Go only (ADR-0118): `{enabled, points[{ref, object, db, zero_db, range_min?, range_max?, band?, zero_band?, db_writable, zero_db_writable, applies, note}], applied, without_range}`: every measurement with a db; `note` in plain words |
+| `PUT /ieds/{id}/deadbands` | `{enabled: bool}` | Go only (ADR-0118): saves "Use SCD deadbands" (`scd_deadbands: true` stored only while on), applies it to a running IED at once, answers as GET |
 | `POST /ieds/{id}/export-scl` | `{overrides}` | Validate/re-import edited copy; project unchanged |
 | `GET /ieds/{id}/removal-preview` | - | Single-delete impact |
 | `DELETE /ieds/{id}` | `{confirm:true}` | Confirmed single deletion with recovery archive |

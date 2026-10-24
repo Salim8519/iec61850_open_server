@@ -10,6 +10,8 @@ import { InfoTip } from '../../ui/InfoTip';
 import { endpointOf, onLabNetwork } from '../network/endpoints';
 import { DeviceConnection } from './DeviceConnection';
 import { TestModeCard } from './TestModeCard';
+import { DeadbandCard } from './DeadbandCard';
+import { useDeadbands } from './useDeadbands';
 import { GoosePartners } from './GoosePartners';
 import { ReadByClients } from './ReadByClients';
 import type { ModeSummary } from './useModes';
@@ -26,6 +28,7 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
   const lab = project.network.mode === 'lab';
   const reachable = onLabNetwork(ied, project.network);
   const publishes = ied.goose?.publishes?.length || 0;
+  const deadbands = useDeadbands(ied.id, project.revision);
   const facts: [string, string][] = [
     ['Data points', ied.signal_count.toLocaleString()], ['Controls', String(ied.controls.length)],
     ['Reports', String(ied.reports.length)], ['GOOSE blocks', String(publishes)],
@@ -47,6 +50,7 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
     {ied.role === 'real' && <DeviceConnection ied={ied} session={session} locked={locked} perform={perform} />}
     {ied.role === 'off' && <p className="muted" style={{ margin: 0 }}>Skipped: it stays in the project, but is not started when you press Run. Choose Simulate or Monitor real device to use it.</p>}
     <TestModeCard ied={ied} summary={mode} perform={perform} />
+    <DeadbandCard ied={ied} deadbands={deadbands} perform={perform} />
     {ied.role === 'simulated' && publishes > 0 && <label className="row" style={{ fontWeight: 500, color: 'var(--text)' }}>
       <input type="checkbox" checked={ied.goose_publish} disabled={locked}
         onChange={event => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { goose_publish: event.target.checked }))} />

@@ -43,7 +43,8 @@ add_executable(studio_ied worker/main.cpp worker/ipc/framing.cpp
     worker/server/server.cpp worker/updates/values.cpp worker/controls/controls.cpp
     worker/controls/typed_controls.cpp worker/controls/typed_values.cpp
     worker/goose/publishing.cpp worker/server/access_log.cpp worker/server/read_hook.c
-    worker/server/event_loop.cpp worker/server/schedule.c worker/server/timer_policy.cpp)
+    worker/server/event_loop.cpp worker/server/schedule.c worker/server/timer_policy.cpp
+    worker/server/deadband_writes.cpp)
 target_include_directories(studio_ied PRIVATE ${STUDIO_HEADERS} worker worker/server hal)
 if(WIN32)
     # 1 ms timer only where Windows has no high-resolution timers (worker/server/timer_policy.cpp)

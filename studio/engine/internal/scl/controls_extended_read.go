@@ -96,3 +96,22 @@ func CachedExtendedControls(iedID, iedName, source string) ([]any, error) {
 	}
 	return value.([]any), nil
 }
+
+var deadbandCache sourceCache
+
+// CachedDeadbandWrites are the IED's db/zeroDb references a client may write over MMS
+// (ADR-0118), from the same single read of the SCL text as the typed controls.
+func CachedDeadbandWrites(iedID, iedName, source string) ([]string, error) {
+	value, err := deadbandCache.get(iedID, iedName, source, func() (any, error) {
+		result, err := documentResult(source, iedName)
+		if err != nil {
+			return nil, err
+		}
+		return result.writable, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	refs, _ := value.([]string)
+	return refs, nil
+}

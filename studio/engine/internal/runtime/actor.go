@@ -3,10 +3,12 @@ package runtime
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/native"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/runtime/pyval"
 )
 
 // running is one IED in the run. A simulated IED has an actor goroutine that owns its worker
@@ -20,6 +22,8 @@ type running struct {
 	host   string
 	port   int64
 
+	bands atomic.Bool // the IED's "Use SCD deadbands" switch (deadbands.go, ADR-0118)
+
 	jobs     chan func()
 	mu       sync.Mutex
 	closed   bool
@@ -27,7 +31,9 @@ type running struct {
 }
 
 func newRunning(model *iedModel, table *valueTable, ied *pyjson.Object) *running {
-	return &running{model: model, table: table, ied: ied}
+	item := &running{model: model, table: table, ied: ied}
+	item.bands.Store(pyval.Get(ied, "scd_deadbands") == true)
+	return item
 }
 
 func (r *running) simulated() bool { return r.model.role == "simulated" }
