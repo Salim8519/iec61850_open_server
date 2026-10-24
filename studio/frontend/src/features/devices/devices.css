@@ -43,3 +43,4 @@
 /* Data point rows stay on one line when they fit; a long description and reference wrap instead of being cut. */
 .device-detail table.compact-rows .point-cell { white-space: normal; overflow-wrap: anywhere; width: 55%; }
 .point-desc { margin-right: 8px; font-weight: 600; }
+.point-deadband { display: block; } /* the SCD db under a measurement (ADR-0118) */

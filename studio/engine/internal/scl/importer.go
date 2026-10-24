@@ -88,10 +88,11 @@ func (im *Importer) ImportNamed(source []byte, filename any, selection Selection
 			}
 			continue
 		}
-		if len(servers) != 1 {
-			return nil, apperr.New("IED " + name + " has multiple servers; select an access point first")
+		station := stationOf(root, ied) // one server, or the station bus of several (ADR-0117)
+		if station.server == nil {
+			return nil, apperr.New(station.refusal)
 		}
-		model, err := run.ied(ied, name, servers[0])
+		model, err := run.ied(ied, name, station.server)
 		if err != nil {
 			return nil, forIED(err, name)
 		}

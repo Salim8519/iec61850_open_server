@@ -24,12 +24,15 @@ func Preview(source []byte) ([]*pyjson.Object, error) {
 	}
 	for _, ied := range doc.Root.FindAll("IED") {
 		servers := ied.FindAll("AccessPoint/Server")
+		station := stationOf(doc.Root, ied)
 		reason := ""
 		switch {
 		case len(servers) == 0:
 			reason = "No server model in this IED"
-		case len(servers) > 1:
+		case station.server == nil && !adr0114():
 			reason = "Multiple servers are not supported yet"
+		case station.server == nil:
+			reason = "Cannot be imported: " + station.refusal
 		default:
 			if failure := failures[ied.GetOr("name", "")]; strings.HasPrefix(failure, "at ") {
 				reason = "Cannot be imported " + failure // ADR-0114: flagged before the import
@@ -38,11 +41,15 @@ func Preview(source []byte) ([]*pyjson.Object, error) {
 			}
 		}
 		name, _ := ied.Get("name") // parse_document guarantees a valid name
-		result = append(result, pyjson.NewObject().Set("name", name).
+		preview := pyjson.NewObject().Set("name", name).
 			Set("description", ied.GetOr("desc", "")).Set("manufacturer", ied.GetOr("manufacturer", "")).
 			Set("type", ied.GetOr("type", "")).
-			Set("logical_devices", int64(len(ied.FindAll("AccessPoint/Server/LDevice")))).
-			Set("unavailable_reason", reason))
+			Set("logical_devices", int64(len(stationDevices(doc.Root, ied)))).
+			Set("unavailable_reason", reason)
+		if note := station.note(); note != "" {
+			preview.Set("access_point_note", note) // Go only, IEDs with several access points
+		}
+		result = append(result, preview)
 	}
 	if len(result) == 0 {
 		return nil, apperr.New("No IEDs found in SCL")
@@ -75,8 +82,8 @@ func ImportFailures(doc *xmldoc.Document, source []byte) map[string]string {
 	var wait sync.WaitGroup
 	slots := make(chan struct{}, runtime.NumCPU())
 	for _, ied := range root.FindAll("IED") {
-		servers := ied.FindAll("AccessPoint/Server")
-		if len(servers) != 1 {
+		server := stationOf(root, ied).server
+		if server == nil {
 			continue
 		}
 		wait.Add(1)
@@ -89,7 +96,7 @@ func ImportFailures(doc *xmldoc.Document, source []byte) map[string]string {
 				failures[name] = err.Error()
 				mu.Unlock()
 			}
-		}(ied, servers[0])
+		}(ied, server)
 	}
 	wait.Wait()
 	return failures
@@ -113,7 +120,7 @@ func UnloadableIEDs(source string) (map[string]string, error) {
 			switch servers := ied.FindAll("AccessPoint/Server"); {
 			case len(servers) == 0:
 				reasons[name] = "it has no server model, so it cannot be simulated"
-			case len(servers) > 1:
+			case stationOf(doc.Root, ied).server == nil:
 				reasons[name] = "it has more than one server, which is not supported yet"
 			case strings.HasPrefix(failures[name], "at "):
 				reasons[name] = "importing it fails " + failures[name]

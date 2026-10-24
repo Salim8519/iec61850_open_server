@@ -39,6 +39,7 @@ func goldenDumps(value any) string {
 // TestSLDAndFlowMatchPython replays golden/sld_flow.json (scl/testdata/sld_flow_gen.py):
 // read_substation, build_diagram, bind, read_flow + build_graph and edge_csv.
 func TestSLDAndFlowMatchPython(t *testing.T) {
+	t.Cleanup(scl.AsPythonTwin()) // an IED with two servers keeps every LD here (ADR-0117)
 	data, err := os.ReadFile(filepath.Join("..", "scl", "testdata", "golden", "sld_flow.json"))
 	if err != nil {
 		t.Skip("sld_flow golden missing")

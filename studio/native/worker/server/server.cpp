@@ -91,6 +91,7 @@ Json Server::start(const Json& config) {
     for (const auto& entry : config.value("extended_controls", Json::array())) {
         install_typed_control(*this, entry);
     }
+    install_deadband_writes(*this, config.value("writable_deadbands", Json::array()));
     auto goose = prepare_goose(*this, config);
     int port = config.value("port", 102);
     // Same single-threaded MMS server, driven by the worker's event loop (workstream G).
@@ -133,5 +134,6 @@ void Server::stop() {
     typed_controls.clear();
     revisions.clear();
     attributes.clear();
+    deadband_refs.clear();
     if (model) { IedModel_destroy(model); model = nullptr; }
 }

@@ -9,6 +9,7 @@ import { FilterBar } from '../../ui/FilterBar';
 import { effective, type Choice } from '../../ui/filterState';
 import { POINT_KIND, SIGNAL_FILTER, signalQuery } from './deviceFilters';
 import { SignalTable } from './SignalTable';
+import { useDeadbands } from './useDeadbands';
 
 const PAGE = 100;
 
@@ -26,6 +27,8 @@ export function DeviceSignals({ ied, project, perform, prepare }: {
   // Points per type, when the engine sends them: chips of types this IED does not have then hide.
   const [kindCounts, setKindCounts] = useState<Partial<Record<Kind, number>> | undefined>();
   const classOf = useDataClasses(ied.id);
+  const deadbandList = useDeadbands(ied.id, project.revision);
+  const deadbands = useMemo(() => new Map(deadbandList?.points.map(point => [point.ref, point]) ?? []), [deadbandList]);
   const [message, setMessage] = useState('');
   // True until the answer for the current IED and search arrives: never show "no match" too early.
   const [loading, setLoading] = useState(true);
@@ -63,7 +66,7 @@ export function DeviceSignals({ ied, project, perform, prepare }: {
       shown={total} total={ied.signal_count} options={options} counts={kindCounts ? { [POINT_KIND]: kindCounts } : undefined} />
     {message && <p className="small muted panel-note" role="status">{message}</p>}
     <SignalTable signals={signals} kindOf={signal => kindOfSignal(signal, classOf, ied.controls)} iedId={ied.id}
-      running={running} perform={perform} addTest={addTest} loading={loading} />
+      running={running} perform={perform} addTest={addTest} loading={loading} deadbands={deadbands} />
     <div className="pager"><span>{total ? offset + 1 : 0}–{Math.min(offset + PAGE, total)} of {total.toLocaleString()}</span>
       <div className="row"><button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - PAGE))}>Previous</button>
         <button disabled={offset + PAGE >= total} onClick={() => setOffset(offset + PAGE)}>Next</button></div></div>

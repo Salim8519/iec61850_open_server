@@ -77,21 +77,16 @@ measurements, reports), not the arrays. So the interim option is enough for SCAD
 dataset uses an array point should stay refused with a clear reason, because the SCADA expects the
 exact dataset.
 
-## 3. IEDs with several access points (NR / NARI layout)
+## 3. IEDs with several access points (NR / NARI layout): done in change 0190
 
-**Problem.** NR and NARI relays (for example PCS-921S, PCS-9705, NSR-3641; also the owner's
-FBMR-E02) put MMS on access point S1, GOOSE on G1 and Sampled Values on M1 by design. Import
-refuses any IED with more than one server ("select an access point first"), but no screen lets the
-user choose (`scl/importer.go`, `scl/preview.go`).
-
-**Plan.** Simulate the MMS server of S1, keep the GOOSE and SV control blocks and addresses from G1
-and M1 (they are the same IED), and say clearly in the preview which access point supplies what.
-Needs an ADR and protocol evidence that GOOSE published from the G1 definitions is identical.
+Built 2026-10-24 ([ADR-0117](docs/decisions/ADR-0117-station-access-point.md)): S1, the access point
+with the IP address or the reports, is simulated exactly; G1 (GOOSE) and M1 (SV) are named in the
+preview and not simulated.
 
 ## Also noted (smaller)
 
-- Deadbands (`db`, `zeroDb`) are not modelled: a 10 Hz source sends 10 reports per second. The owner
-  put this and item 3 (NR/NARI access points) in the next round on 2026-10-24.
+- Deadbands (`db`, `zeroDb`): done in change 0190 ([ADR-0118](docs/decisions/ADR-0118-scd-deadbands.md)), off
+  by default with a per-IED "Use SCD deadbands" switch; SCADA writes follow the SCD valKind.
 - Interlock or synchro-check refusal simulation (CILO.EnaOpn/EnaCls): **not part of ScadaBench**
   (owner, 2026-10-24: not in the next 10 versions at least). Do not plan or propose it.
 - Commands ignore Beh and the Test flag (IEC 61850-7-4 Annex A). Kept on purpose by the owner on

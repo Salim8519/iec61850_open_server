@@ -26,7 +26,7 @@ func publisherCatalogue(root *xmldoc.Element) *catalogue {
 	for _, ied := range root.FindAll("IED") {
 		name := ied.GetOr("name", "")
 		comm, _ := readCommunication(root, name)
-		for _, ld := range ied.FindAll("AccessPoint/Server/LDevice") {
+		for _, ld := range stationDevices(root, ied) {
 			ln0 := ld.Find("LN0")
 			if ln0 == nil {
 				continue
@@ -101,9 +101,9 @@ func member(extref *xmldoc.Element, fcdas []*xmldoc.Element) (any, string) {
 }
 
 // lgosTargets is goose_links._lgos_targets.
-func lgosTargets(ied *xmldoc.Element) map[string]string {
+func lgosTargets(root, ied *xmldoc.Element) map[string]string {
 	targets := map[string]string{}
-	for _, ld := range ied.FindAll("AccessPoint/Server/LDevice") {
+	for _, ld := range stationDevices(root, ied) {
 		domain := ld.GetOr("ldName", "")
 		if domain == "" {
 			domain = ied.GetOr("name", "") + ld.GetOr("inst", "")

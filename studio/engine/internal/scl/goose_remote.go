@@ -7,9 +7,13 @@ import (
 
 // remoteInputs is goose_remote.remote_inputs: ExtRefs naming an IED outside known that
 // are clearly GOOSE (serviceType GOOSE, a srcCBName or a packed vendor intAddr).
-func remoteInputs(ied *xmldoc.Element, known map[string]bool) []any {
+func remoteInputs(root, ied *xmldoc.Element, known map[string]bool) []any {
 	found := []any{}
-	iterTag(ied, "ExtRef", func(extref *xmldoc.Element) {
+	scope := ied
+	if server := stationOf(root, ied).server; server != nil {
+		scope = server // ADR-0117: only the simulated access point's inputs
+	}
+	iterTag(scope, "ExtRef", func(extref *xmldoc.Element) {
 		publisher := extref.GetOr("iedName", "")
 		service, hasService := extref.Get("serviceType")
 		if publisher == "" || known[publisher] || hasService && service != "GOOSE" {

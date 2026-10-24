@@ -29,12 +29,12 @@ func ExtendedControls(source []byte, iedName string) ([]any, error) {
 		if ied.GetOr("name", "") != iedName {
 			continue
 		}
-		servers := ied.FindAll("AccessPoint/Server")
-		if len(servers) != 1 {
+		server := stationOf(doc.Root, ied).server
+		if server == nil {
 			return []any{}, nil
 		}
 		b := newBuilder(types)
-		if err := walkObjects(b, servers[0], iedName); err != nil {
+		if err := walkObjects(b, server, iedName); err != nil {
 			return nil, err
 		}
 		if b.extended == nil {
@@ -95,4 +95,23 @@ func CachedExtendedControls(iedID, iedName, source string) ([]any, error) {
 		return nil, err
 	}
 	return value.([]any), nil
+}
+
+var deadbandCache sourceCache
+
+// CachedDeadbandWrites are the IED's db/zeroDb references a client may write over MMS
+// (ADR-0118), from the same single read of the SCL text as the typed controls.
+func CachedDeadbandWrites(iedID, iedName, source string) ([]string, error) {
+	value, err := deadbandCache.get(iedID, iedName, source, func() (any, error) {
+		result, err := documentResult(source, iedName)
+		if err != nil {
+			return nil, err
+		}
+		return result.writable, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	refs, _ := value.([]string)
+	return refs, nil
 }

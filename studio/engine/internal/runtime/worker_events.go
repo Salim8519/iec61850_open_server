@@ -39,6 +39,14 @@ func (c *Coordinator) onWorkerEvent(iedID string, event *pyjson.Object) {
 			}
 		}
 	}
+	if kind == "deadband_written" { // a client changed a db/zeroDb the SCD allows (ADR-0118)
+		c.mu.Lock()
+		item := c.runs[iedID]
+		c.mu.Unlock()
+		if ref, ok := pyval.Get(event, "ref").(string); ok && item != nil {
+			item.table.set(ref, pyval.Get(event, "value"))
+		}
+	}
 	if kind == "worker_failed" {
 		c.pulses.cancel(iedID, "", false, "IED worker failed")
 		c.mu.Lock()

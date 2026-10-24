@@ -55,6 +55,7 @@ export const HINTS: Record<string, string> = {
   'sv.limit': 'ScadaBench supervises up to 16 streams. These streams are in the SCD but are not supervised:',
   'sv.unknown': 'These Sampled Values streams are on the network but not in your project. They come from other devices.',
   'mode.real': 'Read from the device every 10 seconds while connected. ScadaBench never changes the mode of a real IED.',
+  'deadband.switch': 'A deadband (db) makes an IED report a measurement only when it moves more than a set amount, to save network traffic. Off is the safe default: every change is reported. Values you type by hand always go out; only generators are filtered.',
   'mode.simulated': 'Puts this simulated IED in test, blocked or off mode, like a real relay during testing. Behaviour (Beh) follows the IEC 61850 rules automatically.',
   'mode.simulation_traffic': 'Test equipment or a test mode is sending simulation messages. Real IEDs ignore them unless set to simulation mode; remove them before leaving the site.',
   'flow.intro': 'Shows which IED sends GOOSE messages and reports to which other IED, exactly as written in the SCD file. It does not prove the messages are on the network.',

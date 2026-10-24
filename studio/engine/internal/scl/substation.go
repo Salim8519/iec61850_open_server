@@ -201,7 +201,7 @@ func busY(node *xmldoc.Element) *float64 {
 func (t *Topology) readDomains(root *xmldoc.Element) {
 	for _, ied := range root.FindAll("IED") {
 		name := ied.GetOr("name", "")
-		for _, device := range ied.FindAll("AccessPoint/Server/LDevice") {
+		for _, device := range stationDevices(root, ied) {
 			inst := device.GetOr("inst", "")
 			domain := device.GetOr("ldName", "")
 			if domain == "" {

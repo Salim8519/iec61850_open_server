@@ -19,7 +19,8 @@ import (
 const CurrentFormat = 15
 
 // IEDFields are the stored per-IED fields besides the SCL source.
-var IEDFields = []string{"id", "name", "filename", "ip", "port", "role", "live", "lab_ip", "goose_publish", "test_mode"}
+var IEDFields = []string{"id", "name", "filename", "ip", "port", "role", "live", "lab_ip", "goose_publish", "test_mode",
+	"scd_deadbands"} // stored only while on (ADR-0118)
 
 // SourceDigest is the sha256 hex digest of the UTF-8 SCL text.
 func SourceDigest(source string) string {

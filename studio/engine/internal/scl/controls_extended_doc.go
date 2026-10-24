@@ -11,8 +11,9 @@ import (
 
 // extendedResult is ExtendedControls' answer for one IED name.
 type extendedResult struct {
-	list []any
-	err  error
+	list     []any
+	err      error
+	writable []string // db/zeroDb a client may write online (ADR-0118), read in the same pass
 }
 
 // extendedForDocument gives, for every IED name of one SCL text, exactly what ExtendedControls
@@ -42,21 +43,22 @@ func extendedForDocument(source []byte) (map[string]extendedResult, error) {
 		if _, done := results[name]; done {
 			continue // ExtendedControls answers from the first IED of a name
 		}
-		servers := ied.FindAll("AccessPoint/Server")
-		if len(servers) != 1 {
+		server := stationOf(doc.Root, ied).server
+		if server == nil {
 			results[name] = extendedResult{list: []any{}}
 			continue
 		}
+		writable := deadbandWrites(server, types, name)
 		b := newBuilder(types)
 		b.skipObject = holds.skip
-		if err := walkObjects(b, servers[0], name); err != nil {
-			results[name] = extendedResult{err: err}
+		if err := walkObjects(b, server, name); err != nil {
+			results[name] = extendedResult{err: err, writable: writable}
 			continue
 		}
 		if b.extended == nil {
-			results[name] = extendedResult{list: []any{}}
+			results[name] = extendedResult{list: []any{}, writable: writable}
 		} else {
-			results[name] = extendedResult{list: b.extended}
+			results[name] = extendedResult{list: b.extended, writable: writable}
 		}
 	}
 	return results, nil
@@ -112,6 +114,15 @@ type documentCall struct {
 }
 
 func extendedFromDocument(source, iedName string) ([]any, error) {
+	result, err := documentResult(source, iedName)
+	if err != nil {
+		return nil, err
+	}
+	return result.list, result.err
+}
+
+// documentResult is one IED's answer from the shared read of its SCL text.
+func documentResult(source, iedName string) (extendedResult, error) {
 	hash := fnv.New64a()
 	_, _ = hash.Write([]byte(source))
 	key := strconv.FormatUint(hash.Sum64(), 16) + "|" + strconv.Itoa(len(source))
@@ -131,11 +142,11 @@ func extendedFromDocument(source, iedName string) ([]any, error) {
 		<-call.done
 	}
 	if call.err != nil {
-		return nil, call.err
+		return extendedResult{}, call.err
 	}
 	result, found := call.results[iedName]
 	if !found {
-		return []any{}, nil
+		return extendedResult{list: []any{}}, nil
 	}
-	return result.list, result.err
+	return result, nil
 }

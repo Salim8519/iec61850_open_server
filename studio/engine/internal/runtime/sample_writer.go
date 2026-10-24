@@ -82,11 +82,29 @@ func (c *Coordinator) writeSample(target *running, items []item, source string, 
 				continue
 			}
 		}
-		batch, related, err := signal.MakeSample(info, target.model.lookup, entry.value, timestamp, entry.quality)
+		value, report := entry.value, true
+		band, banded := deadbandOf(target, entry.ref) // only with "Use SCD deadbands" on
+		if banded && source == "generator" {
+			value, report = band.filter(target, entry.ref, value)
+		}
+		var refs []string
+		if banded && band.instant != "" { // instMag follows every value, reported or not
+			instant, _ := target.model.lookup(band.instant)
+			if checked, err := signal.Validate(instant.Kind, value); err == nil {
+				updates.Set(band.instant, checked)
+				refs = append(refs, band.instant)
+			}
+		}
+		if !report {
+			if len(refs) > 0 {
+				groups = append(groups, refs)
+			}
+			continue
+		}
+		batch, related, err := signal.MakeSample(info, target.model.lookup, value, timestamp, entry.quality)
 		if err != nil {
 			return nil, nil, err
 		}
-		var refs []string
 		for _, update := range batch {
 			if _, seen := updates.Get(update.Ref); !seen {
 				refs = append(refs, update.Ref)
