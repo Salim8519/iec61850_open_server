@@ -7,7 +7,15 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Lighter and faster with many IEDs</h2>
+    <h2>{SITE.version} · NR/NARI relays and SCD deadbands</h2>
+    <ul>
+      <li>New: NR and NARI relays (for example PCS-9705 and PCS-921S) now import. They have three access points; ScadaBench simulates the station bus one, S1, which a SCADA connects to, exactly as the SCD defines it. The import dialog says which access points (process-bus GOOSE on G1, Sampled Values on M1) are not simulated.</li>
+      <li>New: deadbands from the SCD. Each simulated IED has a "Use SCD deadbands" switch. When it is on, a measurement is reported only when it moves more than its db, like a real IED. It is off by default, so nothing changes until you turn it on.</li>
+      <li>New: the IED page lists every measurement's deadband in plain words. A measurement without a measuring range (rangeC) never gets a deadband, and the list says so.</li>
+      <li>New: a SCADA can change a measurement's db or zeroDb over MMS when the SCD allows it (valKind Set or not given). Read-only values stay refused, as on the real IED.</li>
+      <li>Values you type by hand always go out; only automatic sources are filtered by a deadband.</li>
+    </ul>
+    <h2>0.1.26 · Lighter and faster with many IEDs</h2>
     <ul>
       <li>Faster: ScadaBench now needs about half the memory and a third of the CPU for large stations. On a 20-IED station memory dropped from about 1.6 GB to under 0.8 GB at its peak, and the project opens and starts faster.</li>
       <li>Faster: Run starts sooner (2.3 s instead of 3.2 s for 20 IEDs), reopening a project is about twice as fast, and SLD commands answer a little quicker.</li>
