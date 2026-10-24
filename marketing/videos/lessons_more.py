@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import re
 import subprocess
+from pathlib import Path
 
 from director import start_app
+from serve_copy import stop
 from lessons_basics import ADD, IMPORT, STATION, button, import_station, open_import, run_all, tab
 
 
@@ -15,13 +17,15 @@ def simulation(d, page, data) -> None:
     d.say("Test points keep the values you change most.")
     d.click(button(page, "Test"))
     d.click(button(page, "Add test point"), after=0.5)
-    search = page.get_by_placeholder("Search signals…")
-    d.say("Search for the breaker position, and add it.")
+    search = page.get_by_placeholder(re.compile("^Search name, number"))
+    add = page.locator("main").get_by_role("button", name="Add", exact=True)
+    d.say("Type chips show how many points of each kind the IED has. Search for the breaker position, and add it.")
+    d.point(page.get_by_text("Double point").first, pause=0.4)
     d.type(search, "XCBR1.Pos.stVal")
-    d.click(page.locator(".signal-search-row").get_by_role("button", name="Add", exact=True).first, after=0.3)
+    d.click(add.first, after=0.3)
     d.say("Then a measurement.")
     d.type(search, "AnIn1.mag.f")
-    d.click(page.locator(".signal-search-row").get_by_role("button", name="Add", exact=True).first, after=0.3)
+    d.click(add.first, after=0.3)
     d.click(button(page, "Close"))
     d.say("Press Run. Clients now read these values.")
     run_all(d, page, 1)
@@ -77,9 +81,9 @@ def goose(d, page, data) -> None:
     d.say("Press Run, and your IEDs publish their GOOSE, just like the SCD says. The SLD shows each message as a moving dot.")
 
 
-def _start_station_copy(browser, index: int) -> tuple[subprocess.Popen, str]:
+def _start_station_copy(browser, index: int) -> tuple[subprocess.Popen, str, Path]:
     """A second ScadaBench simulates one IED of the station: the demo's 'real relay'."""
-    process, url, _ = start_app()
+    process, url, data = start_app()
     context = browser.new_context()
     page = context.new_page()
     page.goto(url)
@@ -94,22 +98,22 @@ def _start_station_copy(browser, index: int) -> tuple[subprocess.Popen, str]:
     page.get_by_text("Running · 1 IED").first.wait_for(timeout=90000)
     address = page.get_by_text(re.compile(r"^127\.\d+\.\d+\.\d+:102$")).first.inner_text()
     context.close()
-    return process, address.split(":")[0]
+    return process, address.split(":")[0], data
 
 
 def real_devices(d, page, data) -> None:
-    station, address = _start_station_copy(page.context.browser, 1)
+    station, address, station_data = _start_station_copy(page.context.browser, 1)
     try:
         d.click(button(page, "Skip tour"), after=0.3)
-        d.say("Simulate is for when the relay is not there. Read real IED is for when it is.")
+        d.say("Simulate is for when the relay is not there. Monitor real device is for when it is.")
         d.say("Import the SCD and pick the relay to check.")
         open_import(d, page)
         d.click(page.locator("dialog.import-dialog input[type=checkbox]").nth(1), after=0.2)
         d.click(page.get_by_role("button", name=ADD), after=0.3)
         page.get_by_text("Choose IEDs to add").wait_for(state="hidden", timeout=90000)
         d.wait(0.6)
-        d.say("Choose Read real IED. ScadaBench connects as a client, and only reads.")
-        d.click(tab(page, "Read real IED").last, after=0.6)
+        d.say("Choose Monitor real device. ScadaBench connects as a client, and only reads.")
+        d.click(tab(page, "Monitor real device").last, after=0.6)
         d.say("Enter its address. Here, a second ScadaBench plays the real relay.")
         field = page.get_by_placeholder(re.compile(r"^(e\.g\. |\d+\.\d+)"))
         d.type(field, address)
@@ -128,5 +132,4 @@ def real_devices(d, page, data) -> None:
         d.click(page.get_by_role("button", name=re.compile(r"^Health check")).first, after=3.0)
         d.say("Export it as CSV or HTML for your commissioning report.")
     finally:
-        station.kill()
-        station.wait()
+        stop(station, station_data)

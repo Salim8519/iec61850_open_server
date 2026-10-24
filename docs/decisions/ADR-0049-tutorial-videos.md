@@ -46,3 +46,18 @@ with a Gemini voice through the owner's fal.ai account, edited with Remotion.
 - Remotion is free for individuals and companies with up to three people. A larger company
   needs a Remotion company licence to render. Viewing the videos needs nothing.
 - Playwright and Edge are already used for the icon pipeline; ffmpeg/ffprobe must be on PATH.
+
+**Amendment 2026-10-24 (change 0188): record the released engine**
+- The recordings now run the Go engine, as the product ships (ADR-0083), instead of the frozen
+  Python backend. `video_app.py` builds `studio/build/video-app` from the current source: the Go
+  `studio_server.exe`, the production frontend bundle (`vite build`) and the native workers,
+  compiled in their own CMake folder (`studio/build/video-native`) so a developer's running app
+  and its build folders are never touched. `serve_copy.py` starts that server on a free port with
+  a temporary data folder and stops it like Ctrl+C, so its IED workers stop too.
+- Not the packaged EXE: there is no license gate (the activation lesson still uses demo answers),
+  but engine, frontend bundle, defaults and native protocol code are the shipped ones.
+- Public data stays the demo station and the sample IED; lessons about typed commands and the tap
+  changer also use `SampleTyped`, a ScadaBench-made test IED (`studio/tests/fixtures/typed_controls`,
+  "not a manufacturer model").
+- Narration stays fal.ai `google/gemini-3.8-flash-lite-tts`, voice Charon, generated through the
+  fal.ai MCP (owner choice 2026-10-24: this model only).

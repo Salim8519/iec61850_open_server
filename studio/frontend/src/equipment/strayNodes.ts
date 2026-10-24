@@ -22,7 +22,7 @@ export function strayIds(nodes: readonly EquipmentNode[], gap = STRAY_GAP): stri
 }
 
 /** Fit view options that fit only the drawing (all symbols but the strays). */
-export function fitOptionsFor(nodes: readonly EquipmentNode[], base: { maxZoom: number; padding: number }) {
+export function fitOptionsFor<B extends { maxZoom: number }>(nodes: readonly EquipmentNode[], base: B) {
   const strays = new Set(strayIds(nodes));
   if (!strays.size) return base;
   return { ...base, nodes: nodes.filter(node => !strays.has(node.id)).map(node => ({ id: node.id })) };

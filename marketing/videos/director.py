@@ -62,15 +62,9 @@ CURSOR_JS = """
 
 def start_app() -> tuple[subprocess.Popen, str, Path]:
     """Start a fresh ScadaBench copy (serve_copy.py) and return it, its URL and data folder."""
-    python = STUDIO / ".venv/Scripts/python.exe"
-    process = subprocess.Popen([str(python), str(Path(__file__).with_name("serve_copy.py"))],
-                               stdout=subprocess.PIPE, text=True)
-    url = process.stdout.readline().strip()
-    data = Path(process.stdout.readline().strip())
-    if not url.startswith("http"):
-        process.kill()
-        raise RuntimeError("the app copy did not start")
-    return process, url, data
+    from serve_copy import start
+
+    return start()
 
 
 @dataclass
@@ -157,9 +151,9 @@ def record(name: str, scenario, prepare=None) -> Path:
     try:
         return _record(name, scenario, url, data, raw, prepare)
     finally:
-        process.kill()
-        process.wait()
-        shutil.rmtree(data.parent, ignore_errors=True)
+        from serve_copy import stop
+
+        stop(process, data)
 
 
 def _record(name, scenario, url, data, raw, prepare) -> Path:

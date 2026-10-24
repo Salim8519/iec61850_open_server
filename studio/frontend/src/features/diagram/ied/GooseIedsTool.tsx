@@ -5,6 +5,7 @@ import type { EquipmentNode } from '../../../api/types';
 import { GOOSE_IEDS_COPY } from '../../../copy/iedComponent';
 import type { Placement } from './iedNodes';
 import type { GooseIedsNote } from './useGooseIeds';
+import { fitPadding } from '../fitPadding';
 
 const NOTE_MS = 6000;
 
@@ -22,7 +23,7 @@ export function GooseIedsTool({ missing, note, clearNote, addOne, addAll, locked
     if (!note) return undefined;
     const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     // New components are measured after their first paint; then the whole drawing is fitted.
-    const fit = note.ids.length ? window.setTimeout(() => flow.fitView({ maxZoom: 1, padding: 0.2,
+    const fit = note.ids.length ? window.setTimeout(() => flow.fitView({ maxZoom: 1, padding: fitPadding(0.2),
       duration: still ? 0 : 300 }), 250) : undefined;
     const timer = window.setTimeout(clearNote, NOTE_MS);
     return () => { window.clearTimeout(timer); if (fit) window.clearTimeout(fit); };

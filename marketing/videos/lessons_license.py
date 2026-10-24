@@ -1,4 +1,4 @@
-"""Lesson 9: activate, move or go offline. Real license screens with demo answers."""
+"""Lesson 13: activate or go offline. Real license screens with demo answers."""
 from __future__ import annotations
 
 import json
@@ -33,7 +33,9 @@ def activation(d, page, data) -> None:
     d.say("A new install opens on the activation screen.")
     d.say("Start a free 7-day trial, no card needed. Or buy a lifetime license.")
     d.point(button(page, "Start 7-day free trial"), pause=0.8)
-    d.say("Have a key? It is in your purchase email. Paste it here.")
+    d.say("Using a virtual machine on a licensed PC? This box shows how the VM uses that PC's license.")
+    d.point(page.get_by_text("Using a virtual machine?").first, pause=0.8)
+    d.say("Have a key? It is in your purchase email, and works on one computer. Paste it here.")
     d.type(page.get_by_placeholder("SUBS-XXXX-XXXX-XXXX-XXXX"), "SUBS-7K4P-QX2M-9TDF-R8WC")
     d.click(button(page, "Activate this computer"), after=1.2)
     page.get_by_text("Engine connected").wait_for(timeout=15000)
@@ -45,7 +47,7 @@ def activation(d, page, data) -> None:
         pass
     d.click(button(page, "Settings"))
     d.click(tab(page, "License"), after=1.0)
-    d.say("New computer? Enter the key there and choose Move the key here.")
+    d.say("Each license stays on this computer. Reinstalling Windows on the same PC is fine.")
     d.say("No internet on site? Copy the Machine ID, and use the offline page on any other PC.")
     d.settle()
     page.goto("https://license.scadabench.com/activate")

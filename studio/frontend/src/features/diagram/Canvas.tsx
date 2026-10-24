@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
   useReactFlow, applyNodeChanges, addEdge, ConnectionMode, SelectionMode,
   type NodeChange, type EdgeChange, type Connection, type NodeTypes } from '@xyflow/react';
@@ -19,6 +19,7 @@ import { useZoomTier } from './useZoomTier';
 import { addBay, BAYS, type BayKind } from '../../equipment/bayTemplates';
 import { fitOptionsFor } from '../../equipment/strayNodes';
 import { StrayNotice } from './StrayNotice';
+import { clearOfToolbar, toolbarSpace } from './fitPadding';
 import { defaultLabel } from '../../equipment/kindInfo';
 import './energization.css';
 
@@ -105,7 +106,20 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
     return result.nodes;
   }, [diagram.nodes, draft, selection]);
   // Far-away strays stay out of Fit view, so the drawing is always what you see first (change 0180).
-  const fit = useMemo(() => fitOptionsFor(diagram.nodes, fitOptions), [diagram.nodes]);
+  // Fit view also keeps the drawing below the floating toolbar (change 0187).
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [barSpace, setBarSpace] = useState(0);
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current, bar = canvas?.querySelector('.canvas-toolbar');
+    if (!canvas || !bar) return undefined;
+    const measure = () => setBarSpace(toolbarSpace(canvas));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+  const fit = useMemo(() => fitOptionsFor(diagram.nodes,
+    { ...fitOptions, padding: clearOfToolbar(fitOptions.padding, barSpace) }), [diagram.nodes, barSpace]);
   const dragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault(); event.dataTransfer.dropEffect = 'move';
   }, []);
@@ -144,7 +158,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
   }, [locked, nodeMenu]);
   return <LiveValues.Provider value={valueStore}><IedNames.Provider value={iedNames}><ModeBadges.Provider value={modeBadges}>
     <StoppedIeds.Provider value={stoppedIeds}><CanvasLocked.Provider value={locked}>
-    <div className={`canvas zoom-${zoomTier}`} onDragOver={dragOver} onDrop={drop}>
+    <div ref={canvasRef} className={`canvas zoom-${zoomTier}`} onDragOver={dragOver} onDrop={drop}>
       {toolbar}
       {locked && <div className={`canvas-lock${lockNote ? ' partial' : ''}`} role="status">{lockNote ?? 'Running · drawing is locked'}</div>}
       {locked && <EnergizationLegend energy={energy} />}

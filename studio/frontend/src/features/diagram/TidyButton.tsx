@@ -4,6 +4,7 @@ import { WandSparkles } from 'lucide-react';
 import type { Diagram, EquipmentNode } from '../../api/types';
 import { tidyDiagram } from '../../equipment/tidy/tidy';
 import { tidyMessage, tidyTitle } from './tidyCopy';
+import { fitPadding } from './fitPadding';
 
 const NOTE_MS = 6000;
 
@@ -31,7 +32,7 @@ export function TidyButton({ diagram, selection, locked, apply }: {
     if (!changed) return;
     apply(result.diagram);
     const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    window.setTimeout(() => flow.fitView({ maxZoom: 1, padding: 0.2, duration: still ? 0 : 300,
+    window.setTimeout(() => flow.fitView({ maxZoom: 1, padding: fitPadding(0.2), duration: still ? 0 : 300,
       nodes: scoped ? selection.map(id => ({ id })) : undefined }), 60);
   };
   // The note floats under the button, so the toolbar buttons never move when it comes and goes (change 0176).

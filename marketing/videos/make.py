@@ -1,7 +1,7 @@
 """Record and compose the tutorial videos:  python marketing/videos/make.py [slug ...]
 
-Needs Microsoft Edge, ffmpeg on PATH, Playwright for Python and the built app
-(studio/frontend/dist and the native workers). Output goes to marketing/videos/out/.
+Needs Microsoft Edge, ffmpeg on PATH, Playwright for Python and the video app built by
+video_app.py (Go engine, production frontend, native workers). Output goes to marketing/videos/out/.
 """
 import sys
 import traceback
@@ -11,7 +11,8 @@ from director import record
 from lessons_basics import cid_scd, getting_started, sld
 from lessons_license import activation, activation_prepare
 from lessons_more import goose, real_devices, simulation
-from lessons_tools import ied_explorer, scada_gateway
+from lessons_sld import commands, goose_sld, point_panels
+from lessons_tools import ied_explorer, scada_gateway, snmp_devices
 
 # Slugs are the public video addresses (/videos/<slug>.mp4); keep them stable.
 LESSONS = [
@@ -23,7 +24,11 @@ LESSONS = [
     ("real-devices", "Connect to real devices", real_devices, None),
     ("ied-explorer", "IED Explorer and Find IEDs", ied_explorer, None),
     ("scada-gateway", "Be the SCADA gateway", scada_gateway, None),
-    ("activation", "Activate, move or go offline", activation, activation_prepare),
+    ("goose-sld", "Send GOOSE from the SLD", goose_sld, None),
+    ("point-panels", "Point panels and the smart point picker", point_panels, None),
+    ("commands", "Select before operate, typed commands and tap changers", commands, None),
+    ("snmp", "SNMP devices: switches and clocks", snmp_devices, None),
+    ("activation", "Activate or go offline", activation, activation_prepare),
 ]
 
 if __name__ == "__main__":
