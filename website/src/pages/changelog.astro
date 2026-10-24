@@ -7,7 +7,14 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · IEDs on the diagram, a smart point picker, many vendor files fixed</h2>
+    <h2>{SITE.version} · Lighter and faster with many IEDs</h2>
+    <ul>
+      <li>Faster: ScadaBench now needs about half the memory and a third of the CPU for large stations. On a 20-IED station memory dropped from about 1.6 GB to under 0.8 GB at its peak, and the project opens and starts faster.</li>
+      <li>Faster: Run starts sooner (2.3 s instead of 3.2 s for 20 IEDs), reopening a project is about twice as fast, and SLD commands answer a little quicker.</li>
+      <li>Memory is given back to Windows after opening a project, Run and Stop, so ScadaBench no longer keeps showing its highest memory use.</li>
+      <li>Nothing else changes: the same screens, the same IED behaviour on the network, and the same reports and GOOSE messages.</li>
+    </ul>
+    <h2>0.1.25 · IEDs on the diagram, a smart point picker, many vendor files fixed</h2>
     <ul>
       <li>New: an IED symbol for the single-line diagram. GOOSE now travels the way it does in a real station: from the whole sending IED to every IED that subscribes to it. "Add all GOOSE IEDs" places them for you, and a chip names subscribers that are not on the drawing.</li>
       <li>New: send a GOOSE message from the IED symbol, from any equipment's GOOSE link (one value, or open and closed separately), or from a point panel row.</li>
