@@ -2,6 +2,7 @@ package service
 
 import (
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/memtrim"
 	"studio-engine/internal/project"
 	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
@@ -11,6 +12,7 @@ import (
 // AddSCL is ProjectService.add_scl: import (outside the lock), name and capacity checks,
 // default IED settings, loopback addresses, save and change.
 func (s *Service) AddSCL(source []byte, filename string, selection scl.Selection) ([]*pyjson.Object, error) {
+	defer memtrim.Soon()
 	models, err := s.config.Importer.Import(source, filename, selection)
 	if err != nil {
 		return nil, err

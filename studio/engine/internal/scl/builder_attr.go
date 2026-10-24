@@ -81,7 +81,7 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 		b.lines = append(b.lines, "}")
 		return nil
 	}
-	enums := pyjson.NewObject()
+	enums := b.emptyEnums
 	if kind == "Enum" {
 		if enums, err = b.enumValues(e); err != nil {
 			return located(err, ref)
@@ -109,7 +109,7 @@ func (b *builder) attribute(e *xmldoc.Element, reference string, instance *xmldo
 		return located(err, ref)
 	}
 	b.lines = append(b.lines, header+suffix+";")
-	signal := pyjson.NewObject().Set("ref", ref).Set("fc", fc).Set("kind", kind).Set("value", initial).
+	signal := pyjson.NewObjectSize(9).Set("ref", ref).Set("fc", fc).Set("kind", kind).Set("value", initial).
 		Set("description", description).Set("enums", enums).Set("writable", writableFCs[fc]).
 		Set("quality", int64(0)).Set("timestamp", int64(0))
 	b.signals = append(b.signals, signal)
@@ -125,6 +125,9 @@ func (b *builder) enumValues(e *xmldoc.Element) (*pyjson.Object, error) {
 	typeID, hasType := e.Get("type")
 	if !hasType && adr0114() {
 		return nil, apperr.New("bType is Enum but the attribute names no EnumType (type attribute missing)")
+	}
+	if shared := b.enumTypes[typeID]; shared != nil && hasType {
+		return shared, nil
 	}
 	definition, err := b.declaration("EnumType", typeID, hasType)
 	if err != nil {
@@ -151,6 +154,9 @@ func (b *builder) enumValues(e *xmldoc.Element) (*pyjson.Object, error) {
 			return nil, apperr.ValueError(pyrules.IntMessage(ord))
 		}
 		enums.Set(label, intValue(number))
+	}
+	if hasType {
+		b.enumTypes[typeID] = enums
 	}
 	return enums, nil
 }

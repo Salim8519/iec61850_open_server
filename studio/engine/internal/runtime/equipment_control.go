@@ -90,7 +90,7 @@ func (c *Coordinator) planCommand(data *pyjson.Object, value any, action string)
 	if refusal := commandRefusal(ied); refusal != "" {
 		return commandPlan{}, apperr.ValueError(refusal)
 	}
-	control := newIedModel(ied).control(pyval.Str(binding, "ref"))
+	control := controlOf(ied, pyval.Str(binding, "ref"))
 	expected, cdcErr := plant.ExpectedCDC(pyval.Str(data, "kind"))
 	if control == nil || cdcErr != nil || pyval.Get(control, "cdc") != expected {
 		if control != nil && cdcErr != nil {

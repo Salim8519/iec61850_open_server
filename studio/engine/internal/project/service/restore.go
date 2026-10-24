@@ -2,6 +2,7 @@ package service
 
 import (
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/memtrim"
 	"studio-engine/internal/project"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/store/archive"
@@ -12,6 +13,7 @@ import (
 // source once, migrate and validate, then swap the project in (persisting when asked)
 // and announce the change. Nothing changes when any step fails.
 func (s *Service) Restore(payload []byte, persist bool) error {
+	defer memtrim.Soon()
 	raw, err := archive.Decode(payload)
 	if err != nil {
 		return err
@@ -78,6 +80,7 @@ func (s *Service) adopt(next, notice *pyjson.Object) error {
 // RecoverStartup folds a leftover journal and restores autosave.scadabench like
 // startup_recovery.recover_startup; the result is the GET /project startup_recovery value.
 func (s *Service) RecoverStartup() (*pyjson.Object, error) {
+	defer memtrim.Soon()
 	return recovery.RecoverStartup(s.config.DataDir, func(payload []byte) error {
 		return s.Restore(payload, false)
 	})

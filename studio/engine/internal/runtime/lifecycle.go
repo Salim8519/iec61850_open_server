@@ -3,6 +3,7 @@ package runtime
 import (
 	"fmt"
 	"path/filepath"
+	"studio-engine/internal/memtrim"
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/pyjson"
@@ -71,6 +72,7 @@ func simulatedOf(items []*running) []*running {
 
 // Start is POST /runtime/start (ids nil) and /runtime/ieds/<id>/start (Coordinator.start).
 func (c *Coordinator) Start(ids []string) error {
+	defer memtrim.Soon()
 	c.lifeMu.Lock()
 	defer c.lifeMu.Unlock()
 	c.mu.Lock()

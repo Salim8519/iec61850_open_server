@@ -1,6 +1,7 @@
 package service
 
 import (
+	"studio-engine/internal/memtrim"
 	"studio-engine/internal/project"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/store/recovery"
@@ -20,6 +21,7 @@ func (s *Service) BulkPreview(keys any) (*pyjson.Object, error) {
 // current project first, then the removal is saved and announced. The result is the
 // preview plus "recovery_file".
 func (s *Service) BulkRemove(keys, fingerprint any) (*pyjson.Object, error) {
+	defer memtrim.Soon()
 	s.mutate.Lock()
 	defer s.mutate.Unlock()
 	st := s.current.Load()
@@ -44,6 +46,7 @@ func (s *Service) BulkRemove(keys, fingerprint any) (*pyjson.Object, error) {
 // RemoveIED is ProjectService.remove_ied(key): the single-IED preview, removed through
 // the bulk path with its own fingerprint.
 func (s *Service) RemoveIED(key string) (*pyjson.Object, error) {
+	defer memtrim.Soon()
 	preview, err := s.RemovalPreview(key)
 	if err != nil {
 		return nil, err

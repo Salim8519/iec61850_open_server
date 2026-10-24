@@ -101,7 +101,7 @@ func (c *Coordinator) sendSpc(ied *pyjson.Object, ref string, value bool) (*pyjs
 	if refusal := commandRefusal(ied); refusal != "" {
 		return nil, apperr.ValueError(refusal)
 	}
-	control := newIedModel(ied).control(ref)
+	control := controlOf(ied, ref)
 	if control == nil || pyval.Get(control, "cdc") != "SPC" {
 		return nil, apperr.New("This IED has no single command (SPC) " + ref + ". Choose the command again.")
 	}

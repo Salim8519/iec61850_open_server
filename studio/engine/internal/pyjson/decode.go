@@ -29,8 +29,9 @@ func Decode(data []byte) (any, error) {
 }
 
 type parser struct {
-	data []byte
-	pos  int
+	data  []byte
+	pos   int
+	stack []entry // members of the objects being read; each object takes an exact-size copy
 }
 
 func (p *parser) fail(message string) error {
@@ -90,12 +91,14 @@ func (p *parser) value(depth int) (any, error) {
 
 func (p *parser) object(depth int) (any, error) {
 	p.pos++
-	object := NewObject()
 	p.space()
 	if p.pos < len(p.data) && p.data[p.pos] == '}' {
 		p.pos++
-		return object, nil
+		return NewObject(), nil
 	}
+	base := len(p.stack)
+	defer func() { p.stack = p.stack[:base] }()
+	var seen map[string]int // key -> stack position, once the object is large
 	for {
 		if p.pos >= len(p.data) || p.data[p.pos] != '"' {
 			return nil, p.fail("Expecting property name enclosed in double quotes")
@@ -114,7 +117,7 @@ func (p *parser) object(depth int) (any, error) {
 		if err != nil {
 			return nil, err
 		}
-		object.Set(key, item)
+		p.member(base, &seen, key, item)
 		p.space()
 		if p.pos < len(p.data) && p.data[p.pos] == ',' {
 			p.pos++
@@ -123,9 +126,35 @@ func (p *parser) object(depth int) (any, error) {
 		}
 		if p.pos < len(p.data) && p.data[p.pos] == '}' {
 			p.pos++
-			return object, nil
+			return objectOf(append([]entry(nil), p.stack[base:]...)), nil
 		}
 		return nil, p.fail("Expecting ',' delimiter")
+	}
+}
+
+// member adds one key like Object.Set: a repeated key keeps its first place, last value wins.
+func (p *parser) member(base int, seen *map[string]int, key string, item any) {
+	if *seen != nil {
+		if position, found := (*seen)[key]; found {
+			p.stack[position].value = item
+			return
+		}
+	} else {
+		for position := base; position < len(p.stack); position++ {
+			if p.stack[position].key == key {
+				p.stack[position].value = item
+				return
+			}
+		}
+	}
+	p.stack = append(p.stack, entry{key, item})
+	if *seen != nil {
+		(*seen)[key] = len(p.stack) - 1
+	} else if len(p.stack)-base > indexAfter {
+		*seen = make(map[string]int, 2*indexAfter)
+		for position := base; position < len(p.stack); position++ {
+			(*seen)[p.stack[position].key] = position
+		}
 	}
 }
 

@@ -82,21 +82,21 @@ func appendArray(dst []byte, items []any, s style) ([]byte, error) {
 }
 
 func appendObject(dst []byte, object *Object, s style) ([]byte, error) {
-	keys := object.keys
+	entries := object.entries
 	if s.sortKeys {
 		// Python sorts str keys by code point; UTF-8 byte order is the same order.
-		keys = object.Keys()
-		sort.Strings(keys)
+		entries = append([]entry(nil), entries...)
+		sort.Slice(entries, func(a, b int) bool { return entries[a].key < entries[b].key })
 	}
 	dst = append(dst, '{')
-	for index, key := range keys {
+	for index := range entries {
 		if index > 0 {
 			dst = append(dst, s.itemSep...)
 		}
-		dst = AppendString(dst, key)
+		dst = AppendString(dst, entries[index].key)
 		dst = append(dst, s.keySep...)
 		var err error
-		if dst, err = appendValue(dst, object.values[key], s); err != nil {
+		if dst, err = appendValue(dst, entries[index].value, s); err != nil {
 			return nil, err
 		}
 	}
