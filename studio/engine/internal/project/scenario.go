@@ -17,7 +17,7 @@ func ValidateScenarios(raw any, ieds []*pyjson.Object) ([]any, error) {
 	if !isList || len(list) > 100 {
 		return nil, apperr.ValueError("Expected at most 100 scenarios")
 	}
-	signals := signalIndex(ieds)
+	signals := signalIndexOf(ieds, stepKeys(list))
 	result, ids := []any{}, map[string]bool{}
 	for _, item := range list {
 		scenario, isDict := item.(*pyjson.Object)
@@ -49,6 +49,28 @@ func ValidateScenarios(raw any, ieds []*pyjson.Object) ([]any, error) {
 			Set("enabled", enabled).Set("steps", normalized))
 	}
 	return result, nil
+}
+
+// stepKeys are the (ied_id, ref) text pairs the scenario steps name (only those can match).
+func stepKeys(list []any) map[signalKey]bool {
+	wanted := map[signalKey]bool{}
+	for _, item := range list {
+		scenario, isDict := item.(*pyjson.Object)
+		if !isDict {
+			continue
+		}
+		steps, _ := pyval.Lookup(scenario, "steps", nil).([]any)
+		for _, raw := range steps {
+			if step, isDict := raw.(*pyjson.Object); isDict {
+				iedID, idIsText := pyval.Lookup(step, "ied_id", nil).(string)
+				reference, refIsText := pyval.Lookup(step, "ref", nil).(string)
+				if idIsText && refIsText {
+					wanted[signalKey{iedID, reference}] = true
+				}
+			}
+		}
+	}
+	return wanted
 }
 
 func validateSteps(steps []any, signals map[signalKey]*pyjson.Object) ([]any, error) {

@@ -70,6 +70,9 @@ func walkObjects(b *builder, server *xmldoc.Element, iedName string) error {
 						break
 					}
 				}
+				if b.skipObject != nil && b.skipObject(object) {
+					continue
+				}
 				if err := b.dataObject(object, domain+"/"+lnName(ln), instance, 0); err != nil {
 					return err
 				}
@@ -86,7 +89,7 @@ var extendedCache sourceCache
 // not change it.
 func CachedExtendedControls(iedID, iedName, source string) ([]any, error) {
 	value, err := extendedCache.get(iedID, iedName, source, func() (any, error) {
-		return ExtendedControls([]byte(source), iedName)
+		return extendedFromDocument(source, iedName)
 	})
 	if err != nil {
 		return nil, err

@@ -25,6 +25,44 @@ func signalIndex(ieds []*pyjson.Object) map[signalKey]*pyjson.Object {
 	return index
 }
 
+// signalIndexOf is signalIndex limited to the wanted keys: the same signal for each of them,
+// without indexing every signal of the project on each request (ADR-0116).
+func signalIndexOf(ieds []*pyjson.Object, wanted map[signalKey]bool) map[signalKey]*pyjson.Object {
+	wantedIEDs := map[string]bool{}
+	for key := range wanted {
+		wantedIEDs[key.ied] = true
+	}
+	index := map[signalKey]*pyjson.Object{}
+	for _, ied := range ieds {
+		id := text(ied, "id")
+		if !wantedIEDs[id] {
+			continue
+		}
+		for _, item := range items(pyval.Lookup(ied, "signals", nil)) {
+			signal := object(item)
+			if key := (signalKey{id, text(signal, "ref")}); wanted[key] {
+				index[key] = signal
+			}
+		}
+	}
+	return index
+}
+
+// sourceKeys are the textual (ied_id, ref) keys a source list names; anything else never
+// matches a signal, as before.
+func sourceKeys(list []any) map[signalKey]bool {
+	wanted := map[signalKey]bool{}
+	for _, entry := range list {
+		if item, isDict := entry.(*pyjson.Object); isDict {
+			key, textual, err := lookupKey(pyval.Lookup(item, "ied_id", nil), pyval.Lookup(item, "ref", nil))
+			if err == nil && textual {
+				wanted[key] = true
+			}
+		}
+	}
+	return wanted
+}
+
 // lookupKey hashes (ied_id, ref) like a Python tuple key: lists and dicts raise TypeError,
 // other non-str values never match.
 func lookupKey(iedID, ref any) (signalKey, bool, error) {
@@ -44,7 +82,7 @@ func ValidateSources(sources any, ieds []*pyjson.Object) ([]any, error) {
 	if !isList || len(list) > 50000 {
 		return nil, apperr.New("Invalid source definitions")
 	}
-	signals := signalIndex(ieds)
+	signals := signalIndexOf(ieds, sourceKeys(list))
 	result, seen := []any{}, map[signalKey]bool{}
 	for _, entry := range list {
 		item, isDict := entry.(*pyjson.Object)

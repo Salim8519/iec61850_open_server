@@ -77,8 +77,12 @@ func (m *iedModel) lookup(ref string) (signal.Signal, bool) {
 func (m *iedModel) controls() []any { return pyval.List(m.raw, "controls") }
 
 // control finds a control entry by reference.
-func (m *iedModel) control(ref string) *pyjson.Object {
-	for _, item := range m.controls() {
+func (m *iedModel) control(ref string) *pyjson.Object { return controlOf(m.raw, ref) }
+
+// controlOf is newIedModel(ied).control(ref) without building the IED's signal model, which
+// a command does not need (ADR-0116).
+func controlOf(ied *pyjson.Object, ref string) *pyjson.Object {
+	for _, item := range pyval.List(ied, "controls") {
 		entry, _ := item.(*pyjson.Object)
 		if pyval.Str(entry, "ref") == ref {
 			return entry

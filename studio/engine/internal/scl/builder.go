@@ -24,10 +24,16 @@ type builder struct {
 	lines           []string
 	extended        []any       // Go-only typed controls (ADR-0104); never part of the IED model
 	notes           importNotes // Go-only import notes (ADR-0114)
+	// One read-only enum object per EnumType, shared by the IED's signals, and one shared empty
+	// object for every other signal (ADR-0116); nothing changes a signal's "enums".
+	enumTypes  map[string]*pyjson.Object
+	emptyEnums *pyjson.Object
+	skipObject func(*xmldoc.Element) bool // walkObjects leaves these DOs out (typed-control read)
 }
 
 func newBuilder(types map[typeKey]*xmldoc.Element) *builder {
-	return &builder{types: types, byReference: map[string]*pyjson.Object{}, signals: []any{}, controls: []any{}}
+	return &builder{types: types, byReference: map[string]*pyjson.Object{}, signals: []any{}, controls: []any{},
+		enumTypes: map[string]*pyjson.Object{}, emptyEnums: pyjson.NewObject()}
 }
 
 func (b *builder) declaration(tag string, id string, present bool) (*xmldoc.Element, error) {

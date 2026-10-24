@@ -51,6 +51,12 @@ only not returned to Windows. Quick wins with no behaviour change: GOGC=50 set i
 in development and the package) and give memory back after Stop. Then find what Run start builds all at
 once (the 1.35 GB peak), then compact point storage. Owner decision: the website keeps "4 GB RAM".
 
+**Done in change 0189 (ADR-0116, 2026-10-24):** compact objects, shared enum lists, one SCL read per
+file at Run start, lookups limited to what a request names, memory returned after one-off jobs. Same
+20-IED project: after open 1,028 -> 370 MB, peak 1,595 -> 761 MB, after Stop 1,595 -> 557 MB, server CPU
+-65 %, reports and GOOSE per second unchanged. Still open: a typed point store (about 1 KB per point
+today), the native IED programs (about 25 MB each) and a memory gate in `verify.py`.
+
 ## 2. Attribute arrays (`DA count`) are refused
 
 **Problem.** 11 IEDs (Schneider PM8000/ION meters, WAGO DSCH, BINOM, Schneider Easergy P5) are
