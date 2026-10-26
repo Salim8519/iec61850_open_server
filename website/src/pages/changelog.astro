@@ -7,7 +7,15 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · NR/NARI relays and SCD deadbands</h2>
+    <h2>{SITE.version} · Lab network on this PC, GOOSE follows your IEDs</h2>
+    <ul>
+      <li>New: a lab network on this PC. Each simulated IED answers at its own address from the SCL file, for example 192.168.216.1, without a virtual machine. Ping, MMS clients such as IEDScout or a SCADA, and GOOSE work on those addresses, and nothing goes out on your Ethernet or Wi-Fi.</li>
+      <li>Windows asks for permission once, to add the "ScadaBench Lab" card (the Windows loopback adapter, no download, no restart). After that, Use and every address change need no prompt. Type another address and it moves at once, even while running; the SCL file is never changed.</li>
+      <li>Clash checks: an address used twice or one of your PC's own addresses is refused; when a real device on your Wi-Fi or Ethernet already answers at an address, ScadaBench warns you and offers a free one.</li>
+      <li>New: GOOSE now follows your IEDs. It goes to the same network as your simulated IEDs (the lab network, a real card, or only inside ScadaBench), and sending next to a real device asks you once first. A missing Npcap is one clear line with a download link.</li>
+      <li>Uninstalling ScadaBench also removes the lab card and its service.</li>
+    </ul>
+    <h2>0.1.27 · NR/NARI relays and SCD deadbands</h2>
     <ul>
       <li>New: NR and NARI relays (for example PCS-9705 and PCS-921S) now import. They have three access points; ScadaBench simulates the station bus one, S1, which a SCADA connects to, exactly as the SCD defines it. The import dialog says which access points (process-bus GOOSE on G1, Sampled Values on M1) are not simulated.</li>
       <li>New: deadbands from the SCD. Each simulated IED has a "Use SCD deadbands" switch. When it is on, a measurement is reported only when it moves more than its db, like a real IED. It is off by default, so nothing changes until you turn it on.</li>
