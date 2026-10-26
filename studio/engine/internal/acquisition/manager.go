@@ -53,6 +53,7 @@ func NewManager(deps Deps) *Manager {
 	m.Engine = NewGooseEngine(deps, filepath.Join(filepath.Dir(deps.LiveExecutable), "studio_goose.exe"))
 	m.Share = NewGooseShare(deps, m.Engine)
 	m.Goose = NewGooseMonitor(deps, m.Engine, m.Share, m.values)
+	m.Share.Waiting = m.Goose.Waiting
 	m.SV = NewSvMonitor(deps)
 	return m
 }

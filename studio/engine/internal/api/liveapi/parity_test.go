@@ -15,6 +15,7 @@ import (
 	"studio-engine/internal/acquisition/goosedom"
 	"studio-engine/internal/acquisition/pyv"
 	"studio-engine/internal/httpapi"
+	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
 )
 
@@ -80,6 +81,8 @@ func TestRoutesMatchPython(t *testing.T) { replayRoutes(t, false) }
 func TestComposedRoutesMatchPython(t *testing.T) { replayRoutes(t, true) }
 
 func replayRoutes(t *testing.T, composed bool) {
+	t.Cleanup(netset.AsPythonTwin()) // ADR-0119 is Go-only
+	t.Cleanup(goosedom.AsPythonTwin())
 	doc := loadScenario(t)
 	e := newEnv(t, doc)
 	if composed {

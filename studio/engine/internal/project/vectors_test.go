@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/project/netset"
 	"studio-engine/internal/project/pyval"
 	"studio-engine/internal/pyjson"
 )
@@ -114,6 +115,7 @@ func errorObject(err error) *pyjson.Object {
 }
 
 func TestGoldenVectors(t *testing.T) {
+	t.Cleanup(netset.AsPythonTwin()) // ADR-0119 is Go-only
 	fx := loadFixtures(t)
 	files, _ := filepath.Glob(filepath.Join("testdata", "generated", "vectors_*.json"))
 	if len(files) == 0 {

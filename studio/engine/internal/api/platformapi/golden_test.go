@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	"studio-engine/internal/acquisition/goosedom"
+	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
 )
 
@@ -96,6 +98,8 @@ func (s step) request() *http.Request {
 // TestPlatformRoutesAgainstFlask replays every recorded step in order against the Go area
 // and compares the status, the user-visible headers and the exact body bytes.
 func TestPlatformRoutesAgainstFlask(t *testing.T) {
+	t.Cleanup(netset.AsPythonTwin()) // ADR-0119 is Go-only
+	t.Cleanup(goosedom.AsPythonTwin())
 	g := loadGolden(t)
 	h := newHarness(t, g)
 	requests, failures := 0, 0

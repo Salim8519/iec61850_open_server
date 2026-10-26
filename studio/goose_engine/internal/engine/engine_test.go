@@ -43,7 +43,7 @@ func (r *rig) opened() frame.MAC {
 
 func (r *rig) sharing() {
 	r.t.Helper()
-	r.engine.SetUplink("{GUID}", true)
+	r.engine.SetUplink("{GUID}", true, true)
 	r.port.opened = time.Now().Add(-time.Second)
 	r.port.onState("open", "")
 	r.event("goose_share") // checking
@@ -75,7 +75,7 @@ func TestFramesFromUnregisteredSendersNeverReachTheInbox(t *testing.T) {
 func TestInsideModeListensButNeverTransmits(t *testing.T) {
 	r := newRig(t)
 	mac := r.opened()
-	r.engine.SetUplink("{GUID}", false)
+	r.engine.SetUplink("{GUID}", false, true)
 	r.port.opened = time.Now().Add(-time.Minute)
 	r.port.onState("open", "")
 	time.Sleep(200 * time.Millisecond)
@@ -153,12 +153,12 @@ func TestOwnReflectionFromTheWireIsDropped(t *testing.T) {
 func TestConflictSeenWhileListeningIsAskedAgainWhenSharingStarts(t *testing.T) {
 	r := newRig(t)
 	r.opened()
-	r.engine.SetUplink("{GUID}", false)
+	r.engine.SetUplink("{GUID}", false, true)
 	r.port.onFrame(frametest.Build(frametest.Options{Src: device, GocbRef: ref}))
 	if r.event("goose_conflict")["sharing"] != false {
 		t.Fatal("listen-only conflict should say sharing is off")
 	}
-	r.engine.SetUplink("{GUID}", true)
+	r.engine.SetUplink("{GUID}", true, true)
 	if r.event("goose_conflict")["sharing"] != true {
 		t.Fatal("waiting conflict not raised again when sharing starts")
 	}

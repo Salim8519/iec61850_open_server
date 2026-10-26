@@ -11,16 +11,18 @@ import (
 var listenBeforeShare = 3 * time.Second
 
 type linkState struct {
-	port    uplink.Port
-	adapter string
-	share   bool
-	state   string
-	message string
+	port        uplink.Port
+	adapter     string
+	share       bool
+	confirmReal bool // the user confirmed sharing next to real devices on this adapter
+	state       string
+	message     string
 }
 
 // SetUplink listens on the adapter ("" closes it) and, when share is true, sends
-// simulated GOOSE outside after the listen window. It returns the new status.
-func (e *Engine) SetUplink(adapter string, share bool) map[string]any {
+// simulated GOOSE outside after the listen window. Without confirmReal, sharing holds
+// as soon as a real device is heard (ADR-0119). It returns the new status.
+func (e *Engine) SetUplink(adapter string, share, confirmReal bool) map[string]any {
 	e.mu.Lock()
 	if adapter != e.link.adapter && e.link.port != nil {
 		old := e.link.port
@@ -32,6 +34,7 @@ func (e *Engine) SetUplink(adapter string, share bool) map[string]any {
 	}
 	if adapter != e.link.adapter {
 		e.link = linkState{adapter: adapter, state: "closed"}
+		e.realSeen.Store(false)
 		if adapter != "" {
 			e.link.state = "opening"
 			e.link.port = e.newPort(adapter, e.fromWire, func(state, message string) { e.uplinkState(adapter, state, message) })
@@ -39,7 +42,11 @@ func (e *Engine) SetUplink(adapter string, share bool) map[string]any {
 	}
 	wasShare := e.link.share
 	e.link.share = share && adapter != ""
+	e.link.confirmReal = confirmReal
 	nowShare := e.link.share
+	if e.realHeldLocked() {
+		e.stopSharing()
+	}
 	if !nowShare {
 		e.stopSharing()
 	}
@@ -47,7 +54,7 @@ func (e *Engine) SetUplink(adapter string, share bool) map[string]any {
 	e.mu.Unlock()
 	e.poke()
 	if nowShare && !wasShare {
-		e.emit(map[string]any{"event": "goose_share", "state": "checking"})
+		e.emit(map[string]any{"event": "goose_share", "state": status["share"]})
 		for _, conflict := range e.guard.Waiting() {
 			e.emit(map[string]any{"event": "goose_conflict", "ied_id": conflict.IED, "gocb_ref": conflict.GocbRef,
 				"src_mac": conflict.Src, "sharing": true})
@@ -108,7 +115,7 @@ func (e *Engine) tick() {
 		}
 		e.mu.Lock()
 		ready := false
-		if e.link.share && e.link.port != nil && !e.sharing.Load() && e.link.state == "open" {
+		if e.link.share && e.link.port != nil && !e.sharing.Load() && e.link.state == "open" && !e.realHeldLocked() {
 			if since, open := e.link.port.OpenSince(); open && time.Since(since) >= listenBeforeShare {
 				e.link.port.AllowSend(true)
 				e.sharing.Store(true)
@@ -126,7 +133,7 @@ func (e *Engine) tick() {
 func (e *Engine) sharePending() bool {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	return e.link.share && e.link.port != nil && !e.sharing.Load() && e.link.state == "open"
+	return e.link.share && e.link.port != nil && !e.sharing.Load() && e.link.state == "open" && !e.realHeldLocked()
 }
 
 // poke makes tick re-check whether it has to tick.
@@ -148,7 +155,9 @@ func (e *Engine) statusLocked() map[string]any {
 	share := "off"
 	if e.link.share {
 		share = "checking"
-		if e.sharing.Load() {
+		if e.realHeldLocked() {
+			share = "real_hold"
+		} else if e.sharing.Load() {
 			share = "sharing"
 		}
 	}

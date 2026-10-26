@@ -28,7 +28,7 @@ func TestSharingResumesWhenALostAdapterComesBack(t *testing.T) {
 func TestSharingWaitsForAnAdapterThatOpensLate(t *testing.T) {
 	r := newRig(t)
 	r.opened()
-	r.engine.SetUplink("{GUID}", true)
+	r.engine.SetUplink("{GUID}", true, true)
 	r.event("goose_share") // checking
 	r.port.onState("needs_npcap", "Npcap is not installed")
 	time.Sleep(3 * tickEvery)

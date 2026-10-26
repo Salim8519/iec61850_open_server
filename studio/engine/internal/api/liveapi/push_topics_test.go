@@ -6,6 +6,7 @@ import (
 
 	"studio-engine/internal/acquisition/goosedom"
 	"studio-engine/internal/acquisition/pyv"
+	"studio-engine/internal/project/netset"
 	"studio-engine/internal/push"
 )
 
@@ -13,6 +14,8 @@ import (
 // answers every GET of a push topic through the push path: the topic's full frame must
 // carry exactly the body Flask recorded (speed lane G).
 func TestPushFullFramesMatchPython(t *testing.T) {
+	t.Cleanup(netset.AsPythonTwin()) // ADR-0119 is Go-only
+	t.Cleanup(goosedom.AsPythonTwin())
 	doc := loadScenario(t)
 	e := newEnv(t, doc)
 	defer e.service.Live.Stop()
