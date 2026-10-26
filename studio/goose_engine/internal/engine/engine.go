@@ -35,6 +35,7 @@ type Engine struct {
 	bus      *bus.Bus
 	counts   counters
 	sharing  atomic.Bool
+	realSeen atomic.Bool // GOOSE from a vendor (globally administered) MAC was heard on the adapter
 	mu       sync.Mutex
 	prefix   [2]byte
 	next     uint32
@@ -141,6 +142,7 @@ func (e *Engine) fromWire(b []byte) {
 	if err != nil {
 		return
 	}
+	e.noteReal(info.Src)
 	deliver, why, conflict := e.guard.FromWire(info)
 	if conflict != nil {
 		e.emit(map[string]any{"event": "goose_conflict", "ied_id": conflict.IED, "gocb_ref": conflict.GocbRef,
@@ -169,7 +171,7 @@ func (e *Engine) storm(info frame.Info) {
 // Close stops sharing, the uplink and the bus.
 func (e *Engine) Close() {
 	close(e.stopTick)
-	e.SetUplink("", false)
+	e.SetUplink("", false, false)
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	if e.bus != nil {

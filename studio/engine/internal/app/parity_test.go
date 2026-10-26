@@ -3,6 +3,9 @@ package app
 import (
 	"strings"
 	"testing"
+
+	"studio-engine/internal/acquisition/goosedom"
+	"studio-engine/internal/project/netset"
 )
 
 var parityVariants = []variant{
@@ -32,6 +35,8 @@ var sanity = map[string]string{
 // Waitress, run by the venv Python) and to the Go app, and requires identical status,
 // headers and bodies. One Python process runs at a time (STUDIO_PYTHON must be set).
 func TestFlaskParity(t *testing.T) {
+	t.Cleanup(netset.AsPythonTwin()) // ADR-0119 is Go-only
+	t.Cleanup(goosedom.AsPythonTwin())
 	frontend := syntheticFrontend(t)
 	for _, v := range parityVariants {
 		t.Run(v.name, func(t *testing.T) {

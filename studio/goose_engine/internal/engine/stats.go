@@ -12,6 +12,7 @@ type counters struct {
 	noInbox       atomic.Uint64
 	wireFrames    atomic.Uint64
 	deliveredWire atomic.Uint64
+	realFrames    atomic.Uint64
 	sent          atomic.Uint64
 	mu            sync.Mutex
 	refused       map[string]uint64
@@ -44,7 +45,8 @@ func (e *Engine) Stats() map[string]any {
 		"bus_frames": e.counts.busFrames.Load(), "bus_rejected": e.counts.busRejected.Load(),
 		"delivered_app": e.counts.deliveredApp.Load(), "no_inbox": e.counts.noInbox.Load(),
 		"wire_frames": e.counts.wireFrames.Load(), "delivered_wire": e.counts.deliveredWire.Load(),
-		"sent": e.counts.sent.Load(), "refused": refused, "gates": e.guard.Gates(),
+		"real_frames": e.counts.realFrames.Load(),
+		"sent":        e.counts.sent.Load(), "refused": refused, "gates": e.guard.Gates(),
 		"sources": sources, "link": e.Status(),
 	}
 }

@@ -12,6 +12,9 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"studio-engine/internal/acquisition/goosedom"
+	"studio-engine/internal/project/netset"
 )
 
 // goldenCase is one request/answer pair recorded from the Flask app by http_gen.py.
@@ -84,6 +87,8 @@ func TestFlaskParityDesignRoutes(t *testing.T) {
 }
 
 func replay(t *testing.T, path string) {
+	t.Cleanup(netset.AsPythonTwin()) // ADR-0119 is Go-only
+	t.Cleanup(goosedom.AsPythonTwin())
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Skip("http golden missing")

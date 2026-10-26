@@ -21,9 +21,15 @@ type GooseShare struct {
 	deps   Deps
 	engine *GooseEngine
 
-	mu     sync.Mutex
-	uplink *pyjson.Object
-	hold   string
+	mu        sync.Mutex
+	uplink    *pyjson.Object
+	holdState string
+	hold      string
+	alone     aloneClock
+
+	// Waiting reports whether a GOOSE the project expects has not arrived yet (the monitor
+	// sets it); nil means nothing waits.
+	Waiting func() bool
 }
 
 // NewGooseShare returns the share service.
@@ -51,7 +57,10 @@ func (g *GooseShare) heardRealGoose() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return pyv.Truthy(pyv.Get(stats, "delivered_wire")), nil
+	if goosedom.PythonTwin() {
+		return pyv.Truthy(pyv.Get(stats, "delivered_wire")), nil
+	}
+	return pyv.Truthy(pyv.Get(stats, "real_frames")), nil
 }
 
 // Preview is everything the "Where GOOSE goes" panel and its warning need.
@@ -60,20 +69,33 @@ func (g *GooseShare) Preview(project *pyjson.Object) (*pyjson.Object, error) {
 	adapters, uplink := g.resolve(network)
 	installed := g.installed()
 	engine := g.engine.Snapshot()
-	state, message := goosedom.ReachStatus(network, uplink, goosedom.ShareHold(network, uplink, installed), engine)
+	ieds := pyv.Objects(pyv.GetList(project, "ieds"))
+	holdState, hold := goosedom.Hold(network, uplink, installed, ieds)
+	state, message := goosedom.Status(network, uplink, holdState, hold, engine)
 	heard, err := g.heardRealGoose()
 	if err != nil {
 		return nil, err
 	}
-	return pyv.O("reach", pyv.GetOr(network, "goose_reach", "inside"), "uplink", uplink,
+	preview := pyv.O("reach", goosedom.Reach(network), "uplink", uplink,
 		"uplink_guid", pyv.GetOr(network, "goose_uplink_guid", ""), "choices", goosedom.AdvancedChoices(adapters),
-		"risk", goosedom.ShareRisk(network, uplink, pyv.Objects(pyv.GetList(project, "ieds")), heard),
+		"risk", goosedom.Risk(network, uplink, ieds, heard),
 		"npcap", installed, "running", pyv.Get(engine, "running"), "state", state, "message", message,
-		"conflicts", pyv.Get(engine, "conflicts")), nil
+		"conflicts", pyv.Get(engine, "conflicts"))
+	if goosedom.PythonTwin() {
+		return preview, nil
+	}
+	alone, err := g.nobodyThere(state)
+	if err != nil {
+		return nil, err
+	}
+	return preview.Set("goes_out", goosedom.Shares(network, uplink)).Set("alone", alone), nil
 }
 
 // Apply saves the user's choice; sharing needs confirm:true and the adapter they saw.
 func (g *GooseShare) Apply(body *pyjson.Object) (*pyjson.Object, error) {
+	if !goosedom.PythonTwin() {
+		return g.applyAuto(body)
+	}
 	reach := pyv.GetOr(body, "reach", "inside")
 	network := pyv.Shallow(pyv.GetObj(g.deps.Projects.Current(), "network"))
 	network.Set("goose_reach", reach)
@@ -101,7 +123,12 @@ func (g *GooseShare) Apply(body *pyjson.Object) (*pyjson.Object, error) {
 		}
 		shareGUID = pyv.GetStr(uplink, "guid")
 	}
-	if err := g.deps.Projects.SaveReach(reach, pyv.PyStr(pyv.GetOr(network, "goose_uplink_guid", "")), shareGUID); err != nil {
+	return g.save(reach, pyv.PyStr(pyv.GetOr(network, "goose_uplink_guid", "")), shareGUID)
+}
+
+// save stores where GOOSE goes and applies it to a running engine at once.
+func (g *GooseShare) save(reach any, uplinkGUID, shareGUID string) (*pyjson.Object, error) {
+	if err := g.deps.Projects.SaveReach(reach, uplinkGUID, shareGUID); err != nil {
 		return nil, err
 	}
 	project := g.deps.Projects.Current()
@@ -118,25 +145,25 @@ func (g *GooseShare) Start(project *pyjson.Object) error {
 	network := pyv.GetObj(project, "network")
 	_, uplink := g.resolve(network)
 	installed := g.installed()
-	hold := goosedom.ShareHold(network, uplink, installed)
+	holdState, hold := goosedom.Hold(network, uplink, installed, pyv.Objects(pyv.GetList(project, "ieds")))
 	g.mu.Lock()
-	g.uplink, g.hold = uplink, hold
+	g.uplink, g.holdState, g.hold = uplink, holdState, hold
 	g.mu.Unlock()
 	listen := ""
 	if installed {
 		listen = pyv.GetStr(uplink, "guid")
 	}
-	share := pyv.Equal(pyv.Get(network, "goose_reach"), "outside") && hold == ""
-	_, err := g.engine.Uplink(listen, share)
+	share := goosedom.Shares(network, uplink) && hold == ""
+	_, err := g.engine.Uplink(listen, share, goosedom.Confirmed(network, uplink))
 	return err
 }
 
 // Status is the (state, message) of the GOOSE traffic view while running.
 func (g *GooseShare) Status(project *pyjson.Object) (string, string) {
 	g.mu.Lock()
-	uplink, hold := g.uplink, g.hold
+	uplink, holdState, hold := g.uplink, g.holdState, g.hold
 	g.mu.Unlock()
-	return goosedom.ReachStatus(pyv.GetObj(project, "network"), uplink, hold, g.engine.Snapshot())
+	return goosedom.Status(pyv.GetObj(project, "network"), uplink, holdState, hold, g.engine.Snapshot())
 }
 
 // Choose answers a conflict: stop this IED's GOOSE outside, or continue (confirmed).

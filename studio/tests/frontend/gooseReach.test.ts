@@ -6,11 +6,14 @@ import { TONES } from '../../frontend/src/copy/status.ts';
 
 const read = (path: string) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
 
-test('every reach state the backend reports has words, an icon and a hint', () => {
-  const backend = read('backend/studio_app/domain/goose_reach.py') + read('backend/studio_app/acquisition/goose_monitor.py');
-  const states = new Set([...backend.matchAll(/return "([a-z_]+)", /g), ...backend.matchAll(/"state": "([a-z_]+)"/g)]
+test('every reach state the Go engine reports has words, an icon and a hint', () => {
+  const backend = read('engine/internal/acquisition/goosedom/reach_auto.go')
+    + read('engine/internal/acquisition/goosedom/reach_share.go');
+  const states = new Set([...backend.matchAll(/return "([a-z_]+)", /g)]
     .map(match => match[1]));
-  assert.ok(states.has('sharing') && states.has('listening') && states.has('share_held'));
+  for (const state of ['sharing', 'listening', 'share_held', 'confirm', 'local', 'inside']) {
+    assert.ok(states.has(state), `Go reports ${state}`);
+  }
   for (const state of states) {
     assert.ok(REACH_STATES[state], `reach state ${state} needs words`);
     assert.ok(reachStatus(state).hint && TONES[reachStatus(state).tone].icon);
@@ -32,9 +35,11 @@ test('GOOSE-25: the share warning is stronger when real devices may act on it', 
   assert.match(dialog, /className="danger"/);
 });
 
-test('sharing is sent only with confirm and the adapter shown; a conflict needs two clicks to continue', () => {
+test('ADR-0119: real devices are confirmed with the adapter shown; a conflict needs two clicks to continue', () => {
   const reach = read('frontend/src/features/network/GooseReach.tsx');
-  assert.match(reach, /reach: 'outside', adapter_guid: share\.uplink\.guid, confirm: true/);
+  assert.match(reach, /reach: 'auto', adapter_guid: share\.uplink\.guid, confirm: true/);
+  assert.match(reach, /NPCAP_URL = 'https:\/\/npcap\.com\/#download'/, 'Npcap has a download link');
+  assert.doesNotMatch(reach, /goose_reach === 'outside'|reach: 'outside'/, 'no browser decides sharing');
   const conflicts = read('frontend/src/features/network/GooseConflicts.tsx');
   assert.match(conflicts, /confirm: choice === 'continue'/);
   assert.match(conflicts, /sure === conflict\.ied_id/);

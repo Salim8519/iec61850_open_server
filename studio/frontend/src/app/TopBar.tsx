@@ -5,6 +5,7 @@ import { runStateWords } from '../copy/running';
 import { RUN_MARK, runSummary } from '../copy/runShape';
 import { REACH_COPY } from '../copy/gooseReach';
 import { onLabNetwork } from '../features/network/endpoints';
+import { useGoesOut } from '../features/network/useGoesOut';
 import { SpinIcon } from '../ui/Spinner';
 import { useDelayed } from '../ui/useDelayed';
 
@@ -31,15 +32,16 @@ export function TopBar({ title, subtitle, project, busy, working = '', saveState
   // ○ stopped, ◐ some IEDs, ● all IEDs: green only when everything runs (change 0106).
   // The way to start the rest sits on Devices and the SLD, so the top bar keeps its width at 1366 px.
   const { shape } = runSummary(project);
+  const goesOut = useGoesOut(running);
   return <header className="topbar">
     <div className="topbar-title"><h1>{title}</h1><p>{subtitle}</p></div>
     {/* While IEDs run the drawing is locked: the idle "All changes saved" yields its room so the page
         subtitle stays whole at 1366 px; "Saving..." and "Not saved" always show (change 0106). */}
     {!(running && saveState === 'All changes saved') && <span className="small muted" aria-live="polite">{saveState}</span>}
     {project && <ReachChip project={project} open={openNetwork} />}
-    {/* Only while running (nothing leaves the PC when stopped). Icon-sized so the page subtitle stays whole
-        at 1366 px; the words are in the tooltip, for screen readers, and in Settings (ADR-0073). */}
-    {running && project?.network.goose_reach === 'outside' && <button className="goose-pill" title={REACH_COPY.pillHint}
+    {/* Only while the Go engine really sends GOOSE out (ADR-0119). Icon-sized so the page subtitle stays
+        whole at 1366 px; the words are in the tooltip, for screen readers, and in Settings (ADR-0073). */}
+    {goesOut && <button className="goose-pill" title={REACH_COPY.pillHint}
       aria-label={`${REACH_COPY.pill}. ${REACH_COPY.pillHint}`} onClick={openNetwork}><Radio size={16} aria-hidden /></button>}
     <Menu label="Project file" align="right" trigger={<><FileUp size={17} />File</>} items={[
       { label: 'Open file…', icon: <FolderOpen size={16} />, onSelect: openFile, disabled: running || busy },

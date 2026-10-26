@@ -1,4 +1,4 @@
-import { Radio } from 'lucide-react';
+import { CircleAlert, ExternalLink, Network, Radio, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
@@ -13,9 +13,11 @@ import './goose.css';
 
 const SHARE = '/goose/share';
 const NPCAP_URL = 'https://npcap.com/#download';
+// States that carry their own reason from the Go engine; shown under the choice.
+const WITH_REASON = new Set(['confirm', 'share_held', 'checking', 'listening']);
 
-/** "Where GOOSE goes": inside ScadaBench (default) or also shared with the network (ADR-0073).
- * Allowed while running; the backend applies it to the live GOOSE engine at once. */
+/** "Where GOOSE goes" (ADR-0119): with the IEDs' network by default, or only inside ScadaBench.
+ * Every decision comes from the Go engine; this card only shows it and sends the user's choice. */
 export function GooseReach({ revision, perform }: { revision: number; perform: (task: () => Promise<unknown>) => Promise<void> }) {
   const [share, setShare] = useState<GooseShare | null>(null);
   const [asking, setAsking] = useState(false);
@@ -29,47 +31,59 @@ export function GooseReach({ revision, perform }: { revision: number; perform: (
     return perform(() => api<GooseShare>(SHARE, 'PUT', body).then(setShare))
       .finally(() => { setBusy(false); setAsking(false); liveFeed.refresh(SHARE); });
   };
-  const outside = share.reach === 'outside';
+  const local = share.reach === 'local';
   const adapter = share.uplink.guid ? share.uplink.label : '';
-  const canShare = share.npcap && !!share.uplink.guid;
-  const status = !share.running && outside ? REACH_STATES.share_at_run : reachStatus(share.state);
+  const waiting = share.state === 'confirm' || share.state === 'share_held';
+  // The red Npcap line carries the Go engine's own words (ADR-0119).
+  const npcapMissing = share.goes_out && !share.npcap && share.state === 'share_held';
+  const status = !share.running && share.goes_out && !waiting ? REACH_STATES.goes_at_run : reachStatus(share.state);
+  const choice = (value: 'auto' | 'local', title: string, line: string) =>
+    <label className={`goose-reach-option${share.reach === value ? ' selected' : ''}`}>
+      <input type="radio" name="goose-reach" aria-label={title} checked={share.reach === value} disabled={busy}
+        onChange={() => send({ reach: value })} />
+      <span><strong>{title}</strong><span className="small muted">{line}</span></span>
+    </label>;
   return <div className="card">
     <div className="card-heading"><h2><Radio size={18} aria-hidden /> {REACH_COPY.title}</h2>
       <StatusPill status={status} /></div>
     <div className="guide-section">
       <Hint id="goose.reach" />
       <div className="goose-reach-options" role="radiogroup" aria-label={REACH_COPY.title}>
-        <label className={`goose-reach-option${outside ? '' : ' selected'}`}>
-          <input type="radio" name="goose-reach" aria-label={REACH_COPY.inside} checked={!outside} disabled={busy}
-            onChange={() => send({ reach: 'inside' })} />
-          <span><strong>{REACH_COPY.inside}</strong><span className="small muted">{REACH_COPY.insideLine}</span></span>
-        </label>
-        <label className={`goose-reach-option${outside ? ' selected' : ''}`}>
-          <input type="radio" name="goose-reach" aria-label={REACH_COPY.outside} checked={outside} disabled={busy || (!outside && !canShare)}
-            onChange={() => setAsking(true)} />
-          <span><strong>{REACH_COPY.outside}</strong><span className="small muted">{REACH_COPY.outsideLine}</span></span>
-        </label>
+        {choice('auto', REACH_COPY.auto, REACH_COPY.autoLine)}
+        {choice('local', REACH_COPY.local, REACH_COPY.localLine)}
       </div>
+      {!local && adapter && <div className="goose-adapter">
+        <Network size={18} aria-hidden />
+        <span><span>{share.goes_out ? REACH_COPY.goesOut : REACH_COPY.listens}: <strong>{adapter}</strong></span>
+          {share.goes_out && <span className="small muted">
+            {share.uplink.why === 'chosen' ? REACH_COPY.chosen : REACH_COPY.picked}</span>}</span>
+      </div>}
+      {share.goes_out && <div className="goose-guard" aria-label={REACH_COPY.protection}>
+        <span className="small muted">{REACH_COPY.protection}</span>
+        <ul>{REACH_COPY.guard.map(item => <li key={item}><ShieldCheck size={14} aria-hidden />{item}</li>)}</ul>
+      </div>}
+      {share.message && WITH_REASON.has(share.state) && !npcapMissing &&
+        <p className="small" style={{ margin: 0 }}>{share.message}</p>}
+      {share.state === 'confirm' && !asking &&
+        <div className="row"><button onClick={() => setAsking(true)} disabled={busy}>{REACH_COPY.review}</button></div>}
       {asking && <GooseShareWarning share={share} busy={busy} cancel={() => setAsking(false)}
-        confirm={() => send({ reach: 'outside', adapter_guid: share.uplink.guid, confirm: true })} />}
-      {share.message && share.state !== 'inside' && <p className="small" style={{ margin: 0 }}>{share.message}</p>}
-      <p className="small" style={{ margin: 0 }}>{REACH_COPY.adapter}: <strong>{adapter || '—'}</strong>
-        {adapter && share.uplink.auto && <span className="muted"> · {REACH_COPY.auto}</span>}
-        {!adapter && <span className="muted"> · {share.uplink.reason}</span>}</p>
-      {share.npcap ? adapter && <Hint id="goose.listen" compact />
-        : <div className="row"><Hint id="goose.npcap.missing" /><InfoTip term="npcap" label="What is Npcap?" />
-          <a className="button" href={NPCAP_URL} target="_blank" rel="noreferrer">{REACH_COPY.getNpcap}</a></div>}
+        confirm={() => send({ reach: 'auto', adapter_guid: share.uplink.guid, confirm: true })} />}
+      {share.alone && <p className="goose-alone" role="status"><TriangleAlert size={16} aria-hidden />
+        <span>{REACH_COPY.alone(adapter)}</span></p>}
+      {npcapMissing && <p className="goose-npcap" role="alert">
+        <CircleAlert size={16} aria-hidden /><span>{share.message}</span>
+        <a href={NPCAP_URL} target="_blank" rel="noreferrer">{REACH_COPY.getNpcap} <ExternalLink size={13} aria-hidden /></a>
+        <InfoTip term="npcap" label="What is Npcap?" /></p>}
       <Disclosure title={REACH_COPY.advanced}>
         <label className="small">{REACH_COPY.adapter}{' '}
-          <select value={share.uplink_guid} disabled={busy || outside}
-            onChange={event => send({ reach: 'inside', uplink_guid: event.target.value })}>
+          <select value={share.uplink_guid} disabled={busy}
+            onChange={event => send({ reach: share.reach, uplink_guid: event.target.value })}>
             <option value="">{REACH_COPY.automatic}</option>
-            {share.choices.map(choice => <option key={choice.guid} value={choice.guid}>
-              {choice.label}{choice.connected ? '' : ' (not connected)'}</option>)}
+            {share.choices.map(item => <option key={item.guid} value={item.guid}>
+              {item.label}{item.connected ? '' : ' (not connected)'}</option>)}
           </select></label>
-        {outside && <p className="small muted" style={{ margin: 0 }}>{REACH_COPY.lockedWhileSharing}</p>}
-        {share.choices.find(choice => choice.guid === share.uplink_guid)?.warning &&
-          <p className="small" style={{ margin: 0 }}>{share.choices.find(choice => choice.guid === share.uplink_guid)?.warning}</p>}
+        {share.choices.find(item => item.guid === share.uplink_guid)?.warning &&
+          <p className="small" style={{ margin: 0 }}>{share.choices.find(item => item.guid === share.uplink_guid)?.warning}</p>}
       </Disclosure>
     </div>
   </div>;

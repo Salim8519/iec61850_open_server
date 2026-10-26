@@ -8,6 +8,7 @@ import (
 )
 
 func TestReachMatchesPython(t *testing.T) {
+	t.Cleanup(AsPythonTwin()) // ADR-0119 is Go-only
 	run(t, "goose_reach.json", map[string]func(goldentest.Case) any{
 		"is_npcap_loopback": func(c goldentest.Case) any { return IsNpcapLoopback(c.Obj(0)) },
 		"pick_uplink":       func(c goldentest.Case) any { return PickUplink(objs(c.Args[0]), c.Obj(1)) },

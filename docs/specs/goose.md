@@ -2,7 +2,8 @@
 
 Decision: [ADR-0030](../decisions/ADR-0030-goose-with-user-installed-npcap.md); subscriber inputs:
 [ADR-0066](../decisions/ADR-0066-goose-inputs-and-mms-access-events.md); GOOSE engine and
-"Where GOOSE goes": [ADR-0073](../decisions/ADR-0073-goose-engine-go.md); SLD view:
+"Where GOOSE goes": [ADR-0073](../decisions/ADR-0073-goose-engine-go.md), amended by
+[ADR-0119](../decisions/ADR-0119-goose-follows-the-ieds.md) (Go engine); SLD view:
 [signal layers](signal-layers.md).
 Owner policy (2026-10-13): Npcap is installed by the user with its free licence;
 Studio detects and guides, and never bundles it. Since ADR-0073, GOOSE between simulated
@@ -10,10 +11,12 @@ IEDs needs no Npcap; only sharing with the network and hearing real devices do.
 
 ## Purpose
 
-Simulated IEDs publish the GOOSE control blocks defined in their SCD. By default the GOOSE
-stays inside ScadaBench, in every network mode, through the Go GOOSE engine `studio_goose.exe`.
-One confirmed switch, *Also share with the network*, also sends it on an automatically picked
-wired adapter, guarded against conflicts with real devices. Studio shows, per control block,
+Simulated IEDs publish the GOOSE control blocks defined in their SCD through the Go GOOSE engine
+`studio_goose.exe`. Go engine (ADR-0119): by default GOOSE follows the IEDs: in lab mode it also
+goes to the lab adapter (or the adapter chosen under Advanced) without a click, guarded as below;
+with IEDs on this PC only it stays inside. *Inside ScadaBench only* keeps it inside. A real device
+on the adapter makes it ask once. Python engine (ADR-0073): inside by default, and one confirmed
+switch, *Also share with the network*, sends it on an automatically picked wired adapter. Studio shows, per control block,
 whether GOOSE is really being received, with a plain explanation of any problem.
 
 ## Behaviour contract
@@ -31,7 +34,14 @@ whether GOOSE is really being received, with a plain explanation of any problem.
   simulated IED its own locally administered MAC for the run (`02:<random>:<index>`).
 - The engine forwards every valid frame to `studio_live`'s inbox with its origin (`app` or
   `wire`). `studio_live` decodes it with libiec61850 and reports `origin` and `src_mac`.
-- **Inside** (default): the engine may listen on the picked adapter (needs Npcap) so real
+- Go engine (ADR-0119): the choice is `auto` (default) or `local`; on disk `goose_reach` keeps
+  Python's `inside`/`outside` and `local` is the Go-only `goose_local: true`, stored only while chosen. GOOSE goes out only with no hold: Npcap missing gives one red line with a download
+  link; real IEDs in the project, or GOOSE from a vendor (globally administered) MAC heard on the
+  adapter, hold it until the user confirms the warning for that adapter (`goose_share_guid`). The
+  engine enforces that hold itself (`confirm_real`, share state `real_hold`); ScadaBench's own
+  `02:` MACs never count. After 10 s of sending with nothing heard back while a GOOSE is still
+  waiting, the card says the other PC or VM may be on another network.
+- **Inside** (default, Python engine): the engine may listen on the picked adapter (needs Npcap) so real
   devices are heard, but it cannot transmit. **Share**: the user confirms a warning that names the
   adapter (stronger when real devices are likely to act on it). The engine listens 3 s first, then
   sends only registered simulated frames (multicast, ≤1518 bytes, ≤1000 per second per IED).
@@ -97,6 +107,9 @@ and guessing what a vendor-specific `intAddr` means.
 | GOOSE-29 | LGOS supervision binds whether `setSrcRef` uses the MMS form (`LD/LLN0$GO$cb`) or the ObjectReference form (`LD/LLN0.cb`) (Go engine). | `studio/engine/internal/scl/vendor_station_test.go::TestLGOSAcceptsTheObjectReferenceForm` |
 | GOOSE-30 | A link from a publisher in the file but not in the project counts as outside the project, never as "not heard" (Go engine). | `studio/engine/internal/acquisition/goosedom/link_outside_test.go::TestUnheardPublisherOutsideTheProjectIsRemote` |
 | GOOSE-31 | A `GSE` without APPID gives one "has no APPID" warning, not a second "no network address" one (Go engine). | `studio/engine/internal/scl/vendor_blocks_test.go::TestGSEWithoutAPPIDIsOneWarning` |
+| GOOSE-32 | GOOSE follows the IEDs: `auto` by default, lab or chosen adapter sends, this-PC-only IEDs stay inside; the stored file stays readable by the Python engine (Go engine, ADR-0119). | `studio/engine/internal/project/goose_reach_test.go::TestGooseReachChoicesKeepTheFilePythonReadable`, `studio/engine/internal/acquisition/goosedom/reach_auto_test.go::TestGooseGoesOutWithTheIEDsNetwork` |
+| GOOSE-33 | A real device (real IED in the project, or a vendor MAC heard) holds sending until confirmed once for that adapter; another ScadaBench never does (Go engine, ADR-0119). | `studio/goose_engine/internal/engine/real_test.go::TestARealDeviceHoldsUnconfirmedSharingUntilConfirmed`, `studio/goose_engine/internal/engine/real_test.go::TestARealDeviceStopsSharingThatAlreadyRuns`, `studio/goose_engine/internal/engine/real_test.go::TestAnotherScadaBenchIsNotARealDevice`, `studio/engine/internal/acquisition/goosedom/reach_auto_test.go::TestRealDevicesAskOncePerAdapter` |
+| GOOSE-34 | Without Npcap, GOOSE that should go out shows one red line and a download link (Go engine, ADR-0119). | `studio/engine/internal/acquisition/goosedom/reach_auto_test.go::TestNpcapMissingIsOneClearLine`, `studio/tests/frontend/gooseReach.test.ts::ADR-0119: real devices are confirmed with the adapter shown; a conflict needs two clicks to continue` |
 
 The GOOSE-18, GOOSE-20, GOOSE-21 and GOOSE-22 wire tests need Npcap and a lab adapter. Set
 `STUDIO_GOOSE_ADAPTER` to its GUID; otherwise they are skipped, and the change record must say so.

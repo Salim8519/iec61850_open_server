@@ -7,9 +7,9 @@ import (
 )
 
 // Version and Capabilities let the backend refuse a stale engine binary.
-const Version = "1"
+const Version = "2"
 
-var Capabilities = []string{"goose_engine_v1"}
+var Capabilities = []string{"goose_engine_v1", "goose_engine_v2"}
 
 // Handlers maps backend operations onto the engine.
 func Handlers(e *Engine) map[string]ipc.Handler {
@@ -39,11 +39,13 @@ func Handlers(e *Engine) map[string]ipc.Handler {
 			var request struct {
 				AdapterGUID string `json:"adapter_guid"`
 				Share       bool   `json:"share"`
+				ConfirmReal *bool  `json:"confirm_real"` // absent (Python backend, ADR-0073): confirmed
 			}
 			if err := json.Unmarshal(raw, &request); err != nil {
 				return nil, err
 			}
-			return e.SetUplink(request.AdapterGUID, request.Share), nil
+			confirmReal := request.ConfirmReal == nil || *request.ConfirmReal
+			return e.SetUplink(request.AdapterGUID, request.Share, confirmReal), nil
 		},
 		"gate": func(raw json.RawMessage) (any, error) {
 			var request struct {

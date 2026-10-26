@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"studio-engine/internal/acquisition/goosedom"
 	"studio-engine/internal/acquisition/pyv"
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/pyjson"
@@ -79,7 +80,7 @@ func (e *GooseEngine) ensureLocked() error {
 		process.Close()
 		return err
 	}
-	if !hasAll(pyv.GetList(pyv.Obj(hello), "capabilities"), []string{"goose_engine_v1"}) {
+	if !hasAll(pyv.GetList(pyv.Obj(hello), "capabilities"), goosedom.EngineCapabilities()) {
 		process.Close()
 		return apperr.ValueError(GooseStale)
 	}
@@ -153,8 +154,9 @@ func (e *GooseEngine) Deliver(inboxPort any) error {
 	return err
 }
 
-// Uplink listens on the adapter ("" = none) and shares outside only when share is true.
-func (e *GooseEngine) Uplink(adapterGUID string, share bool) (*pyjson.Object, error) {
+// Uplink listens on the adapter ("" = none) and shares outside only when share is true;
+// without confirmReal the engine holds sharing next to a real device (ADR-0119).
+func (e *GooseEngine) Uplink(adapterGUID string, share, confirmReal bool) (*pyjson.Object, error) {
 	e.calls.Lock()
 	defer e.calls.Unlock()
 	process := e.current()
@@ -163,7 +165,11 @@ func (e *GooseEngine) Uplink(adapterGUID string, share bool) (*pyjson.Object, er
 		defer e.mu.Unlock()
 		return pyv.Shallow(e.link), nil
 	}
-	result, err := process.Request("uplink", engineCall, pyv.O("adapter_guid", adapterGUID, "share", share))
+	request := pyv.O("adapter_guid", adapterGUID, "share", share)
+	if !goosedom.PythonTwin() {
+		request.Set("confirm_real", confirmReal)
+	}
+	result, err := process.Request("uplink", engineCall, request)
 	if err != nil {
 		return nil, err
 	}

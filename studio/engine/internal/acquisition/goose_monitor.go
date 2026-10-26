@@ -152,3 +152,15 @@ func (g *GooseMonitor) Stop() {
 		process.Close()
 	}
 }
+
+// Waiting reports whether any GOOSE the project expects is still waiting or timed out.
+func (g *GooseMonitor) Waiting() bool {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	for _, key := range g.watches.Keys() {
+		if state := pyv.GetStr(pyv.GetObj(g.watches, key), "state"); state == "waiting" || state == "timeout" {
+			return true
+		}
+	}
+	return false
+}

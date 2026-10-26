@@ -17,3 +17,12 @@
   white-space: nowrap; color: var(--warning); border: 1px dashed var(--warning); background: var(--warning-soft); }
 /* A MAC address never breaks in the middle. */
 .goose-mac { white-space: nowrap; }
+/* ADR-0119: where GOOSE goes out, the guard that always protects it, the peer hint and the Npcap line. */
+.goose-adapter { display: flex; gap: 10px; align-items: flex-start; }
+.goose-adapter > span { display: flex; flex-direction: column; gap: 2px; }
+.goose-guard ul { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.goose-guard li { display: inline-flex; gap: 4px; align-items: center; padding: 2px 8px; font-size: 12px;
+  border: 1px solid var(--border); border-radius: var(--radius); white-space: nowrap; }
+.goose-alone { margin: 0; display: flex; gap: 8px; align-items: flex-start; padding: 8px 12px; font-size: 13px;
+  background: var(--warning-soft); border: 1px solid var(--warning); border-radius: var(--radius); }
+.goose-npcap { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--error); }
