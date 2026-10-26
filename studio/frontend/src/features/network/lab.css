@@ -1,15 +1,7 @@
-/* "This PC lab network" card (ADR-0120): one compact, highlighted card; shared table, pill and button styles. */
-.lab-card { border-color: var(--accent-line); }
-.lab-card.is-active { border-color: var(--accent); }
-.lab-head { display: flex; align-items: center; gap: 14px; }
-.lab-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 40px; height: 40px;
-  border-radius: 10px; background: var(--accent-soft); color: var(--accent); }
-.lab-text { flex: 1; min-width: 0; }
-.lab-text h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.05rem; }
-.lab-text p { margin: 2px 0 0; }
-.lab-new { padding: 1px 8px; border: 1px solid var(--accent-line); border-radius: 999px; background: var(--accent-soft);
-  color: var(--accent); font-size: 12px; font-weight: 600; }
+/* ScadaBench Lab network (ADR-0120, ADR-0121): the panel under the network card list and the folded addresses in the
+   banner. Shared table, pill and button styles. */
 .lab-body { display: flex; flex-direction: column; gap: 10px; }
+.mode-banner > .lab-body { flex-basis: 100%; }
 .lab-table-wrap { max-width: 100%; overflow-x: auto; } /* a narrow window scrolls the table, never clips the card */
 .lab-table td { vertical-align: top; }
 .lab-address { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }

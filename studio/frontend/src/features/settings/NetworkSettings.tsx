@@ -24,7 +24,8 @@ export function NetworkSettings({ project, locked, perform, openTraffic }: {
   const labCard = lab && project.network.adapter_label === LAB_CARD;
   const snmp = useSnmpCount(project.revision);
   const publishing = project.ieds.some(ied => ied.role === 'simulated') || snmp > 0;
-  if (wizard) return <NetworkSetup close={() => setWizard(false)} finished={() => { setWizard(false); perform(async () => {}); }} />;
+  if (wizard) return <NetworkSetup close={() => setWizard(false)} locked={locked} perform={perform}
+    finished={() => { setWizard(false); perform(async () => {}); }} />;
   return <>
     <div className="mode-banner">
       <div className="row" style={{ alignItems: 'flex-start', gap: 14 }}>
@@ -37,13 +38,13 @@ export function NetworkSettings({ project, locked, perform, openTraffic }: {
         {lab && <button disabled={locked} onClick={() => perform(() => api('/network', 'PUT', { mode: 'loopback' }))}>
           <Undo2 size={16} />Back to this PC only</button>}
         <button className="primary" disabled={locked || !publishing} onClick={() => setWizard(true)}>
-          <Network size={16} />{labCard ? 'Use a real network card' : lab ? 'Change network card or addresses' : snmp ? 'Put my devices on a network' : 'Put my IEDs on a network'}</button>
+          <Network size={16} />{labCard ? 'Change network' : lab ? 'Change network card or addresses' : snmp ? 'Put my devices on a network' : 'Put my IEDs on a network'}</button>
       </div>
+      {labCard && publishing && <LabNetwork mode="active" locked={locked} perform={perform} />}
     </div>
     {!publishing && <div className="card"><div className="guide-section">
       <NoPublishers ieds={project.ieds} locked={locked} perform={perform} /></div></div>}
     {locked && <p className="small muted" style={{ margin: 0 }}>{hint('network.locked')}</p>}
-    {publishing && <LabNetwork locked={locked} perform={perform} />}
     <GooseReach revision={project.revision} perform={perform} />
     <div className="card"><div className="guide-section row" style={{ justifyContent: 'space-between' }}>
       <span className="muted">{TOOLS_COPY.settingsLink}</span>

@@ -14,7 +14,6 @@ export const LAB_ROW_STATUS: Record<string, Status> = {
 };
 
 export const LAB_COPY = {
-  title: 'Lab network on this PC',
   intro: 'Test your IEDs at their real addresses from the SCL file, without a VM. Ping, MMS and GOOSE work; '
     + 'nothing goes out on your Ethernet or Wi-Fi.',
   create: 'Create the lab network card',
@@ -31,6 +30,13 @@ export const LAB_COPY = {
   removeHint: 'Removes the card, its addresses and the service (one Windows prompt). Your IEDs go back to this PC only.',
   ping: 'Ping',
   backToFile: 'Use file address',
+  onceHint: 'First time only: Windows asks once to add the card.',
+  // The network card list (ADR-0121): the two choices that keep everything on this PC.
+  pickLoopback: 'This PC only (loopback): IEDs talk to each other here',
+  tagLoopback: 'Simplest',
+  pickLab: 'ScadaBench Lab: each IED at its own SCL address',
+  tagLab: 'No VM · ping works',
+  pickPlaceholder: 'Choose where your IEDs answer…',
 };
 
 /** The card's one line: what the lab network does for this project right now. */
