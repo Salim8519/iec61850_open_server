@@ -1,4 +1,6 @@
 """Record and compose the tutorial videos:  python marketing/videos/make.py [slug ...]
+    --record-only    record, do not compose
+    --compose-only   compose again from the existing recordings (for example after a quality change)
 
 Needs Microsoft Edge, ffmpeg on PATH, Playwright for Python and the video app built by
 video_app.py (Go engine, production frontend, native workers). Output goes to marketing/videos/out/.
@@ -9,6 +11,7 @@ import traceback
 from compose import compose
 from director import record
 from lessons_basics import cid_scd, getting_started, sld
+from lessons_lab import lab_network
 from lessons_license import activation, activation_prepare
 from lessons_more import goose, real_devices, simulation
 from lessons_sld import commands, goose_sld, point_panels
@@ -29,18 +32,21 @@ LESSONS = [
     ("commands", "Select before operate, typed commands and tap changers", commands, None),
     ("snmp", "SNMP devices: switches and clocks", snmp_devices, None),
     ("activation", "Activate or go offline", activation, activation_prepare),
+    ("lab-network", "IEDs at their own addresses, without a VM", lab_network, None),
 ]
 
 if __name__ == "__main__":
     wanted = set(sys.argv[1:])
     record_only = "--record-only" in wanted
-    wanted.discard("--record-only")
+    compose_only = "--compose-only" in wanted
+    wanted -= {"--record-only", "--compose-only"}
     for number, (slug, title, scenario, prepare) in enumerate(LESSONS, 1):
         if wanted and slug not in wanted:
             continue
         try:
-            print(f"Recording {slug}...", flush=True)
-            record(slug, scenario, prepare)
+            if not compose_only:
+                print(f"Recording {slug}...", flush=True)
+                record(slug, scenario, prepare)
             if record_only:
                 continue
             print(f"Composing {slug}...", flush=True)

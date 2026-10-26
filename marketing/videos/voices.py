@@ -23,7 +23,7 @@ STYLE = "Confident, friendly product tutorial narrator. Brisk, clear pace, like 
 
 def lines() -> list[str]:
     found: list[str] = []
-    for name in ("lessons_basics.py", "lessons_more.py", "lessons_tools.py", "lessons_sld.py", "lessons_license.py"):
+    for name in ("lessons_basics.py", "lessons_more.py", "lessons_tools.py", "lessons_sld.py", "lessons_license.py", "lessons_lab.py"):
         source = (HERE / name).read_text(encoding="utf-8")
         for match in re.finditer(r'd\.say\("([^"]+)"', source):
             found.append(match.group(1))

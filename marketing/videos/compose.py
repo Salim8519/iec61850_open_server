@@ -2,7 +2,9 @@
 
 The real-app recording becomes footage; Remotion adds the animated title and end cards,
 a camera that eases toward each click, and caption pills. Output: out/<slug>.mp4
-(1920x1080 H.264) and out/<slug>.jpg (poster for the website's <video> element).
+(2560x1440 H.264, index at the front) and out/<slug>.jpg (poster for the website's <video> element).
+The 1080p composition is rendered at 2x (3840x2160, from the 3200x1800 capture) and downscaled with
+Lanczos, so small UI text stays sharp; out/<slug>.2x.mp4 is only an intermediate.
 """
 from __future__ import annotations
 
@@ -46,11 +48,21 @@ def remotion(*args: str) -> None:
     subprocess.run(["npx", "remotion", *args], cwd=REMOTION, check=True, shell=True)
 
 
+def downscale(source: Path, target: Path, crf: int = 18) -> None:
+    """1440p H.264 for the website: sharp text, playback starts before the download ends."""
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(source),
+                    "-vf", "scale=2560:1440:flags=lanczos", "-c:v", "libx264", "-preset", "slow", "-crf", str(crf),
+                    "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", str(target)], check=True)
+
+
 def compose(slug: str, number: int, title: str) -> Path:
     update_manifest(slug, number, title)
     final = OUT / f"{slug}.mp4"
-    remotion("render", "src/index.ts", slug, str(final), "--codec=h264", "--crf=19", "--audio-codec=aac",
-             "--log=error")
+    sharp = OUT / f"{slug}.2x.mp4"
+    remotion("render", "src/index.ts", slug, str(sharp), "--codec=h264", "--scale=2", "--crf=12",
+             "--audio-codec=aac", "--audio-bitrate=192k", "--log=error")
+    downscale(sharp, final)
+    sharp.unlink()
     remotion("still", "src/index.ts", slug, str(OUT / f"{slug}.jpg"), "--frame=60", "--image-format=jpeg",
-             "--scale=0.6667", "--log=error")
+             "--log=error")
     return final

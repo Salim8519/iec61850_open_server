@@ -1,20 +1,23 @@
-"""Make light web copies of the rendered tutorial videos for scadabench.com.
+"""Copy the rendered tutorial videos to out/web/ for scadabench.com.
 
-The 1080p masters in out/ are 7 to 20 MB each, too heavy for phones on mobile data.
-This writes 720p H.264 copies with the index at the front (+faststart, so playback starts
-before the download ends) to out/web/. website/deploy.cmd ships out/web/ when it exists.
-Needs ffmpeg on PATH. Run: python marketing/videos/web_encode.py
+The 1440p masters from compose.py already have the index at the front (+faststart), so they
+are shipped as they are: sharp text matters more than a few megabytes. Only a master over the
+Cloudflare Pages limit (25 MiB per file) is encoded again, lighter but still 1440p.
+website/deploy.cmd ships out/web/ when it exists. Needs ffmpeg on PATH.
+Run: python marketing/videos/web_encode.py
 """
 from __future__ import annotations
 
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 
+from compose import downscale
+
 OUT = Path(__file__).resolve().parent / "out"
 WEB = OUT / "web"
-SKIP_SUFFIXES = (".capture.mp4",)
+SKIP_SUFFIXES = (".capture.mp4", ".2x.mp4")
+PAGES_LIMIT = 25 * 1024 * 1024
 
 
 def masters() -> list[Path]:
@@ -22,12 +25,11 @@ def masters() -> list[Path]:
 
 
 def encode(source: Path, target: Path) -> None:
-    subprocess.run([
-        "ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(source),
-        "-vf", "scale=-2:720", "-c:v", "libx264", "-preset", "slow", "-crf", "28",
-        "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart",
-        str(target),
-    ], check=True)
+    shutil.copy2(source, target)
+    crf = 20
+    while target.stat().st_size >= PAGES_LIMIT and crf <= 30:
+        downscale(source, target, crf)
+        crf += 2
 
 
 def main() -> int:

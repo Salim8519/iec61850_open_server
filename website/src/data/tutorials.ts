@@ -72,6 +72,11 @@ export const TUTORIALS: Tutorial[] = [
     'Each license works on one computer only and cannot be moved. Reinstalling Windows on the same computer is fine; a new computer needs its own license.',
     'No internet on site? Copy the Machine ID, get a license file at license.scadabench.com/activate and load it.',
   ] },
+  { slug: 'lab-network', title: 'IEDs at their own addresses, without a VM', seconds: 64, steps: [
+    'Settings › Lab network on this PC: Windows asks once to add the ScadaBench Lab card (no download, no restart). Then press Use the lab network; no more prompts.',
+    'Each simulated IED answers at its own address from the SCD. Type another address and press Enter to move it, even while running; the SCD file is never changed.',
+    'Ping, IEDScout, your SCADA and GOOSE reach the IEDs on this PC. Addresses used by this PC or by a real device on your Ethernet or Wi-Fi are caught before they clash.',
+  ] },
 ];
 
 export const totalSeconds = TUTORIALS.reduce((sum, tutorial) => sum + tutorial.seconds, 0);
