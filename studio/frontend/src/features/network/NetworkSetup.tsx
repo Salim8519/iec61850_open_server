@@ -2,6 +2,7 @@ import { Check, RefreshCw, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
+import { LAB, type LabStatus } from '../../api/lab';
 import type { Adapter, ApplyResult, PlanPreview } from '../../api/network';
 import { hint } from '../../copy/hints';
 import { Disclosure } from '../../ui/Disclosure';
@@ -28,6 +29,9 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   const [error, setError] = useState('');
   // Only a Refresh the user pressed shows a turning icon; the quiet 3 s re-check does not.
   const [refreshing, setRefreshing] = useState(false);
+  // The ScadaBench Lab card has its own card on the Network page (ADR-0120); it is never offered here.
+  const [labCard, setLabCard] = useState('');
+  useEffect(() => { api<LabStatus>(LAB).then(answer => setLabCard(answer.card)).catch(() => setLabCard('')); }, []);
   const loopback = guid === LOOPBACK_CHOICE;
   const load = useCallback((refresh: boolean, pressed = false) => {
     if (pressed) setRefreshing(true);
@@ -84,7 +88,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
       setError(reason instanceof Error ? reason.message : String(reason));
     } finally { setApplying(false); }
   };
-  const usable = usableAdapters(adapters);
+  const usable = usableAdapters(adapters).filter(adapter => adapter.guid !== labCard);
   const snmp = preview?.rows.filter(row => row.kind === 'snmp').length ?? 0;
   const count = (preview?.rows.length ?? 0) - snmp;
   if (result) return <div className="card"><div className="guide-section">

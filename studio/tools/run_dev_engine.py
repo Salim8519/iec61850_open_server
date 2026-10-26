@@ -84,6 +84,7 @@ def main_go(arguments, print_only):
     subprocess.run([sys.executable, str(TOOLS / "build_goose_engine.py"), "--if-stale", "--skip-tests"], check=True)
     subprocess.run([sys.executable, str(TOOLS / "build_snmp_engine.py"), "--if-stale"], check=True)
     subprocess.run([sys.executable, str(TOOLS / "build_hostkey_helper.py"), "--if-stale"], check=True)
+    subprocess.run([sys.executable, str(TOOLS / "build_labnet.py"), "--if-stale"], check=True)
     build_server()
     frontend_port = run_dev.available_port(5173, 5199)
     frontend_url = f"http://127.0.0.1:{frontend_port}"

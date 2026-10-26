@@ -13,6 +13,7 @@ import (
 	"studio-engine/internal/events"
 	"studio-engine/internal/gateway/service"
 	"studio-engine/internal/httpapi"
+	"studio-engine/internal/labsetup"
 	"studio-engine/internal/licensing"
 	"studio-engine/internal/netcfg"
 	projects "studio-engine/internal/project/service"
@@ -81,6 +82,7 @@ type Engine struct {
 	Control  *control.Client
 	License  *licensing.Service
 	Network  *netcfg.NetworkService
+	Lab      *labsetup.Service // the "This PC lab network" page (ADR-0120)
 	Updates  *updates.Service
 	Recovery *recovery.Background
 	Push     *push.Area

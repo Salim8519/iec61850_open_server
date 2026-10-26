@@ -3,7 +3,7 @@
     python studio/tools/compile_go_release.py --version 0.1.15            -> studio/dist-go
     python studio/tools/compile_go_release.py --version 0.1.15 --dry-run  show every step
 Steps: preflight -> frontend build + frontend.pak -> licensed native workers + studio_goose
-(shared with compile_protected.py) -> studio_xsd -> studio_snmp -> scadabench_hostkey -> Go engine
+(shared with compile_protected.py) -> studio_xsd -> studio_snmp -> scadabench_hostkey -> scadabench_labnet -> Go engine
 ScadaBench.exe (packaged, sealed)
 -> installed folder layout -> leak check -> code signing -> module signature -> portable exe
 embedding that exact folder -> Inno Setup installer (same installer.iss and AppId as Python).
@@ -74,6 +74,17 @@ def build_hostkey(mode):
         build_hostkey_helper.build(output=target)
 
 
+def build_labnet(mode):
+    """scadabench_labnet.exe (ADR-0120) beside the workers: creates the lab network card and runs as its
+    service once copied to Program Files."""
+    mode.step("Lab network program -> scadabench_labnet.exe")
+    import build_labnet
+    target = mode.native_bin / "scadabench_labnet.exe"
+    print(f"  $ go build ./cmd/scadabench_labnet -> {target}", flush=True)
+    if not mode.dry_run:
+        build_labnet.build(output=target)
+
+
 def preflight(mode):
     release = compile_protected.preflight(mode)
     if not mode.version or not all(part.isdigit() for part in mode.version.split(".")):
@@ -99,6 +110,7 @@ def main(argv=None):
     build_xsd(mode)
     build_snmp(mode)
     build_hostkey(mode)
+    build_labnet(mode)
     folder = steps.fresh_folder(mode)
     steps.build_engine(mode, folder, SEALED)
     steps.lay_out(mode, folder, mode.build / "frontend.pak")

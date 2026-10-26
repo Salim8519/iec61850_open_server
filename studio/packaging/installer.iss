@@ -77,6 +77,19 @@ Filename: "{sys}\taskkill.exe"; Parameters: "/F /IM scadabench_hostkey.exe"; Fla
 Filename: "{sys}\reg.exe"; Parameters: "delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v ScadaBenchVMHost /f"; Flags: runhidden; RunOnceId: "RemoveVmHelperRun"
 
 [Code]
+// The lab network (ADR-0120) exists only after "Create the lab network card"; its service runs from
+// Program Files, so uninstalling ScadaBench removes service, program and card with one administrator
+// prompt, and only when the service is there.
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  ExitCode: Integer;
+begin
+  if (CurUninstallStep = usUninstall) and
+     RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\ScadaBenchLabNet') then
+    ShellExec('runas', ExpandConstant('{app}\_internal\native\scadabench_labnet.exe'),
+      ExpandConstant('uninstall --result "{tmp}\labnet-uninstall.json"'), '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
+end;
+
 // An update replaces the helper's program file, so a running helper is ended first. It is started
 // again the next time ScadaBench opens (or at the next Windows logon) while sharing stays switched on.
 function PrepareToInstall(var NeedsRestart: Boolean): String;
