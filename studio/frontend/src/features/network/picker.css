@@ -1,0 +1,20 @@
+/* Network card list (ADR-0121): "This PC only" in the accent blue, the ScadaBench Lab network in teal. Each also has
+   its own icon and tag, so the choice never depends on colour alone. Shared popover, border and radius tokens. */
+.picker-field { flex: 1; min-width: 0; max-width: 640px; display: flex; align-items: center; gap: 8px; justify-content: flex-start;
+  text-align: left; font-weight: 500; }
+.picker-field .picker-text { flex: 1; }
+.picker-field.tone-loopback { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.picker-field.tone-lab { background: var(--teal-soft); border-color: var(--teal); color: var(--teal); }
+.popover.picker-pop { position: fixed; z-index: 70; padding: 4px 0; overflow: auto; }
+.picker-group { padding: 8px 12px 4px; font-size: var(--font-size-small); color: var(--muted); }
+.picker-group:not(:first-child) { border-top: 1px solid var(--line); margin-top: 4px; }
+.picker-option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; cursor: pointer; }
+.picker-option.is-active { background: var(--hover); }
+.picker-option.is-faint { color: var(--text-2); }
+.picker-option[aria-selected='true'] { font-weight: 600; }
+.picker-option .picker-text { flex: 1; }
+.picker-option.tone-loopback { background: var(--accent-soft); color: var(--accent); border-left: 3px solid var(--accent); }
+.picker-option.tone-lab { background: var(--teal-soft); color: var(--teal); border-left: 3px solid var(--teal); }
+.picker-option.tone-loopback.is-active, .picker-option.tone-lab.is-active { filter: brightness(0.96); }
+.picker-tag { padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; font-size: 12px; font-weight: 600;
+  white-space: nowrap; }

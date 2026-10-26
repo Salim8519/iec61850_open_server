@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
 import { LAB, type LabStatus } from '../../api/lab';
+import { LAB_COPY } from '../../copy/labNetwork';
 import type { Adapter, ApplyResult, PlanPreview } from '../../api/network';
 import { hint } from '../../copy/hints';
 import { Disclosure } from '../../ui/Disclosure';
@@ -11,13 +12,20 @@ import { SpinIcon, Spinner } from '../../ui/Spinner';
 import { StepList } from '../../ui/StepList';
 import { AddressTable, type Manual } from './AddressTable';
 import { CheckProgressView } from './CheckProgressView';
+import { LabNetwork } from './LabNetwork';
+import { NetworkCardPicker, type PickerChoice } from './NetworkCardPicker';
 import { ResultStep, ReviewStep } from './ReviewStep';
 import { adapterLabel, changeSentence, LOOPBACK_CHOICE, putLabel, setupTitle, usableAdapters } from './setupWords';
 import { cleanManual, provisionalChecks } from './typedAddressCheck';
 
+const LAB_CHOICE = 'lab';
+
 /** One page, one button (change 0098): pick the network card, check one address per published IED, apply.
- *  Safety is unchanged: the exact Windows changes are listed, Windows asks once, and Undo/restart removes them. */
-export function NetworkSetup({ close, finished }: { close: () => void; finished: () => void }) {
+ *  Safety is unchanged: the exact Windows changes are listed, Windows asks once, and Undo/restart removes them.
+ *  The list offers the two choices that stay on this PC first: loopback and the ScadaBench Lab network (ADR-0121). */
+export function NetworkSetup({ close, finished, locked, perform }: {
+  close: () => void; finished: () => void; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
+}) {
   const [adapters, setAdapters] = useState<Adapter[] | null>(null);
   const [guid, setGuid] = useState('');
   const [manual, setManual] = useState<Manual>({});
@@ -29,10 +37,11 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   const [error, setError] = useState('');
   // Only a Refresh the user pressed shows a turning icon; the quiet 3 s re-check does not.
   const [refreshing, setRefreshing] = useState(false);
-  // The ScadaBench Lab card has its own card on the Network page (ADR-0120); it is never offered here.
+  // The ScadaBench Lab card is offered as its own choice (ADR-0121), never as an ordinary network card.
   const [labCard, setLabCard] = useState('');
   useEffect(() => { api<LabStatus>(LAB).then(answer => setLabCard(answer.card)).catch(() => setLabCard('')); }, []);
   const loopback = guid === LOOPBACK_CHOICE;
+  const lab = guid === LAB_CHOICE;
   const load = useCallback((refresh: boolean, pressed = false) => {
     if (pressed) setRefreshing(true);
     api<{ adapters: Adapter[] }>(`/network/adapters${refresh ? '?refresh=1' : ''}`)
@@ -57,7 +66,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   // the answer is old, the typed rows show their own first answer (duplicates and the PC's other cards, found in
   // memory at once) and the apply button stays off.
   useEffect(() => {
-    if (!guid || loopback || result) return;
+    if (!guid || loopback || lab || result) return;
     const timer = window.setTimeout(() => {
       setChecking(true); setError('');
       api<PlanPreview>('/network/plan/preview', 'POST', { adapter_guid: guid, strategy: 'scd', manual: cleanManual(manual) })
@@ -66,7 +75,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
         .finally(() => setChecking(false));
     }, 300);
     return () => window.clearTimeout(timer);
-  }, [guid, loopback, manual, result]);
+  }, [guid, loopback, lab, manual, result]);
   const outdated = answered !== manual;
   // While the addresses are being checked the apply button says so with a spinner, in full colour.
   const waiting = !!guid && !error && (outdated || checking) && !applying;
@@ -89,6 +98,12 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     } finally { setApplying(false); }
   };
   const usable = usableAdapters(adapters).filter(adapter => adapter.guid !== labCard);
+  const choices: PickerChoice[] = [
+    { value: LOOPBACK_CHOICE, label: LAB_COPY.pickLoopback, tone: 'loopback', tag: LAB_COPY.tagLoopback, group: 'pc' },
+    { value: LAB_CHOICE, label: LAB_COPY.pickLab, tone: 'lab', tag: LAB_COPY.tagLab, group: 'pc' },
+    ...usable.map(adapter => ({ value: adapter.guid, label: adapterLabel(adapter), group: 'cards' as const,
+      faint: adapter.kind === 'virtual' })),
+  ];
   const snmp = preview?.rows.filter(row => row.kind === 'snmp').length ?? 0;
   const count = (preview?.rows.length ?? 0) - snmp;
   if (result) return <div className="card"><div className="guide-section">
@@ -98,13 +113,10 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
   return <div className="card"><div className="guide-section">
     <h2 style={{ margin: 0 }}>{setupTitle(preview)}</h2>
     <div className="row" style={{ alignItems: 'center' }}>
-      <label className="row" style={{ gap: 8 }}><strong style={{ whiteSpace: 'nowrap' }}>Network card</strong>
-        <select value={guid} disabled={!adapters} onChange={event => { setGuid(event.target.value); setManual({}); setPreview(null); setAnswered(null); }}
-          aria-label="Network card">
-          <option value="">{adapters ? 'Choose the card plugged into the IED or SCADA switch…' : 'Looking for network cards…'}</option>
-          <option value={LOOPBACK_CHOICE}>This PC only (loopback): IEDs talk to each other on this PC</option>
-          {usable.map(adapter => <option key={adapter.guid} value={adapter.guid}>{adapterLabel(adapter)}</option>)}
-        </select></label>
+      <label className="row" style={{ gap: 8, flex: 1, minWidth: 0 }}><strong style={{ whiteSpace: 'nowrap' }}>Network card</strong>
+        <NetworkCardPicker value={guid} choices={choices} disabled={!adapters}
+          placeholder={adapters ? LAB_COPY.pickPlaceholder : 'Looking for network cards…'}
+          onChange={value => { setGuid(value); setManual({}); setPreview(null); setAnswered(null); }} /></label>
       <button onClick={() => load(true, true)} disabled={refreshing} aria-label="Refresh the network cards">
         {refreshing ? <SpinIcon size={14} /> : <RefreshCw size={14} />}{refreshing ? 'Refreshing…' : 'Refresh'}</button>
     </div>
@@ -123,7 +135,9 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
     {preview && !preview.ready && <Hint id="network.address.fix" compact />}
     {preview && <p className="small" style={{ margin: 0 }}>{changeSentence(preview)}</p>}
     {preview && <Disclosure title="Show the exact Windows changes"><ReviewStep preview={preview} /></Disclosure>}
-    <div className="row">
+    {lab && <LabNetwork mode="choose" locked={locked} perform={perform} onUsed={finished}
+      extra={<button onClick={close}><X size={14} />Cancel</button>} />}
+    {!lab && <div className="row">
       {loopback ? <button className="primary" disabled={applying} onClick={useLoopback}>
         {applying ? <SpinIcon /> : <Check size={16} />}Use this PC only</button>
       : <button className={`primary${waiting ? ' is-checking' : ''}`} aria-busy={waiting || applying}
@@ -131,7 +145,7 @@ export function NetworkSetup({ close, finished }: { close: () => void; finished:
         {applying || waiting ? <SpinIcon /> : <Check size={16} />}{applying ? 'Waiting for Windows approval…'
           : waiting ? 'Checking the addresses…' : putLabel(count, preview?.adapter.name, snmp)}</button>}
       <button onClick={close} disabled={applying}><X size={14} />Cancel</button>
-    </div>
+    </div>}
     {applying && !loopback && <p className="small muted" style={{ margin: 0 }}>{hint('network.approving')}</p>}
   </div></div>;
 }
