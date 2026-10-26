@@ -112,6 +112,13 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `GET /network/adapters` | `refresh=1` | Windows adapters with IPv4 addresses (cached 10 s) |
 | `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints (a row that cannot be used adds `alternative: {ip, prefix}`, change 0098), change items, fingerprint; Go also plans SNMP devices (`ied_id` `snmp:<id>`, `kind`, `saved`, item `snmp_firewall`, change 0148) |
 | `GET /network/plan/progress` | | Go only (ADR-0093): the running address check: `run`, `running`, `steps[{key,label,state,ms}]`, `asked`, `answered`, `rows[{id,name,address,state}]` with state `checking`/`free`/`in_use`/`not_checked` |
+| `GET /network/lab` | | Go only (ADR-0120): the ScadaBench Lab card: `installed`, `running` (service), `card`, `card_present`, `card_name`, `ready`, `active` (project uses the card), `ieds_running`, `real_cards[{name,kind,connected,networks}]`, `rows[{ied_id,name,scl_ip,ip,yours,on_card,status,hint,card?,alternative?}]` with status `ok`/`same_range`/`real_device`/`checking`/`duplicate`/`other_card`/`invalid`/`missing`, `checking`, `problem?`, `card_addresses` |
+| `POST /network/lab/check` | `addresses{ied_id: ip}` | The same answer for addresses typed before Use; Go only |
+| `POST /network/lab/install` | | Create (or repair) the card and the `ScadaBenchLabNet` service through one UAC prompt; journaled in `network/lab_journal.jsonl`; Go only |
+| `POST /network/lab/use` | `addresses{ied_id: ip}` | Stopped only: every simulated IED's address on the card, `lab_ip` stored, lab mode on the card; no prompt; refused with the first blocking row's words; Go only |
+| `PUT /network/lab/address` | `ied_id`, `ip` | Any time once in use: one IED moves (a running IED is stopped and started again); Go only |
+| `POST /network/lab/ping` | `ip` | One ICMP echo: `ok`, `ms`, `ttl`; Go only |
+| `POST /network/lab/remove` | | Stopped only: project back to this PC only, then one UAC prompt removes service, program and card; Go only |
 | `POST /network/plan/apply` | `{fingerprint,confirm:true}` | Re-plan; 409 if changed; elevated helper; enters lab mode |
 | `GET /network/cleanup/preview` | - | Outstanding owned items and fingerprint |
 | `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |

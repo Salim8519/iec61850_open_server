@@ -2,6 +2,7 @@
 export const HINTS: Record<string, string> = {
   'network.intro': 'Choose who can reach your simulated IEDs: only this PC, or real devices and other PCs on a network cable.',
   'network.mode.loopback': 'The IEDs ScadaBench publishes (set to "Simulate") can only be reached from this PC. Nothing is changed in Windows.',
+  'network.mode.labcard': 'Each simulated IED answers at its own address on the ScadaBench Lab card, like on a real network. Programs on this PC (IEDScout, SCADA, ping) reach them; nothing goes out on your Ethernet or Wi-Fi.',
   'network.mode.lab': 'The IEDs ScadaBench publishes are on this network card: SCADA, gateways, real IEDs and other PCs can connect to them. Their GOOSE stays inside ScadaBench unless you share it under Where GOOSE goes.',
   'network.setup': 'A short guided setup picks an adapter, plans one address per IED and shows every Windows change before it happens.',
   'network.endpoints': 'Give these addresses to your SCADA, gateway or test tool. Each simulated IED answers on its own address and port 102.',

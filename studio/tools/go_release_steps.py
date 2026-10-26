@@ -15,7 +15,8 @@ ROOT = STUDIO.parent
 ENGINE = STUDIO / "engine"
 ICON = STUDIO / "branding/icon.ico"
 WORKERS = ("studio_ied.exe", "studio_live.exe", "studio_goose.exe", "studio_probe.exe", "studio_gateway.exe",
-           "studio_control.exe", "studio_master.exe", "studio_xsd.exe", "studio_snmp.exe", "scadabench_hostkey.exe")
+           "studio_control.exe", "studio_master.exe", "studio_xsd.exe", "studio_snmp.exe", "scadabench_hostkey.exe",
+           "scadabench_labnet.exe")
 LICENSES = {
     ".local/native/libiec61850/COPYING": "licenses/libiec61850",
     ".local/native/json/LICENSE.MIT": "licenses/nlohmann-json",

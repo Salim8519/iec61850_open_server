@@ -20,7 +20,7 @@ func (e *Engine) wireRuntime(bus *events.Bus) *liveAdapter {
 	live := &liveAdapter{}
 	e.Runtime = runtime.New(runtime.Options{NativeDir: o.NativeDir, DataDir: o.DataDir,
 		Bus: runtimeBus{bus: bus, logf: o.Logf}, Project: e.Projects, Live: live,
-		LabAddresses: labAddresses, CommandKeep: o.CommandKeep, Version: o.Version})
+		LabAddresses: e.labAddresses, CommandKeep: o.CommandKeep, Version: o.Version})
 	return live
 }
 
@@ -28,6 +28,15 @@ func (e *Engine) wireRuntime(bus *events.Bus) *liveAdapter {
 // GET /project/test-panel (runtimeapi owns the GET, toolsapi the PUT).
 func (e *Engine) runtimeRoutes() []api.Route {
 	return runtimeapi.Area{Runtime: e.Runtime, Project: e.Projects}.Routes()
+}
+
+// labAddresses puts the lab card's addresses back first when the project uses that card
+// (ADR-0120: they are gone after Windows restarts), then lists the adapter's addresses.
+func (e *Engine) labAddresses(guid string) ([]string, error) {
+	if e.Lab != nil {
+		e.Lab.EnsureForRun(guid)
+	}
+	return labAddresses(guid)
 }
 
 // addressesOn is the IP Helper lookup (a variable so a test can make it fail).

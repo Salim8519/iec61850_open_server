@@ -84,11 +84,13 @@ def test_portable_key_follows_content_and_paths(tmp_path):
 
 
 def test_go_release_ships_the_python_release_programs_plus_the_go_only_helpers():
-    # studio_xsd.exe (ADR-0083), studio_snmp.exe (ADR-0092) and scadabench_hostkey.exe (ADR-0099) are Go-only.
+    # studio_xsd.exe (ADR-0083), studio_snmp.exe (ADR-0092), scadabench_hostkey.exe (ADR-0099) and
+    # scadabench_labnet.exe (ADR-0120) are Go-only.
     steps = load_tool("go_release_steps")
     spec = (STUDIO / "packaging/studio_protected.spec").read_text(encoding="utf-8")
     python_programs = {name for name in steps.WORKERS if f'native / "{name}"' in spec}
-    assert python_programs == set(steps.WORKERS) - {"studio_xsd.exe", "studio_snmp.exe", "scadabench_hostkey.exe"}
+    assert python_programs == set(steps.WORKERS) - {"studio_xsd.exe", "studio_snmp.exe", "scadabench_hostkey.exe",
+                                                 "scadabench_labnet.exe"}
 
 
 def test_installer_removes_old_program_files_before_copying():
