@@ -23,6 +23,12 @@ Date: 2026-10-27. Decision: [ADR-0125](../../decisions/ADR-0125-gateway-own-lab-
   empty, IEC 104 port 2404, role Station gateway, gateway All networks) and both addresses were off
   the card; they stay in the lists.
 
+- Release 0.1.28 rebuilt in place with 0194-0199 (owner: "push the new version as 0.1.28 too"):
+  installer 200f12e3, portable 889bb916; portable self-test ok; live installer, portable and the
+  release record hashes match; `/download/ScadaBench-Setup.exe` redirects to 0.1.28. Unsigned as before;
+  previous files kept in `D:\ScadaBench-workackup-0.1.28-0be5b9c0`. The website build needed Node
+  22.23 (pi-node) instead of the PATH Node 22.11. Apps already on 0.1.28 are not offered the rebuild.
+
 ## Limitations
 
 - The master's screen was not clicked through: the browser pane stopped drawing (window behind
