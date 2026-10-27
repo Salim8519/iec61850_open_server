@@ -60,6 +60,7 @@ def compose(slug: str, number: int, title: str) -> Path:
     final = OUT / f"{slug}.mp4"
     sharp = OUT / f"{slug}.2x.mp4"
     remotion("render", "src/index.ts", slug, str(sharp), "--codec=h264", "--scale=2", "--crf=12",
+             "--concurrency=4",  # 4K pages are heavy: more at once crashed the browser on a 16-core PC
              "--audio-codec=aac", "--audio-bitrate=192k", "--log=error")
     downscale(sharp, final)
     sharp.unlink()

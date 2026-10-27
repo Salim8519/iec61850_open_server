@@ -22,7 +22,8 @@ make new video"; keep version 0.1.28. Decision: [ADR-0121](../../decisions/ADR-0
   the ScadaBench Lab network in 0.2 s with no Windows prompt; the banner shows the 6 addresses, Ping
   and the remove link. Keyboard: ArrowDown opens, arrows move, Enter picks, Escape closes.
 - At 1366x768 nothing is clipped (screenshots of the list, the lab choice and the banner).
-- Frontend 488/488 (the display-fit test caught a `70vh` in the first picker CSS; removed).
+- Frontend 488/488 (the display-fit test caught a `70vh` in the first picker CSS; removed). No Go code changed; the Go suite run was stopped to protect disk space.
+- Release 0.1.28 rebuilt in place (owner: keep the version): installer 0be5b9c0, portable b6a0b5ea, both match the live files; self-test ok; lab video re-recorded (2560x1440, 72 s).
 
 ## Limitations
 
