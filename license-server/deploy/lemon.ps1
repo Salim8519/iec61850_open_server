@@ -15,8 +15,11 @@ $mode = if ($Live) { "LIVE (real money)" } else { "TEST" }
 
 Write-Host "Lemon Squeezy setup, $mode mode."
 Write-Host "Make the key at app.lemonsqueezy.com > Settings > API > + (Test mode switch $(if ($Live) {'OFF'} else {'ON'}))."
-$secure = Read-Host "Paste the Lemon Squeezy API key (typing is hidden)" -AsSecureString
-$apiKey = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)).Trim()
+$apiKey = "$env:LEMON_API_KEY".Trim()
+if (-not $apiKey) {
+    $secure = Read-Host "Paste the Lemon Squeezy API key (typing is hidden)" -AsSecureString
+    $apiKey = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)).Trim()
+}
 if (-not $apiKey) { throw "No API key was pasted." }
 $headers = @{ Authorization = "Bearer $apiKey"; Accept = "application/vnd.api+json"; "Content-Type" = "application/vnd.api+json" }
 function Api($method, $path, $body) {
@@ -35,7 +38,8 @@ $variant = (Api GET "variants?filter[product_id]=$($product.id)").data |
 $price = "{0:0.00}" -f ($variant.attributes.price / 100)
 Write-Host "Store: $($store.attributes.name) | Product: $($product.attributes.name) | Variant $($variant.id) | Price $price $($store.attributes.currency)"
 
-$bytes = New-Object byte[] 32
+# Lemon Squeezy allows at most 40 characters: 20 random bytes as hex.
+$bytes = New-Object byte[] 20
 [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
 $secret = -join ($bytes | ForEach-Object { "{0:x2}" -f $_ })
 $existing = (Api GET "webhooks?filter[store_id]=$($store.id)").data | Where-Object { $_.attributes.url -eq $hook }
