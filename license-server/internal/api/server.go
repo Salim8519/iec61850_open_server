@@ -10,6 +10,7 @@ import (
 
 	"substation-license-server/internal/certs"
 	"substation-license-server/internal/config"
+	"substation-license-server/internal/lemon"
 	"substation-license-server/internal/logging"
 	"substation-license-server/internal/paypal"
 	"substation-license-server/internal/release"
@@ -24,6 +25,11 @@ type Payments interface {
 	CaptureOrder(ctx context.Context, orderID string) (paypal.Capture, error)
 	GetOrder(ctx context.Context, orderID string) (paypal.Capture, error)
 	VerifyWebhook(ctx context.Context, webhookID string, header http.Header, body []byte) error
+}
+
+// LemonCheckouts is the Lemon Squeezy API surface (faked in tests).
+type LemonCheckouts interface {
+	CreateCheckout(ctx context.Context, request lemon.CheckoutRequest) (string, error)
 }
 
 // Mailer sends one plain-text email (faked in tests).
@@ -41,11 +47,13 @@ type Server struct {
 	Log      *logging.Capped
 	Payments Payments
 	Mailer   Mailer
-	News     NewsMailer
-	Sales    *sales.Book
-	Now      func() time.Time
-	usage    dataUsage
-	owner    *ownerState
+	// Lemon makes card checkouts at the owner-page price (nil: the hosted product link).
+	Lemon LemonCheckouts
+	News  NewsMailer
+	Sales *sales.Book
+	Now   func() time.Time
+	usage dataUsage
+	owner *ownerState
 	// livePrice holds a price changed on the owner page (no restart needed).
 	livePrice livePrice
 	// releaseBody is the signed newest-version answer, built once by LoadRelease.

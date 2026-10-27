@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -10,6 +11,8 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"substation-license-server/internal/lemon"
 )
 
 const lemonUUID = "8f0a7d3e-1b2c-4d5e-9f60-718293a4b5c6"
@@ -117,5 +120,26 @@ func TestLemonStartCarriesComputerAndNews(t *testing.T) {
 	html := page.Body.String()
 	if !strings.Contains(html, `id="lemon-pay"`) || !strings.Contains(html, "or pay with PayPal") {
 		t.Fatal("the buy page must offer the card checkout first and PayPal second")
+	}
+}
+
+type fakeLemon struct{ got lemon.CheckoutRequest }
+
+func (f *fakeLemon) CreateCheckout(_ context.Context, request lemon.CheckoutRequest) (string, error) {
+	f.got = request
+	return "https://scadabench.lemonsqueezy.com/checkout/custom/x?signature=y", nil
+}
+
+func TestLemonCheckoutUsesTheOwnerPagePrice(t *testing.T) {
+	s, _ := lemonServer(t)
+	fake := &fakeLemon{}
+	s.Lemon = fake
+	s.Config.LicensePrice = "79.00"
+	recorder := httptest.NewRecorder()
+	s.Handler().ServeHTTP(recorder, httptest.NewRequest("POST", "/api/v1/checkout/lemon-start",
+		strings.NewReader(`{"news":true}`)))
+	if !strings.Contains(recorder.Body.String(), "checkout/custom/x") || fake.got.Price != "79.00" ||
+		fake.got.VariantID != "555" || fake.got.Custom["news"] != "1" {
+		t.Fatalf("card checkout must carry the owner-page price: %s %+v", recorder.Body.String(), fake.got)
 	}
 }

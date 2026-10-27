@@ -16,6 +16,7 @@ import (
 	"substation-license-server/internal/api"
 	"substation-license-server/internal/certs"
 	"substation-license-server/internal/config"
+	"substation-license-server/internal/lemon"
 	"substation-license-server/internal/logging"
 	"substation-license-server/internal/mail"
 	"substation-license-server/internal/paypal"
@@ -134,6 +135,9 @@ func buildServer(cfg config.Config, db *store.Store) (*api.Server, *logging.Capp
 	}
 	if cfg.PayPalReady() {
 		server.Payments = paypal.New(cfg.PayPalBase(), cfg.PayPalClientID, cfg.PayPalClientSecret)
+	}
+	if cfg.LemonAPIReady() {
+		server.Lemon = lemon.Client{Base: "https://api.lemonsqueezy.com/v1", APIKey: cfg.LemonAPIKey, StoreID: cfg.LemonStoreID}
 	}
 	if cfg.MailReady() {
 		server.Mailer = mail.New(cfg.MailgunDomain, cfg.MailgunAPIKey, cfg.MailgunFrom, cfg.MailgunRegion)

@@ -25,6 +25,13 @@ Date: 2026-10-28. Decision: [ADR-0126](../../decisions/ADR-0126-lemon-squeezy-ch
 - One-use test code `OWNERTEST10` ($98.90 off, only this product, expires 2026-10-30) for a $0.10 real
   purchase test.
 
+## Admin controls the whole price (2026-10-28)
+
+Owner: "Admin should control whole price". `internal/lemon/checkout.go` (+ test) creates each checkout
+through the API at the owner-page price (`custom_price`); `lemon_api_key` and `lemon_store_id` are stored
+on the server; `set-lemon.cmd` no longer copies the dashboard price. Deployed: a live `lemon-start` returned
+a `checkout/custom/...` link, and the API read it back as `custom_price` 9900, variant 2305283, live mode.
+
 ## Evidence
 
 - `internal/api` tests pass, including:

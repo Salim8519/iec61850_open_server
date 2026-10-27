@@ -1,8 +1,9 @@
 # Connect the Lemon Squeezy store to the license server (ADR-0126) in one go:
 #   set-lemon.cmd          test mode (use a Lemon Squeezy API key made while "Test mode" is on)
 #   set-lemon.cmd -Live    real sales (API key made with Test mode off)
-# The API key is typed hidden, used only on this PC to read the store and create the webhook,
-# and never saved. A new random webhook signing secret goes to the server over SSH standard input.
+# The API key is typed hidden (or taken from LEMON_API_KEY). It reads the store and creates the webhook,
+# and goes to the server, which uses it to make each checkout at the owner-page price. The key and a new
+# random webhook signing secret travel over SSH standard input, never on a command line or to disk here.
 param([switch]$Live)
 $ErrorActionPreference = "Stop"
 $OutputEncoding = New-Object System.Text.UTF8Encoding $false
@@ -36,7 +37,7 @@ if (-not $product) { throw "No published product with ScadaBench in its name in 
 $variant = (Api GET "variants?filter[product_id]=$($product.id)").data |
     Where-Object { $_.attributes.status -ne "draft" } | Select-Object -First 1
 $price = "{0:0.00}" -f ($variant.attributes.price / 100)
-Write-Host "Store: $($store.attributes.name) | Product: $($product.attributes.name) | Variant $($variant.id) | Price $price $($store.attributes.currency)"
+Write-Host "Store: $($store.attributes.name) | Product: $($product.attributes.name) | Variant $($variant.id) | Product page price $price $($store.attributes.currency) (buyers pay the owner-page price)"
 
 # Lemon Squeezy allows at most 40 characters: 20 random bytes as hex.
 $bytes = New-Object byte[] 20
@@ -53,16 +54,16 @@ if ($existing) {
         relationships = @{ store = @{ data = @{ type = "stores"; id = "$($store.id)" } } } } } | Out-Null
     Write-Host "Webhook created."
 }
-Remove-Variable apiKey, headers
+Remove-Variable headers
 
 $testFlag = if ($Live) { "off" } else { "on" }
 $remote = "sudo /usr/local/bin/license-server-admin set --lemon-checkout-url $($product.attributes.buy_now_url) " +
-          "--lemon-variant-id $($variant.id) --lemon-test-mode $testFlag --price $price --secrets-stdin " +
+          "--lemon-variant-id $($variant.id) --lemon-store-id $($store.id) --lemon-test-mode $testFlag --secrets-stdin " +
           "&& sudo /usr/bin/systemctl restart license-server"
 Write-Host "== Sending to $server"
-"lemon_signing_secret=$secret" | ssh @ssh $server $remote
+"lemon_signing_secret=$secret`nlemon_api_key=$apiKey" | ssh @ssh $server $remote
 if ($LASTEXITCODE -ne 0) { throw "could not update the license server" }
-Remove-Variable secret
+Remove-Variable secret, apiKey
 Start-Sleep 3
 $health = Invoke-RestMethod "https://license.scadabench.com/api/v1/health"
 Write-Host "Lemon Squeezy checkout ready: $($health.lemon). Buy page: https://license.scadabench.com/buy"

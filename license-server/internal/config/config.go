@@ -42,6 +42,9 @@ type Config struct {
 	LemonVariantID      string `json:"lemon_variant_id"`
 	LemonSigningSecret  string `json:"lemon_signing_secret"`
 	LemonAcceptTestMode bool   `json:"lemon_accept_test_mode"`
+	// With the API key the server makes each checkout at the owner-page price.
+	LemonAPIKey  string `json:"lemon_api_key"`
+	LemonStoreID string `json:"lemon_store_id"`
 
 	MailgunDomain string `json:"mailgun_domain"`
 	MailgunAPIKey string `json:"mailgun_api_key"`
@@ -157,6 +160,11 @@ func (c Config) PayPalReady() bool {
 // LemonReady reports whether the Lemon Squeezy checkout can be offered.
 func (c Config) LemonReady() bool {
 	return strings.HasPrefix(c.LemonCheckoutURL, "https://") && c.LemonVariantID != "" && len(c.LemonSigningSecret) >= 16
+}
+
+// LemonAPIReady reports whether checkouts can carry the owner-page price.
+func (c Config) LemonAPIReady() bool {
+	return c.LemonReady() && c.LemonAPIKey != "" && c.LemonStoreID != ""
 }
 
 // MailReady reports whether license emails can be sent.

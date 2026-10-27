@@ -42,7 +42,9 @@ lemonButton.onclick = async () => {
     if (typeof window.createLemonSqueezy === "function") window.createLemonSqueezy();
     if (window.LemonSqueezy) {
       window.LemonSqueezy.Setup({ eventHandler: paid });
-      window.LemonSqueezy.Url.Open(url + "&embed=1");
+      const overlay = new URL(url);
+      overlay.searchParams.set("embed", "1");
+      window.LemonSqueezy.Url.Open(overlay.toString());
     } else {
       location.href = url;
     }

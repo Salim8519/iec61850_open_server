@@ -16,8 +16,9 @@ import (
 // guess another buyer's (ADR-0126).
 const lemonPrefix = "LS-"
 
-// lemonStart returns the hosted checkout link for the buy page, carrying the app's
-// computer id (when the app opened the page) and the "send me news" choice.
+// lemonStart returns the card checkout for the buy page, carrying the app's computer
+// id (when the app opened the page) and the "send me news" choice. With the API key it
+// is made at the owner-page price; without it the hosted product link is used.
 func (s *Server) lemonStart(r *http.Request, _ string) (any, error) {
 	if !s.Config.LemonReady() {
 		return nil, errCheckoutOff
@@ -27,17 +28,32 @@ func (s *Server) lemonStart(r *http.Request, _ string) (any, error) {
 		News bool   `json:"news"`
 	}
 	decode(r, &request)
+	custom := map[string]string{}
+	if request.News {
+		custom["news"] = "1"
+	}
+	if hwid := strings.TrimSpace(request.HWID); certs.ValidHWID(hwid) {
+		custom["hwid"] = hwid
+	}
+	if s.Lemon != nil {
+		price, _ := s.price()
+		link, err := s.Lemon.CreateCheckout(r.Context(), lemon.CheckoutRequest{VariantID: s.Config.LemonVariantID,
+			Price: price, Custom: custom})
+		if err != nil {
+			s.Log.Event("lemon_checkout_error", map[string]any{"error": err.Error()})
+			return nil, apiError{http.StatusBadGateway, "lemon_error",
+				"The card checkout could not start. Try again in a minute, or pay with PayPal."}
+		}
+		return map[string]string{"url": link}, nil
+	}
 	link, err := url.Parse(s.Config.LemonCheckoutURL)
 	if err != nil {
 		return nil, errCheckoutOff
 	}
 	query := link.Query()
 	query.Set("media", "0")
-	if request.News {
-		query.Set("checkout[custom][news]", "1")
-	}
-	if hwid := strings.TrimSpace(request.HWID); certs.ValidHWID(hwid) {
-		query.Set("checkout[custom][hwid]", hwid)
+	for key, value := range custom {
+		query.Set("checkout[custom]["+key+"]", value)
 	}
 	link.RawQuery = query.Encode()
 	return map[string]string{"url": link.String()}, nil

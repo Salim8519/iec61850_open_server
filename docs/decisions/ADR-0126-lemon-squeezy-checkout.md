@@ -24,14 +24,16 @@ cards, Apple Pay and Google Pay, charges and files sales tax and VAT, and sends 
    event gives the browser that UUID, and the page asks `GET /api/v1/checkout/lemon-key?order=` until
    the webhook has arrived. Nobody can guess another buyer's UUID. Without the overlay the hosted
    checkout opens and the key arrives by email.
-4. **Price.** The Lemon Squeezy product price is authoritative: only the variant id is checked, not
-   the amount, so a price change cannot strand a paid order. `set-lemon.cmd` copies the variant price
-   to the server, so the buy page and scadabench.com show the same price.
+4. **Price (owner: "Admin should control whole price").** The owner-page price is the one price. The
+   server stores the Lemon Squeezy API key and makes each buyer's checkout through the API with
+   `custom_price`, so card, PayPal, the buy page and scadabench.com change together. Only the variant id
+   is checked on the webhook, not the amount, so a price change cannot strand a paid order. Without the
+   key the hosted product link (dashboard price) is used.
 5. **Test mode.** Test orders issue keys only while `lemon_accept_test_mode` is on
    (`set-lemon.cmd` sets it; `set-lemon.cmd -Live` turns it off).
-6. **Secrets.** The owner pastes the API key, hidden, into `set-lemon.cmd`. It is used on the owner's PC
-   only, to find the product and create or update the webhook, and is never saved. The script makes a
-   fresh random signing secret and sends it to the server over SSH standard input.
+6. **Secrets.** `set-lemon.cmd` takes the API key (hidden prompt or `LEMON_API_KEY`), finds the product,
+   creates or updates the webhook with a fresh 40-character signing secret, and sends both to the
+   server over SSH standard input (`lemon_api_key`, `lemon_signing_secret`, never on a command line).
 
 ## Compatibility
 

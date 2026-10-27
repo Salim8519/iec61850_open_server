@@ -24,7 +24,7 @@ func set(args []string) error {
 	var secretsStdin *bool
 	names := []string{"listen", "public-url", "price", "currency", "support-email", "paypal-mode",
 		"paypal-client-id", "paypal-webhook-id", "mailgun-domain", "mailgun-region", "mailgun-from", "notify-email", "seller-name",
-		"admin-path", "admin-origin", "marketing-from", "marketing-domain", "lemon-checkout-url", "lemon-variant-id",
+		"admin-path", "admin-origin", "marketing-from", "marketing-domain", "lemon-checkout-url", "lemon-variant-id", "lemon-store-id",
 		"lemon-test-mode"}
 	dataDir, err := flags("set", args, func(fs *flag.FlagSet) {
 		for _, name := range names {
@@ -48,7 +48,7 @@ func set(args []string) error {
 		"notify-email": &cfg.NotifyEmail, "seller-name": &cfg.SellerName,
 		"admin-path": &cfg.AdminPath, "admin-origin": &cfg.AdminOrigin,
 		"marketing-from": &cfg.MarketingFrom, "marketing-domain": &cfg.MarketingDomain,
-		"lemon-checkout-url": &cfg.LemonCheckoutURL, "lemon-variant-id": &cfg.LemonVariantID, "lemon-test-mode": &testMode}
+		"lemon-checkout-url": &cfg.LemonCheckoutURL, "lemon-variant-id": &cfg.LemonVariantID, "lemon-store-id": &cfg.LemonStoreID, "lemon-test-mode": &testMode}
 	for name, value := range text {
 		if v := strings.TrimSpace(*value); v != "" {
 			*targets[name] = v
@@ -127,6 +127,8 @@ func readSecrets(cfg *config.Config) error {
 			cfg.PayPalClientSecret = strings.TrimSpace(value)
 		case "mailgun_api_key":
 			cfg.MailgunAPIKey = strings.TrimSpace(value)
+		case "lemon_api_key":
+			cfg.LemonAPIKey = strings.TrimSpace(value)
 		case "lemon_signing_secret":
 			cfg.LemonSigningSecret = strings.TrimSpace(value)
 		case "admin_gateway_secret":
