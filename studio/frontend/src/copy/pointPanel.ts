@@ -1,6 +1,9 @@
 /** Words of the point panel (ADR-0102): plain English, short, no jargon without a hint. */
 export const POINT_COPY = {
   kind: 'Point panel',
+  // A renamed point keeps its reference from the SCL file on a small line under the name.
+  refWord: 'IEC 61850',
+  refTitle: 'The original IEC 61850 reference of this point in the SCL file. Renaming never changes it.',
   setupItem: 'At least one point',
   empty: 'Add points in the panel',
   openHint: 'Open the list of points of this panel',

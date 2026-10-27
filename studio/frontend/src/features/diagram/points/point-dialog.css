@@ -23,6 +23,10 @@
 .pp-row-line { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
 .pp-name { flex: 1 1 220px; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 14px; font-weight: 600;
   overflow-wrap: anywhere; }
+/* A renamed point's original IEC 61850 reference: one small muted line under the name. */
+.pp-ref { margin: -2px 0 0; font-size: 12px; color: var(--text-3); overflow-wrap: anywhere; }
+.pp-ref span { font-weight: 600; }
+.pp-ref code { font-size: 12px; color: inherit; }
 .pp-flag { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px; font-size: 12px; font-weight: 600; color: var(--warning-text);
   border: var(--line) dashed var(--warning); border-radius: 6px; background: var(--warning-soft); }
 /* A row whose value is part of a GOOSE message (ADR-0112): the word, an outline, never colour alone. */

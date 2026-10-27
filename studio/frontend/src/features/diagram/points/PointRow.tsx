@@ -38,10 +38,13 @@ export function PointRow({ nodeId, point, ied, extended, locked, available, why,
   const [editing, setEditing] = useState(false);
   const shown = point.type === 'command' ? null : showPoint(point, raw, stopped);
   const unhealthy = locked && point.type !== 'command' && point.healthy !== null && !stopped && !isHealthy(point, raw);
-  const name = point.label === pointRef(point) ? shortRef(point.label, ied?.name) : point.label;
+  const ref = pointRef(point);
+  const name = point.label === ref ? shortRef(point.label, ied?.name) : point.label;
+  // Once the user names a point, its original IEC 61850 reference stays visible under the name.
+  const renamed = !!ref && point.label !== ref;
   // A command row's value is the status of its control object.
   const goose = messagesOfRef(useContext(GooseLeaves), ied?.id, point.type === 'command' ? control?.status : point.source?.ref);
-  return <div className="pp-row kind-edge" {...kindRow(kind)} title={pointRef(point)}>
+  return <div className="pp-row kind-edge" {...kindRow(kind)} title={ref}>
     <div className="pp-row-line">
       <KindBadge kind={kind} raw={control?.cdc} />
       <span className="pp-name">
@@ -58,6 +61,8 @@ export function PointRow({ nodeId, point, ied, extended, locked, available, why,
         aria-label={`${editing ? POINT_COPY.hideSettings : POINT_COPY.showSettings}: ${point.label}`}
         onClick={() => setEditing(open => !open)}><SlidersHorizontal size={15} /></button>}
     </div>
+    {renamed && <p className="pp-ref" title={POINT_COPY.refTitle}>
+      <span>{POINT_COPY.refWord}</span> <code>{shortRef(ref, ied?.name)}</code></p>}
     {!locked && editing && <PointRowEdit point={point} change={patch => change(point.id, patch)} remove={() => remove(point.id)} />}
     {pending && <div className="confirm-box pp-confirm" role="alertdialog" aria-label="Confirm command">
       <span><strong>{POINT_COPY.confirmTitle(pending.label, point.label)}</strong> <small>{POINT_COPY.confirmHint}</small></span>
