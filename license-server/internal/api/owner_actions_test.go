@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -192,5 +193,11 @@ func TestOwnerPriceChangeNeedsCodeAndAppliesAtOnce(t *testing.T) {
 	raw, _ := os.ReadFile(filepath.Join(h.s.Config.DataDir, "config.json"))
 	if !strings.Contains(string(raw), `"license_price": "99.00"`) {
 		t.Fatal("the new price must survive a restart")
+	}
+	h.s.Config.LemonCheckoutURL, h.s.Config.LemonVariantID = "https://s.lemonsqueezy.com/buy/x", "1"
+	h.s.Config.LemonSigningSecret = "a-signing-secret-of-enough-length"
+	status, result, _ = h.do("POST", "/owner-test/api/price", map[string]string{"price": "0.10"}, map[string]string{confirmHeader: h.code()})
+	if status != 400 || !strings.Contains(fmt.Sprint(result), "0.50") {
+		t.Fatalf("with card checkout on, a price under $0.50 must be refused: %d %v", status, result)
 	}
 }

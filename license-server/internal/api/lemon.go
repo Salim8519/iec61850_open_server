@@ -16,6 +16,9 @@ import (
 // guess another buyer's (ADR-0126).
 const lemonPrefix = "LS-"
 
+// lemonMinimum is the lowest card price Lemon Squeezy accepts for a checkout.
+const lemonMinimum = 0.50
+
 // lemonStart returns the card checkout for the buy page, carrying the app's computer
 // id (when the app opened the page) and the "send me news" choice. With the API key it
 // is made at the owner-page price; without it the hosted product link is used.
@@ -41,7 +44,8 @@ func (s *Server) lemonStart(r *http.Request, _ string) (any, error) {
 			Price: price, Custom: custom})
 		if err != nil {
 			s.Log.Event("lemon_checkout_error", map[string]any{"error": err.Error()})
-			return nil, apiError{http.StatusBadGateway, "lemon_error",
+			// Not a 5xx: Cloudflare would replace this text with its own error page.
+			return nil, apiError{http.StatusUnprocessableEntity, "lemon_error",
 				"The card checkout could not start. Try again in a minute, or pay with PayPal."}
 		}
 		return map[string]string{"url": link}, nil

@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 	"sync"
 
 	"substation-license-server/internal/config"
@@ -37,6 +38,9 @@ func (s *Server) ownerSetPrice(r *http.Request, call *ownerCall) (any, error) {
 	amount, err := config.NormalizePrice(request.Price)
 	if err != nil {
 		return nil, badRequest("Write the price as a number, for example 149 or 149.00.")
+	}
+	if value, _ := strconv.ParseFloat(amount, 64); s.Config.LemonReady() && value < lemonMinimum {
+		return nil, badRequest("Card checkout (Lemon Squeezy) needs at least $0.50. Use 0.50 or more.")
 	}
 	old, _ := s.price()
 	saved, err := config.LoadFile(s.Config.DataDir)
