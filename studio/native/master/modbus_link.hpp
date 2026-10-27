@@ -9,7 +9,7 @@
 class ModbusLink {
 public:
     ~ModbusLink() { close(); }
-    void open(const std::string& host, int port, int timeout_ms);
+    void open(const std::string& host, int port, int timeout_ms, const std::string& local = "");
     std::vector<uint8_t> request(uint8_t unit, const std::vector<uint8_t>& pdu);
     void close();
     bool is_open() const { return handle != invalid(); }

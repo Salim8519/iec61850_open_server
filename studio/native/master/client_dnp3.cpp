@@ -64,6 +64,12 @@ class ClientDnp3 : public ProtocolClient {
 public:
     ~ClientDnp3() override { disconnect(); }
 
+    // "Network" in the master (ADR-0123): 0.0.0.0 lets Windows choose the address.
+    static std::string local_address(const Json& settings) {
+        auto local = settings.value("local", std::string());
+        return local.empty() ? "0.0.0.0" : local;
+    }
+
     Json connect(const Json& settings) override {
         auto host = settings.at("host").get<std::string>();
         int port = settings.value("port", 20000);
@@ -73,7 +79,7 @@ public:
         manager = std::make_unique<DNP3Manager>(1, std::make_shared<Quiet>());
         auto channel = manager->AddTCPClient("master", levels::NOTHING,
                                              ChannelRetry(TimeDuration::Seconds(1), TimeDuration::Seconds(10)),
-                                             {IPEndpoint(host, uint16_t(port))}, "0.0.0.0", link);
+                                             {IPEndpoint(host, uint16_t(port))}, local_address(settings), link);
         MasterStackConfig config;
         config.master.responseTimeout = TimeDuration::Seconds(5);
         bool unsolicited = settings.value("unsolicited", true);

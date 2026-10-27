@@ -38,6 +38,9 @@ public:
         time_tagged = settings.value("time_tagged_commands", false);
         peer = peer_name(host, port);
         connection = CS104_Connection_create(host.c_str(), port);
+        // "Network" in the master (ADR-0123): empty lets Windows choose; otherwise connect from this address.
+        auto local = settings.value("local", std::string());
+        if (!local.empty()) CS104_Connection_setLocalAddress(connection, local.c_str(), 0);
         struct sCS104_APCIParameters apci = *CS104_Connection_getAPCIParameters(connection);
         apci.k = settings.value("k", 12); apci.w = settings.value("w", 8);
         apci.t0 = settings.value("t0", 10); apci.t1 = settings.value("t1", 15);

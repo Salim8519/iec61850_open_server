@@ -6,6 +6,7 @@ import (
 	"studio-engine/internal/api/toolsapi"
 	"studio-engine/internal/gateway"
 	"studio-engine/internal/gateway/service"
+	"studio-engine/internal/netcfg"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/ports"
 	"studio-engine/internal/scl"
@@ -32,6 +33,10 @@ func (e *Engine) wireTools() []api.Route {
 	e.Gateway = service.NewManager(gatewayProjects{e.Projects, e.Runtime}, ports.Gateway(e.Runtime), e.Control,
 		o.native("studio_gateway.exe"), nil)
 	e.Master = service.NewMaster(e.Projects, e.Runtime.Emit, o.native("studio_master.exe"), nil)
+	e.Master.Adapters = func() ([]netcfg.Adapter, error) { // the master's Network list (ADR-0123)
+		raw, err := netcfg.RawAdapters()
+		return netcfg.Normalize(raw), err
+	}
 	e.Gateway.Converter = &service.Converter{Master: e.Master}
 	e.Gateway.Typed = ports.GatewayTyped(e.Runtime) // SCADA select / execute / cancel (ADR-0107)
 	gateway.ExtendedControls = typedControlsOf      // BSC/APC/INC links and Add points (ADR-0104)

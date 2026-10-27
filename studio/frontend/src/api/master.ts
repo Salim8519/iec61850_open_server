@@ -23,6 +23,9 @@ export type MasterCommand = { kind: CommandKind; address?: number; value?: numbe
   qualifier?: number; deactivate?: boolean; count?: number; on_time_ms?: number; off_time_ms?: number;
   /** Modbus 2-register writes (FC16): the stored "big" (high word first) or "little"; the engine's default is big. */
   word_order?: 'big' | 'little' };
+/** The master's Network (ADR-0123): "" is All networks (Windows chooses); source is the address the device sees. */
+export type MasterNetwork = { local: string; choices: { address: string; adapter: string }[]; source: string;
+  source_adapter: string; note: string };
 export type CommandAnswer = { ok: boolean; text: string; terminated?: boolean };
 export type CyclicState = { running: boolean; sends: number; interval_ms: number };
 export type CyclicOptions = { interval_ms: number; address_step: number; toggle: boolean };
@@ -42,6 +45,8 @@ export const masterApi = {
   config: () => api<MasterConfig>('/tools/master/config'),
   saveConfig: (protocol: MasterProtocol, host: string, settings: Record<string, number | boolean>) =>
     api<MasterConfig>('/tools/master/config', 'PUT', { protocol, host, settings }),
+  network: () => api<MasterNetwork>('/tools/master/network'),
+  saveNetwork: (local: string) => api<MasterNetwork>('/tools/master/network', 'PUT', { local }),
   connect: () => api<MasterStatus>('/tools/master/connect', 'POST', {}),
   disconnect: () => api<MasterStatus>('/tools/master/disconnect', 'POST', {}),
   interrogate: () => api<{ confirmed: boolean; text: string }>('/tools/master/interrogate', 'POST', {}),

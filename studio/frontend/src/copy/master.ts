@@ -175,3 +175,10 @@ export const RANGES_COPY = {
 };
 
 export const TRAFFIC_WORDS = { rx: 'from the device', tx: 'to the device', info: 'note' };
+
+/** The master's Network (ADR-0123): which address of this PC the connection leaves from. */
+export const NETWORK_COPY = {
+  label: 'Network', all: 'All networks',
+  hint: 'All networks: Windows uses the card that reaches the device. Choose one card when this PC has several networks, or when the device only accepts one of your addresses.',
+  sees: (address: string, adapter: string) => `The device sees this PC as ${address}${adapter ? ` (${adapter})` : ''}.`,
+};

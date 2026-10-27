@@ -7,6 +7,7 @@ import { Disclosure } from '../../../../ui/Disclosure';
 import { HelpTip } from '../../../../ui/HelpTip';
 import { Spinner } from '../../../../ui/Spinner';
 import { StatusPill } from '../../../../ui/StatusPill';
+import { MasterNetwork } from './MasterNetwork';
 
 const AVAILABLE: MasterProtocol[] = ['iec104', 'dnp3', 'modbus'];
 const FLAGS = new Set(['time_tagged_commands', 'unsolicited']);
@@ -42,6 +43,7 @@ export function MasterConnect({ config, status, busy, save, connect, disconnect,
       <HelpTip text={`${MASTER_COPY.hostHint} ${MASTER_COPY.allowList}`} label="Which address?" /></span>
       <input defaultValue={config.host} key={`host-${config.host}`} disabled={connected} placeholder="192.168.1.20"
         onBlur={event => { const next = event.target.value.trim(); if (next !== config.host) save(protocol, next, values); }} /></label>
+    <MasterNetwork host={config.host} locked={connected || busy} />
     {MASTER_MAIN[protocol].map(field)}
     <p className="side-line">{MASTER_COPY.intervalHint[protocol]}</p>
     {MASTER_ADVANCED[protocol].length > 0 && <Disclosure>{MASTER_ADVANCED[protocol].map(field)}</Disclosure>}

@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"studio-engine/internal/gateway"
+	"studio-engine/internal/netcfg"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/numlog"
 	"studio-engine/internal/tools/pytext"
@@ -32,6 +33,8 @@ type Master struct {
 	cyclic     *cyclicSender
 	// OnValues runs after device values were merged (the converter pushes them upstream).
 	OnValues func()
+	// Adapters lists this PC's adapters for the master's "Network" choice (ADR-0123).
+	Adapters func() ([]netcfg.Adapter, error)
 	changes  // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // connect/disconnect

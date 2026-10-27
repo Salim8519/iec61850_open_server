@@ -19,7 +19,7 @@ void receive(SOCKET socket, uint8_t* buffer, int size, const std::string& peer) 
 }
 }
 
-void ModbusLink::open(const std::string& host, int port, int timeout_ms) {
+void ModbusLink::open(const std::string& host, int port, int timeout_ms, const std::string& local) {
     WSADATA data;
     WSAStartup(MAKEWORD(2, 2), &data);
     peer = host + ":" + std::to_string(port);
@@ -29,21 +29,32 @@ void ModbusLink::open(const std::string& host, int port, int timeout_ms) {
     if (getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &found) != 0 || !found)
         throw std::runtime_error("The address " + host + " could not be found");
     SOCKET socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (!local.empty()) {  // "Network" in the master (ADR-0123): connect from this address of the PC
+        sockaddr_in from{};
+        from.sin_family = AF_INET;
+        if (inet_pton(AF_INET, local.c_str(), &from.sin_addr) != 1
+            || bind(socket, reinterpret_cast<sockaddr*>(&from), sizeof from) != 0) {
+            closesocket(socket); freeaddrinfo(found);
+            throw std::runtime_error("This PC has no address " + local + " any more. Choose another network.");
+        }
+    }
     u_long nonblocking = 1;
     ioctlsocket(socket, FIONBIO, &nonblocking);
-    ::connect(socket, found->ai_addr, int(found->ai_addrlen));
+    int started = ::connect(socket, found->ai_addr, int(found->ai_addrlen));
     freeaddrinfo(found);
+    int cause = started == SOCKET_ERROR ? WSAGetLastError() : 0;
     fd_set writable, failed;
     FD_ZERO(&writable); FD_SET(socket, &writable);
     FD_ZERO(&failed); FD_SET(socket, &failed);
     timeval wait{timeout_ms / 1000, (timeout_ms % 1000) * 1000};
     if (select(0, nullptr, &writable, &failed, &wait) <= 0 || FD_ISSET(socket, &failed)) {
-        int error = 0, size = sizeof error;
-        bool refused = FD_ISSET(socket, &failed)
-            && getsockopt(socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error), &size) == 0
-            && error == WSAECONNREFUSED;
+        int error = cause, size = sizeof error;
+        if (FD_ISSET(socket, &failed)) getsockopt(socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error), &size);
         closesocket(socket);
-        if (refused) throw std::runtime_error(refused_text(peer, "Modbus server"));
+        if (error == WSAECONNREFUSED) throw std::runtime_error(refused_text(peer, "Modbus server"));
+        if (error == WSAENETUNREACH || error == WSAEHOSTUNREACH || error == WSAEADDRNOTAVAIL)  // no route (ADR-0123)
+            throw std::runtime_error("This PC cannot reach " + peer + (local.empty() ? std::string() : " from " + local)
+                                     + ". Choose All networks, or the network the device is on.");
         throw std::runtime_error("No answer from " + peer + " within " + std::to_string(timeout_ms / 1000)
                                  + " s. Check the address and port, and that the Modbus server accepts this PC.");
     }

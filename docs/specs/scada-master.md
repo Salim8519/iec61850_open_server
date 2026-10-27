@@ -52,6 +52,9 @@ reads to another SCADA.
 - **Repeat automatically (Go engine).** One command may be sent again on a timer (100-600000 ms,
   Stop ends it, disconnecting ends it). Each shot may add one to the address and flip an on/off
   value. Every shot goes through the same confirmed-command path, so each is logged and warned.
+- **Network (Go engine, ADR-0123).** Under Device address: All networks (Windows chooses, the default) or one
+  address of this PC listed by card, never an IED or ScadaBench Lab address. The column says which address the
+  device sees; another card reaching the device is warned before and after Connect. The worker binds to it.
 - **My point list (Go engine, ADR-0110).** The master keeps its own address-only point list per protocol
   (address, type, name, scale/offset/unit; Modbus table, data type, word order, registers; command type, select
   and value). Add one point, a range, pasted/Excel/CSV rows (every row checked first) or copy the gateway list.

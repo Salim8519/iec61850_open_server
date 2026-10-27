@@ -23,7 +23,7 @@ public:
         unit = uint8_t(settings.value("unit_id", 1));
         peer = peer_name(host, port);
         emit_link("connecting", "Connecting to " + peer);
-        link.open(host, port, settings.value("timeout_ms", 3000));
+        link.open(host, port, settings.value("timeout_ms", 3000), settings.value("local", std::string()));
         emit_link("open", "Connected to " + peer);
         return {{"host", host}, {"port", port}, {"unit_id", unit}};
     }

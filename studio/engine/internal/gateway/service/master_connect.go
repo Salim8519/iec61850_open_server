@@ -67,9 +67,9 @@ func (m *Master) open() (*pyjson.Object, string, string, any, error) {
 	if err != nil {
 		return nil, "", "", nil, err
 	}
-	if err := m.handshake(process, protocol, host, settings); err != nil {
+	if err := m.handshake(process, protocol, workerSettings(settings, config)); err != nil {
 		process.Close()
-		return nil, "", "", nil, err
+		return nil, "", "", nil, m.withNetworkNote(err)
 	}
 	port := get(settings, "port")
 	device := []any{protocol, host, port}
@@ -88,7 +88,7 @@ func (m *Master) open() (*pyjson.Object, string, string, any, error) {
 	return config, protocol, host, port, nil
 }
 
-func (m *Master) handshake(process worker.Process, protocol, host string, settings *pyjson.Object) error {
+func (m *Master) handshake(process worker.Process, protocol string, settings *pyjson.Object) error {
 	hello, err := process.Request("hello", worker.DefaultTimeout, nil)
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func (m *Master) handshake(process worker.Process, protocol, host string, settin
 		return apperr.RuntimeError("ScadaBench cannot act as " + protocolNames[protocol] + " master in this build yet")
 	}
 	_, err = process.Request("connect", connectTimeout(settings), pyjson.NewObject().Set("protocol", protocol).
-		Set("settings", with(settings, "host", host)))
+		Set("settings", settings))
 	return err
 }
 
@@ -182,7 +182,7 @@ func (m *Master) reconnect(config *pyjson.Object) {
 	}
 	if err == nil {
 		_, err = process.Request("connect", connectTimeout(settings), pyjson.NewObject().Set("protocol", protocol).
-			Set("settings", with(settings, "host", get(config, "host"))))
+			Set("settings", workerSettings(settings, config)))
 	}
 	if err != nil {
 		m.setMessage("Still trying to reach the device: " + err.Error())
