@@ -28,6 +28,11 @@ Then publish it with Cloudflare Tunnel (`cloudflared tunnel ...`, ingress to
 `http://127.0.0.1:8090`). In PayPal add the webhook `https://<your address>/api/v1/webhooks/paypal`
 for: Checkout order approved, Payment capture completed, refunded, reversed.
 
+Lemon Squeezy (the main checkout, ADR-0126): run `set-lemon.cmd` on the Windows PC (add `-Live` for real
+sales). It asks for the API key (hidden), finds the published "ScadaBench" product, creates the webhook
+`/api/v1/webhooks/lemonsqueezy` (order created, order refunded) with a new signing secret and sets the
+server's `lemon_*` settings and price.
+
 ## Everyday commands (on the server)
 
 | Task | Command |
@@ -63,6 +68,7 @@ existing ScadaBench installs accept. If it ever leaks: `keygen --force`, then ru
 `GET /api/v1/health`, `GET /api/v1/challenge`, `POST /api/v1/trial|trial/email-code|activate|verify`,
 `POST /api/v1/transfer` (retired: always 410 `moves_disabled`, kept so old 0.1.x apps read a clear text),
 `POST /api/v1/checkout/create-order|capture-order`, `POST /api/v1/webhooks/paypal`,
+`POST /api/v1/checkout/lemon-start`, `GET /api/v1/checkout/lemon-key?order=<uuid>`, `POST /api/v1/webhooks/lemonsqueezy`,
 `POST /api/v1/admin/{issue,revoke,reset-trial,reset-trial-parts,reset-trial-ip,allow-email,list,certificate,backup}`
 (local + token only),
 `GET /buy`, `GET /activate`.

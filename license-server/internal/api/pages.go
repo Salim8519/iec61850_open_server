@@ -21,6 +21,7 @@ type pageData struct {
 	Currency      string
 	ClientID      string
 	CheckoutReady bool
+	LemonReady    bool
 	Support       string
 	TrialDays     int
 	Seller        string
@@ -31,7 +32,7 @@ type pageData struct {
 // an old stylesheet from their browser cache after an update.
 var assetVersion = func() string {
 	hash := sha256.New()
-	for _, name := range []string{"pages/style.css", "pages/common.js"} {
+	for _, name := range []string{"pages/style.css", "pages/common.js", "pages/lemon.js"} {
 		raw, _ := pageFiles.ReadFile(name)
 		hash.Write(raw)
 	}
@@ -50,7 +51,7 @@ func (s *Server) data() pageData {
 	price, currency := s.price()
 	return pageData{Product: s.Config.ProductName, Price: price,
 		Currency: currency, ClientID: s.Config.PayPalClientID,
-		CheckoutReady: s.Config.PayPalReady() && s.Payments != nil, Support: s.Config.SupportEmail,
+		CheckoutReady: s.Config.PayPalReady() && s.Payments != nil, LemonReady: s.Config.LemonReady(), Support: s.Config.SupportEmail,
 		TrialDays: s.Config.TrialDays, Seller: s.Config.SellerName, Asset: assetVersion}
 }
 
@@ -81,7 +82,7 @@ func staticHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("name")
 		contentType, allowed := staticTypes[path.Ext(name)]
-		if !allowed || (name != "common.js" && name != "style.css" && path.Ext(name) != ".woff2") {
+		if !allowed || (name != "common.js" && name != "lemon.js" && name != "style.css" && path.Ext(name) != ".woff2") {
 			http.NotFound(w, r)
 			return
 		}
@@ -108,5 +109,5 @@ func (s *Server) product(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "public, max-age=60")
 	json.NewEncoder(w).Encode(map[string]any{"price": d.Price, "currency": d.Currency, "amount": d.Amount(),
-		"trial_days": d.TrialDays, "checkout": d.CheckoutReady})
+		"trial_days": d.TrialDays, "checkout": d.CheckoutReady || d.LemonReady})
 }

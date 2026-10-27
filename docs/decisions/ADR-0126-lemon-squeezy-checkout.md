@@ -1,0 +1,41 @@
+# ADR-0126: Lemon Squeezy is the main checkout, PayPal the second
+
+Accepted: 2026-10-28. Owner: "lemon squeezy they approved my store", "the price is 99$ only" and
+"Lemon Squeezy is one of two payment gateways, it's the main one. PayPal next". Change
+[0200](../changes/2026/0200-lemon-squeezy-checkout.md). Extends ADR-0072 (owner page) and the PayPal
+checkout of change 0072.
+
+## Problem
+
+Buyers could pay only through PayPal, with ScadaBench as the seller. A merchant of record takes
+cards, Apple Pay and Google Pay, charges and files sales tax and VAT, and sends the receipt.
+
+## Decision
+
+1. **Lemon Squeezy first.** The buy page shows "Pay $99 by card" (Lemon Squeezy overlay) first.
+   "or pay with PayPal" and the PayPal buttons follow when PayPal is set up. Either one can be
+   switched off by leaving its settings empty.
+2. **The license server still issues the key.** Lemon Squeezy's own license keys stay off. A signed
+   `order_created` webhook (`POST /api/v1/webhooks/lemonsqueezy`, HMAC-SHA256 `X-Signature`) with
+   status `paid` for the configured variant issues exactly one SUBS key, records the sale, alerts the
+   owner and emails the key, through the same path as PayPal (`issuePaid`). `order_refunded` with
+   status `refunded` revokes the key. Partial refunds keep it.
+3. **Key on the page.** The order is stored as `LS-<order UUID>`. The overlay's `Checkout.Success`
+   event gives the browser that UUID, and the page asks `GET /api/v1/checkout/lemon-key?order=` until
+   the webhook has arrived. Nobody can guess another buyer's UUID. Without the overlay the hosted
+   checkout opens and the key arrives by email.
+4. **Price.** The Lemon Squeezy product price is authoritative: only the variant id is checked, not
+   the amount, so a price change cannot strand a paid order. `set-lemon.cmd` copies the variant price
+   to the server, so the buy page and scadabench.com show the same price.
+5. **Test mode.** Test orders issue keys only while `lemon_accept_test_mode` is on
+   (`set-lemon.cmd` sets it; `set-lemon.cmd -Live` turns it off).
+6. **Secrets.** The owner pastes the API key, hidden, into `set-lemon.cmd`. It is used on the owner's PC
+   only, to find the product and create or update the webhook, and is never saved. The script makes a
+   fresh random signing secret and sends it to the server over SSH standard input.
+
+## Compatibility
+
+Without `lemon_*` settings the server and buy page behave exactly as before (PayPal only). The PayPal
+fulfilment was moved into the shared `issuePaid` with no change in behaviour. The `/api/v1/product`
+`checkout` flag is true when either gateway is ready, and `/api/v1/health` adds `lemon`. The page
+CSP adds `https://*.lemonsqueezy.com`.

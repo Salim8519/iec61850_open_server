@@ -84,7 +84,7 @@ var errTrialsPaused = apiError{http.StatusServiceUnavailable, "trials_paused",
 // pageHeaders lets the checkout pages load only this server and PayPal; HSTS keeps
 // buyers on HTTPS. PayPal's documented domains are allowed for its buttons and card form.
 func pageHeaders(w http.ResponseWriter) {
-	paypal := "https://*.paypal.com https://*.paypalobjects.com https://*.venmo.com"
+	paypal := "https://*.paypal.com https://*.paypalobjects.com https://*.venmo.com https://*.lemonsqueezy.com"
 	w.Header().Set("Content-Security-Policy", "default-src 'self'; "+
 		"script-src 'self' 'unsafe-inline' "+paypal+"; "+
 		"connect-src 'self' "+paypal+" https://*.braintreegateway.com; "+

@@ -19,7 +19,7 @@
       <li>Each license works on one computer only; it cannot be moved to another computer</li>
     </ul>
     <ol class="steps">
-      <li><b>Pay</b><span>with your PayPal account or a card.</span></li>
+      <li><b>Pay</b><span>with a card, Apple Pay, Google Pay or PayPal.</span></li>
       <li><b>Get your key</b><span>on this page at once, and by email.</span></li>
       <li><b>Activate</b><span>paste it in ScadaBench and press Activate.</span></li>
     </ol>
@@ -36,26 +36,37 @@
         <div class="grand"><dt>Total today</dt><dd>{{.Amount}} <small>{{.Currency}}</small></dd></div>
       </dl>
       <p class="once">One-time payment. You will not be billed again.</p>
-      {{if .CheckoutReady}}
-        <p class="paywith"><span>Pay securely with</span>
-          <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-color.svg" alt="PayPal" width="84" height="22"></p>
+      {{if or .LemonReady .CheckoutReady}}
         <label class="optin"><input id="news" type="checkbox"> <span>Email me about new ScadaBench versions
           and tips (a few times a year, unsubscribe with one click).</span></label>
+      {{end}}
+      {{if .LemonReady}}
+        <button id="lemon-pay" class="btn btn-dark pay-card" type="button">Pay {{.Amount}} by card</button>
+        <p class="paywith small">Card, Apple Pay and Google Pay, checkout by Lemon Squeezy</p>
+      {{end}}
+      {{if .CheckoutReady}}
+        {{if .LemonReady}}<p class="or"><span>or pay with PayPal</span></p>{{else}}
+        <p class="paywith"><span>Pay securely with</span>
+          <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-color.svg" alt="PayPal" width="84" height="22"></p>{{end}}
         <div id="paypal-buttons" class="paypal"><p class="loading">Loading secure PayPal checkout…</p></div>
-        <img class="marks" src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"
-          alt="Accepted: PayPal, Mastercard, Visa, Discover, American Express" width="319" height="110" loading="lazy">
-      {{else}}
+        {{if not .LemonReady}}<img class="marks" src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"
+          alt="Accepted: PayPal, Mastercard, Visa, Discover, American Express" width="319" height="110" loading="lazy">{{end}}
+      {{end}}
+      {{if not (or .LemonReady .CheckoutReady)}}
         <div class="message bad">Online purchase is not set up yet.{{if .Support}} Email {{.Support}} to buy.{{end}}</div>
       {{end}}
       <ul class="assure">
-        <li>{{template "lock"}}<span><b>Checkout runs entirely on PayPal.</b> Card details go to PayPal,
-          never to ScadaBench, and we never store them.</span></li>
-        <li>{{template "mailicon"}}<span><b>Two emails:</b> a receipt from PayPal and your key from
+        <li>{{template "lock"}}<span><b>Checkout runs on {{if .LemonReady}}Lemon Squeezy{{if .CheckoutReady}} or PayPal{{end}}{{else}}PayPal{{end}}.</b>
+          Card details never reach ScadaBench, and we never store them.</span></li>
+        <li>{{template "mailicon"}}<span><b>Two emails:</b> a receipt from the checkout and your key from
           licenses@mg.scadabench.com.</span></li>
         <li>{{template "shield"}}<span><b>Encrypted connection</b> to license.scadabench.com.
           {{if .Support}}Questions: {{.Support}}.{{end}}</span></li>
       </ul>
-      {{if .Seller}}<p class="seller">Sold by ScadaBench, a product of {{.Seller}}. PayPal may show
+      {{if .LemonReady}}<p class="seller">Card orders are processed by Lemon Squeezy, our online reseller,
+        which handles sales tax; your receipt and statement show Lemon Squeezy.{{if .Seller}} PayPal orders show
+        {{.Seller}}.{{end}}</p>
+      {{else if .Seller}}<p class="seller">Sold by ScadaBench, a product of {{.Seller}}. PayPal may show
         {{.Seller}} on your receipt and statement.</p>{{end}}
       <p class="hint"><b>One license, one computer.</b> Each license works on one computer only. It cannot
         be moved to another computer. Reinstalling Windows on the same computer is fine. A new computer or a new
@@ -83,10 +94,10 @@
 </main>
 {{template "footer" .}}
 <script src="/static/common.js?v={{.Asset}}"></script>
-{{if .CheckoutReady}}
-<script src="https://www.paypal.com/sdk/js?client-id={{.ClientID}}&currency={{.Currency}}&intent=capture&disable-funding=paylater"></script>
+{{if or .LemonReady .CheckoutReady}}
 <script>
   const hwid = new URLSearchParams(location.search).get("hwid") || "";
+  const wantsNews = () => document.getElementById("news").checked;
   function showKey(data) {
     document.getElementById("order").hidden = true;
     document.getElementById("result").hidden = false;
@@ -97,10 +108,19 @@
   const copy = document.getElementById("copy");
   copy.onclick = () => navigator.clipboard.writeText(document.getElementById("license-key").textContent)
     .then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy key"; }, 1800); });
+</script>
+{{end}}
+{{if .LemonReady}}
+<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+<script src="/static/lemon.js?v={{.Asset}}" defer></script>
+{{end}}
+{{if .CheckoutReady}}
+<script src="https://www.paypal.com/sdk/js?client-id={{.ClientID}}&currency={{.Currency}}&intent=capture&disable-funding=paylater"></script>
+<script>
   paypal.Buttons({
     style: { layout: "vertical", shape: "pill", color: "gold", label: "pay", height: 48 },
     createOrder: async () => (await postJSON("/api/v1/checkout/create-order",
-      { hwid, news: document.getElementById("news").checked })).id,
+      { hwid, news: wantsNews() })).id,
     onApprove: async (data) => {
       show("status", "Confirming your payment with PayPal…", "");
       try { showKey(await postJSON("/api/v1/checkout/capture-order", { order_id: data.orderID })); }

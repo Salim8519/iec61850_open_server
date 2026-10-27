@@ -92,6 +92,9 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /api/v1/checkout/create-order", s.limited(security.ClassSensitive, s.createOrder))
 	mux.HandleFunc("POST /api/v1/checkout/capture-order", s.limited(security.ClassSensitive, s.captureOrder))
 	mux.HandleFunc("POST /api/v1/webhooks/paypal", s.paypalWebhook)
+	mux.HandleFunc("POST /api/v1/checkout/lemon-start", s.limited(security.ClassSensitive, s.lemonStart))
+	mux.HandleFunc("GET /api/v1/checkout/lemon-key", s.limited(security.ClassGeneral, s.lemonKey))
+	mux.HandleFunc("POST /api/v1/webhooks/lemonsqueezy", s.lemonWebhook)
 	mux.HandleFunc("POST /api/v1/admin/{action}", s.admin)
 	mux.HandleFunc("GET /buy", s.buyPage)
 	mux.HandleFunc("GET /activate", s.activatePage)
@@ -182,7 +185,7 @@ func decode(r *http.Request, target any) error {
 
 func (s *Server) health(r *http.Request, _ string) (any, error) {
 	return map[string]any{"ok": true, "kid": s.Signer.KeyID, "time": s.Now().Unix(),
-		"checkout": s.Config.PayPalReady()}, nil
+		"checkout": s.Config.PayPalReady(), "lemon": s.Config.LemonReady()}, nil
 }
 
 func (s *Server) challenge(r *http.Request, _ string) (any, error) {

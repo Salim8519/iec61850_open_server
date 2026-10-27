@@ -8,11 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"substation-license-server/internal/certs"
-	"substation-license-server/internal/logging"
-	"substation-license-server/internal/mail"
 	"substation-license-server/internal/paypal"
 	"substation-license-server/internal/store"
 )
@@ -84,31 +81,9 @@ func (s *Server) Fulfil(_ context.Context, captured paypal.Capture) (store.Order
 			"amount": captured.Amount, "currency": captured.Currency})
 		return store.Order{}, apiError{http.StatusBadRequest, "amount_mismatch", "The paid amount does not match the price. Contact support."}
 	}
-	order, created, err := s.Store.IssueForOrder(store.Order{OrderID: captured.OrderID, CaptureID: captured.CaptureID,
-		Email: captured.Email, Amount: captured.Amount, Currency: captured.Currency}, certs.NewLicenseKey, s.Now())
-	if err != nil {
-		return order, err
-	}
-	if created {
-		s.Log.Event("order_fulfilled", map[string]any{"order": order.OrderID, "key": logging.MaskKey(order.LicenseKey)})
-		s.recordSale(order, captured)
-		if wantsNews(captured.InvoiceID) && order.Email != "" {
-			if _, err := s.Store.Subscribe(order.Email, "checkout", s.Now()); err != nil {
-				s.Log.Event("subscribe_error", map[string]any{"order": order.OrderID, "error": err.Error()})
-			}
-		}
-	}
-	if !order.Emailed && s.Mailer != nil && order.Email != "" {
-		subject, text := mail.LicenseEmail(s.Config.ProductName, order.LicenseKey, s.Config.PublicURL, s.Config.SupportEmail)
-		mailCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		if err := s.Mailer.Send(mailCtx, order.Email, subject, text); err != nil {
-			s.Log.Event("mail_error", map[string]any{"order": order.OrderID, "error": err.Error()})
-		} else if s.Store.MarkEmailed(order.OrderID) == nil {
-			order.Emailed = true
-		}
-	}
-	return order, nil
+	return s.issuePaid(paid{OrderID: captured.OrderID, CaptureID: captured.CaptureID, Email: captured.Email,
+		Name: captured.Name, Country: captured.Country, PayerID: captured.PayerID, Amount: captured.Amount,
+		Currency: captured.Currency, HWID: captured.CustomID, Mode: s.Config.PayPalMode, News: wantsNews(captured.InvoiceID)})
 }
 
 type webhookEvent struct {
@@ -196,13 +171,7 @@ func (s *Server) revokeForCapture(event webhookEvent) error {
 	if err != nil || !found {
 		return err
 	}
-	reason := strings.ToLower(strings.TrimPrefix(event.Type, "PAYMENT.CAPTURE."))
-	_, err = s.Store.Revoke(order.LicenseKey, reason)
-	if err == nil {
-		s.recordRefund(order, reason)
-	}
-	s.Log.Event("revoked", map[string]any{"order": order.OrderID, "reason": reason, "key": logging.MaskKey(order.LicenseKey)})
-	return err
+	return s.revokeOrder(order, strings.ToLower(strings.TrimPrefix(event.Type, "PAYMENT.CAPTURE.")))
 }
 
 // looksLikePayPal drops forged deliveries before the server spends a PayPal API call

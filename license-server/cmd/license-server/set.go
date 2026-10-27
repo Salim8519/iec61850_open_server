@@ -15,7 +15,8 @@ import (
 
 // set changes settings without questions (used by the Windows deploy command).
 // Secrets never appear on the command line: with --secrets-stdin they are read as
-// "paypal_client_secret=..." / "mailgun_api_key=..." / "admin_gateway_secret=..." lines
+// "paypal_client_secret=..." / "mailgun_api_key=..." / "lemon_signing_secret=..." /
+// "admin_gateway_secret=..." lines
 // from standard input.
 func set(args []string) error {
 	text := map[string]*string{}
@@ -23,7 +24,8 @@ func set(args []string) error {
 	var secretsStdin *bool
 	names := []string{"listen", "public-url", "price", "currency", "support-email", "paypal-mode",
 		"paypal-client-id", "paypal-webhook-id", "mailgun-domain", "mailgun-region", "mailgun-from", "notify-email", "seller-name",
-		"admin-path", "admin-origin", "marketing-from", "marketing-domain"}
+		"admin-path", "admin-origin", "marketing-from", "marketing-domain", "lemon-checkout-url", "lemon-variant-id",
+		"lemon-test-mode"}
 	dataDir, err := flags("set", args, func(fs *flag.FlagSet) {
 		for _, name := range names {
 			text[name] = fs.String(name, "", name)
@@ -38,17 +40,28 @@ func set(args []string) error {
 	if err != nil {
 		return err
 	}
+	testMode := ""
 	targets := map[string]*string{"listen": &cfg.ListenAddr, "public-url": &cfg.PublicURL, "price": &cfg.LicensePrice,
 		"currency": &cfg.LicenseCurrency, "support-email": &cfg.SupportEmail, "paypal-mode": &cfg.PayPalMode,
 		"paypal-client-id": &cfg.PayPalClientID, "paypal-webhook-id": &cfg.PayPalWebhookID,
 		"mailgun-domain": &cfg.MailgunDomain, "mailgun-region": &cfg.MailgunRegion, "mailgun-from": &cfg.MailgunFrom,
 		"notify-email": &cfg.NotifyEmail, "seller-name": &cfg.SellerName,
 		"admin-path": &cfg.AdminPath, "admin-origin": &cfg.AdminOrigin,
-		"marketing-from": &cfg.MarketingFrom, "marketing-domain": &cfg.MarketingDomain}
+		"marketing-from": &cfg.MarketingFrom, "marketing-domain": &cfg.MarketingDomain,
+		"lemon-checkout-url": &cfg.LemonCheckoutURL, "lemon-variant-id": &cfg.LemonVariantID, "lemon-test-mode": &testMode}
 	for name, value := range text {
 		if v := strings.TrimSpace(*value); v != "" {
 			*targets[name] = v
 		}
+	}
+	switch testMode {
+	case "on":
+		cfg.LemonAcceptTestMode = true
+	case "off":
+		cfg.LemonAcceptTestMode = false
+	case "":
+	default:
+		return errors.New("--lemon-test-mode must be on or off")
 	}
 	cfg.PublicURL = strings.TrimRight(cfg.PublicURL, "/")
 	cfg.LicenseCurrency = strings.ToUpper(cfg.LicenseCurrency)
@@ -79,7 +92,7 @@ func set(args []string) error {
 	}
 	ready := map[bool]string{true: "ready", false: "not set up"}
 	fmt.Println("Saved: listen", cfg.ListenAddr, "| public", cfg.PublicURL, "| price", cfg.LicensePrice, cfg.LicenseCurrency,
-		"| PayPal", ready[cfg.PayPalReady()], "("+cfg.PayPalMode+") | email", ready[cfg.MailReady()])
+		"| Lemon Squeezy", ready[cfg.LemonReady()], "| PayPal", ready[cfg.PayPalReady()], "("+cfg.PayPalMode+") | email", ready[cfg.MailReady()])
 	return nil
 }
 
@@ -114,6 +127,8 @@ func readSecrets(cfg *config.Config) error {
 			cfg.PayPalClientSecret = strings.TrimSpace(value)
 		case "mailgun_api_key":
 			cfg.MailgunAPIKey = strings.TrimSpace(value)
+		case "lemon_signing_secret":
+			cfg.LemonSigningSecret = strings.TrimSpace(value)
 		case "admin_gateway_secret":
 			cfg.AdminGatewaySecret = strings.TrimSpace(value)
 		default:

@@ -36,6 +36,13 @@ type Config struct {
 	PayPalClientSecret string `json:"paypal_client_secret"`
 	PayPalWebhookID    string `json:"paypal_webhook_id"`
 
+	// Lemon Squeezy (ADR-0126): the main checkout. The product price lives in the
+	// Lemon Squeezy dashboard; only orders for LemonVariantID issue keys.
+	LemonCheckoutURL    string `json:"lemon_checkout_url"`
+	LemonVariantID      string `json:"lemon_variant_id"`
+	LemonSigningSecret  string `json:"lemon_signing_secret"`
+	LemonAcceptTestMode bool   `json:"lemon_accept_test_mode"`
+
 	MailgunDomain string `json:"mailgun_domain"`
 	MailgunAPIKey string `json:"mailgun_api_key"`
 	MailgunRegion string `json:"mailgun_region"`
@@ -145,6 +152,11 @@ func (c Config) PayPalBase() string {
 // PayPalReady reports whether checkout can be offered.
 func (c Config) PayPalReady() bool {
 	return c.PayPalClientID != "" && c.PayPalClientSecret != ""
+}
+
+// LemonReady reports whether the Lemon Squeezy checkout can be offered.
+func (c Config) LemonReady() bool {
+	return strings.HasPrefix(c.LemonCheckoutURL, "https://") && c.LemonVariantID != "" && len(c.LemonSigningSecret) >= 16
 }
 
 // MailReady reports whether license emails can be sent.
