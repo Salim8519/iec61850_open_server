@@ -181,4 +181,6 @@ export const NETWORK_COPY = {
   label: 'Network', all: 'All networks',
   hint: 'All networks: Windows uses the card that reaches the device. Choose one card when this PC has several networks, or when the device only accepts one of your addresses.',
   sees: (address: string, adapter: string) => `The device sees this PC as ${address}${adapter ? ` (${adapter})` : ''}.`,
+  ownPlaceholder: '10.10.0.200',
+  ownHint: "The master's own address, like a real SCADA. It reaches the gateway or IEDs on this PC only. For another PC or VM, choose All networks.",
 };

@@ -63,6 +63,9 @@ func (m *Master) open() (*pyjson.Object, string, string, any, error) {
 	if err != nil {
 		return nil, "", "", nil, err
 	}
+	if err := m.ensureOwn(config); err != nil {
+		return nil, "", "", nil, err
+	}
 	process, err := m.spawn(m.Executable, m.event)
 	if err != nil {
 		return nil, "", "", nil, err
@@ -177,6 +180,9 @@ func (m *Master) reconnect(config *pyjson.Object) {
 	}
 	protocol, stored := settingsOf(config)
 	settings, err := gateway.ValidateMasterSettings(protocol, stored)
+	if err == nil {
+		err = m.ensureOwn(config)
+	}
 	if err == nil {
 		_, err = process.Request("disconnect", 10*time.Second, nil)
 	}

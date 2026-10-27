@@ -35,3 +35,13 @@ gateway therefore never looked like its own device, as a real gateway does in a 
 Projects without `own_addresses` load to the same bytes. The Python engine ignores the key and,
 seeing `listen: "network"`, listens on all cards. The SCADA master gets the same list in a later
 change.
+
+## SCADA master (change [0199](../changes/2026/0199-master-own-lab-address.md))
+
+Owner: "yes, do the master part now" and "custom ip is always as scadabench network lab". The master's
+Network list gets the same "ScadaBench Lab" group and "Type an address…" with the same checks. The
+address is the one the master connects from (`local`), kept in the master block as `own_addresses`,
+put back on the card before Connect and before each reconnect, and taken off when another network
+is chosen. The gateway and the master cannot take each other's address. A warning shows when the
+device is reached through a real card, because an own address reaches devices on this PC only.
+Typed addresses are listed as "ScadaBench Lab" in both lists.

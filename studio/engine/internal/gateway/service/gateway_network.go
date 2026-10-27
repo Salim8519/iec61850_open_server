@@ -4,6 +4,7 @@ import (
 	"net"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/labnet"
 	"studio-engine/internal/pyjson"
 )
 
@@ -38,7 +39,7 @@ func (m *Manager) Network() *pyjson.Object {
 		choice = "this_pc"
 	case isOwn(config, address):
 		choice, connect = address, address
-		adapterOf[address] = "own address"
+		adapterOf[address] = labnet.CardName
 		if m.Lab == nil || !m.Lab.Ready() {
 			note = "The ScadaBench Lab card is missing, so " + address + " cannot be used. Create it on the lab network page."
 		}

@@ -23,14 +23,17 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 	o := e.options
 	journal := netcfg.NewJournal(o.DataDir)
 	journal.Path = journal.Path[:len(journal.Path)-len("journal.jsonl")] + "lab_journal.jsonl"
-	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects, e.Gateway}, Runtime: e.Runtime,
+	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects, e.Gateway, e.Master}, Runtime: e.Runtime,
 		Windows: labsetup.Windows{
 			Adapters: func() ([]netcfg.Adapter, error) { return network.Adapters(true) },
 			State:    labnet.ServiceState, Card: labnet.InstalledCard, Call: labnet.Call, Ping: labnet.Ping},
 		Asker: labsetup.NewAsker(labnet.AskOn), Elevator: netcfg.UACElevator{}, Program: o.native(labProgram),
 		Directory: o.DataDir, Journal: journal, NewID: network.NewID}
 	if e.Gateway != nil {
-		e.Gateway.Lab = e.Lab // the gateway's own address on the card (ADR-0125)
+		e.Gateway.Lab = e.Lab // the gateway's and the master's own addresses on the card (ADR-0125)
+	}
+	if e.Master != nil {
+		e.Master.Lab = e.Lab
 	}
 	return labapi.New(labapi.Deps{Lab: e.Lab, Leave: projects.LeaveLabMode}).Routes()
 }
@@ -40,13 +43,22 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 type labProjects struct {
 	service *service.Service
 	gateway *gatewayservice.Manager
+	master  *gatewayservice.Master
 }
 
 func (p labProjects) Reserved() map[string]string {
-	if p.gateway == nil {
-		return map[string]string{}
+	used := map[string]string{}
+	if p.gateway != nil {
+		for address, name := range p.gateway.OwnAddresses() {
+			used[address] = name
+		}
 	}
-	return p.gateway.OwnAddresses()
+	if p.master != nil {
+		for address, name := range p.master.OwnAddresses() {
+			used[address] = name
+		}
+	}
+	return used
 }
 
 func (p labProjects) SimulatedIEDs() ([]labsetup.IED, error) {

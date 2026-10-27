@@ -35,6 +35,8 @@ type Master struct {
 	OnValues func()
 	// Adapters lists this PC's adapters for the master's "Network" choice (ADR-0123).
 	Adapters func() ([]netcfg.Adapter, error)
+	// Lab puts the master's own address on the lab card (ADR-0125).
+	Lab LabAddresses
 	changes  // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // connect/disconnect

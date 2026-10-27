@@ -95,17 +95,30 @@ func (m *Master) Network() *pyjson.Object {
 		list = append(list, pyjson.NewObject().Set("address", choice.Address).Set("adapter", choice.Adapter))
 		adapterOf[choice.Address] = choice.Adapter
 	}
-	source, note := local, ""
-	if local == "" {
+	source, note, own := local, "", isOwn(config, local)
+	switch {
+	case own && (m.Lab == nil || !m.Lab.Ready()):
+		note = "The ScadaBench Lab card is missing, so " + local + " cannot be used. Create it on the lab network page."
+	case own:
+		// An own address reaches devices on this PC only; warn when Windows sends to the device on a real card.
+		if auto := windowsSource(text(config, "host")); adapterOf[auto] != "" {
+			note = "This device is on " + adapterName(adapterOf, auto) + ". From the own address " + local +
+				" only devices on this PC can be reached. Choose All networks."
+		}
+		adapterOf[local] = labnet.CardName
+	case local == "":
 		source = windowsSource(text(config, "host"))
-	} else if _, found := adapterOf[local]; !found {
+	case adapterOf[local] == "":
 		note = "This PC has no address " + local + " now. Choose another network, or All networks."
-	} else if auto := windowsSource(text(config, "host")); auto != "" && auto != local {
-		note = "Windows reaches this device through " + adapterName(adapterOf, auto) +
-			". From " + local + " the connection may fail."
+	default:
+		if auto := windowsSource(text(config, "host")); auto != "" && auto != local {
+			note = "Windows reaches this device through " + adapterName(adapterOf, auto) +
+				". From " + local + " the connection may fail."
+		}
 	}
 	return pyjson.NewObject().Set("local", local).Set("choices", list).Set("source", source).
-		Set("source_adapter", adapterOf[source]).Set("note", note)
+		Set("source_adapter", adapterOf[source]).Set("note", note).Set("own_addresses", stringsOf(ownAddresses(config))).
+		Set("own", own).Set("lab_ready", m.Lab != nil && m.Lab.Ready())
 }
 
 func adapterName(adapterOf map[string]string, address string) string {
@@ -121,7 +134,7 @@ func (m *Master) SaveNetwork(local string) error {
 		return apperr.ValueError("Disconnect before changing the network")
 	}
 	if local != "" {
-		known := false
+		known := isOwn(m.Config(), local)
 		for _, choice := range m.choices() {
 			known = known || choice.Address == local
 		}
@@ -129,7 +142,12 @@ func (m *Master) SaveNetwork(local string) error {
 			return apperr.ValueError("This PC has no address " + local + ". Choose one from the list.")
 		}
 	}
-	return m.Save(with(m.Config(), "local", local))
+	previous := localOf(m.Config())
+	if err := m.Save(with(m.Config(), "local", local)); err != nil {
+		return err
+	}
+	m.leaveOwn(previous, local)
+	return nil
 }
 
 // workerSettings adds the host and, when one is chosen, the address to connect from.

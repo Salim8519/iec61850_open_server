@@ -11,7 +11,7 @@ import (
 // and the station gateway's (ADR-0124). The frozen Python engine answers them 404.
 var NetworkRoutes = map[string]bool{"GET /api/v1/tools/master/network": true, "PUT /api/v1/tools/master/network": true,
 	"GET /api/v1/tools/gateway/network": true, "PUT /api/v1/tools/gateway/network": true,
-	"POST /api/v1/tools/gateway/network/own": true}
+	"POST /api/v1/tools/gateway/network/own": true, "POST /api/v1/tools/master/network/own": true}
 
 // networkRoutes read and save the Network fields. Master: "local" is an address of this PC or ""
 // (All networks). Gateway: "choice" is this_pc, network or an address of this PC; "allowed" is the
@@ -31,6 +31,20 @@ func (a *Area) networkRoutes() []api.Route {
 				return nil, apperr.ValueError("Send local: an address of this PC, or empty for All networks")
 			}
 			if err := m.SaveNetwork(local); err != nil {
+				return nil, err
+			}
+			return m.Network(), nil
+		}),
+		route("POST", "/tools/master/network/own", false, func(r *http.Request) (any, error) {
+			data, err := body(r)
+			if err != nil {
+				return nil, err
+			}
+			address, isText := value(data, "address", nil).(string)
+			if !isText {
+				return nil, apperr.ValueError("Send address: the master's own address, for example 10.10.0.200")
+			}
+			if err := m.AddOwnAddress(address); err != nil {
 				return nil, err
 			}
 			return m.Network(), nil

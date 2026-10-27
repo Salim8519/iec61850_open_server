@@ -55,6 +55,7 @@ reads to another SCADA.
 - **Network (Go engine, ADR-0123).** Under Device address: All networks (Windows chooses, the default) or one
   address of this PC listed by card, never an IED or ScadaBench Lab address. The column says which address the
   device sees; another card reaching the device is warned before and after Connect. The worker binds to it.
+- **Own address (Go engine, ADR-0125).** "Type an address…" in the Network list gives the master its own address on the ScadaBench Lab card (same checks as an IED address); it connects from it and reaches devices on this PC only.
 - **My point list (Go engine, ADR-0110).** The master keeps its own address-only point list per protocol
   (address, type, name, scale/offset/unit; Modbus table, data type, word order, registers; command type, select
   and value). Add one point, a range, pasted/Excel/CSV rows (every row checked first) or copy the gateway list.

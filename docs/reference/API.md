@@ -203,6 +203,7 @@ the written values are `signal` events with source `goose_send`.
 | `GET/PUT /tools/master/network` | `local` ("" = All networks) | Go only (ADR-0123): addresses of this PC by card, the saved choice, the address the device sees, a warning |
 | `GET/PUT /tools/gateway/network` | `choice` (this_pc, network or an address), `allowed` | Go only (ADR-0124): the gateway's Network, the address SCADA connects to, the allowed SCADA address |
 | `POST /tools/gateway/network/own` | `address` | Go only (ADR-0125): checks the gateway's own address, adds it to the ScadaBench Lab card and the list, and chooses it |
+| `POST /tools/master/network/own` | `address` | Go only (ADR-0125): checks the master's own address, adds it to the ScadaBench Lab card and the list, and connects from it |
 
 SNMP devices (ADR-0092), Go engine only, under `/tools/snmp` (the Python engine answers 404):
 

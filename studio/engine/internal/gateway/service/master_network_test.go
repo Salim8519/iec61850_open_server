@@ -58,3 +58,35 @@ func TestMasterNetworkSavesOnlyAnAddressOfThisPC(t *testing.T) {
 		t.Fatal("All networks sends no local address")
 	}
 }
+
+// ADR-0125: the master's own address goes on the lab card, becomes the address it connects from,
+// comes back on the card before it connects, and leaves the card when another network is chosen.
+func TestMasterOwnAddressOnTheLabCard(t *testing.T) {
+	m := networkMaster()
+	if err := m.AddOwnAddress("10.10.0.200"); err == nil {
+		t.Fatal("no lab card: refused")
+	}
+	lab := &fakeLab{ready: true, card: map[string]bool{}}
+	m.Lab = lab
+	if err := m.AddOwnAddress("10.10.0.200"); err != nil || !lab.card["10.10.0.200"] {
+		t.Fatalf("not added: %v", err)
+	}
+	got := m.Network()
+	if get(got, "local") != "10.10.0.200" || get(got, "source") != "10.10.0.200" || get(got, "own") != true ||
+		get(got, "note") != "" || len(get(got, "own_addresses").([]any)) != 1 {
+		t.Fatalf("network %v", got)
+	}
+	if m.OwnAddresses()["10.10.0.200"] != MasterOwnName {
+		t.Fatal("the lab page does not see the master's address")
+	}
+	delete(lab.card, "10.10.0.200") // Windows restarted
+	if err := m.ensureOwn(m.Config()); err != nil || !lab.card["10.10.0.200"] {
+		t.Fatalf("not put back: %v", err)
+	}
+	if err := m.SaveNetwork(""); err != nil || lab.card["10.10.0.200"] {
+		t.Fatalf("still on the card: %v", err)
+	}
+	if err := m.SaveNetwork("10.10.0.200"); err != nil {
+		t.Fatalf("a listed own address can be chosen again: %v", err)
+	}
+}

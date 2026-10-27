@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { gatewayApi, type GatewayNetwork as Network } from '../../../api/gateway';
 import { GATEWAY_NETWORK_COPY as COPY } from '../../../copy/gateway';
 import { HelpTip } from '../../../ui/HelpTip';
-
-const TYPE = '__type';
+import { TYPE_ADDRESS, TypeAddress } from './TypeAddress';
 
 /** "Network" of the station gateway (ADR-0124): This PC only, All networks, one card of this PC or its own address
  *  on the ScadaBench Lab card (ADR-0125), and the address SCADA connects to. The list, checks and address come from
@@ -14,7 +13,6 @@ export function GatewayNetwork({ locked, protocol, port, saved }: {
   const [network, setNetwork] = useState<Network | null>(null);
   const [error, setError] = useState('');
   const [typing, setTyping] = useState(false);
-  const [typed, setTyped] = useState('');
   useEffect(() => { gatewayApi.network().then(setNetwork).catch(() => setNetwork(null)); }, [locked, protocol, port]);
   if (!network) return null;
   const send = (choice: string, allowed: string) => {
@@ -22,21 +20,18 @@ export function GatewayNetwork({ locked, protocol, port, saved }: {
     gatewayApi.saveNetwork(choice, allowed).then(next => { setNetwork(next); saved?.(); })
       .catch((problem: Error) => setError(problem.message));
   };
-  const add = () => {
-    setError('');
-    gatewayApi.addOwnAddress(typed.trim()).then(next => { setNetwork(next); setTyping(false); setTyped(''); saved?.(); })
-      .catch((problem: Error) => setError(problem.message));
-  };
+  const add = (address: string) => gatewayApi.addOwnAddress(address)
+    .then(next => { setNetwork(next); setTyping(false); saved?.(); });
   const pick = (choice: string) => {
-    setTyping(choice === TYPE);
-    if (choice !== TYPE) send(choice, network.allowed);
+    setTyping(choice === TYPE_ADDRESS);
+    if (choice !== TYPE_ADDRESS) send(choice, network.allowed);
   };
   const cards = [...new Set(network.choices.map(item => item.adapter))];
   const missing = !['this_pc', 'network'].includes(network.choice) && !network.own_addresses.includes(network.choice)
     && !network.choices.some(item => item.address === network.choice);
   return <>
     <label><span className="label-row">{COPY.label}<HelpTip text={COPY.hint} label="Which network?" /></span>
-      <select value={typing ? TYPE : network.choice} disabled={locked} onChange={event => pick(event.target.value)}>
+      <select value={typing ? TYPE_ADDRESS : network.choice} disabled={locked} onChange={event => pick(event.target.value)}>
         <option value="this_pc">{COPY.thisPc}</option><option value="network">{COPY.all}</option>
         {cards.map(card => <optgroup key={card} label={card}>
           {network.choices.filter(item => item.adapter === card).map(item =>
@@ -44,13 +39,9 @@ export function GatewayNetwork({ locked, protocol, port, saved }: {
         {network.own_addresses.length > 0 && <optgroup label={COPY.own}>
           {network.own_addresses.map(address => <option key={address} value={address}>{address}</option>)}</optgroup>}
         {missing && <option value={network.choice}>{network.choice}</option>}
-        <option value={TYPE}>{COPY.type}</option>
+        <option value={TYPE_ADDRESS}>{COPY.type}</option>
       </select></label>
-    {typing && <div className="label-row" style={{ gap: 8 }}>
-      <input autoFocus value={typed} placeholder={COPY.ownPlaceholder} aria-label={COPY.type}
-        onChange={event => setTyped(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') add(); }} />
-      <button type="button" onClick={add} disabled={!typed.trim()}>{COPY.add}</button></div>}
-    {typing && !network.lab_ready && <p className="side-line">{COPY.noLab}</p>}
+    {typing && <TypeAddress labReady={network.lab_ready} placeholder={COPY.ownPlaceholder} add={add} />}
     {!typing && network.own && <p className="side-line">{COPY.ownHint}</p>}
     <p className="side-line">{COPY.connectTo} <strong style={{ whiteSpace: 'nowrap' }}>{network.connect_to}:{String(network.port)}</strong>
       {network.connect_adapter && ` (${network.connect_adapter})`}{network.others > 0 && `, ${COPY.more(network.others)}`}.</p>
