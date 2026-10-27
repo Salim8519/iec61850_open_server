@@ -26,9 +26,9 @@ export type GooseEngineState = { running: boolean; uplink?: string; share?: stri
   conflicts: GooseConflict[] };
 export type GooseUplink = { guid: string; label: string; kind: string; connected: boolean; auto: boolean;
   why: string; reason: string; warning?: string };
-/** GET /goose/share: everything the "Where GOOSE goes" card and its warning need (ADR-0073, ADR-0119).
- * goes_out: GOOSE should go to the IED network; alone: nothing came back while a GOOSE is missing. */
-export type GooseShare = { reach: 'auto' | 'local'; uplink: GooseUplink; uplink_guid: string;
+/** GET /goose/share: everything the "Where GOOSE goes" card and its warning need (ADR-0073, ADR-0122).
+ * goes_out: the user shared GOOSE and an adapter is there; alone: nothing came back while a GOOSE is missing. */
+export type GooseShare = { reach: 'inside' | 'outside'; uplink: GooseUplink; uplink_guid: string;
   choices: GooseUplink[]; risk: { level: 'high' | 'warning'; reasons: string[] }; npcap: boolean;
   running: boolean; state: string; message: string; conflicts: GooseConflict[]; goes_out: boolean; alone: boolean };
 export type GooseOverview = { running: boolean; state: string; message: string; npcap: NpcapStatus;

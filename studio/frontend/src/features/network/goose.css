@@ -17,9 +17,7 @@
   white-space: nowrap; color: var(--warning); border: 1px dashed var(--warning); background: var(--warning-soft); }
 /* A MAC address never breaks in the middle. */
 .goose-mac { white-space: nowrap; }
-/* ADR-0119: where GOOSE goes out, the guard that always protects it, the peer hint and the Npcap line. */
-.goose-adapter { display: flex; gap: 10px; align-items: flex-start; }
-.goose-adapter > span { display: flex; flex-direction: column; gap: 2px; }
+/* ADR-0119, kept by ADR-0122: the guard that always protects shared GOOSE, the peer hint and the Npcap line. */
 .goose-guard ul { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .goose-guard li { display: inline-flex; gap: 4px; align-items: center; padding: 2px 8px; font-size: 12px;
   border: 1px solid var(--border); border-radius: var(--radius); white-space: nowrap; }

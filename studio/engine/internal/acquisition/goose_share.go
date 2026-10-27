@@ -93,9 +93,6 @@ func (g *GooseShare) Preview(project *pyjson.Object) (*pyjson.Object, error) {
 
 // Apply saves the user's choice; sharing needs confirm:true and the adapter they saw.
 func (g *GooseShare) Apply(body *pyjson.Object) (*pyjson.Object, error) {
-	if !goosedom.PythonTwin() {
-		return g.applyAuto(body)
-	}
 	reach := pyv.GetOr(body, "reach", "inside")
 	network := pyv.Shallow(pyv.GetObj(g.deps.Projects.Current(), "network"))
 	network.Set("goose_reach", reach)
