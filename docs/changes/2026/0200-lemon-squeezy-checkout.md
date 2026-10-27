@@ -32,6 +32,12 @@ through the API at the owner-page price (`custom_price`); `lemon_api_key` and `l
 on the server; `set-lemon.cmd` no longer copies the dashboard price. Deployed: a live `lemon-start` returned
 a `checkout/custom/...` link, and the API read it back as `custom_price` 9900, variant 2305283, live mode.
 
+## First real purchase (2026-10-28)
+
+The owner bought at $1.00 by card: the key showed on the buy page and arrived by email. The buy form
+flashed briefly before the key; the page now hides it as soon as Lemon Squeezy reports success and asks
+for the key at once. Lemon Squeezy refuses card prices under $0.50; the owner page now refuses them too.
+
 ## Evidence
 
 - `internal/api` tests pass, including:

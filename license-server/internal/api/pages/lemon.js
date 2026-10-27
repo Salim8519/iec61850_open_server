@@ -15,8 +15,7 @@ function findIdentifier(value, depth = 0) {
 }
 
 async function waitForKey(identifier) {
-  show("status", "Payment received. Getting your license key…", "");
-  for (const seconds of [2, 3, 4, 5, 6, 8, 10, 12, 15, 20]) {
+  for (const seconds of [0, 1, 2, 2, 3, 4, 5, 6, 8, 10, 12, 15]) {
     await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
     try {
       const response = await fetch("/api/v1/checkout/lemon-key?order=" + encodeURIComponent(identifier));
@@ -29,6 +28,9 @@ async function waitForKey(identifier) {
 
 function paid(event) {
   if (event.event !== "Checkout.Success") return;
+  // Hide the checkout at once, so the buyer never sees the buy form again after paying.
+  document.getElementById("order").hidden = true;
+  show("status", "Payment received. Getting your license key…", "");
   window.LemonSqueezy.Url.Close();
   const identifier = findIdentifier(event.data);
   if (identifier) waitForKey(identifier);
