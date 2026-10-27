@@ -139,4 +139,7 @@ export const GATEWAY_NETWORK_COPY = {
   allowed: 'Allowed SCADA address', allowedPlaceholder: 'Anyone',
   allowedHint: 'Like a real gateway: only this SCADA address may connect, others are refused and shown in Traffic. Empty lets anyone connect.',
   allowedDnp3: 'DNP3 checks the master address instead, so any SCADA address may connect.',
+  own: 'Own address', type: 'Type an address…', add: 'Add', ownPlaceholder: '10.10.0.100',
+  ownHint: "The gateway's own address, like a real gateway. Only programs on this PC can reach it. For another PC or VM, choose All networks.",
+  noLab: 'An own address lives on the ScadaBench Lab card. Create it first in Network > This PC lab network.',
 };

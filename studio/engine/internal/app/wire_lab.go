@@ -4,6 +4,7 @@ import (
 	"studio-engine/internal/api"
 	"studio-engine/internal/api/labapi"
 	"studio-engine/internal/api/platformapi"
+	gatewayservice "studio-engine/internal/gateway/service"
 	"studio-engine/internal/labnet"
 	"studio-engine/internal/labsetup"
 	"studio-engine/internal/netcfg"
@@ -22,17 +23,31 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 	o := e.options
 	journal := netcfg.NewJournal(o.DataDir)
 	journal.Path = journal.Path[:len(journal.Path)-len("journal.jsonl")] + "lab_journal.jsonl"
-	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects}, Runtime: e.Runtime,
+	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects, e.Gateway}, Runtime: e.Runtime,
 		Windows: labsetup.Windows{
 			Adapters: func() ([]netcfg.Adapter, error) { return network.Adapters(true) },
 			State:    labnet.ServiceState, Card: labnet.InstalledCard, Call: labnet.Call, Ping: labnet.Ping},
 		Asker: labsetup.NewAsker(labnet.AskOn), Elevator: netcfg.UACElevator{}, Program: o.native(labProgram),
 		Directory: o.DataDir, Journal: journal, NewID: network.NewID}
+	if e.Gateway != nil {
+		e.Gateway.Lab = e.Lab // the gateway's own address on the card (ADR-0125)
+	}
 	return labapi.New(labapi.Deps{Lab: e.Lab, Leave: projects.LeaveLabMode}).Routes()
 }
 
-// labProjects adapts the project service to labsetup.Projects.
-type labProjects struct{ service *service.Service }
+// labProjects adapts the project service to labsetup.Projects; the gateway names the card
+// address it uses (ADR-0125).
+type labProjects struct {
+	service *service.Service
+	gateway *gatewayservice.Manager
+}
+
+func (p labProjects) Reserved() map[string]string {
+	if p.gateway == nil {
+		return map[string]string{}
+	}
+	return p.gateway.OwnAddresses()
+}
 
 func (p labProjects) SimulatedIEDs() ([]labsetup.IED, error) {
 	ieds := []labsetup.IED{}

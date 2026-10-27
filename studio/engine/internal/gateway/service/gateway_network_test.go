@@ -49,3 +49,53 @@ func TestGatewayNetworkBindsTheChosenCardAndAllowedScada(t *testing.T) {
 		t.Fatal("All networks clears the card")
 	}
 }
+
+type fakeLab struct {
+	ready bool
+	card  map[string]bool
+	err   error
+}
+
+func (l *fakeLab) Ready() bool { return l.ready }
+func (l *fakeLab) AddOwn(address, _ string) (string, error) {
+	if l.err != nil {
+		return "", l.err
+	}
+	l.card[address] = true
+	return address, nil
+}
+func (l *fakeLab) EnsureOwn(address, _ string) error { l.card[address] = true; return nil }
+func (l *fakeLab) RemoveOwn(address, _ string)       { delete(l.card, address) }
+
+// ADR-0125: a typed address goes on the lab card, stays in the list, binds the gateway, comes
+// back on the card before the gateway listens, and leaves the card when another network is chosen.
+func TestGatewayOwnAddressOnTheLabCard(t *testing.T) {
+	m := networkGateway("iec104")
+	if err := m.AddOwnAddress("10.10.0.100"); err == nil {
+		t.Fatal("no lab card: refused")
+	}
+	lab := &fakeLab{ready: true, card: map[string]bool{}}
+	m.Lab = lab
+	if err := m.AddOwnAddress("10.10.0.100"); err != nil || !lab.card["10.10.0.100"] {
+		t.Fatalf("not added: %v", err)
+	}
+	got := m.Network()
+	if get(got, "choice") != "10.10.0.100" || get(got, "connect_to") != "10.10.0.100" || get(got, "own") != true ||
+		len(get(got, "own_addresses").([]any)) != 1 {
+		t.Fatalf("network %v", got)
+	}
+	if m.OwnAddresses()["10.10.0.100"] != OwnName {
+		t.Fatal("the lab page does not see the gateway's address")
+	}
+	delete(lab.card, "10.10.0.100") // Windows restarted
+	settings, err := m.networkSettings(m.Config(), pyjson.NewObject(), "0.0.0.0")
+	if err != nil || get(settings, "bind") != "10.10.0.100" || !lab.card["10.10.0.100"] {
+		t.Fatalf("start: %v %v", settings, err)
+	}
+	if err := m.SaveNetwork("network", ""); err != nil || lab.card["10.10.0.100"] {
+		t.Fatalf("still on the card: %v", err)
+	}
+	if err := m.SaveNetwork("10.10.0.100", ""); err != nil {
+		t.Fatalf("a listed own address can be chosen again: %v", err)
+	}
+}

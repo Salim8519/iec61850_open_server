@@ -12,6 +12,14 @@ import (
 // this PC; "allowed_scada" lets only that SCADA address connect (IEC 104 and Modbus TCP: opendnp3
 // has no accept filter, and DNP3 already checks the master's link address).
 
+func stringsOf(list []string) []any {
+	result := []any{}
+	for _, item := range list {
+		result = append(result, item)
+	}
+	return result
+}
+
 // Network is what the gateway's Network field shows: the choice ("this_pc", "network" or one
 // address), the addresses of this PC by card, the address and port SCADA connects to, and the
 // allowed SCADA address.
@@ -28,6 +36,12 @@ func (m *Manager) Network() *pyjson.Object {
 	switch {
 	case listen != "network":
 		choice = "this_pc"
+	case isOwn(config, address):
+		choice, connect = address, address
+		adapterOf[address] = "own address"
+		if m.Lab == nil || !m.Lab.Ready() {
+			note = "The ScadaBench Lab card is missing, so " + address + " cannot be used. Create it on the lab network page."
+		}
 	case address != "":
 		choice, connect = address, address
 		if _, found := adapterOf[address]; !found {
@@ -45,7 +59,9 @@ func (m *Manager) Network() *pyjson.Object {
 	port := get(get(settings, protocol).(*pyjson.Object), "port")
 	return pyjson.NewObject().Set("choice", choice).Set("choices", list).Set("connect_to", connect).
 		Set("connect_adapter", adapterOf[connect]).Set("others", int64(max(others, 0))).Set("port", port).
-		Set("allowed", allowed).Set("allowed_works", protocol != "dnp3").Set("note", note)
+		Set("allowed", allowed).Set("allowed_works", protocol != "dnp3").Set("note", note).
+		Set("own_addresses", stringsOf(ownAddresses(config))).Set("own", isOwn(config, address) && listen == "network").
+		Set("lab_ready", m.Lab != nil && m.Lab.Ready())
 }
 
 // SaveNetwork stores the choice ("this_pc", "network" or an address of this PC) and the allowed
@@ -56,7 +72,7 @@ func (m *Manager) SaveNetwork(choice, allowed string) error {
 	}
 	listen, address := choice, ""
 	if choice != "this_pc" && choice != "network" {
-		known := false
+		known := isOwn(m.Config(), choice)
 		for _, item := range pcChoices(m.Adapters, m.projects.IEDs()) {
 			known = known || item.Address == choice
 		}
@@ -68,17 +84,24 @@ func (m *Manager) SaveNetwork(choice, allowed string) error {
 	if allowed != "" && net.ParseIP(allowed).To4() == nil {
 		return apperr.ValueError("Type the SCADA address as IPv4, for example 192.168.1.50, or leave it empty")
 	}
+	previous := text(m.Config(), "listen_address")
 	config := with(with(with(m.Config(), "listen", listen), "listen_address", address), "allowed_scada", allowed)
 	if err := m.projects.SaveGateway(config); err != nil {
 		return err
 	}
+	m.leaveOwn(previous, address)
 	m.changed(ChangeGatewayStatus)
 	return nil
 }
 
 // networkSettings narrows the bind address to the chosen card and adds the allowed SCADA address.
 func (m *Manager) networkSettings(config, settings *pyjson.Object, bind string) (*pyjson.Object, error) {
-	if address := text(config, "listen_address"); text(config, "listen") == "network" && address != "" {
+	if address := text(config, "listen_address"); text(config, "listen") == "network" && isOwn(config, address) {
+		if err := m.ensureOwn(address); err != nil {
+			return nil, err
+		}
+		bind = address
+	} else if text(config, "listen") == "network" && address != "" {
 		known := false
 		for _, item := range pcChoices(m.Adapters, m.projects.IEDs()) {
 			known = known || item.Address == address

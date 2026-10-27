@@ -27,10 +27,11 @@ type Manager struct {
 	spawn      worker.Spawner
 	Traffic    *numlog.Log
 	Commands   *numlog.Log
-	Converter  *Converter // protocol converter role; set by the composition
-	Typed      TypedCommands // typed IEC 61850 commands (ADR-0104/0107); set by the composition
+	Converter  *Converter                       // protocol converter role; set by the composition
+	Typed      TypedCommands                    // typed IEC 61850 commands (ADR-0104/0107); set by the composition
 	Adapters   func() ([]netcfg.Adapter, error) // this PC's cards for the Network field (ADR-0124)
-	changes               // OnChange: what the push stream re-reads
+	Lab        LabAddresses                     // the gateway's own address on the lab card (ADR-0125); set by the composition
+	changes                                     // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // Start/Stop one at a time (Python's RLock around them)
 	mu        sync.Mutex // the fields below; never held across a worker request
@@ -44,7 +45,7 @@ type Manager struct {
 	clients   map[string]bool
 	sync      *syncer
 	executor  *executor
-	own       ownStore // values of the own points the running gateway serves (lane G)
+	own       ownStore   // values of the own points the running gateway serves (lane G)
 	selected  selections // IED selections a SCADA select made, until execute or cancel (ADR-0107)
 }
 

@@ -202,6 +202,7 @@ the written values are `signal` events with source `goose_send`.
 | `POST /tools/master/list/new`, `/rows`, `/copy-gateway`, `/from-received`; `GET/POST /tools/master/list.xlsx`; `GET /tools/master/list.csv` | a point or `type, count, from, name`; `text`; `keys`; `data` (base64) | Go only: plan points (one, range, pasted/CSV rows, Excel template, from the gateway list, from what arrived) without saving; template and CSV export |
 | `GET/PUT /tools/master/network` | `local` ("" = All networks) | Go only (ADR-0123): addresses of this PC by card, the saved choice, the address the device sees, a warning |
 | `GET/PUT /tools/gateway/network` | `choice` (this_pc, network or an address), `allowed` | Go only (ADR-0124): the gateway's Network, the address SCADA connects to, the allowed SCADA address |
+| `POST /tools/gateway/network/own` | `address` | Go only (ADR-0125): checks the gateway's own address, adds it to the ScadaBench Lab card and the list, and chooses it |
 
 SNMP devices (ADR-0092), Go engine only, under `/tools/snmp` (the Python engine answers 404):
 

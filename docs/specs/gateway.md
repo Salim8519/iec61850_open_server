@@ -30,6 +30,7 @@ ScadaBench is the controlled station (104 slave), DNP3 outstation or Modbus serv
 - **Network (Go engine, ADR-0124).** This PC only, All networks or one card of this PC; the column says
   "SCADA connects to A:port". An optional Allowed SCADA address refuses other IEC 104 and Modbus callers
   (logged in Traffic); DNP3 checks the master address instead.
+- **Own address (Go engine, ADR-0125).** "Type an address…" in the Network list gives the gateway its own address on the ScadaBench Lab card after the IED address checks; only programs on this PC reach it.
 - **Start and Run are separate (ADR-0059).** Start proposes the point list when it is empty and
   listens; it never starts the IEDs. While the IEDs are off, the page says so and offers a
   separate "Run the IEDs" button.

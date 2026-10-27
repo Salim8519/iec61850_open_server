@@ -17,6 +17,9 @@ type Projects interface {
 	UseCard(addresses map[string]string, guid, label string) error
 	// SetLabIP stores one IED's lab_ip.
 	SetLabIP(id, ip string) error
+	// Reserved maps the card addresses other devices of this PC use (the station gateway, ADR-0125)
+	// to their names; no IED may take them and Use keeps them on the card.
+	Reserved() map[string]string
 }
 
 // Runtime is the coordinator: which IEDs run, and starting or stopping some of them.
@@ -108,6 +111,7 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 	status.Reals = RealCards(adapters, card)
 	status.Rows = Rows(ieds, chosen, status.Active, adapters, card, s.Asker)
 	s.Asker.Start(Questions(status.Rows, status.Reals, s.Asker))
+	reserve(status.Rows, s.Projects.Reserved())
 	for _, row := range status.Rows {
 		status.Checking = status.Checking || row.Status == "checking"
 	}

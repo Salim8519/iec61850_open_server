@@ -26,3 +26,26 @@ func keepAddresses(stored, result *pyjson.Object, keys ...string) error {
 	}
 	return nil
 }
+
+// keepAddressList keeps a stored list of IPv4 addresses (the gateway's own addresses on the lab
+// card, ADR-0125) the same way.
+func keepAddressList(stored, result *pyjson.Object, key string) error {
+	raw, found := stored.Get(key)
+	if !found {
+		return nil
+	}
+	list, isList := raw.([]any)
+	if !isList {
+		return apperr.ValueError("The saved network addresses " + key + " must be a list of IPv4 addresses")
+	}
+	kept := []any{}
+	for _, item := range list {
+		text, isText := item.(string)
+		if !isText || net.ParseIP(text).To4() == nil {
+			return apperr.ValueError("The saved network addresses " + key + " must be a list of IPv4 addresses")
+		}
+		kept = append(kept, text)
+	}
+	result.Set(key, kept)
+	return nil
+}

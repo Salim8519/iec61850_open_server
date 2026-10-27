@@ -18,6 +18,7 @@ type pc struct {
 	guid    string
 	running []string
 	calls   []string
+	reserved map[string]string
 }
 
 func newPC() *pc {
@@ -43,6 +44,7 @@ func (p *pc) SetLabIP(id, address string) error {
 	p.calls = append(p.calls, "store "+address)
 	return nil
 }
+func (p *pc) Reserved() map[string]string { return p.reserved }
 func (p *pc) Running() []string { return append([]string{}, p.running...) }
 func (p *pc) Start(ids []string) error {
 	p.calls = append(p.calls, "start "+strings.Join(ids, ","))

@@ -52,7 +52,7 @@ func (s *Service) Use(chosen map[string]string) (Status, error) {
 		}
 	}
 	for _, address := range status.CardIPs {
-		if !wanted[address] {
+		if _, kept := s.Projects.Reserved()[address]; !wanted[address] && !kept {
 			s.remove(address, "", status.Card) // an address no IED uses any more; failure is harmless
 		}
 	}

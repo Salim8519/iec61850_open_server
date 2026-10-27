@@ -30,3 +30,18 @@ func TestNetworkAddressesSurviveALoad(t *testing.T) {
 		t.Fatal("a damaged address stops the load")
 	}
 }
+
+// The gateway's own lab addresses survive a load (ADR-0125); a damaged list stops it.
+func TestOwnAddressesSurviveALoad(t *testing.T) {
+	stored := pyjson.NewObject().Set("own_addresses", []any{"10.10.0.100", "10.10.0.101"})
+	result, err := NormalizeGateway(stored)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if own, _ := result.Get("own_addresses"); len(own.([]any)) != 2 || own.([]any)[1] != "10.10.0.101" {
+		t.Fatalf("lost: %v", result)
+	}
+	if _, err := NormalizeGateway(pyjson.NewObject().Set("own_addresses", []any{"lab"})); err == nil {
+		t.Fatal("a damaged list stops the load")
+	}
+}
