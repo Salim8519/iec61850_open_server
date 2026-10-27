@@ -37,30 +37,21 @@ const (
 	riskHeard2   = "GOOSE from real devices is being received on this adapter."
 )
 
-// Reach is where the user wants GOOSE (ADR-0119): "local" while the Go-only goose_local key
-// is set, else "auto". The stored goose_reach keeps Python's inside/outside so the Python
-// engine reads the project unchanged; the twin reports it as it is.
+// Reach is where the user wants GOOSE (ADR-0122, as ADR-0073): "inside" by default, "outside"
+// only after the user confirmed sharing. The stored goose_reach is read as it is, so the
+// Python engine and this one agree on every project.
 func Reach(network *pyjson.Object) string {
-	if pythonTwin {
-		return pyv.PyStr(pyv.GetOr(network, "goose_reach", "inside"))
-	}
-	if pyv.Get(network, "goose_local") == true {
-		return "local"
-	}
-	return "auto"
+	return pyv.PyStr(pyv.GetOr(network, "goose_reach", "inside"))
 }
 
-// Shares reports whether GOOSE goes out with the IEDs (ADR-0119): reach "auto" and an
-// adapter that is the lab adapter or the one chosen under Advanced (or any picked adapter
-// for a project the user shared before, stored "outside"). With IEDs on this PC only and
-// no adapter chosen, GOOSE stays inside and only listens.
+// Shares reports whether GOOSE goes out: only when the user confirmed sharing (stored
+// "outside") and an adapter is there. Neither the IED network nor an adapter chosen under
+// Advanced sends GOOSE by itself (ADR-0122).
 func Shares(network, uplink *pyjson.Object) bool {
 	if pythonTwin {
 		return pyv.Equal(pyv.Get(network, "goose_reach"), "outside")
 	}
-	why := pyv.Get(uplink, "why")
-	return Reach(network) == "auto" && pyv.Truthy(pyv.Get(uplink, "guid")) &&
-		(pyv.Equal(why, "lab") || pyv.Equal(why, "chosen") || pyv.Equal(pyv.Get(network, "goose_reach"), "outside"))
+	return Reach(network) == "outside" && pyv.Truthy(pyv.Get(uplink, "guid"))
 }
 
 // Confirmed reports whether the user confirmed sharing next to real devices on this adapter.
@@ -125,19 +116,16 @@ func Status(network, uplink *pyjson.Object, holdState, hold string, link *pyjson
 	switch {
 	case holdState != "":
 		return holdState, hold
-	case Reach(network) == "local":
-		return "local", "GOOSE stays inside ScadaBench, as you chose. Nothing is sent to the network."
 	case pyv.Equal(pyv.GetOr(link, "share", "off"), "real_hold"):
 		return "confirm", realHeard + label + ". Confirm before ScadaBench sends GOOSE next to it."
 	case pyv.Equal(pyv.GetOr(link, "share", "off"), "sharing"):
-		return "sharing", "GOOSE goes to " + label + " with your IEDs. Protection is on."
+		return "sharing", "GOOSE is shared on " + label + ". Protection is on."
 	case pyv.Equal(pyv.GetOr(link, "share", "off"), "checking"):
 		return "checking", "Checking " + label + " for real devices before sending GOOSE…"
 	case pyv.Equal(pyv.Get(link, "uplink"), "open"):
-		return "listening", "Your IEDs use this PC only, so GOOSE stays inside ScadaBench. Real GOOSE on " +
-			label + " is heard."
+		return "listening", "GOOSE stays inside ScadaBench. Real GOOSE on " + label + " is heard. Nothing is sent."
 	}
-	return "inside", "Your IEDs use this PC only, so GOOSE stays inside ScadaBench."
+	return "inside", "GOOSE stays inside ScadaBench. Nothing is sent to the network."
 }
 
 func hasRealIED(ieds []*pyjson.Object) bool {

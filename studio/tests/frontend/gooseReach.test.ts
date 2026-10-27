@@ -11,7 +11,7 @@ test('every reach state the Go engine reports has words, an icon and a hint', ()
     + read('engine/internal/acquisition/goosedom/reach_share.go');
   const states = new Set([...backend.matchAll(/return "([a-z_]+)", /g)]
     .map(match => match[1]));
-  for (const state of ['sharing', 'listening', 'share_held', 'confirm', 'local', 'inside']) {
+  for (const state of ['sharing', 'listening', 'share_held', 'confirm', 'inside']) {
     assert.ok(states.has(state), `Go reports ${state}`);
   }
   for (const state of states) {
@@ -35,11 +35,13 @@ test('GOOSE-25: the share warning is stronger when real devices may act on it', 
   assert.match(dialog, /className="danger"/);
 });
 
-test('ADR-0119: real devices are confirmed with the adapter shown; a conflict needs two clicks to continue', () => {
+test('ADR-0122: GOOSE is shared only after the warning is confirmed with the adapter shown', () => {
   const reach = read('frontend/src/features/network/GooseReach.tsx');
-  assert.match(reach, /reach: 'auto', adapter_guid: share\.uplink\.guid, confirm: true/);
+  assert.match(reach, /reach: 'outside', adapter_guid: share\.uplink\.guid, confirm: true/);
+  assert.match(reach, /onChange=\{\(\) => setAsking\(true\)\}/, 'choosing to share opens the warning first');
+  assert.match(reach, /send\(\{ reach: 'inside' \}\)/, 'one click keeps GOOSE inside');
   assert.match(reach, /NPCAP_URL = 'https:\/\/npcap\.com\/#download'/, 'Npcap has a download link');
-  assert.doesNotMatch(reach, /goose_reach === 'outside'|reach: 'outside'/, 'no browser decides sharing');
+  assert.doesNotMatch(reach, /reach: 'auto'|reach: 'local'/, 'the 0.1.28 follow-the-network choices are gone');
   const conflicts = read('frontend/src/features/network/GooseConflicts.tsx');
   assert.match(conflicts, /confirm: choice === 'continue'/);
   assert.match(conflicts, /sure === conflict\.ied_id/);

@@ -125,17 +125,10 @@ func UpdateNetwork(project *pyjson.Object, value any) (*pyjson.Object, error) {
 }
 
 // SaveReach is projects/goose_reach.save_reach without the save: where GOOSE goes.
-// Go engine (ADR-0119): "auto" and "local" keep the stored Python goose_reach and set or clear
-// the Go-only goose_local key.
 func SaveReach(project *pyjson.Object, reach, uplinkGUID, shareGUID any) (*pyjson.Object, error) {
-	local := false
-	if !netset.PythonTwin() && (reach == "auto" || reach == "local") {
-		local = reach == "local"
-		reach = pyval.Or(pyval.Lookup(object(pyval.Lookup(project, "network", nil)), "goose_reach", nil), "inside")
-	}
 	network, err := pyval.Merge(pyval.Lookup(project, "network", nil), pyjson.NewObject().
 		Set("goose_reach", reach).Set("goose_uplink_guid", pyval.Or(uplinkGUID, "")).
-		Set("goose_share_guid", pyval.Or(shareGUID, "")).Set(netset.GooseLocal, local))
+		Set("goose_share_guid", pyval.Or(shareGUID, "")))
 	if err != nil {
 		return nil, err
 	}

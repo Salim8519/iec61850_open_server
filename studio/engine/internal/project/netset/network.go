@@ -62,13 +62,9 @@ func ValidateNetwork(raw any) (*pyjson.Object, error) {
 		}
 	}
 	label := pyval.Prefix(pyval.Str(pyval.Or(pyval.Lookup(value, "adapter_label", nil), "")), 100)
-	result := pyjson.NewObject().Set("mode", mode).Set("adapter_guid", adapter).Set("adapter_label", label).
+	return pyjson.NewObject().Set("mode", mode).Set("adapter_guid", adapter).Set("adapter_label", label).
 		Set("nominal_hz", hz).Set("goose_reach", reach).Set("goose_uplink_guid", uplink).
-		Set("goose_share_guid", share)
-	if local, _ := value.Get(GooseLocal); local == true && !pythonTwin {
-		result.Set(GooseLocal, true)
-	}
-	return result, nil
+		Set("goose_share_guid", share), nil
 }
 
 // guidText is str(value.get(key) or "").upper().
@@ -79,9 +75,6 @@ func guidText(value *pyjson.Object, key string) string {
 // LabNotice is projects/goose_reach.lab_notice: true once for a lab project saved before
 // "Where GOOSE goes" existed (ADR-0073).
 func LabNotice(rawNetwork any, network *pyjson.Object) bool {
-	if !pythonTwin { // ADR-0119: lab GOOSE goes to the lab network again, so nothing to tell
-		return false
-	}
 	mode, _ := network.Get("mode")
 	if mode != "lab" {
 		return false
