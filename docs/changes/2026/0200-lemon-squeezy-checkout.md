@@ -16,9 +16,10 @@ Date: 2026-10-28. Decision: [ADR-0126](../../decisions/ADR-0126-lemon-squeezy-ch
 
 ## Lemon Squeezy dashboard (2026-10-28)
 
-- Store currency changed from OMR to USD, so the price is exactly $99. The save said "saved", but a
-  reload could not be read back because the browser pane stopped drawing, so it is not verified.
-- The product is not made yet. The browser pane stops while the app window is hidden.
+- Store currency changed from OMR to USD; after a reload the settings page shows "USD - US Dollar".
+- Product "ScadaBench Lifetime License" published in live mode (product 1478750): single payment
+  $99.00, tax category Software, Lemon Squeezy license keys off, shown on the storefront.
+- Not done: store activation for live sales, and the API key (owner).
 
 ## Evidence
 
