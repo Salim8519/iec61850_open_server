@@ -19,7 +19,11 @@ Date: 2026-10-28. Decision: [ADR-0126](../../decisions/ADR-0126-lemon-squeezy-ch
 - Store currency changed from OMR to USD; after a reload the settings page shows "USD - US Dollar".
 - Product "ScadaBench Lifetime License" published in live mode (product 1478750): single payment
   $99.00, tax category Software, Lemon Squeezy license keys off, shown on the storefront.
-- Not done: store activation for live sales, and the API key (owner).
+- Owner added the payout details and an API key (2026-10-28). `set-lemon.cmd -Live` created the
+  live webhook (order created, order refunded; 40-character secret, the Lemon Squeezy limit) and set the
+  server: variant 2305283, price 99.00 USD, test orders off.
+- One-use test code `OWNERTEST10` ($98.90 off, only this product, expires 2026-10-30) for a $0.10 real
+  purchase test.
 
 ## Evidence
 
@@ -34,7 +38,9 @@ Date: 2026-10-28. Decision: [ADR-0126](../../decisions/ADR-0126-lemon-squeezy-ch
 
 ## Limitations
 
-- Not deployed. The live license server and buy page are unchanged until the owner approves a deploy.
+- Deployed 2026-10-28 with owner OK ("Please u do all"). Live: `/api/v1/health` shows `lemon: true`;
+  `/buy` shows "Pay $99.00 by card" and then "or pay with PayPal"; `lemon-start` returns the
+  scadabench.lemonsqueezy.com checkout; an unsigned webhook gets 400. A real purchase is still to be tested.
 - The overlay's `Checkout.Success` payload was not seen live. The page searches it for the order
   `identifier`; if it is missing, the buyer is told the key comes by email.
 - The website still shows the server price. It becomes $99 when `set-lemon.cmd` copies the Lemon
