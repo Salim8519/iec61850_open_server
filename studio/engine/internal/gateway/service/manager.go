@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"studio-engine/internal/gateway"
+	"studio-engine/internal/netcfg"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/numlog"
@@ -28,6 +29,7 @@ type Manager struct {
 	Commands   *numlog.Log
 	Converter  *Converter // protocol converter role; set by the composition
 	Typed      TypedCommands // typed IEC 61850 commands (ADR-0104/0107); set by the composition
+	Adapters   func() ([]netcfg.Adapter, error) // this PC's cards for the Network field (ADR-0124)
 	changes               // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // Start/Stop one at a time (Python's RLock around them)

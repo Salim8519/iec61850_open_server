@@ -38,21 +38,24 @@ func networkChoices(adapters []netcfg.Adapter, ieds map[string]bool) []NetworkCh
 	return choices
 }
 
-func (m *Master) choices() []NetworkChoice {
-	if m.Adapters == nil {
+func (m *Master) choices() []NetworkChoice { return pcChoices(m.Adapters, m.projects.IEDs()) }
+
+// pcChoices lists this PC's addresses for a Network field (master ADR-0123, gateway ADR-0124).
+func pcChoices(list func() ([]netcfg.Adapter, error), ieds []*pyjson.Object) []NetworkChoice {
+	if list == nil {
 		return []NetworkChoice{}
 	}
-	adapters, err := m.Adapters()
+	adapters, err := list()
 	if err != nil {
 		return []NetworkChoice{}
 	}
-	return networkChoices(adapters, m.iedAddresses())
+	return networkChoices(adapters, iedAddresses(ieds))
 }
 
 // iedAddresses are the addresses the project's IEDs use: runtime, lab and SCL addresses.
-func (m *Master) iedAddresses() map[string]bool {
+func iedAddresses(ieds []*pyjson.Object) map[string]bool {
 	used := map[string]bool{}
-	for _, ied := range m.projects.IEDs() {
+	for _, ied := range ieds {
 		scl, _ := get(ied, "scl_address").(*pyjson.Object)
 		for _, value := range []any{get(ied, "ip"), get(ied, "lab_ip"), get(scl, "ip")} {
 			if address, ok := value.(string); ok && address != "" {

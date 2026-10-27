@@ -12,8 +12,8 @@ import (
 )
 
 // MasterGoOnlyRoutes are the SCADA master routes only the Go engine serves: the repeat sender
-// (change 0169), the master's own point list (ADR-0110), Stop for Find registers (0178) and the
-// Network (ADR-0123). The frozen Python engine answers them 404; the Flask route comparison allows them.
+// (change 0169), the master's own point list (ADR-0110) and Stop for Find registers (0178). The frozen Python engine answers
+// them 404; the Flask route comparison allows them.
 var MasterGoOnlyRoutes = map[string]bool{"GET /api/v1/tools/master/cyclic": true,
 	"POST /api/v1/tools/master/cyclic": true, "POST /api/v1/tools/master/cyclic/stop": true,
 	"GET /api/v1/tools/master/list": true, "PUT /api/v1/tools/master/list": true,
@@ -21,8 +21,7 @@ var MasterGoOnlyRoutes = map[string]bool{"GET /api/v1/tools/master/cyclic": true
 	"POST /api/v1/tools/master/list/rows": true, "GET /api/v1/tools/master/list.xlsx": true,
 	"POST /api/v1/tools/master/list.xlsx": true, "GET /api/v1/tools/master/list.csv": true,
 	"POST /api/v1/tools/master/list/copy-gateway": true, "POST /api/v1/tools/master/list/from-received": true,
-	"GET /api/v1/tools/master/list/compare": true, "POST /api/v1/tools/master/probe/stop": true,
-	"GET /api/v1/tools/master/network": true, "PUT /api/v1/tools/master/network": true}
+	"GET /api/v1/tools/master/list/compare": true, "POST /api/v1/tools/master/probe/stop": true}
 
 // masterListRoutes plan and save the master's own point list. Planning routes never change the
 // list: the page adds the planned points and saves the whole list with PUT (save always,

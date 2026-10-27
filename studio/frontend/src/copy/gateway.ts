@@ -130,3 +130,13 @@ export const FIREWALL_COPY = {
   apply: 'Yes, apply', cancel: 'Cancel',
   failed: 'Windows Firewall could not be checked',
 };
+
+/** The gateway's Network (ADR-0124): where SCADA connects, and who may. */
+export const GATEWAY_NETWORK_COPY = {
+  label: 'Network', thisPc: 'This PC only', all: 'All networks',
+  hint: 'Where SCADA can reach the gateway. This PC only: SCADA runs on this PC. All networks: every card of this PC. Or one card only.',
+  connectTo: 'SCADA connects to', more: (count: number) => count === 1 ? 'or 1 more address of this PC' : `or ${count} more addresses of this PC`,
+  allowed: 'Allowed SCADA address', allowedPlaceholder: 'Anyone',
+  allowedHint: 'Like a real gateway: only this SCADA address may connect, others are refused and shown in Traffic. Empty lets anyone connect.',
+  allowedDnp3: 'DNP3 checks the master address instead, so any SCADA address may connect.',
+};

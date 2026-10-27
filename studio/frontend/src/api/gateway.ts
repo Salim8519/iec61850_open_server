@@ -35,7 +35,13 @@ export const GATEWAY_CONFIG = '/tools/gateway/config';
 export const GATEWAY_COMMANDS = '/tools/gateway/commands';
 export const gatewayPointsPath = (protocol: Protocol) => `/tools/gateway/points?protocol=${protocol}`;
 
+/** The gateway's Network (ADR-0124): choice is this_pc, network (All networks) or an address of this PC. */
+export type GatewayNetwork = { choice: string; choices: { address: string; adapter: string }[]; connect_to: string;
+  connect_adapter: string; others: number; port: number; allowed: string; allowed_works: boolean; note: string };
+
 export const gatewayApi = {
+  network: () => api<GatewayNetwork>('/tools/gateway/network'),
+  saveNetwork: (choice: string, allowed: string) => api<GatewayNetwork>('/tools/gateway/network', 'PUT', { choice, allowed }),
   status: () => api<GatewayStatus>('/tools/gateway'),
   config: () => api<GatewayConfig>('/tools/gateway/config'),
   saveConfig: (protocol: Protocol, listen: Listen, settings: Record<string, number | boolean>, real_commands: boolean) =>

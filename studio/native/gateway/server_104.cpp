@@ -27,6 +27,7 @@ public:
         if (common_address < 1 || common_address > 65534) throw std::runtime_error("Common address must be 1 to 65534");
         auto bind = settings.value("bind", std::string("127.0.0.1"));
         int port = settings.value("port", 2404);
+        allowed = settings.value("allowed", std::string());  // Allowed SCADA address (ADR-0124); empty: anyone
         slave = CS104_Slave_create(settings.value("queue", 1000), settings.value("queue", 1000));
         CS104_Slave_setLocalAddress(slave, bind.c_str());
         CS104_Slave_setLocalPort(slave, port);
@@ -84,6 +85,7 @@ private:
     CS104_Slave slave = nullptr;
     CS101_AppLayerParameters parameters = nullptr;
     int common_address = 1;
+    std::string allowed;
 
     bool wrong_address(IMasterConnection connection, CS101_ASDU asdu) {
         int address = CS101_ASDU_getCA(asdu);
@@ -96,7 +98,13 @@ private:
         return true;
     }
 
-    static bool on_request(void*, const char* address) {
+    static bool on_request(void* parameter, const char* address) {
+        auto self = static_cast<Iec104Server*>(parameter);
+        std::string peer(address), ip = peer.substr(0, peer.rfind(':'));
+        if (!self->allowed.empty() && ip != self->allowed) {
+            traffic("rx", peer, "connection refused: only the allowed SCADA address " + self->allowed + " may connect");
+            return false;
+        }
         traffic("rx", address, "TCP connection request accepted");
         return true;
     }

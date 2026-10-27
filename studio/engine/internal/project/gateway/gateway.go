@@ -112,6 +112,10 @@ func NormalizeGateway(raw any) (*pyjson.Object, error) {
 		}
 		points.(*pyjson.Object).Set(name, list)
 	}
+	// Go-only listening card and allowed SCADA address (ADR-0124), kept only when stored.
+	if err := keepAddresses(stored, result, "listen_address", "allowed_scada"); err != nil {
+		return nil, err
+	}
 	return result, nil
 }
 

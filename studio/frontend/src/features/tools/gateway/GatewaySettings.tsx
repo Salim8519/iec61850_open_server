@@ -6,14 +6,15 @@ import { Disclosure } from '../../../ui/Disclosure';
 import { HelpTip } from '../../../ui/HelpTip';
 import { Spinner } from '../../../ui/Spinner';
 import { StatusPill } from '../../../ui/StatusPill';
+import { AllowedScada, GatewayNetwork } from './GatewayNetwork';
 
 /** The settings column of the gateway (ADR-0064): protocol, who may connect, the few settings SCADA
  *  must match, then status, errors and Start/Stop at the bottom. Long explanations sit behind "?". */
-export function GatewaySettings({ config, status, busy, save, start, stop, words, title, error, children }: {
+export function GatewaySettings({ config, status, busy, save, start, stop, words, title, error, reload, children }: {
   config: GatewayConfig; status: GatewayStatus; busy: boolean;
   save: (protocol: Protocol, listen: Listen, settings: Record<string, number | boolean>, realCommands: boolean) => void;
   start: () => void; stop: () => void; words?: Partial<typeof GATEWAY_COPY>; title?: string; error?: string;
-  children?: ReactNode;
+  children?: ReactNode; reload?: () => void;
 }) {
   const copy = { ...GATEWAY_COPY, ...words };
   const running = status.state === 'running';
@@ -42,14 +43,12 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
         onChange={event => { const next = event.target.value as Protocol; save(next, config.listen, config.settings[next], real); }}>
         {(Object.keys(PROTOCOL_NAMES) as Protocol[]).map(value => <option key={value} value={value}>{PROTOCOL_NAMES[value]}</option>)}
       </select></label>
-    <label><span className="label-row">{copy.listen}<HelpTip text={copy.listenHint} label="Who can connect?" /></span>
-      <select value={config.listen} disabled={running || busy} onChange={event => save(protocol, event.target.value as Listen, values, real)}>
-        <option value="this_pc">{copy.thisPc}</option><option value="network">{copy.network}</option></select></label>
+    <GatewayNetwork locked={running || busy} protocol={protocol} port={values.port} saved={reload} />
     {MAIN_SETTINGS[protocol].map(field)}
     <span className="label-row"><label className="row gateway-check"><input type="checkbox" checked={real} disabled={running || busy}
       onChange={event => save(protocol, config.listen, values, event.target.checked)} />{copy.realCommands}</label>
       <HelpTip text={real ? copy.realCommandsOn : copy.realCommandsOff} label="What does this allow?" /></span>
-    {ADVANCED_SETTINGS[protocol].length > 0 && <Disclosure>{ADVANCED_SETTINGS[protocol].map(field)}</Disclosure>}
+    <Disclosure>{ADVANCED_SETTINGS[protocol].map(field)}<AllowedScada locked={running || busy} /></Disclosure>
     <div className="side-foot">
       {starting && !running ? <Spinner label={copy.starting} /> : <StatusPill status={pill} />}
       {running && <p className="side-line" aria-live="polite">{status.message} · {status.clients.length

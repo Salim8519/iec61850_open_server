@@ -99,7 +99,7 @@ func TestEveryPythonRouteServed(t *testing.T) {
 		}
 	}
 	for key := range served {
-		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] && !toolsapi.MasterGoOnlyRoutes[key] && !snmpapi.GoOnly(key) && !hostkeyapi.GoOnly(key) && !labapi.GoOnly(key) &&
+		if !want[key] && !PushOnlyRoutes[key] && !toolsapi.OwnPointRoutes[key] && !toolsapi.MasterGoOnlyRoutes[key] && !toolsapi.NetworkRoutes[key] && !snmpapi.GoOnly(key) && !hostkeyapi.GoOnly(key) && !labapi.GoOnly(key) &&
 			!platformapi.GoOnlyRoutes[key] && !projectapi.GoOnlyRoutes[key] && !runtimeapi.GoOnlyRoutes[key] &&
 			!liveapi.GoOnlyRoutes[key] &&
 			key != explorer.CommandRoute {

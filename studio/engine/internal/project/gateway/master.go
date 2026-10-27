@@ -113,6 +113,9 @@ func NormalizeMaster(raw any) (*pyjson.Object, error) {
 	if err := keepPointList(stored, result); err != nil { // Go-only, kept only when stored (ADR-0110)
 		return nil, err
 	}
+	if err := keepAddresses(stored, result, "local"); err != nil { // Go-only Network (ADR-0123)
+		return nil, err
+	}
 	return result, nil
 }
 

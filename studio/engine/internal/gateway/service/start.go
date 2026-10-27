@@ -125,7 +125,9 @@ func (m *Manager) launch() (*pyjson.Object, string, int, error) {
 	if err != nil {
 		return nil, "", 0, err
 	}
-	settings = with(settings, "bind", bind)
+	if settings, err = m.networkSettings(config, settings, bind); err != nil {
+		return nil, "", 0, err
+	}
 	ieds := m.iedIndex()
 	native, typed := make([]any, len(points)), make([]*pyjson.Object, len(points))
 	for index, raw := range points {

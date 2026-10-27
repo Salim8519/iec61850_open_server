@@ -48,7 +48,7 @@ export function GatewayTool({ ieds, runState, runIeds }: { ieds: Ied[]; runState
   return <div className="fill-body fill-split scada-split">
     <aside className="card side-pane" aria-label={GATEWAY_COPY.settingsTitle}>
       <GatewaySettings config={config} status={status} busy={busy} save={save} stop={() => act(gatewayApi.stop)}
-        start={() => act(gatewayApi.start)} error={error || (status.available ? '' : GATEWAY_COPY.notBuilt)}>
+        start={() => act(gatewayApi.start)} reload={() => gatewayApi.config().then(setConfig).catch(() => undefined)} error={error || (status.available ? '' : GATEWAY_COPY.notBuilt)}>
         <GatewayNotices status={status} runState={runState} runIeds={runIeds} />
         {config.listen === 'network' && <GatewayFirewall port={Number(config.settings[config.protocol].port)} />}
       </GatewaySettings>

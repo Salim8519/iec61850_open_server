@@ -46,6 +46,7 @@ public:
         unit_id = settings.value("unit_id", 1);
         if (unit_id < 0 || unit_id > 255) throw std::runtime_error("Unit ID must be 0 to 255");
         max_connections = settings.value("max_connections", 4);
+        allowed = settings.value("allowed", std::string());  // Allowed SCADA address (ADR-0124); empty: anyone
         listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         sockaddr_in address{};
         address.sin_family = AF_INET;
@@ -88,6 +89,7 @@ private:
     std::set<socket_t> clients;
     int unit_id = 1;
     int max_connections = 4;
+    std::string allowed;
 
     void accept_loop() {
         while (running) {
@@ -98,6 +100,11 @@ private:
             char text[INET_ADDRSTRLEN] = {0};
             inet_ntop(AF_INET, &remote.sin_addr, text, sizeof(text));
             std::string peer = std::string(text) + ":" + std::to_string(ntohs(remote.sin_port));
+            if (!allowed.empty() && allowed != text) {
+                traffic("rx", peer, "connection refused: only the allowed SCADA address " + allowed + " may connect");
+                closesocket(client);
+                continue;
+            }
             std::lock_guard<std::mutex> guard(lock);
             if (int(clients.size()) >= max_connections || !running) {
                 traffic("rx", peer, "connection refused: the connection limit is reached");

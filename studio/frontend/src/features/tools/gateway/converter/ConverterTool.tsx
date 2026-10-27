@@ -71,7 +71,7 @@ export function ConverterTool() {
         interrogate={() => act('device', masterApi.interrogate)} error={error?.side === 'device' ? error.text : ''} />
       <GatewaySettings config={gateway.config} status={gateway.status} busy={busy} words={WORDS} title={CONVERTER_COPY.scadaStep}
         save={(protocol: Protocol, listen: Listen, settings, real) => act('scada', () => gatewayApi.saveConfig(protocol, listen, settings, real), true)}
-        start={() => act('scada', gatewayApi.start)} stop={() => act('scada', gatewayApi.stop)}
+        start={() => act('scada', gatewayApi.start)} reload={refresh} stop={() => act('scada', gatewayApi.stop)}
         error={error?.side === 'scada' ? error.text : ''} />
     </aside>
     <FullView full={full} change={setFull} place={FULL_PLACE.converter}>
