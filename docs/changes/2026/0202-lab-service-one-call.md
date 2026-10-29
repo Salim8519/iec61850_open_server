@@ -54,6 +54,12 @@ resources high usage". Decisions: [ADR-0128](../../decisions/ADR-0128-lab-servic
 - "This PC only", same project, same laptop, two rounds each: installed 0.1.29 Run 5.65 / 7.08 s,
   Stop 0.32 / 0.20 s; new build Run 3.48 / 3.50 s, Stop 0.11 / 0.12 s (about 2.7 s of it is the
   seven native workers starting in parallel).
+- Release 0.1.30 (owner: "Deploy the new version 0.1.30 ... Fix, test, deploy"): installer
+  322016ce, portable 35c55ecf; portable self-test ok; packaged app, This PC only, same project:
+  Run 4.79 s (cold) / 3.64 s, Stop 0.09 / 0.11 s, run log application 0.1.30. Live
+  `/download/ScadaBench-Setup.exe` and the portable link serve these exact files; signed release
+  record 0.1.30 saved; changelog live. Unsigned as before. Built with `studio/.venv` Python and
+  the website with Node 22.23 (pi-node).
 
 ## Limitations
 
