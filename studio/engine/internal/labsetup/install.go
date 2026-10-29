@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/labnet"
 	"studio-engine/internal/netcfg"
 )
 
@@ -40,6 +41,7 @@ func (s *Service) Install() (Status, error) {
 	if !outcome.OK {
 		return Status{}, apperr.New(outcome.Message)
 	}
+	s.call(labnet.Request{Op: labnet.OpStatus}) // the repaired service's version (ADR-0128)
 	return s.Status(nil)
 }
 

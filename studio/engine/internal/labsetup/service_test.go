@@ -12,14 +12,15 @@ import (
 
 // pc is a fake Windows with a working card and service, and a project with two IEDs.
 type pc struct {
-	cardIPs map[string]bool
-	ieds    []IED
-	mode    string
-	guid    string
-	running []string
-	calls   []string
+	cardIPs  map[string]bool
+	ieds     []IED
+	mode     string
+	guid     string
+	running  []string
+	calls    []string
+	version  string // the service's protocol ("" answers like protocol 1)
 	reserved map[string]string
-	lab     *Service // Start and Stop call it as the coordinator does (ADR-0127)
+	lab      *Service // Start and Stop call it as the coordinator does (ADR-0127)
 }
 
 func newPC() *pc {
@@ -46,7 +47,7 @@ func (p *pc) SetLabIP(id, address string) error {
 	return nil
 }
 func (p *pc) Reserved() map[string]string { return p.reserved }
-func (p *pc) Running() []string { return append([]string{}, p.running...) }
+func (p *pc) Running() []string           { return append([]string{}, p.running...) }
 func (p *pc) Start(ids []string) error {
 	p.calls = append(p.calls, "start "+strings.Join(ids, ","))
 	p.lab.EnsureForRun(card, ids)
@@ -74,19 +75,21 @@ func (p *pc) service() *Service {
 		State: func() (bool, bool) { return true, true },
 		Card:  func() string { return card },
 		Call: func(request labnet.Request) (labnet.Reply, error) {
-			p.calls = append(p.calls, request.Op+" "+request.IP)
-			switch request.Op {
-			case labnet.OpAdd:
-				p.cardIPs[request.IP] = true
-			case labnet.OpRemove:
-				delete(p.cardIPs, request.IP)
+			p.calls = append(p.calls, request.Op+" "+strings.Join(request.Wanted(), ","))
+			for _, address := range request.Wanted() {
+				switch request.Op {
+				case labnet.OpAdd:
+					p.cardIPs[address] = true
+				case labnet.OpRemove:
+					delete(p.cardIPs, address)
+				}
 			}
 			addresses := []string{}
 			for address := range p.cardIPs {
 				addresses = append(addresses, address)
 			}
 			sort.Strings(addresses)
-			return labnet.Reply{OK: true, Card: card, Addresses: addresses}, nil
+			return labnet.Reply{OK: true, Card: card, Addresses: addresses, Version: p.version}, nil
 		},
 	}
 	p.lab = &Service{Projects: p, Runtime: p, Windows: windows, Asker: NewAsker(func(string, string) bool { return false })}

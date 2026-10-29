@@ -7,66 +7,84 @@ import (
 // Ops is what the service needs from Windows. The service's own registry key names the card;
 // nothing a user can write decides which card is changed.
 type Ops interface {
-	// Card is the lab card's GUID ({...}) and whether it is a KM-TEST card that exists now.
-	Card() (string, error)
-	// Addresses lists the IPv4 addresses of every adapter by GUID.
-	Addresses() (map[string][]string, error)
-	// Names maps adapter GUIDs to their Windows names (for messages only).
-	Names() map[string]string
-	Add(card, ip string) error
-	Remove(card, ip string) error
+	// Read lists Windows' adapters once (ADR-0128): the lab card, which must be a KM-TEST card
+	// that exists now (ErrNoCard otherwise), and every adapter's IPv4 addresses and name.
+	Read() (View, error)
+	// Add and Remove change one address on the card that view names.
+	Add(view View, ip string) error
+	Remove(view View, ip string) error
+}
+
+// View is one reading of Windows' adapters, taken once per request.
+type View struct {
+	Card      string              // the lab card's GUID ({...})
+	Index     uint32              // the card's interface index, for Add and Remove
+	LUID      uint64              // the card's LUID, for Add and Remove
+	Addresses map[string][]string // IPv4 addresses of every adapter by GUID
+	Names     map[string]string   // Windows adapter names by GUID (for messages only)
 }
 
 // Handle answers one request. Adding an address that is already on the card and removing one
-// that is not are both fine (the app may retry after a reboot or a lost answer).
+// that is not are both fine (the app may retry after a reboot or a lost answer). A request that
+// names several addresses changes each with the same checks; Failed says which did not change.
 func Handle(ops Ops, request Request, version string) Reply {
 	reply := Reply{Version: version, Addresses: []string{}}
-	card, err := ops.Card()
+	view, err := ops.Read()
 	if err != nil {
 		reply.Message = err.Error()
 		return reply
 	}
-	reply.Card = card
-	all, err := ops.Addresses()
-	if err != nil {
-		reply.Message = "Windows did not list the network addresses: " + err.Error()
-		return reply
-	}
-	own := all[card]
+	reply.Card = view.Card
+	own := view.Addresses[view.Card]
 	if request.Op == OpStatus {
 		reply.OK = true
 		return answered(reply, own)
 	}
-	ip, err := ParseAddress(request.IP)
+	failed := map[string]string{}
+	for _, wanted := range request.Wanted() {
+		var message string
+		if own, message = change(ops, view, request.Op, wanted, own); message != "" {
+			if reply.Message == "" {
+				reply.Message = message
+			}
+			failed[wanted] = message
+		}
+	}
+	reply.OK = len(failed) == 0
+	if request.IPs != nil && len(failed) > 0 {
+		reply.Failed = failed
+	}
+	return answered(reply, own)
+}
+
+// change adds or removes one address and returns the card's addresses after it, with the reason
+// when it was refused or Windows failed.
+func change(ops Ops, view View, op, wanted string, own []string) ([]string, string) {
+	ip, err := ParseAddress(wanted)
 	if err != nil {
-		reply.Message = err.Error()
-		return answered(reply, own)
+		return own, err.Error()
 	}
 	present := contains(own, ip)
 	switch {
-	case request.Op == OpAdd && !present:
-		if other := owner(all, card, ip); other != "" {
-			name := ops.Names()[other]
+	case op == OpAdd && !present:
+		if other := owner(view.Addresses, view.Card, ip); other != "" {
+			name := view.Names[other]
 			if name == "" {
 				name = other
 			}
-			reply.Message = ip + " already belongs to “" + name + "” on this PC; nothing was changed"
-			return answered(reply, own)
+			return own, ip + " already belongs to “" + name + "” on this PC; nothing was changed"
 		}
-		if err := ops.Add(card, ip); err != nil {
-			reply.Message = "Windows did not add " + ip + ": " + err.Error()
-			return answered(reply, own)
+		if err := ops.Add(view, ip); err != nil {
+			return own, "Windows did not add " + ip + ": " + err.Error()
 		}
-		own = append(own, ip)
-	case request.Op == OpRemove && present:
-		if err := ops.Remove(card, ip); err != nil {
-			reply.Message = "Windows did not remove " + ip + ": " + err.Error()
-			return answered(reply, own)
+		return append(own, ip), ""
+	case op == OpRemove && present:
+		if err := ops.Remove(view, ip); err != nil {
+			return own, "Windows did not remove " + ip + ": " + err.Error()
 		}
-		own = without(own, ip)
+		return without(own, ip), ""
 	}
-	reply.OK = true
-	return answered(reply, own)
+	return own, ""
 }
 
 func answered(reply Reply, addresses []string) Reply {

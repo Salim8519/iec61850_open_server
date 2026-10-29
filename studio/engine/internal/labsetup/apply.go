@@ -133,20 +133,22 @@ func (s *Service) EnsureForRun(guid string, starting []string) {
 	if err != nil {
 		return
 	}
-	reply, err := s.Windows.Call(labnet.Request{Op: labnet.OpStatus})
+	reply, err := s.call(labnet.Request{Op: labnet.OpStatus})
 	if err != nil || !reply.OK {
 		return
 	}
+	var missing []wanted
 	for _, ied := range ieds {
 		if ied.LabIP != "" && contains(starting, ied.ID) && !contains(reply.Addresses, ied.LabIP) {
-			s.add(ied.LabIP, ied.Name, card)
+			missing = append(missing, wanted{ied.LabIP, ied.Name})
 		}
 	}
+	s.addAll(missing, card)
 }
 
 // add asks the service for one address and journals the answer.
 func (s *Service) add(address, name, card string) error {
-	reply, err := s.Windows.Call(labnet.Request{Op: labnet.OpAdd, IP: address})
+	reply, err := s.call(labnet.Request{Op: labnet.OpAdd, IP: address})
 	if err != nil {
 		return plain(err.Error())
 	}
@@ -160,7 +162,7 @@ func (s *Service) add(address, name, card string) error {
 }
 
 func (s *Service) remove(address, name, card string) {
-	reply, err := s.Windows.Call(labnet.Request{Op: labnet.OpRemove, IP: address})
+	reply, err := s.call(labnet.Request{Op: labnet.OpRemove, IP: address})
 	if err != nil {
 		return
 	}

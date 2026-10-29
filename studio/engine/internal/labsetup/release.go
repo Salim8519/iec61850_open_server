@@ -21,7 +21,7 @@ func (s *Service) Release() {
 	if _, running := s.Windows.State(); !running {
 		return
 	}
-	reply, err := s.Windows.Call(labnet.Request{Op: labnet.OpStatus})
+	reply, err := s.call(labnet.Request{Op: labnet.OpStatus})
 	if err != nil || !reply.OK || len(reply.Addresses) == 0 {
 		return
 	}
@@ -41,9 +41,13 @@ func (s *Service) Release() {
 			}
 		}
 	}
+	var off []string
 	for _, address := range reply.Addresses {
-		if !keep[address] {
-			s.remove(address, "", card)
+		// Only addresses the service could have added: Windows gives the card itself a 169.254.x
+		// address, which the service refuses (ADR-0128).
+		if _, err := labnet.ParseAddress(address); err == nil && !keep[address] {
+			off = append(off, address)
 		}
 	}
+	s.removeAll(off, card)
 }

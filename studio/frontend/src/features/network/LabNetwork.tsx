@@ -74,6 +74,10 @@ export function LabNetwork({ locked, perform, mode, onUsed, extra }: {
     {working === 'create' && <p className="small muted" style={{ margin: 0 }}>{LAB_COPY.creating}</p>}
     {error && <div className="error-banner" role="alert"><span>{error}</span></div>}
     {status.installed && status.problem && <p className="small" style={{ margin: 0 }}>{status.problem}</p>}
+    {status.installed && !status.problem && status.service_update && <p className="small" style={{ margin: 0 }}>
+      {LAB_COPY.serviceUpdate}{' '}<button className="link-button" disabled={busy || locked} onClick={create}
+        title={locked ? LAB_COPY.serviceUpdateStopFirst : LAB_COPY.serviceUpdateHint}>
+        {working === 'create' && <SpinIcon size={14} />}{LAB_COPY.repair}</button></p>}
     {status.installed && status.rows.length > 0 && <details className="disclosure" open={attention || undefined}>
       <summary><ChevronRight size={16} aria-hidden />{LAB_COPY.show(status.rows.length)}</summary>
       <div className="disclosure-body lab-body">

@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/pyval"
@@ -43,10 +44,27 @@ type modeDevice struct {
 	beh [][2]string // (Beh reference, own Mod reference)
 }
 
+// modeCache keeps modePoints for one model: they depend only on its references, which never
+// change, and every Mod write asks for them (ADR-0129: 7 s of regular expressions per Run).
+type modeCache struct {
+	once       sync.Once
+	devices    map[string]*modeDevice
+	simulation []string
+}
+
+// modePoints are the model's mode devices and Sim points. Callers only read them.
 func modePoints(model *iedModel) (map[string]*modeDevice, []string) {
-	refs := make([]string, 0, len(model.index))
+	model.modes.once.Do(func() { model.modes.devices, model.modes.simulation = findModePoints(model) })
+	return model.modes.devices, model.modes.simulation
+}
+
+func findModePoints(model *iedModel) (map[string]*modeDevice, []string) {
+	// Only a Beh or Sim stVal can match: the patterns run on those few, in the same sorted order.
+	refs := []string{}
 	for ref := range model.index {
-		refs = append(refs, ref)
+		if strings.HasSuffix(ref, ".Beh.stVal") || strings.HasSuffix(ref, ".Sim.stVal") {
+			refs = append(refs, ref)
+		}
 	}
 	sort.Strings(refs)
 	devices := map[string]*modeDevice{}

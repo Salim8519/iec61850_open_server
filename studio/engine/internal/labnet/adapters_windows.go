@@ -33,14 +33,23 @@ func (a Adapter) Addresses() []string {
 	return addresses
 }
 
+// gaaSkipDNSInfo is GAA_FLAG_SKIP_DNS_INFO (iptypes.h; not in x/sys): without it every listing
+// asks the Windows DNS Client about every adapter, which nothing here reads (ADR-0128).
+const gaaSkipDNSInfo = 0x800
+
+// listFlags are what every listing asks for: unicast IPv4 addresses, names and states only.
+const listFlags = windows.GAA_FLAG_SKIP_ANYCAST | windows.GAA_FLAG_SKIP_MULTICAST |
+	windows.GAA_FLAG_SKIP_DNS_SERVER | gaaSkipDNSInfo
+
 // ListAdapters reads every adapter with its IPv4 addresses through GetAdaptersAddresses.
-func ListAdapters() ([]Adapter, error) {
+func ListAdapters() ([]Adapter, error) { return listAdapters(listFlags) }
+
+func listAdapters(flags uint32) ([]Adapter, error) {
 	size := uint32(16 * 1024)
 	for attempt := 0; attempt < 4; attempt++ {
 		buffer := make([]byte, size)
 		first := (*windows.IpAdapterAddresses)(unsafe.Pointer(&buffer[0]))
-		err := windows.GetAdaptersAddresses(windows.AF_INET, windows.GAA_FLAG_SKIP_ANYCAST|
-			windows.GAA_FLAG_SKIP_MULTICAST|windows.GAA_FLAG_SKIP_DNS_SERVER, 0, first, &size)
+		err := windows.GetAdaptersAddresses(windows.AF_INET, flags, 0, first, &size)
 		if err == windows.ERROR_BUFFER_OVERFLOW {
 			continue
 		}

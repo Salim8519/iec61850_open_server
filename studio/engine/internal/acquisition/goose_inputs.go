@@ -46,6 +46,7 @@ func (g *GooseInputs) Prepare(ieds []*pyjson.Object, watches *pyjson.Object) {
 		byID[pyv.GetStr(ied, "id")] = ied
 	}
 	routes := map[string][]inputRoute{}
+	binder := goosedom.NewBinder()
 	for _, key := range watches.Keys() {
 		watch := pyv.GetObj(watches, key)
 		gocbRef := pyv.Get(watch, "gocb_ref")
@@ -66,7 +67,7 @@ func (g *GooseInputs) Prepare(ieds []*pyjson.Object, watches *pyjson.Object) {
 				subscriber.Set("applied_inputs", int64(0)).Set("input_problems", []any{"Inputs not applied: " + err.Error()})
 				continue
 			}
-			bindings, problems := goosedom.BindInputs(ied, subscription)
+			bindings, problems := binder.Bind(ied, subscription)
 			if len(problems) > 20 {
 				problems = problems[:20]
 			}

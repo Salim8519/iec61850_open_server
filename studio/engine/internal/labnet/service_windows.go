@@ -9,8 +9,9 @@ import (
 	"golang.org/x/sys/windows/svc"
 )
 
-// ProtocolVersion is the pipe protocol the app and the service speak.
-const ProtocolVersion = "1"
+// ProtocolVersion is the pipe protocol the app and the service speak (2: several addresses in one
+// request, ADR-0128).
+const ProtocolVersion = "2"
 
 // RunService runs the lab network service under the Service Control Manager.
 func RunService() error {

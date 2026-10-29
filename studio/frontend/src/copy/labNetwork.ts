@@ -21,6 +21,10 @@ export const LAB_COPY = {
     + 'no download, no restart) and a small service, so addresses can change later without asking again.',
   creating: 'Waiting for Windows: approve the permission prompt (UAC). It may be behind this window.',
   repair: 'Repair',
+  // ADR-0128: the installed service still changes one address at a time.
+  serviceUpdate: 'Start and Stop can be faster: press Repair to update the lab network service.',
+  serviceUpdateHint: 'One Windows prompt. The service then puts all addresses on the card in one step.',
+  serviceUpdateStopFirst: 'Stop the simulation, then press Repair.',
   editHint: 'Type another address and press Enter. A running IED moves to it at once. The SCL file is never changed.',
   use: 'Use the lab network',
   useHint: 'No Windows prompt. The addresses go on the lab card when you press Start and come off when you stop.',

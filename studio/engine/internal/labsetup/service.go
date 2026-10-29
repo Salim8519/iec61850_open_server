@@ -3,6 +3,7 @@ package labsetup
 import (
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"studio-engine/internal/labnet"
 	"studio-engine/internal/netcfg"
@@ -50,8 +51,9 @@ type Service struct {
 	Journal   *netcfg.Journal
 	NewID     func() string
 
-	change sync.Mutex // one address change at a time
-	card   sync.Mutex // Run's adds and Release's removals never overlap
+	change  sync.Mutex   // one address change at a time
+	card    sync.Mutex   // Run's adds and Release's removals never overlap
+	version atomic.Value // the service's protocol version from its last answer (ADR-0128)
 }
 
 // Status is GET /network/lab.
@@ -69,6 +71,9 @@ type Status struct {
 	Checking    bool     `json:"checking"`
 	Problem     string   `json:"problem,omitempty"`
 	CardIPs     []string `json:"card_addresses"`
+	// ServiceUpdate: the service still speaks protocol 1, one address per request; Repair installs
+	// the one that takes them all at once (ADR-0128).
+	ServiceUpdate bool `json:"service_update"`
 }
 
 // Status reads Windows and the project and decides every row; ARP answers that are missing are
@@ -92,6 +97,9 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 		}
 	}
 	status.Ready = status.Running && status.CardPresent
+	if version := s.serviceVersion(); status.Ready && version != "" && !labnet.Batched(version) {
+		status.ServiceUpdate = true
+	}
 	mode, guid := s.Projects.Network()
 	status.Active = mode == "lab" && status.Card != "" && strings.EqualFold(guid, status.Card)
 	status.IEDsRunning = len(s.Runtime.Running()) > 0

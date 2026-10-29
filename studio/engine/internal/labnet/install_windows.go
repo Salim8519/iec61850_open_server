@@ -92,12 +92,14 @@ func Uninstall(removeCard bool) error {
 	return nil
 }
 
-// configureCard names the card, keeps it last in route choice, turns DHCP and IPv6 off.
+// configureCard names the card, keeps it last in route choice, turns DHCP and IPv6 off and stops
+// the DNS Client registering its addresses (it never uses DNS; ADR-0128).
 func configureCard(guid string) error {
 	script := "$ErrorActionPreference='Stop'; $a = Get-NetAdapter -IncludeHidden | Where-Object { " +
 		"$_.InterfaceGuid -eq '" + guid + "' }; if (-not $a) { throw 'card not found' }; " +
 		"if ($a.Name -ne '" + CardName + "') { Rename-NetAdapter -InputObject $a -NewName '" + CardName + "' }; " +
 		"Set-NetIPInterface -InterfaceIndex $a.ifIndex -AddressFamily IPv4 -InterfaceMetric 9999 -Dhcp Disabled; " +
+		"Set-DnsClient -InterfaceIndex $a.ifIndex -RegisterThisConnectionsAddress $false; " +
 		"Disable-NetAdapterBinding -Name '" + CardName + "' -ComponentID ms_tcpip6"
 	command := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
 	command.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}

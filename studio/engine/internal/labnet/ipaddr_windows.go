@@ -3,6 +3,7 @@
 package labnet
 
 import (
+	"errors"
 	"net/netip"
 	"strings"
 	"unsafe"
@@ -29,54 +30,45 @@ const (
 // the IP Helper API. CreateUnicastIpAddressEntry keeps an address until Windows restarts.
 type WindowsOps struct{}
 
-// Card reads the GUID the installer stored and checks that this KM-TEST card exists now.
-func (WindowsOps) Card() (string, error) {
+// Read takes the GUID the installer stored, lists the adapters once and checks that this KM-TEST
+// card exists now.
+func (WindowsOps) Read() (View, error) {
 	key, err := registry.OpenKey(registry.LOCAL_MACHINE, ParametersKey, registry.QUERY_VALUE)
 	if err != nil {
-		return "", ErrNoCard
+		return View{}, ErrNoCard
 	}
 	defer key.Close()
 	guid, _, err := key.GetStringValue(CardValue)
 	if err != nil || guid == "" {
-		return "", ErrNoCard
+		return View{}, ErrNoCard
 	}
-	adapter, err := find(guid)
-	if err != nil {
-		return "", err
-	}
-	if !IsCard(adapter.Description) {
-		return "", ErrNoCard
-	}
-	return adapter.GUID, nil
-}
-
-// Addresses lists IPv4 addresses by adapter GUID.
-func (WindowsOps) Addresses() (map[string][]string, error) {
 	adapters, err := ListAdapters()
 	if err != nil {
-		return nil, err
+		return View{}, errors.New("Windows did not list the network addresses: " + err.Error())
 	}
-	all := map[string][]string{}
+	view := View{Addresses: map[string][]string{}, Names: map[string]string{}}
 	for _, adapter := range adapters {
-		all[adapter.GUID] = adapter.Addresses()
+		view.Addresses[adapter.GUID], view.Names[adapter.GUID] = adapter.Addresses(), adapter.Name
+		if strings.EqualFold(adapter.GUID, guid) && IsCard(adapter.Description) {
+			view.Card, view.Index, view.LUID = adapter.GUID, adapter.Index, adapter.LUID
+		}
 	}
-	return all, nil
+	if view.Card == "" {
+		return View{}, ErrNoCard
+	}
+	return view, nil
 }
 
-// Names maps GUIDs to Windows adapter names.
-func (WindowsOps) Names() map[string]string {
-	names := map[string]string{}
-	adapters, _ := ListAdapters()
-	for _, adapter := range adapters {
-		names[adapter.GUID] = adapter.Name
-	}
-	return names
+// Card is the lab card's GUID when it exists now (Install keeps an existing card).
+func (ops WindowsOps) Card() (string, error) {
+	view, err := ops.Read()
+	return view.Card, err
 }
 
 // Add puts ip/32 on the card: preferred at once (no duplicate-address wait), usable as a
 // source address so ping and clients without an explicit bind work (ADR-0120).
-func (WindowsOps) Add(card, ip string) error {
-	row, err := rowFor(card, ip)
+func (WindowsOps) Add(view View, ip string) error {
+	row, err := rowFor(view, ip)
 	if err != nil {
 		return err
 	}
@@ -84,19 +76,15 @@ func (WindowsOps) Add(card, ip string) error {
 }
 
 // Remove takes ip off the card.
-func (WindowsOps) Remove(card, ip string) error {
-	row, err := rowFor(card, ip)
+func (WindowsOps) Remove(view View, ip string) error {
+	row, err := rowFor(view, ip)
 	if err != nil {
 		return err
 	}
 	return status(procDeleteUnicastIpAddressEntry.Call(uintptr(unsafe.Pointer(row))))
 }
 
-func rowFor(card, ip string) (*windows.MibUnicastIpAddressRow, error) {
-	adapter, err := find(card)
-	if err != nil {
-		return nil, err
-	}
+func rowFor(view View, ip string) (*windows.MibUnicastIpAddressRow, error) {
 	address, err := netip.ParseAddr(ip)
 	if err != nil || !address.Is4() {
 		return nil, ErrAddress
@@ -106,7 +94,7 @@ func rowFor(card, ip string) (*windows.MibUnicastIpAddressRow, error) {
 	inet := (*windows.RawSockaddrInet4)(unsafe.Pointer(&row.Address))
 	inet.Family = windows.AF_INET
 	inet.Addr = address.As4()
-	row.InterfaceLuid, row.InterfaceIndex = adapter.LUID, adapter.Index
+	row.InterfaceLuid, row.InterfaceIndex = view.LUID, view.Index
 	row.PrefixOrigin, row.SuffixOrigin = ipPrefixOriginManual, ipSuffixOriginManual
 	row.ValidLifetime, row.PreferredLifetime = infinite, infinite
 	row.OnLinkPrefixLength, row.SkipAsSource, row.DadState = 32, 0, ipDadStatePreferred
@@ -118,18 +106,4 @@ func status(code, _ uintptr, _ error) error {
 		return nil
 	}
 	return windows.Errno(code)
-}
-
-// find returns the adapter with this GUID.
-func find(guid string) (Adapter, error) {
-	adapters, err := ListAdapters()
-	if err != nil {
-		return Adapter{}, err
-	}
-	for _, adapter := range adapters {
-		if strings.EqualFold(adapter.GUID, guid) {
-			return adapter, nil
-		}
-	}
-	return Adapter{}, ErrNoCard
 }

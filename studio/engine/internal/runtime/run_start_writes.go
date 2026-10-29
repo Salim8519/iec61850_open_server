@@ -29,6 +29,7 @@ func (c *Coordinator) publishBindings(project *pyjson.Object, only map[string]bo
 	for _, binding := range goOnlyRowBindings(project) {
 		add(binding)
 	}
+	var plan []*snapshotRead
 	for _, binding := range bindings {
 		target := c.simulatedRun(binding.IedID)
 		if binding.IedID == "" || binding.Ref == "" || target == nil || (only != nil && !only[binding.IedID]) {
@@ -44,33 +45,31 @@ func (c *Coordinator) publishBindings(project *pyjson.Object, only map[string]bo
 				refs = append(refs, companion)
 			}
 		}
-		values := pyjson.NewObject()
-		err := target.do(func() error {
-			for _, ref := range refs {
-				value, err := target.worker.Read(ref)
-				if err != nil {
-					return err
-				}
-				values.Set(ref, value)
-			}
-			return nil
-		})
-		if err != nil {
+		plan = append(plan, &snapshotRead{binding: binding, target: target, qualityRef: info.QualityRef,
+			stampRef: info.TimestampRef, refs: refs})
+	}
+	readSnapshots(plan) // all IEDs at once, each IED's reads overlapped (ADR-0129)
+	for _, read := range plan {
+		if err := read.failure(); err != nil {
 			return err
+		}
+		values := pyjson.NewObject()
+		for index, ref := range read.refs {
+			values.Set(ref, read.values[index])
 		}
 		for _, ref := range values.Keys() {
 			value, _ := values.Get(ref)
-			target.table.set(ref, value)
+			read.target.table.set(ref, value)
 		}
 		quality, timestamp := any(int64(0)), any(int64(0))
-		if value, ok := values.Get(info.QualityRef); ok && info.QualityRef != "" {
+		if value, ok := values.Get(read.qualityRef); ok && read.qualityRef != "" {
 			quality = value
 		}
-		if value, ok := values.Get(info.TimestampRef); ok && info.TimestampRef != "" {
+		if value, ok := values.Get(read.stampRef); ok && read.stampRef != "" {
 			timestamp = value
 		}
-		value, _ := values.Get(binding.Ref)
-		c.emit("signal", pyval.Obj("ied_id", binding.IedID, "ref", binding.Ref, "value", value, "quality", quality,
+		value, _ := values.Get(read.binding.Ref)
+		c.emit("signal", pyval.Obj("ied_id", read.binding.IedID, "ref", read.binding.Ref, "value", value, "quality", quality,
 			"source_timestamp", timestamp, "source", "initial_native_snapshot", "updates", values))
 	}
 	c.plant.publishAll()

@@ -14,6 +14,7 @@ type iedModel struct {
 	signals        []signal.Signal
 	rawSignals     []*pyjson.Object
 	index          map[string]int32
+	modes          modeCache // modePoints, worked out once (the model never changes)
 }
 
 func newIedModel(raw *pyjson.Object) *iedModel {

@@ -71,7 +71,23 @@ func (t signalTable) target(intAddr any, ld any) (string, string) {
 // source_ref}; an input is applied only when its intAddr names exactly one
 // runtime-editable data attribute (ADR-0066).
 func BindInputs(ied, subscription *pyjson.Object) ([]Binding, []string) {
-	signals := newSignalTable(objects(ied, "signals"))
+	return NewBinder().Bind(ied, subscription)
+}
+
+// Binder binds several subscriptions and reads each subscriber IED's signals once: an IED with
+// many subscriptions no longer rebuilds its whole signal map for each (ADR-0129).
+type Binder struct{ tables map[*pyjson.Object]signalTable }
+
+// NewBinder is a Binder for one preparation of the GOOSE inputs.
+func NewBinder() *Binder { return &Binder{tables: map[*pyjson.Object]signalTable{}} }
+
+// Bind is BindInputs with the subscriber's signal map kept for the next subscription.
+func (b *Binder) Bind(ied, subscription *pyjson.Object) ([]Binding, []string) {
+	signals, found := b.tables[ied]
+	if !found {
+		signals = newSignalTable(objects(ied, "signals"))
+		b.tables[ied] = signals
+	}
 	domain := ""
 	if ref := pyv.Get(subscription, "dataset_ref"); pyv.Truthy(ref) {
 		domain = strings.SplitN(pyv.PyStr(ref), "/", 2)[0]

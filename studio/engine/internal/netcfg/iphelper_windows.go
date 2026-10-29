@@ -65,11 +65,14 @@ type ipAdapterAddresses struct {
 	FirstGatewayAddress   uintptr
 }
 
+// listingFlags are the GetAdaptersAddresses flags (a variable so a test can compare listings).
+var listingFlags uintptr = gaaFlags
+
 func adapterBuffer() (*ipAdapterAddresses, error) {
 	size := uint32(64 * 1024)
 	for attempt := 0; attempt < 3; attempt++ {
 		buffer := make([]byte, size)
-		result, _, _ := procGetAdaptersAddresses.Call(afInet, gaaFlags, 0,
+		result, _, _ := procGetAdaptersAddresses.Call(afInet, listingFlags, 0,
 			uintptr(unsafe.Pointer(&buffer[0])), uintptr(unsafe.Pointer(&size)))
 		if result == 0 {
 			return (*ipAdapterAddresses)(unsafe.Pointer(&buffer[0])), nil
