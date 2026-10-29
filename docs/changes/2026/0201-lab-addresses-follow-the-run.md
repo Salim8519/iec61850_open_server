@@ -31,6 +31,11 @@ Decision: [ADR-0127](../../decisions/ADR-0127-lab-addresses-follow-the-run.md).
   - Independent client: TCP 102 connected on 10.77.0.12 and 10.77.0.21 while running.
   - Hard kill while running left both addresses; the next launch removed them.
   - Normal exit (Ctrl+Break) while running: exit in 4.1 s, code 0, card empty.
+- Release 0.1.29 (owner: "deploy version 0.1.29"): installer 366f4712, portable cc4b6f65; portable
+  self-test ok; packaged app on the real card: card empty after Use, both addresses while running,
+  empty after Stop. Live `/download/ScadaBench-Setup.exe` and the portable link serve these exact
+  files; release record saved for 0.1.29; changelog live. Unsigned as before. Built with
+  `studio/.venv` Python (system Python has no Flask) and website with Node 22.23 (pi-node).
 
 ## Limitations
 
