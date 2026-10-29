@@ -55,7 +55,11 @@ func (c *Coordinator) addWorkers(batch []*running, network *pyjson.Object, curre
 	}
 	var allowed []string
 	if pyval.Str(network, "mode") == "lab" {
-		addresses, err := c.opt.LabAddresses(pyval.Str(network, "adapter_guid"))
+		starting := make([]string, len(batch))
+		for i, item := range batch {
+			starting[i] = item.model.id
+		}
+		addresses, err := c.opt.LabAddresses(pyval.Str(network, "adapter_guid"), starting)
 		if err != nil {
 			return err // not an apperr: Flask's generic 500, its text in the runtime event
 		}

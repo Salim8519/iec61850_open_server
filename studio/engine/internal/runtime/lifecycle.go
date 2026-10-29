@@ -165,6 +165,7 @@ func (c *Coordinator) start(ids []string) error {
 		c.setStateLocked("stopped")
 		c.active, c.runs = map[string]bool{}, map[string]*running{}
 		c.mu.Unlock()
+		c.opt.LabRelease()
 		c.emit("runtime", pyval.Obj("state", "stopped", "message", errorText(err)))
 		if log := c.setLog(nil); log != nil {
 			log.Close()

@@ -22,9 +22,13 @@ type Options struct {
 	Bus       Bus
 	Project   Project
 	Live      Live
-	// LabAddresses lists the IPv4 addresses on the lab adapter (ip_helper.addresses_on); its
-	// error fails the Run like the OSError Python raised.
-	LabAddresses func(adapterGUID string) ([]string, error)
+	// LabAddresses lists the IPv4 addresses on the lab adapter (ip_helper.addresses_on) after
+	// the addresses of the IEDs about to start were put on it (ADR-0127); its error fails the
+	// Run like the OSError Python raised.
+	LabAddresses func(adapterGUID string, starting []string) ([]string, error)
+	// LabRelease takes the lab card addresses of IEDs that no longer run off the card
+	// (ADR-0127); the coordinator calls it after IEDs stop. nil does nothing.
+	LabRelease func()
 	// CommandKeep is how long a canvas command's MMS association stays open for the next
 	// command to the same IED; 0 closes it after each command like studio_probe did.
 	CommandKeep time.Duration
@@ -91,7 +95,10 @@ func New(opt Options) *Coordinator {
 		opt.Live = NoLive{}
 	}
 	if opt.LabAddresses == nil {
-		opt.LabAddresses = func(string) ([]string, error) { return nil, nil }
+		opt.LabAddresses = func(string, []string) ([]string, error) { return nil, nil }
+	}
+	if opt.LabRelease == nil {
+		opt.LabRelease = func() {}
 	}
 	c := &Coordinator{opt: opt, epoch: time.Now(), state: "stopped", active: map[string]bool{},
 		runs: map[string]*running{}, srcs: map[sourceKey]*source{}, iedStates: map[string]string{},

@@ -21,8 +21,9 @@ func (s *Service) ready(status Status) error {
 	return nil
 }
 
-// Use is POST /network/lab/use {"addresses": {ied_id: ip}}: every simulated IED gets its address
-// on the card and the project switches to the card. Run must be stopped (a network change).
+// Use is POST /network/lab/use {"addresses": {ied_id: ip}}: every simulated IED keeps its checked
+// address and the project switches to the card. The addresses go on the card at Run (ADR-0127).
+// Run must be stopped (a network change).
 func (s *Service) Use(chosen map[string]string) (Status, error) {
 	s.change.Lock()
 	defer s.change.Unlock()
@@ -39,26 +40,17 @@ func (s *Service) Use(chosen map[string]string) (Status, error) {
 	if len(status.Rows) == 0 {
 		return status, plain("No IED is set to 'Simulate', so there is nothing to put on the lab network.")
 	}
-	wanted, addresses := map[string]bool{}, map[string]string{}
+	addresses := map[string]string{}
 	for _, row := range status.Rows {
 		if row.Blocking() {
 			return status, plain(row.Name + ": " + row.Hint)
 		}
-		wanted[row.IP], addresses[row.IEDID] = true, row.IP
-	}
-	for _, row := range status.Rows {
-		if err := s.add(row.IP, row.Name, status.Card); err != nil {
-			return status, err
-		}
-	}
-	for _, address := range status.CardIPs {
-		if _, kept := s.Projects.Reserved()[address]; !wanted[address] && !kept {
-			s.remove(address, "", status.Card) // an address no IED uses any more; failure is harmless
-		}
+		addresses[row.IEDID] = row.IP
 	}
 	if err := s.Projects.UseCard(addresses, status.Card, labnet.CardName); err != nil {
 		return status, err
 	}
+	s.Release() // addresses left from before (nothing runs now)
 	return s.Status(nil)
 }
 
@@ -93,31 +85,20 @@ func (s *Service) SetAddress(id, address string) (Status, error) {
 	if err != nil {
 		return status, err
 	}
-	old, users := "", map[string]int{}
 	for _, ied := range ieds {
-		if ied.ID == id {
-			old = ied.LabIP
-		} else if ied.LabIP != "" {
-			users[ied.LabIP]++
+		if ied.ID == id && ied.LabIP == row.IP {
+			return s.Status(nil)
 		}
 	}
-	if old == row.IP {
-		return s.Status(nil)
-	}
+	// Stop takes the old address off the card and Start puts the new one on (ADR-0127).
 	running := contains(s.Runtime.Running(), id)
 	if running {
 		if err := s.Runtime.Stop([]string{id}); err != nil {
 			return status, err
 		}
 	}
-	if err := s.add(row.IP, row.Name, status.Card); err != nil {
-		return status, s.restart(running, id, err)
-	}
 	if err := s.Projects.SetLabIP(id, row.IP); err != nil {
 		return status, s.restart(running, id, err)
-	}
-	if old != "" && users[old] == 0 {
-		s.remove(old, row.Name, status.Card)
 	}
 	if running {
 		if err := s.Runtime.Start([]string{id}); err != nil {
@@ -135,10 +116,12 @@ func (s *Service) restart(running bool, id string, failure error) error {
 	return failure
 }
 
-// EnsureForRun puts every simulated IED's stored address back on the card before Run (they are
-// gone after Windows restarts). It does nothing unless the project uses the card and the service
-// answers; the usual Run check reports anything still missing.
-func (s *Service) EnsureForRun(guid string) {
+// EnsureForRun puts the stored addresses of the IEDs about to start on the card (ADR-0127: an
+// address is on the card only while its IED runs). It does nothing unless the project uses the
+// card and the service answers; the usual Run check reports anything still missing.
+func (s *Service) EnsureForRun(guid string, starting []string) {
+	s.card.Lock()
+	defer s.card.Unlock()
 	card := s.Windows.Card()
 	if card == "" || !strings.EqualFold(card, guid) {
 		return
@@ -155,7 +138,7 @@ func (s *Service) EnsureForRun(guid string) {
 		return
 	}
 	for _, ied := range ieds {
-		if ied.LabIP != "" && !contains(reply.Addresses, ied.LabIP) {
+		if ied.LabIP != "" && contains(starting, ied.ID) && !contains(reply.Addresses, ied.LabIP) {
 			s.add(ied.LabIP, ied.Name, card)
 		}
 	}

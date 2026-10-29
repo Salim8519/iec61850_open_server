@@ -43,7 +43,7 @@ export function LabRowView({ row, typed, setTyped, commit, busy }: {
       {ping && <span className="small mono" role="status">{pingWords(ping.address, ping.answer)}</span>}
     </div></td>
     <td><button disabled={!row.on_card || pinging} onClick={doPing}
-      title={row.on_card ? `Ping ${row.ip} from this PC` : 'Ping works once the address is on the lab network card'}>
+      title={row.on_card ? `Ping ${row.ip} from this PC` : LAB_COPY.pingAfterStart}>
       {pinging ? <SpinIcon size={14} /> : <Activity size={14} />}{LAB_COPY.ping}</button></td>
   </tr>;
 }

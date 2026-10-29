@@ -21,14 +21,15 @@ export const LAB_COPY = {
     + 'no download, no restart) and a small service, so addresses can change later without asking again.',
   creating: 'Waiting for Windows: approve the permission prompt (UAC). It may be behind this window.',
   repair: 'Repair',
-  editHint: 'Type another address and press Enter; it changes at once, even while running. The SCL file is never changed.',
+  editHint: 'Type another address and press Enter. A running IED moves to it at once. The SCL file is never changed.',
   use: 'Use the lab network',
-  useHint: 'No Windows prompt: the lab network service adds the addresses.',
+  useHint: 'No Windows prompt. The addresses go on the lab card when you press Start and come off when you stop.',
   stopFirst: 'Stop the run to switch the network.',
   show: (count: number) => `Show the ${count} ${count === 1 ? 'address' : 'addresses'}`,
   remove: 'Remove the lab network card',
   removeHint: 'Removes the card, its addresses and the service (one Windows prompt). Your IEDs go back to this PC only.',
   ping: 'Ping',
+  pingAfterStart: 'Press Start, then ping. The address is on the lab card only while its IED runs.',
   backToFile: 'Use file address',
   onceHint: 'First time only: Windows asks once to add the card.',
   // The network card list (ADR-0121): the two choices that keep everything on this PC.
@@ -45,7 +46,8 @@ export function labSummary(status: LabStatus) {
   const ieds = `${count} ${count === 1 ? 'IED' : 'IEDs'}`;
   const attention = status.rows.filter(row => !['ok', 'same_range', 'checking'].includes(row.status)).length;
   const note = attention ? ` ${attention} ${attention === 1 ? 'needs' : 'need'} attention.` : '';
-  if (status.active) return `In use: ${ieds} answer at their own addresses on this PC.${note}`;
+  if (status.active && status.ieds_running) return `In use: ${ieds} answer at their own addresses on this PC.${note}`;
+  if (status.active) return `Set: ${ieds} answer at their own addresses on this PC while the simulation runs.${note}`;
   return `Ready: ${ieds} can answer at their SCL addresses on this PC, without a VM.${note}`;
 }
 

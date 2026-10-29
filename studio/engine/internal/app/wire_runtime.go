@@ -20,7 +20,7 @@ func (e *Engine) wireRuntime(bus *events.Bus) *liveAdapter {
 	live := &liveAdapter{}
 	e.Runtime = runtime.New(runtime.Options{NativeDir: o.NativeDir, DataDir: o.DataDir,
 		Bus: runtimeBus{bus: bus, logf: o.Logf}, Project: e.Projects, Live: live,
-		LabAddresses: e.labAddresses, CommandKeep: o.CommandKeep, Version: o.Version})
+		LabAddresses: e.labAddresses, LabRelease: e.labRelease, CommandKeep: o.CommandKeep, Version: o.Version})
 	return live
 }
 
@@ -32,11 +32,18 @@ func (e *Engine) runtimeRoutes() []api.Route {
 
 // labAddresses puts the lab card's addresses back first when the project uses that card
 // (ADR-0120: they are gone after Windows restarts), then lists the adapter's addresses.
-func (e *Engine) labAddresses(guid string) ([]string, error) {
+func (e *Engine) labAddresses(guid string, starting []string) ([]string, error) {
 	if e.Lab != nil {
-		e.Lab.EnsureForRun(guid)
+		e.Lab.EnsureForRun(guid, starting)
 	}
 	return labAddresses(guid)
+}
+
+// labRelease takes the addresses of IEDs that stopped off the lab card (ADR-0127).
+func (e *Engine) labRelease() {
+	if e.Lab != nil {
+		e.Lab.Release()
+	}
 }
 
 // addressesOn is the IP Helper lookup (a variable so a test can make it fail).

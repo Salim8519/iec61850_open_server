@@ -7,6 +7,9 @@ and its network, prevent clashes, zero headache during installation. Amends
 [ADR-0029](ADR-0029-lab-network-and-format-11.md) (lab mode) for one adapter only. Change
 [0192](../changes/2026/0192-this-pc-lab-network.md). Go engine.
 
+Amended by [ADR-0127](ADR-0127-lab-addresses-follow-the-run.md): an IED's address is on the card
+only while the IED runs (Use stores, Run adds, Stop/exit/launch remove).
+
 ## Problem
 
 To test IEDs at their real SCL addresses the owner needed a VM: loopback mode only offers

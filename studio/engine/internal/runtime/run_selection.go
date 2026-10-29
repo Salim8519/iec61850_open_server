@@ -138,4 +138,5 @@ func (c *Coordinator) forget(items []*running) {
 	c.dropSources(ids)
 	c.mu.Unlock()
 	c.access.forget(list)
+	c.opt.LabRelease()
 }

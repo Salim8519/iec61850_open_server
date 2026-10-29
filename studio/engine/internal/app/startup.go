@@ -33,6 +33,16 @@ func (e *Engine) startBackground(ctx context.Context) {
 	e.License.StartBackgroundVerify()
 	e.Updates.StartBackground(ctx)
 	go e.resumeGateway(ctx)
+	go e.releaseLeftLab()
+}
+
+// releaseLeftLab takes off the lab card the IED addresses an earlier session left there (closed
+// by Task Manager or a crash; ADR-0127). Nothing runs yet, so only the gateway's and the master's
+// own addresses stay; a Run that starts first waits for the cycle lock.
+func (e *Engine) releaseLeftLab() {
+	if e.Lab != nil && e.Runtime != nil {
+		_ = e.Runtime.Stopped(func() error { e.Lab.Release(); return nil })
+	}
 }
 
 // resumeGateway is _resume_gateway: a gateway or master that was running when the app

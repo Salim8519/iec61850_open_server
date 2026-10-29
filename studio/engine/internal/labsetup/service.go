@@ -51,6 +51,7 @@ type Service struct {
 	NewID     func() string
 
 	change sync.Mutex // one address change at a time
+	card   sync.Mutex // Run's adds and Release's removals never overlap
 }
 
 // Status is GET /network/lab.
