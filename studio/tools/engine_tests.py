@@ -5,11 +5,10 @@ Python (STUDIO_PYTHON). Usage: python studio/tools/engine_tests.py [--cases N]
 """
 from pathlib import Path
 import argparse
-import os
 import subprocess
 import sys
 
-from build_goose_engine import go_command
+from build_goose_engine import go_command, test_environment
 
 STUDIO = Path(__file__).resolve().parents[1]
 ENGINE = STUDIO / "engine"
@@ -18,12 +17,13 @@ VENV_PYTHON = STUDIO / ".venv/Scripts/python.exe"  # has Flask; a bare system Py
 
 def test(cases=None):
     python = VENV_PYTHON if VENV_PYTHON.exists() else Path(sys.executable)
-    environment = {**os.environ, "CGO_ENABLED": "0", "STUDIO_PYTHON": str(python)}
+    environment = {**test_environment(), "STUDIO_PYTHON": str(python)}
     if cases:
         environment["PYJSON_CASES"] = str(cases)
     # -trimpath: the antivirus here refuses some untrimmed test binaries ("Access is denied");
-    # -p 2 keeps the laptop usable while the suite runs.
-    command = [go_command(), "test", "-trimpath", "-p", "2", "./...", "-timeout", "60m"]
+    # -p 8: most packages wait on Python, PowerShell or servers, so the full run takes about
+    # 2 minutes instead of 10.6 with -p 2 (change 0203).
+    command = [go_command(), "test", "-trimpath", "-p", "8", "./...", "-timeout", "60m"]
     completed = subprocess.run(command, cwd=ENGINE,
                                env=environment, capture_output=True, text=True)
     if completed.returncode:

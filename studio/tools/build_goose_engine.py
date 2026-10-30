@@ -14,6 +14,7 @@ import sys
 STUDIO = Path(__file__).resolve().parents[1]
 ENGINE = STUDIO / "goose_engine"
 OUTPUT = STUDIO / "native/build/Release/studio_goose.exe"
+GO_TEMP = STUDIO.parent / ".local/gotmp"  # git-ignored
 
 
 def go_command():
@@ -43,10 +44,18 @@ def run(arguments, environment):
         raise SystemExit(f"{' '.join(arguments[1:3])} failed with exit code {completed.returncode}.")
 
 
+def test_environment():
+    """Environment for verify's Go tests: no cgo, and test executables and test temp folders
+    under .local, which the antivirus here leaves alone; in %TEMP% it randomly refuses fresh
+    executables and holds files open (changes 0157, 0171, 0203)."""
+    GO_TEMP.mkdir(parents=True, exist_ok=True)
+    folder = str(GO_TEMP)
+    return {**os.environ, "CGO_ENABLED": "0", "GOTMPDIR": folder, "TEMP": folder, "TMP": folder}
+
+
 def test():
     """Run the engine's Go tests; used by verify.py."""
-    environment = {**os.environ, "CGO_ENABLED": "0"}
-    completed = subprocess.run([go_command(), "test", "./..."], cwd=ENGINE, env=environment,
+    completed = subprocess.run([go_command(), "test", "./..."], cwd=ENGINE, env=test_environment(),
                                capture_output=True, text=True)
     if completed.returncode:
         return [f"studio/goose_engine: go test failed\n{completed.stdout}{completed.stderr}".strip()]

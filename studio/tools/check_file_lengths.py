@@ -1,4 +1,5 @@
 """Enforce the 299-physical-line limit for maintained Studio files."""
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,13 +19,16 @@ EXTENSIONS = {".py", ".ts", ".tsx", ".js", ".css", ".md", ".json", ".toml",
 def maintained_files():
     yield ROOT / "AGENTS.md"
     for folder in (ROOT / "studio", ROOT / "docs", ROOT / "license-server", ROOT / "website"):
-        for path in folder.rglob("*"):
-            if not path.is_file() or any(p in EXCLUDED_DIRS for p in path.parts):
-                continue
-            if path.relative_to(ROOT).as_posix().startswith(EXCLUDED_PATHS):
-                continue
-            if path.name not in EXCLUDED_FILES and path.suffix in EXTENSIONS:
-                yield path
+        # Prune excluded folders before descending: walking node_modules, build and .venv
+        # only to discard them took minutes (change 0203).
+        for directory, folders, names in os.walk(folder):
+            folders[:] = [name for name in folders if name not in EXCLUDED_DIRS]
+            for name in names:
+                path = Path(directory, name)
+                if path.relative_to(ROOT).as_posix().startswith(EXCLUDED_PATHS):
+                    continue
+                if name not in EXCLUDED_FILES and path.suffix in EXTENSIONS:
+                    yield path
 
 
 def check():
