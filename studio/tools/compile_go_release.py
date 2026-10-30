@@ -6,7 +6,8 @@ Steps: preflight -> frontend build + frontend.pak -> licensed native workers + s
 (shared with compile_protected.py) -> studio_xsd -> studio_snmp -> scadabench_hostkey -> scadabench_labnet -> Go engine
 ScadaBench.exe (packaged, sealed)
 -> installed folder layout -> leak check -> code signing -> module signature -> portable exe
-embedding that exact folder -> Inno Setup installer (same installer.iss and AppId as Python).
+embedding that exact folder -> Inno Setup installer (same installer.iss and AppId as Python)
+-> antivirus check of every program, the portable exe and the installer (ADR-0130).
 The Python release (compile_protected.py) is unchanged and stays the fallback.
 """
 import argparse
@@ -85,6 +86,24 @@ def build_labnet(mode):
         build_labnet.build(output=target)
 
 
+def antivirus_check(mode, folder, portable, allow_no_scanner):
+    """ADR-0130: every program, the portable exe and the installer pass the PC's antivirus. On a
+    finding the portable exe and installer are renamed *.flagged, so website/deploy.cmd cannot
+    publish them."""
+    mode.step("Antivirus check")
+    if mode.dry_run:
+        return
+    import antivirus_gate
+    installer = mode.dist / f"ScadaBench-Setup-{mode.version}.exe"
+    outputs = [path for path in (portable, installer) if path.is_file()]
+    findings = antivirus_gate.check([folder, *outputs], allow_no_scanner)
+    if findings:
+        for path in outputs:
+            path.replace(path.with_name(path.name + ".flagged"))
+        lines = "\n".join(f"  {target}: {verdict}" for target, verdict in findings)
+        raise SystemExit(f"The antivirus reports release files; renamed them *.flagged:\n{lines}")
+
+
 def preflight(mode):
     release = compile_protected.preflight(mode)
     if not mode.version or not all(part.isdigit() for part in mode.version.split(".")):
@@ -99,6 +118,7 @@ def main(argv=None):
     parser.add_argument("--version", required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--skip-installer", action="store_true")
+    parser.add_argument("--allow-no-scanner", action="store_true", help="build on a PC without an antivirus")
     args = parser.parse_args(argv)
     mode = GoMode(dry_run=args.dry_run, version=args.version)
     release = preflight(mode)
@@ -124,6 +144,7 @@ def main(argv=None):
     steps.code_sign(mode, [portable])
     if not args.skip_installer:
         compile_protected.installer(mode, mode.version)
+    antivirus_check(mode, folder, portable, args.allow_no_scanner)
     print(f"\nDone{' (dry run)' if mode.dry_run else ''}: {mode.dist}")
     return 0
 

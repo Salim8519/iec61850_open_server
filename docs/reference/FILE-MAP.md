@@ -81,7 +81,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Run shapes (change 0106) | `copy/runShape.ts`, `features/devices/DeviceRunSummary.tsx`, `runGroups.ts`, `features/diagram/RunStrip.tsx`, `equipment/liveContext.ts` (`StoppedIeds`), `simulation/coordinator.py` (`start` adds the rest) |
 | Guided tour | `frontend/src/features/tour/`, `copy/tour.ts`, `projects/preferences.py`, `api/preferences.py` |
 | Desktop window (ADR-0048) | `studio/backend/studio_app/launcher/entrypoint.py`, `app_window.py`, `single_instance.py`, `window_focus.py`, `windowed.py` |
-| Protected release | `tools/configure_release.py`, `compile_protected.py`, `pack_frontend.py`, `packaging/studio_protected.spec` (installed folder + one-file portable exe), `installer.iss` |
+| Protected release | `tools/configure_release.py`, `compile_protected.py`, `pack_frontend.py`, `packaging/studio_protected.spec` (installed folder + one-file portable exe), `installer.iss`; Go release `compile_go_release.py` ends with `antivirus_gate.py` (ADR-0130) |
 
 Tests mirror these boundaries under `studio/tests/unit`, `integration`, `protocol`,
 `frontend`, `packaging` and `performance`. Keep each maintained file below 300

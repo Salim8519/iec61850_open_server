@@ -39,8 +39,10 @@ def stale(output=OUTPUT):
 
 
 def command(output):
-    """The go build command: windowsgui, trimmed, no tags."""
-    return [go_command(), "build", "-trimpath", "-ldflags", "-H windowsgui -s -w", "-o", str(output), PACKAGE]
+    """The go build command: windowsgui, trimmed, no tags. The symbol table and debug information
+    stay in (no -s -w): stripped, Kaspersky reported the 0.1.30 program as
+    VHO:Trojan.Win64.Crypt.gen and quarantined the installer (ADR-0130)."""
+    return [go_command(), "build", "-trimpath", "-ldflags", "-H windowsgui", "-o", str(output), PACKAGE]
 
 
 def build(output=OUTPUT):
