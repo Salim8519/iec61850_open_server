@@ -7,7 +7,15 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Faster Start and Stop, lighter on Windows</h2>
+    <h2>{SITE.version} · Network fixes: no blocked lab service, no lost Wi-Fi, no leftover addresses</h2>
+    <ul>
+      <li>Fixed: Kaspersky could stop the lab network service while it was being set up (reported as PDM:Trojan.Win32.Generic) and delete the lab program. The service is now its own small program, and the setup no longer copies itself.</li>
+      <li>Fixed: picking Wi-Fi (or any card that gets its address automatically) could switch off its automatic address, and the card lost its connection. ScadaBench now refuses fixed addresses on such a card and says why.</li>
+      <li>Faster: putting IEDs on Ethernet makes all the Windows changes in one go instead of one by one: seconds instead of about two minutes. Changes that Windows finishes late are still recorded, so Clean up always finds them.</li>
+      <li>Smoother: on Ethernet and other cards with a fixed address, you approve the IED addresses once. After that Start puts them on and Stop takes them off without a Windows prompt, and closing ScadaBench takes them off too. Before switching to the ScadaBench Lab card, ScadaBench also takes its own old addresses off the other card.</li>
+      <li>Already use the lab network? Press Repair once on the lab network page (one Windows prompt) to get the new service.</li>
+    </ul>
+    <h2>0.1.30 · Faster Start and Stop, lighter on Windows</h2>
     <ul>
       <li>Faster: Start is about twice as fast. ScadaBench now reads the first values of all your IEDs at the same time instead of one point after another, and works out each IED's test modes once instead of on every change.</li>
       <li>Faster: on the ScadaBench Lab network, Start puts all IED addresses on the card in one step and Stop takes them off in one step, instead of about a second per IED.</li>
