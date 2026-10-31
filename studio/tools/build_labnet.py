@@ -1,10 +1,11 @@
-"""Build the lab network program, scadabench_labnet.exe, next to the native workers (ADR-0120).
+"""Build the lab network programs, scadabench_labnet.exe and scadabench_labsvc.exe, next to the native workers.
 
 Usage: python studio/tools/build_labnet.py [--if-stale]
 The program creates the "ScadaBench Lab" Windows loopback card and its service when the user presses
 "Create the lab network card" (one administrator prompt), and, copied to Program Files, runs as that
-service, which only adds and removes the simulated IEDs' addresses on the card. It is a windowsgui
-program (it never opens a console window).
+service, which only adds and removes the simulated IEDs' addresses on the card (ADR-0120). The service is
+the separate scadabench_labsvc.exe, which the installer copies: a program copying itself into Program Files
+as a service was stopped by Kaspersky (ADR-0131). Both are windowsgui programs (never a console window).
 --if-stale rebuilds only when a source of the program is newer than the executable; the development
 launcher uses it so dev never runs an older program than the source.
 """
@@ -20,8 +21,10 @@ STUDIO = Path(__file__).resolve().parents[1]
 ENGINE = STUDIO / "engine"
 OUTPUT = STUDIO / "native/build/Release/scadabench_labnet.exe"
 PACKAGE = "./cmd/scadabench_labnet"
-# The program links the labnet package only; a rebuild takes seconds.
-SOURCES = (ENGINE / "cmd/scadabench_labnet", ENGINE / "internal/labnet")
+SERVICE = "scadabench_labsvc.exe"
+SERVICE_PACKAGE = "./cmd/scadabench_labsvc"
+# The programs link the labnet package only; a rebuild takes seconds.
+SOURCES = (ENGINE / "cmd/scadabench_labnet", ENGINE / "cmd/scadabench_labsvc", ENGINE / "internal/labnet")
 
 
 def sources():
@@ -32,26 +35,29 @@ def sources():
 
 
 def stale(output=OUTPUT):
-    if not output.exists():
+    service = output.parent / SERVICE
+    if not output.exists() or not service.exists():
         return True
-    built = output.stat().st_mtime
+    built = min(output.stat().st_mtime, service.stat().st_mtime)
     return any(path.stat().st_mtime > built for path in sources())
 
 
-def command(output):
+def command(output, package=PACKAGE):
     """The go build command: windowsgui, trimmed, no tags. The symbol table and debug information
     stay in (no -s -w): stripped, Kaspersky reported the 0.1.30 program as
     VHO:Trojan.Win64.Crypt.gen and quarantined the installer (ADR-0130)."""
-    return [go_command(), "build", "-trimpath", "-ldflags", "-H windowsgui", "-o", str(output), PACKAGE]
+    return [go_command(), "build", "-trimpath", "-ldflags", "-H windowsgui", "-o", str(output), package]
 
 
 def build(output=OUTPUT):
+    """Both programs: the installer at output, the service program beside it."""
     environment = {**os.environ, "CGO_ENABLED": "0", "GOOS": "windows", "GOARCH": "amd64"}
     output.parent.mkdir(parents=True, exist_ok=True)
-    completed = subprocess.run(command(output), cwd=ENGINE, env=environment)
-    if completed.returncode:
-        raise SystemExit(f"go build {PACKAGE} failed with exit code {completed.returncode}.")
-    print(f"Built {output}", flush=True)
+    for target, package in ((output, PACKAGE), (output.parent / SERVICE, SERVICE_PACKAGE)):
+        completed = subprocess.run(command(target, package), cwd=ENGINE, env=environment)
+        if completed.returncode:
+            raise SystemExit(f"go build {package} failed with exit code {completed.returncode}.")
+        print(f"Built {target}", flush=True)
 
 
 def main(arguments):

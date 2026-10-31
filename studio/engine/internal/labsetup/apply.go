@@ -47,6 +47,9 @@ func (s *Service) Use(chosen map[string]string) (Status, error) {
 		}
 		addresses[row.IEDID] = row.IP
 	}
+	if err := s.freeOurs(status.Rows); err != nil {
+		return status, err
+	}
 	if err := s.Projects.UseCard(addresses, status.Card, labnet.CardName); err != nil {
 		return status, err
 	}

@@ -18,7 +18,8 @@ type IED struct {
 }
 
 // Row is one IED on the page. Status is one of ok, same_range, real_device, checking, duplicate,
-// other_card, invalid and missing; the last four block "Use" and "Change".
+// other_card, invalid and missing; the last four block "Use" and "Change". ours_elsewhere
+// (ours.go) is an address ScadaBench put on another card; Use takes it off first.
 type Row struct {
 	IEDID       string `json:"ied_id"`
 	Name        string `json:"name"`

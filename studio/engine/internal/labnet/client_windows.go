@@ -27,7 +27,7 @@ func InstalledProgram() string {
 	if err != nil || folder == "" {
 		folder = `C:\Program Files`
 	}
-	return filepath.Join(folder, "ScadaBench", "LabNetwork", ProgramName)
+	return filepath.Join(folder, "ScadaBench", "LabNetwork", ServiceProgram)
 }
 
 // Call sends one request to the service and returns its answer. It refuses to talk to a pipe

@@ -1,15 +1,15 @@
 // scadabench_labnet is the "This PC lab network" program (ADR-0120). ScadaBench starts it through
 // the Windows administrator prompt to install ("install --result FILE": the ScadaBench Lab card,
-// its settings, this program copied to Program Files and the ScadaBench lab network service) or
-// to remove everything ("uninstall --result FILE"). Installed, Windows runs the copy as the
-// service ("service"), which only adds and removes the simulated IEDs' addresses on that card.
-// It has no window.
+// its settings, the service program scadabench_labsvc.exe copied to Program Files and the
+// ScadaBench lab network service) or to remove everything ("uninstall --result FILE"). The
+// service is that separate program; this one never copies itself (ADR-0131). It has no window.
 package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"studio-engine/internal/labnet"
 )
@@ -26,12 +26,6 @@ func main() {
 }
 
 func run(args []string) (code int) {
-	if len(args) == 1 && args[0] == "service" {
-		if err := labnet.RunService(); err != nil {
-			return 1
-		}
-		return 0
-	}
 	if len(args) != 3 || args[1] != "--result" || args[2] == "" {
 		return 2
 	}
@@ -48,9 +42,14 @@ func run(args []string) (code int) {
 	}()
 	switch args[0] {
 	case "install":
-		source, err := os.Executable()
+		self, err := os.Executable()
 		if err != nil {
 			return write(args[2], outcome{Message: err.Error()})
+		}
+		source := filepath.Join(filepath.Dir(self), labnet.ServiceProgram)
+		if !exists(source) {
+			return write(args[2], outcome{Message: "The lab network service program (" + labnet.ServiceProgram +
+				") is missing from this installation. Reinstall ScadaBench."})
 		}
 		installed, err := labnet.Install(source)
 		if err != nil {

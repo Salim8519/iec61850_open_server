@@ -26,7 +26,12 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects, e.Gateway, e.Master}, Runtime: e.Runtime,
 		Windows: labsetup.Windows{
 			Adapters: func() ([]netcfg.Adapter, error) { return network.Adapters(true) },
-			State:    labnet.ServiceState, Card: labnet.InstalledCard, Call: labnet.Call, Ping: labnet.Ping},
+			State:    labnet.ServiceState, Card: labnet.InstalledCard, Call: labnet.Call, Ping: labnet.Ping,
+			Ours: func() map[string][]string {
+				ours, _ := network.OurAddresses()
+				return ours
+			},
+			FreeOurs: network.RemoveOurAddresses},
 		Asker: labsetup.NewAsker(labnet.AskOn), Elevator: netcfg.UACElevator{}, Program: o.native(labProgram),
 		Directory: o.DataDir, Journal: journal, NewID: network.NewID}
 	if e.Gateway != nil {

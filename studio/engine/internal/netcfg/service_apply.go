@@ -110,6 +110,8 @@ func (s *NetworkService) RunHelper(action string, items []*pyjson.Object, finger
 		return nil, err
 	}
 	executable, arguments := HelperCommand(s.Executable, request, sha256Hex(payload), s.Program)
+	waitFor(request, true)
+	defer waitFor(request, false) // after a timeout, catchUp journals a late result (ADR-0131)
 	if _, err := s.Elevator.Elevate(executable, arguments); err != nil {
 		if errors.Is(err, ErrElevationCancelled) {
 			return nil, apperr.New(err.Error())

@@ -84,7 +84,7 @@ func TestHelperRunnerMatchesPython(t *testing.T) {
 			answers = answers[1:]
 			return answer, nil
 		})
-		exit := HelperMain([]string{request, sha256Hex(payload), vectorProgram}, fake)
+		exit := helperMain([]string{request, sha256Hex(payload), vectorProgram}, fake, ExecuteRequest)
 		if exit != c.Exit {
 			t.Errorf("runner %d: exit %d want %d", index, exit, c.Exit)
 		}

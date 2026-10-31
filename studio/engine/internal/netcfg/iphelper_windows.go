@@ -136,6 +136,21 @@ func unicastRows() (map[unicastKey]*pyjson.Object, error) {
 	return found, nil
 }
 
+// DHCPEnabled reports whether Windows gets the card's IPv4 address automatically (DHCP). A fixed
+// address added to such a card turns DHCP off and the card loses its connection (ADR-0131).
+func DHCPEnabled(adapterGUID string) (bool, error) {
+	first, err := adapterBuffer()
+	if err != nil {
+		return false, err
+	}
+	for item := first; item != nil; item = item.Next {
+		if strings.EqualFold(ansiText(item.AdapterName), adapterGUID) {
+			return item.Flags&adapterDHCPEnabled != 0, nil
+		}
+	}
+	return false, nil
+}
+
 // RawAdapters is ip_helper.adapters: one record per listed adapter, in the shape the
 // PowerShell listing produced (normalize them with Normalize).
 func RawAdapters() ([]any, error) {

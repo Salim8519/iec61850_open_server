@@ -95,6 +95,9 @@ func firstError(errs ...error) error {
 
 // Leftovers is service.leftovers: journaled changes that still exist.
 func (s *NetworkService) Leftovers() ([]*pyjson.Object, error) {
+	if err := s.catchUp(); err != nil {
+		return nil, err
+	}
 	outstanding, err := s.Journal.Outstanding()
 	if err != nil {
 		return nil, err

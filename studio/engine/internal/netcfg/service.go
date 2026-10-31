@@ -47,7 +47,9 @@ type NetworkService struct {
 	SNMPRules  func() ([]string, error)                                              // SNMP rule names present
 	// HostKeyRules lists the virtual machine licensing rule names present (ADR-0099).
 	HostKeyRules func() ([]string, error)
-	Progress   PreviewProgress                                                       // live state of the address check
+	// DHCP reports whether a card gets its address automatically; nil skips the check (ADR-0131).
+	DHCP     func(guid string) (bool, error)
+	Progress PreviewProgress // live state of the address check
 
 	mu       sync.Mutex
 	stamp    time.Time
@@ -69,7 +71,7 @@ func NewNetworkService(projects Projects, directory, program, executable string)
 		HostKeyRules: func() ([]string, error) {
 			return RuleNames(HostKeyPrefix, func() ([]string, error) { return ListHostKeyRules(shell) })
 		},
-		Elevator: UACElevator{}, Probe: ARPProber{},
+		Elevator: UACElevator{}, Probe: ARPProber{}, DHCP: DHCPEnabled,
 		Firewall: func(names []string) (map[string]bool, map[string]bool, error) { return GatewayState(names, shell) },
 		Clock:    time.Now, NewID: randomHex}
 }

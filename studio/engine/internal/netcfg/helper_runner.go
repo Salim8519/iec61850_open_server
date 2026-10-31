@@ -62,8 +62,15 @@ func ExecuteRequest(request *pyjson.Object, executor Executor) ([]any, error) {
 
 // HelperMain is runner.main inside the elevated helper. argv: request path, expected SHA-256,
 // worker program path. It writes <request>.result.json and returns the exit code: 0 done,
-// 2 refused, 1 when Python would have raised (no result file then).
+// 2 refused, 1 when Python would have raised (no result file then). The changes run in batches
+// (ExecuteBatch, ADR-0131).
 func HelperMain(argv []string, executor Executor) int {
+	return helperMain(argv, executor, ExecuteBatch)
+}
+
+// helperMain is HelperMain with the way the changes run; the Python-parity test passes
+// ExecuteRequest, one PowerShell per change as runner.py does.
+func helperMain(argv []string, executor Executor, execute func(*pyjson.Object, Executor) ([]any, error)) int {
 	if len(argv) < 3 {
 		return 1
 	}
@@ -81,7 +88,7 @@ func HelperMain(argv []string, executor Executor) int {
 	case err != nil:
 		return 1
 	default:
-		results, err := ExecuteRequest(request, executor)
+		results, err := execute(request, executor)
 		if err != nil {
 			return 1
 		}

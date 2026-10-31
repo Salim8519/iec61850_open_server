@@ -13,7 +13,9 @@ const (
 	// Skip anycast, multicast, DNS servers and DNS information (0x800, GAA_FLAG_SKIP_DNS_INFO: without it
 	// each listing asks the Windows DNS Client about every card, ADR-0128); include gateways.
 	gaaFlags = 0x2 | 0x4 | 0x8 | 0x800 | 0x80
-	afInet                 = 2
+	afInet   = 2
+	// IP_ADAPTER_DHCP_ENABLED: Windows gets the card's IPv4 address from a DHCP server.
+	adapterDHCPEnabled = 0x4
 )
 
 var hiddenWords = []string{"wi-fi direct virtual adapter", "wan miniport", "kernel debug"}

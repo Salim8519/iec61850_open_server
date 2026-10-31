@@ -2,6 +2,7 @@ package netcfg
 
 import (
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -23,8 +24,14 @@ type hostKeyShell struct {
 func (r *hostKeyShell) Run(command Command) (Output, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.commands = append(r.commands, command.Argv[len(command.Argv)-1])
-	return Output{}, nil
+	script := command.Argv[len(command.Argv)-1]
+	r.commands = append(r.commands, script)
+	// A batch of changes (ADR-0131) reports each change as done, like PowerShell would.
+	answer := ""
+	for number := 0; number < strings.Count(script, "'"+batchMarker); number++ {
+		answer += batchMarker + strconv.Itoa(number) + " ok\r\n"
+	}
+	return Output{Stdout: answer}, nil
 }
 
 // hostKeyRig is a NetworkService whose elevated helper really validates and runs the request

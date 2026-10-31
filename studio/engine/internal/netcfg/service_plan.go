@@ -69,6 +69,9 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 			snmp.Ports = append(snmp.Ports, device.Port)
 		}
 	}
+	if err := s.guardDHCP(rows, adapter); err != nil {
+		return nil, previewState{}, err
+	}
 	s.Progress.step("firewall")
 	if len(devices) > 0 {
 		if snmp.Existing, err = s.SNMPRules(); err != nil {

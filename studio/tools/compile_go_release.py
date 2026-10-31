@@ -76,12 +76,12 @@ def build_hostkey(mode):
 
 
 def build_labnet(mode):
-    """scadabench_labnet.exe (ADR-0120) beside the workers: creates the lab network card and runs as its
-    service once copied to Program Files."""
-    mode.step("Lab network program -> scadabench_labnet.exe")
+    """scadabench_labnet.exe (ADR-0120) beside the workers creates the lab network card and copies
+    scadabench_labsvc.exe, the service program, to Program Files (ADR-0131)."""
+    mode.step("Lab network programs -> scadabench_labnet.exe, scadabench_labsvc.exe")
     import build_labnet
     target = mode.native_bin / "scadabench_labnet.exe"
-    print(f"  $ go build ./cmd/scadabench_labnet -> {target}", flush=True)
+    print(f"  $ go build ./cmd/scadabench_labnet ./cmd/scadabench_labsvc -> {target.parent}", flush=True)
     if not mode.dry_run:
         build_labnet.build(output=target)
 

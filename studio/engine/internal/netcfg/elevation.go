@@ -9,8 +9,10 @@ import (
 // HelperFlag is the argv switch that makes the app exe run the elevated network helper.
 const HelperFlag = "--network-helper"
 
-// HelperTimeout is how long the app waits for the elevated helper (elevation.run_elevated).
-const HelperTimeout = 120 * time.Second
+// HelperTimeout is how long the app waits for the elevated helper once Windows started it. Python
+// waited two minutes; on the owner's PC two applies took 126 and 161 seconds, so the app gave up,
+// journaled nothing, and Clean up could not find the addresses Windows had added (ADR-0131).
+const HelperTimeout = 10 * time.Minute
 
 // ErrElevationCancelled is elevation.ElevationCancelled: the user declined the Windows
 // administrator prompt.

@@ -13,6 +13,12 @@ const (
 	ServiceDisplay = "ScadaBench lab network"
 	PipeName       = `\\.\pipe\ScadaBenchLabNet`
 	ProgramName    = "scadabench_labnet.exe"
+	// ServiceProgram is the separate service program the installer copies to Program Files. The
+	// installer never copies itself: Kaspersky stopped "install" as PDM:Trojan.Win32.Generic when
+	// it copied its own file there and made it a service (ADR-0131).
+	ServiceProgram = "scadabench_labsvc.exe"
+	// oldServiceProgram is the copy installations before ADR-0131 registered as the service.
+	oldServiceProgram = ProgramName
 	// ParametersKey is the service's own registry key (only administrators can write it): the
 	// card GUID the installer created.
 	ParametersKey = `SYSTEM\CurrentControlSet\Services\` + ServiceName + `\Parameters`

@@ -1,6 +1,6 @@
 // Response shapes of the "This PC lab network" routes (ADR-0120, Go engine only).
 export type LabRow = { ied_id: string; name: string; scl_ip: string; ip: string; yours: boolean; on_card: boolean;
-  status: 'ok' | 'same_range' | 'real_device' | 'checking' | 'duplicate' | 'other_card' | 'invalid' | 'missing';
+  status: 'ok' | 'same_range' | 'real_device' | 'checking' | 'duplicate' | 'other_card' | 'ours_elsewhere' | 'invalid' | 'missing';
   hint: string; card?: string; alternative?: string };
 export type LabRealCard = { name: string; kind: string; connected: boolean; networks: string[] };
 export type LabStatus = { installed: boolean; running: boolean; card: string; card_present: boolean; card_name: string;

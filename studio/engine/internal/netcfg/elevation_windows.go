@@ -46,7 +46,7 @@ type shellExecuteInfo struct {
 }
 
 // UACElevator runs a program through ShellExecuteExW with the "runas" verb, hidden, and
-// waits up to two minutes for it.
+// waits up to HelperTimeout for it.
 type UACElevator struct{}
 
 // Elevate shows the administrator prompt, starts the program and returns its exit code.
@@ -78,7 +78,7 @@ func (UACElevator) Elevate(executable string, arguments []string) (uint32, error
 	defer syscall.CloseHandle(info.hProcess)
 	wait, _, _ := procWaitForSingleObject.Call(uintptr(info.hProcess), uintptr(HelperTimeout.Milliseconds()))
 	if wait != 0 {
-		return 0, apperr.RuntimeError("The network helper did not finish within two minutes")
+		return 0, apperr.RuntimeError("The network helper did not finish within ten minutes")
 	}
 	var code uint32
 	procGetExitCodeProcess.Call(uintptr(info.hProcess), uintptr(unsafe.Pointer(&code)))

@@ -25,7 +25,8 @@ type Installed struct {
 
 // Install sets up the lab network (needs administrator rights): the card (kept when the
 // service's key already names an existing one, so Repair never makes a second card), its
-// settings, the service program in Program Files and the service itself, started.
+// settings, the service program (source, scadabench_labsvc.exe) in Program Files and the service
+// itself, started. A service of an older installation is pointed at the new program.
 func Install(source string) (Installed, error) {
 	result := Installed{Program: InstalledProgram()}
 	if card, err := (WindowsOps{}).Card(); err == nil {
@@ -55,7 +56,12 @@ func Install(source string) (Installed, error) {
 		}
 		return result, errors.New("the service program could not be copied: " + err.Error())
 	}
-	if service == nil {
+	if service != nil {
+		if err := pointAt(service, result.Program); err != nil {
+			service.Close()
+			return result, err
+		}
+	} else {
 		service, err = manager.CreateService(ServiceName, result.Program, mgr.Config{StartType: mgr.StartAutomatic,
 			DisplayName: ServiceDisplay, Description: "Adds and removes the simulated IEDs' addresses on the " +
 				"ScadaBench Lab network card. Removed with \"Remove the lab network card\" in ScadaBench."}, "service")
@@ -115,6 +121,27 @@ func tail(text string) string {
 		lines = lines[len(lines)-300:]
 	}
 	return string(lines)
+}
+
+// pointAt makes an existing service run the program (a service made before ADR-0131 runs the
+// installer's own copy) and removes that old copy.
+func pointAt(service *mgr.Service, program string) error {
+	config, err := service.Config()
+	if err != nil {
+		return err
+	}
+	quoted := syscall.EscapeArg(program) + " service" // as mgr.CreateService writes it
+	if config.BinaryPathName != quoted {
+		config.BinaryPathName = quoted
+		if err := service.UpdateConfig(config); err != nil {
+			return errors.New("the lab network service could not be pointed at its program: " + err.Error())
+		}
+	}
+	old := filepath.Join(filepath.Dir(program), oldServiceProgram)
+	if old != program {
+		os.Remove(old)
+	}
+	return nil
 }
 
 func copyProgram(source, target string) error {

@@ -37,6 +37,10 @@ type Windows struct {
 	Card     func() string                    // the card GUID the installer stored
 	Call     func(labnet.Request) (labnet.Reply, error)
 	Ping     func(address string, timeoutMS uint32) (labnet.Pinged, error)
+	// Ours lists the addresses ScadaBench added to network cards (address -> card GUIDs) and
+	// FreeOurs removes some of them through one prompt (ADR-0131); nil skips both.
+	Ours     func() map[string][]string
+	FreeOurs func(addresses map[string]bool) error
 }
 
 // Service is the lab network page's logic.
@@ -119,6 +123,9 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 	}
 	status.Reals = RealCards(adapters, card)
 	status.Rows = Rows(ieds, chosen, status.Active, adapters, card, s.Asker)
+	if s.Windows.Ours != nil {
+		markOurs(status.Rows, adapters, s.Windows.Ours())
+	}
 	s.Asker.Start(Questions(status.Rows, status.Reals, s.Asker))
 	reserve(status.Rows, s.Projects.Reserved())
 	for _, row := range status.Rows {

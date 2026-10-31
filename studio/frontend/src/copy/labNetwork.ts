@@ -9,6 +9,8 @@ export const LAB_ROW_STATUS: Record<string, Status> = {
   checking: { label: 'Checking…', tone: 'waiting', hint: '' },
   duplicate: { label: 'Used twice', tone: 'problem', hint: '' },
   other_card: { label: 'Address of this PC', tone: 'problem', hint: '' },
+  // ADR-0131: ScadaBench put it on Ethernet or Wi-Fi earlier; Use moves it to the lab card.
+  ours_elsewhere: { label: 'Moves to the lab card', tone: 'info', hint: '' },
   invalid: { label: 'Address not valid', tone: 'problem', hint: '' },
   missing: { label: 'No address', tone: 'problem', hint: '' },
 };
