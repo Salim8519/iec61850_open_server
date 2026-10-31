@@ -10,8 +10,8 @@ import (
 )
 
 // ProtocolVersion is the pipe protocol the app and the service speak (2: several addresses in one
-// request, ADR-0128).
-const ProtocolVersion = "2"
+// request, ADR-0128; 3: approved addresses on real cards, ADR-0132).
+const ProtocolVersion = "3"
 
 // RunService runs the lab network service under the Service Control Manager.
 func RunService() error {

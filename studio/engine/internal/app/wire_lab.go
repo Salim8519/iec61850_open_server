@@ -31,7 +31,7 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 				ours, _ := network.OurAddresses()
 				return ours
 			},
-			FreeOurs: network.RemoveOurAddresses},
+			FreeOurs: network.RemoveOurAddresses, Approved: labnet.ReadApproved},
 		Asker: labsetup.NewAsker(labnet.AskOn), Elevator: netcfg.UACElevator{}, Program: o.native(labProgram),
 		Directory: o.DataDir, Journal: journal, NewID: network.NewID}
 	if e.Gateway != nil {

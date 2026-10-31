@@ -41,6 +41,9 @@ type Windows struct {
 	// FreeOurs removes some of them through one prompt (ADR-0131); nil skips both.
 	Ours     func() map[string][]string
 	FreeOurs func(addresses map[string]bool) error
+	// Approved lists the real-card addresses approved at Apply: card GUID -> address -> prefix
+	// (ADR-0132); nil means none.
+	Approved func() map[string]map[string]int
 }
 
 // Service is the lab network page's logic.
@@ -75,8 +78,8 @@ type Status struct {
 	Checking    bool     `json:"checking"`
 	Problem     string   `json:"problem,omitempty"`
 	CardIPs     []string `json:"card_addresses"`
-	// ServiceUpdate: the service still speaks protocol 1, one address per request; Repair installs
-	// the one that takes them all at once (ADR-0128).
+	// ServiceUpdate: the service is older than protocol 3; Repair installs the one that takes all
+	// addresses at once (ADR-0128) and puts approved Ethernet addresses on at Start (ADR-0132).
 	ServiceUpdate bool `json:"service_update"`
 }
 
@@ -101,7 +104,7 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 		}
 	}
 	status.Ready = status.Running && status.CardPresent
-	if version := s.serviceVersion(); status.Ready && version != "" && !labnet.Batched(version) {
+	if version := s.serviceVersion(); status.Ready && version != "" && !labnet.RealCards(version) {
 		status.ServiceUpdate = true
 	}
 	mode, guid := s.Projects.Network()

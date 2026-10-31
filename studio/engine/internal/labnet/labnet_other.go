@@ -21,3 +21,6 @@ func AskOn(string, string) bool { return false }
 
 // Ping is unavailable outside Windows.
 func Ping(string, uint32) (Pinged, error) { return Pinged{}, ErrNoService }
+
+// ReadApproved is empty outside Windows.
+func ReadApproved() map[string]map[string]int { return map[string]map[string]int{} }

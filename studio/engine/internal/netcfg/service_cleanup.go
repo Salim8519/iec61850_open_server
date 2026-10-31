@@ -34,6 +34,8 @@ func (p *presence) firewall() error {
 func (p *presence) present(item *pyjson.Object) (bool, error) {
 	f := fieldsOf(item)
 	switch f.text("kind") {
+	case ApprovalKind:
+		return approvalPresent(f), f.err()
 	case "alias":
 		if !p.read["adapters"] {
 			adapters, err := p.service.Adapters(true)

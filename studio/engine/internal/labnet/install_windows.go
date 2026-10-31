@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
@@ -52,6 +53,7 @@ func Install(source string) (Installed, error) {
 	}
 	if err := copyProgram(source, result.Program); err != nil {
 		if service != nil {
+			service.Start() // the old program keeps working
 			service.Close()
 		}
 		return result, errors.New("the service program could not be copied: " + err.Error())
@@ -144,7 +146,20 @@ func pointAt(service *mgr.Service, program string) error {
 	return nil
 }
 
+// copyProgram copies the service program, retrying for a few seconds while Windows or an
+// antivirus still holds the old file.
 func copyProgram(source, target string) error {
+	var err error
+	for attempt := 0; attempt < 20; attempt++ {
+		if err = copyOnce(source, target); err == nil {
+			return nil
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	return err
+}
+
+func copyOnce(source, target string) error {
 	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 		return err
 	}
@@ -183,9 +198,22 @@ func readCard() (string, error) {
 	return value, err
 }
 
+// stopService stops the service and waits until its process has exited: Windows reports
+// "stopped" a moment before the program file is free to be replaced (Repair failed on that).
 func stopService(service *mgr.Service) {
+	var pid uint32
+	if status, err := service.Query(); err == nil {
+		pid = status.ProcessId
+	}
 	service.Control(svc.Stop)
 	waitState(service, svc.Stopped)
+	if pid == 0 {
+		return
+	}
+	if process, err := windows.OpenProcess(windows.SYNCHRONIZE, false, pid); err == nil {
+		windows.WaitForSingleObject(process, 10000)
+		windows.CloseHandle(process)
+	}
 }
 
 func isRunning(service *mgr.Service) bool {

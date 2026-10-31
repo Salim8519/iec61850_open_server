@@ -28,6 +28,9 @@ type View struct {
 // that is not are both fine (the app may retry after a reboot or a lost answer). A request that
 // names several addresses changes each with the same checks; Failed says which did not change.
 func Handle(ops Ops, request Request, version string) Reply {
+	if request.Card != "" {
+		return handleReal(ops, request, version) // an approved real card (ADR-0132)
+	}
 	reply := Reply{Version: version, Addresses: []string{}}
 	view, err := ops.Read()
 	if err != nil {

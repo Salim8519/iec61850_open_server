@@ -6,7 +6,7 @@ export type PlanRow = { ied_id: string; name: string; scd_ip: string; proposed: 
   status: string; hint: string; alternative?: { ip: string; prefix: number };
   /** An SNMP device row (ADR-0092): its saved address may be shown instead of a new free one. */
   kind?: 'snmp'; saved?: boolean };
-export type PlanItem = { kind: 'alias' | 'firewall' | 'snmp_firewall' | 'gateway_firewall' | 'unblock'; action: 'add' | 'keep' | 'remove'; owned: boolean;
+export type PlanItem = { kind: 'alias' | 'approval' | 'firewall' | 'snmp_firewall' | 'gateway_firewall' | 'unblock'; action: 'add' | 'keep' | 'remove'; owned: boolean;
   description: string; ip?: string; name?: string;
   /** Firewall rule: the IEDs' TCP ports (normally 102), or the SNMP devices' UDP ports (normally 161). */
   ports?: number[] };

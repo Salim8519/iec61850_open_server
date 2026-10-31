@@ -23,8 +23,13 @@ func TestRunAndStopSendOneRequestToANewService(t *testing.T) {
 	if len(p.cardIPs) != 0 {
 		t.Fatalf("card %v", p.cardIPs)
 	}
+	if status, _ := service.Status(nil); !status.ServiceUpdate {
+		t.Fatal("a protocol 2 service was not offered the update for Ethernet addresses (ADR-0132)")
+	}
+	p.version = "3"
+	service.Release() // the service's next answer carries its new version
 	if status, _ := service.Status(nil); status.ServiceUpdate {
-		t.Fatal("a protocol 2 service was offered an update")
+		t.Fatal("a protocol 3 service was offered an update")
 	}
 }
 

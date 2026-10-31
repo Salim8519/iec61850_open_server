@@ -105,7 +105,7 @@ func validateGatewayProgram(item *pyjson.Object, program string) error {
 
 func validateItem(item *pyjson.Object, program string) error {
 	switch get(item, "kind") {
-	case "alias":
+	case "alias", ApprovalKind:
 		return validateAlias(item)
 	case "firewall":
 		return validateFirewall(item, program)

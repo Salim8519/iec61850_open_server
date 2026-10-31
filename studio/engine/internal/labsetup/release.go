@@ -14,6 +14,11 @@ import (
 func (s *Service) Release() {
 	s.card.Lock()
 	defer s.card.Unlock()
+	s.releaseLab()
+	s.releaseReal() // approved addresses on Ethernet follow the run too (ADR-0132)
+}
+
+func (s *Service) releaseLab() {
 	card := s.Windows.Card()
 	if card == "" {
 		return

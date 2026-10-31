@@ -13,7 +13,7 @@ export function ReviewStep({ preview }: { preview: PlanPreview }) {
       <thead><tr><th>What will happen</th><th>Kind</th><th>Result</th></tr></thead>
       <tbody>{preview.items.map((item, index) => <tr key={index}>
         <td>{item.description}</td>
-        <td>{item.kind === 'alias' ? <InfoTip term="alias" /> : <InfoTip term="firewall" />}</td>
+        <td>{['alias', 'approval'].includes(item.kind) ? <InfoTip term="alias" /> : <InfoTip term="firewall" />}</td>
         <td><StatusPill status={UI_STATUS[`item_${item.action}`]} /></td>
       </tr>)}</tbody></table></div>
     {preview.needs_admin && <div className="row" style={{ alignItems: 'flex-start' }}>

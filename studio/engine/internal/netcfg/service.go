@@ -48,8 +48,11 @@ type NetworkService struct {
 	// HostKeyRules lists the virtual machine licensing rule names present (ADR-0099).
 	HostKeyRules func() ([]string, error)
 	// DHCP reports whether a card gets its address automatically; nil skips the check (ADR-0131).
-	DHCP     func(guid string) (bool, error)
-	Progress PreviewProgress // live state of the address check
+	DHCP func(guid string) (bool, error)
+	// RealCards says whether the ScadaBench network service can put this real card's IED addresses
+	// on at Start and take them off at Stop (protocol 3); nil means it cannot (ADR-0132).
+	RealCards func(guid string) bool
+	Progress  PreviewProgress // live state of the address check
 
 	mu       sync.Mutex
 	stamp    time.Time

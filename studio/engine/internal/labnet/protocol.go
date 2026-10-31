@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"strings"
 )
 
 // Names the installer, the service and the app share.
@@ -23,6 +24,11 @@ const (
 	// card GUID the installer created.
 	ParametersKey = `SYSTEM\CurrentControlSet\Services\` + ServiceName + `\Parameters`
 	CardValue     = "CardGUID"
+	// ApprovedKey holds the real-card addresses an administrator approved through the network
+	// helper (ADR-0132): one DWORD value per address, named "{card GUID} address", holding the
+	// prefix length. Only administrators can write it; the service changes nothing else on a
+	// real card.
+	ApprovedKey = ParametersKey + `\Approved`
 )
 
 // Operations the service accepts; anything else is refused.
@@ -38,6 +44,9 @@ type Request struct {
 	Op  string   `json:"op"`
 	IP  string   `json:"ip,omitempty"`
 	IPs []string `json:"ips,omitempty"`
+	// Card names a real card (its GUID) instead of the lab card, from protocol 3 on (ADR-0132):
+	// only addresses approved for that card may be added or removed there.
+	Card string `json:"card,omitempty"`
 }
 
 // Wanted is the addresses the request names, in order.
@@ -58,6 +67,17 @@ type Reply struct {
 	Addresses []string          `json:"addresses"`
 	Failed    map[string]string `json:"failed,omitempty"`
 	Version   string            `json:"version,omitempty"`
+}
+
+// ApprovalName is the registry value name of one approved address under ApprovedKey; the network
+// helper writes it, the service reads it (ADR-0132).
+func ApprovalName(cardGUID, ip string) string { return strings.ToUpper(cardGUID) + " " + ip }
+
+// RealCards says whether a service that answered with this version puts approved addresses on
+// real cards (protocol 3, ADR-0132).
+func RealCards(version string) bool {
+	number, err := strconv.Atoi(version)
+	return err == nil && number >= 3
 }
 
 // Batched says whether a service that answered with this version takes several addresses in one
@@ -85,6 +105,9 @@ func DecodeRequest(line []byte) (Request, error) {
 	if err := decoder.Decode(&request); err != nil {
 		return request, errors.New("the request is not valid")
 	}
+	if request.Card != "" && !isGUID(request.Card) {
+		return request, errors.New("the card must be a GUID")
+	}
 	switch request.Op {
 	case OpStatus:
 		if request.IP != "" || request.IPs != nil {
@@ -98,6 +121,24 @@ func DecodeRequest(line []byte) (Request, error) {
 		return request, errors.New("only status, add and remove are allowed")
 	}
 	return request, nil
+}
+
+// isGUID accepts "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}" (hex digits, either case).
+func isGUID(text string) bool {
+	if len(text) != 38 || text[0] != '{' || text[37] != '}' {
+		return false
+	}
+	for index, char := range text[1:37] {
+		switch {
+		case index == 8 || index == 13 || index == 18 || index == 23:
+			if char != '-' {
+				return false
+			}
+		case !strings.ContainsRune("0123456789abcdefABCDEF", char):
+			return false
+		}
+	}
+	return true
 }
 
 // Pinged is one echo: whether it answered, the round trip in milliseconds and the TTL.

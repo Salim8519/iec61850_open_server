@@ -21,6 +21,12 @@ export function adapterLabel(adapter: Adapter) {
 export function changeSentence(preview: PlanPreview) {
   const adds = preview.items.filter(item => item.action === 'add');
   const aliases = adds.filter(item => item.kind === 'alias').length;
+  // ADR-0132: approved addresses go on at Start and come off at Stop through the ScadaBench service.
+  const approvals = adds.filter(item => item.kind === 'approval').length;
+  if (!adds.length && preview.items.some(item => item.kind === 'approval')) {
+    return `Nothing changes in Windows: ScadaBench already puts these addresses on “${preview.adapter.name}” `
+      + 'while the IEDs run.';
+  }
   if (!adds.length) return `Nothing changes in Windows: these addresses are already on “${preview.adapter.name}”.`;
   // The rules open the IEDs' own MMS ports (a project may use other ports than 102) and the SNMP
   // devices' UDP ports, as the exact list says.
@@ -30,7 +36,12 @@ export function changeSentence(preview: PlanPreview) {
   const rules = [mms ? `${portWords(mms.ports ?? [102])}${snmp ? ' for the IEDs' : ''}` : '',
     snmp ? `UDP ${portWords(snmp.ports ?? [161])} for the SNMP devices` : ''].filter(Boolean).join(' and ');
   const parts = [aliases ? `add ${aliases} ${aliases === 1 ? 'address' : 'addresses'} to “${preview.adapter.name}”` : '',
+    approvals ? `put ${approvals} ${approvals === 1 ? 'address' : 'addresses'} on “${preview.adapter.name}” while the IEDs run` : '',
     rules ? `allow ${rules}${mms && !snmp ? ' for them' : ''} in Windows Firewall` : ''].filter(Boolean).join(' and ');
+  if (approvals && !aliases) {
+    return `ScadaBench will ${parts}. Windows asks once; after that Start adds the addresses and Stop `
+      + 'removes them without asking. Clean up removes everything.';
+  }
   return `ScadaBench will ${parts}. Windows asks once. The addresses disappear when Windows restarts, `
     + 'or remove them earlier with Clean up.';
 }

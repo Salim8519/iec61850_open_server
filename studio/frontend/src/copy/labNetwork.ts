@@ -25,7 +25,8 @@ export const LAB_COPY = {
   repair: 'Repair',
   // ADR-0128: the installed service still changes one address at a time.
   serviceUpdate: 'Start and Stop can be faster: press Repair to update the lab network service.',
-  serviceUpdateHint: 'One Windows prompt. The service then puts all addresses on the card in one step.',
+  serviceUpdateHint: 'One Windows prompt. The service then puts all addresses on in one step, and Start and Stop '
+    + 'add and remove Ethernet addresses without asking.',
   serviceUpdateStopFirst: 'Stop the simulation, then press Repair.',
   editHint: 'Type another address and press Enter. A running IED moves to it at once. The SCL file is never changed.',
   use: 'Use the lab network',

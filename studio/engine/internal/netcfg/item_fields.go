@@ -84,6 +84,8 @@ func ItemKey(item *pyjson.Object) (string, error) {
 	switch f.text("kind") {
 	case "alias":
 		key = "alias:" + f.text("adapter_guid") + ":" + f.text("ip")
+	case ApprovalKind:
+		key = ApprovalKind + ":" + f.text("adapter_guid") + ":" + f.text("ip")
 	case "unblock":
 		key = "unblock:" + f.text("name")
 	default:

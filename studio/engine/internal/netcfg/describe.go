@@ -30,6 +30,8 @@ func Describe(item *pyjson.Object) (string, error) {
 	case "unblock":
 		text = "Switch off a Windows Firewall rule that blocks the ScadaBench gateway (Windows made it when its " +
 			"'allow access?' question was closed); clean-up switches it on again"
+	case ApprovalKind:
+		text = describeApproval(f)
 	case "alias":
 		if f.text("action") == "keep" {
 			text = "Use address " + f.text("ip") + " that is already on '" + f.text("adapter_name") + "' for " + f.text("for")
@@ -61,6 +63,8 @@ func DescribeRemoval(item *pyjson.Object) (string, error) {
 		text = "Remove the Windows Firewall rule that ScadaBench added for virtual machine licensing"
 	case "unblock":
 		text = "Switch the Windows Firewall rule that blocked the gateway on again, as it was before"
+	case ApprovalKind:
+		text = describeApprovalRemoval(f)
 	case "alias":
 		text = "Remove address " + f.text("ip") + " that ScadaBench added to '" + f.text("adapter_name") + "'"
 	default:

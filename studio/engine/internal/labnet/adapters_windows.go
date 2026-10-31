@@ -19,6 +19,7 @@ type Adapter struct {
 	Index       uint32
 	LUID        uint64
 	Up          bool
+	DHCP        bool // IP_ADAPTER_DHCP_ENABLED: Windows gets the card's own IPv4 address automatically
 	// Networks are the IPv4 address/prefix pairs, e.g. "192.168.40.111/24".
 	Networks []string
 }
@@ -36,6 +37,9 @@ func (a Adapter) Addresses() []string {
 // gaaSkipDNSInfo is GAA_FLAG_SKIP_DNS_INFO (iptypes.h; not in x/sys): without it every listing
 // asks the Windows DNS Client about every adapter, which nothing here reads (ADR-0128).
 const gaaSkipDNSInfo = 0x800
+
+// adapterDHCPEnabled is IP_ADAPTER_DHCP_ENABLED (iptypes.h; not in x/sys).
+const adapterDHCPEnabled = 0x4
 
 // listFlags are what every listing asks for: unicast IPv4 addresses, names and states only.
 const listFlags = windows.GAA_FLAG_SKIP_ANYCAST | windows.GAA_FLAG_SKIP_MULTICAST |
@@ -68,7 +72,8 @@ func listAdapters(flags uint32) ([]Adapter, error) {
 func adapterOf(item *windows.IpAdapterAddresses) Adapter {
 	adapter := Adapter{GUID: strings.ToUpper(windows.BytePtrToString(item.AdapterName)),
 		Name: windows.UTF16PtrToString(item.FriendlyName), Description: windows.UTF16PtrToString(item.Description),
-		Index: item.IfIndex, LUID: item.Luid, Up: item.OperStatus == windows.IfOperStatusUp}
+		Index: item.IfIndex, LUID: item.Luid, Up: item.OperStatus == windows.IfOperStatusUp,
+		DHCP: item.Flags&adapterDHCPEnabled != 0}
 	for unicast := item.FirstUnicastAddress; unicast != nil; unicast = unicast.Next {
 		raw := unicast.Address.Sockaddr
 		if raw == nil || raw.Addr.Family != windows.AF_INET {
