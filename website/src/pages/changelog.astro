@@ -7,13 +7,15 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Network fixes: no blocked lab service, no lost Wi-Fi, no leftover addresses</h2>
+    <h2>{SITE.version} · More reliable and faster network setup</h2>
     <ul>
-      <li>Fixed: Kaspersky could stop the lab network service while it was being set up (reported as PDM:Trojan.Win32.Generic) and delete the lab program. The service is now its own small program, and the setup no longer copies itself.</li>
-      <li>Fixed: picking Wi-Fi (or any card that gets its address automatically) could switch off its automatic address, and the card lost its connection. ScadaBench now refuses fixed addresses on such a card and says why.</li>
-      <li>Faster: putting IEDs on Ethernet makes all the Windows changes in one go instead of one by one: seconds instead of about two minutes. Changes that Windows finishes late are still recorded, so Clean up always finds them.</li>
-      <li>Smoother: on Ethernet and other cards with a fixed address, you approve the IED addresses once. After that Start puts them on and Stop takes them off without a Windows prompt, and closing ScadaBench takes them off too. Before switching to the ScadaBench Lab card, ScadaBench also takes its own old addresses off the other card.</li>
-      <li>Already use the lab network? Press Repair once on the lab network page (one Windows prompt) to get the new service.</li>
+      <li>New: on Ethernet and other network cards with a fixed address, IED addresses are approved once. After that, Start adds them and Stop removes them without a Windows prompt, and closing ScadaBench removes them as well.</li>
+      <li>Faster: placing IEDs on a real network card applies all Windows changes in one step, in seconds instead of up to two minutes. Changes that Windows completes late are still recorded, so Clean up finds every one.</li>
+      <li>Improved: moving IEDs to the ScadaBench Lab card first removes the addresses ScadaBench had placed on the previous card.</li>
+      <li>Fixed: some antivirus products could block the lab network service during installation. The service now runs as its own dedicated program.</li>
+      <li>Fixed: ScadaBench no longer places fixed addresses on a network card that gets its address automatically (DHCP), so that card keeps its connection. The network page explains why such a card cannot be used.</li>
+      <li>Fixed: Repair now updates a lab network service that is already running.</li>
+      <li>Upgrading: if you already use the lab network, press Repair once on the lab network page (one Windows prompt) to install the new service.</li>
     </ul>
     <h2>0.1.30 · Faster Start and Stop, lighter on Windows</h2>
     <ul>
