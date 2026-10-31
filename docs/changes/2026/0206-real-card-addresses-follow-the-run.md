@@ -35,9 +35,22 @@ Decision: [ADR-0132](../../decisions/ADR-0132-real-card-addresses-follow-the-run
 - Before the ARP question, Windows' own duplicate check made the address usable only after
   3.3–3.5 s, and the first Start failed with WinError 10049 (the service then waited 3 s only).
 
+## Release 0.1.31 (owner: "Deploy the 0.1.31 as bug fixed network issues")
+
+- Changes 0205 and 0206 released as 0.1.31. The first build left `scadabench_labsvc.exe` out of the
+  package (found by listing it before deploy, not published); after the fix the release gate
+  scanned 19 programs with Kaspersky, 0 findings. Installer f5847187 (19,556,057 bytes), portable
+  562fb53b (53,095,936 bytes) carrying the service program; portable self-test exit 0.
+- `website/deploy.cmd`: Pages, R2 portable and signed release record 0.1.31. The live
+  `/download/ScadaBench-Setup.exe` and `/download/ScadaBench-Portable.exe` downloaded back match the
+  build byte for byte; a Kaspersky scan of the downloads: 0 detections, files kept. The live
+  changelog shows the 0.1.31 entry.
+- Full Go suite: every package passes; under the parallel release build two packages timed out or
+  lost a temp file and passed when run again on a quiet PC.
+
 ## Limitations
 
-- Not released: the installed app is still 0.1.30. Each PC needs one Repair after the update.
+- Each PC with an older lab service needs one Repair after updating to 0.1.31 (the page offers it).
 - The 0.7 s ARP question replaces Windows' duplicate check where the card has an address on that
   network; a device that answers ARP later than 0.7 s is not seen.
 - SNMP device addresses on a real card still stay until Clean up (their own Start/Stop is not
