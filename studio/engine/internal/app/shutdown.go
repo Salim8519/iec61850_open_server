@@ -38,6 +38,7 @@ func (e *Engine) Close() error {
 		}
 		if e.Live != nil {
 			e.Live.Stop()
+			e.Live.Engine.Discard()
 		}
 		if e.Runtime != nil {
 			e.Runtime.Close()

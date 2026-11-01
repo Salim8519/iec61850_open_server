@@ -26,6 +26,7 @@ Use this map to find the one layer that owns a change. Detailed boundaries are i
 | Native typed updates | `native/worker/updates/values.cpp` |
 | Runtime evidence | `observability/log_writer.py`, `tools/query_runtime_logs.py`; Go: `engine/internal/runtime/runlog.go`, `runlog_summary.go` (generator `signal_summary`, ADR-0115) |
 | Simulated IED Beh, batches, start times (ADR-0115) | Go: `engine/internal/runtime/behaviour.go` (Beh from Mod), `test_modes.go`, `sample_batches.go` (native batch limit), `start_times.go`, `signal/sample_rules.go` (Enum, VisString, quality checks); native: `worker/server/server.cpp` (start times, TimeQuality, idle RCB events), `worker/updates/values.cpp`, `control/canvas_command.cpp` (origin) |
+| Run start and opening speed, offline page (ADR-0133) | native: `libfix/value_cache_index.{c,h}`, `cmake/value_cache_index.cmake` (generated `mms_value_cache.c`); Go: `engine/internal/runtime/start_overlap.go`, `supervisor.go` (`prepareNetwork`, `writeStartValues`), `lifecycle.go` (`startValues`), `start_warm.go` (idle reading of start data), `acquisition/goose_spare.go` (spare GOOSE engine), `memtrim/memtrim.go` (`Hold`), `project/service/cached_reads.go`, `httpapi/offline_policy.go`; `frontend/vite.config.ts` (dev policy), `tools/check_offline_ui.py` |
 | Frontend API/contracts | `frontend/src/api/client.ts`, `api/types.ts` |
 | Shared tab/state flow | `frontend/src/state/useStudio.ts` |
 | Equipment sheet | `frontend/src/features/diagram/EquipmentSheet.tsx`, `SheetSettings.tsx`, `equipmentFields.ts` |

@@ -72,7 +72,7 @@ func simulatedOf(items []*running) []*running {
 
 // Start is POST /runtime/start (ids nil) and /runtime/ieds/<id>/start (Coordinator.start).
 func (c *Coordinator) Start(ids []string) error {
-	defer memtrim.Soon()
+	defer memtrim.Hold()()
 	c.lifeMu.Lock()
 	defer c.lifeMu.Unlock()
 	c.mu.Lock()
@@ -181,9 +181,18 @@ func (c *Coordinator) startRun(project *pyjson.Object, items, simulated []*runni
 		return apperr.RuntimeError(err.Error())
 	}
 	c.setLog(log)
+	c.mu.Lock()
+	active := c.sortedActive()
+	c.mu.Unlock()
+	// The listeners (GOOSE monitor, SV, real IEDs) only listen: they start while the IEDs start
+	// and get their start values (ADR-0133). The first error keeps the old order: IEDs,
+	// bindings, states, test modes, listeners; a failed Run waits for them before it stops.
+	listening := make(chan error, 1)
+	go func() { listening <- c.opt.Live.Start(project, active) }()
 	if len(simulated) > 0 {
 		c.commands.warm() // the first canvas command must not wait for studio_control
 		if err := c.addWorkers(simulated, pyval.Map(project, "network"), nil); err != nil {
+			<-listening
 			return err
 		}
 	}
@@ -191,19 +200,13 @@ func (c *Coordinator) startRun(project *pyjson.Object, items, simulated []*runni
 	c.mu.Lock()
 	c.setStateLocked("running")
 	c.lastAutomation = c.now()
-	active := c.sortedActive()
 	c.mu.Unlock()
 	c.emit("runtime", pyval.Obj("state", "running", "running", stringsAny(active)))
-	if err := c.publishBindings(project, nil); err != nil {
+	if err := c.startValues(project); err != nil {
+		<-listening
 		return err
 	}
-	if err := c.applyInitialStates(project, nil); err != nil {
-		return err
-	}
-	if err := c.applyTestModes(project, nil); err != nil {
-		return err
-	}
-	if err := c.opt.Live.Start(project, active); err != nil {
+	if err := <-listening; err != nil {
 		return err
 	}
 	c.mu.Lock()
@@ -211,6 +214,17 @@ func (c *Coordinator) startRun(project *pyjson.Object, items, simulated []*runni
 	c.cadence.reset(c.lastAutomation)
 	c.mu.Unlock()
 	return nil
+}
+
+// startValues publishes the bindings, then writes the start positions and test modes.
+func (c *Coordinator) startValues(project *pyjson.Object) error {
+	if err := c.publishBindings(project, nil); err != nil {
+		return err
+	}
+	if err := c.applyInitialStates(project, nil); err != nil {
+		return err
+	}
+	return c.applyTestModes(project, nil)
 }
 
 func stringsAny(items []string) []any {

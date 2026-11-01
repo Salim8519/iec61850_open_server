@@ -24,7 +24,8 @@ func closedLink() *pyjson.Object {
 }
 
 // GooseEngine owns studio_goose.exe for one Run (ADR-0073). calls serialises requests;
-// mu guards the state events update and is never held while waiting for a reply.
+// mu guards the state events update and is never held while waiting for a reply. Between
+// Runs a fresh, greeted process may wait as the next Run's engine (spare, ADR-0133).
 type GooseEngine struct {
 	deps       Deps
 	executable string
@@ -36,6 +37,7 @@ type GooseEngine struct {
 	sources   *pyjson.Object
 	link      *pyjson.Object
 	conflicts *pyjson.Object
+	spare     spareEngine
 }
 
 // NewGooseEngine returns a stopped engine for executable.
@@ -57,6 +59,27 @@ func (e *GooseEngine) current() Worker {
 	return e.process
 }
 
+// greet starts a fresh engine process and checks it answers with today's capabilities.
+func (e *GooseEngine) greet() (Worker, error) {
+	if info, err := os.Stat(e.executable); err != nil || info.IsDir() {
+		return nil, apperr.ValueError(GooseMissing)
+	}
+	process, err := e.deps.Start(e.executable, e.onEvent)
+	if err != nil {
+		return nil, err
+	}
+	hello, err := process.Request("hello", engineCall, pyjson.NewObject())
+	if err != nil {
+		process.Close()
+		return nil, err
+	}
+	if !hasAll(pyv.GetList(pyv.Obj(hello), "capabilities"), goosedom.EngineCapabilities()) {
+		process.Close()
+		return nil, apperr.ValueError(GooseStale)
+	}
+	return process, nil
+}
+
 // Ensure starts the engine once per Run and refuses a missing or outdated binary.
 func (e *GooseEngine) Ensure() error {
 	e.calls.Lock()
@@ -68,21 +91,13 @@ func (e *GooseEngine) ensureLocked() error {
 	if e.current() != nil {
 		return nil
 	}
-	if info, err := os.Stat(e.executable); err != nil || info.IsDir() {
-		return apperr.ValueError(GooseMissing)
-	}
-	process, err := e.deps.Start(e.executable, e.onEvent)
-	if err != nil {
-		return err
-	}
-	hello, err := process.Request("hello", engineCall, pyjson.NewObject())
-	if err != nil {
-		process.Close()
-		return err
-	}
-	if !hasAll(pyv.GetList(pyv.Obj(hello), "capabilities"), goosedom.EngineCapabilities()) {
-		process.Close()
-		return apperr.ValueError(GooseStale)
+	process := e.takeSpare()
+	if process == nil {
+		greeted, err := e.greet()
+		if err != nil {
+			return err
+		}
+		process = greeted
 	}
 	e.mu.Lock()
 	e.process = process

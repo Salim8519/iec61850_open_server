@@ -2,6 +2,7 @@ package app
 
 import (
 	"net/http"
+	"time"
 
 	"studio-engine/internal/acquisition"
 	"studio-engine/internal/acquisition/goosedom"
@@ -13,6 +14,9 @@ import (
 	"studio-engine/internal/runtime/ports"
 	"studio-engine/internal/scl"
 )
+
+// spareEngineDelay keeps the first spare GOOSE engine out of the application's own start.
+const spareEngineDelay = 3 * time.Second
 
 // wireLive builds LiveManager (real-IED sessions, GOOSE/SV listeners and the GOOSE engine)
 // on the coordinator's ports, binds it to the runtime and returns the live routes.
@@ -26,6 +30,8 @@ func (e *Engine) wireLive(live *liveAdapter) []api.Route {
 		Values: a.Values, Samples: a.Samples, Equipment: a.Equipment, States: a.States,
 		Network: systemNetwork{}, Clock: systemClock{}, Members: scl.SubscriptionMembers}
 	e.Live = acquisition.NewManager(deps)
+	// The first Run finds a GOOSE engine ready as well, started once the window has opened.
+	time.AfterFunc(spareEngineDelay, e.Live.Engine.Prepare)
 	live.manager = e.Live
 	declarations := &project.GooseDeclarations{} // one cache per process
 	area := &liveapi.Service{Deps: deps, Live: e.Live, Access: acquisition.NewMmsAccess(a.Bus, deps.Clock),
@@ -65,7 +71,12 @@ func (l *liveAdapter) Connect(p *pyjson.Object, real []*pyjson.Object) error {
 
 func (l *liveAdapter) Disconnect(iedID string) { l.manager.Disconnect(iedID) }
 
-func (l *liveAdapter) Stop() { l.manager.Stop() }
+// Stop ends the Run's listeners and GOOSE engine, then readies a fresh engine for the next
+// Run in the background (ADR-0133).
+func (l *liveAdapter) Stop() {
+	l.manager.Stop()
+	l.manager.Engine.Prepare()
+}
 
 func (l *liveAdapter) BusFor(ieds []*pyjson.Object) (map[string]string, error) {
 	opened, err := l.manager.Engine.BusFor(ieds)

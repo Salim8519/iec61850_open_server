@@ -24,7 +24,8 @@ func (e *Engine) gates() (httpapi.LicenseGate, httpapi.StartupGate) {
 }
 
 // startBackground is the end of create_app: license background verify, the daily update
-// check and, once startup recovery succeeded, the gateway resume (_resume_gateway).
+// check, once startup recovery succeeded the gateway resume (_resume_gateway), and the Go-only
+// idle reading of Run start data (ADR-0133).
 func (e *Engine) startBackground(ctx context.Context) {
 	if e.options.NoBackground {
 		close(e.resumed)
@@ -34,6 +35,7 @@ func (e *Engine) startBackground(ctx context.Context) {
 	e.Updates.StartBackground(ctx)
 	go e.resumeGateway(ctx)
 	go e.releaseLeftLab()
+	go e.startWarm.Run(ctx)
 }
 
 // releaseLeftLab takes off the lab card the IED addresses an earlier session left there (closed

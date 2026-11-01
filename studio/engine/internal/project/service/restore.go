@@ -31,7 +31,8 @@ func (s *Service) Restore(payload []byte, persist bool) error {
 		return err
 	}
 	models := map[string]*pyjson.Object{}
-	for _, group := range groups {
+	reads := s.readCached(groups)
+	for index, group := range groups {
 		names, err := group.Names()
 		if err != nil {
 			return err
@@ -40,7 +41,7 @@ func (s *Service) Restore(payload []byte, persist bool) error {
 		if !ok {
 			return apperr.ValueError("Stored SCL source is not text")
 		}
-		built, err := s.storedModels(source, group.Filename, names)
+		built, err := s.storedModels(source, group.Filename, names, reads[index])
 		if err != nil {
 			return err
 		}

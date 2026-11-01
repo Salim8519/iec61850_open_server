@@ -39,9 +39,11 @@ func items(value any) []any {
 }
 
 // ValidateDiagram is validate_diagram: the browser diagram checked against the pydantic
-// contract and the project IEDs; it returns the normalised diagram.
+// contract and the project IEDs; it returns the normalised diagram. A one-off index answers
+// the signal/control questions (identical answers; opening a large project scanned every
+// IED's signal list once per binding and point, ADR-0133).
 func ValidateDiagram(value any, ieds []*pyjson.Object) (*pyjson.Object, error) {
-	return ValidateDiagramWith(value, LinearLookup(ieds))
+	return ValidateDiagramWith(value, NewIndex().For(ieds))
 }
 
 // ValidateDiagramWith is ValidateDiagram answering IED/signal/control questions from ieds

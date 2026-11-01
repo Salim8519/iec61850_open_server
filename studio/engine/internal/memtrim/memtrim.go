@@ -17,6 +17,7 @@ const quiet = 2 * time.Second
 var (
 	mu    sync.Mutex
 	timer *time.Timer
+	held  int // jobs running now (Hold); a due collection waits for the last one (ADR-0133)
 )
 
 // Soon returns freed memory to the system once no job has asked for quiet seconds.
@@ -30,7 +31,27 @@ func Soon() {
 	timer = time.AfterFunc(quiet, func() {
 		mu.Lock()
 		timer = nil
+		busy := held > 0
 		mu.Unlock()
-		debug.FreeOSMemory()
+		if !busy {
+			debug.FreeOSMemory()
+		}
 	})
+}
+
+// Hold keeps the collection away while a job runs (a full collection paused a Run that started
+// two seconds after a Stop); the returned release ends the job and asks for a collection Soon.
+func Hold() (release func()) {
+	mu.Lock()
+	held++
+	mu.Unlock()
+	var once sync.Once
+	return func() {
+		once.Do(func() {
+			mu.Lock()
+			held--
+			mu.Unlock()
+			Soon()
+		})
+	}
 }

@@ -94,7 +94,9 @@ func copyFile(source, target string) error {
 
 // fakeWorker answers the requests the coordinator sends. Every 7th update_batch it also
 // reports an MMS control of its first control object (control_applied), so native feedback
-// runs while canvas commands, writes and Run/Stop compete for the runtime's locks.
+// runs while canvas commands, writes and Run/Stop compete for the runtime's locks. The batch
+// of start values right after "start" is not counted: those were single writes before
+// ADR-0133, and the count keeps the moments the tests were written against.
 type fakeWorker struct {
 	out      *bufio.Writer
 	values   map[string]any
@@ -107,6 +109,7 @@ type fakeWorker struct {
 func runFakeNative(name string, stdin io.Reader, stdout io.Writer) {
 	w := &fakeWorker{out: bufio.NewWriter(stdout), values: map[string]any{}}
 	in := bufio.NewReader(stdin)
+	previous := ""
 	for {
 		message, err := native.ReadFrame(in)
 		if err != nil {
@@ -119,9 +122,10 @@ func runFakeNative(name string, stdin io.Reader, stdout io.Writer) {
 		if op == "stop" {
 			return
 		}
-		if op == "update_batch" {
+		if op == "update_batch" && previous != "start" {
 			w.maybeControl()
 		}
+		previous = op
 	}
 }
 

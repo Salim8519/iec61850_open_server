@@ -7,6 +7,7 @@ import (
 	"studio-engine/internal/events"
 	projects "studio-engine/internal/project/service"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/runtime"
 	"studio-engine/internal/scl"
 	"studio-engine/internal/store/autosave"
 	"studio-engine/internal/store/modelcache"
@@ -37,6 +38,8 @@ func (e *Engine) wireProject() error {
 	}
 	bus := events.NewBus(events.Capacity)
 	e.bus = bus
+	e.startWarm = runtime.NewStartWarmer(func() *pyjson.Object { return e.Projects.Current() },
+		runtime.StartWarmDelay)
 	service, err := projects.New(projects.Config{
 		DataDir:  o.DataDir,
 		Importer: &scl.Importer{Validator: e.validator},
@@ -44,6 +47,7 @@ func (e *Engine) wireProject() error {
 		// lifeMu -> commandMu -> project.mutate -> table.mu -> bus.mu).
 		OnChange: func(revision int64, source any) {
 			publish(bus, o.Logf, "project_changed", pyjson.NewObject().Set("revision", revision).Set("source", source))
+			e.startWarm.Changed() // never blocks
 		},
 		OnSnapshotError: func(err error) { o.Logf("Background autosave failed: %v", err) },
 		ModelCache:      modelcache.New(o.DataDir),

@@ -6,12 +6,14 @@ from check_architecture import check as architecture
 from check_documentation import check as documentation
 from history_log import check as history
 from check_specs import check as specifications
+from check_offline_ui import check as offline_ui
 from build_goose_engine import test as goose_engine
 from engine_tests import test as engine
 
 CHECKS = [("File lengths", lengths), ("Architecture", architecture),
           ("Documentation", documentation), ("Engineering history", history),
-          ("Specifications", specifications), ("GOOSE engine (go test)", goose_engine),
+          ("Specifications", specifications), ("Offline interface", offline_ui),
+          ("GOOSE engine (go test)", goose_engine),
           ("Go engine (go test, pyjson vs CPython)", engine)]
 
 

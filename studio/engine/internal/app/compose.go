@@ -93,6 +93,7 @@ type Engine struct {
 	options   Options
 	bus       *events.Bus
 	validator *xsd.Validator
+	startWarm *runtime.StartWarmer // reads Run start data while idle (ADR-0133)
 	cancel    context.CancelFunc
 	resumed   chan struct{} // closed when the gateway resume goroutine ended
 	closeOnce sync.Once

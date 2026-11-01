@@ -60,6 +60,7 @@ func (s *Server) index(w http.ResponseWriter, r *http.Request) {
 			[]byte("ScadaBench frontend build is not available yet."))
 		return
 	}
+	setOfflinePolicy(w)
 	if front.files != nil {
 		front.memory(w, "index.html")
 		return

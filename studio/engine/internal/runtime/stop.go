@@ -9,7 +9,7 @@ import (
 // Stop is POST /runtime/stop (ids nil) and /runtime/ieds/<id>/stop: stop the whole run, or
 // only these IEDs while the others keep running (Coordinator.stop).
 func (c *Coordinator) Stop(ids []string) error {
-	defer memtrim.Soon()
+	defer memtrim.Hold()()
 	c.lifeMu.Lock()
 	defer c.lifeMu.Unlock()
 	project := c.opt.Project.Current()

@@ -12,15 +12,20 @@ import (
 // derived models of an unchanged source come from <data>/cache/models instead of a new
 // parse, type resolution and XSD check; ids are still drawn in import order and the
 // source text is re-attached where import_scl puts it, so the result is identical.
-func (s *Service) storedModels(source string, filename any, names []any) ([]*pyjson.Object, error) {
+// read is the cache entry a restore found before this source's turn (nil: look now).
+func (s *Service) storedModels(source string, filename any, names []any, read *cachedRead) ([]*pyjson.Object, error) {
 	cache := s.config.ModelCache
 	key, cacheable := "", false
 	if cache != nil {
 		key, cacheable = modelKey(source, filename, names)
 	}
 	if cacheable {
-		if cached, ok := cache.Get(key); ok {
-			if models, ok := s.attachIdentity(cached, source); ok {
+		if read == nil {
+			read = &cachedRead{}
+			read.models, read.hit = cache.Get(key)
+		}
+		if read.hit {
+			if models, ok := s.attachIdentity(read.models, source); ok {
 				return models, nil
 			}
 		}

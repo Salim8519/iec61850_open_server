@@ -15,6 +15,9 @@ import (
 // (supervisor._launch), so a worker starts with the last known positions.
 var startKinds = map[string]bool{"Dbpos": true, "Tcmd": true, "Quality": true, "Timestamp": true}
 
+// startBatch is the most attributes the worker takes in one update_batch.
+const startBatch = 4096
+
 // gooseRequest is worker_settings.goose_request.
 func gooseRequest(ied *pyjson.Object, bus string) *pyjson.Object {
 	publish := bus != "" && pyval.Truthy(getOr(ied, "goose_publish", true)) &&
@@ -35,7 +38,10 @@ func getOr(object *pyjson.Object, key string, fallback any) any {
 
 // addWorkers is Supervisor.add: endpoints, preflight, GOOSE bus, then every worker started
 // in parallel (0111 rule 9). On any failure the whole batch is stopped and the first error
-// in project order is returned, as the serial Python loop would.
+// in project order is returned, as the serial Python loop would. A fresh Run opens the GOOSE
+// bus while the lab addresses are prepared (ADR-0133): a failed fresh Run stops the GOOSE engine
+// anyway, and the errors keep their order. The IED processes start after both, so a slow PC
+// never starts the GOOSE engine and every IED process at the same moment.
 func (c *Coordinator) addWorkers(batch []*running, network *pyjson.Object, current []*running) error {
 	executable := filepath.Join(c.opt.NativeDir, "studio_ied.exe")
 	if _, err := os.Stat(executable); err != nil {
@@ -53,26 +59,17 @@ func (c *Coordinator) addWorkers(batch []*running, network *pyjson.Object, curre
 	if err := c.assignEndpoints(everyone); err != nil {
 		return err
 	}
-	var allowed []string
-	if pyval.Str(network, "mode") == "lab" {
-		starting := make([]string, len(batch))
-		for i, item := range batch {
-			starting[i] = item.model.id
-		}
-		addresses, err := c.opt.LabAddresses(pyval.Str(network, "adapter_guid"), starting)
-		if err != nil {
-			return err // not an apperr: Flask's generic 500, its text in the runtime event
-		}
-		allowed = addresses
-	}
-	if err := preflight(ieds, network, allowed); err != nil {
+	bus := c.openBus(ieds, len(current) == 0)
+	if err := c.prepareNetwork(batch, ieds, network); err != nil {
+		bus.wait()
 		return err
 	}
 	folder := filepath.Join(c.opt.DataDir, "runtime")
 	if err := os.MkdirAll(folder, 0o755); err != nil {
+		bus.wait()
 		return apperr.RuntimeError(err.Error())
 	}
-	buses, err := c.opt.Live.BusFor(ieds)
+	buses, err := bus.result(ieds)
 	if err != nil {
 		return err
 	}
@@ -93,6 +90,23 @@ func (c *Coordinator) addWorkers(batch []*running, network *pyjson.Object, curre
 		}
 	}
 	return nil
+}
+
+// prepareNetwork puts the lab card's addresses on (lab mode) and runs the preflight checks.
+func (c *Coordinator) prepareNetwork(batch []*running, ieds []*pyjson.Object, network *pyjson.Object) error {
+	var allowed []string
+	if pyval.Str(network, "mode") == "lab" {
+		starting := make([]string, len(batch))
+		for i, item := range batch {
+			starting[i] = item.model.id
+		}
+		addresses, err := c.opt.LabAddresses(pyval.Str(network, "adapter_guid"), starting)
+		if err != nil {
+			return err // not an apperr: Flask's generic 500, its text in the runtime event
+		}
+		allowed = addresses
+	}
+	return preflight(ieds, network, allowed)
 }
 
 func (c *Coordinator) launch(item *running, executable, folder string, network *pyjson.Object, bus string) error {
@@ -130,7 +144,22 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 	c.endpoints[id] = endpoint{item.host, item.port}
 	c.hub.notify(Change{IEDID: id})
 	c.mu.Unlock()
+	if err := writeStartValues(item, worker); err != nil {
+		return err
+	}
+	stampStartTimes(item, pyval.Get(started, "started_at"))
+	c.mu.Lock()
+	c.setIedStateLocked(id, "running")
+	c.mu.Unlock()
+	return nil
+}
+
+// writeStartValues writes the last known positions, commands, qualities and changed times in
+// signal order, in batches of one data-model lock each (ADR-0133; the worker validates a whole
+// batch before it changes anything, so a refused value fails the Run as the single write did).
+func writeStartValues(item *running, worker *native.Ied) error {
 	previousStart := item.table.startTime()
+	var updates []any
 	for i, entry := range item.model.signals {
 		if !startKinds[entry.Kind] {
 			continue
@@ -140,15 +169,16 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 			continue // never changed in the last run: stampStartTimes gives it this run's start
 		}
 		if pyval.Truthy(value) {
-			if _, err := worker.Update(entry.Ref, value); err != nil {
-				return err
-			}
+			updates = append(updates, pyjson.NewObject().Set("ref", entry.Ref).Set("value", value))
 		}
 	}
-	stampStartTimes(item, pyval.Get(started, "started_at"))
-	c.mu.Lock()
-	c.setIedStateLocked(id, "running")
-	c.mu.Unlock()
+	for len(updates) > 0 {
+		size := min(len(updates), startBatch)
+		if _, err := worker.UpdateBatch(updates[:size]); err != nil {
+			return err
+		}
+		updates = updates[size:]
+	}
 	return nil
 }
 
