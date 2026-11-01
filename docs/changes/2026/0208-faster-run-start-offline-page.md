@@ -52,6 +52,20 @@ app ui is completely offline". Decision: [ADR-0133](../../decisions/ADR-0133-fas
 - Page: served with the policy, renders the Devices and diagram pages with no blocked resource and
   Windows fonts; every request goes to 127.0.0.1.
 
+## Release (0.1.31 rebuilt and published again, same version)
+
+- `compile_go_release.py --version 0.1.31` with `studio\.venv` (the packer needs Flask): antivirus
+  gate 19 programs, 0 findings. Packaged app on the project copy: page data 0.98 s, Start 2.53 s
+  and 4.09 s, Stop 0.39 s and 0.80 s.
+- Protocol files that need Flask, run with `studio\.venv`: 18 passed (with the rest: 90 passed,
+  9 skipped).
+- Changelog (`website/src/pages/changelog.astro`): title "Faster Start and more reliable network
+  setup", two Faster lines and an offline line added. `website/deploy.cmd`: Pages 9992de50, "Saved
+  release 0.1.31 from 2026-11-01".
+- Live installer 2c090c48 (19,557,335 bytes) and portable 8eb23467 (53,122,048 bytes) match the
+  build; the signed release record carries both hashes and the new notes line; copies of both
+  downloads scan clean (101 objects, 0 detected).
+
 ## Limitations
 
 - Timings move with the PC's load; every comparison alternates old and new rounds and reports
