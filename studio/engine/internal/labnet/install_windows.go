@@ -22,6 +22,7 @@ type Installed struct {
 	Card    string `json:"card"`
 	Created bool   `json:"created"`
 	Program string `json:"program"`
+	Note    string `json:"note,omitempty"` // a skipped optional setting and Windows' reason
 }
 
 // Install sets up the lab network (needs administrator rights): the card (kept when the
@@ -39,9 +40,11 @@ func Install(source string) (Installed, error) {
 		}
 		result.Card, result.Created = card, true
 	}
-	if err := configureCard(result.Card); err != nil {
+	note, err := configureCard(result.Card)
+	if err != nil {
 		return result, err
 	}
+	result.Note = note
 	manager, err := mgr.Connect()
 	if err != nil {
 		return result, err
@@ -101,20 +104,16 @@ func Uninstall(removeCard bool) error {
 }
 
 // configureCard names the card, keeps it last in route choice, turns DHCP and IPv6 off and stops
-// the DNS Client registering its addresses (it never uses DNS; ADR-0128).
-func configureCard(guid string) error {
-	script := "$ErrorActionPreference='Stop'; $a = Get-NetAdapter -IncludeHidden | Where-Object { " +
-		"$_.InterfaceGuid -eq '" + guid + "' }; if (-not $a) { throw 'card not found' }; " +
-		"if ($a.Name -ne '" + CardName + "') { Rename-NetAdapter -InputObject $a -NewName '" + CardName + "' }; " +
-		"Set-NetIPInterface -InterfaceIndex $a.ifIndex -AddressFamily IPv4 -InterfaceMetric 9999 -Dhcp Disabled; " +
-		"Set-DnsClient -InterfaceIndex $a.ifIndex -RegisterThisConnectionsAddress $false; " +
-		"Disable-NetAdapterBinding -Name '" + CardName + "' -ComponentID ms_tcpip6"
-	command := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
+// the DNS Client registering its addresses (it never uses DNS; ADR-0128). Only the DNS step may
+// fail (ADR-0134): its reason comes back as the note and the other steps still run and must work.
+func configureCard(guid string) (note string, err error) {
+	command := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", cardScript(guid))
 	command.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-	if output, err := command.CombinedOutput(); err != nil {
-		return errors.New("the card's settings could not be set: " + tail(string(output)))
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return "", errors.New("the card's settings could not be set: " + tail(string(output)))
 	}
-	return nil
+	return dnsNote(string(output)), nil
 }
 
 func tail(text string) string {

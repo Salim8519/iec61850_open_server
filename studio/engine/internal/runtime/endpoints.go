@@ -148,19 +148,20 @@ func preflight(ieds []*pyjson.Object, network *pyjson.Object, allowed []string) 
 		}
 		seen[key] = true
 		if err := bindTest(text, port); err != nil {
-			return apperr.New(fmt.Sprintf("%s cannot listen on %s:%d because another program is using it (%s). "+
-				"Close that program or change the port.", name, text, port, err))
+			return listenProblem(name, text, port, err)
 		}
 	}
 	return nil
 }
 
-// bindTest binds a TCP listener with SO_EXCLUSIVEADDRUSE like the Python preflight.
+// bindTest binds a TCP listener with SO_EXCLUSIVEADDRUSE like the Python preflight. It refuses
+// exactly where the IED's own listener (SO_REUSEADDR) would fail or would share the port with
+// another listener on its address (measured, ADR-0134).
 func bindTest(host string, port int64) error {
 	config := net.ListenConfig{Control: exclusiveAddress}
 	listener, err := config.Listen(contextBackground(), "tcp4", fmt.Sprintf("%s:%d", host, port))
 	if err != nil {
-		return osErrorText(err)
+		return err
 	}
 	return listener.Close()
 }

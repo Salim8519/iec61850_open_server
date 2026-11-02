@@ -55,7 +55,11 @@ func run(args []string) (code int) {
 		if err != nil {
 			return write(args[2], outcome{Message: err.Error(), Installed: &installed})
 		}
-		return write(args[2], outcome{OK: true, Message: "The lab network card is ready.", Installed: &installed})
+		ready := "The lab network card is ready."
+		if installed.Note != "" {
+			ready += " " + installed.Note // recorded in the network journal (ADR-0134)
+		}
+		return write(args[2], outcome{OK: true, Message: ready, Installed: &installed})
 	case "uninstall":
 		if err := labnet.Uninstall(true); err != nil {
 			return write(args[2], outcome{Message: err.Error()})

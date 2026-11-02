@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"sync"
@@ -106,7 +107,12 @@ func (c *Coordinator) prepareNetwork(batch []*running, ieds []*pyjson.Object, ne
 		}
 		allowed = addresses
 	}
-	return preflight(ieds, network, allowed)
+	err := preflight(ieds, network, allowed)
+	var refused *listenFailure
+	if errors.As(err, &refused) {
+		c.emit("listen_check_failed", refused.event) // the run log keeps Windows' answer (ADR-0134)
+	}
+	return err
 }
 
 func (c *Coordinator) launch(item *running, executable, folder string, network *pyjson.Object, bus string) error {
