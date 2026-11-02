@@ -35,6 +35,19 @@ Owner requests and choices of 2026-11-02 (see the decision). Decision:
   on the running sample IED: Disconnect solid red, XCBR1.Pos opened → 4 reads in 7 s (open + every
   2 s), one "Read all now", no arrow on each object. Top bar fits at 1366 px with no cut text.
 
+## Release 0.1.32 (together with change 0211)
+
+- `compile_go_release.py --version 0.1.32` with `studio\.venv`: antivirus gate 19 programs, 0 findings.
+  A first build numbered 0.1.33 was not published (the owner chose 0.1.32); its first antivirus run
+  got no Kaspersky report and passed when run again.
+- Packaged portable on a throwaway data folder: sample IED import, `GET /project/history`
+  "IED change", Undo answers `can_redo`, the IED is gone, both top-bar arrows present.
+- `website/deploy.cmd` needs Node 22.22+ for Astro; run with `fnm exec --using=24`. Pages
+  389e4bed, "Saved release 0.1.32 from 2026-11-03". The stopped 0.1.33 run had already uploaded
+  `download/ScadaBench-Portable-0.1.33.exe` to the downloads bucket (linked from nowhere).
+- Live installer d9cf81b9 (19,584,425 bytes) and portable 33685e90 (53,190,656 bytes) match the
+  build; copies of both downloads scan clean (2 programs, 0 findings).
+
 ## Limitations
 
 - Save as with the Windows Save dialog was not clicked through (a native dialog); the file name
