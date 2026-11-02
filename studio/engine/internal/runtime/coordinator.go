@@ -34,6 +34,9 @@ type Options struct {
 	CommandKeep time.Duration
 	// Version is the app version written into each run log's run_started record.
 	Version string
+	// OnState, when set, hears every run state change under c.mu; it must not block or call
+	// back into the coordinator (the project service's Undo uses it, ADR-0135).
+	OnState func(state string)
 }
 
 type sourceKey struct{ ied, ref string }

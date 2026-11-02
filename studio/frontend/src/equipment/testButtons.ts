@@ -35,7 +35,8 @@ export function testAvailability(data: EquipmentData, ieds: Ied[], running: Set<
 }
 
 export const TEST_COPY = {
-  title: 'Test',
+  title: 'Test', titleTag: 'forced change, no command',
+  operateTitle: 'Operate', operateTag: 'real MMS command',
   explain: (name: string) => `Sets the position in the simulated IED as if the ${name.toLowerCase()} moved by itself. No command is sent.`,
   explainOther: 'Sets the value in the simulated IED as if the plant changed by itself. No command is sent.',
   real: 'Reads a real IED: test buttons never change it. Use its command link to operate it.',

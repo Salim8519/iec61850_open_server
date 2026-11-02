@@ -77,6 +77,11 @@ func (a *Area) Routes() []api.Route {
 		route("POST", "/project/save", a.saveProject),
 		route("GET", "/project/download", a.downloadProject),
 		route("POST", "/project/open", a.openProject),
+		route("GET", "/project/history", a.getHistory), // Go-only (ADR-0135)
+		route("POST", "/project/undo", a.stepHistory(true)),
+		route("POST", "/project/redo", a.stepHistory(false)),
+		route("POST", "/project/new", a.newProject),
+		route("POST", "/project/close", a.closeProject),
 		route("POST", "/scl/validate", a.validateSCL),
 		route("POST", "/scl/preview", a.previewSCL),
 		route("POST", "/scl/import", a.importSCL),

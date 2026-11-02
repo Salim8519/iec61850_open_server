@@ -13,6 +13,7 @@ import (
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/project"
+	"studio-engine/internal/project/history"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/scl"
 	"studio-engine/internal/store/archive"
@@ -62,6 +63,10 @@ type Service struct {
 	validated *pyjson.Object     // the last diagram this service validated (mutate held)
 	// validatedIEDs is the IED list validated was checked against.
 	validatedIEDs []any
+	history       *history.History // Undo/Redo steps (mutate held; ADR-0135)
+	replaying     bool             // the commit in progress is not an Undo step (mutate held)
+	running       atomic.Bool      // IEDs run: changes are not steps, Undo is refused
+	recovered     atomic.Value     // id (string) of the project startup recovery opened
 }
 
 // New creates the service with a new empty project. Fold the journal of an earlier run
@@ -74,7 +79,7 @@ func New(config Config) (*Service, error) {
 		config.OnChange = func(int64, any) {}
 	}
 	s := &Service{config: config, sessionID: config.NewID(), encoder: archive.NewEncoder(),
-		compactor: project.NewCompactor(), index: project.NewIndex()}
+		compactor: project.NewCompactor(), index: project.NewIndex(), history: history.New(undoRules{}, time.Now)}
 	journal, err := autosave.OpenJournal(config.DataDir, s.encoder)
 	if err != nil {
 		return nil, err
@@ -159,6 +164,9 @@ func (s *Service) commit(next *pyjson.Object, notice *pyjson.Object, bump bool, 
 	}
 	s.current.Store(&state{project: next, compact: compactNext, notice: notice, revision: revision})
 	s.snapshots.Request(s.seq, compactNext)
+	if bump && !s.replaying && !s.running.Load() {
+		s.history.Record(prev.project, next, source)
+	}
 	if bump {
 		s.config.OnChange(revision, source)
 	}

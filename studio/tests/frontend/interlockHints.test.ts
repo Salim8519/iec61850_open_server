@@ -9,7 +9,7 @@ test('hints never disable switching and always name their source', () => {
   const box = read('features/diagram/SwitchHints.tsx');
   const sheet = read('features/diagram/EquipmentSheet.tsx');
   assert.doesNotMatch(box, /disabled/, 'the hint box has no way to block a command');
-  const operate = sheet.slice(sheet.indexOf('<h3>Operate</h3>'), sheet.indexOf('<SwitchHints'));
+  const operate = sheet.slice(sheet.indexOf('<h3>{TEST_COPY.operateTitle}'), sheet.indexOf('<SwitchHints'));
   assert.match(operate, /<SwitchOperate /, 'the Operate area holds Open and Close (ADR-0108)');
   const buttons = read('features/diagram/SwitchOperate.tsx').replace(/\s+/g, ' ')
     .match(/<button(?:=>|[^>])*>(Open|Close)<\/button>/g) ?? [];

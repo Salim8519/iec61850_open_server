@@ -17,7 +17,7 @@ export function EquipmentTest({ node, project, running, busy, test, message }: {
   const switching = ['CB', 'DS', 'ES'].includes(data.kind);
   const press = (button: TestButton) => test(node.id, button.action,
     button.action === 'set' ? { value: Number(value) } : button.row ? { row: button.row } : undefined);
-  return <section className="sheet-section"><h3>{TEST_COPY.title}</h3>
+  return <section className="sheet-section"><h3>{TEST_COPY.title}<span className="sheet-tag"> · {TEST_COPY.titleTag}</span></h3>
     {reason === 'real' && <p className="small muted" style={{ margin: 0 }}>{TEST_COPY.real}</p>}
     {reason === 'not_running' && <p className="small muted" style={{ margin: 0 }}>{TEST_COPY.notRunning}</p>}
     {buttons.some(button => button.action === 'set') && <label className="small">{TEST_COPY.valueLabel}

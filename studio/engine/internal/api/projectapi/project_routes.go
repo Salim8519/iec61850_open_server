@@ -16,7 +16,7 @@ func (a *Area) getProject(w http.ResponseWriter, r *http.Request) error {
 	state, running := a.runtimeState()
 	var recovery any
 	if a.deps.Startup != nil {
-		if result, _ := a.deps.Startup.Result(); result != nil {
+		if result, _ := a.deps.Startup.Result(); result != nil && a.deps.Projects.StillRecovered() {
 			recovery = result
 		}
 	}

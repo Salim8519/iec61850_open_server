@@ -73,3 +73,5 @@ a.button.disabled { pointer-events: none; opacity: 0.5; }
 .command-options p { margin: 0; }
 .command-option { display: flex; gap: 8px; align-items: center; font-weight: 500; }
 .command-field { display: grid; gap: 4px; font-weight: 600; max-width: 320px; }
+.explorer-detail .panel-head .explorer-read-all { margin-left: auto; min-height: 32px; padding: 0 10px; }
+.explorer-paused { margin: 0; padding: 6px 16px; }

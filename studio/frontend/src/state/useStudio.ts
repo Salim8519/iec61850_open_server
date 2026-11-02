@@ -2,8 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, connectSession, upload } from '../api/client';
 import type { Diagram, Project, StudioEvent } from '../api/types';
 import type { ImportPreview } from '../features/ieds/ImportSelection';
-import { sameEngineering, type DiagramHistory } from './diagramHistory';
-import { adoptProject, forgetHistory, NO_HISTORY, recordEdit, stepHistory, type HistorySession } from './historySession';
+import { sameEngineering } from './diagramHistory';
+import { useHistory } from './useHistory';
+import { saveProjectAs } from './saveProjectAs';
+import { PROJECT_FILE_COPY } from '../copy/projectFile';
 import { classifyProjectChange, seenInRead } from './projectChange';
 import { EquipmentValueStore } from '../equipment/liveValues';
 import { EnergizationStore, type Energization } from '../equipment/energization';
@@ -25,20 +27,15 @@ export function useStudio() {
   const [working, setWorking] = useState('');
   const [saveState, setSaveState] = useState('All changes saved');
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
-  const [history, setHistory] = useState<DiagramHistory | null>(null);
   const equipmentValues = useMemo(() => new EquipmentValueStore(), []);
   const energization = useMemo(() => new EnergizationStore(), []);
   const signalLayers = useMemo(() => new SignalLayerStore(), []);
-  // The Undo history and the project it belongs to (historySession.ts).
-  const session = useRef<HistorySession>(NO_HISTORY);
   const tabId = useRef(crypto.randomUUID());
   const current = useRef<Project | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveQueue = useRef<Promise<void>>(Promise.resolve());
   const saveGeneration = useRef(0);
   const apply = useCallback((value: Project) => {
-    const adopted = adoptProject(session.current, value);
-    if (adopted !== session.current) { session.current = adopted; setHistory(adopted.history); }
     current.current = value; setProject(value); rememberIedNames(value.ieds);  // Activity names IEDs (0177)
   }, []);
   // One GET /project in flight and one waiting at most, however many events ask (speed lane F).
@@ -69,7 +66,6 @@ export function useStudio() {
         }
       } catch (reason) {
         saveGeneration.current += 1;
-        session.current = forgetHistory(session.current);
         await refresh();
         throw reason;
       }
@@ -113,7 +109,6 @@ export function useStudio() {
             saveGeneration.current += 1;
             if (timer.current) clearTimeout(timer.current);
             timer.current = null;
-            session.current = forgetHistory(session.current);
             setSaveState('All changes saved');
             refresh().catch(fail);
           }
@@ -137,15 +132,11 @@ export function useStudio() {
     finally { setBusy(false); setWorking(''); }
   }, [refresh]);
 
-  const updateDiagram = useCallback((diagram: Diagram, group?: string, navigating = false) => {
+  // Each saved diagram edit is one Undo step in the engine (ADR-0135); quick edits of the same
+  // thing join there, so the gesture group is not needed here.
+  const updateDiagram = useCallback((diagram: Diagram, _group?: string) => {
     if (!current.current || current.current.runtime !== 'stopped') return;
-    if (!navigating && session.current.history) {
-      session.current = recordEdit(session.current, diagram, group);
-      setHistory(session.current.history);
-    }
     const unchanged = sameEngineering(diagram, current.current.diagram);
-    // A local edit never goes through apply(): it cannot change which project this is, so it must
-    // not be able to start a new history (that lost the first edit after opening the page).
     const edited = { ...current.current, diagram };
     current.current = edited; setProject(edited);
     if (unchanged) return;
@@ -156,14 +147,26 @@ export function useStudio() {
     }), 400);
   }, [saveDiagram]);
 
-  const navigateHistory = useCallback((direction: 'undo' | 'redo') => {
-    if (!session.current.history || current.current?.runtime !== 'stopped') return;
-    session.current = stepHistory(session.current, direction);
-    const stepped = session.current.history;
-    setHistory(stepped); if (stepped) updateDiagram(stepped.present, undefined, true);
-  }, [updateDiagram]);
-  const undo = useCallback(() => navigateHistory('undo'), [navigateHistory]);
-  const redo = useCallback(() => navigateHistory('redo'), [navigateHistory]);
+  const history = useHistory(project, perform, saveDiagram);
+  // File › Save as…: the Windows Save dialog (or a named download) with what is on screen saved first.
+  const saveAs = useCallback(() => perform(async () => {
+    await saveDiagram();
+    const how = await saveProjectAs(current.current?.name ?? '');
+    if (how !== 'cancelled') setSaveState(PROJECT_FILE_COPY.saved(how));
+  }, 'Saving a copy…'), [perform, saveDiagram]);
+  // File › New project / Close project: an empty project replaces the open one (ADR-0135).
+  const replaceProject = useCallback(async (mode: 'new' | 'close', name: string) => {
+    let done = false;
+    await perform(async () => {
+      saveGeneration.current += 1;
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = null;
+      await api(mode === 'new' ? '/project/new' : '/project/close', 'POST', mode === 'new' ? { name } : undefined);
+      liveData().values.clear(); equipmentValues.clear(); energization.clear();
+      setSaveState('All changes saved'); done = true;
+    }, mode === 'new' ? 'Starting a new project…' : 'Closing the project…');
+    return done;
+  }, [perform, equipmentValues, energization]);
 
   const runtime = (action: string) => perform(async () => {
     if (current.current?.runtime === 'stopped') await saveDiagram();
@@ -183,7 +186,7 @@ export function useStudio() {
       await saveDiagram(); steps.next();
       if (project) {
         await upload('/project/open', file); liveData().values.clear(); equipmentValues.clear(); energization.clear();
-        session.current = forgetHistory(session.current); steps.next();
+        steps.next();
       } else {
         const preview = await upload('/scl/preview', file) as Omit<ImportPreview, 'file'>;
         setImportPreview({ ...preview, file }); steps.end();
@@ -205,10 +208,10 @@ export function useStudio() {
     }, 'Importing the IEDs…').finally(steps.end);
   };
   return { project, error, setError, busy, working, work: steps.work, equipmentValues, energization, signalLayers, saveState, updateDiagram,
-    canUndo: !!history?.past.length, canRedo: !!history?.future.length,
-    undo, redo,
+    history, canUndo: history.canUndo, canRedo: history.canRedo, undo: history.undo, redo: history.redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },
     runtime, addTemplate, importFile, perform, refresh, prepare: saveDiagram,
     save: () => perform(async () => { await saveDiagram(); await api('/project/save', 'POST'); }),
+    saveAs, replaceProject,
   };
 }

@@ -8,6 +8,9 @@ package runtime
 func (c *Coordinator) setStateLocked(state string) {
 	c.state = state
 	c.hub.notify(Change{})
+	if c.opt.OnState != nil {
+		c.opt.OnState(state)
+	}
 }
 
 // ForceState sets the run state without starting or stopping anything: the parity build's

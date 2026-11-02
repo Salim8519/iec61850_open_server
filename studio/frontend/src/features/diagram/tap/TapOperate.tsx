@@ -1,3 +1,4 @@
+import { TEST_COPY } from '../../../equipment/testButtons';
 import { useContext } from 'react';
 import { Bot, ChevronDown, ChevronUp, Hand } from 'lucide-react';
 import type { EquipmentData } from '../../../api/types';
@@ -18,7 +19,7 @@ export function TapOperate({ nodeId, data, message }: { nodeId: string; data: Eq
   const lower = stepBlock(tap, tapValue, auto, 'lower');
   const canAuto = !!tap.mode_control || (!tap.mode_source && tap.avr.enabled);
   const canManual = !!tap.mode_control || !tap.mode_source;
-  return <section className="sheet-section"><h3>{TAP_COPY.operateTitle}</h3>
+  return <section className="sheet-section"><h3>{TAP_COPY.operateTitle}<span className="sheet-tag"> · {TEST_COPY.operateTag}</span></h3>
     <p className="energy-sentence" role="status">{facts.join(' · ')}</p>
     <div className="tap-actions">
       <button disabled={!!raise || busy} title={raise ?? TAP_COPY.raiseHint} onClick={() => send(nodeId, 'raise')}>

@@ -24,8 +24,9 @@ test('only the packaged app window asks before closing', () => {
   assert.match(read('app/App.tsx'), /useExitConfirm\(\);/);
 });
 
-test('project download is a link, not a navigation', () => {
-  const topBar = read('app/TopBar.tsx');
-  assert.doesNotMatch(topBar, /location\.href/);
-  assert.match(topBar, /link\.download = ''/);
+test('Save as never navigates away: a Save dialog, else a download link (ADR-0135)', () => {
+  const saveAs = read('state/saveProjectAs.ts');
+  assert.doesNotMatch(saveAs, /location\.href/);
+  assert.match(saveAs, /showSaveFilePicker/);
+  assert.match(saveAs, /link\.download = suggestedName/);
 });

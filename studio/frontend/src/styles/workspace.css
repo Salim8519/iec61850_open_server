@@ -89,3 +89,4 @@
   align-items: center; gap: 12px; max-width: min(720px, calc(100% - 140px)); padding: 8px 10px 8px 14px; border-radius: 12px;
   background: var(--surface); border: var(--line) solid var(--border-strong); box-shadow: var(--shadow-small); font-size: 14px; }
 .stray-notice button { flex: none; }
+.sheet-section h3 .sheet-tag { font-weight: 500; font-size: var(--font-size-small); color: var(--muted); }

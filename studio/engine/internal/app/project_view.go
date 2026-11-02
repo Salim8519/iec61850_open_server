@@ -50,7 +50,8 @@ func (e *Engine) getProject(w http.ResponseWriter, r *http.Request) {
 		running = append(running, id)
 	}
 	var recovered any
-	if result, _ := e.Recovery.Result(); result != nil {
+	// The notice speaks about the recovered project only, not one made or opened later (ADR-0135).
+	if result, _ := e.Recovery.Result(); result != nil && e.Projects.StillRecovered() {
 		recovered = result
 	}
 	body.Set("runtime", e.Runtime.State()).Set("running_ieds", running).Set("startup_recovery", recovered)

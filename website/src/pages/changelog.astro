@@ -7,7 +7,16 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Faster Start and more reliable network setup</h2>
+    <h2>{SITE.version} · Undo everywhere, New and Close project</h2>
+    <ul>
+      <li>New: Undo and Redo next to the File menu work on every page: IEDs, the single-line diagram, the Test page and the gateway lists. Ctrl+Z and Ctrl+Y work too. The last 20 changes can be undone, and the button tip says what it takes back. Changes made while IEDs run are not undone.</li>
+      <li>New: File › New project, Save as and Close project. Save as lets you pick the name and folder; New and Close offer to save a copy first.</li>
+      <li>Improved: IED Explorer refreshes the data objects you open every 2 seconds by itself, with one Read all now button instead of a refresh arrow on each object.</li>
+      <li>Improved: Stop and Disconnect buttons are red, and the breaker, disconnector and earth switch panels say which buttons send a real MMS command (Operate) and which only force a value in the simulated IED (Test).</li>
+      <li>Improved: when an IED cannot start because its address or port is not available, the message now says why (the port is held by another program, which is named; the address is not available on this PC; or the network card is unplugged), and the reason is kept in the run log.</li>
+      <li>Fixed: creating the lab network card no longer fails on PCs where Windows cannot change the card's DNS registration setting; the card is set up without it.</li>
+    </ul>
+    <h2>0.1.31 · Faster Start and more reliable network setup</h2>
     <ul>
       <li>New: on Ethernet and other network cards with a fixed address, IED addresses are approved once. After that, Start adds them and Stop removes them without a Windows prompt, and closing ScadaBench removes them as well.</li>
       <li>Faster: each simulated IED loads its data model up to five times faster, so Start takes about half as long on projects with large IEDs.</li>

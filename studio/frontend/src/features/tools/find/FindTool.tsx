@@ -65,7 +65,7 @@ export function FindTool({ openExplorer, known }: { openExplorer: (host: string,
         <label className="find-port">{FIND_COPY.port}
           <input value={port} onChange={event => setPort(event.target.value.replace(/\D/g, ''))} disabled={scanning} /></label>
         {scanning
-          ? <button onClick={() => scanApi.stop().then(setScan)}><Square size={16} />{FIND_COPY.stop}</button>
+          ? <button className="danger" onClick={() => scanApi.stop().then(setScan)}><Square size={16} />{FIND_COPY.stop}</button>
           : <button className="primary" disabled={!preview} onClick={start}><Radar size={16} />
             {scan && scan.state !== 'idle' ? FIND_COPY.again : FIND_COPY.start}</button>}
         {preview && <span className="find-preview" title={FIND_COPY.willCheck(preview.count, preview.first, preview.last, preview.port)}>

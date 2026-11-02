@@ -13,7 +13,7 @@ export function RunThisIed({ ied, project, busy, perform }: {
   const inRun = (project.running_ieds || []).includes(ied.id);
   const copy = RUN_ONE_COPY[ied.role === 'real' ? 'real' : 'simulated'];
   const Icon = ied.role === 'real' ? (inRun ? Unplug : Plug) : (inRun ? Square : Play);
-  return <button className={inRun ? undefined : 'primary'} disabled={busy} title={inRun ? copy.stopHint : copy.startHint}
+  return <button className={inRun ? 'danger' : 'primary'} disabled={busy} title={inRun ? copy.stopHint : copy.startHint}
     onClick={() => perform(() => api(`/runtime/ieds/${encodeURIComponent(ied.id)}/${inRun ? 'stop' : 'start'}`, 'POST'))}>
     <Icon size={16} />{inRun ? copy.stop : copy.start}</button>;
 }

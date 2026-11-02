@@ -81,7 +81,7 @@ export function ExplorerTool({ target }: { target?: { host: string; port: number
         <input value={port} onChange={event => setPort(event.target.value.replace(/\D/g, ''))} inputMode="numeric"
           disabled={connected} /></label>
       {connected
-        ? <button type="button" onClick={() => { setNode(''); run(explorerApi.disconnect); }} disabled={busy}>
+        ? <button type="button" className="danger" onClick={() => { setNode(''); run(explorerApi.disconnect); }} disabled={busy}>
           <Unplug size={16} />{EXPLORER_COPY.disconnect}</button>
         : <button type="submit" className="primary" disabled={pending || !host.trim()}>
           {pending ? <Loader2 size={16} className="spin" /> : <Plug size={16} />}{EXPLORER_COPY.connect}</button>}

@@ -1,25 +1,22 @@
-import { Download, FileUp, FolderOpen, Laptop, MoreHorizontal, Network, Pause, Play, Radio, Save, Square } from 'lucide-react';
+import { FilePlus, FileUp, FileX, FolderOpen, Laptop, MoreHorizontal, Network, Pause, Play, Radio, Redo2, Save, SaveAll, Square, Undo2 } from 'lucide-react';
 import type { Project } from '../api/types';
 import { Menu } from '../ui/Menu';
 import { runStateWords } from '../copy/running';
 import { RUN_MARK, runSummary } from '../copy/runShape';
 import { REACH_COPY } from '../copy/gooseReach';
+import { PROJECT_FILE_COPY, UNDO_COPY } from '../copy/projectFile';
+import type { ProjectHistory } from '../state/useHistory';
 import { onLabNetwork } from '../features/network/endpoints';
 import { useGoesOut } from '../features/network/useGoesOut';
 import { SpinIcon } from '../ui/Spinner';
 import { useDelayed } from '../ui/useDelayed';
 
-// A download link, not a page navigation, so the app window's exit prompt does not appear.
-function downloadProject() {
-  const link = document.createElement('a');
-  link.href = '/api/v1/project/download';
-  link.download = '';
-  link.click();
-}
+/** What the File menu does besides opening: the App owns the dialogs (ADR-0135). */
+export type FileActions = { open: () => void; save: () => void; saveAs: () => void; newProject: () => void; close: () => void };
 
-export function TopBar({ title, subtitle, project, busy, working = '', saveState, run, openFile, save, openNetwork }: {
+export function TopBar({ title, subtitle, project, busy, working = '', saveState, run, file, history, openNetwork }: {
   title: string; subtitle: string; project: Project | null; busy: boolean; working?: string; saveState: string;
-  run: (action: 'start' | 'stop' | 'pause') => void; openFile: () => void; save: () => void; openNetwork: () => void;
+  run: (action: 'start' | 'stop' | 'pause') => void; file: FileActions; history: ProjectHistory; openNetwork: () => void;
 }) {
   // Words appear only when a task takes longer than a blink, so quick clicks do not flicker.
   const slow = useDelayed(working, 400);
@@ -43,11 +40,13 @@ export function TopBar({ title, subtitle, project, busy, working = '', saveState
         whole at 1366 px; the words are in the tooltip, for screen readers, and in Settings (ADR-0073). */}
     {goesOut && <button className="goose-pill" title={REACH_COPY.pillHint}
       aria-label={`${REACH_COPY.pill}. ${REACH_COPY.pillHint}`} onClick={openNetwork}><Radio size={16} aria-hidden /></button>}
+    {history.available && <UndoRedo history={history} busy={busy || !project} />}
     <Menu label="Project file" align="right" trigger={<><FileUp size={17} />File</>} items={[
-      { label: 'Open file…', icon: <FolderOpen size={16} />, onSelect: openFile, disabled: running || busy },
-      { label: 'Save project', icon: <Save size={16} />, onSelect: save, disabled: running || busy || !project },
-      { label: 'Download project', icon: <Download size={16} />,
-        onSelect: downloadProject, disabled: !project },
+      { label: PROJECT_FILE_COPY.menu.open, icon: <FolderOpen size={16} />, onSelect: file.open, disabled: running || busy },
+      { label: PROJECT_FILE_COPY.menu.new, icon: <FilePlus size={16} />, onSelect: file.newProject, disabled: running || busy || !project },
+      { label: PROJECT_FILE_COPY.menu.save, icon: <Save size={16} />, onSelect: file.save, disabled: running || busy || !project },
+      { label: PROJECT_FILE_COPY.menu.saveAs, icon: <SaveAll size={16} />, onSelect: file.saveAs, disabled: busy || !project },
+      { label: PROJECT_FILE_COPY.menu.close, icon: <FileX size={16} />, onSelect: file.close, disabled: running || busy || !project },
     ]} />
     <span className={`run-state shape-${shape}`} role="status">{slow ? <><SpinIcon size={14} />{slow}</>
       : <><span className="run-mark" aria-hidden>{RUN_MARK[shape]}</span>{state}</>}</span>
@@ -56,7 +55,8 @@ export function TopBar({ title, subtitle, project, busy, working = '', saveState
         onSelect: () => run('pause'), disabled: busy },
     ]} />}
     {running
-      ? <button className={`run-pill ${shape === 'all' ? 'running' : 'partial'}`} data-tour="run" disabled={busy}
+      // Stop is solid red like every Stop and Disconnect (owner, ADR-0135); the run state beside it keeps ○ ◐ ●.
+      ? <button className="run-pill danger" data-tour="run" disabled={busy}
         title="Stop every running IED" onClick={() => run('stop')}>{slow ? <SpinIcon size={15} /> : <Square size={15} />}
         {shape === 'partial' ? 'Stop all' : 'Stop'}</button>
       : <button className="run-pill primary" data-tour="run" disabled={busy || !active} title={active ? 'Start every IED that is not skipped' : 'Add an IED first'}
@@ -79,4 +79,17 @@ function ReachChip({ project, open }: { project: Project; open: () => void }) {
     {lab ? <Network size={15} aria-hidden /> : <Laptop size={15} aria-hidden />}
     {count} {published.length === 1 ? 'IED' : 'IEDs'} reachable from {lab ? <>“{project.network.adapter_label}”</> : 'this PC only'}
   </button>;
+}
+
+/** Small Undo and Redo for the whole project (ADR-0135); the tips say what they take back. */
+function UndoRedo({ history, busy }: { history: ProjectHistory; busy: boolean }) {
+  const status = history.status;
+  const tip = (can: boolean, what: string, words: (what: string) => string, nothing: string) =>
+    status?.running ? UNDO_COPY.running : can ? words(what) : nothing;
+  return <div className="history-buttons" role="group" aria-label="Undo and redo">
+    <button className="icon ghost" aria-label={UNDO_COPY.undo} disabled={busy || !history.canUndo} onClick={history.undo}
+      title={tip(history.canUndo, status?.undo ?? '', UNDO_COPY.undoTip, UNDO_COPY.nothingUndo)}><Undo2 size={17} /></button>
+    <button className="icon ghost" aria-label={UNDO_COPY.redo} disabled={busy || !history.canRedo} onClick={history.redo}
+      title={tip(history.canRedo, status?.redo ?? '', UNDO_COPY.redoTip, UNDO_COPY.nothingRedo)}><Redo2 size={17} /></button>
+  </div>;
 }

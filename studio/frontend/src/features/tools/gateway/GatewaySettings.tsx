@@ -57,7 +57,7 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
       {config.auto_start && !running && <p className="side-line">{copy.autoStart}</p>}
       {error && <p className="side-error" role="alert">{error}</p>}
       {running
-        ? <button onClick={stop} disabled={busy}><Square size={16} />{copy.stop}</button>
+        ? <button className="danger" onClick={stop} disabled={busy}><Square size={16} />{copy.stop}</button>
         : <button className="primary" onClick={() => { setStarting(true); start(); }} disabled={busy || !status.available}>
           <Play size={16} />{copy.start}</button>}
     </div>

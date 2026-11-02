@@ -30,7 +30,7 @@ export function FindRegisters({ status, added, fail }: { status: MasterStatus; a
       <button className="primary" disabled={!valid || running || !status.link_open}
         onClick={() => masterApi.probe(table, start, end).catch(error => fail(error.message))}>
         <Radar size={16} />{RANGES_COPY.find}</button>
-      {running && <button onClick={() => masterApi.stopProbe().catch(error => fail(error.message))} title={RANGES_COPY.stopHint}>
+      {running && <button className="danger" onClick={() => masterApi.stopProbe().catch(error => fail(error.message))} title={RANGES_COPY.stopHint}>
         <Square size={14} />{RANGES_COPY.stop}</button>}
     </div>
     <p className="small muted" style={{ margin: 0 }}>{RANGES_COPY.findHint} {valid

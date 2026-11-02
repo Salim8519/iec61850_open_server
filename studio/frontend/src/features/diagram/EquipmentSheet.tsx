@@ -65,7 +65,7 @@ export function EquipmentSheet({ node, project, locked, busy, operation, section
         {optional.length > 0 && <p className="small muted" style={{ margin: '6px 0 0' }}>{TEST_COPY.commandHint}</p>}</div>}
       {locked && section && <section className="sheet-section"><h3>Power</h3>
         <p className="energy-sentence">{section}</p></section>}
-      {locked && canAct && <section className="sheet-section"><h3>Operate</h3>
+      {locked && canAct && <section className="sheet-section"><h3>{TEST_COPY.operateTitle}<span className="sheet-tag"> · {TEST_COPY.operateTag}</span></h3>
         {switching ? <SwitchOperate key={node.id} node={node} project={project} busy={busy} operate={operate} />
         : <div className="sheet-actions">{trip ? <>
           <button disabled={busy} onClick={() => operate(node.id, 'reset')}>Reset</button>

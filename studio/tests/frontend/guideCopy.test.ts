@@ -85,7 +85,7 @@ test('the clean-up card says it is checking Windows instead of showing nothing (
 
 test('IED Explorer reads the data object again after a command (change 0089)', () => {
   // Seen between two machines: "now reads on (closed)" above a table still showing "off (open)".
-  assert.ok(read('frontend/src/features/tools/explorer/NodeDetail.tsx').includes('operated={() => read(object.name, object.attributes)}'));
+  assert.ok(read('frontend/src/features/tools/explorer/NodeDetail.tsx').includes('operated={() => read(object.name, [object.attributes])}'));
   assert.ok(read('frontend/src/features/tools/explorer/CommandPanel.tsx').includes('operated?.()'));
 });
 

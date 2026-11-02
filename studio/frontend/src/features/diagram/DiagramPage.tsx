@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { Copy, Cpu, Redo2, Trash2, Undo2 } from 'lucide-react';
+import { Copy, Cpu, Trash2 } from 'lucide-react';
 import { api } from '../../api/client';
 import type { CommandOptions, Diagram, EquipmentKind, EquipmentNode, Project } from '../../api/types';
 import { commandBody } from '../../equipment/commandOptions';
@@ -73,8 +73,7 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
     if (present.length !== selection.length) setSelection(present);
   }, [diagram.nodes, selection]);
   const edit = useCallback((next: Diagram, group?: string) => studio.updateDiagram(next, group), [studio.updateDiagram]);
-  const actions = useCanvasShortcuts({ active: !studio.busy, locked, diagram, selection, edit, setSelection,
-    undo: studio.undo, redo: studio.redo });
+  const actions = useCanvasShortcuts({ active: !studio.busy, locked, diagram, selection, edit, setSelection });
   // A click adds the symbol at a free spot in the visible middle of the canvas (change 0176).
   const add = useCallback((kind: EquipmentKind, at: { x: number; y: number }) => {
     const count = diagram.nodes.filter(node => node.data.kind === kind).length + 1;
@@ -121,7 +120,7 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   const menuNode = menu ? diagram.nodes.find(item => item.id === menu.nodeId) : undefined;
   // The toolbar and lock note are made only when what they show changes, so Canvas (memo) skips
   // re-rendering when this page renders for an unrelated reason (speed lane F).
-  const { canUndo, canRedo, undo, redo, prepare, runtime, busy } = studio;
+  const { prepare, runtime, busy } = studio;
   const gooseIeds = useGooseIeds({ diagram, edit, select: setSelection, prepare, revision: project.revision, watch: layers.layers.goose });
   const noIeds = !project.ieds.length;
   const toolbar = useMemo(() => <div className="canvas-toolbar" role="toolbar" aria-label="Diagram tools">
@@ -129,16 +128,13 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
     <SldImport disabled={locked} revision={project.revision} apply={(next: Diagram) => edit(next)} prepare={prepare} />
     <TidyButton diagram={diagram} selection={selection} locked={locked} apply={(next: Diagram) => edit(next)} />
     <span className="divider" />
-    <button className="icon ghost" title="Undo" aria-label="Undo" disabled={locked || !canUndo} onClick={undo}><Undo2 size={18} /></button>
-    <button className="icon ghost" title="Redo" aria-label="Redo" disabled={locked || !canRedo} onClick={redo}><Redo2 size={18} /></button>
-    <span className="divider" />
     <SignalLayerSwitches layers={layers.layers} toggle={layers.toggle} />
     <OutsideSenders store={studio.signalLayers} importFile={openFile} />
     <GooseIedsTool missing={gooseIeds.missing} note={gooseIeds.note} clearNote={gooseIeds.clearNote} addOne={gooseIeds.addOne}
       addAll={gooseIeds.addAll} locked={locked} show={layers.layers.goose} />
     {noIeds && <><span className="divider" />
       <button className="ghost" onClick={() => openDevices()}><Cpu size={17} />Import an IED first</button></>}
-  </div>, [locked, add, addBay, attachHint, project.revision, edit, prepare, diagram, selection, canUndo, canRedo, undo, redo,
+  </div>, [locked, add, addBay, attachHint, project.revision, edit, prepare, diagram, selection,
     layers.layers, layers.toggle, studio.signalLayers, openFile, noIeds, openDevices, gooseIeds]);
   const partial = summary.shape === 'partial';
   const summaryKey = partial ? `${summary.running.map(ied => ied.id)}|${summary.stopped.map(ied => ied.id)}` : '';

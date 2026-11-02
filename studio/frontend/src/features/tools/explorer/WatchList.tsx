@@ -52,7 +52,7 @@ export function WatchList({ status, run }: {
         onChange={event => save(watch, Number(event.target.value))}>
         {INTERVALS.map(([value, label]) => <option key={value} value={value}>{EXPLORER_COPY.everyShort} {label}</option>)}</select>
       <button disabled={!watch.length} onClick={readOnce}><RefreshCw size={16} />{EXPLORER_COPY.readOnce}</button>
-      <button className={status.polling ? '' : 'primary'} disabled={!watch.length}
+      <button className={status.polling ? 'danger' : 'primary'} disabled={!watch.length}
         onClick={() => run(() => explorerApi.polling(!status.polling))}>
         {status.polling ? <><EyeOff size={16} />{EXPLORER_COPY.stop}</> : <><Eye size={16} />{EXPLORER_COPY.start}</>}</button>
       <Menu label={EXPLORER_COPY.moreWatch} trigger={<>{EXPLORER_COPY.more}<ChevronDown size={14} aria-hidden /></>} items={[

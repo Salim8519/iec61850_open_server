@@ -28,7 +28,9 @@ test('A1: opening a data object never reads a command field, so SBO is never rea
   assert.equal(selectsOnRead({ ref: 'LD/GGIO2$CO$AnOut1$SBO', fc: 'co' }), true);
   assert.equal(selectsOnRead(leaf('LD/GGIO2.AnOut1.SBOw.ctlVal', 'CO')), false);
   assert.equal(selectsOnRead(leaf('LD/GGIO2.AnOut1.SBO', 'ST')), false);
-  assert.match(read('features/tools/explorer/NodeDetail.tsx'), /bulkReadable\(attributes\)\.slice\(0, 200\)/);
+  // Opening, the 2 s refresh and Read all now share one reader (ADR-0135), 200 attributes per request.
+  assert.match(read('features/tools/explorer/useNodeReads.ts'), /groups\.flatMap\(group => bulkReadable\(group\)\)/);
+  assert.match(read('features/tools/explorer/useNodeReads.ts'), /const BATCH = 200;/);
   assert.match(read('features/tools/explorer/ObjectTable.tsx'), /disabled=\{sbo \|\| watched\.has\(key\)\}/);
   assert.match(read('features/tools/explorer/ExplorerTool.tsx'), /items\.filter\(item => !selectsOnRead\(item\)\)/);
 });

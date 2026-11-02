@@ -1,5 +1,8 @@
 import type { Diagram } from '../api/types';
 
+// The app's Undo lives in the engine (ADR-0135). This model of a diagram history stays as the
+// test helper that proves each canvas gesture is one diagram edit (one engine step).
+
 export type DiagramHistory = { past: Diagram[]; present: Diagram; future: Diagram[]; group?: string };
 const LIMIT = 50;
 

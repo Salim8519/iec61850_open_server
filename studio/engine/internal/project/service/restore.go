@@ -58,10 +58,11 @@ func (s *Service) Restore(payload []byte, persist bool) error {
 	}
 	s.mutate.Lock()
 	defer s.mutate.Unlock()
+	s.history.Clear() // another project: its steps do not apply
 	if !persist {
 		return s.adopt(restored.Project, restored.Notice)
 	}
-	return s.commit(restored.Project, restored.Notice, true, nil)
+	return s.commitUnrecorded(restored.Project, restored.Notice)
 }
 
 // adopt installs a project restored from the autosave itself (startup, persist=False):
@@ -82,7 +83,18 @@ func (s *Service) adopt(next, notice *pyjson.Object) error {
 // startup_recovery.recover_startup; the result is the GET /project startup_recovery value.
 func (s *Service) RecoverStartup() (*pyjson.Object, error) {
 	defer memtrim.Soon()
-	return recovery.RecoverStartup(s.config.DataDir, func(payload []byte) error {
+	result, err := recovery.RecoverStartup(s.config.DataDir, func(payload []byte) error {
 		return s.Restore(payload, false)
 	})
+	if id, ok := s.Project().Get("id"); ok {
+		s.recovered.Store(id)
+	}
+	return result, err
+}
+
+// StillRecovered says the open project is the one startup recovery opened: its notice
+// ("Recovered the last saved substation") does not speak about a project made or opened later.
+func (s *Service) StillRecovered() bool {
+	id, _ := s.Project().Get("id")
+	return s.recovered.Load() == id
 }

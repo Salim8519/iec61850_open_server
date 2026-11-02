@@ -5,7 +5,6 @@ import { copySelection, nudgeNodes, pasteClip, removeNodes, PASTE_OFFSET, type C
 type Options = {
   active: boolean; locked: boolean; diagram: Diagram; selection: string[];
   edit: (diagram: Diagram, group?: string) => void; setSelection: (ids: string[]) => void;
-  undo: () => void; redo: () => void;
 };
 const ARROWS: Record<string, [number, number]> = {
   ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1],
@@ -18,8 +17,9 @@ function typing(event: KeyboardEvent): boolean {
     ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || !!window.getSelection()?.toString();
 }
 
-/** Canvas editing actions shared by keyboard shortcuts and the properties panel. */
-export function useCanvasShortcuts({ active, locked, diagram, selection, edit, setSelection, undo, redo }: Options) {
+/** Canvas editing actions shared by keyboard shortcuts and the properties panel. Ctrl+Z and Ctrl+Y
+ *  are the whole app's Undo and Redo (useUndoKeys, ADR-0135). */
+export function useCanvasShortcuts({ active, locked, diagram, selection, edit, setSelection }: Options) {
   const clip = useRef<{ content: Clip; pastes: number } | null>(null);
   const duplicate = useCallback(() => {
     const content = copySelection(diagram, new Set(selection));
@@ -53,9 +53,7 @@ export function useCanvasShortcuts({ active, locked, diagram, selection, edit, s
       if (command && key === 'a') { event.preventDefault(); setSelection(diagram.nodes.map(node => node.id)); return; }
       if (command && key === 'c') { if (copy()) event.preventDefault(); return; }
       if (locked) return;
-      if (command && key === 'z') { event.preventDefault(); if (event.shiftKey) redo(); else undo(); }
-      else if (command && key === 'y') { event.preventDefault(); redo(); }
-      else if (command && key === 'x') { if (copy()) { event.preventDefault(); remove(); } }
+      if (command && key === 'x') { if (copy()) { event.preventDefault(); remove(); } }
       else if (command && key === 'v') { event.preventDefault(); paste(); }
       else if (command && key === 'd') { event.preventDefault(); duplicate(); }
       else if (ARROWS[event.key] && selection.length && !command &&
@@ -69,6 +67,6 @@ export function useCanvasShortcuts({ active, locked, diagram, selection, edit, s
     };
     window.addEventListener('keydown', keyboard);
     return () => window.removeEventListener('keydown', keyboard);
-  }, [active, copy, diagram, duplicate, edit, locked, paste, redo, remove, selection, setSelection, undo]);
+  }, [active, copy, diagram, duplicate, edit, locked, paste, remove, selection, setSelection]);
   return { duplicate, remove };
 }

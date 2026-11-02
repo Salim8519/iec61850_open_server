@@ -45,9 +45,11 @@ test('sidebar dots are half filled during a partial run', () => {
   assert.match(read('styles/layout.css'), /\.live-dot\.partial \{/);
 });
 
-test('top bar is green only when all run; SLD greys equipment of stopped IEDs in words', () => {
+test('top bar shows the run shape beside a red Stop; SLD greys equipment of stopped IEDs in words', () => {
   const bar = read('app/TopBar.tsx');
-  assert.match(bar, /shape === 'all' \? 'running' : 'partial'/);
+  // ADR-0135: Stop is solid red like Disconnect; ○ ◐ ● and the green mark stay on the run state.
+  assert.match(bar, /className=\{`run-state shape-\$\{shape\}`\}/);
+  assert.match(bar, /className="run-pill danger"/);
   assert.match(read('features/diagram/RunStrip.tsx'), /Run all/);
   assert.match(read('features/devices/DeviceRunSummary.tsx'), /runRest/);
   assert.match(read('styles/layout.css'), /\.run-state\.shape-partial \{[^}]*dashed/);

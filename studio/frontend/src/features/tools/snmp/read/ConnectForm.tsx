@@ -52,7 +52,7 @@ export function ConnectForm({ status, config, refresh, fail }: {
       <button type="button" disabled={busy} onClick={twin}><Copy size={16} />{READ_COPY.saveTwin}</button>
       {note && <p className="small snmp-live" role="status">✓ {note}</p>}
     </>}
-    <button type="button" disabled={busy} onClick={() => act(snmpApi.disconnect)}><Unplug size={16} />{READ_COPY.disconnect}</button>
+    <button type="button" className="danger" disabled={busy} onClick={() => act(snmpApi.disconnect)}><Unplug size={16} />{READ_COPY.disconnect}</button>
   </div>;
   return <form className="side-section" onSubmit={event => { event.preventDefault(); act(() => snmpApi.connect(target)); }}>
     <h3 className="side-title"><PlugZap size={18} aria-hidden />{READ_COPY.connectTitle}</h3>

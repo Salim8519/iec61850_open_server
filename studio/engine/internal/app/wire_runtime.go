@@ -20,7 +20,8 @@ func (e *Engine) wireRuntime(bus *events.Bus) *liveAdapter {
 	live := &liveAdapter{}
 	e.Runtime = runtime.New(runtime.Options{NativeDir: o.NativeDir, DataDir: o.DataDir,
 		Bus: runtimeBus{bus: bus, logf: o.Logf}, Project: e.Projects, Live: live,
-		LabAddresses: e.labAddresses, LabRelease: e.labRelease, CommandKeep: o.CommandKeep, Version: o.Version})
+		LabAddresses: e.labAddresses, LabRelease: e.labRelease, CommandKeep: o.CommandKeep, Version: o.Version,
+		OnState: func(state string) { e.Projects.SetRunning(state != "stopped") }})
 	return live
 }
 

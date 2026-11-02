@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { useStudio } from '../state/useStudio';
 import { OPEN_FILE_ACCEPT } from '../state/projectFile';
@@ -14,7 +14,9 @@ import { ToolsPage } from '../features/tools/ToolsPage';
 import type { ToolId } from '../copy/tools';
 import { Sidebar } from './Sidebar';
 import { ConnectionNotice, useConnection } from './EngineStatus';
-import { TopBar } from './TopBar';
+import { TopBar, type FileActions } from './TopBar';
+import { useUndoKeys } from './useUndoKeys';
+import { ProjectFileDialog, type ProjectFileMode } from '../features/project/ProjectFileDialog';
 import { WorkPanel } from './WorkPanel';
 import { TourOverlay } from '../features/tour/TourOverlay';
 import { getPreferences, markTourSeen } from '../api/preferences';
@@ -51,6 +53,10 @@ export function App() {
   const locked = project?.runtime !== 'stopped';
   // Stable callbacks keep the memoised diagram toolbar from being rebuilt on every app render.
   const openFile = useCallback(() => fileInput.current?.click(), []);
+  const [fileDialog, setFileDialog] = useState<ProjectFileMode | null>(null);
+  useUndoKeys(studio.history, studio.busy);
+  const file: FileActions = useMemo(() => ({ open: openFile, save: studio.save, saveAs: studio.saveAs,
+    newProject: () => setFileDialog('new'), close: () => setFileDialog('close') }), [openFile, studio.save, studio.saveAs]);
   const openDevices = useCallback((iedId?: string) => { setFlowIed(iedId); setCurrent('devices'); }, []);
   const info = place(current);
   const running = useActivity(!!project);
@@ -65,7 +71,7 @@ export function App() {
       update={update.status} dismissUpdate={version => { update.change({ dismissed: version }).catch(() => {}); }} />
     <div className="main">
       <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy} working={studio.working}
-        saveState={studio.saveState} run={studio.runtime} openFile={openFile} save={studio.save}
+        saveState={studio.saveState} run={studio.runtime} file={file} history={studio.history}
         openNetwork={() => setCurrent('settings')} />
       <ConnectionNotice state={connection} />
       <RecoveryNotice recovery={project?.startup_recovery} />
@@ -93,6 +99,8 @@ export function App() {
       </main>
     </div>
     {project && <GooseConflicts project={project} />}
+    {project && fileDialog && <ProjectFileDialog mode={fileDialog} project={project} close={() => setFileDialog(null)} prepare={studio.prepare}
+      confirm={name => studio.replaceProject(fileDialog, name).then(done => { if (done) setCurrent('devices'); return done; })} />}
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}
     {activity && <EventLog close={() => setActivity(false)}
       session={project ? `${project.session_id.slice(0, 8)} · revision ${project.revision}` : undefined} />}

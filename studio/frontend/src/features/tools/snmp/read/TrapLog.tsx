@@ -43,7 +43,7 @@ export function TrapLog({ status, config, refresh, fail }: {
         onChange={event => setPort(Number(event.target.value) || 0)} /></label>
       {ip === '0.0.0.0' && <HelpTip text={COPY.allCardsHint} />}
       {listening
-        ? <button disabled={busy} onClick={() => act(snmpApi.stopListening)}><CircleStop size={16} />{COPY.stop}</button>
+        ? <button className="danger" disabled={busy} onClick={() => act(snmpApi.stopListening)}><CircleStop size={16} />{COPY.stop}</button>
         : <button className="primary" disabled={busy} onClick={() => act(() => snmpApi.listen(ip, port, users))}>
           <BellRing size={16} />{COPY.listen}</button>}
       <span className={`small ${listening ? 'snmp-live' : 'muted'}`}>{status.traps.message}</span>

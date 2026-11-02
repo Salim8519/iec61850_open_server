@@ -59,7 +59,7 @@ export function MasterConnect({ config, status, busy, save, connect, disconnect,
       {connected && <button onClick={interrogate} disabled={busy || status.state !== 'connected'} title={ASK_AGAIN[protocol].hint}>
         <RefreshCw size={16} />{ASK_AGAIN[protocol].label}</button>}
       {connected
-        ? <button onClick={disconnect} disabled={busy}><Unplug size={16} />{MASTER_COPY.disconnect}</button>
+        ? <button className="danger" onClick={disconnect} disabled={busy}><Unplug size={16} />{MASTER_COPY.disconnect}</button>
         : <button className="primary" onClick={() => { setConnecting(true); connect(); }} disabled={busy || !status.available || !config.host}>
           <PlugZap size={16} />{MASTER_COPY.connect}</button>}
     </div>
