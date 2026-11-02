@@ -12,7 +12,7 @@ export const SITE = {
   download: `/download/ScadaBench-Setup-${VERSION}.exe`,
   portable: `https://download.scadabench.com/download/ScadaBench-Portable-${VERSION}.exe`,
   supportEmail: 'support@scadabench.com',
-  price: '149',
+  price: '99',
   currency: 'USD',
   trialDays: 7,
   refundDays: 7,
