@@ -12,6 +12,7 @@ import (
 	"studio-engine/internal/project/pyval"
 	"studio-engine/internal/project/service"
 	"studio-engine/internal/pyjson"
+	snmpservice "studio-engine/internal/snmp/service"
 )
 
 // labProgram is the lab network program beside the native workers (ADR-0120).
@@ -23,7 +24,7 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 	o := e.options
 	journal := netcfg.NewJournal(o.DataDir)
 	journal.Path = journal.Path[:len(journal.Path)-len("journal.jsonl")] + "lab_journal.jsonl"
-	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects, e.Gateway, e.Master}, Runtime: e.Runtime,
+	e.Lab = &labsetup.Service{Projects: labProjects{e.Projects, e.Gateway, e.Master, e.SNMP}, Runtime: e.Runtime,
 		Windows: labsetup.Windows{
 			Adapters: func() ([]netcfg.Adapter, error) { return network.Adapters(true) },
 			State:    labnet.ServiceState, Card: labnet.InstalledCard, Call: labnet.Call, Ping: labnet.Ping,
@@ -40,6 +41,9 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 	if e.Master != nil {
 		e.Master.Lab = e.Lab
 	}
+	if e.SNMP != nil {
+		e.SNMP.SetLabCard(e.snmpLabCard())
+	}
 	return labapi.New(labapi.Deps{Lab: e.Lab, Leave: projects.LeaveLabMode}).Routes()
 }
 
@@ -49,6 +53,7 @@ type labProjects struct {
 	service *service.Service
 	gateway *gatewayservice.Manager
 	master  *gatewayservice.Master
+	snmp    *snmpservice.Service
 }
 
 func (p labProjects) Reserved() map[string]string {
@@ -60,6 +65,11 @@ func (p labProjects) Reserved() map[string]string {
 	}
 	if p.master != nil {
 		for address, name := range p.master.OwnAddresses() {
+			used[address] = name
+		}
+	}
+	if p.snmp != nil {
+		for address, name := range p.snmp.CardAddresses() {
 			used[address] = name
 		}
 	}

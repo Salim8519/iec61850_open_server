@@ -41,7 +41,7 @@ test('a lab-mode IED without a lab address is not called reachable from the adap
   assert.equal(endpointOf(added, lab).host, '127.50.0.3');
   assert.equal(onLabNetwork({ lab_ip: '192.168.98.28' }, lab), true);
   assert.match(read('app/TopBar.tsx'), /onLabNetwork/);
-  assert.match(read('features/devices/DeviceOverview.tsx'), /no address on the lab network yet/);
+  assert.match(read('features/devices/DeviceOverview.tsx'), /Until it has an address on the network, only programs on this PC reach it/);
 });
 
 test('a receiving sender outside the project shows its live state, a silent one says Outside project', () => {

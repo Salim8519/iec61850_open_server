@@ -122,24 +122,23 @@ func (s *Service) restart(running bool, id string, failure error) error {
 // EnsureForRun puts the stored addresses of the IEDs about to start on the card (ADR-0127: an
 // address is on the card only while its IED runs). It does nothing unless the project uses the
 // card and the service answers; the usual Run check reports anything still missing.
-func (s *Service) EnsureForRun(guid string, starting []string) {
+func (s *Service) EnsureForRun(guid string, starting []string) error {
 	s.card.Lock()
 	defer s.card.Unlock()
 	card := s.Windows.Card()
 	if card == "" || !strings.EqualFold(card, guid) {
-		s.ensureReal(guid, starting) // a real card with approved addresses (ADR-0132)
-		return
+		return s.ensureReal(guid, starting) // a real card with approved addresses (ADR-0132)
 	}
 	if _, running := s.Windows.State(); !running {
-		return
+		return nil
 	}
 	ieds, err := s.Projects.SimulatedIEDs()
 	if err != nil {
-		return
+		return nil
 	}
 	reply, err := s.call(labnet.Request{Op: labnet.OpStatus})
 	if err != nil || !reply.OK {
-		return
+		return nil
 	}
 	var missing []wanted
 	for _, ied := range ieds {
@@ -148,6 +147,7 @@ func (s *Service) EnsureForRun(guid string, starting []string) {
 		}
 	}
 	s.addAll(missing, card)
+	return nil
 }
 
 // add asks the service for one address and journals the answer.

@@ -27,10 +27,12 @@ type DeviceStatus struct {
 	Kind    string `json:"kind"`
 	Address string `json:"address"`
 	Network bool   `json:"network"` // answers on the lab network (Network setup), not this PC only
-	Local   string `json:"local"`   // its 127.x address on this PC
-	State   string `json:"state"`   // running, stopped or failed
-	Error   string `json:"error"`
-	Points  int    `json:"points"`
+	// OnNetwork: the project is on a network, so the device's address there can be typed (change 0215).
+	OnNetwork bool   `json:"on_network"`
+	Local     string `json:"local"` // its 127.x address on this PC
+	State     string `json:"state"` // running, stopped or failed
+	Error     string `json:"error"`
+	Points    int    `json:"points"`
 }
 
 // ReaderStatus is the Read devices state.
@@ -71,7 +73,7 @@ func (s *Service) Status() Status {
 	for _, device := range config.Devices {
 		state := s.devices[device.ID]
 		item := DeviceStatus{ID: device.ID, Name: device.Name, Profile: device.Profile, Kind: profiles.Names[device.Profile],
-			Address: answersAt(device, lab), Network: lab && device.LabIP != "",
+			Address: answersAt(device, lab), Network: lab && device.LabIP != "", OnNetwork: lab,
 			Local: device.IP + ":" + strconv.Itoa(device.Port), State: "stopped", Error: state.Error,
 			Points: len(device.Points)}
 		if lab && device.LabIP == "" && state.State == "" {

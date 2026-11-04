@@ -73,6 +73,7 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 	if err := s.guardDHCP(rows, adapter); err != nil {
 		return nil, previewState{}, err
 	}
+	s.guardHelper(rows, adapter)
 	s.Progress.step("firewall")
 	if len(devices) > 0 {
 		if snmp.Existing, err = s.SNMPRules(); err != nil {
@@ -94,7 +95,7 @@ func (s *NetworkService) preview(guid any, strategy string, manual any) (*pyjson
 	}
 	if s.RealCards != nil && s.RealCards(adapter.GUID) {
 		approved := labnet.ReadApproved()
-		plan.Items = useApprovals(plan.Items, rows, approved) // added at Start (ADR-0132)
+		plan.Items = useApprovals(plan.Items, approved) // added at Start (ADR-0132)
 		runningHints(rows, adapter, approved)
 		if plan.Fingerprint, err = sortedFingerprint(pyjson.NewObject().Set("adapter", adapter.GUID).
 			Set("items", itemsAny(plan.Items))); err != nil {

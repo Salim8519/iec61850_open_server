@@ -35,7 +35,9 @@ func (e *Engine) runtimeRoutes() []api.Route {
 // (ADR-0120: they are gone after Windows restarts), then lists the adapter's addresses.
 func (e *Engine) labAddresses(guid string, starting []string) ([]string, error) {
 	if e.Lab != nil {
-		e.Lab.EnsureForRun(guid, starting)
+		if err := e.Lab.EnsureForRun(guid, starting); err != nil {
+			return nil, err // a real card refused an address: the service's reason, not "not set up"
+		}
 	}
 	return labAddresses(guid)
 }

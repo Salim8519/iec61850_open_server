@@ -31,6 +31,7 @@ export const PROBLEMS: Record<string, Status> = {
   adapter_has_no_network: { label: 'Adapter has no network', tone: 'warning', hint: 'This network card has no usable IPv4 network. Type an address or pick another network card.' },
   network_full: { label: 'No free address', tone: 'problem', hint: 'There is no free address left in this network. Type an address in another network.' },
   already_on_adapter: { label: 'Already on adapter', tone: 'info', hint: 'ScadaBench will use this existing address and will not remove it later.' },
+  helper_off: { label: 'Network helper is off', tone: 'problem', hint: 'The ScadaBench network helper puts this address on at Start and takes it off at Stop, but it is not running. Open Network › This PC lab network and press Repair (one Windows prompt), then review again.' },
   adapter_uses_dhcp: { label: 'Card gets its address automatically', tone: 'problem', hint: 'This card gets its address from DHCP. A fixed address would switch that off and the card would lose its connection. Pick ScadaBench Lab or a card with a fixed address.' },
   used_by_other_adapter: { label: 'Used by another adapter', tone: 'problem', hint: 'Another adapter of this PC already has this address. Pick another address.' },
   duplicate: { label: 'Used twice', tone: 'problem', hint: 'Two IEDs would get the same address. Give each IED its own address.' },

@@ -52,6 +52,7 @@ type Service struct {
 	trapText  string
 	network   func() bool       // the project is on the lab network (SetNetwork)
 	bound     map[string]string // device id -> the address it was started on
+	labCard   LabCard           // the ScadaBench Lab card (SetLabCard)
 }
 
 // New returns the tool for studio_snmp at executable; dataDir holds the MIB library.

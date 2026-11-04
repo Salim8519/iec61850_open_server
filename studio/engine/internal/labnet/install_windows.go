@@ -125,15 +125,16 @@ func tail(text string) string {
 }
 
 // pointAt makes an existing service run the program (a service made before ADR-0131 runs the
-// installer's own copy) and removes that old copy.
+// installer's own copy), starts it with Windows again when another program set it to manual or
+// disabled (ADR-0136) and removes that old copy.
 func pointAt(service *mgr.Service, program string) error {
 	config, err := service.Config()
 	if err != nil {
 		return err
 	}
 	quoted := syscall.EscapeArg(program) + " service" // as mgr.CreateService writes it
-	if config.BinaryPathName != quoted {
-		config.BinaryPathName = quoted
+	if config.BinaryPathName != quoted || config.StartType != mgr.StartAutomatic {
+		config.BinaryPathName, config.StartType = quoted, mgr.StartAutomatic
 		if err := service.UpdateConfig(config); err != nil {
 			return errors.New("the lab network service could not be pointed at its program: " + err.Error())
 		}

@@ -92,3 +92,27 @@ func TestAnOlderServiceLeavesRealCardsAlone(t *testing.T) {
 		t.Fatalf("requests %v", *requests)
 	}
 }
+
+// Another device already answers at an approved address: Run stops with the service's reason and
+// the IED's name, not with the preflight's "not set up" (owner bench, 2026-11-03).
+func TestARefusedRealAddressStopsTheRunWithItsReason(t *testing.T) {
+	_, s, _ := onEthernet(t)
+	call := s.Windows.Call
+	s.Windows.Call = func(request labnet.Request) (labnet.Reply, error) {
+		reply, err := call(request)
+		if request.Card != "" && request.Op == labnet.OpAdd {
+			reply.Failed = map[string]string{"192.168.40.22": "Another device on Ethernet already uses 192.168.40.22; ScadaBench took it off again"}
+		}
+		return reply, err
+	}
+	err := s.EnsureForRun(eth, []string{"a", "b"})
+	want := "D60 cannot start on 192.168.40.22: Another device on Ethernet already uses 192.168.40.22; " +
+		"ScadaBench took it off again. Stop the other device that uses this address, or give D60 another " +
+		"address in Network > Set up lab network."
+	if err == nil || err.Error() != want {
+		t.Fatalf("error %v", err)
+	}
+	if err := s.EnsureForRun(eth, []string{"a"}); err != nil {
+		t.Fatalf("an accepted address refused the Run: %v", err)
+	}
+}

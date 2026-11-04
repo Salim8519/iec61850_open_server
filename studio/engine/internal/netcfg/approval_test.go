@@ -15,17 +15,17 @@ func aliasItem(ip, action string) *pyjson.Object {
 		Set("owned", action == "add").Set("action", action)
 }
 
-func TestIEDAddressesBecomeApprovalsAndSNMPKeepsItsAlias(t *testing.T) {
+// IED and SNMP addresses both become approvals (ADR-0136): nothing is added that Stop leaves.
+func TestIEDAndSNMPAddressesBecomeApprovals(t *testing.T) {
 	items := []*pyjson.Object{aliasItem("192.168.230.21", "add"), aliasItem("192.168.230.24", "add"),
 		aliasItem("192.168.40.111", "keep"), aliasItem("192.168.40.21", "add")}
-	rows := []Row{{IEDID: SNMPRowPrefix + "switch1", Proposed: "192.168.40.21", Kind: "snmp"}}
 	approved := map[string]map[string]int{ethGUID: {"192.168.230.24": 24}}
-	useApprovals(items, rows, approved)
+	useApprovals(items, approved)
 	kinds := []string{}
 	for _, item := range items {
 		kinds = append(kinds, pyStr(get(item, "kind"))+"/"+pyStr(get(item, "action")))
 	}
-	want := "approval/add approval/keep alias/keep alias/add"
+	want := "approval/add approval/keep alias/keep approval/add"
 	if strings.Join(kinds, " ") != want {
 		t.Fatalf("kinds %v want %s", kinds, want)
 	}

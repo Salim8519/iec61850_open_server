@@ -1,10 +1,11 @@
 import { ChevronDown, ChevronUp, Info, TriangleAlert, X } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 
-/** A one-line notice above the page (change 0093): the message, a Details button and Dismiss.
- *  Details open over the page instead of pushing it down, so lists stay where they are. */
-export function CompactNotice({ message, problem, detailsLabel, dismissLabel, children }: {
-  message: string; problem?: boolean; detailsLabel: string; dismissLabel: string; children?: ReactNode;
+/** A one-line notice above the page (change 0093): the message, a Details button, an optional
+ *  action (ADR-0136) and Dismiss. Details open over the page instead of pushing it down, so lists
+ *  stay where they are. */
+export function CompactNotice({ message, problem, detailsLabel, dismissLabel, action, children }: {
+  message: string; problem?: boolean; detailsLabel: string; dismissLabel: string; action?: ReactNode; children?: ReactNode;
 }) {
   const [dismissed, setDismissed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -15,6 +16,7 @@ export function CompactNotice({ message, problem, detailsLabel, dismissLabel, ch
     <span className="notice-text" title={message}>{message}</span>
     {children && <button className="ghost" aria-expanded={open} onClick={() => setOpen(!open)}>
       {open ? <ChevronUp size={15} /> : <ChevronDown size={15} />}{detailsLabel}</button>}
+    {action}
     <button className="ghost" aria-label={dismissLabel} title="Dismiss" onClick={() => setDismissed(true)}><X size={16} /></button>
     {open && children && <div className="notice-details" role="region" aria-label={detailsLabel}>{children}</div>}
   </div>;

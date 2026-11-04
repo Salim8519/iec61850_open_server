@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import type { DeviceStatus } from '../../../../api/snmp';
+import type { DeviceStatus, SnmpDevice } from '../../../../api/snmp';
+import { NetworkAddress } from '../../../network/NetworkAddress';
 import { SETTINGS_COPY } from '../../../../copy/snmp';
 import { Disclosure } from '../../../../ui/Disclosure';
 import { HelpTip } from '../../../../ui/HelpTip';
@@ -12,9 +13,12 @@ const HERE: DeviceProblem['field'][] = ['name', 'ip', 'port', 'versions', 'commu
 
 /** A device's address, versions, communities, v3 users and engine ID. Every valid change is saved at once
  *  (the status says Saving… then Saved); a wrong value keeps its text and shows one red line under it. */
-export function DeviceSettings({ state, running, settings }: { state?: DeviceStatus; running: boolean; settings: DeviceDraft }) {
+export function DeviceSettings({ device, state, running, settings, perform }: {
+  device: SnmpDevice; state?: DeviceStatus; running: boolean; settings: DeviceDraft;
+  perform: (task: () => Promise<unknown>) => Promise<void>;
+}) {
   const { draft, set, problem, refused } = settings;
-  const address = state?.network ? SETTINGS_COPY.localAddress : SETTINGS_COPY.address;
+  const address = state?.on_network ? SETTINGS_COPY.localAddress : SETTINGS_COPY.address;
   const [portText, setPortText] = useState(String(draft.port));
   const at = (field: DeviceProblem['field']) => problem?.field === field ? problem.text : '';
   const elsewhere = problem && !HERE.includes(problem.field) ? SETTINGS_COPY.trapProblem(problem.text) : '';
@@ -33,7 +37,9 @@ export function DeviceSettings({ state, running, settings }: { state?: DeviceSta
           set({ port: /^\d{1,5}$/.test(event.target.value.trim()) ? Number(event.target.value) : 0 }, true);
         }} /></label><SaveProblem text={at('port')} /></div>
     </div>
-    {state?.network && <p className="small snmp-network-note">{SETTINGS_COPY.networkNote(state.address)}</p>}
+    {state?.on_network && <div className="snmp-network-note"><span className="label-row small">{SETTINGS_COPY.networkAddress}
+      <HelpTip text={SETTINGS_COPY.networkAddressHint} /></span>
+      <NetworkAddress kind="snmp" id={device.id} address={device.lab_ip || ''} port={device.port} perform={perform} /></div>}
     <fieldset className="snmp-fieldset"><legend><span className="label-row">{SETTINGS_COPY.versions}
       <HelpTip text={SETTINGS_COPY.versionsHint} /></span></legend>
       <div className="row">{(['v1', 'v2c', 'v3'] as const).map(version => <label key={version} className="row gateway-check">

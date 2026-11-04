@@ -16,20 +16,14 @@ const ApprovalKind = "approval"
 // approvalPath is the service's Approved key as PowerShell names it.
 const approvalPath = `HKLM:\` + labnet.ApprovedKey
 
-// useApprovals turns the plan's IED address items into approvals when the service can add them
-// (protocol 3) and the card is a real one. SNMP device addresses keep the alias items: those
-// devices start from their own page, not with Run. Addresses already on the card stay "keep", and
-// so does an approval already in the service's key (approved holds those: GUID -> ip -> prefix).
-func useApprovals(items []*pyjson.Object, rows []Row, approved map[string]map[string]int) []*pyjson.Object {
-	snmp := map[string]bool{}
-	for _, row := range rows {
-		if isSNMPRow(row) {
-			snmp[row.Proposed] = true
-		}
-	}
+// useApprovals turns the plan's address items into approvals when the service can add them
+// (protocol 3) and the card is a real one: IEDs (added at Run) and SNMP devices (added when the
+// devices start, ADR-0136). Addresses already on the card stay "keep", and so does an approval
+// already in the service's key (approved holds those: GUID -> ip -> prefix).
+func useApprovals(items []*pyjson.Object, approved map[string]map[string]int) []*pyjson.Object {
 	for _, item := range items {
 		f := fieldsOf(item)
-		if f.text("kind") != "alias" || f.text("action") != "add" || snmp[f.text("ip")] {
+		if f.text("kind") != "alias" || f.text("action") != "add" {
 			continue
 		}
 		item.Set("kind", ApprovalKind)

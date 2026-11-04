@@ -23,21 +23,35 @@ func (s *Service) Ready() bool {
 func (s *Service) AddOwn(address, owner string) (string, error) {
 	s.change.Lock()
 	defer s.change.Unlock()
-	parsed, err := labnet.ParseAddress(strings.TrimSpace(address))
+	parsed, status, err := s.checkOwn(address, owner)
 	if err != nil {
-		return "", plain("Not an address ScadaBench can use: " + err.Error() + ".")
-	}
-	status, err := s.Status(nil)
-	if err != nil {
-		return "", err
-	}
-	if err := s.ready(status); err != nil {
-		return "", err
-	}
-	if err := s.ownClash(parsed, owner, status); err != nil {
 		return "", err
 	}
 	return parsed, s.add(parsed, owner, status.Card)
+}
+
+// CheckOwn checks address for owner exactly as AddOwn does without putting it on the card: an
+// SNMP device's address goes on when the device starts (change 0215).
+func (s *Service) CheckOwn(address, owner string) (string, error) {
+	s.change.Lock()
+	defer s.change.Unlock()
+	parsed, _, err := s.checkOwn(address, owner)
+	return parsed, err
+}
+
+func (s *Service) checkOwn(address, owner string) (string, Status, error) {
+	parsed, err := labnet.ParseAddress(strings.TrimSpace(address))
+	if err != nil {
+		return "", Status{}, plain("Not an address ScadaBench can use: " + err.Error() + ".")
+	}
+	status, err := s.Status(nil)
+	if err != nil {
+		return "", status, err
+	}
+	if err := s.ready(status); err != nil {
+		return "", status, err
+	}
+	return parsed, status, s.ownClash(parsed, owner, status)
 }
 
 // ownClash refuses an address an IED, another device of this PC, another card or a real device

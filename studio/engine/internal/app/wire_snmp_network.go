@@ -1,7 +1,10 @@
 package app
 
 import (
+	"strings"
+
 	"studio-engine/internal/api/platformapi"
+	"studio-engine/internal/labnet"
 	"studio-engine/internal/netcfg"
 	"studio-engine/internal/project/pyval"
 	"studio-engine/internal/pyjson"
@@ -24,6 +27,25 @@ func (n snmpNetwork) SNMPDevices() ([]netcfg.SNMPDevice, error) {
 
 func (n snmpNetwork) SetSNMPLabIPs(addresses map[string]string) error {
 	return n.service.SetLabIPs(addresses)
+}
+
+// snmpLabCard puts a device's lab address on the project's card before the device starts: the
+// ScadaBench Lab card (change 0213) or, through its approval, a real card (ADR-0136). Stop, exit
+// and the next launch take it off again.
+func (e *Engine) snmpLabCard() snmpservice.LabCard {
+	return snmpservice.LabCard{
+		Ensure: func(address, owner string) error {
+			mode, guid := labProjects{service: e.Projects}.Network()
+			if mode != "lab" || guid == "" {
+				return nil
+			}
+			if card := labnet.InstalledCard(); card != "" && strings.EqualFold(card, guid) {
+				return e.Lab.EnsureOwn(address, owner)
+			}
+			return e.Lab.EnsureRealOwn(guid, address, owner)
+		},
+		Release: e.Lab.Release, // keeps the running IEDs' and devices' addresses (ADR-0127)
+	}
 }
 
 // wireSNMPNetwork joins the SNMP devices to Network setup and to the project's network mode.

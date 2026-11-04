@@ -8,6 +8,7 @@ import type { Ied, Project } from '../../api/types';
 import { Disclosure } from '../../ui/Disclosure';
 import { InfoTip } from '../../ui/InfoTip';
 import { endpointOf, onLabNetwork } from '../network/endpoints';
+import { NetworkAddress } from '../network/NetworkAddress';
 import { DeviceConnection } from './DeviceConnection';
 import { TestModeCard } from './TestModeCard';
 import { DeadbandCard } from './DeadbandCard';
@@ -39,10 +40,11 @@ export function DeviceOverview({ ied, project, locked, session, perform, mode, s
       <span key={label}><span className="muted">{label}</span> <strong>{value}</strong></span>)}</p>
     {ied.role === 'simulated' && <div className="mode-banner">
       <div><h3 style={{ margin: 0 }}>Clients connect to</h3>
-        <code style={{ fontSize: 18 }}>{endpoint.host}:{endpoint.port}</code>
-        <p className="small muted" style={{ margin: '4px 0 0' }}>{reachable ? 'On the lab network adapter.'
-          : lab ? 'Only programs on this PC can reach it: it has no address on the lab network yet. Use Settings › Network to add it.'
-          : 'Only programs on this PC can reach it. Use Settings › Network to put it on a real network.'}</p></div>
+        {lab ? <NetworkAddress kind="ied" id={ied.id} address={ied.lab_ip || ''} port={endpoint.port} size={18} perform={perform} />
+          : <code style={{ fontSize: 18 }}>{endpoint.host}:{endpoint.port}</code>}
+        {!reachable && <p className="small muted" style={{ margin: '4px 0 0' }}>{lab
+          ? `Until it has an address on the network, only programs on this PC reach it at ${endpoint.host}:${endpoint.port}.`
+          : 'Only programs on this PC can reach it. Use Settings › Network to put it on a real network.'}</p>}</div>
       <button onClick={async () => { await navigator.clipboard.writeText(`${endpoint.host}:${endpoint.port}`); setCopied(true);
         window.setTimeout(() => setCopied(false), 2000); }}>
         {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? 'Copied' : 'Copy address'}</button>

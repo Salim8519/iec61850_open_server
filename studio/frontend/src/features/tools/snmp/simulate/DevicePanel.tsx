@@ -46,7 +46,8 @@ export function DevicePanel({ device, state, refresh, fail }: {
     </div>
     <div className="panel-body">
       {tab === 'values' && <PointsTable device={device} running={running} refresh={refresh} fail={fail} />}
-      {tab === 'settings' && <DeviceSettings state={state} running={running} settings={settings} />}
+      {tab === 'settings' && <DeviceSettings device={device} state={state} running={running} settings={settings}
+        perform={task => task().then(refresh).catch(reason => fail(reason.message))} />}
       {tab === 'traps' && <TrapPanel device={device} running={running} settings={settings} fail={fail} />}
       {tab === 'log' && <RequestLog device={device.id} />}
     </div>

@@ -36,7 +36,9 @@ func (s *Service) AddDevice(profile string) (model.Device, error) {
 	return device, s.saveAndRestart(config)
 }
 
-// UpdateDevice replaces a device's settings; its points stay unless points is true.
+// UpdateDevice replaces a device's settings; its points stay unless points is true. Its network
+// address stays too: only Network setup and the address change set it (change 0215), so an
+// editor holding an older copy cannot undo a new address.
 func (s *Service) UpdateDevice(device model.Device, points bool) (model.Device, error) {
 	config := s.Config()
 	index, err := config.findDevice(device.ID)
@@ -44,6 +46,7 @@ func (s *Service) UpdateDevice(device model.Device, points bool) (model.Device, 
 		return model.Device{}, err
 	}
 	device.Name = strings.TrimSpace(device.Name)
+	device.LabIP = config.Devices[index].LabIP
 	if !points {
 		device.Points = config.Devices[index].Points
 	}
@@ -98,6 +101,9 @@ func (s *Service) Start() (*Status, error) {
 			continue
 		}
 		placed, err := place(device, lab)
+		if err == nil && lab {
+			err = s.ensureOnCard(placed)
+		}
 		if err != nil {
 			states[device.ID] = deviceState{State: "failed", Error: err.Error()}
 			continue
@@ -157,6 +163,7 @@ func (s *Service) Stop() error {
 	}
 	s.changed(ChangeStatus)
 	s.releaseIfIdle()
+	s.releaseCard()
 	return nil
 }
 

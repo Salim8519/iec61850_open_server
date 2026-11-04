@@ -14,8 +14,8 @@ import (
 // NoLabAddress is the device's message when the project is on the lab network but Network
 // setup has not given this device an address yet.
 func NoLabAddress(name string) string {
-	return name + " has no address on the lab network yet. Open Settings › Network and put the " +
-		"devices on the network again: ScadaBench finds a free address for each SNMP device."
+	return name + " has no address on the network yet. Type one in its Settings tab, or open " +
+		"Settings › Network and put the devices on the network again: ScadaBench finds a free address for each."
 }
 
 // SetNetwork tells the service whether the project is on the lab network (true) or uses

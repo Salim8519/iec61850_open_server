@@ -57,7 +57,7 @@ func TestDevicesFollowTheLabNetwork(t *testing.T) {
 	if _, err := s.Start(); err != nil {
 		t.Fatal(err)
 	}
-	if state := s.Status().Devices[0]; state.State != "failed" || !strings.Contains(state.Error, "no address on the lab network") {
+	if state := s.Status().Devices[0]; state.State != "failed" || !strings.Contains(state.Error, "no address on the network yet") {
 		t.Fatalf("a device without a lab address must not start: %+v", state)
 	}
 

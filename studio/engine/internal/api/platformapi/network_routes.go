@@ -169,3 +169,23 @@ func (a *Area) firewallApply(r *http.Request) (any, error) {
 	}
 	return a.deps.Firewall.Apply(fingerprint, confirm)
 }
+
+// leftovers is GET /network/leftovers (allowed while running; Go only, ADR-0136).
+func (a *Area) leftovers(r *http.Request) (any, error) {
+	return a.deps.Network.LeftoverAddresses()
+}
+
+// removeLeftovers is POST /network/leftovers/remove: {"fingerprint", "confirm"} while stopped.
+func (a *Area) removeLeftovers(r *http.Request) (any, error) {
+	data, err := bodyOrEmpty(r)
+	if err != nil {
+		return nil, err
+	}
+	return a.locked(func() (any, error) {
+		fingerprint, confirm, err := pair(data, "fingerprint", "confirm")
+		if err != nil {
+			return nil, err
+		}
+		return a.deps.Network.RemoveLeftoverAddresses(fingerprint, confirm)
+	})
+}

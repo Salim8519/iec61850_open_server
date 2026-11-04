@@ -47,6 +47,10 @@ type Network interface {
 	Apply(fingerprint, confirm any) (*pyjson.Object, error)
 	CleanupPreview() (*pyjson.Object, error)
 	Cleanup(fingerprint, confirm any) (*pyjson.Object, error)
+	// LeftoverAddresses and RemoveLeftoverAddresses are the addresses an older plan left on a
+	// card, asked about after launch and Stop (Go only, ADR-0136).
+	LeftoverAddresses() (*pyjson.Object, error)
+	RemoveLeftoverAddresses(fingerprint, confirm any) (*pyjson.Object, error)
 	// PreviewProgress is the live state of the running address check (Go only, change 0150).
 	PreviewProgress() *pyjson.Object
 }
@@ -109,9 +113,10 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // GoOnlyRoutes are the routes this area adds beyond Flask's.
-var GoOnlyRoutes = map[string]bool{"GET /api/v1/network/plan/progress": true}
+var GoOnlyRoutes = map[string]bool{"GET /api/v1/network/plan/progress": true,
+	"GET /api/v1/network/leftovers": true, "POST /api/v1/network/leftovers/remove": true}
 
-// Routes implements api.Area: 7 license, 3 update and 10 network routes (one Go only).
+// Routes implements api.Area: 7 license, 3 update and 12 network routes (three Go only).
 func (a *Area) Routes() []api.Route {
 	route := func(method, pattern string, h handler) api.Route {
 		return api.Route{Method: method, Pattern: "/api/v1" + pattern, Handler: h}
@@ -135,6 +140,8 @@ func (a *Area) Routes() []api.Route {
 		route("GET", "/network/plan/progress", a.planProgress),
 		route("GET", "/network/cleanup/preview", a.cleanupPreview),
 		route("POST", "/network/cleanup/apply", a.cleanupApply),
+		route("GET", "/network/leftovers", a.leftovers),
+		route("POST", "/network/leftovers/remove", a.removeLeftovers),
 		route("GET", "/network/gateway-firewall", a.firewallPreview),
 		route("POST", "/network/gateway-firewall", a.firewallApply),
 	}

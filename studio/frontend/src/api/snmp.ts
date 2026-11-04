@@ -27,6 +27,8 @@ export type SnmpConfig = { role: SnmpRole; auto_start: boolean; devices: SnmpDev
 export type DeviceStatus = { id: string; name: string; profile: string; kind: string; address: string;
   /** It answers on the lab network (address) and on this PC (local). */
   network: boolean; local: string;
+  /** The project is on a network, so its address there can be typed (change 0215). */
+  on_network?: boolean;
   state: 'running' | 'stopped' | 'failed'; error: string; points: number };
 export type ReaderState = 'disconnected' | 'connecting' | 'walking' | 'connected' | 'failed';
 export type SnmpStatus = { role: SnmpRole; engine: 'off' | 'running' | 'failed'; message: string;

@@ -26,6 +26,7 @@ import { placeActivity, toolActivity } from './running';
 import { useActivity } from './useActivity';
 import { useUpdateStatus } from '../api/updates';
 import { GooseConflicts } from '../features/network/GooseConflicts';
+import { LeftoverNotice } from '../features/network/LeftoverNotice';
 
 export function App() {
   const studio = useStudio();
@@ -76,6 +77,7 @@ export function App() {
       <ConnectionNotice state={connection} />
       <RecoveryNotice recovery={project?.startup_recovery} />
       <MigrationNotice notice={project?.migration_notice} />
+      {project && <LeftoverNotice running={!!project.running_ieds?.length} perform={studio.perform} />}
       {studio.error && <div className="error-banner" role="alert"><span>{studio.error}</span>
         <button className="ghost" onClick={() => studio.setError('')} aria-label="Dismiss error"><X size={16} /></button></div>}
       <input ref={fileInput} type="file" accept={OPEN_FILE_ACCEPT} style={{ display: 'none' }}

@@ -50,5 +50,6 @@ func (e *Engine) wirePlatform() ([]api.Route, error) {
 	routes := platformapi.New(platformapi.Deps{License: e.License, Updates: e.Updates, Network: network,
 		Firewall: firewall, Projects: projectNetwork, Runtime: e.Runtime, AppVersion: o.Version}).Routes()
 	routes = append(routes, e.labRoutes(network, projectNetwork)...)
+	routes = append(routes, e.addressRoutes(network)...)
 	return append(routes, e.hostKeyRoutes(network)...), nil
 }
