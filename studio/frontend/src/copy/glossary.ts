@@ -20,6 +20,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   npcap: { term: 'Npcap', plain: 'A free Windows driver that lets programs send and receive GOOSE. You install it once from npcap.com.' },
   adapter: { term: 'Network adapter', plain: 'A network port of this PC, such as a USB Ethernet dongle, the built-in Ethernet port or Wi-Fi.' },
   alias: { term: 'Extra address', plain: 'An additional IP address Windows gives to an adapter so a simulated IED can be reached on it.' },
+  network_service: { term: 'Network service', plain: 'A small ScadaBench service that puts the IED and device addresses on the network card at Start and takes them off at Stop.' },
   firewall: { term: 'Firewall rule', plain: 'A Windows permission that lets other devices connect to the simulated IEDs.' },
   uac: { term: 'Administrator prompt', plain: 'The Windows window that asks for permission before a program changes network settings.' },
   loopback: { term: 'This PC only', plain: 'Private 127.x addresses that only programs on this PC can reach. Safe and needs no setup.' },

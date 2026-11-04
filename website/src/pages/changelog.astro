@@ -15,7 +15,7 @@ import { SITE } from '../data/site';
       <li>Improved: on Ethernet and other network cards, SNMP device addresses now follow the devices like IED addresses do: they are added when the devices start and removed when they stop or ScadaBench closes.</li>
       <li>Improved: when ScadaBench opens, and after Stop, it looks for addresses an earlier version or a forced close left on your network cards. If it finds any, it lists them and removes them in one step with your approval. Addresses you set yourself are never touched.</li>
       <li>Improved: when an address on a network card is already used by another device, Start now names the IED and that device instead of asking you to apply the address plan again.</li>
-      <li>Fixed: if another program turns off the ScadaBench network service, Network setup no longer places addresses that would stay after Stop. It says the network helper is off, and Repair on the lab network page turns it back on and starts it with Windows again.</li>
+      <li>Fixed: if the ScadaBench network service is missing, out of date or was turned off by another program, putting IEDs on Ethernet or another network card now sets it up within the same Windows approval, and Start turns it back on by itself (Windows asks once). No addresses are left behind after Stop.</li>
     </ul>
     <h2>0.1.32 · Undo everywhere, New and Close project</h2>
     <ul>

@@ -88,6 +88,8 @@ func ItemKey(item *pyjson.Object) (string, error) {
 		key = ApprovalKind + ":" + f.text("adapter_guid") + ":" + f.text("ip")
 	case "unblock":
 		key = "unblock:" + f.text("name")
+	case ServiceRepairKind:
+		key = ServiceRepairKind + ":" + f.text("name")
 	default:
 		key = "firewall:" + f.text("name")
 	}

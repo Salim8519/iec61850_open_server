@@ -85,6 +85,9 @@ func (s *Service) EnsureRealOwn(guid, address, owner string) error {
 		return plain(owner + ": " + address + " is not approved for this card. Open Network setup and " +
 			"apply the address plan.")
 	}
+	if err := s.turnOnForRun(); err != nil {
+		return err
+	}
 	if !s.RealCardsReady(guid) {
 		return plain("The ScadaBench network helper is not running, so " + address + " cannot be used. " +
 			"Open Network › This PC lab network and press Repair.")

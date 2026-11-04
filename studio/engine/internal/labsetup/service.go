@@ -114,7 +114,7 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 	case status.Installed && !status.CardPresent:
 		status.Problem = "The ScadaBench Lab card is missing (removed in Device Manager?). Press Repair."
 	case status.Installed && !status.Running:
-		status.Problem = "The lab network service is not running. Press Repair."
+		status.Problem = "The lab network service is off. Run turns it back on (Windows asks once), or press Repair."
 	}
 	ieds, err := s.Projects.SimulatedIEDs()
 	if err != nil {

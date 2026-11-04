@@ -100,6 +100,9 @@ func (s *Service) EnsureOwn(address, owner string) error {
 		return plain("The ScadaBench Lab card is missing, so " + address + " cannot be used. " +
 			"Create it on the lab network page, or choose another network.")
 	}
+	if err := s.turnOnForRun(); err != nil {
+		return err
+	}
 	reply, err := s.call(labnet.Request{Op: labnet.OpStatus})
 	if err != nil {
 		return plain("The lab network service does not answer, so " + address + " cannot be used. " +

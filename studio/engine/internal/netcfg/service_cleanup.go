@@ -36,6 +36,8 @@ func (p *presence) present(item *pyjson.Object) (bool, error) {
 	switch f.text("kind") {
 	case ApprovalKind:
 		return approvalPresent(f), f.err()
+	case ServiceRepairKind:
+		return false, f.err() // the service is not a leftover
 	case "alias":
 		if !p.read["adapters"] {
 			adapters, err := p.service.Adapters(true)

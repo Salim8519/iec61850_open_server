@@ -126,6 +126,11 @@ func (s *Service) EnsureForRun(guid string, starting []string) error {
 	s.card.Lock()
 	defer s.card.Unlock()
 	card := s.Windows.Card()
+	if s.needsService(guid) {
+		if err := s.turnOnForRun(); err != nil {
+			return err
+		}
+	}
 	if card == "" || !strings.EqualFold(card, guid) {
 		return s.ensureReal(guid, starting) // a real card with approved addresses (ADR-0132)
 	}

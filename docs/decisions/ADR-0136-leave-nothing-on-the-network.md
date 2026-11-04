@@ -30,9 +30,12 @@ Clean-up happens at exactly three moments, and only there: **Stop**, **closing t
 1. **One owner, no fallback.** On a real card only the network service adds addresses: IED and
    SNMP addresses both go through approvals (ADR-0132). The service adds them at Start (devices: at
    their start) and removes them at Stop, at exit and at the next launch, with no prompt. When the
-   service is missing, stopped or too old, Network setup never plans `alias` items. It says so in
-   plain English and offers one action: turn the network helper on (one Windows prompt: automatic
-   start, then start).
+   service is missing, stopped or too old, Network setup never plans `alias` items. Instead
+   (amended by change [0216](../changes/2026/0216-network-service-fixes-itself.md), owner: "the fix
+   should be clear to all"): the plan's own Windows prompt sets the service up first (installed,
+   started with Windows again, or updated, by the same program as Create and Repair), and Start
+   turns a stopped service back on itself (one Windows prompt). The user never has to find another
+   page. "Network service needed" remains only when the installation lacks that program.
 2. **Stop and close.** Stop and a normal exit already release every address the service holds
    (ADR-0127, ADR-0132). SNMP devices now do the same, so after Stop or close nothing of ours stays
    on any card.

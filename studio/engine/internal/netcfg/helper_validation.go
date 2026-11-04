@@ -113,6 +113,8 @@ func validateItem(item *pyjson.Object, program string) error {
 		return validateSNMPFirewall(item, program)
 	case HostKeyKind:
 		return validateHostKeyFirewall(item, program)
+	case ServiceRepairKind:
+		return validateServiceRepair(item, program)
 	case "gateway_firewall":
 		if !pyMatch(gatewayRulePattern, textOr(item, "name")) || get(item, "group") != GatewayGroup {
 			return refuse("Gateway firewall item is not a ScadaBench rule")

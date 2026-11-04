@@ -60,6 +60,11 @@ func run(args []string) (code int) {
 			ready += " " + installed.Note // recorded in the network journal (ADR-0134)
 		}
 		return write(args[2], outcome{OK: true, Message: ready, Installed: &installed})
+	case "start": // the service was set to manual or disabled by another program (ADR-0136)
+		if err := labnet.TurnOn(); err != nil {
+			return write(args[2], outcome{Message: err.Error()})
+		}
+		return write(args[2], outcome{OK: true, Message: "The ScadaBench network service is running again."})
 	case "uninstall":
 		if err := labnet.Uninstall(true); err != nil {
 			return write(args[2], outcome{Message: err.Error()})

@@ -32,6 +32,8 @@ func Describe(item *pyjson.Object) (string, error) {
 			"'allow access?' question was closed); clean-up switches it on again"
 	case ApprovalKind:
 		text = describeApproval(f)
+	case ServiceRepairKind:
+		text = describeServiceRepair
 	case "alias":
 		if f.text("action") == "keep" {
 			text = "Use address " + f.text("ip") + " that is already on '" + f.text("adapter_name") + "' for " + f.text("for")
@@ -65,6 +67,8 @@ func DescribeRemoval(item *pyjson.Object) (string, error) {
 		text = "Switch the Windows Firewall rule that blocked the gateway on again, as it was before"
 	case ApprovalKind:
 		text = describeApprovalRemoval(f)
+	case ServiceRepairKind:
+		text = "Leave the ScadaBench network service installed"
 	case "alias":
 		text = "Remove address " + f.text("ip") + " that ScadaBench added to '" + f.text("adapter_name") + "'"
 	default:

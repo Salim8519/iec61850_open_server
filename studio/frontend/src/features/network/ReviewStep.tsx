@@ -5,6 +5,12 @@ import { InfoTip } from '../../ui/InfoTip';
 import { StatusPill } from '../../ui/StatusPill';
 import { UI_STATUS } from '../../copy/status';
 
+// The glossary word for one Windows change in the plan.
+function kindTerm(kind: string) {
+  if (kind === 'alias' || kind === 'approval') return 'alias';
+  return kind === 'service_repair' ? 'network_service' : 'firewall';
+}
+
 export function ReviewStep({ preview }: { preview: PlanPreview }) {
   return <div className="stack">
     <h2 style={{ margin: 0 }}>Review the changes on “{preview.adapter.name}”</h2>
@@ -13,7 +19,7 @@ export function ReviewStep({ preview }: { preview: PlanPreview }) {
       <thead><tr><th>What will happen</th><th>Kind</th><th>Result</th></tr></thead>
       <tbody>{preview.items.map((item, index) => <tr key={index}>
         <td>{item.description}</td>
-        <td>{['alias', 'approval'].includes(item.kind) ? <InfoTip term="alias" /> : <InfoTip term="firewall" />}</td>
+        <td><InfoTip term={kindTerm(item.kind)} /></td>
         <td><StatusPill status={UI_STATUS[`item_${item.action}`]} /></td>
       </tr>)}</tbody></table></div>
     {preview.needs_admin && <div className="row" style={{ alignItems: 'flex-start' }}>

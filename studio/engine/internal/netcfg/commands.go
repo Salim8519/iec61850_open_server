@@ -46,6 +46,8 @@ func ApplyCommand(item *pyjson.Object) (string, error) {
 		command = hostKeyFirewallCommand(f)
 	case ApprovalKind:
 		command = approvalApply(f)
+	case ServiceRepairKind:
+		command = serviceRepairCommand(f)
 	case "alias":
 		command = "New-NetIPAddress -InterfaceIndex " + f.integer("adapter_index") + " -IPAddress " + f.text("ip") +
 			" -PrefixLength " + f.integer("prefix") + " -AddressFamily IPv4 -SkipAsSource $true " +
@@ -68,6 +70,8 @@ func RemoveCommand(item *pyjson.Object) (string, error) {
 		command = restoreCheck(f) + "Enable-NetFirewallRule -Name " + psString(f.text("name"))
 	case ApprovalKind:
 		command = approvalRemove(f)
+	case ServiceRepairKind:
+		command = "Write-Output 'The ScadaBench network service stays installed'" // never removed by clean-up
 	case "alias":
 		command = "Remove-NetIPAddress -InterfaceIndex " + f.integer("adapter_index") + " -IPAddress " + f.text("ip") +
 			" -PolicyStore ActiveStore -Confirm:$false"
