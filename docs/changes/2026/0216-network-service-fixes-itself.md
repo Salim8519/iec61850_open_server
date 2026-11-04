@@ -58,3 +58,17 @@ never created the lab card had no service at all and hit the same wall every tim
   installed with it (ADR-0120). Nothing goes on that card unless the project uses it.
 - A stopped service that is also too old is turned on at Start but stays too old until the next
   Apply or Repair updates it.
+
+## Release 0.1.33, rebuilt (same version)
+
+- Owner: "deploy the new veriosn man again, unders ame veriosn". `compile_go_release.py --version
+  0.1.33`: antivirus gate 19 programs, 0 findings; `ScadaBench.exe` carries the set-up step and
+  `scadabench_labnet.exe` the `start` command.
+- Packaged portable on a throwaway data folder: version 0.1.33; the Ethernet plan for the sample IED
+  at a typed address is ready with `service_repair`, `approval`, `firewall` (service stopped on
+  this PC); Run, then an independent MMS read of `Feeder01CTRL/XCBR1.Pos.stVal` with
+  `studio_probe` (ok, 01); Stop.
+- `website/deploy.cmd`: Pages 5b0bbc23, "Saved release 0.1.33 from 2026-11-04". Live installer
+  b58f1d27 (19,598,170 bytes) and portable c4af7448 (53,254,656 bytes) match the build; copies of
+  both scan clean (2 programs, 0 findings). The changelog shows the reworded fix.
+- Apps that already installed the first 0.1.33 build are not offered this one (same version).
