@@ -50,3 +50,16 @@ Layers: Go engine (`netaddr`, `api/addressapi`, `labsetup`, `snmp/service`, `app
   lab card refuses; the real-card path needs the owner's Windows prompt. Both are covered by the
   unit tests.
 - Not in the installed 0.1.32. The EXE was not rebuilt (owner rule). Python engine untouched.
+
+## Release 0.1.33 (with changes 0212–0214)
+
+- `compile_go_release.py --version 0.1.33` with `studio\.venv`: antivirus gate 19 programs, 0 findings.
+- Packaged portable on a throwaway data folder: version 0.1.33; `GET /network/leftovers` 200; the address
+  route answers `not_found` for an unknown IED; sample IED imported, Start, an independent MMS read
+  of `Feeder01CTRL/XCBR1.Pos.stVal` with `studio_probe` (ok, 01), Stop.
+- `website/deploy.cmd` under `fnm exec --using=24`: Pages 9dd30909, "Saved release 0.1.33 from
+  2026-11-04"; installed apps are told about 0.1.33 by the signed release record.
+- Live installer b74004d0 (19,593,782 bytes) and portable 2d44c952 (53,242,368 bytes) match the build;
+  copies of both downloads scan clean (2 programs, 0 findings). The changelog page shows
+  "0.1.33 · Nothing left on your network, addresses edited where you see them".
+- This PC's curl needs `--ssl-no-revoke` for download.scadabench.com (revocation check offline).

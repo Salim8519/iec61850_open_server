@@ -7,7 +7,17 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Undo everywhere, New and Close project</h2>
+    <h2>{SITE.version} · Nothing left on your network, addresses edited where you see them</h2>
+    <ul>
+      <li>New: change an IED's network address right on the Devices page. Click the address under "Clients connect to", type the new one and press Enter. On the ScadaBench Lab card it is checked and used at once; on a card such as Ethernet, Windows asks once to approve it.</li>
+      <li>New: SNMP devices have their own address on the network, shown and edited in each device's Settings tab, with the same checks as IEDs. Two devices can no longer share one address.</li>
+      <li>New: simulated SNMP devices also run on the ScadaBench Lab card, so SCADA and network management software on this PC can poll them at their own addresses.</li>
+      <li>Improved: on Ethernet and other network cards, SNMP device addresses now follow the devices like IED addresses do: they are added when the devices start and removed when they stop or ScadaBench closes.</li>
+      <li>Improved: when ScadaBench opens, and after Stop, it looks for addresses an earlier version or a forced close left on your network cards. If it finds any, it lists them and removes them in one step with your approval. Addresses you set yourself are never touched.</li>
+      <li>Improved: when an address on a network card is already used by another device, Start now names the IED and that device instead of asking you to apply the address plan again.</li>
+      <li>Fixed: if another program turns off the ScadaBench network service, Network setup no longer places addresses that would stay after Stop. It says the network helper is off, and Repair on the lab network page turns it back on and starts it with Windows again.</li>
+    </ul>
+    <h2>0.1.32 · Undo everywhere, New and Close project</h2>
     <ul>
       <li>New: Undo and Redo next to the File menu work on every page: IEDs, the single-line diagram, the Test page and the gateway lists. Ctrl+Z and Ctrl+Y work too. The last 20 changes can be undone, and the button tip says what it takes back. Changes made while IEDs run are not undone.</li>
       <li>New: File › New project, Save as and Close project. Save as lets you pick the name and folder; New and Close offer to save a copy first.</li>
