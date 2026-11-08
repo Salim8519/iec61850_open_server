@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import Closing from '../components/Closing.astro';
 import { TUTORIALS, lengthOf, posterOf, totalSeconds, videoOf } from '../data/tutorials';
 import { GUIDES } from '../data/guides';
+import { HOWTOS, guidePath } from '../data/howto';
 const totalMinutes = Math.ceil(totalSeconds / 60);
 ---
 <Base title="Tutorials" description="Learn IEC 61850 with ScadaBench: CID and SCD files, the single-line diagram, IED simulation, GOOSE, real devices, IED Explorer, the SCADA gateway, point panels, commands, tap changers and SNMP, and IEDs at their own addresses without a VM, in fourteen short narrated videos.">
@@ -24,6 +25,14 @@ const totalMinutes = Math.ceil(totalSeconds / 60);
           </div>
         </article>
       ))}
+    </div>
+  </section>
+  <section class="section written" aria-labelledby="written-title">
+    <div class="wrap list">
+      <h2 id="written-title" class="guides-title">Written guides</h2>
+      <ul class="written-list">
+        {HOWTOS.map((guide) => <li><a href={guidePath(guide)}>{guide.title}</a></li>)}
+      </ul>
     </div>
   </section>
   <section class="section" aria-labelledby="guides-title">
@@ -71,5 +80,9 @@ const totalMinutes = Math.ceil(totalSeconds / 60);
   .steps li { display: grid; gap: 12px; }
   .steps img { width: 100%; max-width: 900px; height: auto; border-radius: var(--radius-small); border: 1px solid var(--line); }
   .muted { color: var(--muted); }
+  .written { padding-block: 0; }
+  .written-list { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+  .written-list a { color: var(--ink); }
+  .written-list a:hover { color: var(--accent); }
   @media (max-width: 860px) { .lesson { grid-template-columns: 1fr; } }
 </style>

@@ -1,0 +1,30 @@
+---
+// One page per search guide (data/howto): the question as the heading, the short answer
+// under it, then the steps. TechArticle and breadcrumb data help search engines.
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import GuideBody from '../../components/GuideBody.astro';
+import Closing from '../../components/Closing.astro';
+import { HOWTOS, guideSchema, type HowTo } from '../../data/howto';
+import { SITE } from '../../data/site';
+
+export const getStaticPaths = () => HOWTOS.map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
+
+interface Props { guide: HowTo; }
+const { guide } = Astro.props;
+const schema = guideSchema(guide, new URL('/og-image.png', SITE.url).href);
+---
+<Base title={guide.title.replace(/^How to /, '').replace(/^./, (first) => first.toUpperCase())}
+  description={guide.description} schema={schema}>
+  <PageHeader eyebrow="Guide" title={guide.title} lede={guide.answer}>
+    <nav class="crumbs mono" aria-label="Breadcrumb"><a href="/guides/">All guides</a></nav>
+  </PageHeader>
+  <GuideBody guide={guide} />
+  <Closing title="Try it with your own SCD." />
+</Base>
+
+<style>
+  .crumbs a { color: var(--muted); font-size: 0.85rem; }
+  .crumbs a:hover { color: var(--accent); }
+  :global(.page-header h1) { max-width: 22ch; }
+</style>

@@ -1,0 +1,94 @@
+---
+// The body of one search guide on the light paper surface: what you need, the numbered
+// steps with real screenshots, the matching tutorial video, common problems and the
+// other guides. Screenshots open large on tap (scripts/lightbox.ts).
+import { Picture, getImage } from 'astro:assets';
+import { HOWTOS, guidePath, type HowTo } from '../data/howto';
+import { TUTORIALS, posterOf, videoOf } from '../data/tutorials';
+
+interface Props { guide: HowTo; }
+const { guide } = Astro.props;
+const tutorial = TUTORIALS.find((item) => item.slug === guide.video);
+const large = await Promise.all(guide.steps.map((step) =>
+  step.image ? getImage({ src: step.image.src, width: 1568, format: 'webp' }) : undefined));
+const others = HOWTOS.filter((item) => item.slug !== guide.slug);
+---
+<section class="paper guide-body">
+  <div class="wrap layout">
+    <section aria-labelledby="needs">
+      <h2 id="needs">What you need</h2>
+      <ul class="needs">{guide.needs.map((need) => <li>{need}</li>)}</ul>
+    </section>
+
+    <section aria-labelledby="steps">
+      <h2 id="steps">Step by step</h2>
+      <ol class="steps">
+        {guide.steps.map((step, index) => (
+          <li class="step">
+            <span class="num mono" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <div class="step-text">
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+              {step.image && (
+                <div class="shot" data-zoom={large[index]?.src} data-zoom-alt={step.image.alt}>
+                  <Picture src={step.image.src} alt={step.image.alt} widths={[640, 960, 1280]}
+                    sizes="(max-width: 760px) 100vw, 720px" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {tutorial && (
+      <section aria-labelledby="watch">
+        <h2 id="watch">Watch it in the app</h2>
+        <div class="video">
+          <video src={videoOf(tutorial)} poster={posterOf(tutorial)} controls preload="none" playsinline
+            width="2560" height="1440" aria-label={`Video: ${tutorial.title}`}></video>
+        </div>
+        <p class="muted">{tutorial.title}. More lessons on the <a href="/tutorials/">tutorials page</a>.</p>
+      </section>
+    )}
+
+    <section aria-labelledby="problems">
+      <h2 id="problems">Common problems</h2>
+      <dl class="problems">
+        {guide.problems.map((problem) => (<div><dt>{problem.q}</dt><dd>{problem.a}</dd></div>))}
+      </dl>
+    </section>
+
+    <nav aria-labelledby="more">
+      <h2 id="more">More guides</h2>
+      <ul class="more">
+        {others.map((item) => <li><a href={guidePath(item)}>{item.title}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<style>
+  .guide-body { padding-block: clamp(48px, 7vw, 96px); }
+  .layout { display: grid; gap: clamp(40px, 6vw, 64px); }
+  .layout > * { max-width: 760px; }
+  h2 { font-size: var(--step-2); margin-bottom: 20px; }
+  h3 { font-size: var(--step-1); letter-spacing: -0.02em; }
+  p, li, dd { color: var(--paper-muted); line-height: 1.7; }
+  a { color: var(--paper-ink); }
+  .needs, .more { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 36px; }
+  .step { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .num { font-size: 0.9rem; color: var(--accent-on-paper); padding-top: 4px; }
+  .step-text { display: grid; gap: 12px; }
+  .shot { display: block; margin-top: 4px; }
+  .shot :global(img) { width: 100%; height: auto; border-radius: var(--radius-small); border: 1px solid var(--paper-line); }
+  .video { aspect-ratio: 16 / 9; border-radius: var(--radius-small); overflow: hidden; background: var(--navy);
+    border: 1px solid var(--paper-line); margin-bottom: 12px; }
+  .video video { width: 100%; height: 100%; object-fit: cover; }
+  .problems { margin: 0; display: grid; gap: 20px; }
+  .problems dt { font-weight: 600; color: var(--paper-ink); }
+  .problems dd { margin: 4px 0 0; }
+  .muted { color: var(--paper-muted); }
+  @media (max-width: 560px) { .step { grid-template-columns: 1fr; gap: 6px; } }
+</style>

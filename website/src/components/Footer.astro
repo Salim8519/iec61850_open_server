@@ -12,6 +12,7 @@ const year = new Date().getFullYear();
       <h2>Product</h2>
       {NAV.filter((item) => item.href !== '/contact/').map((item) => <a href={item.href}>{item.label}</a>)}
       <a href={buyUrl}>Buy a license</a>
+      <a href="/guides/">Guides</a>
       <a href="/changelog/">Changelog</a>
     </nav>
     <nav aria-label="Company">

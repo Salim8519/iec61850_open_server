@@ -1,8 +1,9 @@
 import type { APIRoute } from 'astro';
 import { SITE } from '../data/site';
+import { HOWTOS, guidePath } from '../data/howto';
 
 const PAGES = ['/', '/features/', '/pricing/', '/download/', '/tutorials/', '/faq/', '/contact/', '/changelog/',
-  '/legal/eula/', '/legal/privacy/'];
+  '/legal/eula/', '/legal/privacy/', '/guides/', ...HOWTOS.map(guidePath)];
 
 export const GET: APIRoute = () => {
   const urls = PAGES.map((path) => `  <url><loc>${new URL(path, SITE.url).href}</loc></url>`).join('\n');
