@@ -1,0 +1,17 @@
+/* Command pop-ups (ui/PopupDialog.tsx): the app's modal dialog look, from shared tokens. */
+.popup-dialog { width: min(640px, calc(100vw / var(--fit, 1) - 48px)); max-height: calc(100vh / var(--fit, 1) - 48px); padding: 0;
+  border: var(--line) solid var(--frame); border-radius: var(--radius); color: var(--text); background: var(--surface); }
+.popup-dialog.wide { width: min(860px, calc(100vw / var(--fit, 1) - 48px)); }
+.popup-dialog[open] { display: flex; flex-direction: column; }
+.popup-dialog::backdrop { background: rgb(23 43 77 / 35%); }
+.popup-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: var(--line) solid var(--frame); }
+.popup-head h2 { flex: 1; margin: 0; font-size: 17px; min-width: 0; overflow-wrap: anywhere; }
+.popup-body { display: grid; gap: 10px; padding: 14px 16px 16px; overflow-y: auto; min-height: 0; }
+.popup-body .confirm-box p { margin: 0 0 6px; }
+.popup-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.popup-result { margin: 0; padding: 8px 12px; border-radius: var(--radius-small); background: var(--warning-soft); }
+.popup-result.ok { background: var(--success-soft); color: var(--success); }
+.popup-list { display: grid; gap: 6px; }
+.popup-list-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 6px 8px;
+  border: var(--line) solid var(--border); border-radius: var(--radius-small); }
+.popup-list-row code { flex: 1 1 260px; min-width: 0; overflow-wrap: anywhere; }

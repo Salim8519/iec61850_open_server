@@ -15,7 +15,9 @@ so large files never end in a connection reset (Go, change 0186).
 | `POST /session` | `{token}` | Establish same-origin session |
 | `GET /project` | - | Project snapshot, session, revision, runtime, `running_ieds`, recovery notice |
 | `PUT /project/diagram` | `{diagram,revision,tab_id}` | Stopped-only revision-checked save |
-| `POST /project/save` | - | Atomic autosave |
+| `POST /project/save` | - | Atomic autosave; with auto save off the only write of the changes (ADR-0139) |
+| `GET /project/autosave` | - | Go only (ADR-0139): `{on, unsaved}` |
+| `PUT /project/autosave` | `{on: true\|false}` | Go only (ADR-0139): turn auto save on (saves the unsaved changes first) or off; remembered as preference `autosave_off` |
 | `GET /project/download` | - | Current `.scadabench` ZIP (`substation.scadabench`) |
 | `POST /project/open` | multipart `file` | Stopped-only validated restore/migration; a `.subsim` file name is refused (400, code `old_project_file`, ADR-0096) |
 | `POST /runtime/start` | - | Start all workers after capability/preflight checks |
@@ -124,7 +126,7 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |
 | `GET /network/gateway-firewall` | - | Gateway firewall check: items, fingerprint, `open`, `blocked`, `needs_admin` (no elevation) |
 | `POST /network/gateway-firewall` | `{fingerprint,confirm:true}` | Allow rule + switch off Block rules for the gateway worker; 409 if Windows changed (ADR-0062) |
-| `PUT /ieds/{id}/settings` | `{role?,live?,lab_ip?,goose_publish?,port?}` | Stopped-only; SCL never rewritten |
+| `PUT /ieds/{id}/settings` | `{role?,live?,lab_ip?,goose_publish?,port?}` | Stopped-only; SCL never rewritten. `live.allow_commands` (Boolean, off by default, stored only while on) lets gateway commands reach a real IED (ADR-0138) |
 | `GET /goose` | - | Configured/observed GOOSE blocks (`origin` app/wire, `src_mac`), problems, unknown GOOSE, `engine` (ADR-0073) |
 | `GET /goose/share` | - | Where GOOSE goes: `reach`, picked `uplink`, Advanced `choices`, `risk` {level, reasons}, `npcap`, `state`, `message`, `conflicts`; Go engine also `goes_out` (shared and an adapter is there), `alone` (ADR-0119, ADR-0122) |
 | `PUT /goose/share` | `{reach, uplink_guid?, adapter_guid?, confirm?}` | Allowed while running. `reach` `inside` (default) or `outside`; `outside` needs `confirm:true`, Npcap and the `adapter_guid` shown (GOOSE-19); the same in both engines again (ADR-0122) |
@@ -136,6 +138,8 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
 | `GET /live/{id}/comparison` | - | SCD vs device categories, dataset and report diffs |
 | `GET /live/{id}/comparison.csv` | - | Same comparison as CSV |
+| `GET /live/{id}/controls` | - | Go only (ADR-0138): the device's own ctlModel/sboTimeout and Loc read on connect; `{summary, rows[{ref, result: match\|differs\|unreadable, note, …}], local, checked_at}` or `{error}`; 400 before the first connect |
+| `POST /live/{id}/operate` | `{ref, value: true\|false, confirm: true}` | Go only (ADR-0138): one command to a real IED from Devices while its `live.allow_commands` is on and its session is live; device's own control model; `{ok, summary, result, observed, changed, correlation_id}`; refusals 400 in words; events `real_command_requested/applied/failed/observed` |
 | `POST /live/{id}/read` | `{refs}` (max 500) | On-demand read; device errors reported, not values |
 
 New SSE kinds: `goose_publishing`, `goose_control`, `goose_status`, `goose_unknown`,

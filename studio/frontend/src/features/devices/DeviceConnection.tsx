@@ -5,10 +5,13 @@ import type { LiveSession } from '../../api/network';
 import type { Ied, LiveSettings } from '../../api/types';
 import { hint } from '../../copy/hints';
 import { liveStatus } from '../../copy/status';
+import { HelpTip } from '../../ui/HelpTip';
 import { SegmentedControl } from '../../ui/SegmentedControl';
 import { StatusPill } from '../../ui/StatusPill';
+import { withCommands } from './allowCommands';
+import { DeviceCommandCheck } from './DeviceCommandCheck';
 
-/** How ScadaBench reaches a real IED: it reads values here; commands follow the gateway and Explorer confirmations. */
+/** How ScadaBench reaches a real IED: it reads values here; gateway commands need Allow commands (ADR-0138). */
 export function DeviceConnection({ ied, session, locked, perform }: {
   ied: Ied; session?: LiveSession; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
@@ -24,6 +27,7 @@ export function DeviceConnection({ ied, session, locked, perform }: {
       {session.access?.notes.map(note => <span key={note} className="small row" style={{ alignItems: 'flex-start' }}>
         <ShieldCheck size={15} style={{ flexShrink: 0, color: 'var(--success)' }} />{note}</span>)}
     </div></div> : <p className="muted" style={{ margin: 0 }}>{hint('live.not_running')} {hint('live.commands')}</p>}
+    {session && <DeviceCommandCheck iedId={ied.id} live={session.state === 'live'} />}
     <div className="form-grid">
       <label>Device address<input value={draft.ip} disabled={locked} placeholder={scd || 'e.g. 192.168.1.20'}
         onChange={event => setDraft({ ...draft, ip: event.target.value.trim() })} />
@@ -37,6 +41,13 @@ export function DeviceConnection({ ied, session, locked, perform }: {
         onChange={access => setDraft({ ...draft, access })} options={[
           { value: 'auto_reports', label: 'Reports (recommended)' }, { value: 'polling', label: 'Ask every second' }]} />
       <span className="small muted">{hint(`live.access.${draft.access}`)}</span>
+    </div>
+    <div className="stack" style={{ gap: 8 }}>
+      <span className="label-row"><label className="row" style={{ gap: 8, fontWeight: 600 }}>
+        <input type="checkbox" checked={!!draft.allow_commands} disabled={locked}
+          onChange={event => setDraft(withCommands(draft, event.target.checked))} />Allow commands</label>
+        <HelpTip text={hint('live.commands')} label="Where do commands come from?" /></span>
+      <span className="small muted">{hint(draft.allow_commands ? 'live.allow_commands.on' : 'live.allow_commands.off')}</span>
     </div>
     <div className="row"><button className="primary" disabled={locked || !changed}
       onClick={() => perform(() => api(`/ieds/${ied.id}/settings`, 'PUT', { live: draft }))}><Save size={16} />Save connection</button>

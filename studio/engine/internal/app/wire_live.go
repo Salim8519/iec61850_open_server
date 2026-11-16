@@ -11,8 +11,10 @@ import (
 	"studio-engine/internal/httpapi"
 	"studio-engine/internal/project"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/realcmd"
 	"studio-engine/internal/runtime/ports"
 	"studio-engine/internal/scl"
+	"studio-engine/internal/tools/control"
 )
 
 // spareEngineDelay keeps the first spare GOOSE engine out of the application's own start.
@@ -34,7 +36,18 @@ func (e *Engine) wireLive(live *liveAdapter) []api.Route {
 	time.AfterFunc(spareEngineDelay, e.Live.Engine.Prepare)
 	live.manager = e.Live
 	declarations := &project.GooseDeclarations{} // one cache per process
-	area := &liveapi.Service{Deps: deps, Live: e.Live, Access: acquisition.NewMmsAccess(a.Bus, deps.Clock),
+	if e.Control == nil { // shared with the Explorer and the gateway (wireTools)
+		e.Control = control.NewClient(o.native("studio_control.exe"), nil)
+	}
+	commands := &realcmd.Service{FindIED: e.Projects.FindIED, Control: e.Control, Emit: e.Runtime.Emit,
+		Sessions: func(id string) (realcmd.Session, error) {
+			session, err := e.Live.Session(id)
+			if err != nil || session == nil {
+				return nil, err
+			}
+			return session, nil
+		}}
+	area := &liveapi.Service{Deps: deps, Live: e.Live, Access: acquisition.NewMmsAccess(a.Bus, deps.Clock), Commands: commands,
 		Modes: acquisition.NewTestModes(deps), Version: o.Version,
 		Declarations: func(p *pyjson.Object) (goosedom.Declarations, error) {
 			value, err := declarations.For(p)

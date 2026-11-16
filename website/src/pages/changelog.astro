@@ -7,7 +7,15 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Nothing left on your network, addresses edited where you see them</h2>
+    <h2>{SITE.version} · Real devices stay read only until you allow commands</h2>
+    <ul>
+      <li>Changed: an IED set to "Monitor real device" is now read only. Each real IED has its own Allow commands switch in Devices › Overview, off by default. SCADA commands through the gateway reach a real IED only when its switch and the gateway's "Allow commands to real IEDs" are both on.</li>
+      <li>New: while Allow commands is on and the IED is live, Devices › Data points can send Close/Open (or On/Off) to it. Every command asks first, uses the device's own control model, and shows what the device answered and where the position went.</li>
+      <li>New: after connecting, ScadaBench reads how the real device itself takes each command of the SCD (its control model, select time and Local/Remote) and shows where it differs from the file. It only reads.</li>
+      <li>Improved: command screens in Devices, the gateway point list and the SCADA master open as a pop-up, so the data points stay where they are.</li>
+      <li>New: File › Turn off auto save. Your changes are then kept while ScadaBench is open and written only when you choose Save project or press Ctrl+S; the top bar shows when something is not saved. Auto save is on by default and ScadaBench remembers your choice.</li>
+    </ul>
+    <h2>0.1.33 · Nothing left on your network, addresses edited where you see them</h2>
     <ul>
       <li>New: change an IED's network address right on the Devices page. Click the address under "Clients connect to", type the new one and press Enter. On the ScadaBench Lab card it is checked and used at once; on a card such as Ethernet, Windows asks once to approve it.</li>
       <li>New: SNMP devices have their own address on the network, shown and edited in each device's Settings tab, with the same checks as IEDs. Two devices can no longer share one address.</li>

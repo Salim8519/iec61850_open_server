@@ -10,8 +10,10 @@ import (
 )
 
 // GoOnlyRoutes are the live routes the frozen Python app does not have: the GOOSE messages of
-// one IED and the exact leaf references of every message (ADR-0112).
-var GoOnlyRoutes = map[string]bool{"GET /api/v1/ieds/{ied_id}/goose/messages": true, "GET /api/v1/goose/members": true}
+// one IED and the exact leaf references of every message (ADR-0112), a real IED's command check
+// and sending from Devices (ADR-0138).
+var GoOnlyRoutes = map[string]bool{"GET /api/v1/ieds/{ied_id}/goose/messages": true, "GET /api/v1/goose/members": true,
+	"GET /api/v1/live/{key}/controls": true, "POST /api/v1/live/{key}/operate": true}
 
 // gooseMessages is GET /ieds/{ied_id}/goose/messages: the IED's sendable messages, who receives
 // them, every member with its leaves (and their values while running), what it receives, and

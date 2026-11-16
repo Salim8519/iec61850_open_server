@@ -36,6 +36,12 @@ export type GooseOverview = { running: boolean; state: string; message: string; 
 export type AccessPlan = { reports: string[]; polling_datasets: string[]; notes: string[] };
 export type LiveSession = { ied_id: string; name: string; state: string; host: string; port: number;
   endpoint_source: 'scd' | 'override' | 'missing'; message: string; access: AccessPlan | null };
+/** GET /live/{id}/controls (Go engine, ADR-0138): the device's own control settings against the CID. */
+export type CommandCheckRow = { ref: string; cdc: string; result: 'match' | 'differs' | 'unreadable'; note: string;
+  cid_model_text: string; device_model_text: string };
+export type CommandCheck = { error?: string; checked_at: string; limited?: boolean; local?: string[];
+  summary?: { total: number; match: number; differs: number; unreadable: number; local: number; loc_checked: number };
+  rows?: CommandCheckRow[] };
 export type CompareRow = { ref: string; fc: string; category: string; scd_type: string | null;
   device_type: string | null; hint: string };
 export type Comparison = { summary: Record<string, number>; signals: CompareRow[];

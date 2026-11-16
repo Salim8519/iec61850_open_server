@@ -67,6 +67,8 @@ type Service struct {
 	replaying     bool             // the commit in progress is not an Undo step (mutate held)
 	running       atomic.Bool      // IEDs run: changes are not steps, Undo is refused
 	recovered     atomic.Value     // id (string) of the project startup recovery opened
+	manual        atomic.Bool      // auto save is off: commits are not written (manual_save.go)
+	unsaved       atomic.Bool      // auto save off and changes Save has not written
 }
 
 // New creates the service with a new empty project. Fold the journal of an earlier run
@@ -129,17 +131,28 @@ func (s *Service) Export() ([]byte, error) {
 	return s.encoder.Encode(s.current.Load().compact)
 }
 
-// Save is ProjectService.save(): the current project written to autosave.scadabench now.
+// Save is ProjectService.save(): the current project written to autosave.scadabench now
+// (with auto save off, the only way changes reach it).
 func (s *Service) Save() error {
 	st := s.current.Load()
 	if _, err := s.encoder.Encode(st.compact); err != nil {
 		return err
 	}
 	s.mutate.Lock()
+	st = s.current.Load() // the latest change, so Unsaved is only cleared for what was written
 	s.seq++
-	s.snapshots.Request(s.seq, st.compact)
+	saved := s.seq
+	s.snapshots.Request(saved, st.compact)
 	s.mutate.Unlock()
-	return s.snapshots.Flush()
+	if err := s.snapshots.Flush(); err != nil {
+		return err
+	}
+	s.mutate.Lock()
+	if s.seq == saved {
+		s.unsaved.Store(false)
+	}
+	s.mutate.Unlock()
+	return nil
 }
 
 // commit persists next (journal line + coalesced snapshot) and publishes it; bump says
@@ -159,11 +172,10 @@ func (s *Service) commit(next *pyjson.Object, notice *pyjson.Object, bump bool, 
 		revision++
 	}
 	s.seq++
-	if err := s.journal.Commit(s.seq, prev.compact, compactNext); err != nil {
+	if err := s.persist(prev.compact, compactNext); err != nil {
 		return err
 	}
 	s.current.Store(&state{project: next, compact: compactNext, notice: notice, revision: revision})
-	s.snapshots.Request(s.seq, compactNext)
 	if bump && !s.replaying && !s.running.Load() {
 		s.history.Record(prev.project, next, source)
 	}

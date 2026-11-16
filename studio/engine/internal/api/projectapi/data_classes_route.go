@@ -8,12 +8,13 @@ import (
 )
 
 // GoOnlyRoutes are the routes this area adds beyond Flask's (ADR-0095, ADR-0112, ADR-0118,
-// ADR-0135 Undo/Redo and New/Close project).
+// ADR-0135 Undo/Redo and New/Close project, ADR-0139 auto save switch).
 var GoOnlyRoutes = map[string]bool{"GET /api/v1/ieds/{ied_id}/data-classes": true,
 	"GET /api/v1/diagram/goose-ieds":      true,
 	"GET /api/v1/ieds/{ied_id}/deadbands": true, "PUT /api/v1/ieds/{ied_id}/deadbands": true,
 	"GET /api/v1/project/history": true, "POST /api/v1/project/undo": true, "POST /api/v1/project/redo": true,
-	"POST /api/v1/project/new": true, "POST /api/v1/project/close": true}
+	"POST /api/v1/project/new": true, "POST /api/v1/project/close": true,
+	"GET /api/v1/project/autosave": true, "PUT /api/v1/project/autosave": true}
 
 // dataClasses is GET /ieds/{ied_id}/data-classes: {"classes": {object ref: cdc}} read from the
 // IED's stored SCL. The frontend refines point kinds with it; older engines answer 404 and the

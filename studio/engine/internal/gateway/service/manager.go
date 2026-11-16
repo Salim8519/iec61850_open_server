@@ -8,6 +8,7 @@ import (
 
 	"studio-engine/internal/gateway"
 	"studio-engine/internal/netcfg"
+	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/numlog"
@@ -125,7 +126,8 @@ func realCommands(config *pyjson.Object) bool {
 	return !found || pytext.Truthy(value)
 }
 
-// MonitorOnly is _monitor_only: no commands to an IED that is off, or real while real commands are off.
+// MonitorOnly is _monitor_only: no commands to an IED that is off, or real while real commands are off
+// in the gateway or for that IED (ADR-0138).
 func (m *Manager) MonitorOnly(point, config *pyjson.Object, ied *pyjson.Object) bool {
 	if get(point, "source") == "remote" {
 		return !realCommands(config)
@@ -134,7 +136,7 @@ func (m *Manager) MonitorOnly(point, config *pyjson.Object, ied *pyjson.Object) 
 		return false
 	}
 	role := roleOf(ied)
-	return role == "off" || (role == "real" && !realCommands(config))
+	return role == "off" || (role == "real" && (!realCommands(config) || !netset.AllowsCommands(ied)))
 }
 
 // roleOf is (ied or {}).get("role", "off").

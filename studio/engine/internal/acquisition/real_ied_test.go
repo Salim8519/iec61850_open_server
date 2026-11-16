@@ -95,6 +95,13 @@ func TestRealIEDSession(t *testing.T) {
 		t.Fatalf("comparison: %v", pyv.Repr(summary))
 	}
 	t.Logf("status: %s", pyv.Repr(pyv.Merge(status, pyv.O("comparison", summary))))
+	check := session.Controls() // ADR-0138: the device's own control settings against the CID
+	counts := pyv.GetObj(check, "summary")
+	if pyv.Has(check, "error") || pyv.Equal(pyv.Get(counts, "total"), 0) ||
+		!pyv.Equal(pyv.Get(counts, "differs"), 0) || !pyv.Equal(pyv.Get(counts, "unreadable"), 0) {
+		t.Fatalf("control check: %s", pyv.Repr(check))
+	}
+	t.Logf("control check: %s", pyv.Repr(counts))
 	rig.call(t, map[string]any{"op": "update", "ref": analog, "value": 42.5})
 	waitFor(t, 10*time.Second, func() bool { value, _, _ := values.Get("real1", analog); return pyv.Equal(value, 42.5) })
 	independent := rig.call(t, map[string]any{"op": "read", "refs": []any{map[string]any{"ref": analog, "fc": "MX"}}})

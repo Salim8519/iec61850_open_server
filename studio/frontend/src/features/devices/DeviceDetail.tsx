@@ -16,6 +16,7 @@ import { DeviceFiles } from './DeviceFiles';
 import { DeviceOverview } from './DeviceOverview';
 import { DeviceSignals } from './DeviceSignals';
 import { LiveValueTable } from './LiveValueTable';
+import { RealCommands } from './RealCommands';
 import { SignalFlowView } from './SignalFlowView';
 import type { ModeSummary } from './useModes';
 import { RoleLine } from './RoleLine';
@@ -66,7 +67,8 @@ export function DeviceDetail({ ied, project, locked, busy = false, perform, prep
         <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode}
           selectDevice={selectDevice} /></div>}
       {tab === 'signals' && (ied.role === 'real'
-        ? <LiveValueTable iedId={ied.id} live={session?.state === 'live'} controls={ied.controls} />
+        ? <><RealCommands ied={ied} connected={session?.state === 'live'} />
+          <LiveValueTable iedId={ied.id} live={session?.state === 'live'} controls={ied.controls} /></>
         : <DeviceSignals ied={ied} project={project} perform={perform} prepare={prepare} />)}
       {tab === 'compare' && <ComparisonView iedId={ied.id} ready={session?.state === 'live'} />}
       {tab === 'flow' && <div className="fill-scroll"><SignalFlowView iedName={ied.name} running={running} /></div>}

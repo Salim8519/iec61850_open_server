@@ -1,10 +1,11 @@
-import { FilePlus, FileUp, FileX, FolderOpen, Laptop, MoreHorizontal, Network, Pause, Play, Radio, Redo2, Save, SaveAll, Square, Undo2 } from 'lucide-react';
+import { FilePlus, FileUp, FileX, FolderOpen, Laptop, MoreHorizontal, Network, Pause, Play, Radio, Redo2, Save, SaveAll, Square, ToggleLeft, ToggleRight, Undo2 } from 'lucide-react';
 import type { Project } from '../api/types';
 import { Menu } from '../ui/Menu';
 import { runStateWords } from '../copy/running';
 import { RUN_MARK, runSummary } from '../copy/runShape';
 import { REACH_COPY } from '../copy/gooseReach';
-import { PROJECT_FILE_COPY, UNDO_COPY } from '../copy/projectFile';
+import { AUTOSAVE_COPY, PROJECT_FILE_COPY, saveWords, UNDO_COPY } from '../copy/projectFile';
+import type { AutoSaveSwitch } from '../state/useAutoSaveSwitch';
 import type { ProjectHistory } from '../state/useHistory';
 import { onLabNetwork } from '../features/network/endpoints';
 import { useGoesOut } from '../features/network/useGoesOut';
@@ -14,9 +15,10 @@ import { useDelayed } from '../ui/useDelayed';
 /** What the File menu does besides opening: the App owns the dialogs (ADR-0135). */
 export type FileActions = { open: () => void; save: () => void; saveAs: () => void; newProject: () => void; close: () => void };
 
-export function TopBar({ title, subtitle, project, busy, working = '', saveState, run, file, history, openNetwork }: {
+export function TopBar({ title, subtitle, project, busy, working = '', saveState, run, file, history, openNetwork, autoSave }: {
   title: string; subtitle: string; project: Project | null; busy: boolean; working?: string; saveState: string;
   run: (action: 'start' | 'stop' | 'pause') => void; file: FileActions; history: ProjectHistory; openNetwork: () => void;
+  autoSave: AutoSaveSwitch;
 }) {
   // Words appear only when a task takes longer than a blink, so quick clicks do not flicker.
   const slow = useDelayed(working, 400);
@@ -30,11 +32,12 @@ export function TopBar({ title, subtitle, project, busy, working = '', saveState
   // The way to start the rest sits on Devices and the SLD, so the top bar keeps its width at 1366 px.
   const { shape } = runSummary(project);
   const goesOut = useGoesOut(running);
+  const words = saveWords(saveState, autoSave);
   return <header className="topbar">
     <div className="topbar-title"><h1>{title}</h1><p>{subtitle}</p></div>
     {/* While IEDs run the drawing is locked: the idle "All changes saved" yields its room so the page
         subtitle stays whole at 1366 px; "Saving..." and "Not saved" always show (change 0106). */}
-    {!(running && saveState === 'All changes saved') && <span className="small muted" aria-live="polite">{saveState}</span>}
+    {!(running && words.text === 'All changes saved') && <span className="small muted" aria-live="polite" title={words.tip}>{words.text}</span>}
     {project && <ReachChip project={project} open={openNetwork} />}
     {/* Only while the Go engine really sends GOOSE out (ADR-0119). Icon-sized so the page subtitle stays
         whole at 1366 px; the words are in the tooltip, for screen readers, and in Settings (ADR-0073). */}
@@ -47,6 +50,8 @@ export function TopBar({ title, subtitle, project, busy, working = '', saveState
       { label: PROJECT_FILE_COPY.menu.save, icon: <Save size={16} />, onSelect: file.save, disabled: running || busy || !project },
       { label: PROJECT_FILE_COPY.menu.saveAs, icon: <SaveAll size={16} />, onSelect: file.saveAs, disabled: busy || !project },
       { label: PROJECT_FILE_COPY.menu.close, icon: <FileX size={16} />, onSelect: file.close, disabled: running || busy || !project },
+      { label: autoSave.on ? AUTOSAVE_COPY.turnOff : AUTOSAVE_COPY.turnOn, onSelect: autoSave.toggle, disabled: busy || !project,
+        icon: autoSave.on ? <ToggleRight size={16} /> : <ToggleLeft size={16} /> },
     ]} />
     <span className={`run-state shape-${shape}`} role="status">{slow ? <><SpinIcon size={14} />{slow}</>
       : <><span className="run-mark" aria-hidden>{RUN_MARK[shape]}</span>{state}</>}</span>

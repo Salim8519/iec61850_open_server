@@ -75,6 +75,8 @@ func (a *Area) Routes() []api.Route {
 		{Method: "GET", Pattern: "/api/v1/project", Handler: handler(a.getProject), Polled: true},
 		route("PUT", "/project/diagram", a.putDiagram),
 		route("POST", "/project/save", a.saveProject),
+		{Method: "GET", Pattern: "/api/v1/project/autosave", Handler: handler(a.getAutoSave), Polled: true}, // Go-only (ADR-0139)
+		route("PUT", "/project/autosave", a.putAutoSave),
 		route("GET", "/project/download", a.downloadProject),
 		route("POST", "/project/open", a.openProject),
 		route("GET", "/project/history", a.getHistory), // Go-only (ADR-0135)

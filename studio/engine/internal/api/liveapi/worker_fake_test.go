@@ -61,6 +61,11 @@ func (s *scriptedWorkers) start(executable string, onEvent func(*pyjson.Object))
 
 func (w *scriptedWorker) Request(op string, _ time.Duration, args *pyjson.Object) (any, error) {
 	key := w.role + "|" + op + "|" + canonical(args)
+	if op == "read" && controlCheckRead(args) {
+		// The device control check (ADR-0138) is a Go-only read Python never recorded. It fails
+		// here, as on a device that cannot answer, so the recorded conversation stays exact.
+		return nil, apperr.RuntimeError("Go-only control check: no recorded reply")
+	}
 	s := w.owner
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -74,6 +79,23 @@ func (w *scriptedWorker) Request(op string, _ time.Duration, args *pyjson.Object
 		return nil, apperr.RuntimeError(fmt.Sprintf("no recorded reply for %s", key))
 	}
 	return pyv.Copy(reply), nil
+}
+
+// controlCheckRead is a read of ctlModel (and sboTimeout, Loc.stVal) as the control check asks.
+func controlCheckRead(args *pyjson.Object) bool {
+	items, models := pyv.Objects(pyv.GetList(args, "refs")), 0
+	for _, item := range items {
+		ref := pyv.GetStr(item, "ref")
+		switch {
+		case strings.HasSuffix(ref, ".ctlModel") && pyv.GetStr(item, "fc") == "CF":
+			models++
+		case strings.HasSuffix(ref, ".sboTimeout") && pyv.GetStr(item, "fc") == "CF":
+		case strings.HasSuffix(ref, ".Loc.stVal") && pyv.GetStr(item, "fc") == "ST":
+		default:
+			return false
+		}
+	}
+	return models > 0
 }
 
 func (w *scriptedWorker) Close() {}

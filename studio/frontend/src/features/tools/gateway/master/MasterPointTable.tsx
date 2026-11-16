@@ -71,9 +71,9 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
     </div>
     <FilterBar label="Filter points" spec={MASTER_POINT_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
       shown={shown.length} total={rows.length} options={options} counts={counts} />
-    {(draft || note || (rows.length > 0 && rows[0].stale)) && <div className="guide-section panel-messages">
-      {draft && <MasterCommandForm key={`${draft.kind}-${draft.address}`} draft={draft} host={status.host} protocol={status.protocol}
-        close={() => setDraft(null)} fail={fail} />}
+    {draft && <MasterCommandForm key={`${draft.kind}-${draft.address}`} draft={draft} host={status.host} protocol={status.protocol}
+      close={() => setDraft(null)} fail={fail} />}
+    {(note || (rows.length > 0 && rows[0].stale)) && <div className="guide-section panel-messages">
       {note && <p className="small muted" style={{ margin: 0 }}>{note}</p>}
       {rows.length > 0 && rows[0].stale && <p className="small gateway-warning" style={{ margin: 0 }}>{MASTER_COPY.stale}</p>}
     </div>}

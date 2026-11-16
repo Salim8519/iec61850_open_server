@@ -25,6 +25,7 @@ type RealSession struct {
 
 	mu       sync.Mutex
 	status   *pyjson.Object
+	controls *pyjson.Object // the device control check (ADR-0138), nil until read
 	process  Worker
 	stopping chan struct{}
 	stopOnce sync.Once
@@ -192,6 +193,7 @@ func (s *RealSession) RefreshHealth() (*pyjson.Object, error) {
 		return nil, err
 	}
 	s.put("health", health)
+	s.checkControls(process)
 	return health, nil
 }
 

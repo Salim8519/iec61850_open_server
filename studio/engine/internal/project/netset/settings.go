@@ -37,7 +37,15 @@ func ValidateLive(raw any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	return pyjson.NewObject().Set("ip", ip).Set("port", number).Set("access", access).Set("poll_ms", poll), nil
+	allow, ok := pyval.Lookup(value, "allow_commands", false).(bool)
+	if !ok {
+		return nil, apperr.ValueError("Allow commands must be on or off")
+	}
+	live := pyjson.NewObject().Set("ip", ip).Set("port", number).Set("access", access).Set("poll_ms", poll)
+	if allow { // stored only when on, so settings without it stay exactly as before (ADR-0138)
+		live.Set("allow_commands", true)
+	}
+	return live, nil
 }
 
 // ValidateIEDSettings is validate_ied_settings: the stored settings of one IED with the
@@ -77,6 +85,16 @@ func EffectiveEndpoint(ied, network *pyjson.Object) (any, any) {
 		return lab, portValue
 	}
 	return pyval.Lookup(ied, "ip", nil), portValue
+}
+
+// AllowsCommands reports whether the user allowed commands to this real IED (ADR-0138).
+func AllowsCommands(ied *pyjson.Object) bool {
+	live, _ := pyval.Lookup(ied, "live", nil).(*pyjson.Object)
+	if live == nil {
+		return false
+	}
+	allow, _ := pyval.Lookup(live, "allow_commands", false).(bool)
+	return allow
 }
 
 // RealEndpoint is real_endpoint: the user override, else the SCD address, and its origin.

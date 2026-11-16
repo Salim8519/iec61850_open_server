@@ -16,6 +16,8 @@ import { Sidebar } from './Sidebar';
 import { ConnectionNotice, useConnection } from './EngineStatus';
 import { TopBar, type FileActions } from './TopBar';
 import { useUndoKeys } from './useUndoKeys';
+import { useSaveKey } from './useSaveKey';
+import { useAutoSaveSwitch } from '../state/useAutoSaveSwitch';
 import { ProjectFileDialog, type ProjectFileMode } from '../features/project/ProjectFileDialog';
 import { WorkPanel } from './WorkPanel';
 import { TourOverlay } from '../features/tour/TourOverlay';
@@ -56,6 +58,8 @@ export function App() {
   const openFile = useCallback(() => fileInput.current?.click(), []);
   const [fileDialog, setFileDialog] = useState<ProjectFileMode | null>(null);
   useUndoKeys(studio.history, studio.busy);
+  const autoSave = useAutoSaveSwitch(project, studio.perform);
+  useSaveKey(studio.save, studio.busy || !project || locked);
   const file: FileActions = useMemo(() => ({ open: openFile, save: studio.save, saveAs: studio.saveAs,
     newProject: () => setFileDialog('new'), close: () => setFileDialog('close') }), [openFile, studio.save, studio.saveAs]);
   const openDevices = useCallback((iedId?: string) => { setFlowIed(iedId); setCurrent('devices'); }, []);
@@ -73,7 +77,7 @@ export function App() {
     <div className="main">
       <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy} working={studio.working}
         saveState={studio.saveState} run={studio.runtime} file={file} history={studio.history}
-        openNetwork={() => setCurrent('settings')} />
+        openNetwork={() => setCurrent('settings')} autoSave={autoSave} />
       <ConnectionNotice state={connection} />
       <RecoveryNotice recovery={project?.startup_recovery} />
       <MigrationNotice notice={project?.migration_notice} />

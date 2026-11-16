@@ -10,6 +10,7 @@ import (
 	"studio-engine/internal/acquisition/signalindex"
 	"studio-engine/internal/api"
 	"studio-engine/internal/pyjson"
+	"studio-engine/internal/realcmd"
 )
 
 // Declarations returns the merged GOOSE declarations of the project's stored SCL files
@@ -25,6 +26,7 @@ type Service struct {
 	Modes        *acquisition.TestModes
 	Declarations Declarations
 	Version      string // studio_app.version.__version__
+	Commands     *realcmd.Service // commands to real IEDs from Devices (ADR-0138)
 
 	signals signalindex.Cache
 }
@@ -38,6 +40,8 @@ func (s *Service) Routes() []api.Route {
 		route("GET", "/live", true, s.live),
 		route("GET", "/live/{key}/comparison", false, s.comparison),
 		route("GET", "/live/{key}/comparison.csv", false, s.comparisonCSV),
+		route("GET", "/live/{key}/controls", false, s.controls), // Go-only (ADR-0138)
+		route("POST", "/live/{key}/operate", false, s.operate), // Go-only (ADR-0138)
 		route("POST", "/live/{key}/read", false, s.read),
 		route("GET", "/goose", true, s.goose),
 		route("GET", "/goose/links", true, s.gooseLinks),

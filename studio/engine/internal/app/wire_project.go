@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"studio-engine/internal/events"
+	"studio-engine/internal/project"
 	projects "studio-engine/internal/project/service"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime"
@@ -13,6 +14,7 @@ import (
 	"studio-engine/internal/store/modelcache"
 	"studio-engine/internal/store/projectfile"
 	"studio-engine/internal/store/recovery"
+	"studio-engine/internal/store/settings"
 	"studio-engine/internal/store/xsd"
 )
 
@@ -56,6 +58,8 @@ func (e *Engine) wireProject() error {
 		return err
 	}
 	e.Projects = service
+	// Auto save off is remembered (ADR-0139); it applies before the first change of this run.
+	_ = service.SetAutoSave(!project.AutoSaveOff(settings.NewPreferences(o.DataDir).Load()))
 	recover := service.RecoverStartup
 	if o.RecoverStartup != nil {
 		recover = func() (*pyjson.Object, error) { return o.RecoverStartup(service.RecoverStartup) }

@@ -81,7 +81,7 @@ export function PointTable({ protocol, ieds, locked, fail }: {
     gatewayApi.send(command.row.id!, command.value)
       .then(answer => setSent({ ok: answer.ok, text: own ? OWN_COPY.sentResult(command.label, ownName(command.row), answer.ok, answer.reason)
         : GATEWAY_COPY.sentResult(command.label, command.row.ref, answer.ok, answer.reason) }))
-      .catch(error => fail(error.message)).finally(() => { setSending(false); setPending(null); load(); });
+      .catch(error => { setPending(null); fail(error.message); }).finally(() => { setSending(false); load(); });
   };
   const options = useMemo(() => ({ ied: choicesOf((rows ?? []).map(row => row.ied_name ?? row.ied)) }), [rows]);
   const values = useMemo(() => effective(GATEWAY_POINT_FILTER, filter.values, options), [filter.values, options]);
@@ -119,10 +119,9 @@ export function PointTable({ protocol, ieds, locked, fail }: {
       shown={shown.length} total={rows?.length ?? 0} options={options} counts={counts} />
     {picked && !locked && <SelectBar count={chosen.length} shown={shown.length} noun="point" cancel={() => setPicked(null)}
       selectShown={() => setPicked(toggleShown(new Set(), shownKeys))} remove={removeChosen} />}
-    {(pending || sent || undo || stuck || notes.length > 0 || skipped.length > 0 || problems.length > 0) && <div className="guide-section panel-messages">
-      {pending && <CommandWarning pending={pending} real={pending.row.ied_role === 'real'} own={isOwn(pending.row)} busy={sending}
-        cancel={() => setPending(null)} send={() => send(pending)} />}
-      {sent && <p className={`small gateway-sent${sent.ok ? ' ok' : ''}`} role="status">{sent.text}</p>}
+    {pending && <CommandWarning pending={pending} real={pending.row.ied_role === 'real'} own={isOwn(pending.row)} busy={sending}
+      result={sent} cancel={() => { setPending(null); setSent(null); }} send={() => send(pending)} />}
+    {(undo || stuck || notes.length > 0 || skipped.length > 0 || problems.length > 0) && <div className="guide-section panel-messages">
       {notes.map((note, at) => <p key={note} className="small muted row" style={{ margin: 0 }}>{note}{at === notes.length - 1 && undoButton}</p>)}
       {notes.length === 0 && undoButton && <p className="small row" style={{ margin: 0 }}>{undoButton}</p>}
       {state.phase === 'failed' && <SaveProblem text={GATEWAY_COPY.notSaved} />}

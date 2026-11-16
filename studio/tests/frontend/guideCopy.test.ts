@@ -90,7 +90,9 @@ test('IED Explorer reads the data object again after a command (change 0089)', (
 });
 
 test('real-IED text says where commands are allowed instead of "never" (change 0091)', () => {
-  // IED Explorer and the gateway operate real IEDs after a confirmation; only reading happens here.
+  // Commands reach a real IED through the gateway only with its Allow commands on (ADR-0138);
+  // IED Explorer is separate and asks before every command. Only reading happens here.
   assert.ok(!/not enabled in this version|never operates/.test(HINTS['live.commands']));
-  assert.match(HINTS['live.commands'], /IED Explorer or the gateway/);
+  assert.match(HINTS['live.commands'], /through the gateway reach it only when Allow commands is on/);
+  assert.match(HINTS['live.commands'], /IED Explorer is separate/);
 });

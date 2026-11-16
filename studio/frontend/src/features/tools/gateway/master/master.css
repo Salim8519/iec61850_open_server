@@ -21,3 +21,5 @@
 .master-cyclic .gateway-number { width: 110px; }
 /* Find registers shows its whole result (the "Read these as" choice too), not a small inner scroll (0178). */
 .panel-messages.find-registers { max-height: none; overflow: visible; flex-shrink: 0; }
+/* Inside its pop-up (ui/PopupDialog.tsx) the command form needs no frame of its own. */
+.popup-dialog .master-command { padding: 0; border: 0; background: none; }

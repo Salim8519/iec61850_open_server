@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { CommandValue, GatewayPoint } from '../../../api/gateway';
 import { GATEWAY_COPY, OWN_COPY } from '../../../copy/gateway';
 import { TYPED_COMMAND_COPY } from '../../../copy/gatewayTypedKinds';
+import { PopupDialog } from '../../../ui/PopupDialog';
 import '../../../ui/kind.css';
 import { commandLabels, commandValues, parseSetpoint } from './gatewayCommands';
 import { ownName } from './ownPoints';
@@ -43,17 +44,24 @@ function SetpointSend({ row, ask }: { row: GatewayPoint; ask: (pending: PendingC
   </span>;
 }
 
-/** The warning shown before a command leaves the page. Real devices get the strongest wording. */
-export function CommandWarning({ pending, real, own, busy, cancel, send }: {
-  pending: PendingCommand; real: boolean; own?: boolean; busy: boolean; cancel: () => void; send: () => void;
+/** The warning shown before a command leaves the page, as a pop-up over the point list; after sending
+ *  it shows the answer. Real devices get the strongest wording. */
+export function CommandWarning({ pending, real, own, busy, result, cancel, send }: {
+  pending: PendingCommand; real: boolean; own?: boolean; busy: boolean; result: { ok: boolean; text: string } | null;
+  cancel: () => void; send: () => void;
 }) {
   const target = own ? `${OWN_COPY.ownPoint} · ${ownName(pending.row)}` : `${pending.row.ied_name ?? pending.row.ied} · ${pending.row.ref}`;
-  return <div className={`confirm-box gateway-confirm${real ? ' real' : ''}`} role="alertdialog" aria-label="Confirm command">
-    <p><TriangleAlert size={18} aria-hidden /><strong>{GATEWAY_COPY.confirmTitle(pending.label, target)}</strong></p>
-    <p className="small">{own ? OWN_COPY.commandWarning : real ? GATEWAY_COPY.realWarning : GATEWAY_COPY.simulatedWarning}</p>
-    <div className="row">
-      <button onClick={cancel} autoFocus>{GATEWAY_COPY.cancel}</button>
-      <button className="danger" disabled={busy} onClick={send}><Send size={14} />{GATEWAY_COPY.send(pending.label)}</button>
-    </div>
-  </div>;
+  return <PopupDialog title={GATEWAY_COPY.confirmTitle(pending.label, target)} label="Confirm command" busy={busy} close={cancel}>
+    {result ? <>
+      <p className={`small popup-result${result.ok ? ' ok' : ''}`} role="status">{result.text}</p>
+      <div className="popup-actions"><button onClick={cancel} autoFocus>Close</button></div>
+    </> : <div className={`confirm-box gateway-confirm${real ? ' real' : ''}`} role="alertdialog" aria-label="Confirm command">
+      <p className="small"><TriangleAlert size={18} aria-hidden />
+        {own ? OWN_COPY.commandWarning : real ? GATEWAY_COPY.realWarning : GATEWAY_COPY.simulatedWarning}</p>
+      <div className="row">
+        <button onClick={cancel} disabled={busy} autoFocus>{GATEWAY_COPY.cancel}</button>
+        <button className="danger" disabled={busy} onClick={send}><Send size={14} />{GATEWAY_COPY.send(pending.label)}</button>
+      </div>
+    </div>}
+  </PopupDialog>;
 }

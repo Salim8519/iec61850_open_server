@@ -1,0 +1,366 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "studio-dev",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "studio/tools/run_dev_engine.py",
+        "--no-browser"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "studio-built",
+      "runtimeExecutable": "studio/build/engine/studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8790",
+        "--no-browser",
+        "--data-dir",
+        "studio/data",
+        "--native-exe",
+        "studio/native/build/Release/studio_ied.exe"
+      ],
+      "port": 8790
+    },
+    {
+      "name": "point-panel-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\point-panel\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8791",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\devdata",
+        "--native-exe",
+        "C:\\Users\\Salim\\AppData\\Local\\Programs\\ScadaBench\\_internal\\native\\studio_ied.exe"
+      ],
+      "port": 8791
+    },
+    {
+      "name": "integration-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8795",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\intdata",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8795
+    },
+    {
+      "name": "integration-outstation",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8796",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\intdata2",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8796
+    },
+    {
+      "name": "goose-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8797",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\goosedata",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8797
+    },
+    {
+      "name": "release-0122",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\dist-go\\ScadaBench-Portable-0.1.22.exe",
+      "runtimeArgs": [
+        "--port",
+        "8798",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\reldata"
+      ],
+      "port": 8798
+    },
+    {
+      "name": "bug-a",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8811",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\bug-a-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8811
+    },
+    {
+      "name": "bug-b",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8812",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\bug-b-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8812
+    },
+    {
+      "name": "bug-c",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8813",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\bug-c-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8813
+    },
+    {
+      "name": "bug-c2",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8814",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\bug-c2-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8814
+    },
+    {
+      "name": "bugfix-check",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8851",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\bugfix-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\integration\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8851
+    },
+    {
+      "name": "release-0123",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\dist-go\\ScadaBench-Portable-0.1.23.exe",
+      "runtimeArgs": [
+        "--port",
+        "8799",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\reldata23"
+      ],
+      "port": 8799
+    },
+    {
+      "name": "sld-case",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8870",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\sldcase\\data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8870
+    },
+    {
+      "name": "release-0124",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\dist-go\\ScadaBench-Portable-0.1.24.exe",
+      "runtimeArgs": [
+        "--port",
+        "8802",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a0d81a86-1165-47e8-a2ff-89170f232a7b\\scratchpad\\rel24data"
+      ],
+      "port": 8802
+    },
+    {
+      "name": "goose-ied-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\goose-ied\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8881",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\c3e73be0-2afe-4f82-a977-3881c1eb5927\\scratchpad\\goose-ied-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8881
+    },
+    {
+      "name": "smart-picker-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\.claude\\worktrees\\smart-picker\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8882",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\c3e73be0-2afe-4f82-a977-3881c1eb5927\\scratchpad\\smart-picker-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8882
+    },
+    {
+      "name": "merged-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine-merged\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8883",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\c3e73be0-2afe-4f82-a977-3881c1eb5927\\scratchpad\\merged-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8883
+    },
+    {
+      "name": "goose-follow-preview",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8891",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\7d93cb76-67a5-4f4e-bfb3-4cab354be9e3\\scratchpad\\goose-follow-data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8891
+    },
+    {
+      "name": "lab-adapter-dev",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        ".claude/worktrees/lab-adapter/studio/tools/run_dev_engine.py",
+        "--no-browser"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "lab-release-check",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine-labcheck\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8901",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\a1b0f665-9157-4fe8-9801-514fd305b468\\scratchpad\\labcheck\\data",
+        "--native-exe",
+        "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\native\\build\\Release\\studio_ied.exe"
+      ],
+      "port": 8901
+    },
+    {
+      "name": "lab-switch-check",
+      "runtimeExecutable": "C:\\Users\\Salim\\Desktop\\Windsurf\\iec61850_open_server\\studio\\build\\engine-labswitch\\studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8921",
+        "--no-browser",
+        "--data-dir",
+        "C:\\Users\\Salim\\AppData\\Local\\Temp\\claude\\C--Users-Salim-Desktop-Windsurf-iec61850-open-server\\9cfe3c60-dc05-4999-bad9-617277374a0c\\scratchpad\\labswitch\\data",
+        "--native-exe",
+        "C:\\Users\\Salim\\AppData\\Local\\Programs\\ScadaBench\\_internal\\native\\studio_ied.exe"
+      ],
+      "port": 8921
+    },
+    {
+      "name": "undo-check",
+      "runtimeExecutable": "C:/Users/Salim/Desktop/Windsurf/iec61850_open_server/studio/build/engine/studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8931",
+        "--no-browser",
+        "--data-dir",
+        "C:/Users/Salim/AppData/Local/Temp/claude/C--Users-Salim-Desktop-Windsurf-iec61850-open-server/a5f635a3-169c-4177-bcf8-250208c20bc5/scratchpad/undodata",
+        "--native-exe",
+        "C:/Users/Salim/Desktop/Windsurf/iec61850_open_server/studio/native/build/Release/studio_ied.exe"
+      ],
+      "port": 8931
+    },
+    {
+      "name": "alkamil-dev",
+      "runtimeExecutable": "C:/Users/Salim/Desktop/Windsurf/iec61850_open_server/studio/build/engine/studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8766",
+        "--no-browser",
+        "--data-dir",
+        "C:/Users/Salim/AppData/Local/ScadaBench/data",
+        "--native-exe",
+        "C:/Users/Salim/AppData/Local/Programs/ScadaBench/_internal/native/studio_ied.exe"
+      ],
+      "port": 8766
+    },
+    {
+      "name": "leftcheck",
+      "runtimeExecutable": "C:/Users/Salim/Desktop/Windsurf/iec61850_open_server/studio/build/engine/studio_server.exe",
+      "runtimeArgs": [
+        "--port",
+        "8767",
+        "--no-browser",
+        "--data-dir",
+        "C:/Users/Salim/AppData/Local/Temp/claude/C--Users-Salim-Desktop-Windsurf-iec61850-open-server/421adefa-3893-4796-9b37-84412acbf699/scratchpad/leftcheck",
+        "--native-exe",
+        "C:/Users/Salim/AppData/Local/Programs/ScadaBench/_internal/native/studio_ied.exe"
+      ],
+      "port": 8767
+    },
+    {
+      "name": "release-0133",
+      "runtimeExecutable": "C:/Users/Salim/Desktop/Windsurf/iec61850_open_server/studio/dist-go/ScadaBench-Portable-0.1.33.exe",
+      "runtimeArgs": [
+        "--port",
+        "8933",
+        "--no-browser",
+        "--data-dir",
+        "C:/Users/Salim/AppData/Local/Temp/claude/C--Users-Salim-Desktop-Windsurf-iec61850-open-server/421adefa-3893-4796-9b37-84412acbf699/scratchpad/rel33data"
+      ],
+      "port": 8933
+    },
+    {
+      "name": "website-preview",
+      "runtimeExecutable": "C:/Users/Salim/AppData/Local/pi-node/current/node.exe",
+      "runtimeArgs": [
+        "website/node_modules/astro/bin/astro.mjs",
+        "preview",
+        "--root",
+        "website",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4321"
+      ],
+      "port": 4321
+    }
+  ]
+}

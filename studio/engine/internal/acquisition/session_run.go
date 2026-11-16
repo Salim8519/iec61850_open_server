@@ -102,6 +102,7 @@ func (s *RealSession) session(host string, port any) error {
 		return err
 	}
 	s.put("health", health)
+	s.checkControls(process)
 	return s.live()
 }
 

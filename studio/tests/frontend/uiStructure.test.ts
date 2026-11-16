@@ -87,3 +87,17 @@ test('one value control and one generator editor', () => {
   assert.deepEqual(owners.ValueControl, ['./features/test/ValueControl.tsx']);
   assert.deepEqual(owners.SourceEditor, ['./features/test/SourceEditor.tsx']);
 });
+
+// Owner 2026-11-11 (ADR-0139): command screens of Devices and the gateway are pop-ups over the list,
+// never boxes pushed into the page above the data points.
+test('Devices and gateway command screens open as pop-ups', () => {
+  for (const path of ['./features/devices/RealCommands.tsx', './features/tools/gateway/CommandSend.tsx',
+    './features/tools/gateway/master/MasterCommandForm.tsx']) {
+    assert.ok(read(path).includes('<PopupDialog'), path);
+  }
+  for (const path of ['./features/tools/gateway/PointTable.tsx', './features/tools/gateway/master/MasterPointTable.tsx',
+    './features/tools/gateway/master/list/MasterList.tsx']) {
+    const panel = read(path).split('className="guide-section panel-messages"')[1] ?? '';
+    assert.ok(!/CommandWarning|MasterCommandForm/.test(panel.split('</div>}')[0]), `${path}: command screen inside the messages`);
+  }
+});

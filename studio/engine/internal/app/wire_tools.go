@@ -24,7 +24,9 @@ func (e *Engine) wireTools() []api.Route {
 	o := e.options
 	bus := e.bus
 	store := memory.New(o.DataDir)
-	e.Control = control.NewClient(o.native("studio_control.exe"), nil)
+	if e.Control == nil { // wireLive may have made it for Devices commands (ADR-0138)
+		e.Control = control.NewClient(o.native("studio_control.exe"), nil)
+	}
 	e.Explorer = explorer.NewService(o.native("studio_live.exe"), nil, func(kind string, payload *pyjson.Object) {
 		publish(bus, o.Logf, kind, payload)
 	}, store, e.Control)

@@ -39,6 +39,21 @@ func (s *Service) comparison(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, comparison)
 }
 
+// controls is GET /live/{key}/controls: the device control check of a real IED (ADR-0138).
+func (s *Service) controls(w http.ResponseWriter, r *http.Request) {
+	session, err := s.Live.Session(r.PathValue("key"))
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	check := session.Controls()
+	if check == nil {
+		writeError(w, apperr.ValueError("The command check is ready after ScadaBench has connected to the device"))
+		return
+	}
+	writeJSON(w, http.StatusOK, check)
+}
+
 // comparisonCSV writes csv.writer rows (CRLF, minimal quoting) of the SCD-vs-device rows.
 func (s *Service) comparisonCSV(w http.ResponseWriter, r *http.Request) {
 	key := r.PathValue("key")

@@ -72,7 +72,7 @@ export const GATEWAY_COPY = {
     ok ? `"${label}" sent to ${ref}: the IED operated it. The Commands tab shows what changed.` : `"${label}" was not carried out: ${reason}`,
   fromPage: 'You · this page', noCommands: 'No command yet. Commands come from your SCADA or from the Send buttons in Points.',
   realCommands: 'Allow commands to real IEDs',
-  realCommandsOn: 'Commands from SCADA and from the Send buttons reach connected real devices too, with their own control model. Switch this off when the real devices must stay untouched.',
+  realCommandsOn: 'Commands from SCADA and from the Send buttons reach real devices whose Allow commands is on in Devices, with their own control model. Switch this off when the real devices must stay untouched.',
   realCommandsOff: 'Real devices are only read. SCADA gets a negative answer for their commands, and their Send buttons are off; simulated IEDs still operate.',
   autoStart: 'The gateway was running when ScadaBench closed, so it starts listening again by itself. The IEDs still start only with Run.',
   connected: (count: number) => count === 1 ? '1 SCADA connected' : `${count} SCADA connections`,

@@ -2,6 +2,7 @@ package service
 
 import (
 	"studio-engine/internal/gateway"
+	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/pytext"
@@ -184,7 +185,8 @@ func RealEndpoint(ied *pyjson.Object) (string, any) {
 	return host, get(live, "port")
 }
 
-// Refusal is commands.refusal: why this SCADA command is not sent, or "" when it may be.
+// Refusal is commands.refusal: why this SCADA command is not sent, or "" when it may be. A real
+// IED needs the gateway switch and its own Allow commands switch (ADR-0138).
 func Refusal(point, ied *pyjson.Object, realCommands bool) string {
 	if point == nil {
 		return "this point is not in the gateway point list"
@@ -205,6 +207,8 @@ func Refusal(point, ied *pyjson.Object, realCommands bool) string {
 		return name + " is switched off in Devices"
 	case role == "real" && !realCommands:
 		return "commands to real IEDs are switched off in the gateway settings"
+	case role == "real" && !netset.AllowsCommands(ied):
+		return name + " is a real device with commands off; turn on Allow commands in Devices"
 	case role == "real":
 		if host, _ := RealEndpoint(ied); host == "" {
 			return name + " has no address; type it in Devices"

@@ -1,10 +1,11 @@
-import { Send, TriangleAlert, X } from 'lucide-react';
+import { Send, TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
 import { masterApi, type CommandKind, type CrobCode, type MasterCommand, type MasterProtocol } from '../../../../api/master';
 import { ACTIVATION, ADDRESS_WORD, COMMAND_HINT, COMMAND_NAMES, COMMANDS, CROB_CODES, MASTER_COPY, RANGES_COPY, REG_VALUES, TARGET_WORD }
   from '../../../../copy/master';
 import { MasterCyclic } from './MasterCyclic';
 import { hasWordOrder } from './wordOrder';
+import { PopupDialog } from '../../../../ui/PopupDialog';
 import '../../../../ui/kind.css';
 
 const ON_OFF = [{ value: 1, label: 'ON (1)' }, { value: 0, label: 'OFF (0)' }];
@@ -48,9 +49,9 @@ export function MasterCommandForm({ draft, host, protocol, close, fail, review =
   const numberField = (label: string, key: 'qualifier' | 'count' | 'on_time_ms' | 'off_time_ms', fallback: number, hint?: string) =>
     <label title={hint}>{label}<input inputMode="numeric" className="gateway-number" defaultValue={String(command[key] ?? fallback)}
       onBlur={event => change({ [key]: event.target.value === '' ? undefined : Number(event.target.value) })} /></label>;
-  return <div className="master-command" role="group" aria-label={MASTER_COPY.commandTitle}>
-    <div className="row gateway-toolbar"><strong>{MASTER_COPY.commandTitle}</strong><span className="gateway-spacer" />
-      <button className="ghost icon-button" onClick={close} aria-label="Close"><X size={16} /></button></div>
+  // A pop-up over the list (owner, 2026-11-11), so the points under it stay in view.
+  return <PopupDialog title={MASTER_COPY.commandTitle} label={MASTER_COPY.commandTitle} busy={sending} close={close} wide>
+    <div className="master-command" role="group" aria-label={MASTER_COPY.commandTitle}>
     <div className="row master-command-fields">
       <label>{MASTER_COPY.kind}<select value={command.kind} onChange={event => {
         const kind = event.target.value as CommandKind;
@@ -91,5 +92,5 @@ export function MasterCommandForm({ draft, host, protocol, close, fail, review =
     {answer && <p className={`small gateway-sent${answer.ok ? ' ok' : ''}`} role="status">
       {answer.ok ? 'Done: ' : 'Not carried out: '}{answer.text}</p>}
     {!clock && <MasterCyclic command={command} ready={ready} fail={fail} />}
-  </div>;
+  </div></PopupDialog>;
 }

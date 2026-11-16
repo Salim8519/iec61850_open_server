@@ -1,5 +1,5 @@
 import { ChevronDown, Copy, Download, ListPlus, Plus, Upload } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { MasterCommand, MasterStatus } from '../../../../../api/master';
 import { masterListApi, type ComparedRow, type ListPoint } from '../../../../../api/masterList';
 import { GATEWAY_COPY } from '../../../../../copy/gateway';
@@ -27,9 +27,6 @@ export function MasterList({ status, fail }: { status: MasterStatus; fail: (mess
   const [adding, setAdding] = useState<ListSource | null>(null);
   const [note, setNote] = useState('');
   const [draft, setDraft] = useState<MasterCommand | null>(null);
-  const messages = useRef<HTMLDivElement>(null);
-  // Send opens the confirmation above the list: bring it into view (the list may be scrolled far down).
-  useEffect(() => { if (draft) messages.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, [draft]);
   const types = useMemo(() => new Map((list?.types ?? []).map(type => [type.kind, type])), [list]);
   const rows = useMemo<ComparedRow[]>(() => {
     const found = new Map((comparison?.rows ?? []).map(row => [row.id, row]));
@@ -72,9 +69,9 @@ export function MasterList({ status, fail }: { status: MasterStatus; fail: (mess
     <FilterBar label="Filter my point list" spec={LIST_FILTER} values={filter.values} set={filter.set} clear={filter.clear}
       shown={extras ? shownExtras.length : shownRows.length} total={extras ? comparison?.not_in_list.length ?? 0 : rows.length}
       counts={stateCounts(comparison)} />
-    {(note || problem || undo || draft) && <div ref={messages} className="guide-section panel-messages">
-      {draft && <MasterCommandForm key={`${draft.kind}-${draft.address}`} draft={draft} host={status.host} protocol={status.protocol}
-        review close={() => setDraft(null)} fail={fail} />}
+    {draft && <MasterCommandForm key={`${draft.kind}-${draft.address}`} draft={draft} host={status.host} protocol={status.protocol}
+      review close={() => setDraft(null)} fail={fail} />}
+    {(note || problem || undo) && <div className="guide-section panel-messages">
       <SaveProblem text={problem} />
       {(note || undo) && <p className="small muted row" style={{ margin: 0 }}>{note}
         {undo && <button className="ghost" onClick={() => { restore(); setNote(''); }}>{LIST_COPY.undo}</button>}</p>}
