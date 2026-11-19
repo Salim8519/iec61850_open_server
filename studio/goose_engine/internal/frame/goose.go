@@ -50,7 +50,8 @@ func Parse(b []byte) (Info, error) {
 		info.Tagged = true
 		pos += 4
 	}
-	if len(b) < pos+10 || int(b[pos])<<8|int(b[pos+1]) != EtherTypeGoose {
+	// EtherType (2), APPID, length, reserved1, reserved2 (8) and the goosePdu tag (1).
+	if len(b) < pos+11 || int(b[pos])<<8|int(b[pos+1]) != EtherTypeGoose {
 		return info, errNotGoose
 	}
 	pos += 2

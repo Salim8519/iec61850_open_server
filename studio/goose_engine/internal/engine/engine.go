@@ -5,6 +5,7 @@ package engine
 import (
 	"crypto/rand"
 	"errors"
+	"log"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -103,13 +104,14 @@ func (e *Engine) Gate(ied, choice string) (guard.Gate, error) { return e.guard.C
 
 // fromBus handles a frame published by a simulated IED.
 func (e *Engine) fromBus(b []byte) {
+	defer e.survive("bus", b)
 	e.counts.busFrames.Add(1)
 	info, err := frame.Parse(b)
 	if err != nil || !e.guard.FromApp(info) {
 		e.counts.busRejected.Add(1)
 		return
 	}
-	if e.bus.Deliver(bus.OriginApp, b) {
+	if out := e.currentBus(); out != nil && out.Deliver(bus.OriginApp, b) {
 		e.counts.deliveredApp.Add(1)
 	} else {
 		e.counts.noInbox.Add(1)
@@ -137,6 +139,7 @@ func (e *Engine) fromBus(b []byte) {
 
 // fromWire handles a frame heard on the adapter.
 func (e *Engine) fromWire(b []byte) {
+	defer e.survive("wire", b)
 	e.counts.wireFrames.Add(1)
 	info, err := frame.Parse(b)
 	if err != nil {
@@ -152,8 +155,24 @@ func (e *Engine) fromWire(b []byte) {
 		e.counts.refuse(why)
 		return
 	}
-	if e.bus.Deliver(bus.OriginWire, b) {
+	if out := e.currentBus(); out != nil && out.Deliver(bus.OriginWire, b) {
 		e.counts.deliveredWire.Add(1)
+	}
+}
+
+// currentBus reads the bus under the lock: Close sets it to nil while frames still arrive.
+func (e *Engine) currentBus() *bus.Bus {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.bus
+}
+
+// survive keeps the receive loop alive when one frame panics: the frame is counted as
+// refused for "panic" and logged to stderr (length only, never its bytes).
+func (e *Engine) survive(source string, b []byte) {
+	if r := recover(); r != nil {
+		e.counts.refuse("panic")
+		log.Printf("goose %s frame of %d bytes dropped after a panic: %v", source, len(b), r)
 	}
 }
 
