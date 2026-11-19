@@ -49,7 +49,9 @@ Everyday commands:
   admin-setup --password-stdin   create or replace the owner page login (password on stdin);
                             prints the authenticator key and recovery codes once
   admin-status              say whether the owner login exists (no secrets shown)
-  backup --out FILE.tar.gz  save database, settings and signing key (keep it offline!)
+  backup --out FILE.tar.gz  save database, settings, signing key, sales book, owner login
+                            and release (keep it offline!)
+  restore --from FILE.tar.gz   put a backup into an empty --data folder (server stopped)
   keygen [--force]          create the Ed25519 signing key (configure does this once)
 
 All commands accept --data DIR (default: $LICENSE_DATA_DIR, /var/lib/substation-license, or ./data).
@@ -75,6 +77,8 @@ func main() {
 		err = keygen(args)
 	case "backup":
 		err = backup(args)
+	case "restore":
+		err = restore(args)
 	case "payments":
 		err = payments(args)
 	case "release":

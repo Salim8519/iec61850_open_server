@@ -55,8 +55,10 @@ func (s *Store) DeleteLicense(key string) error {
 }
 
 // IssueForOrder is idempotent: the first call creates the key and order, later
-// calls (browser capture, webhook, retries) return the same key.
-func (s *Store) IssueForOrder(order Order, newKey func() string, now time.Time) (Order, bool, error) {
+// calls (browser capture, webhook, retries) return the same key. trialDays > 0 makes
+// the key a trial of that length (test and sandbox payments), never a lifetime key.
+// An order whose refund arrived first issues nothing (ErrOrderRefunded).
+func (s *Store) IssueForOrder(order Order, trialDays int, newKey func() string, now time.Time) (Order, bool, error) {
 	created := false
 	err := s.db.Update(func(tx *bolt.Tx) error {
 		var existing Order
@@ -68,10 +70,16 @@ func (s *Store) IssueForOrder(order Order, newKey func() string, now time.Time) 
 			order = existing
 			return nil
 		}
+		if refundedBefore(tx, order) {
+			return ErrOrderRefunded
+		}
 		order.LicenseKey = newKey()
 		order.CreatedAt = now.Unix()
 		license := License{Key: order.LicenseKey, Email: order.Email, Type: "lifetime",
 			CreatedAt: now.Unix(), OrderID: order.OrderID}
+		if trialDays > 0 {
+			license.Type, license.Days = "trial", trialDays
+		}
 		if err := put(tx, bucketLicenses, license.Key, license); err != nil {
 			return err
 		}

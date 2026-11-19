@@ -38,8 +38,10 @@ func (s *Server) lemonStart(r *http.Request, _ string) (any, error) {
 	if hwid := strings.TrimSpace(request.HWID); certs.ValidHWID(hwid) {
 		custom["hwid"] = hwid
 	}
+	price, currency := s.price()
+	// The signed quote lets the webhook accept this price after the owner changes it.
+	custom["invoice"] = s.newInvoice(price, currency, request.News)
 	if s.Lemon != nil {
-		price, _ := s.price()
 		link, err := s.Lemon.CreateCheckout(r.Context(), lemon.CheckoutRequest{VariantID: s.Config.LemonVariantID,
 			Price: price, Custom: custom})
 		if err != nil {
@@ -127,6 +129,10 @@ func (s *Server) handleLemon(order lemon.Order) error {
 			s.Log.Event("lemon_unpaid_order", map[string]any{"order": order.ID, "status": order.Status})
 			return nil
 		}
+		if !s.lemonAmountAccepted(order) {
+			s.Log.Event("lemon_amount_mismatch", map[string]any{"order": order.ID})
+			return nil
+		}
 		mode := "lemon"
 		if order.TestMode {
 			mode = "lemon-test"
@@ -134,18 +140,33 @@ func (s *Server) handleLemon(order lemon.Order) error {
 		_, err := s.issuePaid(paid{OrderID: lemonPrefix + order.Identifier, CaptureID: lemonPrefix + order.ID,
 			Email: order.Email, Name: order.Name, Amount: order.Subtotal, Currency: order.Currency,
 			HWID: order.Custom["hwid"], Mode: mode, News: order.Custom["news"] == "1"})
-		return err
+		return ignorePending(err)
 	case "order_refunded":
 		if order.Status != "refunded" {
 			return nil
 		}
 		issued, found, err := s.Store.GetOrder(lemonPrefix + order.Identifier)
-		if err != nil || !found {
+		if err != nil {
 			return err
+		}
+		if !found { // refund before the order: remembered, so the order issues nothing
+			return s.Store.MarkRefunded(lemonPrefix+order.Identifier, s.Now().Unix())
 		}
 		return s.revokeOrder(issued, "refunded")
 	}
 	return nil
+}
+
+// lemonAmountAccepted applies PayPal's rule (current price or a price this server
+// quoted) to the order's subtotal, which Lemon Squeezy reports before discounts, so an
+// owner-made discount code never refuses an order. For tax-inclusive prices the
+// subtotal with tax is accepted too.
+func (s *Server) lemonAmountAccepted(order lemon.Order) bool {
+	invoice := order.Custom["invoice"]
+	if s.paidAmountAccepted(invoice, order.Subtotal, order.Currency) {
+		return true
+	}
+	return order.WithTax != "" && s.paidAmountAccepted(invoice, order.WithTax, order.Currency)
 }
 
 // orderIsLemon tells the sales book which gateway an order came through.

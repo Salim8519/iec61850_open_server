@@ -23,6 +23,7 @@ func lemonServer(t *testing.T) (*Server, *fakeMail) {
 	s.Config.LemonCheckoutURL = "https://scadabench.lemonsqueezy.com/buy/abc"
 	s.Config.LemonVariantID = "555"
 	s.Config.LemonSigningSecret = "a-signing-secret-of-enough-length"
+	s.Config.LicensePrice = "99.00" // the price the events below were paid at
 	mail := &fakeMail{}
 	s.Mailer = mail
 	s.Payments = &fakePayments{}

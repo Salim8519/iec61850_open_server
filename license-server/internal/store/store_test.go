@@ -97,11 +97,11 @@ func TestIssueForOrderIsIdempotent(t *testing.T) {
 	now := time.Unix(1_760_000_000, 0)
 	calls := 0
 	keyFactory := func() string { calls++; return "SUBS-ORDR-0000-0000-000" + string(rune('0'+calls)) }
-	first, created, err := db.IssueForOrder(Order{OrderID: "O-1", CaptureID: "C-1", Email: "a@b.c"}, keyFactory, now)
+	first, created, err := db.IssueForOrder(Order{OrderID: "O-1", CaptureID: "C-1", Email: "a@b.c"}, 0, keyFactory, now)
 	if err != nil || !created {
 		t.Fatal("first fulfilment failed")
 	}
-	second, created, err := db.IssueForOrder(Order{OrderID: "O-1", CaptureID: "C-1"}, keyFactory, now)
+	second, created, err := db.IssueForOrder(Order{OrderID: "O-1", CaptureID: "C-1"}, 0, keyFactory, now)
 	if err != nil || created || second.LicenseKey != first.LicenseKey || calls != 1 {
 		t.Fatal("second fulfilment created another key")
 	}
@@ -139,5 +139,28 @@ func TestDatabaseRefusesSecondOpener(t *testing.T) {
 	defer db.Close()
 	if _, err := Open(path); !errors.Is(err, ErrDatabaseBusy) {
 		t.Fatalf("second opener got %v", err)
+	}
+}
+
+func TestRefundBeforeOrderIssuesNothingAndTrialOrdersAreTrials(t *testing.T) {
+	db := open(t)
+	now := time.Unix(1_760_000_000, 0)
+	keyFactory := func() string { return "SUBS-ORDR-TEST-0000-0001" }
+	for i := 0; i < 2; i++ { // a repeated refund changes nothing
+		if err := db.MarkRefunded("LS-early", now.Unix()); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, created, err := db.IssueForOrder(Order{OrderID: "LS-early", CaptureID: "LS-1"}, 0, keyFactory, now); created || !errors.Is(err, ErrOrderRefunded) {
+		t.Fatalf("a refunded order must issue nothing: created=%v err=%v", created, err)
+	}
+	db.MarkRefunded("CAP-early", now.Unix())
+	if _, created, err := db.IssueForOrder(Order{OrderID: "O-2", CaptureID: "CAP-early"}, 0, keyFactory, now); created || !errors.Is(err, ErrOrderRefunded) {
+		t.Fatalf("a refunded capture must issue nothing: created=%v err=%v", created, err)
+	}
+	order, created, err := db.IssueForOrder(Order{OrderID: "O-3", CaptureID: "C-3"}, 7, keyFactory, now)
+	license, _ := db.GetLicense(order.LicenseKey)
+	if err != nil || !created || license.Type != "trial" || license.Days != 7 {
+		t.Fatalf("a test-payment order must be a 7-day trial: %+v %v", license, err)
 	}
 }

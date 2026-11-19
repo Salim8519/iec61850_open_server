@@ -126,7 +126,12 @@ func runRemote(cfg config.Config, command string, request api.AdminRequest) (any
 	return result, nil
 }
 
-// backup writes database (hot copy), config.json and signing.key into one tar.gz.
+// backupFiles are the data-folder files a backup carries next to licenses.db, when they
+// exist: settings, signing key, the permanent sales book, the owner login and the
+// published release. restore puts back exactly these names.
+var backupFiles = []string{"config.json", "signing.key", "sales.jsonl", "admin-account.json", "release.json"}
+
+// backup writes database (hot copy) and backupFiles into one tar.gz.
 func backup(args []string) error {
 	var out *string
 	dataDir, err := flags("backup", args, func(set *flag.FlagSet) {
@@ -154,7 +159,7 @@ func backup(args []string) error {
 	zipped := gzip.NewWriter(file)
 	archive := tar.NewWriter(zipped)
 	entries := map[string][]byte{"licenses.db": database.Bytes()}
-	for _, name := range []string{"config.json", "signing.key"} {
+	for _, name := range backupFiles {
 		if raw, err := os.ReadFile(filepath.Join(dataDir, name)); err == nil {
 			entries[name] = raw
 		}

@@ -168,8 +168,11 @@ func (s *Server) revokeForCapture(event webhookEvent) error {
 		}
 	}
 	order, found, err := s.Store.FindOrderByCapture(captureID)
-	if err != nil || !found {
+	if err != nil {
 		return err
+	}
+	if !found { // remembered, so a capture fulfilled later issues no key
+		return s.Store.MarkRefunded(captureID, s.Now().Unix())
 	}
 	return s.revokeOrder(order, strings.ToLower(strings.TrimPrefix(event.Type, "PAYMENT.CAPTURE.")))
 }
@@ -189,7 +192,7 @@ func looksLikePayPal(header http.Header) bool {
 
 func ignorePending(err error) error {
 	var known apiError
-	if errors.As(err, &known) && known.code == "payment_incomplete" {
+	if errors.As(err, &known) && (known.code == "payment_incomplete" || known.code == "order_refunded") {
 		return nil
 	}
 	return err

@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"time"
 
 	"substation-license-server/internal/certs"
@@ -18,11 +20,27 @@ type paid struct {
 	News                                               bool
 }
 
+// errOrderRefunded answers an order whose refund arrived before it: no key is issued.
+var errOrderRefunded = apiError{http.StatusPaymentRequired, "order_refunded",
+	"This payment was refunded, so no license key is issued. Contact support."}
+
+// testPayment is true for Lemon Squeezy test-mode and PayPal sandbox payments: no real
+// money moved, so they get a short trial key, never a lifetime one.
+func testPayment(mode string) bool { return mode == "lemon-test" || mode == "sandbox" }
+
 // issuePaid issues exactly one key per order, records the sale once and emails the
 // key until one email went out.
 func (s *Server) issuePaid(payment paid) (store.Order, error) {
+	trialDays := 0
+	if testPayment(payment.Mode) {
+		trialDays = max(s.Config.TrialDays, 1)
+	}
 	order, created, err := s.Store.IssueForOrder(store.Order{OrderID: payment.OrderID, CaptureID: payment.CaptureID,
-		Email: payment.Email, Amount: payment.Amount, Currency: payment.Currency}, certs.NewLicenseKey, s.Now())
+		Email: payment.Email, Amount: payment.Amount, Currency: payment.Currency}, trialDays, certs.NewLicenseKey, s.Now())
+	if errors.Is(err, store.ErrOrderRefunded) {
+		s.Log.Event("refunded_order_ignored", map[string]any{"order": payment.OrderID})
+		return order, errOrderRefunded
+	}
 	if err != nil {
 		return order, err
 	}
@@ -49,8 +67,12 @@ func (s *Server) issuePaid(payment paid) (store.Order, error) {
 	return order, nil
 }
 
-// revokeOrder turns a refunded or charged-back order's key off and records why.
+// revokeOrder turns a refunded or charged-back order's key off and records why. A
+// repeated delivery of the same refund changes nothing and adds no second record.
 func (s *Server) revokeOrder(order store.Order, reason string) error {
+	if before, err := s.Store.GetLicense(order.LicenseKey); err == nil && before.Revoked && before.Reason == reason {
+		return nil
+	}
 	_, err := s.Store.Revoke(order.LicenseKey, reason)
 	if err == nil {
 		s.recordRefund(order, reason)

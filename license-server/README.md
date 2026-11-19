@@ -46,7 +46,8 @@ server's `lemon_*` settings and price.
 | Stop asking one network for an email | `sudo license-server-admin reset-trial-ip --ip 203.0.113.7` |
 | Let an email address confirm one more trial | `sudo license-server-admin allow-email --trial-email name@company.com` |
 | Trial rules | more than `trial_ip_email_after` (3) new trials from one IP in `trial_ip_window_days` (30) ask for an email; Mailgun sends the code (if mail is down, no code is needed) |
-| Back up everything | `sudo license-server-admin backup --out /root/license-backup.tar.gz` |
+| Back up everything | `sudo license-server-admin backup --out /root/license-backup.tar.gz` (database, settings, signing key, sales book, owner login, release) |
+| Restore a backup | stop the server, then `sudo license-server-admin restore --from /root/license-backup.tar.gz --data <empty folder>` |
 | Change settings | `sudo bash deploy/setup.sh --configure` |
 | Update after new code | `sudo bash deploy/setup.sh` (or `push.ps1` again) |
 | Live output | `journalctl -u license-server -f` |

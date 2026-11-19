@@ -35,6 +35,7 @@ type Order struct {
 	Name       string
 	Currency   string
 	Subtotal   string // price before tax and discount, "99.00"
+	WithTax    string // subtotal plus tax, set only for tax-inclusive orders
 	VariantID  string // the product variant bought
 	TestMode   bool
 	Custom     map[string]string // checkout[custom] values: invoice, hwid
@@ -56,6 +57,8 @@ type payload struct {
 			UserName   string `json:"user_name"`
 			Currency   string `json:"currency"`
 			Subtotal   int64  `json:"subtotal"`
+			Tax        int64  `json:"tax"`
+			TaxIncl    bool   `json:"tax_inclusive"`
 			TestMode   bool   `json:"test_mode"`
 			FirstItem  struct {
 				VariantID int64 `json:"variant_id"`
@@ -88,6 +91,9 @@ func Parse(body []byte) (Order, error) {
 	order.Status, order.Email, order.Name = attributes.Status, strings.TrimSpace(attributes.UserEmail), attributes.UserName
 	order.Currency = strings.ToUpper(attributes.Currency)
 	order.Subtotal = cents(attributes.Subtotal)
+	if attributes.TaxIncl {
+		order.WithTax = cents(attributes.Subtotal + attributes.Tax)
+	}
 	order.TestMode = raw.Meta.TestMode || attributes.TestMode
 	if attributes.FirstItem.VariantID > 0 {
 		order.VariantID = strconv.FormatInt(attributes.FirstItem.VariantID, 10)
