@@ -63,51 +63,58 @@ Json Server::start(const Json& config) {
     auto path = config.at("cfg").get<std::string>();
     model = ConfigFileParser_createModelFromConfigFileEx(path.c_str());
     if (!model) throw std::runtime_error("Native model parser rejected configuration");
-    auto options = IedServerConfig_create();
-    IedServerConfig_setReportBufferSize(options, 1024 * 1024);
-    IedServerConfig_enableFileService(options, false);
-    IedServerConfig_enableLogService(options, false);
-    IedServerConfig_setMaxMmsConnections(options, 8);
-    IedServerConfig_setEdition(options, config.value("edition", 2) == 1 ?
-        IEC_61850_EDITION_1 : IEC_61850_EDITION_2);
-    handle = IedServer_createWithConfig(model, nullptr, options);
-    IedServerConfig_destroy(options);
-    if (!handle) throw std::runtime_error("Unable to construct MMS server");
-    IedServer_setTimeQuality(handle, true, false, true, 10);  // == time_quality, for vendor-set times
-    started_at = Hal_getTimeInMs();
-    int stamped = 0;
-    for (auto device = model->firstChild; device; device = reinterpret_cast<LogicalDevice*>(device->sibling))
-        stamped += stamp_times(reinterpret_cast<ModelNode*>(device), started_at, time_quality);
-    auto ip = config.at("ip").get<std::string>();
-    IedServer_setLocalIpAddress(handle, ip.c_str());
-    // What clients and Find IEDs see: the product name and that this IED is simulated (change 0089).
-    IedServer_setServerIdentity(handle, "ScadaBench", "Simulated IED", "1");
-    IedServer_setConnectionIndicationHandler(handle, connection, this);
-    IedServer_setRCBEventHandler(handle, report, this);
-    bool observing = studio_observe_reads(handle, observed_read, &access);
-    for (const auto& entry : config.value("controls", Json::array())) {
-        install_control(*this, entry);
-    }
-    for (const auto& entry : config.value("extended_controls", Json::array())) {
-        install_typed_control(*this, entry);
-    }
-    install_deadband_writes(*this, config.value("writable_deadbands", Json::array()));
-    auto goose = prepare_goose(*this, config);
-    int port = config.value("port", 102);
-    // Same single-threaded MMS server, driven by the worker's event loop (workstream G).
-    IedServer_startThreadless(handle, port);
-    if (!IedServer_isRunning(handle)) {
+    // Anything failing once the model exists (bad control, bind, GOOSE ...) undoes the whole
+    // start like stop(), so the next start is not refused with "IED already started".
+    try {
+        auto options = IedServerConfig_create();
+        IedServerConfig_setReportBufferSize(options, 1024 * 1024);
+        IedServerConfig_enableFileService(options, false);
+        IedServerConfig_enableLogService(options, false);
+        IedServerConfig_setMaxMmsConnections(options, 8);
+        IedServerConfig_setEdition(options, config.value("edition", 2) == 1 ?
+            IEC_61850_EDITION_1 : IEC_61850_EDITION_2);
+        handle = IedServer_createWithConfig(model, nullptr, options);
+        IedServerConfig_destroy(options);
+        if (!handle) throw std::runtime_error("Unable to construct MMS server");
+        IedServer_setTimeQuality(handle, true, false, true, 10);  // == time_quality, for vendor-set times
+        started_at = Hal_getTimeInMs();
+        int stamped = 0;
+        for (auto device = model->firstChild; device; device = reinterpret_cast<LogicalDevice*>(device->sibling))
+            stamped += stamp_times(reinterpret_cast<ModelNode*>(device), started_at, time_quality);
+        auto ip = config.at("ip").get<std::string>();
+        IedServer_setLocalIpAddress(handle, ip.c_str());
+        // What clients and Find IEDs see: the product name and that this IED is simulated (change 0089).
+        IedServer_setServerIdentity(handle, "ScadaBench", "Simulated IED", "1");
+        IedServer_setConnectionIndicationHandler(handle, connection, this);
+        IedServer_setRCBEventHandler(handle, report, this);
+        bool observing = studio_observe_reads(handle, observed_read, &access);
+        for (const auto& entry : config.value("controls", Json::array())) {
+            install_control(*this, entry);
+        }
+        for (const auto& entry : config.value("extended_controls", Json::array())) {
+            install_typed_control(*this, entry);
+        }
+        install_deadband_writes(*this, config.value("writable_deadbands", Json::array()));
+        auto goose = prepare_goose(*this, config);
+        int port = config.value("port", 102);
+        // Same single-threaded MMS server, driven by the worker's event loop (workstream G).
+        IedServer_startThreadless(handle, port);
+        if (!IedServer_isRunning(handle)) {
+            stop();
+            throw std::runtime_error("MMS bind failed: " + ip + ":" + std::to_string(port));
+        }
+        loop.start(handle);
+        start_goose(*this);
+        access.start();
+        auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback", "control_selection_events",
+                                         "standard_controls", "goose_aware", "goose_bus", "typed_controls"});
+        if (observing) capabilities.push_back("mms_access");
+        return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities},
+                {"started_at", started_at}, {"stamped_times", stamped}, {"time_quality", time_quality}};
+    } catch (...) {
         stop();
-        throw std::runtime_error("MMS bind failed: " + ip + ":" + std::to_string(port));
+        throw;
     }
-    loop.start(handle);
-    start_goose(*this);
-    access.start();
-    auto capabilities = Json::array({"versioned_updates", "atomic_control_feedback",
-                                     "control_selection_events", "standard_controls", "goose_aware", "goose_bus", "typed_controls"});
-    if (observing) capabilities.push_back("mms_access");
-    return {{"running", true}, {"ip", ip}, {"port", port}, {"goose", goose}, {"capabilities", capabilities},
-            {"started_at", started_at}, {"stamped_times", stamped}, {"time_quality", time_quality}};
 }
 
 // The model tree walk costs microseconds per reference; update_batch and reads resolve the

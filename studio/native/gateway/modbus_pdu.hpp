@@ -19,6 +19,9 @@ public:
     ModbusApplication(PointTable& table, CommandBridge& bridge) : table(table), bridge(bridge) {}
     // Returns the response PDU (function code + data, or exception) and a log line.
     std::vector<uint8_t> handle(const std::vector<uint8_t>& request, const std::string& peer, std::string& summary);
+    // FC3/FC4 show double, step position, float, integer and set point registers in one
+    // register view: throws, naming both points, when two of them share a register.
+    void check_layout() const;
 private:
     PointTable& table;
     CommandBridge& bridge;
@@ -36,3 +39,5 @@ private:
 };
 
 std::vector<uint8_t> modbus_exception(uint8_t function, uint8_t code);
+// Registers a point occupies in the FC3/FC4 register view; 0 for points outside it.
+int modbus_register_width(const GatewayPoint& point);

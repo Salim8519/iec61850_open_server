@@ -31,6 +31,7 @@ int main() {
             if (found == factories.end()) throw std::runtime_error("Unknown gateway protocol");
             table.load(request.at("points"));
             bridge.typed = request.value("typed_commands", false);  // ADR-0107; absent = the Python-era channel
+            bridge.resume();
             auto candidate = found->second();
             auto opened = candidate->start(request.value("settings", Json::object()));
             server = std::move(candidate);
@@ -48,6 +49,7 @@ int main() {
         }},
         {"command_result", [&](const Json& request) { bridge.answer(request); return Json(true); }},
         {"halt", [&](const Json&) {
+            bridge.cancel();  // waiting commands are refused now, so stop() joins without delay
             if (server) server->stop();
             server.reset();
             return Json(true);
@@ -61,6 +63,7 @@ int main() {
                 if (message.value("version", 0) != 1) throw std::runtime_error("Protocol version must be 1");
                 auto op = message.at("op").get<std::string>();
                 if (op == "stop") {
+                    bridge.cancel();
                     if (server) server->stop();
                     emit_frame({{"id", id}, {"ok", true}});
                     break;
@@ -74,7 +77,9 @@ int main() {
         }
     } catch (const std::exception& error) {
         std::cerr << error.what() << std::endl;
+        bridge.cancel();  // the server's destructor stops it; no command keeps it waiting
         return 1;
     }
+    bridge.cancel();  // input closed without "stop": same quick shutdown
     return 0;
 }

@@ -3,11 +3,13 @@
 #include <condition_variable>
 #include <map>
 #include <mutex>
+#include <set>
 #include <string>
 
 // A SCADA command waits here while the backend operates the simulated IED over MMS.
 // The protocol thread blocks for at most the timeout, so commands of one connection
-// are handled one at a time, as in a real gateway.
+// are handled one at a time, as in a real gateway. cancel() wakes every waiter before the
+// protocol threads are joined, so stopping never waits for the command timeout.
 struct CommandAnswer {
     bool ok = false;
     std::string reason;
@@ -21,7 +23,11 @@ public:
     // cause, DNP3 function ...). The engine's routing table decides select / execute / cancel.
     CommandAnswer ask_step(const std::string& point_id, const Json& value, const Json& wire,
                            const std::string& protocol, const std::string& peer, int timeout_ms = 15000);
+    // An answer whose waiter already gave up (timeout or cancel) is dropped.
     void answer(const Json& request);
+    // Stop: every waiting and later command is refused at once until resume() (next start).
+    void cancel();
+    void resume();
     // True when the engine asked for every command step ("typed_commands" in start); false
     // keeps the outstation's own select/cancel confirmation of the Python-era channel.
     bool typed = false;
@@ -30,5 +36,7 @@ private:
     std::mutex lock;
     std::condition_variable changed;
     std::map<std::string, CommandAnswer> answers;
+    std::set<std::string> waiting;  // tokens whose protocol thread still waits for the answer
+    bool stopping = false;
     unsigned long next = 0;
 };

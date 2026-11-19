@@ -7,8 +7,6 @@
 namespace {
 constexpr uint8_t ILLEGAL_FUNCTION = 1, ILLEGAL_ADDRESS = 2, ILLEGAL_VALUE = 3, DEVICE_FAILURE = 4;
 
-int width(const GatewayPoint& point) { return point.format == "int16" || point.format == "uint16" ? 1 : 2; }
-
 double decode(const GatewayPoint& point, uint16_t first, uint16_t second) {
     if (point.format == "int16") return double(int16_t(first));
     if (point.format == "uint16") return double(first);
@@ -53,7 +51,8 @@ std::vector<uint8_t> ModbusApplication::write_registers(uint8_t function, int st
             summary += ": no set point starts at register " + std::to_string(at) + " (exception 2)";
             return modbus_exception(function, ILLEGAL_ADDRESS);
         }
-        if (offset + width(*point) > count) {
+        int registers = modbus_register_width(*point);
+        if (offset + registers > count) {
             summary += ": the set point at register " + std::to_string(at)
                        + " has 2 registers; write both with FC16 (exception 3)";
             return modbus_exception(function, ILLEGAL_VALUE);
@@ -62,8 +61,8 @@ std::vector<uint8_t> ModbusApplication::write_registers(uint8_t function, int st
             summary += ": real IED, and commands to real IEDs are off in the gateway settings (exception 1)";
             return modbus_exception(function, ILLEGAL_FUNCTION);
         }
-        writes.push_back({*point, decode(*point, values[offset], width(*point) == 2 ? values[offset + 1] : 0), offset});
-        offset += width(*point);
+        writes.push_back({*point, decode(*point, values[offset], registers == 2 ? values[offset + 1] : 0), offset});
+        offset += registers;
     }
     for (const auto& write : writes) {
         auto answer = bridge.ask_step(write.point.id, write.value, Json{{"function", int(function)}}, "modbus", peer);
@@ -72,7 +71,7 @@ std::vector<uint8_t> ModbusApplication::write_registers(uint8_t function, int st
             return modbus_exception(function, DEVICE_FAILURE);
         }
         std::lock_guard<std::mutex> guard(coil_lock);
-        for (int index = 0; index < width(write.point); ++index)
+        for (int index = 0; index < modbus_register_width(write.point); ++index)
             holding[start + write.offset + index] = values[write.offset + index];
         summary += " = " + number_text(write.value);
     }

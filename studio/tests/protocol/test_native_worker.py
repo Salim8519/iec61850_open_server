@@ -101,6 +101,10 @@ def test_worker_refuses_the_removed_compatibility_profile(tmp_path):
     try:
         with pytest.raises(RuntimeError, match="compatibility profiles were removed"):
             worker.request("start", cfg=str(config), ip="127.50.0.226", port=18116, controls=controls)
+        # A20: the failed start is undone, so the same worker starts (no "IED already started").
+        started = worker.request("start", cfg=str(config), ip="127.50.0.226", port=18116,
+                                 controls=model["controls"])
+        assert started["running"]
     finally:
         worker.close()
 

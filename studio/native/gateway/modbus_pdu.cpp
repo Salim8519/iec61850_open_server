@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <stdexcept>
 
 namespace {
 constexpr uint8_t ILLEGAL_FUNCTION = 1, ILLEGAL_ADDRESS = 2, ILLEGAL_VALUE = 3, DEVICE_FAILURE = 4;
@@ -21,6 +22,27 @@ std::string range(int start, int count) {
 
 std::vector<uint8_t> modbus_exception(uint8_t function, uint8_t code) {
     return {uint8_t(function | 0x80), code};
+}
+
+int modbus_register_width(const GatewayPoint& point) {
+    if (point.kind == "double" || point.kind == "step_position") return 1;
+    if (point.kind == "float" || point.kind == "integer") return 2;
+    if (point.kind == "command_setpoint") return point.format == "int16" || point.format == "uint16" ? 1 : 2;
+    return 0;
+}
+
+void ModbusApplication::check_layout() const {
+    std::map<int, std::string> owners;
+    for (const auto& point : table.all()) {
+        for (int offset = 0; offset < modbus_register_width(point); ++offset) {
+            int address = point.address + offset;
+            auto placed = owners.emplace(address, point.id);
+            if (!placed.second)
+                throw std::runtime_error("Points " + placed.first->second + " and " + point.id
+                                         + " both use Modbus register " + std::to_string(address)
+                                         + " (float, integer, int32 and float set points use 2 registers)");
+        }
+    }
 }
 
 std::vector<uint8_t> ModbusApplication::handle(const std::vector<uint8_t>& request, const std::string& peer,
