@@ -42,6 +42,9 @@ func (s *Service) RefreshVMHost() error {
 	if vm == nil {
 		return errors.New("virtual machines are not offered a host here")
 	}
+	if !vm.isVM() {
+		return errors.New(NotAVMText)
+	}
 	s.vm.refresh.Lock()
 	err := s.askHost(vm)
 	s.vm.refresh.Unlock()

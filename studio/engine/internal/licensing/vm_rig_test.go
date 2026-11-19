@@ -65,6 +65,7 @@ func (r *vmRig) newVM() *Service {
 // vmOn is the computer that uses license home home: the same one again after a restart.
 func (r *vmRig) vmOn(home string) *Service {
 	options := VMOptions{Hosts: func() []string { return []string{r.address} }, Timeout: 2 * time.Second, RetryAfter: 30 * time.Second,
+		IsVM: func() bool { return true },
 		Dial: func(ctx context.Context, address string) (net.Conn, error) {
 			r.dials.Add(1)
 			if r.dial != nil {

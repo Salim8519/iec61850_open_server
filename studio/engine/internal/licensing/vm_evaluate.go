@@ -9,9 +9,11 @@ import (
 // is valid, the proof of a licensed host it runs on (docs/architecture/license-binding-contract.md,
 // "VM host key"). A proof never replaces a valid license of the computer's own, and it never gets
 // past the integrity check: a swapped worker or an attached debugger is unlicensed whatever a host says.
+// Only a virtual machine looks for a host or reads a stored proof (VMOptions.IsVM): a physical PC never does.
 func (s *Service) evaluate() (Status, error) {
 	status, err := s.evaluateOwn()
-	if err != nil || status.Licensed || !s.options.Enforce || s.options.HostKey.VM == nil {
+	vm := s.options.HostKey.VM
+	if err != nil || status.Licensed || !s.options.Enforce || vm == nil || !vm.isVM() {
 		return status, err
 	}
 	if s.integrityProblem() != "" {

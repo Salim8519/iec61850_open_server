@@ -29,6 +29,17 @@ type VMOptions struct {
 	Timeout time.Duration
 	// RetryAfter is the pause before a failed search starts again (default 30 s).
 	RetryAfter time.Duration
+	// IsVM says whether this computer is a virtual machine; nil means its firmware's answer
+	// (IsVirtualMachine). A computer that is not one never asks a host and ignores a stored proof.
+	IsVM func() bool
+}
+
+// isVM applies the IsVM seam.
+func (vm *VMOptions) isVM() bool {
+	if vm.IsVM != nil {
+		return vm.IsVM()
+	}
+	return IsVirtualMachine()
 }
 
 const (
@@ -48,6 +59,8 @@ const (
 		"Enter your license key again to make a new one."
 	HostKeyMismatchText = "The virtual machine key on this PC does not belong to this license. " +
 		"Enter your license key again to make a new one."
+	NotAVMText = "This computer is not a virtual machine, so it cannot use the license of another PC. " +
+		"Activate ScadaBench with a license of its own."
 	HostIsVMText = "This computer is a virtual machine that uses its host's license. " +
 		"Share the license from the host PC."
 )

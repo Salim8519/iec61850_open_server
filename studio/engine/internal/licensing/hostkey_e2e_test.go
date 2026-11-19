@@ -123,6 +123,9 @@ func (h *hostE2E) issueKey() string {
 func (h *hostE2E) hostHome() string { return filepath.Join(h.localApp, "ScadaBench") }
 
 func (h *hostE2E) service(home string, vm *VMOptions) *Service {
+	if vm != nil {
+		vm.IsVM = isVM // the test PC plays the virtual machine
+	}
 	return New(Options{Home: home, DataDir: home, Enforce: true, Keys: h.keys, AllowTestServer: true,
 		Debugger: func() bool { return false }, Logf: h.t.Logf, Registry: newHKRegistry(),
 		HostKey: HostKeyOptions{Protector: hostkey.System(), VM: vm}})

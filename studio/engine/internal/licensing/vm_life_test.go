@@ -58,7 +58,7 @@ func TestAVMNeverGetsPastTheIntegrityCheckWhateverItsHostSays(t *testing.T) {
 	rig.vm = New(Options{Home: rig.vmHome, DataDir: rig.vmHome, Enforce: true, Keys: rig.host.signer.keys(),
 		HWID: func() (string, error) { return rig.vmHWID, nil }, Clock: func() float64 { return *rig.now },
 		Debugger: func() bool { return true }, Logf: t.Logf, Registry: newHKRegistry(),
-		HostKey: HostKeyOptions{VM: &VMOptions{Hosts: func() []string { return []string{rig.address} }}}})
+		HostKey: HostKeyOptions{VM: &VMOptions{Hosts: func() []string { return []string{rig.address} }, IsVM: isVM}}})
 	status := rig.status()
 	if status.Licensed || status.Reason == NoLicense {
 		t.Fatalf("a debugged VM was licensed or lost its real reason: %+v", status)
@@ -100,7 +100,7 @@ func TestTheHostsLicenseIsNeverReportedToTheLicenseServerFromAVM(t *testing.T) {
 		HWID: func() (string, error) { return rig.vmHWID, nil }, Clock: func() float64 { return *rig.now },
 		Debugger: func() bool { return false }, Logf: t.Logf, Registry: newHKRegistry(), AllowTestServer: true,
 		ClientFactory: func(string) Client { calls++; return nil },
-		HostKey:       HostKeyOptions{VM: &VMOptions{Hosts: func() []string { return []string{rig.address} }}}})
+		HostKey:       HostKeyOptions{VM: &VMOptions{Hosts: func() []string { return []string{rig.address} }, IsVM: isVM}}})
 	if err := vm.RefreshVMHost(); err != nil {
 		t.Fatal(err)
 	}
@@ -119,7 +119,7 @@ func TestDevelopmentAndBuildsWithoutAHostSearchNeverAskAnyone(t *testing.T) {
 			HWID: func() (string, error) { return rig.vmHWID, nil }, Clock: func() float64 { return *rig.now },
 			Debugger: func() bool { return false }, Logf: t.Logf, Registry: newHKRegistry(), HostKey: HostKeyOptions{VM: vm}})
 	}
-	options := &VMOptions{Hosts: func() []string { rig.dials.Add(1); return []string{rig.address} }}
+	options := &VMOptions{Hosts: func() []string { rig.dials.Add(1); return []string{rig.address} }, IsVM: isVM}
 	for name, service := range map[string]*Service{"development": build(false, options), "no search configured": build(true, nil)} {
 		status, err := service.Current(true)
 		if err != nil {

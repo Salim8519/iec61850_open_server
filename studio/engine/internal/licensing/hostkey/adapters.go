@@ -16,25 +16,28 @@ type Adapter struct {
 	Gateways    []net.IP    // IPv4 default gateways of this adapter
 }
 
-// The adapters of the virtual switches the contract names: Hyper-V "vEthernet", VMware VMnet1 and
-// VMnet8 (host-only and NAT) and VirtualBox "Host-Only". Names are matched on the friendly name
-// and the description, ignoring case.
+// The adapters of the virtual switches the contract names: Hyper-V ("Hyper-V Virtual Ethernet
+// Adapter"), VMware VMnet1 and VMnet8 (host-only and NAT, "VMware Virtual Ethernet Adapter for
+// VMnet8") and VirtualBox ("VirtualBox Host-Only Ethernet Adapter"). They are recognised by the
+// DESCRIPTION only, the driver's text that Windows reports and renaming a card does not change: any
+// user can rename a physical card "vEthernet (LAN)", so the friendly name never makes an adapter a
+// virtual switch. Matching ignores case.
 var (
-	hyperV     = regexp.MustCompile(`(?i)^vethernet|hyper-v virtual ethernet adapter`)
+	hyperV     = regexp.MustCompile(`(?i)hyper-v virtual ethernet adapter`)
 	vmware     = regexp.MustCompile(`(?i)vmnet(1|8)([^0-9]|$)`)
 	virtualBox = regexp.MustCompile(`(?i)virtualbox host-only`)
 	// wsl is the switch of the Windows Subsystem for Linux: no Windows program runs behind it.
 	wsl = regexp.MustCompile(`(?i)\bwsl\b`)
 )
 
-// IsVirtualSwitch reports whether a is the host side of a virtual switch.
+// IsVirtualSwitch reports whether a is the host side of a virtual switch, judged by its description.
+// The name only ever excludes (WSL), it never qualifies an adapter.
 func IsVirtualSwitch(a Adapter) bool {
-	text := a.Name + "\n" + a.Description
-	if wsl.MatchString(text) {
+	if wsl.MatchString(a.Name + "\n" + a.Description) {
 		return false
 	}
-	return hyperV.MatchString(a.Name) || hyperV.MatchString(a.Description) ||
-		vmware.MatchString(text) || virtualBox.MatchString(text)
+	return hyperV.MatchString(a.Description) || vmware.MatchString(a.Description) ||
+		virtualBox.MatchString(a.Description)
 }
 
 // Listen is one address the host serves on, with the subnet its peers must belong to.

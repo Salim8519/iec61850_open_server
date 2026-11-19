@@ -42,9 +42,9 @@ func (l *noteLog) text() string {
 	return strings.Join(l.lines, "\n")
 }
 
-func adapterOf(name string, gateway bool, address string) hostkey.Adapter {
+func adapterOf(name, description string, gateway bool, address string) hostkey.Adapter {
 	ip, network, _ := net.ParseCIDR(address)
-	a := hostkey.Adapter{Name: name, Up: true, IPv4: []net.IPNet{{IP: ip, Mask: network.Mask}}}
+	a := hostkey.Adapter{Name: name, Description: description, Up: true, IPv4: []net.IPNet{{IP: ip, Mask: network.Mask}}}
 	if gateway {
 		a.Gateways = []net.IP{net.ParseIP("192.168.1.1")}
 	}
@@ -62,9 +62,10 @@ func TestTheHelperServesOnlyWhileThisPCsLicenseAllowsAndOnlyOnVirtualSwitches(t 
 			return errors.New("This license belongs to a different computer.")
 		},
 		adapters: func() ([]hostkey.Adapter, error) {
-			return []hostkey.Adapter{adapterOf("Ethernet", true, "192.168.1.20/24"),
-				adapterOf("vEthernet (Default Switch)", false, "172.20.80.1/20"),
-				adapterOf("vEthernet (External)", true, "192.168.1.21/24")}, nil
+			return []hostkey.Adapter{adapterOf("Ethernet", "Intel(R) Ethernet Connection", true, "192.168.1.20/24"),
+				adapterOf("vEthernet (Default Switch)", "Hyper-V Virtual Ethernet Adapter", false, "172.20.80.1/20"),
+				adapterOf("vEthernet (External)", "Hyper-V Virtual Ethernet Adapter #2", true, "192.168.1.21/24"),
+				adapterOf("vEthernet (LAN)", "Intel(R) Ethernet Connection I219-LM", false, "192.168.2.20/24")}, nil
 		}}
 	if endpoints := h.endpoints(); len(endpoints) != 0 {
 		t.Fatalf("the helper opened %v although this PC's license does not allow it", endpoints)

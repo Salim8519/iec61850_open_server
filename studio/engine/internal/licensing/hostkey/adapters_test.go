@@ -66,6 +66,30 @@ func TestNoPhysicalOrLookAlikeAdapterIsServed(t *testing.T) {
 	}
 }
 
+// Windows lets any user rename a network card, so a physical LAN card renamed like a virtual switch
+// (and without a default gateway) must never be served: the description is what counts.
+func TestAPhysicalAdapterRenamedLikeAVirtualSwitchIsNeverServed(t *testing.T) {
+	for _, a := range []Adapter{
+		adapter("vEthernet (LAN)", "Intel(R) Ethernet Connection (7) I219-LM", true, "", "192.168.1.20/24"),
+		adapter("vEthernet (Default Switch)", "Realtek PCIe GbE Family Controller", true, "", "192.168.1.21/24"),
+		adapter("VMware Network Adapter VMnet8", "Realtek USB GbE Family Controller", true, "", "192.168.1.22/24"),
+		adapter("VirtualBox Host-Only Network", "Intel(R) Wi-Fi 6 AX201 160MHz", true, "", "192.168.1.23/24"),
+		adapter("Hyper-V Virtual Ethernet Adapter", "", true, "", "192.168.1.24/24"),
+	} {
+		if IsVirtualSwitch(a) {
+			t.Errorf("%q (%s) counts as a virtual switch by its name", a.Name, a.Description)
+		}
+		if got := ListenAddresses([]Adapter{a}); len(got) != 0 {
+			t.Errorf("%q (%s) was served on %v", a.Name, a.Description, got)
+		}
+	}
+	// A real virtual switch still qualifies whatever it is called.
+	renamed := adapter("Lab network", "Hyper-V Virtual Ethernet Adapter #2", true, "", "10.0.5.1/24")
+	if got := listenIPs([]Adapter{renamed}); !reflect.DeepEqual(got, []string{"10.0.5.1"}) {
+		t.Fatalf("a renamed Hyper-V switch was served on %v", got)
+	}
+}
+
 func TestAHyperVExternalSwitchThatCarriesTheRealNetworkIsNeverServed(t *testing.T) {
 	external := adapter("vEthernet (External)", "Hyper-V Virtual Ethernet Adapter #4", true, "192.168.1.1", "192.168.1.20/24")
 	if got := ListenAddresses([]Adapter{external}); len(got) != 0 {
@@ -83,7 +107,8 @@ func TestAnAdapterThatIsDownOrHasNoIPv4AddressIsSkipped(t *testing.T) {
 }
 
 func TestEachServedAddressNamesTheSubnetOfItsSwitch(t *testing.T) {
-	listens := ListenAddresses([]Adapter{adapter("vEthernet (Default Switch)", "", true, "", "172.20.80.1/20")})
+	switchAdapter := adapter("vEthernet (Default Switch)", "Hyper-V Virtual Ethernet Adapter", true, "", "172.20.80.1/20")
+	listens := ListenAddresses([]Adapter{switchAdapter})
 	if len(listens) != 1 || listens[0].Subnet.String() != "172.20.80.0/20" {
 		t.Fatalf("subnet of the served address: %+v", listens)
 	}
