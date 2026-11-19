@@ -1,7 +1,6 @@
 package autosave
 
 import (
-	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -79,7 +78,8 @@ func (w *SnapshotWriter) SetInterval(interval time.Duration) {
 }
 
 // Flush waits until the latest request made before the call was written and returns the
-// error of that attempt (nil when it succeeded).
+// error of the latest attempt, which covers that request (nil when it succeeded). A later
+// attempt holds the requested changes too, so its failure is the caller's failure.
 func (w *SnapshotWriter) Flush() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
@@ -90,10 +90,7 @@ func (w *SnapshotWriter) Flush() error {
 	for w.finished < target {
 		w.changed.Wait()
 	}
-	if w.finished == target {
-		return w.lastErr
-	}
-	return nil
+	return w.lastErr
 }
 
 // Close flushes, stops the goroutine and closes the journal (removing it when the last
@@ -160,15 +157,17 @@ func (w *SnapshotWriter) awaitTurn() {
 	}
 }
 
-// write encodes the document, writes autosave.tmp, marks the snapshot in the journal,
-// renames it onto autosave.scadabench and trims the journal. No lock is held during I/O.
+// write encodes the document, writes and fsyncs autosave.tmp, marks the snapshot in the
+// journal, renames it onto autosave.scadabench and trims the journal. The data reaches the
+// disk before the rename, so a power cut never leaves a renamed but empty autosave behind
+// a trimmed journal. No lock is held during I/O.
 func (w *SnapshotWriter) write(request *snapshotRequest) error {
 	payload, err := w.enc.Encode(request.doc)
 	if err != nil {
 		return err
 	}
 	temporary := filepath.Join(w.dataDir, TempName)
-	if err := os.WriteFile(temporary, payload, 0o666); err != nil {
+	if err := writeSynced(temporary, payload); err != nil {
 		return err
 	}
 	sha := digest(payload)
@@ -177,7 +176,7 @@ func (w *SnapshotWriter) write(request *snapshotRequest) error {
 			return err
 		}
 	}
-	if err := os.Rename(temporary, filepath.Join(w.dataDir, AutosaveName)); err != nil {
+	if err := renameFile(temporary, filepath.Join(w.dataDir, AutosaveName)); err != nil {
 		return err
 	}
 	if w.journal != nil {

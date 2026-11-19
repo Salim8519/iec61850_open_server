@@ -16,6 +16,16 @@ import (
 // the snapshots it marked (for example another program saved it); both files are kept.
 var ErrJournalMismatch = errors.New("autosave journal does not belong to autosave.scadabench; both files were kept")
 
+// ErrJournalUnreadable matches (errors.Is) every Fold error caused by the content of the
+// journal or the autosave, which no retry can fix: a damaged line, a mismatch, a record
+// that does not apply. Disk errors (reading, writing, removing) do not match it.
+var ErrJournalUnreadable = errors.New("autosave journal cannot be folded")
+
+// unreadable marks err as ErrJournalUnreadable and keeps its text.
+type unreadable struct{ error }
+
+func (u unreadable) Unwrap() []error { return []error{u.error, ErrJournalUnreadable} }
+
 // Fold applies a leftover <data>/autosave.journal to autosave.scadabench and removes the
 // journal only after the new autosave was renamed in. It returns the number of records
 // applied (0 and no error when there is no journal). A damaged or partial last line is a
@@ -32,7 +42,7 @@ func Fold(dataDir string, enc *archive.Encoder) (int, error) {
 	}
 	parsed, err := parseJournal(data)
 	if err != nil {
-		return 0, err
+		return 0, unreadable{err}
 	}
 	payload, current, err := autosaveDigest(dataDir)
 	if err != nil {
@@ -40,7 +50,7 @@ func Fold(dataDir string, enc *archive.Encoder) (int, error) {
 	}
 	floor, accepted := parsed.floor(current)
 	if !accepted && len(parsed.records) > 0 {
-		return 0, ErrJournalMismatch
+		return 0, unreadable{ErrJournalMismatch}
 	}
 	pending := parsed.after(floor)
 	if len(pending) == 0 {
@@ -49,10 +59,10 @@ func Fold(dataDir string, enc *archive.Encoder) (int, error) {
 	var doc *pyjson.Object
 	if _, full := pending[0].record.Get("doc"); !full {
 		if payload == nil {
-			return 0, fmt.Errorf("%w (no autosave.scadabench)", errMissing)
+			return 0, unreadable{fmt.Errorf("%w (no autosave.scadabench)", errMissing)}
 		}
 		if doc, err = archive.Decode(payload); err != nil {
-			return 0, fmt.Errorf("autosave journal cannot be folded into an unreadable autosave: %w", err)
+			return 0, unreadable{fmt.Errorf("autosave journal cannot be folded into an unreadable autosave: %w", err)}
 		}
 	}
 	pool := map[string]string{}
@@ -61,7 +71,7 @@ func Fold(dataDir string, enc *archive.Encoder) (int, error) {
 	}
 	for _, item := range pending {
 		if doc, err = apply(doc, item.record, pool); err != nil {
-			return 0, fmt.Errorf("autosave journal record %d: %w", item.rev, err)
+			return 0, unreadable{fmt.Errorf("autosave journal record %d: %w", item.rev, err)}
 		}
 	}
 	if enc == nil {

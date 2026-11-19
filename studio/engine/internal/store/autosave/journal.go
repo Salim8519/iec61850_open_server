@@ -199,21 +199,6 @@ func (j *Journal) snapshotted(rev uint64, sha string) error {
 	return nil
 }
 
-func writeSynced(path string, data []byte) error {
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o666)
-	if err != nil {
-		return err
-	}
-	_, err = file.Write(data)
-	if err == nil {
-		err = file.Sync()
-	}
-	if closeErr := file.Close(); err == nil {
-		err = closeErr
-	}
-	return err
-}
-
 // Close closes the journal and removes it when no record is newer than the autosave
 // (after a final SnapshotWriter.Flush); otherwise it stays for Fold.
 func (j *Journal) Close() error {

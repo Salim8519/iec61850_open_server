@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -30,9 +31,9 @@ func (e *Engine) wireProject() error {
 	if _, err := projectfile.Migrate(o.DataDir); err != nil {
 		return err
 	}
-	if _, err := autosave.Fold(o.DataDir, nil); err != nil {
-		return fmt.Errorf("the autosave journal of the last Go run could not be folded "+
-			"(both files were kept in %s): %w", o.DataDir, err)
+	notice, err := foldJournal(o.DataDir)
+	if err != nil {
+		return err
 	}
 	e.validator = xsd.New(xsd.Config{HelperPath: o.XSDHelper, SchemasDir: o.SchemasDir, DataDir: o.DataDir})
 	if err := seedVerdicts(e.validator, o.XSDSeed); err != nil {
@@ -64,9 +65,34 @@ func (e *Engine) wireProject() error {
 	if o.RecoverStartup != nil {
 		recover = func() (*pyjson.Object, error) { return o.RecoverStartup(service.RecoverStartup) }
 	}
+	if notice != nil {
+		inner := recover
+		recover = func() (*pyjson.Object, error) {
+			result, err := inner()
+			return notice.Apply(result), err
+		}
+	}
 	e.Recovery = recovery.StartBackground(recover,
 		func(err error) { o.Logf("Startup recovery stopped: %v", err) })
 	return nil
+}
+
+// foldJournal folds a journal left by an earlier Go run. A journal whose content cannot be
+// applied is moved to the recovery folder (the autosave is copied next to it and kept), so
+// the app starts with the last autosave and shows the returned notice; disk errors, or a
+// journal that cannot be moved, still stop start-up with both files kept.
+func foldJournal(dataDir string) (*recovery.JournalNotice, error) {
+	_, err := autosave.Fold(dataDir, nil)
+	if err == nil {
+		return nil, nil
+	}
+	if errors.Is(err, autosave.ErrJournalUnreadable) {
+		if notice, moveErr := recovery.QuarantineJournal(dataDir, err); moveErr == nil {
+			return notice, nil
+		}
+	}
+	return nil, fmt.Errorf("the autosave journal of the last Go run could not be folded "+
+		"(both files were kept in %s): %w", dataDir, err)
 }
 
 // seedVerdicts imports verdict files written by Python (lists of {sha256, schema, status,
