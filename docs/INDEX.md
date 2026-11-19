@@ -19,6 +19,7 @@
 - [Changes](changes/INDEX.md)
 - [Acceptance and evidence](testing/acceptance.md)
 - [Known issues](known-issues.md)
+- [Fix plan from the 2026-11-19 code review](testing/fix-plan-2026-11-19.md)
 
 Development rules live in the repository-root AGENTS.md. Status statements refer
 to evidence in change records; planned features are not delivered features.
