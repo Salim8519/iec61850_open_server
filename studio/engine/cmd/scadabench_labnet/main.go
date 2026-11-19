@@ -2,6 +2,8 @@
 // the Windows administrator prompt to install ("install --result FILE": the ScadaBench Lab card,
 // its settings, the service program scadabench_labsvc.exe copied to Program Files and the
 // ScadaBench lab network service) or to remove everything ("uninstall --result FILE"). The
+// uninstaller also starts it to undo the journaled firewall changes ("firewall --result FILE
+// --data DIR", where DIR is the data folder holding network\journal.jsonl). The
 // service is that separate program; this one never copies itself (ADR-0131). It has no window.
 package main
 
@@ -26,7 +28,11 @@ func main() {
 }
 
 func run(args []string) (code int) {
-	if len(args) != 3 || args[1] != "--result" || args[2] == "" {
+	data := "" // "firewall --result FILE --data DIR": the uninstaller's firewall clean-up (B-3)
+	if len(args) == 5 && args[0] == "firewall" && args[3] == "--data" && args[4] != "" {
+		data, args = args[4], args[:3]
+	}
+	if len(args) != 3 || args[1] != "--result" || args[2] == "" || (args[0] == "firewall") != (data != "") {
 		return 2
 	}
 	// Whatever happens, the app gets a result file with the reason (it has no other way to hear it).
@@ -65,6 +71,8 @@ func run(args []string) (code int) {
 			return write(args[2], outcome{Message: err.Error()})
 		}
 		return write(args[2], outcome{OK: true, Message: "The ScadaBench network service is running again."})
+	case "firewall":
+		return write(args[2], firewallCleanup(data))
 	case "uninstall":
 		if err := labnet.Uninstall(true); err != nil {
 			return write(args[2], outcome{Message: err.Error()})

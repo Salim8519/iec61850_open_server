@@ -136,3 +136,13 @@ func TestARealCardRequestNeedsAGUIDAndAServiceThatKnowsRealCards(t *testing.T) {
 		t.Fatal("RealCards version rule")
 	}
 }
+
+// A DHCP card's address is the PC's own: an approved address there is never taken off (A6).
+func TestNothingIsRemovedFromADHCPCard(t *testing.T) {
+	f := newRealFake()
+	f.all[wifi] = []string{"192.168.8.21"} // the router gave the card the approved address
+	reply := Handle(f, Request{Op: OpRemove, IP: "192.168.8.21", Card: wifi}, "3")
+	if reply.OK || !strings.Contains(reply.Message, "DHCP") || !contains(f.all[wifi], "192.168.8.21") {
+		t.Fatalf("the DHCP card's own address was removed: %+v (card %v)", reply, f.all[wifi])
+	}
+}

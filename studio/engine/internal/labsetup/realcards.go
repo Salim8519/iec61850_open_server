@@ -44,9 +44,9 @@ func (s *Service) ensureReal(guid string, starting []string) error {
 	if err != nil {
 		return nil
 	}
-	names, addresses := map[string]string{}, []string{}
-	for _, ied := range ieds {
-		if ied.LabIP != "" && approved[ied.LabIP] > 0 && contains(starting, ied.ID) {
+	names, addresses, on := map[string]string{}, []string{}, s.addressesOn(guid)
+	for _, ied := range ieds { // an address already on the card is not ScadaBench's to add (A6)
+		if ied.LabIP != "" && approved[ied.LabIP] > 0 && contains(starting, ied.ID) && !on[ied.LabIP] {
 			names[ied.LabIP], addresses = ied.Name, append(addresses, ied.LabIP)
 		}
 	}
@@ -100,24 +100,12 @@ func (s *Service) EnsureRealOwn(guid, address, owner string) error {
 
 // onCard says whether the real card has address now.
 func (s *Service) onCard(guid, address string) bool {
-	adapters, err := s.Windows.Adapters()
-	if err != nil {
-		return false
-	}
-	for _, adapter := range adapters {
-		if strings.EqualFold(adapter.GUID, guid) {
-			for _, item := range adapter.Addresses {
-				if item.IP == address {
-					return true
-				}
-			}
-		}
-	}
-	return false
+	return s.addressesOn(guid)[address]
 }
 
-// releaseReal takes approved addresses off every real card unless a running IED of the project's
-// card uses them: after Stop, at launch (a crash left them) and at exit.
+// releaseReal takes the approved addresses ScadaBench added (journaled, A6) off every real card
+// unless a running IED of the project's card uses them: after Stop, at launch (a crash left them)
+// and at exit.
 func (s *Service) releaseReal() {
 	if s.Windows.Approved == nil {
 		return
@@ -143,11 +131,15 @@ func (s *Service) releaseReal() {
 			}
 		}
 	}
+	outstanding := s.outstandingReal()
 	for _, adapter := range adapters {
 		guid := strings.ToUpper(adapter.GUID)
+		s.settleGone(adapter, outstanding)
 		var off []string
 		for _, address := range adapter.Addresses {
-			if approved[guid][address.IP] > 0 && !keep[guid+" "+address.IP] {
+			// The service's own addresses are never source addresses; the card's own address is.
+			ours := outstanding[realKey(guid, address.IP)] && address.SkipAsSource
+			if approved[guid][address.IP] > 0 && ours && !keep[guid+" "+address.IP] {
 				off = append(off, address.IP)
 			}
 		}

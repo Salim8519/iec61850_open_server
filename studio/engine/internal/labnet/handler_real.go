@@ -126,6 +126,9 @@ func changeReal(real RealOps, card RealCard, op, ip string, approved map[string]
 		}
 		return append(own, ip), nil
 	case op == OpRemove && present:
+		if card.DHCP { // the card's own address from DHCP: never taken off (fix plan A6)
+			return own, errors.New("“" + card.Name + "” gets its address automatically (DHCP); nothing was removed")
+		}
 		if err := real.RemoveReal(card, ip); err != nil {
 			return own, errors.New("Windows did not remove " + ip + ": " + err.Error())
 		}

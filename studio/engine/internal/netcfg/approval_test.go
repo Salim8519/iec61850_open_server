@@ -67,3 +67,19 @@ func TestApprovalCommandsKeyAndValidation(t *testing.T) {
 		t.Fatalf("description %s", text)
 	}
 }
+
+// Clean up takes an approved address off only while it is still the service's (fix plan A6): an
+// address Windows saved (set by the user) or one on a DHCP card stays.
+func TestApprovalRemovalLeavesTheCardsOwnAddress(t *testing.T) {
+	remove, _ := RemoveCommand(aliasItem("192.168.230.21", "add").Set("kind", ApprovalKind))
+	for _, part := range []string{"-IPAddress 192.168.230.21 -PolicyStore PersistentStore",
+		"-IPAddress 192.168.230.21 -PolicyStore ActiveStore", "$_.SkipAsSource", "$_.PrefixOrigin -eq 'Manual'",
+		"-not $kept", "Get-NetIPInterface -InterfaceIndex 15 -AddressFamily IPv4", "$dhcp -ne 'Enabled'"} {
+		if !strings.Contains(remove, part) {
+			t.Fatalf("remove %s lacks %s", remove, part)
+		}
+	}
+	if strings.Index(remove, "Where-Object") > strings.Index(remove, "Remove-NetIPAddress") {
+		t.Fatalf("the address is removed before it is checked: %s", remove)
+	}
+}

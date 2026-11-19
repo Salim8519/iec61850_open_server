@@ -56,11 +56,18 @@ func approvalApply(f *itemFields) string {
 		" -Value " + f.integer("prefix") + " -PropertyType DWord -Force"
 }
 
-// approvalRemove deletes the approval and the address, if it is on the card now.
+// approvalRemove deletes the approval and the address only while it is still the one the network
+// service put there (fix plan A6): manual, never a source address, not saved by Windows, on a
+// card that does not use DHCP. An address the user or DHCP gave the card since stays.
 func approvalRemove(f *itemFields) string {
+	index, ip := f.integer("adapter_index"), f.text("ip")
 	return "Remove-ItemProperty -Path " + psString(approvalPath) + " -Name " + approvalName(f) +
-		" -ErrorAction SilentlyContinue; Get-NetIPAddress -InterfaceIndex " + f.integer("adapter_index") +
-		" -IPAddress " + f.text("ip") + " -ErrorAction SilentlyContinue | Remove-NetIPAddress -Confirm:$false"
+		" -ErrorAction SilentlyContinue; $dhcp = (Get-NetIPInterface -InterfaceIndex " + index +
+		" -AddressFamily IPv4 -ErrorAction SilentlyContinue).Dhcp; $kept = Get-NetIPAddress -InterfaceIndex " + index +
+		" -IPAddress " + ip + " -PolicyStore PersistentStore -ErrorAction SilentlyContinue; " +
+		"Get-NetIPAddress -InterfaceIndex " + index + " -IPAddress " + ip + " -PolicyStore ActiveStore " +
+		"-ErrorAction SilentlyContinue | Where-Object { $_.SkipAsSource -and $_.PrefixOrigin -eq 'Manual' " +
+		"-and -not $kept -and $dhcp -ne 'Enabled' } | Remove-NetIPAddress -Confirm:$false"
 }
 
 func describeApproval(f *itemFields) string {

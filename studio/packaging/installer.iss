@@ -77,6 +77,58 @@ Filename: "{sys}\taskkill.exe"; Parameters: "/F /IM scadabench_hostkey.exe"; Fla
 Filename: "{sys}\reg.exe"; Parameters: "delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v ScadaBenchVMHost /f"; Flags: runhidden; RunOnceId: "RemoveVmHelperRun"
 
 [Code]
+// The data folder the app uses: a "data" folder beside the program, else the user's own folder.
+function DataFolder(): String;
+begin
+  Result := ExpandConstant('{app}\data');
+  if not DirExists(Result) then
+    Result := ExpandConstant('{localappdata}\ScadaBench\data');
+end;
+
+// The reason the lab network program wrote to its result file ('' when there is none).
+function ResultMessage(const FileName: String): String;
+var
+  Content: AnsiString;
+  Start: Integer;
+begin
+  Result := '';
+  if not LoadStringFromFile(FileName, Content) then
+    Exit;
+  Start := Pos('"message":"', Content);
+  if Start = 0 then
+    Exit;
+  Result := Copy(Content, Start + 11, Length(Content));
+  Start := Pos('"', Result);
+  if Start > 0 then
+    Result := Copy(Result, 1, Start - 1);
+end;
+
+// The firewall rules ScadaBench added and the Windows rules it switched off are in its network
+// journal. When the user agrees (the default), the lab network program undoes exactly those with
+// one administrator prompt; a failure is reported, never ignored. User data stays.
+procedure UndoFirewallChanges();
+var
+  ExitCode: Integer;
+  Data: String;
+begin
+  Data := DataFolder();
+  if not FileExists(Data + '\network\journal.jsonl') then
+    Exit;
+  if SuppressibleMsgBox('Also remove the firewall rules ScadaBench added and switch Windows'' own rules back on?',
+       mbConfirmation, MB_YESNO, IDYES) <> IDYES then
+    Exit;
+  if not ShellExec('runas', ExpandConstant('{app}\_internal\native\scadabench_labnet.exe'),
+       ExpandConstant('firewall --result "{tmp}\labnet-firewall.json" --data "') + Data + '"',
+       '', SW_HIDE, ewWaitUntilTerminated, ExitCode) then
+    SuppressibleMsgBox('Windows administrator permission was not given, so the firewall rules ScadaBench added ' +
+      'were not removed. You can remove them in Windows Defender Firewall (rules named ScadaBench or ' +
+      'SubstationStudio).', mbError, MB_OK, IDOK)
+  else if ExitCode <> 0 then
+    SuppressibleMsgBox('Some firewall changes ScadaBench made could not be undone (code ' + IntToStr(ExitCode) +
+      '). ' + ResultMessage(ExpandConstant('{tmp}\labnet-firewall.json')) + ' Check Windows Defender Firewall ' +
+      'for rules named ScadaBench or SubstationStudio.', mbError, MB_OK, IDOK);
+end;
+
 // The lab network (ADR-0120) exists only after "Create the lab network card"; its service runs from
 // Program Files, so uninstalling ScadaBench removes service, program and card with one administrator
 // prompt, and only when the service is there.
@@ -84,6 +136,8 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   ExitCode: Integer;
 begin
+  if CurUninstallStep = usUninstall then
+    UndoFirewallChanges();
   if (CurUninstallStep = usUninstall) and
      RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\ScadaBenchLabNet') then
     ShellExec('runas', ExpandConstant('{app}\_internal\native\scadabench_labnet.exe'),

@@ -20,13 +20,15 @@ func onEthernet(t *testing.T) (*pc, *Service, *[]string) {
 	p.ieds[0].LabIP, p.ieds[1].LabIP = "192.168.40.21", "192.168.40.22"
 	p.version = "3"
 	s := p.service()
+	s.Journal = netcfg.NewJournal(t.TempDir()) // what ScadaBench added is journaled (A6)
 	ethernet, requests := map[string]bool{"192.168.40.111": true}, &[]string{}
 	inner, call := s.Windows.Adapters, s.Windows.Call
 	s.Windows.Adapters = func() ([]netcfg.Adapter, error) {
 		adapters, err := inner()
 		adapters[1].Addresses = nil
 		for address := range ethernet {
-			adapters[1].Addresses = append(adapters[1].Addresses, netcfg.Address{IP: address, Prefix: 24})
+			adapters[1].Addresses = append(adapters[1].Addresses, netcfg.Address{IP: address, Prefix: 24,
+				SkipAsSource: address != "192.168.40.111"}) // the service adds them as never-source
 		}
 		return adapters, err
 	}
