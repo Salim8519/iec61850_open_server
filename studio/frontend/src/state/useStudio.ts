@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, connectSession, upload } from '../api/client';
 import type { Diagram, Project, StudioEvent } from '../api/types';
 import type { ImportPreview } from '../features/ieds/ImportSelection';
-import { sameEngineering } from './diagramHistory';
 import { useHistory } from './useHistory';
 import { saveProjectAs } from './saveProjectAs';
 import { PROJECT_FILE_COPY } from '../copy/projectFile';
@@ -14,6 +13,8 @@ import { coalesce } from './coalesce';
 import { deliverLive, openEventStream, RELOADS, type StudioStream } from './eventStream';
 import { liveData } from './liveData';
 import { useWork } from './workSteps';
+import { createBusyCount } from './busyCount';
+import { createDiagramSave, keepLocalEdit, SAVED } from './diagramSave';
 import { fileKind, OLD_PROJECT_MESSAGE } from './projectFile';
 import { friendlyImportError } from '../copy/devices';
 import { rememberIedNames } from '../features/event-log/iedNames';
@@ -25,54 +26,33 @@ export function useStudio() {
   const steps = useWork();
   // What the running task is doing, in words, so a slow action never looks frozen (change 0105).
   const [working, setWorking] = useState('');
-  const [saveState, setSaveState] = useState('All changes saved');
+  const [saveState, setSaveState] = useState(SAVED);
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const equipmentValues = useMemo(() => new EquipmentValueStore(), []);
   const energization = useMemo(() => new EnergizationStore(), []);
   const signalLayers = useMemo(() => new SignalLayerStore(), []);
   const tabId = useRef(crypto.randomUUID());
   const current = useRef<Project | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const saveQueue = useRef<Promise<void>>(Promise.resolve());
-  const saveGeneration = useRef(0);
   const apply = useCallback((value: Project) => {
     current.current = value; setProject(value); rememberIedNames(value.ieds);  // Activity names IEDs (0177)
   }, []);
   // One GET /project in flight and one waiting at most, however many events ask (speed lane F).
   // When the last project read started (browser clock = the backend's clock: both run on this PC).
   const readAt = useRef(0);
-  const refresh = useMemo(() => coalesce(async () => { readAt.current = Date.now(); apply(await api<Project>('/project')); }), [apply]);
+  // A read keeps a drawing edit that is not saved yet (fix plan A1); only a conflict reads it back (A2).
+  const diagramSave = useMemo(() => createDiagramSave({ project: () => current.current, tabId: tabId.current,
+    show: value => { current.current = value; setProject(value); }, status: setSaveState, error: setError,
+    put: body => api<{ revision: number }>('/project/diagram', 'PUT', body), reload: (): Promise<void> => refresh() }), []);
+  const refresh = useMemo(() => coalesce(async () => {
+    readAt.current = Date.now();
+    const read = await api<Project>('/project');
+    apply(keepLocalEdit(read, current.current, diagramSave.pending()));
+  }), [apply, diagramSave]);
   const hydrateEquipment = useCallback(async () => {
     const result = await api<{ states: { node_id: string; value: unknown }[]; energization: Energization }>('/equipment/states');
     equipmentValues.replace(result.states); energization.set(result.energization);
   }, [equipmentValues, energization]);
-  const saveDiagram = useCallback(async () => {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = null;
-    if (!current.current || current.current.runtime !== 'stopped') return;
-    const diagram = current.current.diagram;
-    const generation = saveGeneration.current;
-    saveQueue.current = saveQueue.current.catch(() => {}).then(async () => {
-      if (generation !== saveGeneration.current) return;
-      const active = current.current;
-      if (!active || active.runtime !== 'stopped') return;
-      try {
-        const result = await api<{ revision: number }>('/project/diagram', 'PUT', {
-          diagram, revision: active.revision, tab_id: tabId.current,
-        });
-        if (current.current?.session_id === active.session_id) {
-          const updated = { ...current.current, revision: result.revision };
-          current.current = updated; setProject(updated);
-        }
-      } catch (reason) {
-        saveGeneration.current += 1;
-        await refresh();
-        throw reason;
-      }
-    });
-    await saveQueue.current;
-    if (generation === saveGeneration.current) setSaveState('All changes saved');
-  }, [refresh]);
+  const saveDiagram = diagramSave.save;
 
   useEffect(() => {
     let disposed = false;
@@ -106,10 +86,8 @@ export function useStudio() {
             const updated = { ...current.current, revision: Number(event.revision) };
             current.current = updated; setProject(updated);
           } else if (change === 'other') {
-            saveGeneration.current += 1;
-            if (timer.current) clearTimeout(timer.current);
-            timer.current = null;
-            setSaveState('All changes saved');
+            diagramSave.drop();
+            setSaveState(SAVED);
             refresh().catch(fail);
           }
         }
@@ -122,30 +100,17 @@ export function useStudio() {
         }
       } });
     }).catch(fail);
-    return () => { disposed = true; stream?.close(); if (timer.current) clearTimeout(timer.current); };
-  }, [equipmentValues, energization, signalLayers, hydrateEquipment, refresh]);
+    return () => { disposed = true; stream?.close(); diagramSave.dispose(); };
+  }, [equipmentValues, energization, signalLayers, hydrateEquipment, refresh, diagramSave]);
 
-  const perform = useCallback(async (task: () => Promise<unknown>, label = 'Working…') => {
-    setBusy(true); setError(''); setWorking(label);
-    try { await task(); await refresh(); }
-    catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); setWorking(''); }
-  }, [refresh]);
+  // Busy until the last overlapping action ends; the first failure is shown (fix plan A16).
+  const work = useMemo(() => createBusyCount({ busy: setBusy, working: setWorking, error: setError }), []);
+  const perform = useCallback((task: () => Promise<unknown>, label = 'Working…') =>
+    work(async () => { await task(); await refresh(); }, label), [work, refresh]);
 
   // Each saved diagram edit is one Undo step in the engine (ADR-0135); quick edits of the same
   // thing join there, so the gesture group is not needed here.
-  const updateDiagram = useCallback((diagram: Diagram, _group?: string) => {
-    if (!current.current || current.current.runtime !== 'stopped') return;
-    const unchanged = sameEngineering(diagram, current.current.diagram);
-    const edited = { ...current.current, diagram };
-    current.current = edited; setProject(edited);
-    if (unchanged) return;
-    setSaveState('Saving...');
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => saveDiagram().catch(reason => {
-      setSaveState('Not saved'); setError(reason.message);
-    }), 400);
-  }, [saveDiagram]);
+  const updateDiagram = useCallback((diagram: Diagram, _group?: string) => diagramSave.edit(diagram), [diagramSave]);
 
   const history = useHistory(project, perform, saveDiagram);
   // File › Save as…: the Windows Save dialog (or a named download) with what is on screen saved first.
@@ -158,15 +123,13 @@ export function useStudio() {
   const replaceProject = useCallback(async (mode: 'new' | 'close', name: string) => {
     let done = false;
     await perform(async () => {
-      saveGeneration.current += 1;
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = null;
+      diagramSave.drop();
       await api(mode === 'new' ? '/project/new' : '/project/close', 'POST', mode === 'new' ? { name } : undefined);
       liveData().values.clear(); equipmentValues.clear(); energization.clear();
-      setSaveState('All changes saved'); done = true;
+      setSaveState(SAVED); done = true;
     }, mode === 'new' ? 'Starting a new project…' : 'Closing the project…');
     return done;
-  }, [perform, equipmentValues, energization]);
+  }, [perform, equipmentValues, energization, diagramSave]);
 
   const runtime = (action: string) => perform(async () => {
     if (current.current?.runtime === 'stopped') await saveDiagram();

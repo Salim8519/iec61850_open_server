@@ -10,13 +10,16 @@ import { SegmentedControl } from '../../ui/SegmentedControl';
 import { StatusPill } from '../../ui/StatusPill';
 import { withCommands } from './allowCommands';
 import { DeviceCommandCheck } from './DeviceCommandCheck';
+import { draftKey } from './liveDraft';
 
 /** How ScadaBench reaches a real IED: it reads values here; gateway commands need Allow commands (ADR-0138). */
 export function DeviceConnection({ ied, session, locked, perform }: {
   ied: Ied; session?: LiveSession; locked: boolean; perform: (task: () => Promise<unknown>) => Promise<void>;
 }) {
   const [draft, setDraft] = useState<LiveSettings>(ied.live);
-  useEffect(() => setDraft(ied.live), [ied.id, ied.live]);
+  const saved = draftKey(ied.id, ied.live);
+  // Reset only for another IED or new saved values, not for every project read (fix plan A17).
+  useEffect(() => setDraft(ied.live), [saved]);
   const scd = ied.scl_address?.ip || '';
   const changed = JSON.stringify(draft) !== JSON.stringify(ied.live);
   return <div className="stack">

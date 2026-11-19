@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './app/App';
 import { LicenseBoundary } from './features/license/LicenseBoundary';
+import { ErrorBoundary } from './app/ErrorBoundary';
 import { initPerf } from './app/perf';
 import { installFit } from './app/installFit';
 import { api } from './api/client';
@@ -21,5 +22,5 @@ installFit();
 // Go engine: one push stream per tab replaces polling; Python keeps polling (capabilities 404).
 installPushClient({ feed: liveFeed, put: body => api('/push/topics', 'PUT', body) });
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode><LicenseBoundary><App /></LicenseBoundary></React.StrictMode>,
+  <React.StrictMode><ErrorBoundary><LicenseBoundary><App /></LicenseBoundary></ErrorBoundary></React.StrictMode>,
 );
