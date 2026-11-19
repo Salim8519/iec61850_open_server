@@ -110,7 +110,8 @@ virtual network can never reach the license server.
   nothing (machine ID); copying `host_key.dpapi` does nothing (DPAPI); a stolen certificate cannot answer
   for another VM or another nonce (the signature covers both); a recorded answer is useless for another
   request (fresh nonce per request, machine ID inside the signature).
-- **Why the VM needs no VM detection.** A physical PC behind a licensed host on a virtual switch could use a
+- **Superseded by [ADR-0140](ADR-0140-fix-plan-safety-decisions.md):** the asking computer must be a VM.
+  **Why the VM needs no VM detection (original).** A physical PC behind a licensed host on a virtual switch could use a
   host proof too, which is harmless: the host is the license owner's own PC.
 - **A cancelled license** stops being answered by the host as soon as the host learns of it (its own online
   check, ADR-0097), so a VM loses it within 24 h at the latest. The VM learns nothing from the server.
