@@ -39,9 +39,12 @@ func newRunning(model *iedModel, table *valueTable, ied *pyjson.Object) *running
 func (r *running) simulated() bool { return r.model.role == "simulated" }
 
 func (r *running) startActor() {
-	r.jobs = make(chan func(), 16)
+	jobs := make(chan func(), 16)
+	r.mu.Lock() // do reads jobs under the same lock
+	r.jobs = jobs
+	r.mu.Unlock()
 	go func() {
-		for job := range r.jobs {
+		for job := range jobs {
 			job()
 		}
 	}()

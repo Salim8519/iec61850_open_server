@@ -83,8 +83,9 @@ func (c *Coordinator) SetControlChecks(iedID, ref string, checks *pyjson.Object)
 	}
 	c.mu.Lock()
 	item := c.runs[iedID]
+	ready := item != nil && item.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if item == nil || item.worker == nil {
+	if !ready {
 		return apperr.ValueError("IED is not running")
 	}
 	_, err = item.worker.Request("control_checks", native.DefaultTimeout, fields)

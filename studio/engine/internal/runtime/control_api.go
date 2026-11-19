@@ -23,8 +23,9 @@ func (c *Coordinator) OperateControl(iedID, ref string, value any) (*pyjson.Obje
 	c.access.markOwn(iedID, ref)
 	c.mu.Lock()
 	item, state := c.runs[iedID], c.iedStates[iedID]
+	ready := item != nil && item.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if item == nil || item.worker == nil {
+	if !ready {
 		return nil, apperr.ValueError("IED is not running")
 	}
 	return c.commands.operate(ied, state, ref, value, item.host, item.port)

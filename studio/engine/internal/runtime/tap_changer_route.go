@@ -111,8 +111,9 @@ func (c *Coordinator) sendSpc(ied *pyjson.Object, ref string, value bool) (*pyjs
 	c.access.markOwn(iedID, ref)
 	c.mu.Lock()
 	run, state := c.runs[iedID], c.iedStates[iedID]
+	ready := run != nil && run.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if run == nil || run.worker == nil {
+	if !ready {
 		return nil, apperr.ValueError("IED is not running")
 	}
 	return c.commands.operate(ied, state, ref, value, run.host, run.port)

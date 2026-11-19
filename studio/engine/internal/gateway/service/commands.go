@@ -6,43 +6,7 @@ import (
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/pytext"
-	"studio-engine/internal/tools/worker"
 )
-
-type job struct {
-	process worker.Process
-	event   *pyjson.Object
-}
-
-// executor is CommandExecutor: one goroutine runs SCADA commands in arrival order.
-type executor struct {
-	manager *Manager
-	jobs    chan job
-}
-
-func newExecutor(manager *Manager) *executor {
-	e := &executor{manager: manager, jobs: make(chan job, 1024)}
-	go e.loop()
-	return e
-}
-
-func (e *executor) submit(process worker.Process, event *pyjson.Object) {
-	select {
-	case e.jobs <- job{process, event}:
-	default:
-		go func() { e.jobs <- job{process, event} }() // never block the worker's reader
-	}
-}
-
-func (e *executor) loop() {
-	for next := range e.jobs {
-		ok, reason := e.run(next.event)
-		if next.process != nil {
-			next.process.Request("command_result", worker.DefaultTimeout, pyjson.NewObject().
-				Set("token", get(next.event, "token")).Set("ok", ok).Set("reason", reason))
-		}
-	}
-}
 
 // run executes one command and never fails: (ok, plain reason).
 func (e *executor) run(event *pyjson.Object) (ok bool, reason string) {

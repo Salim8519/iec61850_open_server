@@ -21,9 +21,10 @@ func (c *Coordinator) findNode(nodeID string) (*pyjson.Object, error) {
 func (c *Coordinator) validateTarget(binding plant.Binding) (*running, error) {
 	c.mu.Lock()
 	item := c.runs[binding.IedID]
+	ready := item != nil && item.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if item != nil {
-		if info, ok := item.model.lookup(binding.Ref); ok && info.Writable && info.FC != "CF" && item.worker != nil {
+	if ready {
+		if info, ok := item.model.lookup(binding.Ref); ok && info.Writable && info.FC != "CF" {
 			return item, nil
 		}
 	}
@@ -126,8 +127,9 @@ func (c *Coordinator) command(nodeID string, plan commandPlan, options CommandOp
 	c.access.markOwn(iedID, controlRef)
 	c.mu.Lock()
 	item, state := c.runs[iedID], c.iedStates[iedID]
+	ready := item != nil && item.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if item == nil || item.worker == nil {
+	if !ready {
 		return nil, apperr.ValueError("IED is not running")
 	}
 	result, used, err := c.sendEquipment(nodeID, plan, options, state, item)

@@ -27,7 +27,7 @@ func (c *Client) Typed(op string, fields *pyjson.Object) (*pyjson.Object, error)
 	if !hasCapability(hello, "typed_commands") {
 		return nil, apperr.RuntimeError("The control program is outdated; rebuild the native programs")
 	}
-	answer, err := process.Request(op, OperateTimeout, fields)
+	answer, err := c.request(process, op, fields)
 	if err != nil {
 		return nil, err
 	}

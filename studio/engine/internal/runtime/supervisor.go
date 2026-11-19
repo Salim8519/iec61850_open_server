@@ -126,30 +126,33 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 	if err != nil {
 		return apperr.RuntimeError(err.Error())
 	}
-	item.worker = worker
-	item.startActor()
 	point := effectiveEndpoint(item.ied, network)
 	request := startRequest(item, absolute, point, gooseRequest(item.ied, bus))
 	started, err := worker.StartModel(request)
 	if err != nil {
+		worker.Close() // never published, so stopWorkers would not find it
 		return err
 	}
-	item.host, item.port = point.host, portNumber(point.port)
-	if host, ok := started.Get("ip"); ok {
-		item.host, _ = host.(string)
+	host, port := point.host, portNumber(point.port)
+	if value, ok := started.Get("ip"); ok {
+		host, _ = value.(string)
 	}
-	if port, ok := started.Get("port"); ok {
-		item.port = portNumber(port)
+	if value, ok := started.Get("port"); ok {
+		port = portNumber(value)
 	}
 	goose, ok := started.Get("goose")
 	if !ok {
 		goose = pyjson.NewObject()
 	}
+	// Publish the worker under the lock only once its model started: until then commands
+	// and sample writes find "IED is not running".
 	c.mu.Lock()
+	item.worker, item.host, item.port = worker, host, port
 	c.gooseStates[id] = goose
 	c.endpoints[id] = endpoint{item.host, item.port}
 	c.hub.notify(Change{IEDID: id})
 	c.mu.Unlock()
+	item.startActor()
 	if err := writeStartValues(item, worker); err != nil {
 		return err
 	}

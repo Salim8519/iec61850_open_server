@@ -3,12 +3,15 @@ package realcmd
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
+	"sync"
 	"time"
 
 	"studio-engine/internal/apperr"
 	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
+	"studio-engine/internal/tools/worker"
 )
 
 // Session is the live connection of one real IED (acquisition.RealSession).
@@ -25,6 +28,9 @@ type Service struct {
 	Emit     func(kind string, payload *pyjson.Object)
 	Observe  time.Duration // how long the feedback may take; 3 s when zero
 	Poll     time.Duration // between feedback reads; 500 ms when zero
+
+	mu       sync.Mutex
+	inFlight map[string]bool // IED id + reference of the commands still running
 }
 
 // Operate sends one confirmed command and returns {ok, summary, result, observed, changed,
@@ -46,12 +52,24 @@ func (s *Service) Operate(key, ref string, value any, confirmed bool) (*pyjson.O
 	if s.Control == nil {
 		return nil, apperr.RuntimeError("Commands are not available in this copy of ScadaBench")
 	}
+	if !s.begin(iedID, ref) {
+		return nil, apperr.ValueError("A command to " + ref + " on " + text(ied, "name") +
+			" is still running; wait for its result")
+	}
+	defer s.end(iedID, ref)
 	command := controlOf(ied, ref)
 	host, port, _ := netset.RealEndpoint(ied)
 	correlation := newID()
 	s.Emit("real_command_requested", pyjson.NewObject().Set("ied_id", iedID).Set("ref", ref).Set("value", value).
 		Set("correlation_id", correlation).Set("origin", "devices"))
 	result, err := s.Control.Operate(hostText(host), port, ref, value, pyjson.NewObject().Set("originator", "station"))
+	var timeout *worker.Timeout
+	if errors.As(err, &timeout) { // the worker is gone, but the device may have operated
+		reason := text(ied, "name") + " did not answer in time; result unknown — check the position before trying again"
+		s.Emit("real_command_unknown", pyjson.NewObject().Set("ied_id", iedID).Set("ref", ref).
+			Set("correlation_id", correlation).Set("reason", reason))
+		return nil, apperr.RuntimeError(reason)
+	}
 	if err != nil {
 		s.Emit("real_command_failed", pyjson.NewObject().Set("ied_id", iedID).Set("ref", ref).
 			Set("correlation_id", correlation).Set("reason", err.Error()))
@@ -97,6 +115,27 @@ func (s *Service) observe(session Session, status string, want any) (string, boo
 		}
 		time.Sleep(pause)
 	}
+}
+
+// begin marks a command to this IED and reference as running; false when one already is.
+func (s *Service) begin(iedID, ref string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	key := iedID + "\x00" + ref
+	if s.inFlight[key] {
+		return false
+	}
+	if s.inFlight == nil {
+		s.inFlight = map[string]bool{}
+	}
+	s.inFlight[key] = true
+	return true
+}
+
+func (s *Service) end(iedID, ref string) {
+	s.mu.Lock()
+	delete(s.inFlight, iedID+"\x00"+ref)
+	s.mu.Unlock()
 }
 
 func hostText(host any) string { value, _ := host.(string); return value }

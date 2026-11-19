@@ -188,8 +188,13 @@ func (s *RealSession) chooseAccess(process Worker, blocks *pyjson.Object, access
 }
 
 // live is the connected loop: poll the uncovered points every poll_ms and re-read the mode
-// every 10 s until Stop or a lost connection.
-func (s *RealSession) live() error {
+// every 10 s until Stop, a lost connection or an error; the last two mark the values stale.
+func (s *RealSession) live() (err error) {
+	defer func() { // a read error, a failed mode read or a lost connection: never "fresh"
+		if err != nil {
+			s.values.MarkStale(s.ID(), err.Error())
+		}
+	}()
 	polling := pyv.List(s.get("polling"))
 	used := len(pyv.GetList(pyv.Obj(s.get("access")), "reports")) > 0
 	how := "Connected. Use 'Read these now' below to read values from the device"
@@ -224,7 +229,6 @@ func (s *RealSession) live() error {
 		}
 	}
 	if closed(lost) {
-		s.values.MarkStale(s.ID(), errLost.Error())
 		return errLost
 	}
 	return nil

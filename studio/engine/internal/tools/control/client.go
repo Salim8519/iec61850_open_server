@@ -1,6 +1,7 @@
 package control
 
 import (
+	"errors"
 	"os"
 	"sync"
 	"time"
@@ -81,7 +82,7 @@ func (c *Client) Operate(host string, port any, reference string, value any, opt
 		item, _ := settings.Get(key)
 		fields.Set(key, item)
 	}
-	answer, err := process.Request("operate", OperateTimeout, fields)
+	answer, err := c.request(process, "operate", fields)
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +91,24 @@ func (c *Client) Operate(host string, port any, reference string, value any, opt
 		return pyjson.NewObject(), nil
 	}
 	return result, nil
+}
+
+// request sends one command step (caller holds c.mu). With no answer in time the device's
+// result is unknown: the worker is killed so it can never finish the command later, and the
+// next command starts a fresh one. The *worker.Timeout is returned unchanged.
+func (c *Client) request(process worker.Process, op string, fields *pyjson.Object) (any, error) {
+	answer, err := process.Request(op, OperateTimeout, fields)
+	var timeout *worker.Timeout
+	if errors.As(err, &timeout) {
+		if killer, ok := process.(interface{ Kill() }); ok {
+			killer.Kill()
+		}
+		process.Close()
+		if c.process == process {
+			c.process = nil
+		}
+	}
+	return answer, err
 }
 
 // Close stops the warm worker.

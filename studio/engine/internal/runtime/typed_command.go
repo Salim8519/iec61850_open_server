@@ -44,8 +44,9 @@ func (c *Coordinator) typedControl(iedID, ref string) (*typedTarget, error) {
 	}
 	c.mu.Lock()
 	item, state := c.runs[iedID], c.iedStates[iedID]
+	ready := item != nil && item.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if item == nil || item.worker == nil || state != "running" {
+	if !ready || state != "running" {
 		return nil, apperr.ValueError("IED must be running to operate equipment")
 	}
 	target := &typedTarget{host: item.host, port: item.port}

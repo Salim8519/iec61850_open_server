@@ -68,12 +68,15 @@ func (c *Coordinator) addIeds(ids []string) error {
 		return err
 	}
 	if err := c.publishBindings(project, ids2); err != nil {
+		c.forget(items) // never leave a half-added IED running
 		return err
 	}
 	if err := c.applyInitialStates(project, ids2); err != nil {
+		c.forget(items) // never leave a half-added IED running
 		return err
 	}
 	if err := c.applyTestModes(project, ids2); err != nil {
+		c.forget(items) // never leave a half-added IED running
 		return err
 	}
 	c.plant.publishAll()

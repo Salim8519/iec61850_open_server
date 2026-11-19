@@ -35,12 +35,11 @@ func (w *Worker) call(op string, fields *pyjson.Object, timeout time.Duration) (
 	}
 	w.pending[id] = response
 	w.mu.Unlock()
+	timer := time.NewTimer(timeout)
+	defer timer.Stop()
 	frame, err := EncodeFrame(message)
 	if err == nil {
-		// The pipe has its own lock so the dispatcher never waits behind a write.
-		w.writeMu.Lock()
-		_, err = w.stdin.Write(frame)
-		w.writeMu.Unlock()
+		err = w.write(op, frame, timer.C)
 	}
 	if err != nil {
 		w.mu.Lock()
@@ -49,6 +48,9 @@ func (w *Worker) call(op string, fields *pyjson.Object, timeout time.Duration) (
 		if frameError, ok := err.(*FrameError); ok {
 			return nil, apperr.ValueError(frameError.Message)
 		}
+		if IsTimeout(err) {
+			return nil, err
+		}
 		return nil, apperr.RuntimeError(err.Error())
 	}
 	defer func() {
@@ -56,13 +58,31 @@ func (w *Worker) call(op string, fields *pyjson.Object, timeout time.Duration) (
 		delete(w.pending, id)
 		w.mu.Unlock()
 	}()
-	timer := time.NewTimer(timeout)
-	defer timer.Stop()
 	select {
 	case reply := <-response:
 		return replyResult(reply)
 	case <-timer.C:
 		return nil, newTimeout(op)
+	}
+}
+
+// write sends one frame within the request's deadline; the pipe has its own lock so the
+// dispatcher never waits behind a write. A worker that does not take the frame in time is
+// killed: it may be half written, and a late command must never run.
+func (w *Worker) write(op string, frame []byte, deadline <-chan time.Time) error {
+	written := make(chan error, 1)
+	go func() {
+		w.writeMu.Lock()
+		_, err := w.stdin.Write(frame)
+		w.writeMu.Unlock()
+		written <- err
+	}()
+	select {
+	case err := <-written:
+		return err
+	case <-deadline:
+		_ = w.command.Process.Kill()
+		return newTimeout(op)
 	}
 }
 

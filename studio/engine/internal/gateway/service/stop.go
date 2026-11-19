@@ -69,11 +69,17 @@ func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
 	if sync != nil {
 		sync.close()
 	}
+	m.executor.drain() // waiting SCADA commands are refused, never sent after Stop
 	if process != nil {
 		_, err := process.Request("halt", 10*time.Second, nil)
 		process.Close()
 		if err != nil {
-			return nil, err // Python lets the halt error through and keeps the old state
+			// Python keeps the old state here; the process is gone, so never show "running".
+			m.mu.Lock()
+			m.state, m.message, m.clients = "stopped", "The gateway program did not stop cleanly: "+err.Error(), map[string]bool{}
+			m.mu.Unlock()
+			m.own.reset(nil)
+			return nil, err
 		}
 		m.Traffic.Add(pyjson.NewObject().Set("dir", "info").Set("peer", "").Set("text", "Gateway stopped"))
 		m.emit("gateway_stopped", pyjson.NewObject())

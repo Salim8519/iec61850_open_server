@@ -34,7 +34,8 @@ type process struct {
 	command  *exec.Cmd
 	stdin    *os.File
 	onEvent  func(*pyjson.Object)
-	mu       sync.Mutex // writes and the pending table, like Python's RLock
+	mu       sync.Mutex // the pending table
+	writeMu  sync.Mutex // one frame at a time on stdin; never held by the reader
 	pending  map[string]chan *pyjson.Object
 	closing  bool
 	exited   chan struct{}
@@ -174,17 +175,12 @@ func (p *process) Request(op string, timeout time.Duration, fields *pyjson.Objec
 		return nil, apperr.RuntimeError("Native worker exited: " + strconv.Itoa(p.command.ProcessState.ExitCode()))
 	}
 	frame, err := encodeFrame(message)
-	if err == nil {
-		p.pending[id.(string)] = response
-		_, err = p.stdin.Write(frame)
-		if err != nil {
-			delete(p.pending, id.(string))
-		}
-	}
-	p.mu.Unlock()
 	if err != nil {
+		p.mu.Unlock()
 		return nil, err
 	}
+	p.pending[id.(string)] = response
+	p.mu.Unlock()
 	defer func() {
 		p.mu.Lock()
 		delete(p.pending, id.(string))
@@ -192,6 +188,9 @@ func (p *process) Request(op string, timeout time.Duration, fields *pyjson.Objec
 	}()
 	timer := time.NewTimer(timeout)
 	defer timer.Stop()
+	if err := p.write(op, frame, timer.C); err != nil {
+		return nil, err
+	}
 	select {
 	case reply := <-response:
 		if ok, _ := reply.Get("ok"); !pytext.Truthy(ok) {
@@ -207,6 +206,28 @@ func (p *process) Request(op string, timeout time.Duration, fields *pyjson.Objec
 		return nil, &Timeout{Op: op}
 	}
 }
+
+// write sends one frame within the request's deadline. A worker that does not take it in
+// time is killed: the frame may be half written, and a late command must never run.
+func (p *process) write(op string, frame []byte, deadline <-chan time.Time) error {
+	written := make(chan error, 1)
+	go func() {
+		p.writeMu.Lock()
+		_, err := p.stdin.Write(frame)
+		p.writeMu.Unlock()
+		written <- err
+	}()
+	select {
+	case err := <-written:
+		return err
+	case <-deadline:
+		p.Kill()
+		return &Timeout{Op: op}
+	}
+}
+
+// Kill ends the worker at once (a command whose result can no longer be waited for).
+func (p *process) Kill() { p.command.Process.Kill() }
 
 // Close stops the worker politely (stop, 3 s), then terminates it (3 s), then kills it.
 func (p *process) Close() {

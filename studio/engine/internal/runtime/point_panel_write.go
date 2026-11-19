@@ -120,8 +120,9 @@ func (c *Coordinator) pointSend(nodeID string, ied *pyjson.Object, point panelPo
 	c.access.markOwn(iedID, point.ref)
 	c.mu.Lock()
 	run, state := c.runs[iedID], c.iedStates[iedID]
+	ready := run != nil && run.worker != nil // published under c.mu (launch)
 	c.mu.Unlock()
-	if run == nil || run.worker == nil {
+	if !ready {
 		return nil, apperr.ValueError("IED is not running")
 	}
 	answer, err := c.sendPoint(nodeID, ied, point, control, typed, state, run)
