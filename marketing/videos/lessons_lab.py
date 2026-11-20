@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 
-from lessons_basics import button, import_station, run_all
+from lessons_basics import button, import_station, nav, run_all
 
 MOVED = "192.168.216.1"
 
@@ -56,4 +56,8 @@ def lab_network(d, page, data) -> None:
     reply = page.get_by_text(re.compile(rf"^Reply from {re.escape(MOVED)}"))
     reply.first.wait_for(timeout=30000)
     d.point(reply, pause=1.0)
+    d.click(nav(page, "Devices"), after=0.6)
+    d.click(page.get_by_text("FEED2", exact=True).first, after=0.6)
+    d.say("Devices shows the same address under Clients connect to. Click it to change it there as well.")
+    d.point(page.locator(".mode-banner").get_by_text(MOVED).first, pause=1.0)
     d.say("IEDScout, your SCADA and GOOSE reach the IEDs here, and nothing goes out on your Ethernet or Wi-Fi.")

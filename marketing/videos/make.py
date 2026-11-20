@@ -10,16 +10,18 @@ import traceback
 
 from compose import compose
 from director import record
-from lessons_basics import cid_scd, getting_started, sld
+from lessons_basics import cid_scd, sld
+from lessons_start import getting_started
 from lessons_lab import lab_network
 from lessons_license import activation, activation_prepare
 from lessons_more import goose, real_devices, simulation
 from lessons_sld import commands, goose_sld, point_panels
+from lessons_test import test_station
 from lessons_tools import ied_explorer, scada_gateway, snmp_devices
 
 # Slugs are the public video addresses (/videos/<slug>.mp4); keep them stable.
 LESSONS = [
-    ("getting-started", "IEC 61850 and ScadaBench in one minute", getting_started, None),
+    ("getting-started", "A whole substation on one PC", getting_started, None),
     ("cid-scd", "CID and SCD files", cid_scd, None),
     ("sld", "The single-line diagram (SLD)", sld, None),
     ("simulation", "Simulate IEDs and change values", simulation, None),
@@ -33,6 +35,7 @@ LESSONS = [
     ("snmp", "SNMP devices: switches and clocks", snmp_devices, None),
     ("activation", "Activate or go offline", activation, activation_prepare),
     ("lab-network", "IEDs at their own addresses, without a VM", lab_network, None),
+    ("test-station", "Generators and timed test sequences", test_station, None),
 ]
 
 if __name__ == "__main__":

@@ -21,13 +21,16 @@ export const SITE = {
 };
 
 // Main navigation, in reading order. The header shows it on wide screens and in the
-// phone menu; Buy and Free trial are separate buttons next to it.
-export const NAV = [
+// phone menu; Buy and Free trial are separate buttons next to it. Items with header: false
+// appear only in the phone menu and the footer (the wide header has no room for them).
+export const NAV: { href: string; label: string; header?: boolean }[] = [
   { href: '/', label: 'Home' },
   { href: '/features/', label: 'Features' },
   { href: '/tutorials/', label: 'Tutorials' },
+  { href: '/docs/', label: 'Docs' },
   { href: '/pricing/', label: 'Pricing' },
   { href: '/download/', label: 'Download' },
+  { href: '/docs/licence/offline-activation/', label: 'Offline activation', header: false },
   { href: '/faq/', label: 'FAQ' },
   { href: '/contact/', label: 'Contact' },
 ];

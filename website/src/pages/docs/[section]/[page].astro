@@ -1,0 +1,20 @@
+---
+// One manual page per Markdown file. The URL is /docs/<section>/<page>/.
+import { getCollection, render } from 'astro:content';
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import { sortDocs, slugOf } from '../../../data/docs';
+
+export async function getStaticPaths() {
+  const pages = sortDocs(await getCollection('docs'));
+  return pages.map((entry) => ({
+    params: { section: entry.data.section, page: slugOf(entry) },
+    props: { entry, pages },
+  }));
+}
+
+const { entry, pages } = Astro.props;
+const { Content } = await render(entry);
+---
+<DocsLayout entry={entry} pages={pages}>
+  <Content />
+</DocsLayout>

@@ -1,4 +1,4 @@
-"""Lessons 1-3: IEC 61850 and ScadaBench, CID and SCD files, the SLD.
+"""Lessons 2-3: CID and SCD files, the SLD (lesson 1 is lessons_start.py).
 
 The narration teaches the idea while the real app shows it. Every d.say() line is
 spoken (voice files from voices.py) and captioned; the recorder starts the next line
@@ -18,6 +18,11 @@ ADD = re.compile(r"^Add \d")
 
 def button(page, name: str):
     return page.get_by_role("button", name=name, exact=True)
+
+
+def nav(page, name: str):
+    """Main menu entries; a green dot is added to their name while IEDs run."""
+    return page.get_by_role("navigation", name="Main").get_by_role("button", name=re.compile("^" + re.escape(name)))
 
 
 def tab(page, name: str):
@@ -53,45 +58,6 @@ def run_all(d, page, count: int) -> None:
     d.click(button(page, "Run"), after=0.3)
     label = "Running · 1 IED" if count == 1 else f"Running · {count} IEDs"
     page.get_by_text(label).first.wait_for(timeout=90000)
-
-
-def getting_started(d, page, data) -> None:
-    d.say("IEC 61850 is the standard substation devices use to talk. ScadaBench lets you test it on your PC.")
-    for text in ["Devices are your IEDs: the relays and bay controllers of a substation.",
-                 "SLD is the single-line diagram: the station, drawn with one line per circuit.",
-                 "Run turns each IED into a live IEC 61850 server.",
-                 "Test lets you change values on purpose.",
-                 "Tools has helpers: an IED client, a network scan, a SCADA gateway and GOOSE traffic.",
-                 "Settings puts the IEDs on a real network.",
-                 "And Help brings this tour, and these videos, back any time."]:
-        d.settle()
-        d.click(button(page, "Next"), after=0.2)
-        d.say(text)
-    d.settle()
-    d.click(button(page, "Start using ScadaBench"))
-    d.quiet()
-    d.click(button(page, "Devices"))
-    d.say("Let's try one. Use a sample IED.")
-    d.click(button(page, "Use a sample IED"), after=0.8)
-    d.click(tab(page, "Data points"), after=0.6)
-    d.say("Every IED has a data model. Feeder01CTRL is its logical device.")
-    d.type(page.get_by_placeholder(re.compile("^Search name")), "XCBR1.Pos")
-    d.say("XCBR1 is the circuit breaker. Pos is its position, and stVal holds the value.")
-    d.point(page.get_by_text("Feeder01CTRL/XCBR1.Pos.stVal").first, pause=1.0)
-    d.say("ST means status. MX means measurement. The badge before it tells the point type.")
-    d.point(page.get_by_text("ST", exact=True).first, pause=0.8)
-    d.say("Press Run. The IED now answers over MMS, on port 102, like a real relay.")
-    run_all(d, page, 1)
-    d.click(tab(page, "Overview"), after=0.4)
-    d.say("Point your SCADA or test client at this address.")
-    d.point(page.get_by_text(re.compile(r"^127\.50\.0\.\d+:102$")).first, pause=0.8)
-    d.click(button(page, "Copy address"), after=0.8)
-    d.say("A real IEC 61850 server, on your PC, without a single relay.")
-    d.settle()
-    d.click(button(page, "Settings"), after=0.6)
-    d.click(tab(page, "Display"), after=0.6)
-    d.say("On a small laptop, Fit to window draws the same layout, just evenly smaller.")
-    d.point(page.get_by_text("Fit to window (recommended)").first, pause=1.0)
 
 
 def cid_scd(d, page, data) -> None:

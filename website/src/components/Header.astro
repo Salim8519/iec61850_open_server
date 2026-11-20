@@ -12,7 +12,7 @@ const current = Astro.url.pathname;
       <span>Scada<b>Bench</b></span>
     </a>
     <nav class="links" aria-label="Main">
-      {NAV.map((item) => (
+      {NAV.filter((item) => item.header !== false).map((item) => (
         <a href={item.href} aria-current={isCurrent(item.href, current) ? 'page' : undefined}>{item.label}</a>
       ))}
     </nav>

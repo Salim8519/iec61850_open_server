@@ -7,10 +7,10 @@ export const posterOf = (tutorial: Tutorial) => `/videos/${tutorial.slug}.jpg`;
 export const lengthOf = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 
 export const TUTORIALS: Tutorial[] = [
-  { slug: 'getting-started', title: 'IEC 61850 and ScadaBench in one minute', seconds: 111, steps: [
-    'IEC 61850 is the standard substation devices (IEDs) use to talk. SCADA reads them over MMS, TCP port 102.',
-    'Every IED has a data model: logical devices, logical nodes such as XCBR (breaker), and data such as Pos.stVal.',
-    'Devices › Use a sample IED, then Run: the IED answers on its own address, like the real relay.',
+  { slug: 'getting-started', title: 'A whole substation on one PC', seconds: 78, steps: [
+    'Devices › Import CID / SCD: every IED in the SCD arrives with its full data model.',
+    'SLD › Build from SCD draws the single-line diagram from the same file. Press Run: every IED becomes a real IEC 61850 server.',
+    'Operate a breaker like your SCADA would, switch on GOOSE messages, and point your SCADA, gateway or test set at the addresses in Devices.',
   ] },
   { slug: 'cid-scd', title: 'CID and SCD files', seconds: 82, steps: [
     'SCL files describe IEC 61850 projects. A CID describes one configured IED; an SCD describes the whole substation.',
@@ -32,9 +32,10 @@ export const TUTORIALS: Tutorial[] = [
     'Each IED lists its GOOSE partners; Signal flow draws who sends GOOSE and reports to whom.',
     'Settings › Put my IEDs on a network: pick the network card, review every Windows change, then apply. Tools shows the GOOSE really on the wire.',
   ] },
-  { slug: 'real-devices', title: 'Connect to real devices', seconds: 59, steps: [
+  { slug: 'real-devices', title: 'Connect to real devices', seconds: 77, steps: [
     'Simulate is for when the relay is not there; Monitor real device is for when it is. ScadaBench connects as a client and only reads.',
     'Enter the device address and press Run. It uses a report block only if it is free, otherwise it polls, and gives it back on Stop.',
+    'Commands stay off until you tick Allow commands for that IED. Send commands opens a pop-up; every command asks first and uses the device’s own control model.',
     'Compare with SCD lists every difference; Health check gives one verdict per IED, exportable as CSV or HTML.',
   ] },
   { slug: 'ied-explorer', title: 'IED Explorer and Find IEDs', seconds: 80, steps: [
@@ -72,10 +73,15 @@ export const TUTORIALS: Tutorial[] = [
     'Each license works on one computer only and cannot be moved. Reinstalling Windows on the same computer is fine; a new computer needs its own license.',
     'No internet on site? Copy the Machine ID, get a license file at license.scadabench.com/activate and load it.',
   ] },
-  { slug: 'lab-network', title: 'IEDs at their own addresses, without a VM', seconds: 72, steps: [
+  { slug: 'lab-network', title: 'IEDs at their own addresses, without a VM', seconds: 86, steps: [
     'Settings › Put my IEDs on a network › ScadaBench Lab. Windows asks once to add the card (no download, no restart); then Use the lab network needs no prompt.',
     'Each simulated IED answers at its own address from the SCD. Type another address and press Enter to move it, even while running; the SCD file is never changed.',
     'Ping, IEDScout, your SCADA and GOOSE reach the IEDs on this PC. Addresses used by this PC or by a real device on your Ethernet or Wi-Fi are caught before they clash.',
+  ] },
+  { slug: 'test-station', title: 'Generators and timed test sequences', seconds: 59, steps: [
+    'Test › Generators › New generator: pick a measurement and how it changes (smooth wave, ramp, steps, random noise or a CSV recording).',
+    'Test › Sequences: add timed Set value steps, and Check value steps to make it a test. A failed check stops the sequence and says why.',
+    'Tick Start automatically with Run, press Run, and the same test plays the same way every time. It is saved with the project.',
   ] },
 ];
 

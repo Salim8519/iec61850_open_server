@@ -1,0 +1,21 @@
+---
+// Previous and next page links at the foot of a manual page.
+import { docPath, type DocEntry } from '../../data/docs';
+
+interface Props { prev?: DocEntry; next?: DocEntry; }
+const { prev, next } = Astro.props;
+---
+<nav class="pager" aria-label="Previous and next pages">
+  {prev ? <a class="prev" href={docPath(prev)}><span>Previous</span>{prev.data.title}</a> : <span />}
+  {next ? <a class="next" href={docPath(next)}><span>Next</span>{next.data.title}</a> : <span />}
+</nav>
+
+<style>
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--paper-line); }
+  a { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--radius-small); border: 1px solid var(--paper-line);
+    background: #fff; color: var(--paper-ink); text-decoration: none; font-weight: 600; line-height: 1.35; }
+  a:hover { border-color: var(--accent-on-paper); }
+  a span { font-size: .8rem; color: var(--accent-on-paper); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .next { text-align: right; }
+  @media (max-width: 560px) { .pager { grid-template-columns: 1fr; } .next { text-align: left; } }
+</style>

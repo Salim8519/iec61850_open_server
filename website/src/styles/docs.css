@@ -1,0 +1,54 @@
+/* Manual pages (/docs/). Text sits on the paper surface of Prose; the print rules at the end
+   give the browser's "Save as PDF" a clean manual with no site chrome. */
+.page-header h1 { max-width: 24ch; }
+
+.doc-video { margin: 0; display: grid; gap: 8px; }
+.doc-video video { width: 100%; aspect-ratio: 16 / 9; height: auto; border-radius: var(--radius-small);
+  border: 1px solid var(--paper-line); background: var(--night); }
+.doc-video figcaption { color: var(--paper-muted); font-size: .9rem; }
+.doc-video figcaption a { color: var(--accent-on-paper); }
+
+.doc-body { display: grid; gap: 16px; }
+.doc-body :is(h2) { font-size: var(--step-2); margin-top: 28px; line-height: 1.2; }
+.doc-body :is(h3) { font-size: var(--step-1); margin-top: 16px; }
+.doc-body ol { margin: 0; padding-left: 26px; display: grid; gap: 10px; color: var(--paper-ink); }
+.doc-body ol li::marker { font-weight: 650; color: var(--accent-on-paper); }
+.doc-body ol li strong, .doc-body ul li strong { color: var(--paper-ink); }
+.doc-body kbd { font-family: var(--mono); font-size: .85em; border: 1px solid var(--paper-line); border-bottom-width: 2px;
+  border-radius: 6px; padding: 1px 6px; background: #fff; color: var(--paper-ink); }
+.doc-body table { width: 100%; border-collapse: collapse; font-size: .95rem; background: #fff; }
+.doc-body th, .doc-body td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--paper-line); vertical-align: top; }
+.doc-body th { color: var(--paper-ink); font-weight: 650; background: var(--paper-2); }
+.doc-body td { color: var(--paper-muted); }
+.doc-body .note { border-left: 4px solid var(--accent-on-paper); }
+
+/* Whole-manual page: each manual page starts on a new printed page. */
+.manual-entry + .manual-entry { margin-top: 56px; padding-top: 8px; }
+.manual-entry > h2 { font-size: var(--step-3); margin: 0 0 6px; }
+.manual-entry > .entry-lede { color: var(--paper-muted); margin: 0 0 18px; }
+.print-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 36px; }
+.print-bar p { margin: 0; color: var(--paper-muted); font-size: .95rem; flex: 1 1 260px; }
+.print-bar .btn { color: var(--accent-ink); }
+
+@media print {
+  @page { margin: 16mm 14mm; }
+  html, body { background: #fff !important; color: #000 !important; }
+  .skip, .site-header, .site-footer, .cta-bar, .menu, .docs-nav, .side, .pager, .doc-video,
+  .print-bar, .no-print, .sticky-cta, [data-cta-bar] { display: none !important; }
+  .js .reveal.pending { opacity: 1 !important; transform: none !important; }
+  .page-header { background: none !important; padding: 0 0 12pt !important; }
+  .page-header h1 { color: #000 !important; font-size: 26pt !important; max-width: none !important; }
+  .page-header .lede, .page-header .eyebrow { color: #333 !important; }
+  .paper, .prose-section, .wrap, .prose, .with-aside { background: #fff !important; color: #000 !important;
+    padding: 0 !important; margin: 0 !important; max-width: none !important; display: block !important; }
+  .prose :global(p), .prose :global(li), .doc-body td, .manual-entry > .entry-lede { color: #222 !important; }
+  .doc-body th { background: #eee !important; color: #000 !important; }
+  .doc-body table, .doc-body th, .doc-body td { color: #000 !important; }
+  .doc-body .note { background: #f2f2f2 !important; color: #000 !important; }
+  .manual-entry { break-before: page; page-break-before: always; }
+  .manual-entry:first-of-type { break-before: auto; page-break-before: auto; }
+  .manual-entry > h2 { break-after: avoid; }
+  a { color: #000 !important; text-decoration: none; }
+  h2, h3 { break-after: avoid; }
+  ol, table, figure { break-inside: avoid; }
+}

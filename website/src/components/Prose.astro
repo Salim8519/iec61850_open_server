@@ -1,13 +1,21 @@
 ---
-// Readable long-form text (legal, changelog, contact) on the light paper surface.
+// Readable long-form text (legal, changelog, contact, manual) on the light paper surface.
+// An optional "aside" slot puts a side column (the manual's page list) beside the text.
+const hasAside = Astro.slots.has('aside');
 ---
 <section class="paper prose-section">
-  <div class="wrap"><div class="prose"><slot /></div></div>
+  <div class:list={['wrap', { 'with-aside': hasAside }]}>
+    {hasAside && <aside class="side"><slot name="aside" /></aside>}
+    <div class="prose"><slot /></div>
+  </div>
 </section>
 
 <style>
   .prose-section { padding-block: clamp(48px, 7vw, 96px); }
+  .with-aside { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+  .side { position: sticky; top: 88px; max-height: calc(100vh - 110px); overflow-y: auto; padding-right: 4px; }
   .prose { max-width: 70ch; display: grid; gap: 16px; color: var(--paper-ink); }
+  .with-aside .prose { max-width: 76ch; }
   .prose :global(h2) { font-size: var(--step-2); margin-top: 24px; }
   .prose :global(h3) { font-size: var(--step-1); margin-top: 12px; letter-spacing: -0.02em; }
   .prose :global(p), .prose :global(li) { color: var(--paper-muted); line-height: 1.7; }
@@ -15,4 +23,8 @@
   .prose :global(a) { color: var(--paper-ink); }
   .prose :global(code) { font-family: var(--mono); font-size: .9em; background: var(--paper-2); padding: 2px 6px; border-radius: 6px; }
   .prose :global(.note) { padding: 14px 18px; border-radius: var(--radius-small); background: var(--paper-2); color: var(--paper-ink); }
+  @media (max-width: 899px) {
+    .with-aside { grid-template-columns: 1fr; }
+    .side { position: static; max-height: none; overflow: visible; }
+  }
 </style>

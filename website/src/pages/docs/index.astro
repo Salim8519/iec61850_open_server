@@ -1,0 +1,50 @@
+---
+// The manual's front page: every section in reading order with its pages.
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Closing from '../../components/Closing.astro';
+import { getCollection } from 'astro:content';
+import { DOC_SECTIONS, docPath, groupBySection, sortDocs } from '../../data/docs';
+import '../../styles/docs.css';
+
+const pages = sortDocs(await getCollection('docs'));
+const groups = groupBySection(pages);
+---
+<Base title="Docs" description="The ScadaBench manual: install and start the app, import CID and SCD files, simulate IEDs, draw the single-line diagram, test with generators and sequences, and use the tools.">
+  <PageHeader eyebrow="Manual" title="ScadaBench documentation" lede="Step-by-step guides for the real app, written for beginners. Start with Getting started, or pick a section below." />
+  <section class="paper docs-index">
+    <div class="wrap grid">
+      {DOC_SECTIONS.map((section, index) => {
+        const group = groups[index];
+        return (
+          <article class="card" id={section.id}>
+            <span class="num">{String(index + 1).padStart(2, '0')}</span>
+            <h2>{section.title}</h2>
+            <p>{section.blurb}</p>
+            {group.pages.length ? (
+              <ul>{group.pages.map((page) => <li><a href={docPath(page)}>{page.data.title}</a></li>)}</ul>
+            ) : <p class="soon">Coming soon.</p>}
+          </article>
+        );
+      })}
+    </div>
+    <div class="wrap whole"><a class="btn btn-primary" href="/docs/all/">Read the whole manual on one page</a></div>
+  </section>
+  <Closing title="Try it with your own SCD." />
+</Base>
+
+<style>
+  .docs-index { padding-block: clamp(48px, 7vw, 88px); color: var(--paper-ink); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .card { background: #fff; border: 1px solid var(--paper-line); border-radius: var(--radius); padding: 24px; display: grid; gap: 10px; align-content: start; }
+  .num { font-family: var(--mono); font-size: .8rem; color: var(--accent-on-paper); font-weight: 600; }
+  h2 { font-size: var(--step-1); margin: 0; letter-spacing: -0.02em; }
+  p { margin: 0; color: var(--paper-muted); line-height: 1.6; }
+  .soon { font-style: italic; }
+  ul { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+  li a { color: var(--paper-ink); text-decoration: none; font-weight: 600; }
+  li a::before { content: '› '; color: var(--accent-on-paper); }
+  li a:hover { text-decoration: underline; }
+  .whole { margin-top: 28px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,51 @@
+---
+// Manual navigation: every section with its pages, in order. On phones the list folds into a
+// "Pages in this manual" disclosure (a script closes it below 900px); on wide screens it stays open.
+import { groupBySection, docPath, type DocEntry } from '../../data/docs';
+
+interface Props { pages: DocEntry[]; current: string; }
+const { pages, current } = Astro.props;
+const groups = groupBySection(pages).filter((group) => group.pages.length);
+---
+<details class="docs-nav" data-docs-nav open>
+  <summary>Pages in this manual</summary>
+  <nav aria-label="Manual">
+    <a class="all-link" href="/docs/">All sections</a>
+    {groups.map((group) => (
+      <div class="group">
+        <h2>{group.title}</h2>
+        <ul>
+          {group.pages.map((page) => (
+            <li><a href={docPath(page)} aria-current={page.id === current ? 'page' : undefined}>{page.data.title}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+    <a class="all-link" href="/docs/all/">Whole manual on one page</a>
+  </nav>
+</details>
+
+<script>
+  const nav = document.querySelector<HTMLDetailsElement>('[data-docs-nav]');
+  if (nav && matchMedia('(max-width: 899px)').matches) nav.open = false;
+</script>
+
+<style>
+  summary { display: none; }
+  .group + .group { margin-top: 18px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--paper-muted); margin: 0 0 6px; font-weight: 650; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  a { display: block; padding: 7px 10px; border-radius: 8px; color: var(--paper-ink); text-decoration: none; font-size: .95rem; line-height: 1.35; }
+  a:hover { background: var(--paper-2); }
+  a[aria-current='page'] { background: var(--paper-2); font-weight: 650; box-shadow: inset 3px 0 0 var(--accent-on-paper); }
+  .all-link { color: var(--accent-on-paper); font-weight: 600; margin-bottom: 12px; }
+  .all-link + .group { margin-top: 0; }
+  nav > .all-link:last-child { margin: 18px 0 0; }
+  @media (max-width: 899px) {
+    summary { display: block; cursor: pointer; font-weight: 650; color: var(--paper-ink); padding: 12px 14px; min-height: 44px;
+      background: var(--paper-2); border-radius: var(--radius-small); list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    .docs-nav { margin-bottom: 20px; }
+    nav { padding: 6px 4px 0; }
+  }
+</style>

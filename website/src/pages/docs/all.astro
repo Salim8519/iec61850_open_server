@@ -1,0 +1,46 @@
+---
+// The whole manual on one page, in reading order. "Download as PDF" opens the print dialog;
+// choose "Save as PDF" there. The print rules in styles/docs.css hide the site chrome.
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { sortDocs, docPath, sectionOf } from '../../data/docs';
+import '../../styles/docs.css';
+
+const pages = sortDocs(await getCollection('docs'));
+const entries = await Promise.all(pages.map(async (entry) => ({ entry, Content: (await render(entry)).Content })));
+---
+<Base title="Whole manual" description="The complete ScadaBench manual on one page, in reading order, with a Download as PDF button that opens the print dialog.">
+  <PageHeader eyebrow="Manual" title="The whole ScadaBench manual" lede={`All ${pages.length} pages in reading order. To keep a copy, press Download as PDF and choose Save as PDF.`} />
+  <section class="paper all-manual">
+    <div class="wrap">
+      <div class="print-bar">
+        <p>The print dialog opens. Choose <strong>Save as PDF</strong> as the destination to keep the manual on your computer.</p>
+        <button class="btn btn-primary" type="button" data-print>Download as PDF</button>
+      </div>
+      {entries.map(({ entry, Content }) => (
+        <article class="manual-entry" id={entry.id.replace(/\//g, '-')}>
+          <p class="eyebrow-line">{sectionOf(entry.data.section)?.title}</p>
+          <h2>{entry.data.title}</h2>
+          <p class="entry-lede">{entry.data.description}</p>
+          <div class="doc-body"><Content /></div>
+          <p class="link-line"><a href={docPath(entry)}>Open this page online</a></p>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelector<HTMLButtonElement>('[data-print]')?.addEventListener('click', () => window.print());
+</script>
+
+<style>
+  .all-manual { padding-block: clamp(40px, 6vw, 72px); color: var(--paper-ink); }
+  .eyebrow-line { margin: 0; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-on-paper); }
+  .link-line { margin: 18px 0 0; font-size: .9rem; }
+  .link-line a { color: var(--accent-on-paper); }
+  .manual-entry h2 { margin-top: 4px; }
+  .manual-entry .doc-body { margin-top: 12px; }
+
+</style>
