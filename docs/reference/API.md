@@ -21,7 +21,7 @@ so large files never end in a connection reset (Go, change 0186).
 | `GET /project/download` | - | Current `.scadabench` ZIP (`substation.scadabench`) |
 | `POST /project/open` | multipart `file` | Stopped-only validated restore/migration; a `.subsim` file name is refused (400, code `old_project_file`, ADR-0096) |
 | `POST /runtime/start` | - | Start all workers after capability/preflight checks |
-| `POST /runtime/stop` | - | Stop workers and flush append-only run log |
+| `POST /runtime/stop` | - | Stop workers and real-IED sessions (together, change 0223) and flush append-only run log |
 | `POST /runtime/pause` | - | Toggle automation pause; MMS remains active |
 | `POST /runtime/ieds/{id}/start` | - | Run (simulated) or connect (real) one IED; joins a running run (ADR-0067); returns `{state, running}` |
 | `POST /runtime/ieds/{id}/stop` | - | Stop or disconnect one IED; the others keep running; the last one stops the run; an id not in the project: 400 `not_found` "Unknown IED" (Go, change 0186) |
@@ -198,7 +198,7 @@ the written values are `signal` events with source `goose_send`.
 | `POST /tools/gateway/start`, `/stop`; `GET /tools/gateway`, `/traffic?after=`, `/commands` | - | Start (points; never Run), status, decoded traffic, command log. Go: status `address_gone` (the listen address is no longer on this PC; `message` says what to do, change 0221). A command whose control program did not answer in time is logged `applied` "result unknown: …", another control failure "failed: …" (change 0226) |
 | `POST /tools/gateway/role` | `role` (`gateway`, `master`, `converter`) | Act as station gateway, SCADA master or protocol converter (ADR-0061); refused while running |
 | `GET/PUT /tools/master/config`; `GET /tools/master` | `protocol`, `host`, `settings` | SCADA master settings (disconnected only) and status (link, points, probe, poll failures) |
-| `POST /tools/master/connect`, `/disconnect`, `/interrogate` | - | Connect (then discover all), disconnect (forgets auto-connect), ask for all values / read now |
+| `POST /tools/master/connect`, `/disconnect`, `/interrogate` | - | Connect answers once the link is open; the interrogation it starts runs in the background and its values arrive as `master_values` events (ADR-0142); disconnect (forgets auto-connect; ends the worker at once during an interrogation), ask for all values / read now |
 | `GET /tools/master/points`; `PUT /tools/master/selection`, `/label` | `unticked`, `key`, `label` | Discovered points with worded quality; untick and name points |
 | `GET /tools/master/points.csv`; `POST /tools/master/labels.csv` | CSV text (POST) | Export points; import names |
 | `POST /tools/master/command` | `kind`, `address`, `value`, `select`, `code`, `confirm: true` | Command to the device after the REAL-device warning |

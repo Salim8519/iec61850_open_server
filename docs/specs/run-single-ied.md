@@ -66,6 +66,7 @@ Editing the drawing or roles while some IEDs run; test buttons on real devices.
 | RUNONE-06 | Devices status pills sit on their own line so they are never cut. | `studio/tests/frontend/testButtons.test.ts::Devices rows put status pills on their own line so nothing is cut` |
 | RUNONE-07 | Stopped, partial and full runs have distinct shapes and words; the run state is green only when all run, beside a solid red Stop (ADR-0135); Devices groups running IEDs first; SLD greys stopped IEDs' equipment in words. | `studio/tests/frontend/runShape.test.ts::the run has three shapes and left-out IEDs never count`, `studio/tests/frontend/runShape.test.ts::Devices groups running IEDs first only during a partial run`, `studio/tests/frontend/runShape.test.ts::top bar shows the run shape beside a red Stop; SLD greys equipment of stopped IEDs in words` |
 | RUNONE-08 | *Run all* during a partial run adds the remaining IEDs; with nothing left it is refused. | `studio/tests/protocol/test_run_single_ied.py::test_run_all_during_a_partial_run_adds_the_rest` |
+| RUNONE-09 | While stopped one greeted spare `studio_ied` waits per simulated IED and Run (all or one IED) takes it; a spare of a changed program file is never used (ADR-0142). | `studio/engine/internal/runtime/spare_ieds_test.go::TestRunTakesSpareProcesses`, `studio/engine/internal/runtime/spare_ieds_test.go::TestSparesNotUsedAfterTheProgramChanged` |
 
 ## Acceptance evidence
 

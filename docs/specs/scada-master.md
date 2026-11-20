@@ -23,7 +23,8 @@ reads to another SCADA.
 - **Words.** Each protocol uses its own words: controlling/controlled station (104 master/slave),
   DNP3 master/outstation, Modbus client/server.
 - **Discovery.**
-  - IEC 104: station interrogation at connect and every `gi_minutes`, followed by a general
+  - IEC 104: station interrogation at connect (Connect answers once the link is open; the values
+    follow by themselves, ADR-0142) and every `gi_minutes`, followed by a general
     counter interrogation (C_CI_NA_1, read without freeze) so integrated totals are found too; a
     device that refuses it does not fail discovery.
   - DNP3: integrity poll at connect and every `integrity_minutes`, plus event polls and
@@ -92,3 +93,4 @@ reads to another SCADA.
 | MASTER-13 | The Go engine adds the most-used commands (C_RC, QU, Activate/Deactivate, DNP3 CROB options and g41v2, cyclic sending with address step and value toggle), validated and framed without changing the frozen Python routes. | `studio/engine/internal/api/toolsapi/master_commands_extra_test.go::TestMasterExtraCommands`, `studio/engine/internal/gateway/service/master_cyclic_test.go::TestCyclicStepsAddressAndTogglesValue` |
 | MASTER-14 | The master point list is address-only and checked before it is saved (types per protocol, address spaces, ranges, pasted/Excel/CSV rows, copy from gateway without IED links); a stored list survives a project load only when present. | `studio/engine/internal/gateway/masterpoints/contract_test.go::TestValidateKeepsShapeAndRefusesClashes`, `studio/engine/internal/gateway/masterpoints/rows_test.go::TestCSVAndExcelRoundTrip`, `studio/engine/internal/gateway/masterpoints/copy_test.go::TestCopyFromGatewayMapsTypesAndKeepsNoIEDLink`, `studio/engine/internal/project/gateway/master_points_test.go::TestNormalizeMasterKeepsAStoredPointList` |
 | MASTER-15 | Expected vs received is computed by the engine (Received, Missing, Wrong type, Waiting, Command, Not in your list), Modbus reads follow the list, and Check against IED reads the gateway's mapping with plain reasons. | `studio/engine/internal/gateway/masterpoints/compare_test.go::TestCompareClassifiesExpectedAgainstReceived`, `studio/engine/internal/gateway/masterpoints/compare_test.go::TestPollRangesMergeNeighboursAndCapEachRequest`, `studio/engine/internal/gateway/masterpoints/copy_test.go::TestCheckAgainstIEDGivesPlainReasons`, `studio/engine/internal/api/toolsapi/master_list_test.go::TestMasterListRoutes` |
+| MASTER-16 | Connect answers once the link is open; the values asked for arrive by themselves; the protocol converter maps the received points only after that interrogation, and Disconnect during it is immediate (ADR-0142). | `studio/engine/internal/gateway/service/master_asking_test.go::TestConnectAnswersBeforeTheInterrogationEnds`, `studio/engine/internal/gateway/service/master_asking_test.go::TestDisconnectDuringInterrogationIsQuick`, `studio/tools/trials/r7_master_connect.py` |

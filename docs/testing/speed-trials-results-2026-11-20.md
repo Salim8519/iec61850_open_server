@@ -208,12 +208,14 @@ Wi-Fi is the owner's DHCP card and Ethernet is unplugged, so no real-card number
    took on screen.
 4. Send `.local/trials/results/card-watch-*.json` and the noted times. Repeat with about 20
    IEDs if such an Ethernet project exists.
+5. Run and Stop (R3, R6, R7, packaged app, a real IED switched off, a real RTU): see the Owner
+   checks in the [Run and Stop details](speed-trials-runstop-2026-11-20.md).
 
 ## Results for the ideas
 
 Filled in by each trial (same test on today's code and on the trial, at least 10 runs each,
 median and worst; verdict per the plan's table).
-Details per group: [network N1, N2, N6-N8](speed-trials-network-2026-11-20.md), [locks N3-N5, N9, N10](speed-trials-locks-2026-11-20.md), [screen U1-U5](speed-trials-screen-2026-11-20.md).
+Details per group: [network N1, N2, N6-N8](speed-trials-network-2026-11-20.md), [locks N3-N5, N9, N10](speed-trials-locks-2026-11-20.md), [screen U1-U5](speed-trials-screen-2026-11-20.md), [Run and Stop R1-R7](speed-trials-runstop-2026-11-20.md).
 
 | Idea | Today's number | Trial number | Runs | Verdict | Reason |
 |---|---|---|---|---|---|
@@ -228,13 +230,13 @@ Details per group: [network N1, N2, N6-N8](speed-trials-network-2026-11-20.md), 
 | N9 | Gateway own address left after Stop 10 of 10 and after exit; on the card as soon as typed | Left after Stop 0 of 10, after exit no; started 10/10 and an IEC 104 client connected 10/10 on both sides; Start 0.13 → 0.24 s median (it adds the address) | 10 each | Consider (implemented, change 0222; amends ADR-0125) | Address only while running; Start ~0.1 s slower, Stop unchanged |
 | N10 | Run's address step 0.154 s (14 %) / 0.300 s (13 %), Stop's release 0.066 s / 0.118 s (38 %); 160 Windows address changes and 50-61 DNS Client CPU s per 10 small rounds | Release 0.000 s in all 26 trial rounds, address step 0.000 s when no older engine wipes the card; 7 changes and 6.3 CPU s per 10 rounds (quiet set); nothing left after File › Close, exit, kill + launch | 4 sets each (8-10 rounds) | Consider (implemented, change 0222; amends ADR-0127/0132). **Owner's eye:** addresses stay visible after Stop until the project closes | Stop ≥ 20 % faster by its removed step, Run ~14 %; far fewer Windows changes; other agents' pre-0222 engines wiped kept addresses in later sets (details) |
 | N11 | Address changed 5 times on Ethernet: 5 prompts (each one approval + one rule); port changed 5 times: 5; Simulate toggled: 1 | Not built: even with firewall items free, 5 new addresses still ask 5 times (each needs its approval, ADR-0132) | Code path + 4 unit scenarios (deterministic) | Drop | Saves no prompt in the plan's test; the only savings (port, Simulate) need a rule wider than today's address list; change 0225 |
-| R1 | | | | | |
-| R2 | | | | | |
-| R3 | | | | | |
-| R4 | | | | | |
-| R5 | | | | | |
-| R6 | | | | | |
-| R7 | | | | | |
+| R1 | Run 1.595 / 4.075 s (small), 2.257 / 4.151 s (large) | 1.541 / 3.063 s, 2.482 / 4.590 s | 10 + 10 each, alternating | Drop | Not faster: 20 model loads slow the address step and each other on the busy PC; since ADR-0141 later Runs add no address (change 0223) |
+| R2 | Large: initial-state step 0.087 / 0.397 s, Run 1.579 / 3.913 s, event order the same each round | 0.003 / 0.011 s, Run 3.035 / 6.067 s (noise), event order differs every round | 11 / 10 | Drop | Saves 0.08 s (3-6 % of Run) and changes the order of the initial-state events |
+| R3 | Run 0.884 / 1.201 s (small), 3.116 / 5.869 s (large); every Run starts 8 / 20 processes | 0.647 / 0.795 s (-27 %), 1.167 / 2.763 s (-63 %); 0 started (spares: 0.82 MB each, no CPU) | 10 + 10 each, alternating | Consider (implemented, change 0223, ADR-0142) | Faster, worst better, wire identical; the packaged licence check (0.1-0.2 s for 20 at once) also leaves the Run |
+| R4 | Stop with a real session (report block held): 0.079 / 0.278 s | 0.047 / 0.127 s (-40 %) | 10 each, alternating | Consider (implemented, change 0223) | Faster; an independent client saw the block free after every Stop (20 / 20) |
+| R5 | Click to `stopped` 0.096 / 0.370 s, Stop 0.099 / 0.389 s (small, after ADR-0141) | 0.096 / 0.253 s, 0.097 / 0.254 s | 10 each, alternating | Drop | Since ADR-0141 the release at Stop costs about 2 ms |
+| R6 | Stop while connecting to a device that never answers: 4.074 / 4.231 s (up to 120 s while reading a data model) | 0.045 / 0.109 s | 10 each, alternating | Consider (implemented, change 0223) | Stop within 2 s; "disconnect" kept once a report block may be reserved |
+| R7 | Connect (5000 points, outstation without counter confirmation) 15.117 / 15.181 s; first Disconnect 14.6 s; lib60870 outstation 0.461 / 0.804 s | 0.073 / 0.125 s, Disconnect 0.016 s worst; 0.260 / 1.172 s | 10 + 10 each, alternating | Consider (implemented, change 0223, ADR-0142) | Returns at once, all 5000 points arrive; converter waits for the interrogation |
 | U1 | Set value (Test page): click to ready median 30/29.5/27 ms, worst 52/36/37, 5 requests a press (POST, GET project, test panel, auto save, push topics). SLD sheet Test button: 26.5/27 ms, worst 44/49, 4 requests | Set value: 20/21.5/25.5 ms, worst 38/35/42, 1 request (the POST). Test button: 20/18.5 ms, worst 34/30, 2 requests (the sheet's signal read + the POST) | 3 x 10 presses (value), 2 x 10 (test) per side | Consider (implemented) | 15-30 % faster to ready, 80 % / 50 % fewer requests; `u1_revision_check.mjs`: revision and project body unchanged after each runtime-only action, so nothing the re-read showed can be missed. Operate/tap kept as a re-read (they store the last position in the project) |
 | U2 | 9 requests per drag (8 when the sheet already showed the IED), worst 9 | 2 (PUT diagram + the sheet's signals for a newly selected breaker), worst 2 | 2 x 10 drags per side | Consider (implemented) | 78 % fewer requests; Undo, Redo, the auto save switch and a second tab checked (`u2_still_correct.mjs`): all correct with the trial; today the second tab never showed the switch change |
 | U3 | first paint median 156/176/164 ms, ready (Devices rows) 319/357/351 ms, JS before ready 1 175 kB | first paint 132/136/124 ms, ready 494/363/318 ms (worst 880 vs 486), JS 456 kB | 3 x 5 cold starts per side | Drop | Usable start not faster (ready median not better, worst worse); first SLD visit slower until the background load ends (81-140 vs 39-50 ms); and loading page stylesheets later changed the look (`u3_same_look.mjs`: SLD zoom buttons 15 to 20 px margin and another shadow, a Test page line 8 px higher). Kept as today |

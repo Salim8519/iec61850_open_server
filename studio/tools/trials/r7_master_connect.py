@@ -3,12 +3,12 @@
     python studio/tools/trials/r7_master_connect.py --points 5000 --rounds 10 ^
         --base studio/build/engine/studio_server_base.exe=<native dir> --trial <exe>=<native dir>
 
-The outstation is a separate studio_gateway (IEC 104, common address 1) on 127.67.26.30:26404
-with --points points (single, double, float, integer), started here outside any engine. Each
+The outstation (IEC 104, common address 1, 127.67.26.30:26404, --points points, started here
+outside any engine) is `--outstation gateway`: a separate studio_gateway (single, double, float,
+integer points), or `standin`: r7_station.py, which never answers the counter interrogation. Each
 session starts an engine instance (temp data folder) in the SCADA master role and does
 Connect / wait for every point / Disconnect rounds. Timed: the Connect answer, the moment
-GET /tools/master shows every point, and Disconnect (clicked once every point is there). The
-outstation has no counters and does not confirm a counter interrogation, as many real ones.
+GET /tools/master shows every point, and Disconnect (clicked once every point is there).
 Writes .local/trials/results/r7-<time>.json.
 """
 import argparse
@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fixplan_engine import wait_for  # noqa: E402
 from instance import Instance  # noqa: E402
 from runstop_ab import side  # noqa: E402
+from r7_station import SilentCounterStation  # noqa: E402
 from step0_run_stop import RESULTS  # noqa: E402
 
 STUDIO = Path(__file__).resolve().parents[2]
@@ -92,8 +93,12 @@ def main():
     parser.add_argument("--rounds", type=int, default=10)
     parser.add_argument("--per-session", type=int, default=5)
     parser.add_argument("--gap", type=float, default=1.0)
+    parser.add_argument("--outstation", choices=["gateway", "standin"], default="gateway")
     args = parser.parse_args()
-    gateway, count = outstation(args.base["native"], args.points)
+    if args.outstation == "gateway":
+        gateway, count = outstation(args.base["native"], args.points)
+    else:
+        gateway, count = SilentCounterStation(HOST, PORT, args.points), args.points
     data = {"base": [], "trial": []}
     try:
         while any(len(rounds) < args.rounds for rounds in data.values()):
@@ -104,11 +109,11 @@ def main():
                     session(getattr(args, name), count, wanted, args.gap, data[name])
     finally:
         gateway.close()
-    result = {"points": count, "base": args.base, "trial": args.trial, "rounds": data,
+    result = {"points": count, "outstation": args.outstation, "base": args.base, "trial": args.trial, "rounds": data,
               "summary": {name: {key: summary([r[key] for r in rounds]) for key in ("connect", "all_points", "disconnect")}
                           | {"incomplete": sum(not r["complete"] for r in rounds)} for name, rounds in data.items()}}
     RESULTS.mkdir(parents=True, exist_ok=True)
-    path = RESULTS / f"r7-{time.strftime('%Y%m%d-%H%M%S')}.json"
+    path = RESULTS / f"r7-{args.outstation}-{time.strftime('%Y%m%d-%H%M%S')}.json"
     path.write_text(json.dumps(result, indent=1), encoding="utf-8")
     print(json.dumps(result["summary"], indent=1), f"\nsaved {path}")
 

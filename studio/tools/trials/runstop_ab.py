@@ -49,9 +49,14 @@ def session(config, document, rounds, hold, gap, warm, into):
                     print(f"  Run refused: {run['error'][:200]}", flush=True)
                     time.sleep(gap)
                     continue
+                # R2: the order of the initial-state writes (IED, reference) as the events show it
+                run["facts"]["initial_order"] = [[e.get("ied_id"), e.get("ref")] for e in events.since(run["facts"]["click"])
+                                                 if e.get("kind") == "signal" and e.get("source") == "initial_state"]
                 stop = one_stop(engine, watch, events, settle=1.0)
                 stop["facts"]["stopped_shown"] = stop["facts"].get("stopped_event")
-                if run["facts"]["disturbed"] or stop["facts"]["addresses_gone"] == 0:
+                # Another engine took our addresses off while running (since ADR-0141 the
+                # addresses stay after Stop, so none leaving at Stop is normal).
+                if run["facts"]["disturbed"]:
                     into["disturbed_rounds"].append({"run": run, "stop": stop})
                 else:
                     into["runs"].append(run)

@@ -22,6 +22,9 @@ same time, pass `--shared` (`Instance(shared=True)`): `step0_run_stop.py` then l
 round in which Windows showed our addresses vanish (`disturbed_rounds`) and keeps refused Runs
 with Windows' address changes (`failed_runs`); use medians.
 
+A trial with its own address range, ports or workers sets `SCADABENCH_TRIAL_RANGE` (e.g. `198.18.26`),
+`SCADABENCH_TRIAL_PORTS` (e.g. `26000-26999`) and `SCADABENCH_TRIAL_NATIVE` before starting a tool.
+
 Rebuild the engine first when its source changed (from `studio/engine`):
 `go build -o ..\build\engine\studio_server.exe ./cmd/studio_server`.
 
@@ -33,6 +36,10 @@ Rebuild the engine first when its source changed (from `studio/engine`):
 | `python studio/tools/trials/card_watch.py --card Ethernet --seconds 300` | Owner check on a real card: every address change on the card and DNS Client CPU each second, read-only |
 | `python studio/tools/trials/dnscache_cpu.py --repeats 3` | Windows DNS Client CPU for 30 s after one address added/removed and after a Run/Stop |
 | `python studio/tools/trials/process_start.py --count 8 --repeats 10` | Bare `studio_ied.exe` start, N at once, until its first answer (`--exe` for another build) |
+| `python studio/tools/trials/runstop_ab.py --project large --base <exe>=<workers> --trial <exe>=<workers>` | R1/R2/R3/R5: Run and Stop, today against a trial build, alternating sessions |
+| `python studio/tools/trials/real_stop_ab.py --case r4\|r6 --base ... --trial ...` | R4/R6: Stop with a real-IED session (a separate `studio_ied`, or a listener that never answers) |
+| `python studio/tools/trials/r7_master_connect.py --outstation gateway\|standin --base ... --trial ...` | R7: SCADA master Connect to an IEC 104 outstation with 5000 points (`r7_station.py`: no counter confirmation) |
+| `python studio/tools/trials/r3_spare_cost.py --server <exe> --native <workers> --release <workers>` | R3: spares' memory and processor time, licence-check parts |
 | `python studio/tools/trials/winaddr.py` | The Lab card's addresses as Windows lists them now |
 | `python studio/tools/trials/winlisten.py` | Every TCP listener and its process |
 | `python studio/tools/trials/projects.py` | IED and diagram counts of the two trial projects |
