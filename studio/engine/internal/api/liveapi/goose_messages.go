@@ -13,7 +13,15 @@ import (
 // one IED and the exact leaf references of every message (ADR-0112), a real IED's command check
 // and sending from Devices (ADR-0138).
 var GoOnlyRoutes = map[string]bool{"GET /api/v1/ieds/{ied_id}/goose/messages": true, "GET /api/v1/goose/members": true,
-	"GET /api/v1/live/{key}/controls": true, "POST /api/v1/live/{key}/operate": true}
+	"GET /api/v1/goose/messages": true, "GET /api/v1/live/{key}/controls": true, "POST /api/v1/live/{key}/operate": true}
+
+// gooseMessagesByQuery is GET /goose/messages?ied=<id>: the same answer as
+// /ieds/{ied_id}/goose/messages with the IED as a query parameter, so the push stream can
+// carry it as topic goose.messages (its parameters are query parameters, change 0224).
+func (s *Service) gooseMessagesByQuery(w http.ResponseWriter, r *http.Request) {
+	r.SetPathValue("ied_id", r.URL.Query().Get("ied"))
+	s.gooseMessages(w, r)
+}
 
 // gooseMessages is GET /ieds/{ied_id}/goose/messages: the IED's sendable messages, who receives
 // them, every member with its leaves (and their values while running), what it receives, and

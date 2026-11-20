@@ -4,6 +4,7 @@ import type { Signal } from '../../api/types';
 import { SignalValueEditor } from '../../components/SignalValueEditor';
 import { AutoValue } from '../../ui/EditableText';
 import { pulse as sendPulse, resume, setValue, type Point } from './signalActions';
+import { useCommand } from '../../state/runCommand';
 
 /** One way to set, pulse or resume a simulated value, used on every screen (UI-06). `generator`: a
  *  generator exists for this point; `driven`: it is driving the value right now (not overridden by hand),
@@ -14,11 +15,12 @@ export function ValueControl({ point, signal, value, running, perform, pulse, ge
   pulse?: { active: boolean; durationMs: number }; generator?: boolean; driven?: boolean; segmented?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
+  const command = useCommand(perform);  // set, pulse and resume change live values only (change 0224)
   const [error, setError] = useState('');
   const writable = signal.writable && signal.fc !== 'CF';
   const run = async (task: () => Promise<unknown>) => {
     setBusy(true); setError('');
-    await perform(async () => {
+    await command(async () => {
       try { await task(); }
       catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); throw reason; }
     });

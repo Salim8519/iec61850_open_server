@@ -94,6 +94,11 @@ Stream text, in order: `retry: 1000\n\n`, then the hello frame, then everything 
 | `/tools/master/commands`, `/tools/master/traffic` | `master.commands`, `master.traffic` | keyed by `seq` | master logs |
 | `/tools/explorer` | `explorer` | full | explorer hook, explorer_\* |
 | `/tools/scan` | `scan` | full | scan hook; 1 s while scanning |
+| `/project/history` | `project.history` | full | project_changed, runtime (change 0224) |
+| `/project/autosave` | `project.autosave` | full | project_changed, `project.saved` (File › Save, the auto save switch) (0224) |
+| `/goose/members` | `goose.members` | full | project_changed (0224) |
+| `/goose/messages` (param `ied`) | `goose.messages` | full | goose_\*, every value change; gap 1 s (0224) |
+| `/network/lab` | `network.lab` | full | every 3 s while a page shows it (the poll it replaces; card and service change outside events) (0224) |
 
 `runtime`, `ied_runtime`, `project_changed`, a bus `resync` and a value-hub resync re-read
 every subscribed topic. The default gap is 100 ms: a change after a quiet period is read at

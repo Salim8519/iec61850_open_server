@@ -133,8 +133,9 @@ func Compose(options Options) (*Engine, error) {
 		return nil, err
 	}
 	var routes []api.Route
-	for _, group := range [][]api.Route{live, tools, platform, runtimeRoutes, e.projectRoutes(),
-		e.wirePush(live, runtimeRoutes, tools)} {
+	project := e.projectRoutes()
+	for _, group := range [][]api.Route{live, tools, platform, runtimeRoutes, project,
+		e.wirePush(live, runtimeRoutes, tools, project, platform)} {
 		routes = append(routes, group...)
 	}
 	license, startup := e.gates()

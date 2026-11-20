@@ -134,6 +134,7 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `POST /goose/conflicts` | `{ied_id, choice: stop\|continue, confirm?}` | Answer a conflict for this Run; `continue` needs `confirm:true` |
 | `GET /goose/links` | - | GOOSE link map (ADR-0065): `ieds`, `blocks` (status, `member_refs`), `links` (status, inputs, `live`), `diagnostics`, `summary` |
 | `GET /ieds/{id}/goose/messages` | - | Go only (ADR-0112): `{ied_id,name,role,running,can_send,why_not,messages[{gocb_ref,name,dataset,go_id,app_id,conf_rev,subscribers,complete,members[{position,text,fc,refs[{ref,kind,fc,value_type (onoff\|position\|number\|null),writable,sendable,description,value}]}]}],receives[{gocb_ref,publisher,block,status}]}`; members FC-aware from the stored dataset |
+| `GET /goose/messages?ied={id}` | - | Go only (change 0224): the same answer as `GET /ieds/{id}/goose/messages`; the push stream carries this form as topic `goose.messages` |
 | `GET /goose/members` | - | Go only (ADR-0112): `{ieds:{ied_id:{gocb_ref:[exact leaf refs]}}}` for expected pulses and the panel "GOOSE" tag |
 | `GET /mms/access` | - | MMS clients per simulated IED (ADR-0066): address, nodes read, report blocks, commands |
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |

@@ -107,6 +107,8 @@ export function useStudio() {
   const work = useMemo(() => createBusyCount({ busy: setBusy, working: setWorking, error: setError }), []);
   const perform = useCallback((task: () => Promise<unknown>, label = 'Working…') =>
     work(async () => { await task(); await refresh(); }, label), [work, refresh]);
+  // Runtime-only actions change no project data: no project read after them (state/runCommand.ts).
+  const command = useCallback((task: () => Promise<unknown>, label = 'Working…') => work(task, label), [work]);
 
   // Each saved diagram edit is one Undo step in the engine (ADR-0135); quick edits of the same
   // thing join there, so the gesture group is not needed here.
@@ -173,7 +175,7 @@ export function useStudio() {
   return { project, error, setError, busy, working, work: steps.work, equipmentValues, energization, signalLayers, saveState, updateDiagram,
     history, canUndo: history.canUndo, canRedo: history.canRedo, undo: history.undo, redo: history.redo,
     importPreview, confirmImport, cancelImport: () => { setImportPreview(null); setError(''); },
-    runtime, addTemplate, importFile, perform, refresh, prepare: saveDiagram,
+    runtime, addTemplate, importFile, perform, command, refresh, prepare: saveDiagram,
     save: () => perform(async () => { await saveDiagram(); await api('/project/save', 'POST'); }),
     saveAs, replaceProject,
   };

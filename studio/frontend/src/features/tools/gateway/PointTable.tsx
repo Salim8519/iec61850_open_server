@@ -7,6 +7,7 @@ import { ADD_COPY } from '../../../copy/gatewayAdd';
 import type { SmartAnswer } from '../../../api/gatewayAdd';
 import { kindOfGatewayPoint } from '../../../points/pointKind';
 import { useListFilter } from '../../../state/useListFilter';
+import { useSameList } from '../../../ui/sameProps';
 import { FilterBar } from '../../../ui/FilterBar';
 import { choicesOf, effective } from '../../../ui/filterState';
 import { stillThere, toggleShown, togglePick } from '../../../ui/pickRows';
@@ -33,7 +34,9 @@ const PAGE = 100;
 export function PointTable({ protocol, ieds, locked, fail }: {
   protocol: Protocol; ieds: Ied[]; locked: boolean; fail: (message: string) => void;
 }) {
-  const { rows, setRows, dirty, problems, undo, edit, update, discard, load, state } = usePointList(protocol, locked, fail);
+  const { rows, latest, setRows, dirty, problems, undo, edit, update, discard, load, state } = usePointList(protocol, locked, fail);
+  // Own points only, the same array while none of them changed: memoised rows skip value-only updates (0224).
+  const ownRows = useSameList(useMemo(() => (rows ?? []).filter(isOwn), [rows]));
   const [notes, setNotes] = useState<string[]>([]);
   const [skipped, setSkipped] = useState<string[]>([]); // lines of an imported file that could not be used (not a save problem)
   const [page, setPage] = useState(0);
@@ -97,10 +100,11 @@ export function PointTable({ protocol, ieds, locked, fail }: {
   const counts = useMemo(() => kindCounts(rows ?? [], row => kindOfGatewayPoint(row.kind)), [rows]);
   // Removing is saved at once, so it always offers Undo (the list before is kept for it).
   const removeRows = (keep: (row: GatewayPoint, index: number) => boolean) => {
-    if (!rows) return;
-    const left = rows.filter(keep);
-    edit(left, rows);
-    setNotes([GATEWAY_COPY.removedNote(rows.length - left.length)]);
+    const now = latest();  // a memoised row may call an older copy of this handler
+    if (!now) return;
+    const left = now.filter(keep);
+    edit(left, now);
+    setNotes([GATEWAY_COPY.removedNote(now.length - left.length)]);
   };
   const removeChosen = () => { const gone = new Set(chosen); removeRows((row, index) => !gone.has(pointKey(row, index))); setPicked(null); };
   // A list that is not being saved (it has problems, or waits for the gateway to stop) can be discarded.
@@ -140,9 +144,9 @@ export function PointTable({ protocol, ieds, locked, fail }: {
         <th>{ADDRESS_LABEL[protocol]}</th><th>IED · path</th><th>Scale</th><th>Value now</th><th aria-label="Remove" /></tr></thead>
         <tbody>{shown.slice(first, first + PAGE).map(({ row, index }) => {
           const key = pointKey(row, index);
-          return <Fragment key={key}><PointRow row={row} protocol={protocol} rows={rows ?? []} locked={locked} dirty={dirty}
+          return <Fragment key={key}><PointRow row={row} index={index} protocol={protocol} rows={ownRows} locked={locked} dirty={dirty}
             picking={!!picked && !locked} picked={!!picked?.has(key)} changing={changing === key} choices={choices}
-            togglePicked={() => picked && setPicked(togglePick(picked, key))} toggleChange={() => setChanging(changing === key ? null : key)}
+            togglePicked={() => setPicked(current => current && togglePick(current, key))} toggleChange={() => setChanging(current => current === key ? null : key)}
             update={change => update(index, change)} remove={() => removeRows((_, at) => at !== index)}
             setOwn={value => setOwn(index, row, value)} ask={choice => { setSent(null); setPending(choice); }} fail={fail} />
             {changing === key && !isOwn(row) && !locked && <SignalChange row={row} ieds={ieds} taken={takenFor(index, row.kind)}

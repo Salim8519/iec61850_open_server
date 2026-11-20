@@ -15,6 +15,13 @@ func (a *Area) autoSaveState() *pyjson.Object {
 	return pyjson.NewObject().Set("on", !a.deps.Projects.ManualSave()).Set("unsaved", a.deps.Projects.Unsaved())
 }
 
+// saved tells Deps.Saved (the push stream) that {on, unsaved} may have moved.
+func (a *Area) saved() {
+	if a.deps.Saved != nil {
+		a.deps.Saved()
+	}
+}
+
 // getAutoSave is GET /project/autosave: {on, unsaved}.
 func (a *Area) getAutoSave(w http.ResponseWriter, r *http.Request) error {
 	writeJSON(w, 200, a.autoSaveState())
@@ -34,7 +41,9 @@ func (a *Area) putAutoSave(w http.ResponseWriter, r *http.Request) error {
 	if !isBool {
 		return apperr.ValueError("Auto save must be on or off")
 	}
-	if err := a.deps.Projects.SetAutoSave(wanted); err != nil {
+	err := a.deps.Projects.SetAutoSave(wanted)
+	a.saved() // turning it on may have saved before failing; the answer is read again either way
+	if err != nil {
 		return err
 	}
 	off := map[bool]int64{true: 0, false: 1}[wanted]

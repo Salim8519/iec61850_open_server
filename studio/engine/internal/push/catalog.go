@@ -98,7 +98,7 @@ func Specs(o CatalogOptions) []Spec {
 		keyed(whole("master.traffic", "/tools/master/traffic", ChangeMasterTraffic), Keyed, "entries", "seq"),
 		whole("explorer", "/tools/explorer", ChangeExplorer, "explorer_*"),
 		ticking(whole("scan", "/tools/scan", ChangeScan), scanning),
-	}, snmpSpecs()...)
+	}, append(snmpSpecs(), projectSpecs()...)...)
 }
 
 // Catalog binds the specs to the composed routes; missing lists the patterns no area

@@ -13,11 +13,11 @@ var PushOnlyRoutes = map[string]bool{"GET /api/v1/capabilities": true, "GET /api
 	"PUT /api/v1/push/topics": true}
 
 // wirePush builds the push stream (one stream per tab, topics read through the exact GET
-// handlers of the live, runtime and tools areas) and hooks the services' change
-// notifications into it. Every project_changed reaches the gateway (ProjectChanged), which
+// handlers of the given areas: live, runtime, tools, project and platform, change 0224) and
+// hooks the services' change notifications into it. Every project_changed reaches the gateway (ProjectChanged), which
 // replaced the gateway's 10 s sweep.
-func (e *Engine) wirePush(live, runtimeRoutes, tools []api.Route) []api.Route {
-	topics, missing := push.Catalog(push.IndexRoutes(live, runtimeRoutes, tools), push.CatalogOptions{
+func (e *Engine) wirePush(areas ...[]api.Route) []api.Route {
+	topics, missing := push.Catalog(push.IndexRoutes(areas...), push.CatalogOptions{
 		Running:  func() bool { return e.Runtime.State() != "stopped" },
 		Scanning: e.Scanner.Scanning,
 	})
@@ -44,4 +44,12 @@ func (e *Engine) wirePush(live, runtimeRoutes, tools []api.Route) []api.Route {
 	e.Scanner.OnChange(e.Push.Changed)
 	e.SNMP.OnChange(e.Push.Changed)
 	return e.Push.Routes()
+}
+
+// projectSaved re-reads /project/autosave for the push stream after File › Save project or
+// the auto save switch (change 0224); before the stream exists there is nobody to tell.
+func (e *Engine) projectSaved() {
+	if e.Push != nil {
+		e.Push.Changed(push.ChangeProjectSaved)
+	}
 }

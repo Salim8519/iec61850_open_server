@@ -4,6 +4,7 @@ import type { EquipmentData, EquipmentNode, Project } from '../../../api/types';
 import { GOOSE_LINK_COPY, IED_SHEET_COPY } from '../../../copy/iedComponent';
 import { GooseMessageList } from './GooseMessageList';
 import { useIedMessages } from './useIedMessages';
+import { useCommand } from '../../../state/runCommand';
 import './ied-sheet.css';
 
 /** Sheet of an IED component (ADR-0112): which IED it is (one component per IED), the messages it
@@ -15,6 +16,7 @@ export function IedSheet({ node, project, locked, perform, update }: {
 }) {
   const data = node.data;
   const { answer, error, refresh } = useIedMessages(data.ied_id, locked);
+  const command = useCommand(perform);  // a GOOSE send changes live values only (change 0224)
   const [note, setNote] = useState('');
   const taken = new Set(project.diagram.nodes.filter(item => item.data.kind === 'IED' && item.id !== node.id)
     .map(item => item.data.ied_id));
@@ -22,7 +24,7 @@ export function IedSheet({ node, project, locked, perform, update }: {
     const ied = project.ieds.find(item => item.id === iedId);
     update({ ...data, ied_id: ied?.id ?? null, label: ied?.name ?? data.label });
   };
-  const send = (gocbRef: string, ref: string, value: boolean | number, words: string) => perform(async () => {
+  const send = (gocbRef: string, ref: string, value: boolean | number, words: string) => command(async () => {
     setNote('');
     await sendGoose(node.id, { gocb_ref: gocbRef, ref, value });
     setNote(GOOSE_LINK_COPY.sent(words)); refresh();

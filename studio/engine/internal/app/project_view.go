@@ -16,7 +16,7 @@ import (
 // the project's signal dicts and went with them).
 func (e *Engine) projectRoutes() []api.Route {
 	area := projectapi.New(projectapi.Deps{Projects: e.Projects, Runtime: e.Runtime, Startup: e.Recovery,
-		Preferences: settings.NewPreferences(e.options.DataDir)})
+		Preferences: settings.NewPreferences(e.options.DataDir), Saved: e.projectSaved})
 	routes := area.Routes()
 	for i, route := range routes {
 		switch route.Method + " " + route.Pattern {

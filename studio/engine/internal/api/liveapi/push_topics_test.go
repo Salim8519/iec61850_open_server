@@ -59,7 +59,7 @@ func TestPushFullFramesMatchPython(t *testing.T) {
 		}
 	}
 	served, notPolled, uncovered := push.Coverage(e.service.Routes())
-	if fmt.Sprint(served) != "[goose.links goose.overview goose.share health live.sessions mms.access sv]" ||
+	if fmt.Sprint(served) != "[goose.links goose.members goose.messages goose.overview goose.share health live.sessions mms.access sv]" ||
 		len(notPolled)+len(uncovered) > 0 {
 		t.Errorf("topics %v, not polled %v, polled without a topic %v", served, notPolled, uncovered)
 	}
