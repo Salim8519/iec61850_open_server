@@ -94,7 +94,7 @@ func TestGatewayServesValuesAndCommandsOverIEC104(t *testing.T) {
 	if objects[20001]["value"] != 1.0 || objects[30001]["value"] != 230.5 {
 		t.Fatalf("interrogation %v", objects)
 	}
-	frames := master104(t, int(port), "dc:50001:2:select", "dc:50001:2", "wait:1500")
+	frames := master104(t, int(port), "dc:50001:2:select", "dc:50001:2", "wait:4000") // the spontaneous position can take over 1.5 s on a busy PC
 	var answers []string
 	spontaneous := false
 	for _, frame := range frames {

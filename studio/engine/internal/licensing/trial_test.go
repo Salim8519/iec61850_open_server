@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"studio-engine/internal/testutil"
 	"testing"
 
 	"studio-engine/internal/pyjson"
@@ -127,7 +128,7 @@ func statusFrom(t *testing.T, text string) Status {
 
 func TestClockValuesMatchPython(t *testing.T) {
 	for index, c := range loadTrial(t).Clock {
-		home := t.TempDir()
+		home := testutil.TempDir(t)
 		for name, data := range c.Files {
 			os.WriteFile(filepath.Join(home, name), fromB64(t, data), 0o666)
 		}

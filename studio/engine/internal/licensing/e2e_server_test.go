@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"studio-engine/internal/testutil"
 	"testing"
 	"time"
 )
@@ -44,7 +45,7 @@ func buildServerBinary(t *testing.T) string {
 	if _, err := exec.LookPath("go"); err != nil {
 		t.Skip("Go toolchain not installed")
 	}
-	binary := filepath.Join(t.TempDir(), "license-server.exe")
+	binary := filepath.Join(testutil.TempDir(t), "license-server.exe")
 	build := exec.Command("go", "build", "-o", binary, "./cmd/license-server")
 	build.Dir = filepath.Join("..", "..", "..", "..", "license-server")
 	if output, err := build.CombinedOutput(); err != nil {
@@ -57,7 +58,7 @@ func startRealServer(t *testing.T) *realServer {
 	t.Helper()
 	binary := buildServerBinary(t)
 	port := freePort(t)
-	env := append(os.Environ(), "LICENSE_DATA_DIR="+filepath.Join(t.TempDir(), "data"),
+	env := append(os.Environ(), "LICENSE_DATA_DIR="+filepath.Join(testutil.TempDir(t), "data"),
 		fmt.Sprintf("LICENSE_LISTEN_ADDR=127.0.0.1:%d", port), "LICENSE_POW_DIFFICULTY=10",
 		"LICENSE_RATE_SENSITIVE=1000", "LICENSE_RATE_GENERAL=10000")
 	keygen := exec.Command(binary, "keygen")

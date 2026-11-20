@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"studio-engine/internal/testutil"
 	"testing"
 )
 
@@ -54,7 +55,7 @@ func writeOrRemove(t *testing.T, path string, data *string) {
 }
 
 func TestTimeAnchorMatchesPython(t *testing.T) {
-	folder := t.TempDir()
+	folder := testutil.TempDir(t)
 	value := NewClockValue("time_anchor", folder, nil)
 	anchor := TimeAnchor{Value: value, RunsFile: filepath.Join(folder, "runs.jsonl")}
 	for index, c := range loadUnits(t).Anchor {
