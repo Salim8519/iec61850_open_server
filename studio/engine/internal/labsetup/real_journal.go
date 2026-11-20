@@ -21,7 +21,11 @@ func realKey(guid, address string) string { return strings.ToUpper(guid) + " " +
 // changes nothing. "requested" counts as added (change 0221): the service may have added the
 // address although its answer was lost, and only an address really on the card, never-source and
 // approved is ever taken off. An unreadable journal means none (nothing is removed).
-func (s *Service) outstandingReal() map[string]bool {
+func (s *Service) outstandingReal() map[string]bool { return s.outstanding("real_address") }
+
+// outstanding is outstandingReal for any address kind ("real_address", "lab_address"), keyed by
+// realKey(card, address).
+func (s *Service) outstanding(kind string) map[string]bool {
 	found := map[string]bool{}
 	if s.Journal == nil {
 		return found
@@ -33,7 +37,7 @@ func (s *Service) outstandingReal() map[string]bool {
 	for _, record := range records {
 		raw, _ := record.Get("item")
 		item, _ := raw.(*pyjson.Object)
-		if item == nil || text(item, "kind") != "real_address" {
+		if item == nil || text(item, "kind") != kind {
 			continue
 		}
 		key := realKey(text(item, "card"), text(item, "ip"))

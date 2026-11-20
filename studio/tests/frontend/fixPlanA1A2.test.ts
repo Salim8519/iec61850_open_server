@@ -97,6 +97,31 @@ test('A2: only a revision conflict reads the engine drawing back', async () => {
   assert.equal(view.seen.error, 'Another tab changed this project.');
 });
 
+// Change 0224 (found in trial U2): Undo first saves what is on screen. Sending an unchanged drawing
+// again made the engine record an empty step, so the first Undo after a drag did nothing visible.
+test('a save with nothing waiting sends nothing, but still waits for a save on its way', async () => {
+  const server = { project: project(10) };
+  const sent: Diagram[] = [];
+  let release = () => {};
+  const view = tab(server, body => new Promise(resolve => {
+    sent.push(body.diagram); release = () => resolve({ revision: body.revision + 1 });
+  }));
+  await view.save.save();
+  assert.equal(sent.length, 0, 'nothing edited: no PUT');
+  view.save.edit(drawing(60));
+  await wait();
+  assert.equal(sent.length, 1, 'the edit is on its way');
+  let settled = false;
+  const prepare = view.save.save().then(() => { settled = true; });  // e.g. Undo right after the drag
+  await wait();
+  assert.equal(settled, false, 'Undo waits for the drag to reach the engine');
+  release();
+  await prepare;
+  assert.equal(sent.length, 1, 'and does not send the same drawing again');
+  await view.save.save();
+  assert.equal(sent.length, 1);
+});
+
 test('useStudio reads the project through keepLocalEdit and saves through createDiagramSave', () => {
   const hook = readFileSync(new URL('../../frontend/src/state/useStudio.ts', import.meta.url), 'utf8');
   assert.match(hook, /apply\(keepLocalEdit\(read, current\.current, diagramSave\.pending\(\)\)\)/);

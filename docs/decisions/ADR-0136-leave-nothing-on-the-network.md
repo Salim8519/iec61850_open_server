@@ -60,3 +60,9 @@ Clean-up happens at exactly three moments, and only there: **Stop**, **closing t
 ## Evidence
 
 Change [0214](../changes/2026/0214-leave-nothing-on-the-network.md).
+
+## Amended by ADR-0141 (2026-11-20)
+
+For IED addresses the clean-up moments are closing the project (or switching the network), exit
+and reopening; Stop keeps them for the session, and the lab page offers "Take them off now". The
+gateway's and master's own addresses now also come off at Stop and exit. [ADR-0141](ADR-0141-lab-addresses-owned-and-kept.md), change [0222](../changes/2026/0222-lab-addresses-owned-and-kept.md).

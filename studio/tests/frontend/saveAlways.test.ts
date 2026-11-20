@@ -134,7 +134,8 @@ test('the old unsaved-changes words are gone from the gateway copy', () => {
 test('whole-list actions keep a way back: Remove, Propose and Import offer Undo', () => {
   const table = read('features/tools/gateway/PointTable.tsx');
   assert.match(table, /edit\(value\.points, rows\)/, 'propose and import hand over the list before');
-  assert.match(table, /edit\(left, rows\)/, 'removing hands over the list before');
+  // change 0224: the latest list (`now = latest()`), so a memoised row's older handler cannot drop newer rows
+  assert.match(table, /edit\(left, now\)/, 'removing hands over the list before');
   assert.match(table, /GATEWAY_COPY\.undo/);
   assert.match(read('features/tools/gateway/usePointList.ts'), /discard/);
 });

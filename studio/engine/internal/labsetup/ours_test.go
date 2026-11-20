@@ -9,8 +9,8 @@ import (
 
 // withEthernetAddress puts D60's address (10.20.0.5) on Ethernet, as an earlier "Put your
 // published IEDs on a network" on Ethernet did, and records what FreeOurs removes.
-func withEthernetAddress(p *pc, journaled bool) (*Service, *[]string) {
-	s := p.service()
+func withEthernetAddress(t *testing.T, p *pc, journaled bool) (*Service, *[]string) {
+	s := p.service(t)
 	present, freed := true, []string{}
 	inner := s.Windows.Adapters
 	s.Windows.Adapters = func() ([]netcfg.Adapter, error) {
@@ -38,7 +38,7 @@ func withEthernetAddress(p *pc, journaled bool) (*Service, *[]string) {
 
 func TestUseTakesScadaBenchsOwnAddressOffTheOtherCard(t *testing.T) {
 	p := newPC()
-	s, freed := withEthernetAddress(p, true)
+	s, freed := withEthernetAddress(t, p, true)
 	status, err := s.Status(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +57,7 @@ func TestUseTakesScadaBenchsOwnAddressOffTheOtherCard(t *testing.T) {
 
 func TestAnAddressScadaBenchDidNotAddStillBlocks(t *testing.T) {
 	p := newPC()
-	s, freed := withEthernetAddress(p, false)
+	s, freed := withEthernetAddress(t, p, false)
 	if _, err := s.Use(nil); err == nil || !strings.Contains(err.Error(), "is the address of “Ethernet”") {
 		t.Fatalf("Use with someone else's address: %v", err)
 	}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { getPreferences, setPreferences } from '../../../api/preferences';
 import { LINK_MAP, liveFeed } from '../../../api/polls';
+import { useAskAgain } from '../../../api/useAskAgain';
 import type { GooseLinkMap, MmsClient } from '../../../api/signalLayers';
 import type { Layers, SignalLayerStore } from '../../../equipment/signalLayerStore';
 import { MMS_ACCESS } from '../../devices/useGooseLinks';
@@ -23,7 +24,8 @@ export function useSignalLayers(store: SignalLayerStore, revision: number, runni
   useEffect(() => {
     if (!active) return undefined;
     return liveFeed.subscribe<GooseLinkMap>(LINK_MAP, running ? 5000 : null, map => store.setMap(map));
-  }, [active, revision, running, store]);
+  }, [active, running, store]);
+  useAskAgain(active ? LINK_MAP : null, revision);  // pushed: nothing to ask (change 0224)
   useEffect(() => {
     if (!layers.readers || !running) return undefined;
     return liveFeed.subscribe<{ ieds: Record<string, MmsClient[]> }>(MMS_ACCESS, null, result => store.setClients(result.ieds));

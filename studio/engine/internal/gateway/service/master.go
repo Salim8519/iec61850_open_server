@@ -36,8 +36,8 @@ type Master struct {
 	// Adapters lists this PC's adapters for the master's "Network" choice (ADR-0123).
 	Adapters func() ([]netcfg.Adapter, error)
 	// Lab puts the master's own address on the lab card (ADR-0125).
-	Lab LabAddresses
-	changes  // OnChange: what the push stream re-reads
+	Lab     LabAddresses
+	changes // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // connect/disconnect
 	mu        sync.Mutex // the fields below; never held across a worker request
@@ -50,6 +50,7 @@ type Master struct {
 	stopping  chan struct{}
 	asking    int           // interrogations in flight (master_asking.go)
 	askIdle   chan struct{} // closed when the last one ends
+	claim     ownClaim      // the own address on the lab card while connected (ADR-0141)
 
 	tableMu sync.Mutex // the discovered table; values arrive while requests run
 	table   *pyjson.Object

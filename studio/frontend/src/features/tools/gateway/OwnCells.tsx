@@ -6,7 +6,7 @@ import { isCommand, isMeasured, ownName, ownTargets, parseOwnNumber, statusChoic
 
 /** The "IED · reference" cell of an own point: no IED, and what a command drives. */
 export function OwnReference({ row, rows, locked, change }: {
-  row: GatewayPoint; rows: GatewayPoint[]; locked: boolean; change: (target: string | undefined) => void;
+  row: GatewayPoint; rows: readonly GatewayPoint[]; locked: boolean; change: (target: string | undefined) => void;
 }) {
   const drives = targetName(rows, row.target);
   return <td className="reference-cell" title={OWN_COPY.hint}><span className="reference-line"><strong>{OWN_COPY.ownPoint}</strong>

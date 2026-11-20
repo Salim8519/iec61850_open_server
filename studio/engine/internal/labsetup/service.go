@@ -18,9 +18,13 @@ type Projects interface {
 	UseCard(addresses map[string]string, guid, label string) error
 	// SetLabIP stores one IED's lab_ip.
 	SetLabIP(id, ip string) error
-	// Reserved maps the card addresses other devices of this PC use (the station gateway, ADR-0125)
-	// to their names; no IED may take them and Use keeps them on the card.
+	// Reserved maps the card addresses other devices of this PC are set to use (the station
+	// gateway, ADR-0125) to their names; no IED may take them.
 	Reserved() map[string]string
+	// InUse maps the card addresses other devices of this PC hold on the card right now (a
+	// starting or running gateway, master or SNMP device, ADR-0141) to their names; Release keeps
+	// them.
+	InUse() map[string]string
 }
 
 // Runtime is the coordinator: which IEDs run, and starting or stopping some of them.
@@ -28,6 +32,8 @@ type Runtime interface {
 	Running() []string
 	Start(ids []string) error
 	Stop(ids []string) error
+	// Stopped runs fn under the run's cycle lock while nothing runs, else refuses.
+	Stopped(fn func() error) error
 }
 
 // Windows is everything that reads or changes Windows; tests replace it.
@@ -58,9 +64,12 @@ type Service struct {
 	Journal   *netcfg.Journal
 	NewID     func() string
 
-	change  sync.Mutex   // one address change at a time
-	card    sync.Mutex   // Run's adds and Release's removals never overlap
+	change sync.Mutex // one page change (Use, an address, Install, Remove, a check) at a time
+	// card: every add and every removal, with the reads that decide it, runs alone (trial N3):
+	// Run, Release, the gateway's, master's and SNMP devices' own addresses.
+	card    sync.Mutex
 	version atomic.Value // the service's protocol version from its last answer (ADR-0128)
+	session session      // IED addresses kept on the card while the project stays open (N10)
 }
 
 // Status is GET /network/lab.
@@ -81,12 +90,15 @@ type Status struct {
 	// ServiceUpdate: the service is older than protocol 3; Repair installs the one that takes all
 	// addresses at once (ADR-0128) and puts approved Ethernet addresses on at Start (ADR-0132).
 	ServiceUpdate bool `json:"service_update"`
+	// Kept: stopped IEDs' addresses this session keeps on the card until the project closes
+	// (ADR-0141); the page offers to take them off now.
+	Kept []string `json:"kept"`
 }
 
 // Status reads Windows and the project and decides every row; ARP answers that are missing are
 // asked in the background (the page refreshes by itself).
 func (s *Service) Status(chosen map[string]string) (Status, error) {
-	status := Status{CardName: labnet.CardName, Reals: []Real{}, Rows: []Row{}, CardIPs: []string{}}
+	status := Status{CardName: labnet.CardName, Reals: []Real{}, Rows: []Row{}, CardIPs: []string{}, Kept: []string{}}
 	status.Installed, status.Running = s.Windows.State()
 	status.Card = s.Windows.Card()
 	adapters, err := s.Windows.Adapters()
@@ -115,7 +127,7 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 		status.Problem = "The ScadaBench Lab card is missing (removed in Device Manager?). Press Repair."
 	case status.Installed && !status.Running:
 		status.Problem = "The lab network service is off. Run turns it back on (Windows asks once), or press Repair."
-		if left := s.leftOn(status.CardIPs); len(left) > 0 && !status.IEDsRunning { // change 0221
+		if left := s.leftOn(status.Card, status.CardIPs); len(left) > 0 && !status.IEDsRunning { // change 0221
 			status.Problem = "The lab network service is off, so ScadaBench cannot take " + strings.Join(left, ", ") +
 				" off the card. Run turns the service back on (Windows asks once), or press Repair."
 		}
@@ -135,17 +147,19 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 	}
 	s.Asker.Start(Questions(status.Rows, status.Reals, s.Asker))
 	reserve(status.Rows, s.Projects.Reserved())
+	status.Kept = s.keptRows(card, status.Rows)
 	for _, row := range status.Rows {
 		status.Checking = status.Checking || row.Status == "checking"
 	}
 	return status, nil
 }
 
-// leftOn is the card addresses no other device of this PC keeps there (Release would take them off).
-func (s *Service) leftOn(addresses []string) []string {
-	kept, left := s.Projects.Reserved(), []string{}
+// leftOn is the card addresses this copy added that no other device of this PC holds (Release
+// would take them off; ADR-0141).
+func (s *Service) leftOn(card string, addresses []string) []string {
+	kept, ours, left := s.Projects.InUse(), s.outstanding("lab_address"), []string{}
 	for _, address := range addresses {
-		if _, found := kept[address]; !found {
+		if _, found := kept[address]; !found && ours[realKey(card, address)] {
 			left = append(left, address)
 		}
 	}

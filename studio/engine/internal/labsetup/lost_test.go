@@ -29,7 +29,7 @@ func TestALostRealAnswerIsSettledAndStopTakesTheAddressOff(t *testing.T) {
 		t.Fatalf("the address is on the card, so the Run goes on: %v", err)
 	}
 	p.running = nil
-	if err := s.Release(); err != nil {
+	if err := s.EndSession(); err != nil { // exit: Stop keeps it for the session (ADR-0141)
 		t.Fatal(err)
 	}
 	if !reflect.DeepEqual(*requests, []string{"add 192.168.40.21", "remove 192.168.40.21"}) {
@@ -73,7 +73,7 @@ func TestALostRealAnswerBeforeTheAddressAppears(t *testing.T) {
 func TestALostLabAnswerIsSettled(t *testing.T) {
 	p := newPC()
 	p.version = "2"
-	s := p.service()
+	s := p.service(t)
 	s.Journal = newJournal(t)
 	s.Use(nil)
 	call := s.Windows.Call
@@ -100,7 +100,7 @@ func TestALostLabAnswerIsSettled(t *testing.T) {
 		}
 		return reply, err
 	}
-	if err := s.Release(); err != nil || len(p.cardIPs) != 0 {
+	if err := s.EndSession(); err != nil || len(p.cardIPs) != 0 { // exit (ADR-0141)
 		t.Fatalf("stop: %v %v", err, p.cardIPs)
 	}
 	if events := journalEvents(t, s); events[len(events)-1] != "removed" {

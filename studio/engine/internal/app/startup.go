@@ -33,17 +33,20 @@ func (e *Engine) startBackground(ctx context.Context) {
 	}
 	e.License.StartBackgroundVerify()
 	e.Updates.StartBackground(ctx)
-	go e.resumeGateway(ctx)
-	go e.releaseLeftLab()
+	go func() {
+		e.releaseLeftLab() // first: the automatic starts put their addresses on afterwards (trial N4)
+		e.resumeGateway(ctx)
+	}()
 	if e.Runtime != nil {
 		e.startWarm.AfterWarm = e.Runtime.PrepareSpares
 	}
 	go e.startWarm.Run(ctx)
 }
 
-// releaseLeftLab takes off the lab card the IED addresses an earlier session left there (closed
-// by Task Manager or a crash; ADR-0127). Nothing runs yet, so only the gateway's and the master's
-// own addresses stay; a Run that starts first waits for the cycle lock.
+// releaseLeftLab takes off the cards the addresses this copy's earlier session left there (closed
+// by Task Manager or a crash; ADR-0127, ADR-0141). Nothing runs yet; a Run that starts first waits
+// for the cycle lock. It finishes before the gateway, master and SNMP devices start by themselves,
+// so it never takes their new addresses off (trial N4).
 func (e *Engine) releaseLeftLab() {
 	if e.Lab != nil && e.Runtime != nil {
 		_ = e.Runtime.Stopped(func() error { e.labRelease(); return nil })

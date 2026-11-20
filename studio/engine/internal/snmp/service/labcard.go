@@ -35,8 +35,10 @@ func (s *Service) ensureOnCard(placed model.Device) error {
 	return ensure(placed.IP, CardOwner(placed.Name))
 }
 
-// CardAddresses are the lab addresses running devices answer at now (address -> owner), so the
-// card keeps them while the IEDs stop and start.
+// CardAddresses are the lab addresses starting and running devices hold now (address -> owner),
+// so the card keeps them while the IEDs stop and start. A starting device counts from the moment
+// before its address goes on (ADR-0141, trial N5): before, a Release in that moment took it off
+// and the device failed with "not an address of this PC".
 func (s *Service) CardAddresses() map[string]string {
 	used := map[string]string{}
 	if !s.onLab() {
@@ -53,7 +55,27 @@ func (s *Service) CardAddresses() map[string]string {
 			used[address] = CardOwner(names[id])
 		}
 	}
+	for id, address := range s.starting {
+		used[address] = CardOwner(names[id])
+	}
 	return used
+}
+
+// markStarting reports a device's lab address as held while Start puts it on.
+func (s *Service) markStarting(id, address string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.starting == nil {
+		s.starting = map[string]string{}
+	}
+	s.starting[id] = address
+}
+
+// clearStarting ends Start's hold: the devices that run are in devices and bound by then.
+func (s *Service) clearStarting() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.starting = nil
 }
 
 // releaseCard takes the addresses of stopped devices off the card.

@@ -1,9 +1,11 @@
 import { Pencil, X } from 'lucide-react';
+import { memo } from 'react';
 import type { GatewayPoint, PointKind, Protocol } from '../../../api/gateway';
 import { CHANGE_COPY, GATEWAY_COPY, KIND_LABELS, KIND_WHERE, OWN_COPY } from '../../../copy/gateway';
 import { kindOfGatewayPoint } from '../../../points/pointKind';
 import { EditableText } from '../../../ui/EditableText';
 import { KindBadge, kindRow } from '../../../ui/KindBadge';
+import { sameData } from '../../../ui/sameProps';
 import { ChoiceEdit, type EditChoice } from './ChoiceEdit';
 import { CommandButtons, type PendingCommand } from './CommandSend';
 import { blockedReason } from './gatewayCommands';
@@ -15,10 +17,14 @@ const shortPath = (ref: string, ied?: string | null) => (ied && ref.startsWith(i
 
 /** One point on one line (ADR-0095): the type badge gives the coloured left edge; name, address and
  *  scale are text with a ✎ pin that turns into an input on click. Every change goes through `update`,
- *  exactly like the always-open inputs did; the table saves the list after each change. */
-export function PointRow({ row, protocol, rows, locked, dirty, picking, picked, changing, choices, togglePicked, toggleChange,
+ *  exactly like the always-open inputs did; the table saves the list after each change. Memoised (change
+ *  0224): a row renders again only when what it shows changed; `index` is passed so a moved row renders
+ *  again and its handlers act on its new place; `rows` holds the own points only (OwnReference). */
+export const PointRow = memo(PointRowView, sameData);
+
+function PointRowView({ row, protocol, rows, locked, dirty, picking, picked, changing, choices, togglePicked, toggleChange,
   update, remove, setOwn, ask, fail }: {
-  row: GatewayPoint; protocol: Protocol; rows: GatewayPoint[]; locked: boolean; dirty: boolean; picking: boolean;
+  row: GatewayPoint; index: number; protocol: Protocol; rows: readonly GatewayPoint[]; locked: boolean; dirty: boolean; picking: boolean;
   picked: boolean; changing: boolean; choices: EditChoice[]; togglePicked: () => void; toggleChange: () => void;
   update: (change: Partial<GatewayPoint>) => void; remove: () => void; setOwn: (value: number) => void;
   ask: (pending: PendingCommand) => void; fail: (message: string) => void;

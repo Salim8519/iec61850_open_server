@@ -19,7 +19,7 @@ func onEthernet(t *testing.T) (*pc, *Service, *[]string) {
 	p.mode, p.guid = "lab", eth
 	p.ieds[0].LabIP, p.ieds[1].LabIP = "192.168.40.21", "192.168.40.22"
 	p.version = "3"
-	s := p.service()
+	s := p.service(t)
 	s.Journal = netcfg.NewJournal(t.TempDir()) // what ScadaBench added is journaled (A6)
 	ethernet, requests := map[string]bool{"192.168.40.111": true}, &[]string{}
 	inner, call := s.Windows.Adapters, s.Windows.Call
@@ -69,15 +69,20 @@ func TestRealCardAddressesFollowStartAndStop(t *testing.T) {
 		t.Fatalf("requests %v", *requests)
 	}
 	p.running = []string{"b"}
-	s.Release()
+	s.Release() // ADR-0141 (N10): Stop keeps them for the session, so the next Start adds nothing
 	p.running = nil
 	s.Release()
-	want := []string{"add 192.168.40.21", "add 192.168.40.22", "remove 192.168.40.21", "remove 192.168.40.22"}
+	s.EnsureForRun(eth, []string{"a", "b"})
+	if len(*requests) != 2 {
+		t.Fatalf("Stop or the next Start changed the card: %v", *requests)
+	}
+	s.EndSession() // exit (or another project) takes them off
+	want := []string{"add 192.168.40.21", "add 192.168.40.22", "remove 192.168.40.21,192.168.40.22"}
 	if !reflect.DeepEqual(*requests, want) {
 		t.Fatalf("requests %v", *requests)
 	}
 	s.Release() // nothing left: no request, and the owner's own address was never touched
-	if len(*requests) != 4 {
+	if len(*requests) != 3 {
 		t.Fatalf("requests %v", *requests)
 	}
 }

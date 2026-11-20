@@ -18,6 +18,7 @@ import { TopBar, type FileActions } from './TopBar';
 import { useUndoKeys } from './useUndoKeys';
 import { useSaveKey } from './useSaveKey';
 import { useAutoSaveSwitch } from '../state/useAutoSaveSwitch';
+import { CommandContext } from '../state/runCommand';
 import { ProjectFileDialog, type ProjectFileMode } from '../features/project/ProjectFileDialog';
 import { WorkPanel } from './WorkPanel';
 import { TourOverlay } from '../features/tour/TourOverlay';
@@ -67,7 +68,7 @@ export function App() {
   const running = useActivity(!!project);
   const connection = useConnection(!!project);  // follows the real polls, not "loaded once" (change 0177)
   const update = useUpdateStatus();
-  return <div className="app">
+  return <CommandContext.Provider value={studio.command}><div className="app">
     <WorkPanel work={studio.importPreview ? null : studio.work} />
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} work={studio.work} />}
@@ -110,5 +111,5 @@ export function App() {
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}
     {activity && <EventLog close={() => setActivity(false)}
       session={project ? `${project.session_id.slice(0, 8)} · revision ${project.revision}` : undefined} />}
-  </div>;
+  </div></CommandContext.Provider>;
 }

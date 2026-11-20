@@ -43,6 +43,7 @@ func (e *Engine) Close() error {
 		if e.Runtime != nil {
 			e.Runtime.Close()
 		}
+		e.labEndSession() // the addresses kept for the session come off too (ADR-0141)
 		if e.Explorer != nil {
 			e.Explorer.Close()
 		}

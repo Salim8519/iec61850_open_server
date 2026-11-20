@@ -7,10 +7,11 @@ import (
 
 const gateway = "Station gateway"
 
-func TestAnOwnAddressGoesOnTheCard(t *testing.T) {
+// ADR-0141 (trial N9): a typed own address is only checked; it goes on the card at its owner's start.
+func TestAnOwnAddressIsCheckedWithoutTouchingTheCard(t *testing.T) {
 	p := newPC()
-	address, err := p.service().AddOwn(" 10.10.0.100 ", gateway)
-	if err != nil || address != "10.10.0.100" || !p.cardIPs["10.10.0.100"] {
+	address, err := p.service(t).CheckOwn(" 10.10.0.100 ", gateway)
+	if err != nil || address != "10.10.0.100" || len(p.cardIPs) != 0 {
 		t.Fatalf("address %q err %v card %v", address, err, p.cardIPs)
 	}
 }
@@ -25,7 +26,7 @@ func TestAnOwnAddressIsRefusedWhenSomethingUsesIt(t *testing.T) {
 	for address, want := range cases {
 		p := newPC()
 		p.reserved = map[string]string{"10.10.0.200": "SCADA master"}
-		if _, err := p.service().AddOwn(address, gateway); err == nil || !strings.Contains(err.Error(), want) {
+		if _, err := p.service(t).CheckOwn(address, gateway); err == nil || !strings.Contains(err.Error(), want) {
 			t.Fatalf("%s: %v, want %q", address, err, want)
 		}
 		if len(p.cardIPs) != 0 {
@@ -36,12 +37,12 @@ func TestAnOwnAddressIsRefusedWhenSomethingUsesIt(t *testing.T) {
 
 func TestARealDeviceOnTheWiFiBlocksAnOwnAddress(t *testing.T) {
 	p := newPC()
-	service := p.service()
+	service := p.service(t)
 	service.Asker = NewAsker(func(address, _ string) bool { return address == "192.168.118.50" })
-	if _, err := service.AddOwn("192.168.118.50", gateway); err == nil || !strings.Contains(err.Error(), "real device on Wi-Fi") {
+	if _, err := service.CheckOwn("192.168.118.50", gateway); err == nil || !strings.Contains(err.Error(), "real device on Wi-Fi") {
 		t.Fatalf("real device not seen: %v", err)
 	}
-	if _, err := service.AddOwn("192.168.118.51", gateway); err != nil {
+	if _, err := service.CheckOwn("192.168.118.51", gateway); err != nil {
 		t.Fatalf("a silent address was refused: %v", err)
 	}
 }
@@ -50,11 +51,11 @@ func TestIEDsCannotTakeAnOwnAddressAndUseKeepsIt(t *testing.T) {
 	p := newPC()
 	p.reserved = map[string]string{"10.10.0.100": gateway}
 	p.cardIPs["10.10.0.100"] = true
-	status, err := p.service().Status(map[string]string{"b": "10.10.0.100"})
+	status, err := p.service(t).Status(map[string]string{"b": "10.10.0.100"})
 	if err != nil || byID(status.Rows)["b"].Status != "duplicate" || !strings.Contains(byID(status.Rows)["b"].Hint, gateway) {
 		t.Fatalf("row %+v err %v", byID(status.Rows)["b"], err)
 	}
-	if _, err := p.service().Use(nil); err != nil {
+	if _, err := p.service(t).Use(nil); err != nil {
 		t.Fatal(err)
 	}
 	if !p.cardIPs["10.10.0.100"] {
@@ -64,7 +65,7 @@ func TestIEDsCannotTakeAnOwnAddressAndUseKeepsIt(t *testing.T) {
 
 func TestAnOwnAddressComesBackAfterARestartAndLeaves(t *testing.T) {
 	p := newPC()
-	service := p.service()
+	service := p.service(t)
 	if err := service.EnsureOwn("10.10.0.100", gateway); err != nil || !p.cardIPs["10.10.0.100"] {
 		t.Fatalf("not added again: %v %v", err, p.cardIPs)
 	}

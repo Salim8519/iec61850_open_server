@@ -5,7 +5,9 @@ export type LabRow = { ied_id: string; name: string; scl_ip: string; ip: string;
 export type LabRealCard = { name: string; kind: string; connected: boolean; networks: string[] };
 export type LabStatus = { installed: boolean; running: boolean; card: string; card_present: boolean; card_name: string;
   ready: boolean; active: boolean; ieds_running: boolean; real_cards: LabRealCard[]; rows: LabRow[];
-  checking: boolean; problem?: string; card_addresses: string[]; service_update: boolean };
+  checking: boolean; problem?: string; card_addresses: string[]; service_update: boolean;
+  /** Stopped IEDs' addresses kept on the card until the project closes (ADR-0141). */
+  kept?: string[] };
 export type LabPing = { ok: boolean; ms: number; ttl: number };
 export const LAB = '/network/lab';
 /** Rows that block Use and Change; the engine decides them, the page only shows them. */

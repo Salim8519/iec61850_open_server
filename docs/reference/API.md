@@ -114,13 +114,14 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `GET /network/adapters` | `refresh=1` | Windows adapters with IPv4 addresses (cached 10 s) |
 | `POST /network/plan/preview` | `{adapter_guid,strategy,manual?}` | Address rows with fix hints (a row that cannot be used adds `alternative: {ip, prefix}`, change 0098), change items, fingerprint; Go also plans SNMP devices (`ied_id` `snmp:<id>`, `kind`, `saved`, item `snmp_firewall`, change 0148) |
 | `GET /network/plan/progress` | | Go only (ADR-0093): the running address check: `run`, `running`, `steps[{key,label,state,ms}]`, `asked`, `answered`, `rows[{id,name,address,state}]` with state `checking`/`free`/`in_use`/`not_checked` |
-| `GET /network/lab` | | Go only (ADR-0120): the ScadaBench Lab card: `installed`, `running` (service), `card`, `card_present`, `card_name`, `ready`, `active` (project uses the card), `ieds_running`, `real_cards[{name,kind,connected,networks}]`, `rows[{ied_id,name,scl_ip,ip,yours,on_card,status,hint,card?,alternative?}]` with status `ok`/`same_range`/`real_device`/`checking`/`duplicate`/`other_card`/`invalid`/`missing`, `checking`, `problem?`, `card_addresses`, `service_update` (the installed service still takes one address per request: the page offers Repair, ADR-0128) |
+| `GET /network/lab` | | Go only (ADR-0120): the ScadaBench Lab card: `installed`, `running` (service), `card`, `card_present`, `card_name`, `ready`, `active` (project uses the card), `ieds_running`, `real_cards[{name,kind,connected,networks}]`, `rows[{ied_id,name,scl_ip,ip,yours,on_card,status,hint,card?,alternative?}]` with status `ok`/`same_range`/`real_device`/`checking`/`duplicate`/`other_card`/`invalid`/`missing`, `checking`, `problem?`, `card_addresses`, `service_update` (the installed service still takes one address per request: the page offers Repair, ADR-0128), `kept` (stopped IEDs' addresses this session keeps on the card until the project closes, ADR-0141) |
 | `POST /network/lab/check` | `addresses{ied_id: ip}` | The same answer for addresses typed before Use; Go only |
 | `POST /network/lab/install` | | Create (or repair) the card and the `ScadaBenchLabNet` service through one UAC prompt; journaled in `network/lab_journal.jsonl`; Go only |
 | `POST /network/lab/use` | `addresses{ied_id: ip}` | Stopped only: every simulated IED's address on the card, `lab_ip` stored, lab mode on the card; no prompt; refused with the first blocking row's words; Go only |
-| `PUT /network/lab/address` | `ied_id`, `ip` | Any time once in use: one IED moves (a running IED is stopped and started again); Go only |
+| `PUT /network/lab/address` | `ied_id`, `ip` | Any time once in use: one IED moves (a running IED is stopped and started again; the old address comes off, ADR-0141); Go only |
 | `POST /network/lab/ping` | `ip` | One ICMP echo: `ok`, `ms`, `ttl`; Go only |
 | `POST /network/lab/remove` | | Stopped only: project back to this PC only, then one UAC prompt removes service, program and card; Go only |
+| `POST /network/lab/cleanup` | | Stopped only: every address this copy put on a card that nothing uses comes off now, also the ones kept for the session ("Take them off now", ADR-0141); answers the status; Go only |
 | `POST /network/plan/apply` | `{fingerprint,confirm:true}` | Re-plan; 409 if changed; elevated helper; enters lab mode |
 | `GET /network/cleanup/preview` | - | Outstanding owned items and fingerprint |
 | `POST /network/cleanup/apply` | `{fingerprint,confirm:true}` | Remove owned items; back to loopback mode |
@@ -133,6 +134,7 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `POST /goose/conflicts` | `{ied_id, choice: stop\|continue, confirm?}` | Answer a conflict for this Run; `continue` needs `confirm:true` |
 | `GET /goose/links` | - | GOOSE link map (ADR-0065): `ieds`, `blocks` (status, `member_refs`), `links` (status, inputs, `live`), `diagnostics`, `summary` |
 | `GET /ieds/{id}/goose/messages` | - | Go only (ADR-0112): `{ied_id,name,role,running,can_send,why_not,messages[{gocb_ref,name,dataset,go_id,app_id,conf_rev,subscribers,complete,members[{position,text,fc,refs[{ref,kind,fc,value_type (onoff\|position\|number\|null),writable,sendable,description,value}]}]}],receives[{gocb_ref,publisher,block,status}]}`; members FC-aware from the stored dataset |
+| `GET /goose/messages?ied={id}` | - | Go only (change 0224): the same answer as `GET /ieds/{id}/goose/messages`; the push stream carries this form as topic `goose.messages` |
 | `GET /goose/members` | - | Go only (ADR-0112): `{ieds:{ied_id:{gocb_ref:[exact leaf refs]}}}` for expected pulses and the panel "GOOSE" tag |
 | `GET /mms/access` | - | MMS clients per simulated IED (ADR-0066): address, nodes read, report blocks, commands |
 | `GET /live` | - | Real-IED sessions (state, endpoint source, access notes) |
@@ -206,8 +208,8 @@ the written values are `signal` events with source `goose_send`.
 | `POST /tools/master/list/new`, `/rows`, `/copy-gateway`, `/from-received`; `GET/POST /tools/master/list.xlsx`; `GET /tools/master/list.csv` | a point or `type, count, from, name`; `text`; `keys`; `data` (base64) | Go only: plan points (one, range, pasted/CSV rows, Excel template, from the gateway list, from what arrived) without saving; template and CSV export |
 | `GET/PUT /tools/master/network` | `local` ("" = All networks) | Go only (ADR-0123): addresses of this PC by card, the saved choice, the address the device sees, a warning |
 | `GET/PUT /tools/gateway/network` | `choice` (this_pc, network or an address), `allowed` | Go only (ADR-0124): the gateway's Network, the address SCADA connects to, the allowed SCADA address |
-| `POST /tools/gateway/network/own` | `address` | Go only (ADR-0125): checks the gateway's own address, adds it to the ScadaBench Lab card and the list, and chooses it |
-| `POST /tools/master/network/own` | `address` | Go only (ADR-0125): checks the master's own address, adds it to the ScadaBench Lab card and the list, and connects from it |
+| `POST /tools/gateway/network/own` | `address` | Go only (ADR-0125): checks the gateway's own address, adds it to the list and chooses it; it goes on the ScadaBench Lab card at Start and comes off at Stop and exit (ADR-0141) |
+| `POST /tools/master/network/own` | `address` | Go only (ADR-0125): checks the master's own address, adds it to the list and connects from it; it goes on the ScadaBench Lab card at Connect and comes off at Disconnect and exit (ADR-0141) |
 
 SNMP devices (ADR-0092), Go engine only, under `/tools/snmp` (the Python engine answers 404):
 

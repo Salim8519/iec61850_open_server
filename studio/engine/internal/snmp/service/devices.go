@@ -102,6 +102,7 @@ func (s *Service) Start() (*Status, error) {
 		}
 		placed, err := place(device, lab)
 		if err == nil && lab {
+			s.markStarting(device.ID, placed.IP) // a Release meanwhile keeps it (ADR-0141, trial N5)
 			err = s.ensureOnCard(placed)
 		}
 		if err != nil {
@@ -110,6 +111,7 @@ func (s *Service) Start() (*Status, error) {
 		}
 		valid, bound[device.ID] = append(valid, placed), placed.IP
 	}
+	defer s.clearStarting()
 	if len(config.Devices) == 0 {
 		return nil, apperr.ValueError("Add a device first: press Add device")
 	}

@@ -20,7 +20,7 @@ export function LabNetwork({ locked, perform, mode, onUsed, extra }: {
 }) {
   const [status, setStatus] = useState<LabStatus | null>(null);
   const [typed, setTyped] = useState<Typed>({});
-  const [working, setWorking] = useState<'' | 'create' | 'use' | 'move' | 'remove'>('');
+  const [working, setWorking] = useState<'' | 'create' | 'use' | 'move' | 'remove' | 'cleanup'>('');
   const [error, setError] = useState('');
   const typedRef = useRef(typed);
   typedRef.current = typed;
@@ -52,6 +52,7 @@ export function LabNetwork({ locked, perform, mode, onUsed, extra }: {
     if (used) onUsed?.();
   };
   const remove = () => perform(() => run('remove', () => api<LabStatus>(`${LAB}/remove`, 'POST')));
+  const cleanup = () => perform(() => run('cleanup', () => api<LabStatus>(`${LAB}/cleanup`, 'POST')));
   const commit = (id: string, address: string) => {
     if (!active) { setTyped({ ...typed, [id]: address }); return; }
     perform(async () => {
@@ -86,6 +87,9 @@ export function LabNetwork({ locked, perform, mode, onUsed, extra }: {
           <tbody>{status.rows.map(row => <LabRowView key={row.ied_id} row={row} typed={typed[row.ied_id]}
             setTyped={value => edit(row.ied_id, value)} commit={address => commit(row.ied_id, address)} busy={busy} />)}</tbody>
         </table></div>
+        {!!status.kept?.length && !status.ieds_running && <p className="small" style={{ margin: 0 }}>
+          {LAB_COPY.kept(status.kept.length)}{' '}<button className="link-button" disabled={busy || locked} onClick={cleanup}
+            title={LAB_COPY.keptOffHint}>{working === 'cleanup' && <SpinIcon size={14} />}{LAB_COPY.keptOff}</button></p>}
         <p className="small muted" style={{ margin: 0 }}>{LAB_COPY.editHint}
           {status.real_cards.length > 0 && <> Real cards: {status.real_cards.map(realCardLine).join('; ')}.</>}</p>
         <div className="row"><button className="link-button" disabled={busy || locked} onClick={remove}

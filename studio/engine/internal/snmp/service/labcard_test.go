@@ -22,11 +22,13 @@ func TestDevicesPutTheirAddressOnTheLabCard(t *testing.T) {
 	lab.Store(true)
 	s.SetNetwork(lab.Load)
 	var asked []string
+	var held []bool // trial N5: the card keeps the address from before it goes on (ADR-0141)
 	var refuse atomic.Bool
 	released := 0
 	s.SetLabCard(LabCard{
 		Ensure: func(address, owner string) error {
 			asked = append(asked, address+" "+owner)
+			held = append(held, s.CardAddresses()[address] == owner)
 			if refuse.Load() {
 				return errors.New("The ScadaBench Lab card is missing")
 			}
@@ -50,6 +52,9 @@ func TestDevicesPutTheirAddressOnTheLabCard(t *testing.T) {
 	}
 	if want := []string{labIP + " SNMP · SESW-A"}; !reflect.DeepEqual(asked, want) {
 		t.Fatalf("asked %v, want %v", asked, want)
+	}
+	if !reflect.DeepEqual(held, []bool{true}) {
+		t.Fatalf("a starting device's address was not kept while it went on: %v", held)
 	}
 	if got := s.CardAddresses(); !reflect.DeepEqual(got, map[string]string{labIP: "SNMP · SESW-A"}) {
 		t.Fatalf("card addresses while running: %v", got)

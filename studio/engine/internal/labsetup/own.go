@@ -9,8 +9,9 @@ import (
 // Own addresses (ADR-0125): a device of this PC that is not an IED, such as the station gateway,
 // may answer at its own address on the ScadaBench Lab card, exactly as an IED does. The same
 // rules apply: a unicast IPv4 address no IED, no other card and no real device on a connected
-// card uses. Addresses on the card are gone after Windows restarts, so the owner ensures its
-// address again before it starts.
+// card uses. The address is only checked and stored when it is typed; it goes on the card when
+// its owner starts (EnsureOwn) and comes off when it stops (RemoveOwn; ADR-0141, trial N9).
+// While it is on the card the owner reports it (Projects.InUse), so a Release never takes it off.
 
 // Ready says the card and the lab network service can take an address now (no network reads).
 func (s *Service) Ready() bool {
@@ -18,20 +19,9 @@ func (s *Service) Ready() bool {
 	return installed && running && s.Windows.Card() != ""
 }
 
-// AddOwn checks address for owner (a plain name such as "Station gateway") and puts it on the
-// card. It returns the address as ScadaBench writes it.
-func (s *Service) AddOwn(address, owner string) (string, error) {
-	s.change.Lock()
-	defer s.change.Unlock()
-	parsed, status, err := s.checkOwn(address, owner)
-	if err != nil {
-		return "", err
-	}
-	return parsed, s.add(parsed, owner, status.Card)
-}
-
-// CheckOwn checks address for owner exactly as AddOwn does without putting it on the card: an
-// SNMP device's address goes on when the device starts (change 0215).
+// CheckOwn checks address for owner (a plain name such as "Station gateway") without putting it
+// on the card, and returns the address as ScadaBench writes it. The owner stores it first and
+// puts it on at its start (ADR-0141; an SNMP device since change 0215).
 func (s *Service) CheckOwn(address, owner string) (string, error) {
 	s.change.Lock()
 	defer s.change.Unlock()
@@ -91,10 +81,11 @@ func (s *Service) ownClash(address, owner string, status Status) error {
 	return nil
 }
 
-// EnsureOwn puts an address that was checked before back on the card (after a Windows restart).
+// EnsureOwn puts an address that was checked before on the card as its owner starts. The owner
+// reports it in Projects.InUse before calling, so no Release in between takes it off (N3).
 func (s *Service) EnsureOwn(address, owner string) error {
-	s.change.Lock()
-	defer s.change.Unlock()
+	s.card.Lock()
+	defer s.card.Unlock()
 	card := s.Windows.Card()
 	if card == "" {
 		return plain("The ScadaBench Lab card is missing, so " + address + " cannot be used. " +
@@ -124,11 +115,12 @@ func reserve(rows []Row, reserved map[string]string) {
 	}
 }
 
-// RemoveOwn takes an address its owner no longer uses off the card (failure is harmless).
+// RemoveOwn takes an address its owner stopped using off the card when this copy put it there
+// (ADR-0141; failure is harmless, the next Release tries again).
 func (s *Service) RemoveOwn(address, owner string) {
-	s.change.Lock()
-	defer s.change.Unlock()
-	if card := s.Windows.Card(); card != "" {
+	s.card.Lock()
+	defer s.card.Unlock()
+	if card := s.Windows.Card(); card != "" && s.outstanding("lab_address")[realKey(card, address)] {
 		s.remove(address, owner, card)
 	}
 }

@@ -80,6 +80,7 @@ func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
 			m.state, m.message, m.clients = "stopped", "The gateway program did not stop cleanly: "+err.Error(), map[string]bool{}
 			m.mu.Unlock()
 			m.own.reset(nil)
+			m.leaveCard()
 			return nil, err
 		}
 		m.Traffic.Add(pyjson.NewObject().Set("dir", "info").Set("peer", "").Set("text", "Gateway stopped"))
@@ -89,6 +90,7 @@ func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
 	m.state, m.message, m.clients = "stopped", "", map[string]bool{}
 	m.mu.Unlock()
 	m.own.reset(nil)
+	m.leaveCard() // the own address comes off with the gateway (ADR-0141, trial N9)
 	return m.Status(), nil
 }
 

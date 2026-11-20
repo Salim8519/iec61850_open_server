@@ -44,3 +44,14 @@ test('an old lab service is offered Repair in plain words (ADR-0128)', () => {
     assert.ok(words.length > 20 && words.endsWith('.'), words);
   }
 });
+
+test('addresses kept for the session can be taken off now (ADR-0141)', () => {
+  assert.ok(read('engine/internal/labsetup/service.go').includes('json:"kept"'), 'Go decides kept');
+  assert.ok(read('engine/internal/api/labapi/routes.go').includes('Prefix + "/cleanup"'), 'Go serves the clean-up');
+  const page = read('frontend/src/features/network/LabNetwork.tsx');
+  assert.ok(page.includes('status.kept') && page.includes('/cleanup'));
+  for (const words of [LAB_COPY.kept(1), LAB_COPY.kept(3), LAB_COPY.keptOffHint, LAB_COPY.useHint, LAB_COPY.pingAfterStart]) {
+    assert.ok(words.length > 20 && words.endsWith('.'), words);
+  }
+  assert.ok(LAB_COPY.kept(1).startsWith('1 address stays') && LAB_COPY.kept(3).startsWith('3 addresses stay'));
+});

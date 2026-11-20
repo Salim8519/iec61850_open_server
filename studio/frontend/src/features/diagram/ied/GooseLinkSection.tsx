@@ -6,6 +6,7 @@ import { GOOSE_LINK_COPY } from '../../../copy/iedComponent';
 import { ACTION_LABEL, leafName, leafOf, linkActions, takesGooseLink, valueWords } from '../../../equipment/gooseLinkChoices';
 import { GooseLinkPicker } from './GooseLinkPicker';
 import { useIedMessages } from './useIedMessages';
+import { useCommand } from '../../../state/runCommand';
 import './ied-sheet.css';
 
 type Perform = (task: () => Promise<unknown>) => Promise<void>;
@@ -36,6 +37,7 @@ function GooseLinkSend({ nodeId, data, link, project, perform }: {
   nodeId: string; data: EquipmentData; link: GooseLinkSetting; project: Project; perform: Perform;
 }) {
   const { answer, refresh } = useIedMessages(link.ied_id, true);
+  const command = useCommand(perform);  // a GOOSE send changes live values only (change 0224)
   const [number, setNumber] = useState('');
   const [note, setNote] = useState('');
   const message = answer?.messages.find(item => item.gocb_ref === link.gocb_ref);
@@ -43,7 +45,7 @@ function GooseLinkSend({ nodeId, data, link, project, perform }: {
   const actions = linkActions(data.kind, link, leaf);
   const iedName = project.ieds.find(ied => ied.id === link.ied_id)?.name ?? link.ied_id;
   const why = answer && !answer.can_send ? answer.why_not : '';
-  const send = (body: Parameters<typeof sendGoose>[1], words: string) => perform(async () => {
+  const send = (body: Parameters<typeof sendGoose>[1], words: string) => command(async () => {
     setNote('');
     await sendGoose(nodeId, body);
     setNote(GOOSE_LINK_COPY.sent(words)); refresh();

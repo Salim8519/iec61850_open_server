@@ -47,8 +47,9 @@ func (e *Engine) labRoutes(network *netcfg.NetworkService, projects platformapi.
 	return labapi.New(labapi.Deps{Lab: e.Lab, Leave: projects.LeaveLabMode}).Routes()
 }
 
-// labProjects adapts the project service to labsetup.Projects; the gateway names the card
-// address it uses (ADR-0125).
+// labProjects adapts the project service to labsetup.Projects; the gateway, the master and the
+// SNMP devices name the card addresses they are set to use (ADR-0125) and the ones they hold on
+// the card now (ADR-0141).
 type labProjects struct {
 	service *service.Service
 	gateway *gatewayservice.Manager
@@ -65,6 +66,26 @@ func (p labProjects) Reserved() map[string]string {
 	}
 	if p.master != nil {
 		for address, name := range p.master.OwnAddresses() {
+			used[address] = name
+		}
+	}
+	if p.snmp != nil {
+		for address, name := range p.snmp.CardAddresses() {
+			used[address] = name
+		}
+	}
+	return used
+}
+
+func (p labProjects) InUse() map[string]string {
+	used := map[string]string{}
+	if p.gateway != nil {
+		for address, name := range p.gateway.CardAddresses() {
+			used[address] = name
+		}
+	}
+	if p.master != nil {
+		for address, name := range p.master.CardAddresses() {
 			used[address] = name
 		}
 	}

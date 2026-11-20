@@ -22,7 +22,9 @@ export type GooseSendAnswer = { node_id: string; ied_id: string; gocb_ref: strin
   applied: Record<string, unknown>; correlation_id: string };
 
 export const GOOSE_MEMBERS = '/goose/members';
-export const messagesPath = (iedId: string) => `/ieds/${encodeURIComponent(iedId)}/goose/messages`;
+// The query form (change 0224) is what the push stream carries as topic goose.messages; the answer is
+// the same as /ieds/{id}/goose/messages.
+export const messagesPath = (iedId: string) => `/goose/messages?ied=${encodeURIComponent(iedId)}`;
 export const getIedMessages = (iedId: string) => api<IedMessages>(messagesPath(iedId));
 export const getGooseMembers = () => api<GooseMembers>(GOOSE_MEMBERS);
 export const getGooseProposal = () => api<GooseProposal>('/diagram/goose-ieds');

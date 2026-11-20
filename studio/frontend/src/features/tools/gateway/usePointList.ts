@@ -72,8 +72,12 @@ export function usePointList(protocol: Protocol, locked: boolean, fail: (message
     setRows(next); setDirty(true); setProblems([]); setUndo(back?.length ? back : null);
     autosave.push({ protocol, rows: next, edit: edits.current });
   };
-  const update = (index: number, change: Partial<GatewayPoint>) =>
-    rows && edit(rows.map((row, at) => at === index ? { ...row, ...change } : row));
+  // The latest list, not the one of the render that made the handler: memoised rows keep older handlers (0224).
+  const latest = () => rowsRef.current;
+  const update = (index: number, change: Partial<GatewayPoint>) => {
+    const now = latest();
+    if (now) edit(now.map((row, at) => at === index ? { ...row, ...change } : row));
+  };
   /** Give up a list that cannot be saved (or waits for the gateway) and show the saved one again. */
   const discard = () => {
     autosave.drop(); clearDraft(protocol); edits.current += 1; dirtyRef.current = false;
@@ -82,5 +86,5 @@ export function usePointList(protocol: Protocol, locked: boolean, fail: (message
     gatewayApi.points(protocol).then(value => { if (ticket === edits.current) setRows(value.points); })
       .catch(error => fail(error.message));
   };
-  return { rows, setRows, dirty, problems, setProblems, undo, edit, update, discard, load, state: autosave.state };
+  return { rows, latest, setRows, dirty, problems, setProblems, undo, edit, update, discard, load, state: autosave.state };
 }

@@ -2,6 +2,7 @@ import { CircleAlert, ExternalLink, Radio, ShieldCheck, TriangleAlert } from 'lu
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
 import { liveFeed } from '../../api/polls';
+import { useAskAgain } from '../../api/useAskAgain';
 import type { GooseShare } from '../../api/network';
 import { REACH_COPY, REACH_STATES, reachStatus } from '../../copy/gooseReach';
 import { Disclosure } from '../../ui/Disclosure';
@@ -25,7 +26,8 @@ export function GooseReach({ revision, perform }: { revision: number; perform: (
   const [busy, setBusy] = useState(false);
   const live = !!share?.running;
   // Shared live feed: on open and each revision, then every 2 s while GOOSE runs.
-  useEffect(() => liveFeed.subscribe<GooseShare>(SHARE, live ? 2000 : null, setShare), [revision, live]);
+  useEffect(() => liveFeed.subscribe<GooseShare>(SHARE, live ? 2000 : null, setShare), [live]);
+  useAskAgain(SHARE, revision);  // pushed: nothing to ask (change 0224)
   if (!share) return null;
   const send = (body: Record<string, unknown>) => {
     setBusy(true);

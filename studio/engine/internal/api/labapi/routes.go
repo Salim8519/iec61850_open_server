@@ -28,6 +28,7 @@ type Lab interface {
 	SetAddress(id, address string) (labsetup.Status, error)
 	Ping(address string) (labnet.Pinged, error)
 	Remove(leave func() error) (labsetup.Status, error)
+	CleanUp() (labsetup.Status, error)
 }
 
 // Deps are the services behind the routes; Leave switches the project back to "This PC only".
@@ -48,7 +49,7 @@ func GoOnly(key string) bool {
 	return pattern == Prefix || strings.HasPrefix(pattern, Prefix+"/")
 }
 
-// Routes lists the seven routes.
+// Routes lists the eight routes.
 func (a *Area) Routes() []api.Route {
 	return []api.Route{
 		{Method: "GET", Pattern: Prefix, Handler: handle(func(*http.Request) (any, error) {
@@ -90,6 +91,9 @@ func (a *Area) Routes() []api.Route {
 		})},
 		{Method: "POST", Pattern: Prefix + "/remove", Handler: handle(func(*http.Request) (any, error) {
 			return a.deps.Lab.Remove(a.deps.Leave)
+		})},
+		{Method: "POST", Pattern: Prefix + "/cleanup", Handler: handle(func(*http.Request) (any, error) {
+			return a.deps.Lab.CleanUp() // the addresses kept for the session come off now (ADR-0141)
 		})},
 	}
 }

@@ -43,14 +43,14 @@ const DRIVES: Partial<Record<PointKind, PointKind[]>> = {
 };
 
 /** The own points a command can drive (single or double for ON/OFF commands), with an id. */
-export function ownTargets(rows: GatewayPoint[], kind?: PointKind): Choice[] {
+export function ownTargets(rows: readonly GatewayPoint[], kind?: PointKind): Choice[] {
   const fits = (kind && DRIVES[kind]) ?? ['single', 'double'];
   return rows.filter(row => isOwn(row) && row.id && fits.includes(row.kind))
     .map(row => ({ value: row.id!, label: `${ownName(row)} · ${row.address}` }));
 }
 
 /** The name of the status point a command drives, or '' when it drives none. */
-export function targetName(rows: GatewayPoint[], target: string | undefined): string {
+export function targetName(rows: readonly GatewayPoint[], target: string | undefined): string {
   if (!target) return '';
   const found = rows.find(row => row.id === target);
   return found ? ownName(found) : target;

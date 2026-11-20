@@ -122,6 +122,7 @@ func (a *Area) saveProject(w http.ResponseWriter, r *http.Request) error {
 	if err := a.deps.Projects.Save(); err != nil {
 		return err
 	}
+	a.saved()
 	writeJSON(w, 200, pyjson.NewObject().Set("ok", true))
 	return nil
 }

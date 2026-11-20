@@ -53,7 +53,13 @@ func (s *Service) ensureReal(guid string, starting []string) error {
 	if len(addresses) == 0 {
 		return nil
 	}
-	return runRefused(s.changeReal(labnet.OpAdd, guid, addresses, names)) // in project order
+	failed := s.changeReal(labnet.OpAdd, guid, addresses, names) // in project order
+	items := make([]wanted, len(addresses))
+	for index, address := range addresses {
+		items[index] = wanted{address, names[address]}
+	}
+	s.keepAdded(guid, items, failed) // kept while the project stays open (ADR-0141, N10)
+	return runRefused(failed)
 }
 
 // EnsureRealOwn puts one approved address of a device that is not an IED (an SNMP device) on the
@@ -85,8 +91,9 @@ func (s *Service) onCard(guid, address string) bool {
 }
 
 // releaseReal takes the approved addresses ScadaBench added (journaled, A6) off every real card
-// unless a running IED of the project's card uses them: after Stop, at launch (a crash left them)
-// and at exit. The addresses that stay come back with their reason (change 0221).
+// unless a running IED of the project's card uses them, a device holds them now, or this session
+// keeps them for the open project (ADR-0141): after Stop, at launch (a crash left them), after a
+// project change and at exit. The addresses that stay come back with their reason (change 0221).
 func (s *Service) releaseReal() []failure {
 	if s.Windows.Approved == nil {
 		return nil
@@ -101,13 +108,13 @@ func (s *Service) releaseReal() []failure {
 	}
 	keep := map[string]bool{}
 	if mode, guid := s.Projects.Network(); mode == "lab" {
-		for address := range s.Projects.Reserved() { // running SNMP devices (ADR-0136)
+		for address := range s.Projects.InUse() { // running SNMP devices (ADR-0136)
 			keep[strings.ToUpper(guid)+" "+address] = true
 		}
 		ieds, _ := s.Projects.SimulatedIEDs()
 		running := s.Runtime.Running()
 		for _, ied := range ieds {
-			if ied.LabIP != "" && contains(running, ied.ID) {
+			if ied.LabIP != "" && (contains(running, ied.ID) || s.session.has(guid, ied.LabIP)) {
 				keep[strings.ToUpper(guid)+" "+ied.LabIP] = true
 			}
 		}
@@ -130,6 +137,7 @@ func (s *Service) releaseReal() []failure {
 		failed := []failure{}
 		if s.RealCardsReady(adapter.GUID) {
 			failed = s.changeReal(labnet.OpRemove, adapter.GUID, off, nil)
+			s.session.forgetAll(adapter.GUID, off, failed)
 		} else {
 			for _, address := range off {
 				failed = append(failed, failure{address: address, reason: "the ScadaBench network service is off"})
