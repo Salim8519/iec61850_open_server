@@ -40,6 +40,7 @@ func (e *Engine) wireTools() []api.Route {
 		return netcfg.Normalize(raw), err
 	}
 	e.Gateway.Adapters = e.Master.Adapters
+	e.Gateway.HasAddress = netcfg.HasAddress // "Address gone" while running (change 0221)
 	e.Gateway.Converter = &service.Converter{Master: e.Master}
 	e.Gateway.Typed = ports.GatewayTyped(e.Runtime) // SCADA select / execute / cancel (ADR-0107)
 	gateway.ExtendedControls = typedControlsOf      // BSC/APC/INC links and Add points (ADR-0104)

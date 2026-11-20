@@ -56,6 +56,8 @@ export const GATEWAY_COPY = {
   listen: 'Who can connect', thisPc: 'This PC only', network: 'All network adapters',
   listenHint: 'Choose All network adapters when SCADA runs on another PC. ScadaBench checks Windows Firewall for you below.',
   start: 'Start gateway', stop: 'Stop gateway', starting: 'Starting…',
+  /** Change 0221: the running gateway's address was taken off its card; SCADA cannot connect. */
+  addressGone: 'Running, address gone',
   startHint: 'Press Start gateway. The point list is prepared for you.',
   notRunning: 'The gateway is running, but the IEDs are not: every point is sent to SCADA as invalid until you press Run.',
   separateRun: 'The IEDs are not running. Run and the gateway are separate: start the IEDs with Run, and the gateway with Start gateway.',

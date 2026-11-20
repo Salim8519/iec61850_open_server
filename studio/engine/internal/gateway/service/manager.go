@@ -32,6 +32,7 @@ type Manager struct {
 	Typed      TypedCommands                    // typed IEC 61850 commands (ADR-0104/0107); set by the composition
 	Adapters   func() ([]netcfg.Adapter, error) // this PC's cards for the Network field (ADR-0124)
 	Lab        LabAddresses                     // the gateway's own address on the lab card (ADR-0125); set by the composition
+	HasAddress func(string) (bool, error)       // Windows still has the listen address (change 0221); nil: never watched
 	changes                                     // OnChange: what the push stream re-reads
 
 	lifecycle sync.Mutex // Start/Stop one at a time (Python's RLock around them)
@@ -48,6 +49,8 @@ type Manager struct {
 	executor  *executor
 	own       ownStore   // values of the own points the running gateway serves (lane G)
 	selected  selections // IED selections a SCADA select made, until execute or cancel (ADR-0107)
+	watch     *addressWatch
+	gone      bool // the running gateway's address is no longer on this PC (change 0221)
 }
 
 // NewManager returns a stopped gateway for studio_gateway at executable.
@@ -168,7 +171,7 @@ func (m *Manager) Status() *pyjson.Object {
 	for peer := range m.clients {
 		clients = append(clients, peer)
 	}
-	state, message, problems := m.state, m.message, m.problems
+	state, message, problems, gone := m.state, m.message, m.problems, m.gone && m.state == "running"
 	m.mu.Unlock()
 	sort.Strings(clients)
 	peers := make([]any, len(clients))
@@ -188,11 +191,15 @@ func (m *Manager) Status() *pyjson.Object {
 	if !found {
 		realValue = true
 	}
-	return pyjson.NewObject().Set("state", state).Set("message", message).Set("opened", opened).
+	status := pyjson.NewObject().Set("state", state).Set("message", message).Set("opened", opened).
 		Set("protocol", get(config, "protocol")).Set("listen", get(config, "listen")).Set("clients", peers).
 		Set("problems", problems).Set("run_state", m.runtime.RunState()).Set("available", err == nil).
 		Set("traffic_last", m.Traffic.Sequence()).Set("real_commands", realValue).Set("auto_start", autoStart).
 		Set("role", role)
+	if gone { // only while it is gone: the usual answer stays byte-identical to Python (change 0221)
+		status.Set("address_gone", true)
+	}
+	return status
 }
 
 // Table is the saved point list of one protocol with what each point carries now.

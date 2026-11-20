@@ -159,7 +159,8 @@ func (m *Manager) launch() (*pyjson.Object, string, int, error) {
 		m.points[text(point, "id")] = point
 		m.order = append(m.order, text(point, "id"))
 	}
-	m.state, m.message, m.sync = "running", "Listening on "+endpoint, sync
+	m.state, m.message, m.sync, m.gone = "running", "Listening on "+endpoint, sync, false
+	m.watch = m.watchAddress(process, pytext.Str(get(opened, "bind")), endpoint) // change 0221
 	m.mu.Unlock()
 	m.Traffic.Add(pyjson.NewObject().Set("dir", "info").Set("peer", "").Set("text", "Gateway started: "+protocol+
 		" on "+endpoint+" with "+strconv.Itoa(len(points))+" points"))
