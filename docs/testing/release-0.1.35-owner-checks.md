@@ -12,6 +12,20 @@ the speed and network trials ([results](speed-trials-results-2026-11-20.md)): ch
 [0225](../changes/2026/0225-fixed-firewall-rule-dropped.md) (dropped), and
 [0227](../changes/2026/0227-gateway-restart-and-late-lab-adds.md).
 
+## Candidate build (2026-11-20, from master after all merges)
+
+- `compile_go_release.py --version 0.1.35`: installer compiled (with the B-3 uninstall step),
+  antivirus gate 19 programs, 0 findings. `ScadaBench-Setup-0.1.35.exe` 20,248,032 bytes (SHA-256
+  `cee23fad…`), `ScadaBench-Portable-0.1.35.exe` 54,877,184 bytes (`2d27ad6d…`).
+- Before the build, on this PC with no other agent running: native workers rebuilt (VS 2019);
+  Go engine `go vet` and `go test ./...`; frontend `tsc` and 511/511 tests (Node 24);
+  `verify.py` all 8 checks PASS; protocol suite 95 passed, 9 skipped, 1 failed
+  (`test_adapter_listing`, see "Known").
+- Packaged folder on a throwaway data folder (your licence read from `%LOCALAPPDATA%\ScadaBench`
+  like the installed app): `GET /app/update` current 0.1.35; sample IED Feeder01 added; 10
+  Run/Stop rounds: the IED listens 0.02 s after Run answers (pre-R3 build: 0.06-0.08 s), every
+  independent read of `Feeder01CTRL/XCBR1.Pos.stVal` with `studio_probe` answered `01`; Stop 0.01 s.
+
 ## Two decisions
 
 1. **IED addresses stay after Stop (N10, ADR-0141 item 5).** Until now Stop took every IED address
