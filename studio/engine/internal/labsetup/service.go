@@ -115,6 +115,10 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 		status.Problem = "The ScadaBench Lab card is missing (removed in Device Manager?). Press Repair."
 	case status.Installed && !status.Running:
 		status.Problem = "The lab network service is off. Run turns it back on (Windows asks once), or press Repair."
+		if left := s.leftOn(status.CardIPs); len(left) > 0 && !status.IEDsRunning { // change 0221
+			status.Problem = "The lab network service is off, so ScadaBench cannot take " + strings.Join(left, ", ") +
+				" off the card. Run turns the service back on (Windows asks once), or press Repair."
+		}
 	}
 	ieds, err := s.Projects.SimulatedIEDs()
 	if err != nil {
@@ -135,6 +139,17 @@ func (s *Service) Status(chosen map[string]string) (Status, error) {
 		status.Checking = status.Checking || row.Status == "checking"
 	}
 	return status, nil
+}
+
+// leftOn is the card addresses no other device of this PC keeps there (Release would take them off).
+func (s *Service) leftOn(addresses []string) []string {
+	kept, left := s.Projects.Reserved(), []string{}
+	for _, address := range addresses {
+		if _, found := kept[address]; !found {
+			left = append(left, address)
+		}
+	}
+	return left
 }
 
 // settled is Status after every ARP question it needs has been answered.

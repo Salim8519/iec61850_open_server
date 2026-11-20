@@ -15,8 +15,11 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// journalEvents are the events journal.append accepts.
-var journalEvents = map[string]bool{"applied": true, "removed": true, "failed": true, "skipped": true}
+// journalEvents are the events journal.append accepts. "requested" is written only to the Go lab
+// journal (lab_journal.jsonl), before a real-card add whose answer may be lost (change 0221);
+// Outstanding ignores it, so journal.jsonl reads exactly as Python's.
+var journalEvents = map[string]bool{"applied": true, "removed": true, "failed": true, "skipped": true,
+	"requested": true}
 
 // Journal is the append-only record of Windows network changes ScadaBench itself made
 // (<data>/network/journal.jsonl): one json.dumps(record, sort_keys=True) per line, written in

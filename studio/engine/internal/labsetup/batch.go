@@ -22,13 +22,17 @@ func (s *Service) serviceVersion() string {
 }
 
 // addAll puts addresses on the card in one request when the service takes several (ADR-0128),
-// else one request each as protocol 1 needs. Every address keeps its own journal record.
-func (s *Service) addAll(items []wanted, card string) {
+// else one request each as protocol 1 needs. Every address keeps its own journal record; the ones
+// that did not go on come back with their reason, in order (change 0221).
+func (s *Service) addAll(items []wanted, card string) []failure {
+	var failures []failure
 	if len(items) < 2 || !labnet.Batched(s.serviceVersion()) {
 		for _, item := range items {
-			s.add(item.address, item.name, card)
+			if failed := s.addOne(item, card); failed != nil {
+				failures = append(failures, *failed)
+			}
 		}
-		return
+		return failures
 	}
 	addresses := make([]string, len(items))
 	for index, item := range items {
@@ -36,7 +40,7 @@ func (s *Service) addAll(items []wanted, card string) {
 	}
 	reply, err := s.call(labnet.Request{Op: labnet.OpAdd, IPs: addresses})
 	if err != nil {
-		return
+		return s.lostLabAdds(items, card, err)
 	}
 	for _, item := range items {
 		reason := reply.Failed[item.address]
@@ -48,20 +52,26 @@ func (s *Service) addAll(items []wanted, card string) {
 			reason = reply.Message
 		}
 		s.journal("failed", "lab_address", item.address, item.name, card, reason)
+		failures = append(failures, failure{item.address, item.name, labnet.CardName, reason})
 	}
+	return failures
 }
 
-// removeAll takes addresses off the card, in one request when the service takes several.
-func (s *Service) removeAll(addresses []string, card string) {
+// removeAll takes addresses off the card, in one request when the service takes several, and
+// returns the ones that stayed with their reason.
+func (s *Service) removeAll(addresses []string, card string) []failure {
+	var failures []failure
 	if len(addresses) < 2 || !labnet.Batched(s.serviceVersion()) {
 		for _, address := range addresses {
-			s.remove(address, "", card)
+			if failed := s.removeOne(address, "", card); failed != nil {
+				failures = append(failures, *failed)
+			}
 		}
-		return
+		return failures
 	}
 	reply, err := s.call(labnet.Request{Op: labnet.OpRemove, IPs: addresses})
 	if err != nil {
-		return
+		return s.lostLabRemoves(addresses, card, err)
 	}
 	for _, address := range addresses {
 		event, reason := "removed", reply.Failed[address]
@@ -72,5 +82,9 @@ func (s *Service) removeAll(addresses []string, card string) {
 			reason = reply.Message
 		}
 		s.journal(event, "lab_address", address, "", card, reason)
+		if event == "failed" {
+			failures = append(failures, failure{address, "", labnet.CardName, reason})
+		}
 	}
+	return failures
 }

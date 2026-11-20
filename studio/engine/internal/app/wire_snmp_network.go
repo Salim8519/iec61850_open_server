@@ -44,7 +44,7 @@ func (e *Engine) snmpLabCard() snmpservice.LabCard {
 			}
 			return e.Lab.EnsureRealOwn(guid, address, owner)
 		},
-		Release: e.Lab.Release, // keeps the running IEDs' and devices' addresses (ADR-0127)
+		Release: e.labRelease, // keeps the running IEDs' and devices' addresses (ADR-0127)
 	}
 }
 

@@ -17,8 +17,10 @@ import (
 func realKey(guid, address string) string { return strings.ToUpper(guid) + " " + address }
 
 // outstandingReal is the real-card addresses the journal says ScadaBench added and has not taken
-// off yet: the newest "applied", "removed" or "skipped" record of each wins; "failed" changes
-// nothing. An unreadable journal means none (nothing is removed).
+// off yet: the newest "requested", "applied", "removed" or "skipped" record of each wins; "failed"
+// changes nothing. "requested" counts as added (change 0221): the service may have added the
+// address although its answer was lost, and only an address really on the card, never-source and
+// approved is ever taken off. An unreadable journal means none (nothing is removed).
 func (s *Service) outstandingReal() map[string]bool {
 	found := map[string]bool{}
 	if s.Journal == nil {
@@ -36,7 +38,7 @@ func (s *Service) outstandingReal() map[string]bool {
 		}
 		key := realKey(text(item, "card"), text(item, "ip"))
 		switch text(record, "event") {
-		case "applied":
+		case "applied", "requested":
 			found[key] = true
 		case "removed", "skipped":
 			delete(found, key)
@@ -63,7 +65,7 @@ func (s *Service) settleGone(adapter netcfg.Adapter, outstanding map[string]bool
 	for _, address := range gone {
 		delete(outstanding, realKey(adapter.GUID, address))
 		s.journal("skipped", "real_address", address, "", adapter.GUID,
-			"No longer on the card (Windows restarted or the card was reset); nothing to take off.")
+			"Not on the card (never added, Windows restarted or the card was reset); nothing to take off.")
 	}
 }
 

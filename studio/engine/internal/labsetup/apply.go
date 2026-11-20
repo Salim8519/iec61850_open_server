@@ -120,8 +120,9 @@ func (s *Service) restart(running bool, id string, failure error) error {
 }
 
 // EnsureForRun puts the stored addresses of the IEDs about to start on the card (ADR-0127: an
-// address is on the card only while its IED runs). It does nothing unless the project uses the
-// card and the service answers; the usual Run check reports anything still missing.
+// address is on the card only while its IED runs). Every address that does not go on stops the
+// Run with its own reason, and so does a service that is off or does not answer while addresses
+// are missing (change 0221); before, Run went on and only the preflight's "not set up" followed.
 func (s *Service) EnsureForRun(guid string, starting []string) error {
 	s.card.Lock()
 	defer s.card.Unlock()
@@ -134,52 +135,89 @@ func (s *Service) EnsureForRun(guid string, starting []string) error {
 	if card == "" || !strings.EqualFold(card, guid) {
 		return s.ensureReal(guid, starting) // a real card with approved addresses (ADR-0132)
 	}
-	if _, running := s.Windows.State(); !running {
-		return nil
-	}
 	ieds, err := s.Projects.SimulatedIEDs()
 	if err != nil {
 		return nil
 	}
-	reply, err := s.call(labnet.Request{Op: labnet.OpStatus})
-	if err != nil || !reply.OK {
-		return nil
-	}
-	var missing []wanted
+	var needed []wanted
 	for _, ied := range ieds {
-		if ied.LabIP != "" && contains(starting, ied.ID) && !contains(reply.Addresses, ied.LabIP) {
-			missing = append(missing, wanted{ied.LabIP, ied.Name})
+		if ied.LabIP != "" && contains(starting, ied.ID) {
+			needed = append(needed, wanted{ied.LabIP, ied.Name})
 		}
 	}
-	s.addAll(missing, card)
-	return nil
+	if len(needed) == 0 {
+		return nil
+	}
+	if _, running := s.Windows.State(); !running {
+		return serviceDownForRun(s.notOn(card, needed), "is off")
+	}
+	reply, err := s.call(labnet.Request{Op: labnet.OpStatus})
+	if err != nil || !reply.OK {
+		return serviceDownForRun(s.notOn(card, needed), "does not answer")
+	}
+	var missing []wanted
+	for _, item := range needed {
+		if !contains(reply.Addresses, item.address) {
+			missing = append(missing, item)
+		}
+	}
+	return runRefused(s.addAll(missing, card))
 }
 
-// add asks the service for one address and journals the answer.
+// notOn is the items whose address Windows does not list on the card.
+func (s *Service) notOn(card string, items []wanted) []wanted {
+	present, missing := s.addressesOn(card), []wanted{}
+	for _, item := range items {
+		if !present[item.address] {
+			missing = append(missing, item)
+		}
+	}
+	return missing
+}
+
+// add asks the service for one address and journals the answer; the error is the reason.
 func (s *Service) add(address, name, card string) error {
-	reply, err := s.call(labnet.Request{Op: labnet.OpAdd, IP: address})
-	if err != nil {
-		return plain(err.Error())
+	if failed := s.addOne(wanted{address, name}, card); failed != nil {
+		return plain(failed.reason)
 	}
-	present := contains(reply.Addresses, address)
-	if !reply.OK || !present {
-		s.journal("failed", "lab_address", address, name, card, reply.Message)
-		return plain(reply.Message)
-	}
-	s.journal("applied", "lab_address", address, name, card, "")
 	return nil
 }
 
-func (s *Service) remove(address, name, card string) {
+func (s *Service) addOne(item wanted, card string) *failure {
+	reply, err := s.call(labnet.Request{Op: labnet.OpAdd, IP: item.address})
+	if err != nil {
+		if failures := s.lostLabAdds([]wanted{item}, card, err); len(failures) > 0 {
+			return &failures[0]
+		}
+		return nil
+	}
+	if !reply.OK || !contains(reply.Addresses, item.address) {
+		s.journal("failed", "lab_address", item.address, item.name, card, reply.Message)
+		return &failure{item.address, item.name, labnet.CardName, reply.Message}
+	}
+	s.journal("applied", "lab_address", item.address, item.name, card, "")
+	return nil
+}
+
+func (s *Service) remove(address, name, card string) { s.removeOne(address, name, card) }
+
+func (s *Service) removeOne(address, name, card string) *failure {
 	reply, err := s.call(labnet.Request{Op: labnet.OpRemove, IP: address})
 	if err != nil {
-		return
+		if failures := s.lostLabRemoves([]string{address}, card, err); len(failures) > 0 {
+			return &failures[0]
+		}
+		return nil
 	}
 	event := "removed"
 	if !reply.OK {
 		event = "failed"
 	}
 	s.journal(event, "lab_address", address, name, card, reply.Message)
+	if !reply.OK {
+		return &failure{address, name, labnet.CardName, reply.Message}
+	}
+	return nil
 }
 
 // journal appends one record to network/lab_journal.jsonl (append-only, never rewritten).
