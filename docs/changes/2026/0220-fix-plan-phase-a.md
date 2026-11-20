@@ -73,3 +73,27 @@ Each item has a test that failed before the fix and passes after, unless marked 
   no key. A tax-inclusive store accepts subtotal or subtotal plus tax.
 - Uninstall with the lab card shows two administrator prompts.
 - Laptop checks to run: [fix plan, laptop checklist](../../testing/fix-plan-2026-11-19.md).
+
+## Windows build and tests (2026-11-20)
+
+- Native workers built with VS 2019 (`studio_ied`, `studio_live`, `studio_probe`, `studio_gateway`,
+  `studio_control`, `studio_master`, both test masters): A12-A14 and A20 compile and link; the
+  first link of `studio_gateway.exe` was refused (file briefly locked), the retry linked.
+  `studio_goose.exe` rebuilt with `build_goose_engine.py`.
+- Found on Windows and fixed: a VM over the host's rate limit could lose the "Too many requests"
+  answer, because the host replied and closed without reading the request and Windows reset the
+  connection (`hostkey/server.go` now reads the request first). The test failed 1 run in 5
+  before and passed 30 of 30 after. The behaviour predates the fix plan.
+- Go engine `go vet` and `go test ./...` on Windows pass, including the `internal/runtime`,
+  uplink and netcfg tests the sandbox could not run. Three tests failed only while several Go
+  suites ran at once (IEC 104 gateway commands, canvas-vs-probe read count, a 20 s PowerShell
+  call in netcfg); each passes alone (3 of 3) and in a full run of the engine suite on its own.
+- GOOSE engine and license server `go test ./...` pass on Windows; frontend 500 of 500 under
+  Node 24; `verify.py` all checks PASS (one earlier run reported a Go failure that the log did
+  not keep; the rerun passed).
+- Protocol tests with the new workers: 93 passed, 9 skipped, 1 failed. The failure,
+  `test_adapter_listing`, compares the frozen Python adapter list with Get-NetAdapter on this
+  PC (ScadaBench Lab versus VMnet1); neither side changed since 2026-10-20. The GOOSE input
+  test failed only against the old `studio_goose.exe` and passes with the rebuilt one.
+  `test_gateway_wire` logs "command_result request timed out": its Python test harness answers
+  from the reader thread, so the reply can never be read (harness only; tests pass).

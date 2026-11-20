@@ -157,11 +157,14 @@ func (s *Server) handle(conn net.Conn, endpoint Endpoint) {
 	if peer := net.ParseIP(remote); endpoint.Subnet != nil && (peer == nil || !endpoint.Subnet.Contains(peer)) {
 		return
 	}
-	if s.Limiter != nil && !s.Limiter.Allow(remote) {
+	allowed := s.Limiter == nil || s.Limiter.Allow(remote)
+	// Read the request before any reply: closing with unread input makes Windows reset the
+	// connection, and the peer can lose the "Too many requests" answer.
+	line, err := bufio.NewReaderSize(io.LimitReader(conn, MaxRequestBytes+1), MaxRequestBytes+1).ReadBytes('\n')
+	if !allowed {
 		reply(conn, Answer{Error: "Too many requests. Wait a minute."})
 		return
 	}
-	line, err := bufio.NewReaderSize(io.LimitReader(conn, MaxRequestBytes+1), MaxRequestBytes+1).ReadBytes('\n')
 	if err != nil || len(line) > MaxRequestBytes {
 		return
 	}
