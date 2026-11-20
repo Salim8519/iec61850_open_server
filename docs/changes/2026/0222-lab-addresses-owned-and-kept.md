@@ -107,3 +107,15 @@ Ports 24000-24999, addresses 198.18.24.0/24. Full tables:
   this port" while the address was there (the previous gateway's port), not changed here.
 - Not run: real cards (N10 on Ethernet: no ARP question and no DNS Client work at the second Start),
   the master's own address live (unit tests only).
+
+## Owner decision (2026-11-20, morning)
+
+- N10 is switched off for now: "for the time being the stop removes them". `labsetup.keepForSession
+  = false` keeps nothing for the session, so Stop's Release takes IED addresses off again (ADR-0127
+  item 3, ADR-0132 item 2), the lab page never lists kept addresses and **Take them off now** has
+  nothing extra to remove. The mechanism stays so turning it on is one line.
+- Kept as built: each copy removes only the addresses its own journal says it added ("each
+  scadabench copy removes its own ip"), the one lock, device addresses following their device,
+  starting SNMP devices kept and the launch order.
+- Tests: the Stop expectations of `batch_test.go`, `realcards_test.go` and `service_test.go` are back
+  to "Stop removes"; the two N10 tests in `ownership_test.go` skip while the switch is off.

@@ -26,17 +26,12 @@ the speed and network trials ([results](speed-trials-results-2026-11-20.md)): ch
   Run/Stop rounds: the IED listens 0.02 s after Run answers (pre-R3 build: 0.06-0.08 s), every
   independent read of `Feeder01CTRL/XCBR1.Pos.stVal` with `studio_probe` answered `01`; Stop 0.01 s.
 
-## Two decisions
+## Decisions (owner, 2026-11-20 morning)
 
-1. **IED addresses stay after Stop (N10, ADR-0141 item 5).** Until now Stop took every IED address
-   off (your words in ADR-0136: leftovers look "like trash"). Now they stay while the project is
-   open and come off at Close, another project, Use, exit, or the lab page's **Take them off now**.
-   Measured: Stop's address step 38 % → 0, Windows address changes 160 → 7 per 10 Run/Stop
-   rounds, Run 13-14 % quicker from the second Run. The page names the kept addresses. If you
-   prefer the old way, say so: it is one rule in `labsetup` (ADR-0141 item 5) to switch back.
-2. **Each copy removes only its own addresses (ADR-0141 item 1).** This was the fix plan's Part B
-   item "installed and portable copies remove each other's addresses" (not decided). Tonight it
-   broke Runs ("MMS bind failed") 7 times between test engines, so it was fixed: 40/40 → 0/40.
+1. **IED addresses: Stop removes them (N10 off for now).** Stop takes IED addresses off as before;
+   the keep-for-the-session mechanism stays in the code, switched off (`labsetup.keepForSession`).
+2. **Each copy removes only its own addresses (ADR-0141 item 1): kept.** Tonight's test copies broke
+   each other's Runs 7 times before this; 40/40 → 0/40 after.
 
 ## Checks that need you
 
@@ -45,8 +40,8 @@ Do them with the 0.1.35 candidate installed (or the dev app on master for 1-3).
 1. **Undo after a drag (screen).** Drag a breaker on the diagram, press Undo once: it goes back.
 2. **Second tab.** Open a second tab, switch auto save off in the first, bring the second to the
    front: it shows auto save off.
-3. **Kept addresses (decision 1).** Run and Stop a Lab-card project: the lab page says "N addresses
-   stay on the lab card until you close this project…"; **Take them off now** empties the card.
+3. **Stop removes IED addresses (decision 1).** Run and Stop a Lab-card project: after Stop the
+   lab card holds no IED address (`Get-NetIPAddress -InterfaceAlias "ScadaBench Lab"`).
 4. **Network service update (needed for 5 and 6).** Network › This PC lab network › **Repair**
    (one UAC prompt) installs the new network service.
 5. **Cable out (N6).** Project on Ethernet with approved addresses, cable unplugged, press Run:
@@ -57,7 +52,7 @@ Do them with the 0.1.35 candidate installed (or the dev app on master for 1-3).
    With the service stopped, Run asks Windows once; accept it and Run works.
 7. **Real card Run/Stop (N2, N10, A6).** On Ethernet with approved addresses:
    `python studio/tools/trials/card_watch.py --card Ethernet --seconds 300`, then Run, Stop, Run,
-   Stop: the second Run adds no address. Close the project: no IED address left on Ethernet. Set
+   Stop: after each Stop no IED address is left on Ethernet. Set
    one address as the card's own static address in Windows, open ScadaBench, Run, Stop, Quit: it
    stays. A DHCP card's own address is never removed.
 8. **Gateway address gone (N8).** Gateway on an own Lab address, Start; admin PowerShell

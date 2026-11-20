@@ -54,7 +54,7 @@ Measured on the owner's PC on today's code (2026-11-20, details in
    address while the gateway is stopped. Replaces ADR-0125 item 3 ("on the card while chosen").
 4. **Launch clean-up first (N4).** At launch the clean-up of what an earlier session left finishes
    before the master, gateway and SNMP devices start by themselves.
-5. **IED addresses stay for the session (N10).** An IED address this run of ScadaBench put on a card
+5. **IED addresses stay for the session (N10).** Off for now (owner, 2026-11-20: "for the time being the stop removes them"; `labsetup.keepForSession = false`): Stop takes IED addresses off as ADR-0127 item 3 and ADR-0132 item 2 say; the rest of this item describes the switched-off mechanism. An IED address this run of ScadaBench put on a card
    (Lab card, or an approved real-card address, ADR-0132) stays there after Stop while the project
    stays open; the next Run adds nothing. It comes off when the project's addresses change while
    nothing runs (another project opened, File › New or Close, This PC only, the IED moved or

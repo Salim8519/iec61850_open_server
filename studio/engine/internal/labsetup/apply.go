@@ -167,8 +167,12 @@ func (s *Service) EnsureForRun(guid string, starting []string) error {
 	return runRefused(failed)
 }
 
-// keepAdded keeps for the session the IED addresses that went on (ADR-0141, trial N10).
+// keepAdded keeps for the session the IED addresses that went on (ADR-0141, trial N10) while
+// keepForSession is on; off, Stop's Release takes them off as before.
 func (s *Service) keepAdded(card string, items []wanted, failed []failure) {
+	if !keepForSession {
+		return
+	}
 	refused := map[string]bool{}
 	for _, item := range failed {
 		refused[item.address] = true

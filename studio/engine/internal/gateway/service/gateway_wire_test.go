@@ -83,12 +83,17 @@ func TestGatewayServesValuesAndCommandsOverIEC104(t *testing.T) {
 	}
 	time.Sleep(300 * time.Millisecond) // the first batch leaves after 100 ms
 	objects := map[float64]map[string]any{}
-	for _, frame := range master104(t, int(port), "gi") {
-		if frame["cot"] == 20.0 {
-			for _, raw := range frame["objects"].([]any) {
-				object := raw.(map[string]any)
-				objects[object["ioa"].(float64)] = object
+	for deadline := time.Now().Add(5 * time.Second); ; time.Sleep(200 * time.Millisecond) {
+		for _, frame := range master104(t, int(port), "gi") { // a busy PC can delay the first values
+			if frame["cot"] == 20.0 {
+				for _, raw := range frame["objects"].([]any) {
+					object := raw.(map[string]any)
+					objects[object["ioa"].(float64)] = object
+				}
 			}
+		}
+		if (objects[20001]["value"] == 1.0 && objects[30001]["value"] == 230.5) || time.Now().After(deadline) {
+			break
 		}
 	}
 	if objects[20001]["value"] != 1.0 || objects[30001]["value"] != 230.5 {

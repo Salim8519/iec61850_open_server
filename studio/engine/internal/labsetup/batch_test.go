@@ -14,13 +14,9 @@ func TestRunAndStopSendOneRequestToANewService(t *testing.T) {
 	service.Use(nil)
 	p.calls = nil
 	service.Runtime.Start([]string{"a", "b"})
-	service.Runtime.Stop(nil)                 // keeps them for the session (ADR-0141)
-	service.Runtime.Start([]string{"a", "b"}) // nothing to add
-	service.Runtime.Stop(nil)
-	service.EndSession() // exit takes them off in one request
+	service.Runtime.Stop(nil) // Stop takes them off in one request (keepForSession off)
 	want := []string{"start a,b", "status ", "add 192.168.216.1,10.20.0.5", "status ",
-		"stop ", "status ", "start a,b", "status ", "status ", "stop ", "status ",
-		"status ", "remove 10.20.0.5,192.168.216.1"}
+		"stop ", "status ", "remove 10.20.0.5,192.168.216.1"}
 	if !reflect.DeepEqual(p.calls, want) {
 		t.Fatalf("calls %v, want %v", p.calls, want)
 	}
@@ -67,8 +63,7 @@ func TestStopLeavesTheCardsOwnAddress(t *testing.T) {
 	service.Runtime.Start([]string{"a"})
 	p.calls = nil
 	service.Runtime.Stop(nil)
-	service.EndSession()
-	if !reflect.DeepEqual(p.calls, []string{"stop ", "status ", "status ", "remove 192.168.216.1"}) {
+	if !reflect.DeepEqual(p.calls, []string{"stop ", "status ", "remove 192.168.216.1"}) {
 		t.Fatalf("calls %v", p.calls)
 	}
 	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"169.254.71.48": true}) {

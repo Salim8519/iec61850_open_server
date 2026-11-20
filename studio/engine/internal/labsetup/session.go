@@ -11,6 +11,12 @@ import (
 // closed or another one opened, when the network changes or the IED moves, at exit (EndSession)
 // and, after a kill, at the next launch (the session is empty then and the journal says the
 // address is ours).
+//
+// Off for now (owner, 2026-11-20: "for the time being the stop removes them"): Stop takes the IED
+// addresses off again (ADR-0127 item 3, ADR-0132 item 2). The mechanism stays so turning this on is
+// one line; with it off nothing is ever kept, so the lab page never shows kept addresses.
+const keepForSession = false
+
 type session struct {
 	mu    sync.Mutex
 	added map[string]bool // realKey(card, address)

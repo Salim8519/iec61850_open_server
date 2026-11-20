@@ -159,10 +159,10 @@ func TestARunningIEDMovesAndStartsAgain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// The old address stays through the Stop (kept for the session) and comes off once the project
-	// no longer has it (ADR-0141).
-	want := []string{"stop b", "status ", "store 10.20.0.50", "start b", "status ",
-		"add 10.20.0.50", "status ", "remove 10.20.0.5", "status "}
+	// The old address comes off at the Stop (keepForSession off); the release after the move finds
+	// nothing more to take off.
+	want := []string{"stop b", "status ", "remove 10.20.0.5", "store 10.20.0.50", "start b", "status ",
+		"add 10.20.0.50", "status ", "status "}
 	if !reflect.DeepEqual(p.calls, want) {
 		t.Fatalf("calls %v, want %v", p.calls, want)
 	}
@@ -200,9 +200,10 @@ func TestAddressesFollowStartAndStop(t *testing.T) {
 		t.Fatalf("after Start a: %v", p.cardIPs)
 	}
 	service.Runtime.Stop(nil)
-	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"192.168.216.1": true, "10.10.0.100": true}) {
-		t.Fatalf("after Stop the address stays for the session (ADR-0141): %v", p.cardIPs)
+	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"10.10.0.100": true}) {
+		t.Fatalf("after Stop the gateway's address must stay alone: %v", p.cardIPs)
 	}
+	p.ours("192.168.216.1") // as if an earlier session of this copy left it
 	p.mode = "loopback" // This PC only: nothing of the project stays either
 	service.Release()
 	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"10.10.0.100": true}) {

@@ -48,6 +48,9 @@ func TestAGoneAddressIsSettledAndNeverTakenForOurs(t *testing.T) {
 // Trial N10: Stop keeps the IED addresses for the session, the next Run adds nothing, and another
 // project (or This PC only) takes the old project's addresses off.
 func TestAddressesStayForTheSessionAndLeaveWithTheProject(t *testing.T) {
+	if !keepForSession {
+		t.Skip("addresses are not kept for the session while keepForSession is off (owner, 2026-11-20)")
+	}
 	p := newPC()
 	s := p.service(t)
 	s.Use(nil)
@@ -70,6 +73,9 @@ func TestAddressesStayForTheSessionAndLeaveWithTheProject(t *testing.T) {
 // Trial N10: after a kill, the next launch (a new session over the same journal) takes the
 // addresses the killed session kept off.
 func TestALaunchAfterAKillTakesTheSessionsAddressesOff(t *testing.T) {
+	if !keepForSession {
+		t.Skip("addresses are not kept for the session while keepForSession is off (owner, 2026-11-20)")
+	}
 	p := newPC()
 	s := p.service(t)
 	s.Use(nil)
