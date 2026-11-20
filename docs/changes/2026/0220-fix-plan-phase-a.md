@@ -97,3 +97,17 @@ Each item has a test that failed before the fix and passes after, unless marked 
   test failed only against the old `studio_goose.exe` and passes with the rebuilt one.
   `test_gateway_wire` logs "command_result request timed out": its Python test harness answers
   from the reader thread, so the reply can never be read (harness only; tests pass).
+
+## License server deployed (2026-11-20)
+
+- Owner: "Push all to master and deploy to server". Before: price 99.00 USD on the server; Lemon
+  checkouts are created by the server at its own price (`custom_price`), so paid subtotals match the
+  new amount check (A21). `go vet` and `go test ./...` of `license-server` pass on Windows.
+- Backup before the upgrade with the old admin `backup` (5,375 bytes, `/tmp` on the server, readable
+  by the service user only); `push.ps1` built amd64/arm64, uploaded and installed; service active
+  from 10:46:33 UTC; data folder untouched (4 payments, price, key id `768dc76e` unchanged).
+- After: `/api/v1/health` ok (checkout, Lemon on), `/api/v1/product` $99.00 USD, `/api/v1/release`
+  still 0.1.35 with the installer hash `3b08b789…`; the admin tool lists `restore --from`; a new full
+  backup (6,809 bytes) now holds the sales book and owner login too.
+- Limitation: both backups sit in the server's `/tmp` (lost on a reboot) and only root can copy them
+  off; the deploy user's sudo is limited to the license tools.
