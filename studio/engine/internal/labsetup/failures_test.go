@@ -13,7 +13,7 @@ import (
 func TestEveryRefusedLabAddressStopsTheRunWithItsReason(t *testing.T) {
 	p := newPC()
 	p.version = "2"
-	s := p.service()
+	s := p.service(t)
 	s.Use(nil)
 	call := s.Windows.Call
 	s.Windows.Call = func(request labnet.Request) (labnet.Reply, error) {
@@ -74,7 +74,7 @@ func TestEveryRefusedRealAddressIsNamed(t *testing.T) {
 // naming them; addresses already on the card need nothing.
 func TestRunSaysWhenTheServiceIsOff(t *testing.T) {
 	p := newPC()
-	s := p.service()
+	s := p.service(t)
 	s.Use(nil)
 	s.Windows.State = func() (bool, bool) { return true, false }
 	err := s.EnsureForRun(card, []string{"a", "b"})
@@ -99,10 +99,10 @@ func TestRunSaysWhenTheServiceIsOff(t *testing.T) {
 // failed and shown on the lab page; before, Release did nothing and said nothing.
 func TestStopNamesTheAddressesThatStay(t *testing.T) {
 	p := newPC()
-	s := p.service()
+	s := p.service(t)
 	s.Journal = netcfg.NewJournal(t.TempDir())
 	s.Use(nil)
-	p.cardIPs["192.168.216.1"] = true
+	p.ours("192.168.216.1") // left by this copy (ADR-0141)
 	p.reserved = map[string]string{"10.9.9.1": "Station gateway"}
 	p.cardIPs["10.9.9.1"] = true
 	s.Windows.State = func() (bool, bool) { return true, false }
@@ -129,9 +129,9 @@ func TestStopNamesTheAddressesThatStay(t *testing.T) {
 func TestStopNamesARefusedRemoval(t *testing.T) {
 	p := newPC()
 	p.version = "2"
-	s := p.service()
+	s := p.service(t)
 	s.Use(nil)
-	p.cardIPs["192.168.216.1"], p.cardIPs["10.20.0.5"] = true, true
+	p.ours("192.168.216.1", "10.20.0.5") // left by this copy (ADR-0141)
 	call := s.Windows.Call
 	s.Windows.Call = func(request labnet.Request) (labnet.Reply, error) {
 		if request.Op != labnet.OpRemove {

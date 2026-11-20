@@ -50,7 +50,8 @@ type Manager struct {
 	own       ownStore   // values of the own points the running gateway serves (lane G)
 	selected  selections // IED selections a SCADA select made, until execute or cancel (ADR-0107)
 	watch     *addressWatch
-	gone      bool // the running gateway's address is no longer on this PC (change 0221)
+	gone      bool     // the running gateway's address is no longer on this PC (change 0221)
+	claim     ownClaim // the own address on the lab card while the gateway runs (ADR-0141)
 }
 
 // NewManager returns a stopped gateway for studio_gateway at executable.

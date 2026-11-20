@@ -34,6 +34,7 @@ func (e *Engine) wirePush(live, runtimeRoutes, tools []api.Route) []api.Route {
 			if event.Kind == "project_changed" {
 				e.Gateway.ProjectChanged()
 				e.SNMP.NetworkChanged() // devices follow the IEDs between this PC and the lab network
+				e.labProjectChanged()   // addresses kept for the session follow the project (ADR-0141)
 			}
 		},
 	})

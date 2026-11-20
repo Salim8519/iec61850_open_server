@@ -44,9 +44,11 @@ func (p *trialProject) Reserved() map[string]string {
 	}
 	return kept
 }
-func (p *trialProject) Running() []string    { return p.running }
-func (p *trialProject) Start([]string) error { return nil }
-func (p *trialProject) Stop([]string) error  { return nil }
+func (p *trialProject) InUse() map[string]string      { return p.Reserved() }
+func (p *trialProject) Running() []string             { return p.running }
+func (p *trialProject) Start([]string) error          { return nil }
+func (p *trialProject) Stop([]string) error           { return nil }
+func (p *trialProject) Stopped(fn func() error) error { return fn() }
 
 func trialService(t *testing.T, addresses ...string) (*Service, *trialProject) {
 	card := labnet.InstalledCard()

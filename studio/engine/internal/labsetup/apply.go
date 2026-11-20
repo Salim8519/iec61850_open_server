@@ -93,7 +93,7 @@ func (s *Service) SetAddress(id, address string) (Status, error) {
 			return s.Status(nil)
 		}
 	}
-	// Stop takes the old address off the card and Start puts the new one on (ADR-0127).
+	// Start puts the new address on; the old one comes off at the Release below (ADR-0141).
 	running := contains(s.Runtime.Running(), id)
 	if running {
 		if err := s.Runtime.Stop([]string{id}); err != nil {
@@ -108,6 +108,7 @@ func (s *Service) SetAddress(id, address string) (Status, error) {
 			return status, plain(row.Name + " moved to " + row.IP + " but did not start again: " + err.Error())
 		}
 	}
+	s.Release() // the old address, kept for the session, is no longer the project's (ADR-0141)
 	return s.Status(nil)
 }
 
@@ -161,7 +162,22 @@ func (s *Service) EnsureForRun(guid string, starting []string) error {
 			missing = append(missing, item)
 		}
 	}
-	return runRefused(s.addAll(missing, card))
+	failed := s.addAll(missing, card)
+	s.keepAdded(card, missing, failed)
+	return runRefused(failed)
+}
+
+// keepAdded keeps for the session the IED addresses that went on (ADR-0141, trial N10).
+func (s *Service) keepAdded(card string, items []wanted, failed []failure) {
+	refused := map[string]bool{}
+	for _, item := range failed {
+		refused[item.address] = true
+	}
+	for _, item := range items {
+		if !refused[item.address] {
+			s.session.keep(card, item.address)
+		}
+	}
 }
 
 // notOn is the items whose address Windows does not list on the card.

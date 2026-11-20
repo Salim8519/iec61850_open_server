@@ -30,13 +30,19 @@ export const LAB_COPY = {
   serviceUpdateStopFirst: 'Stop the simulation, then press Repair.',
   editHint: 'Type another address and press Enter. A running IED moves to it at once. The SCL file is never changed.',
   use: 'Use the lab network',
-  useHint: 'No Windows prompt. The addresses go on the lab card when you press Start and come off when you stop.',
+  useHint: 'No Windows prompt. The addresses go on the lab card when you press Start and stay there until you close '
+    + 'the project or ScadaBench, so the next Start is quicker.',
+  // ADR-0141: after Stop the addresses stay for the session; this takes them off now.
+  kept: (count: number) => `${count} ${count === 1 ? 'address stays' : 'addresses stay'} on the lab card until you `
+    + 'close this project or ScadaBench, so the next Start is quicker.',
+  keptOff: 'Take them off now',
+  keptOffHint: 'Takes the addresses of the stopped IEDs off the lab card now. Start puts them back.',
   stopFirst: 'Stop the run to switch the network.',
   show: (count: number) => `Show the ${count} ${count === 1 ? 'address' : 'addresses'}`,
   remove: 'Remove the lab network card',
   removeHint: 'Removes the card, its addresses and the service (one Windows prompt). Your IEDs go back to this PC only.',
   ping: 'Ping',
-  pingAfterStart: 'Press Start, then ping. The address is on the lab card only while its IED runs.',
+  pingAfterStart: 'Press Start, then ping. An address goes on the lab card when its IED starts.',
   backToFile: 'Use file address',
   onceHint: 'First time only: Windows asks once to add the card.',
   // The network card list (ADR-0121): the two choices that keep everything on this PC.
@@ -54,7 +60,7 @@ export function labSummary(status: LabStatus) {
   const attention = status.rows.filter(row => !['ok', 'same_range', 'checking'].includes(row.status)).length;
   const note = attention ? ` ${attention} ${attention === 1 ? 'needs' : 'need'} attention.` : '';
   if (status.active && status.ieds_running) return `In use: ${ieds} answer at their own addresses on this PC.${note}`;
-  if (status.active) return `Set: ${ieds} answer at their own addresses on this PC while the simulation runs.${note}`;
+  if (status.active) return `Set: ${ieds} answer at their own addresses on this PC once the simulation runs.${note}`;
   return `Ready: ${ieds} can answer at their SCL addresses on this PC, without a VM.${note}`;
 }
 

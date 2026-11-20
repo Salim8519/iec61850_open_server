@@ -97,6 +97,7 @@ type Engine struct {
 	cancel    context.CancelFunc
 	resumed   chan struct{} // closed when the gateway resume goroutine ended
 	closeOnce sync.Once
+	labFollow labFollow // the project's lab addresses, for the session's Release (ADR-0141)
 }
 
 func (o *Options) defaults() {

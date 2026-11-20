@@ -11,12 +11,15 @@ import (
 	"studio-engine/internal/labsetup"
 )
 
-type fakeLab struct{ chosen map[string]string }
+type fakeLab struct {
+	chosen  map[string]string
+	cleaned int
+}
 
 func (f *fakeLab) Status(chosen map[string]string) (labsetup.Status, error) {
 	f.chosen = chosen
 	return labsetup.Status{CardName: "ScadaBench Lab", Rows: []labsetup.Row{{IEDID: "a", IP: "10.0.0.1", Status: "ok"}},
-		Reals: []labsetup.Real{}, CardIPs: []string{}}, nil
+		Reals: []labsetup.Real{}, CardIPs: []string{}, Kept: []string{}}, nil
 }
 func (f *fakeLab) Install() (labsetup.Status, error) { return f.Status(nil) }
 func (f *fakeLab) Use(chosen map[string]string) (labsetup.Status, error) {
@@ -30,6 +33,19 @@ func (f *fakeLab) SetAddress(id, address string) (labsetup.Status, error) {
 }
 func (f *fakeLab) Ping(string) (labnet.Pinged, error)                 { return labnet.Pinged{OK: true, TTL: 128}, nil }
 func (f *fakeLab) Remove(leave func() error) (labsetup.Status, error) { return f.Status(nil) }
+func (f *fakeLab) CleanUp() (labsetup.Status, error) {
+	f.cleaned++
+	return f.Status(nil)
+}
+
+// ADR-0141: the lab page's "Take them off now" reaches the clean-up and answers the new status.
+func TestCleanUpTakesTheSessionsAddressesOff(t *testing.T) {
+	lab := &fakeLab{}
+	if code, body := serve(t, lab, "POST", Prefix+"/cleanup", ""); code != 200 || lab.cleaned != 1 ||
+		!strings.Contains(body, `"kept":`) {
+		t.Fatalf("%d %s", code, body)
+	}
+}
 
 func serve(t *testing.T, lab *fakeLab, method, path, body string) (int, string) {
 	t.Helper()

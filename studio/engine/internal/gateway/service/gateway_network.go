@@ -85,13 +85,11 @@ func (m *Manager) SaveNetwork(choice, allowed string) error {
 	if allowed != "" && net.ParseIP(allowed).To4() == nil {
 		return apperr.ValueError("Type the SCADA address as IPv4, for example 192.168.1.50, or leave it empty")
 	}
-	previous := text(m.Config(), "listen_address")
 	config := with(with(with(m.Config(), "listen", listen), "listen_address", address), "allowed_scada", allowed)
 	if err := m.projects.SaveGateway(config); err != nil {
 		return err
 	}
-	m.leaveOwn(previous, address)
-	m.changed(ChangeGatewayStatus)
+	m.changed(ChangeGatewayStatus) // a stopped gateway holds nothing on the lab card (ADR-0141)
 	return nil
 }
 

@@ -29,6 +29,9 @@ func (m *Master) Connect() (*pyjson.Object, error) {
 	defer m.changed(ChangeMasterStatus)
 	m.lifecycle.Lock()
 	config, protocol, host, port, err := m.open()
+	if err != nil {
+		m.leaveCard() // the own address went on for a connect that failed (ADR-0141)
+	}
 	m.lifecycle.Unlock()
 	if err != nil {
 		return nil, err
@@ -226,6 +229,7 @@ func (m *Master) Disconnect(remember bool) (*pyjson.Object, error) {
 	m.mu.Lock()
 	m.state, m.message, m.linkOpen = "disconnected", "", false
 	m.mu.Unlock()
+	m.leaveCard() // the own address comes off with the link (ADR-0141, trial N9)
 	return m.Status(), nil
 }
 

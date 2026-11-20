@@ -20,7 +20,9 @@ type pc struct {
 	calls    []string
 	version  string // the service's protocol ("" answers like protocol 1)
 	reserved map[string]string
-	lab      *Service // Start and Stop call it as the coordinator does (ADR-0127)
+	inUse    map[string]string // nil: every reserved address is held on the card now
+	lab      *Service          // Start and Stop call it as the coordinator does (ADR-0127)
+	journal  *netcfg.Journal   // one per pc: what this copy added (ADR-0141)
 }
 
 func newPC() *pc {
@@ -47,7 +49,13 @@ func (p *pc) SetLabIP(id, address string) error {
 	return nil
 }
 func (p *pc) Reserved() map[string]string { return p.reserved }
-func (p *pc) Running() []string           { return append([]string{}, p.running...) }
+func (p *pc) InUse() map[string]string {
+	if p.inUse != nil {
+		return p.inUse
+	}
+	return p.reserved
+}
+func (p *pc) Running() []string { return append([]string{}, p.running...) }
 func (p *pc) Start(ids []string) error {
 	p.calls = append(p.calls, "start "+strings.Join(ids, ","))
 	p.lab.EnsureForRun(card, ids)
@@ -55,6 +63,7 @@ func (p *pc) Start(ids []string) error {
 	p.lab.Release()
 	return nil
 }
+func (p *pc) Stopped(fn func() error) error { return fn() }
 func (p *pc) Stop(ids []string) error {
 	p.calls = append(p.calls, "stop "+strings.Join(ids, ","))
 	p.running = nil
@@ -62,7 +71,10 @@ func (p *pc) Stop(ids []string) error {
 	return nil
 }
 
-func (p *pc) service() *Service {
+func (p *pc) service(t *testing.T) *Service {
+	if p.journal == nil {
+		p.journal = netcfg.NewJournal(t.TempDir())
+	}
 	windows := Windows{
 		Adapters: func() ([]netcfg.Adapter, error) {
 			adapters := pcAdapters()
@@ -92,14 +104,24 @@ func (p *pc) service() *Service {
 			return labnet.Reply{OK: true, Card: card, Addresses: addresses, Version: p.version}, nil
 		},
 	}
-	p.lab = &Service{Projects: p, Runtime: p, Windows: windows, Asker: NewAsker(func(string, string) bool { return false })}
+	p.lab = &Service{Projects: p, Runtime: p, Windows: windows, Asker: NewAsker(func(string, string) bool { return false }),
+		Journal: p.journal}
 	return p.lab
+}
+
+// ours puts addresses on the card as this copy's (journaled "applied"), as an earlier session did.
+func (p *pc) ours(addresses ...string) {
+	for _, address := range addresses {
+		p.cardIPs[address] = true
+		p.lab.journal("applied", "lab_address", address, "", card, "")
+	}
 }
 
 func TestUseSwitchesTheProjectButPutsNothingOnTheCard(t *testing.T) {
 	p := newPC()
-	p.cardIPs["10.9.9.9"] = true // left by an earlier session
-	status, err := p.service().Use(nil)
+	s := p.service(t)
+	p.ours("10.9.9.9") // left by an earlier session of this copy
+	status, err := s.Use(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,21 +135,21 @@ func TestUseSwitchesTheProjectButPutsNothingOnTheCard(t *testing.T) {
 
 func TestUseRefusesAClashAndChangesNothing(t *testing.T) {
 	p := newPC()
-	if _, err := p.service().Use(map[string]string{"b": "192.168.216.1"}); err == nil || !strings.Contains(err.Error(), "also uses") {
+	if _, err := p.service(t).Use(map[string]string{"b": "192.168.216.1"}); err == nil || !strings.Contains(err.Error(), "also uses") {
 		t.Fatalf("duplicate accepted: %v", err)
 	}
 	if len(p.cardIPs) != 0 || p.mode != "loopback" {
 		t.Fatalf("something changed: %+v", p)
 	}
 	p.running = []string{"a"}
-	if _, err := p.service().Use(nil); err == nil {
+	if _, err := p.service(t).Use(nil); err == nil {
 		t.Fatal("Use while running was accepted")
 	}
 }
 
 func TestARunningIEDMovesAndStartsAgain(t *testing.T) {
 	p := newPC()
-	service := p.service()
+	service := p.service(t)
 	if _, err := service.Use(nil); err != nil {
 		t.Fatal(err)
 	}
@@ -137,8 +159,10 @@ func TestARunningIEDMovesAndStartsAgain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := []string{"stop b", "status ", "remove 10.20.0.5", "store 10.20.0.50", "start b", "status ",
-		"add 10.20.0.50", "status "}
+	// The old address stays through the Stop (kept for the session) and comes off once the project
+	// no longer has it (ADR-0141).
+	want := []string{"stop b", "status ", "store 10.20.0.50", "start b", "status ",
+		"add 10.20.0.50", "status ", "remove 10.20.0.5", "status "}
 	if !reflect.DeepEqual(p.calls, want) {
 		t.Fatalf("calls %v, want %v", p.calls, want)
 	}
@@ -154,13 +178,13 @@ func TestARunningIEDMovesAndStartsAgain(t *testing.T) {
 
 func TestAStoppedIEDMovesWithoutTouchingTheCard(t *testing.T) {
 	p := newPC()
-	service := p.service()
+	service := p.service(t)
 	service.Use(nil)
 	p.calls = nil
 	if _, err := service.SetAddress("b", "10.20.0.50"); err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(p.calls, []string{"store 10.20.0.50"}) || len(p.cardIPs) != 0 {
+	if !reflect.DeepEqual(p.calls, []string{"store 10.20.0.50", "status "}) || len(p.cardIPs) != 0 {
 		t.Fatalf("calls %v card %v", p.calls, p.cardIPs)
 	}
 }
@@ -169,18 +193,17 @@ func TestAddressesFollowStartAndStop(t *testing.T) {
 	p := newPC()
 	p.reserved = map[string]string{"10.10.0.100": "Station gateway"}
 	p.cardIPs["10.10.0.100"] = true
-	service := p.service()
+	service := p.service(t)
 	service.Use(nil)
 	service.Runtime.Start([]string{"a"})
 	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"192.168.216.1": true, "10.10.0.100": true}) {
 		t.Fatalf("after Start a: %v", p.cardIPs)
 	}
 	service.Runtime.Stop(nil)
-	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"10.10.0.100": true}) {
-		t.Fatalf("after Stop the gateway's address must stay alone: %v", p.cardIPs)
+	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"192.168.216.1": true, "10.10.0.100": true}) {
+		t.Fatalf("after Stop the address stays for the session (ADR-0141): %v", p.cardIPs)
 	}
 	p.mode = "loopback" // This PC only: nothing of the project stays either
-	p.cardIPs["192.168.216.1"] = true
 	service.Release()
 	if !reflect.DeepEqual(p.cardIPs, map[string]bool{"10.10.0.100": true}) {
 		t.Fatalf("after This PC only: %v", p.cardIPs)
@@ -189,7 +212,7 @@ func TestAddressesFollowStartAndStop(t *testing.T) {
 
 func TestAMoveOntoAnotherIEDsAddressIsRefused(t *testing.T) {
 	p := newPC()
-	service := p.service()
+	service := p.service(t)
 	service.Use(nil)
 	p.calls = nil
 	if _, err := service.SetAddress("b", "192.168.216.1"); err == nil {
@@ -202,7 +225,7 @@ func TestAMoveOntoAnotherIEDsAddressIsRefused(t *testing.T) {
 
 func TestRunPutsTheAddressesBackAfterARestart(t *testing.T) {
 	p := newPC()
-	service := p.service()
+	service := p.service(t)
 	service.Use(nil)
 	p.cardIPs = map[string]bool{} // Windows restarted
 	service.EnsureForRun(card, []string{"a", "b"})

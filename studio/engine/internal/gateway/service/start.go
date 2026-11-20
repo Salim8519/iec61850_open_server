@@ -69,6 +69,9 @@ func (m *Manager) Start() (*pyjson.Object, error) {
 		return nil, apperr.ValueError("The gateway is already running; stop it first")
 	}
 	opened, protocol, count, err := m.launch()
+	if err != nil {
+		m.leaveCard() // the own address went on for a start that failed (ADR-0141)
+	}
 	m.lifecycle.Unlock()
 	if err != nil {
 		return nil, err

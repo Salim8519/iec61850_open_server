@@ -52,6 +52,7 @@ type Service struct {
 	trapText  string
 	network   func() bool       // the project is on the lab network (SetNetwork)
 	bound     map[string]string // device id -> the address it was started on
+	starting  map[string]string // device id -> its lab address while Start puts it on (trial N5)
 	labCard   LabCard           // the ScadaBench Lab card (SetLabCard)
 }
 

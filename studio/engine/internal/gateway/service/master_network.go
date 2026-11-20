@@ -142,12 +142,7 @@ func (m *Master) SaveNetwork(local string) error {
 			return apperr.ValueError("This PC has no address " + local + ". Choose one from the list.")
 		}
 	}
-	previous := localOf(m.Config())
-	if err := m.Save(with(m.Config(), "local", local)); err != nil {
-		return err
-	}
-	m.leaveOwn(previous, local)
-	return nil
+	return m.Save(with(m.Config(), "local", local)) // a disconnected master holds nothing on the card (ADR-0141)
 }
 
 // workerSettings adds the host and, when one is chosen, the address to connect from.
