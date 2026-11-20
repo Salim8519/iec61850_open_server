@@ -137,32 +137,20 @@ func (WindowsOps) RemoveReal(card RealCard, ip string) error {
 	return status(procDeleteUnicastIpAddressEntry.Call(uintptr(unsafe.Pointer(row))))
 }
 
-// Settle waits while Windows checks the added addresses on a connected card (a disconnected card
-// keeps them tentative until its cable is in, as before). An address another device answers for
-// is taken off again and reported.
+// Settle waits while Windows checks the added addresses (settle: a duplicate, and an address
+// Windows is still checking when the wait ends, are taken off again and reported). A card without
+// a link gets no address at all (handleReal), so nothing waits for a cable (change 0221).
 func (ops WindowsOps) Settle(card RealCard, ips []string) map[string]string {
-	duplicates := map[string]string{}
-	if !card.Up || len(ips) == 0 {
-		return duplicates
-	}
-	waiting := append([]string{}, ips...)
-	for deadline := time.Now().Add(settleWait); len(waiting) > 0 && time.Now().Before(deadline); {
-		still := []string{}
-		for _, ip := range waiting {
-			switch {
-			case dadState(card, ip) == windows.IpDadStateDuplicate:
-				ops.RemoveReal(card, ip)
-				duplicates[ip] = "Another device on “" + card.Name + "” already uses " + ip + "; ScadaBench took it off again"
-			case !usable(ip):
-				still = append(still, ip) // Windows is still checking the network (tentative)
-			}
-		}
-		if waiting = still; len(waiting) > 0 {
-			time.Sleep(100 * time.Millisecond)
-		}
-	}
-	return duplicates
+	return settle(ops, card, ips, settleWait, time.Now, time.Sleep)
 }
+
+// Duplicate says whether Windows' duplicate check found another device at ip.
+func (WindowsOps) Duplicate(card RealCard, ip string) bool {
+	return dadState(card, ip) == windows.IpDadStateDuplicate
+}
+
+// Usable is usable, for settle.
+func (WindowsOps) Usable(ip string) bool { return usable(ip) }
 
 // usable says whether a program can listen on the address now, which is what the IED workers need:
 // a tentative address refuses (WSAEADDRNOTAVAIL).
@@ -196,4 +184,3 @@ func realRow(card RealCard, ip string) (*windows.MibUnicastIpAddressRow, error) 
 	row.InterfaceLuid, row.InterfaceIndex = card.LUID, card.Index
 	return row, nil
 }
-
