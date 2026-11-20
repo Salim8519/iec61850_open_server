@@ -10,19 +10,19 @@ import (
 	"studio-engine/internal/labnet"
 )
 
-// TestTrialRemoveLeftovers takes group C's trial addresses (198.18.24.x only, listed in
+// TestTrialRemoveLeftovers takes trial addresses (the 198.18.x test range only, listed in
 // TRIAL_REMOVE, comma-separated) off the Lab card through the installed service. A trial engine
 // that was killed and whose data folder was deleted leaves its session's addresses on the card,
 // and since ADR-0141 no other copy removes them (studio/tools/trials/labgroup.py clean_card).
 func TestTrialRemoveLeftovers(t *testing.T) {
 	var addresses []string
 	for _, address := range strings.Split(os.Getenv("TRIAL_REMOVE"), ",") {
-		if address = strings.TrimSpace(address); strings.HasPrefix(address, "198.18.24.") {
+		if address = strings.TrimSpace(address); strings.HasPrefix(address, "198.18.") {
 			addresses = append(addresses, address)
 		}
 	}
 	if len(addresses) == 0 {
-		t.Skip("TRIAL_REMOVE lists no 198.18.24.x address")
+		t.Skip("TRIAL_REMOVE lists no 198.18.x address")
 	}
 	reply, err := labnet.Call(labnet.Request{Op: labnet.OpRemove, IPs: addresses})
 	if err != nil {
