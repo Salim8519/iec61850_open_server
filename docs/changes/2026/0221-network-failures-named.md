@@ -70,10 +70,13 @@ Windows' own address list as witness (`studio/tools/trials/n1_n2_lab_failures.ps
   lab card's Stop removes by the service's list, so nothing was left there even before; the
   leftover is on real cards (unit test, Owner check).
 - N8, before: the status kept "Listening on" for 10 s after the address left (never changed);
-  after: "Address gone" in 1.77–2.06 s (21 runs), back to "Listening on" in 1.84–2.01 s in the 16
-  runs where the address stayed back (in 5 runs another session's card-wide Stop took the
-  re-added address off again within 2 s; Windows confirmed it absent, the status was right). One
-  Windows read costs 0.16–0.92 ms (mean of 1000), once every 2 s.
+  after: "Address gone" in 1.71–2.06 s (31 runs), back to "Listening on" in 1.79–2.01 s in the 24
+  runs where the address stayed back. In 7 runs the re-added address was gone again within 10 s;
+  each time Windows' table and the service's list both lacked it, so "Address gone" was right.
+  The cause is outside the watch and not proven: no engine journal on this PC recorded a removal
+  then, and a probe without the gateway status (10 cycles: add, remove, wait 2 s, add, watch 6 s
+  at 50 ms) never lost the address; another agent's direct call to the shared service is the
+  likely remover. One Windows read costs 0.16–0.92 ms (mean of 1000), once every 2 s.
 - No slowdown: Run's address step and Stop's release, 7 and 20 addresses, before and after
   interleaved in both orders, 50–60 runs each: 7 IEDs Run median 60.5 → 88 ms, Stop 163 → 224 ms;
   20 IEDs Run 220.5 → 193 ms, Stop 330.5 → 274.5 ms (worst runs 0.4–1.4 s on both sides; other

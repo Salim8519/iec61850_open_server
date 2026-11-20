@@ -220,7 +220,7 @@ Details per group: [network N1, N2, N6-N8](speed-trials-network-2026-11-20.md).
 | N5 | | | | | |
 | N6 | Cable out: address added, reported OK, left tentative; still-checking after 6 s reported OK | Refused with "“Ethernet” is disconnected ... Plug the cable in, then press Start again"; still-checking taken off and reported | Unit tests only (service side; cable needs the owner) | Needs the owner's eye (implemented, change 0221) | Fault removed in the service's logic; live proof needs a reinstall (UAC) and the cable out |
 | N7 | Device answering ARP after 0.7 s is not seen (ADR-0132 accepted) | Not built | 0 | Drop | Would add Windows' 3.3–3.5 s duplicate check instead of 0.7 s to every real-card Start; LAN devices answer ARP in milliseconds |
-| N8 | Gateway status unchanged 10 s after its address left the card (never changes) | "Address gone" in 1.77–2.06 s; cleared in 1.84–2.01 s; one Windows read 0.16–0.92 ms every 2 s | 1 before, 21 after | Consider (implemented, change 0221) | Status changes within a few seconds; negligible CPU; Running gateway untouched |
+| N8 | Gateway status unchanged 10 s after its address left the card (never changes) | "Address gone" in 1.71–2.06 s; cleared in 1.79–2.01 s (24 runs; 7 lost the re-added address, see below); one Windows read 0.16–0.92 ms every 2 s | 1 before, 31 after | Consider (implemented, change 0221) | Status changes within a few seconds; negligible CPU; Running gateway untouched |
 | N9 | | | | | |
 | N10 | | | | | |
 | N11 | | | | | |

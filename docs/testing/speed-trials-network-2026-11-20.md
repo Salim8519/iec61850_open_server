@@ -16,8 +16,21 @@ interleaved in both orders (other agents' Runs shared the Lab card, so single ru
 The changed code sends exactly the same service requests and journal writes on this path
 (asserted by `TestRunAndStopSendOneRequestToANewService`); a fake-Windows benchmark of one Run
 plus Stop is about 2 ms on both sides. The differences are Windows and machine load, not the
-change. (One "after" round of 20 failed its own check once, most likely another session's Stop
-taking the trial's addresses off; it did not repeat in 2 more runs.)
+change. (One "after" round of 20 failed its own check once: another engine's Stop took the
+trial's addresses off. Its lab journal, `%TEMP%ixplan-lab-*\data
+etwork\lab_journal.jsonl`,
+records "removed" for 198.18.21.100 and up at 09:51 local, during that round. It did not repeat
+in 2 more runs. Engines on one PC take each other's Lab addresses off at launch and Stop; a later
+group fixes that, so the trials do not.)
+
+## N8 runs where the address did not come back
+
+In 7 of 31 runs the trial's re-added 198.18.21.50 was gone again within 10 s. Windows' table and
+the service's list both lacked it, so the status ("Address gone") was right. No engine journal on
+this PC (`%TEMP%`, every worktree's and the main `.local`) was written in those minutes, so no
+engine's Stop or launch removed it. A probe without the gateway status (10 cycles: add, remove,
+wait 2 s, add, watch 6 s every 50 ms) never lost the address. The cause is outside the watch and
+not proven; another agent's direct call to the shared service is the likely one.
 
 ## Owner checks (N1, N2, N6, N8)
 
