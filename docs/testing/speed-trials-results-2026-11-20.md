@@ -223,7 +223,7 @@ Details per group: [network N1, N2, N6-N8](speed-trials-network-2026-11-20.md).
 | N8 | Gateway status unchanged 10 s after its address left the card (never changes) | "Address gone" in 1.71–2.06 s; cleared in 1.79–2.01 s (24 runs; 7 lost the re-added address, see below); one Windows read 0.16–0.92 ms every 2 s | 1 before, 31 after | Consider (implemented, change 0221) | Status changes within a few seconds; negligible CPU; Running gateway untouched |
 | N9 | | | | | |
 | N10 | | | | | |
-| N11 | | | | | |
+| N11 | Address changed 5 times on Ethernet: 5 prompts (each one approval + one rule); port changed 5 times: 5; Simulate toggled: 1 | Not built: even with firewall items free, 5 new addresses still ask 5 times (each needs its approval, ADR-0132) | Code path + 4 unit scenarios (deterministic) | Drop | Saves no prompt in the plan's test; the only savings (port, Simulate) need a rule wider than today's address list; change 0225 |
 | R1 | | | | | |
 | R2 | | | | | |
 | R3 | | | | | |
