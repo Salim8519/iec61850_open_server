@@ -6,17 +6,16 @@ import { GATEWAY_COPY } from '../../../../copy/gateway';
 import { COMMANDS, MASTER_COPY } from '../../../../copy/master';
 import { kindOfMasterGroup } from '../../../../points/pointKind';
 import { useListFilter } from '../../../../state/useListFilter';
-import { EditableText } from '../../../../ui/EditableText';
 import { FilterBar } from '../../../../ui/FilterBar';
 import { choicesOf, effective } from '../../../../ui/filterState';
 import { HelpTip } from '../../../../ui/HelpTip';
-import { KindBadge, kindRow } from '../../../../ui/KindBadge';
 import { Menu } from '../../../../ui/Menu';
 import { kindCounts } from '../kindCounts';
 import { Pager } from '../Pager';
 import { MASTER_POINT_FILTER, masterPointMatches } from '../pointFilters';
 import { saveFile } from '../saveFile';
 import { MasterCommandForm, startValue } from './MasterCommandForm';
+import { MasterPointRow } from './MasterPointRow';
 
 const PAGE = 100;
 
@@ -38,8 +37,16 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
     setRows(current => current.map(row => ({ ...row, ticked: !hidden.has(row.key) })));
     masterApi.untick(keys).catch(error => fail(error.message));
   };
-  const toggle = (row: MasterPoint) => untick(rows.filter(item => item.key === row.key ? row.ticked : !item.ticked)
+  // The latest list and status: memoised rows may call an older copy of these handlers (change 0224).
+  const latest = useRef({ rows, status });
+  latest.current = { rows, status };
+  const toggle = (row: MasterPoint) => untick(latest.current.rows.filter(item => item.key === row.key ? row.ticked : !item.ticked)
     .map(item => item.key));
+  const command = (row: MasterPoint) => {
+    const protocol = latest.current.status.protocol;
+    setDraft({ kind: row.command!, address: row.address, value: startValue(row.command!), select: protocol !== 'modbus',
+      code: row.command === 'binary_output' ? 'latch' : undefined });
+  };
   const rename = (row: MasterPoint, label: string) => label !== row.label && masterApi.label(row.key, label)
     .then(() => setRows(current => current.map(item => item.key === row.key ? { ...item, label } : item)))
     .catch(error => fail(error.message));
@@ -84,26 +91,8 @@ export function MasterPointTable({ status, fail }: { status: MasterStatus; fail:
       <div className="table-scroll"><table className="gateway-points master-points compact-rows"><thead><tr>
         <th aria-label="Watched" /><th>Type</th><th>Address</th><th>Name</th><th>Value</th><th>Quality</th><th>Last cause</th>
         <th aria-label="Command" /></tr></thead>
-        <tbody>{shown.slice(first, first + PAGE).map(row => {
-          const kind = kindOfMasterGroup(row.group);
-          return <tr key={row.key} {...kindRow(kind)} className={row.ticked ? '' : 'unwatched'}>
-            <td><input type="checkbox" checked={row.ticked} aria-label={`Watch ${row.label || row.key}`}
-              onChange={() => toggle(row)} /></td>
-            <td><span className="type-cell"><KindBadge kind={kind} raw={`${row.group_name} · ${row.type}`} />
-              <span className="small">{row.group_name}</span></span></td>
-            <td className="mono">{row.address}</td>
-            <td><EditableText value={row.label} label={`Name of ${row.key}`} placeholder={MASTER_COPY.labelPlaceholder}
-              onSave={text => rename(row, text.trim())} /></td>
-            <td className={row.stale ? 'muted' : ''}><strong>{row.value_text}</strong>
-              {row.changes > 0 && <span className="small muted"> · {row.changes} {row.changes === 1 ? 'change' : 'changes'}</span>}</td>
-            <td><span className={row.good ? 'quality-good' : 'quality-bad'}>{row.good ? '✓ ' : '⚠ '}{row.quality_text}</span></td>
-            <td className="small muted">{row.cause}</td>
-            <td>{row.command && <button className="ghost" disabled={!status.link_open} onClick={() => setDraft({
-              kind: row.command!, address: row.address, value: startValue(row.command!), select: status.protocol !== 'modbus',
-              code: row.command === 'binary_output' ? 'latch' : undefined })}>
-              <Send size={14} />{MASTER_COPY.sendTo}</button>}</td>
-          </tr>;
-        })}</tbody></table>
+        <tbody>{shown.slice(first, first + PAGE).map(row => <MasterPointRow key={row.key} row={row}
+          linkOpen={status.link_open} toggle={toggle} rename={rename} command={command} />)}</tbody></table>
         {shown.length === 0 && <p className="muted watch-empty">{GATEWAY_COPY.emptyFilter}</p>}</div>}
     <Pager count={shown.length} page={page} size={PAGE} setPage={setPage} noun="points" />
   </>;

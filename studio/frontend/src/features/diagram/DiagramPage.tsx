@@ -111,11 +111,11 @@ export function DiagramPage({ studio, project, locked, openDevices, openFile }: 
   // Test buttons write the bound point in the simulated IED through the backend; no command is sent (ADR-0067).
   const test = useCallback((nodeId: string, action: string, extra?: { value?: number; row?: string }) => {
     setTested(null);
-    studio.perform(async () => {
+    studio.command(async () => {  // a Test button changes live values only (change 0224)
       await api(`/equipment/${encodeURIComponent(nodeId)}/test`, 'POST', { action, ...extra });
       setTested({ nodeId, message: `Test: ${action.replace('_', ' ')} set in the simulated IED` });
     });
-  }, [studio.perform]);
+  }, [studio.command]);
   const openMenu = useCallback((nodeId: string, x: number, y: number) => setMenu({ nodeId, x, y }), []);
   const menuNode = menu ? diagram.nodes.find(item => item.id === menu.nodeId) : undefined;
   // The toolbar and lock note are made only when what they show changes, so Canvas (memo) skips

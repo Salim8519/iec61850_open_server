@@ -25,7 +25,7 @@ type Service struct {
 	Access       *acquisition.MmsAccess
 	Modes        *acquisition.TestModes
 	Declarations Declarations
-	Version      string // studio_app.version.__version__
+	Version      string           // studio_app.version.__version__
 	Commands     *realcmd.Service // commands to real IEDs from Devices (ADR-0138)
 
 	signals signalindex.Cache
@@ -41,7 +41,7 @@ func (s *Service) Routes() []api.Route {
 		route("GET", "/live/{key}/comparison", false, s.comparison),
 		route("GET", "/live/{key}/comparison.csv", false, s.comparisonCSV),
 		route("GET", "/live/{key}/controls", false, s.controls), // Go-only (ADR-0138)
-		route("POST", "/live/{key}/operate", false, s.operate), // Go-only (ADR-0138)
+		route("POST", "/live/{key}/operate", false, s.operate),  // Go-only (ADR-0138)
 		route("POST", "/live/{key}/read", false, s.read),
 		route("GET", "/goose", true, s.goose),
 		route("GET", "/goose/links", true, s.gooseLinks),
@@ -57,7 +57,8 @@ func (s *Service) Routes() []api.Route {
 		route("GET", "/ieds/{ied_id}/signals", false, s.listSignals),
 		route("PUT", "/ieds/{key}/test-mode", false, s.testMode),
 		route("GET", "/ieds/{ied_id}/goose/messages", false, s.gooseMessages), // Go-only (ADR-0112)
-		route("GET", "/goose/members", false, s.gooseMembers),
+		route("GET", "/goose/members", true, s.gooseMembers),                  // read through the live feed
+		route("GET", "/goose/messages", true, s.gooseMessagesByQuery),         // ?ied= form for the push stream (change 0224)
 	}
 }
 

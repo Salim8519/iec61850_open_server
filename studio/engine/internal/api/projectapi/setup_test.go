@@ -119,7 +119,10 @@ func counterIDs() func() string {
 
 // newArea wires the routes like the app: one id counter for the service and importer,
 // startup recovery run to completion before the first request.
-func newArea(t *testing.T) (http.Handler, *fakeRuntime) {
+func newArea(t *testing.T) (http.Handler, *fakeRuntime) { return newAreaSaved(t, nil) }
+
+// newAreaSaved is newArea with Deps.Saved set (change 0224).
+func newAreaSaved(t *testing.T, saved func()) (http.Handler, *fakeRuntime) {
 	dir := testutil.TempDir(t)
 	ids := counterIDs()
 	projects, err := service.New(service.Config{DataDir: dir, NewID: ids,
@@ -131,7 +134,7 @@ func newArea(t *testing.T) (http.Handler, *fakeRuntime) {
 	result, err := projects.RecoverStartup()
 	runtime := &fakeRuntime{}
 	area := New(Deps{Projects: projects, Runtime: runtime, Startup: startupResult{result, err},
-		Preferences: settings.NewPreferences(dir)})
+		Preferences: settings.NewPreferences(dir), Saved: saved})
 	mux := http.NewServeMux()
 	for _, route := range area.Routes() {
 		mux.Handle(route.Method+" "+muxPattern(route.Pattern), suffixed(route.Pattern, route.Handler))

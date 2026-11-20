@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GOOSE_MEMBERS, type GooseMembers } from '../../../api/gooseMessages';
 import { liveFeed } from '../../../api/polls';
+import { useAskAgain } from '../../../api/useAskAgain';
 import type { LeafIndex } from '../../../equipment/gooseLeaves';
 import type { SignalLayerStore } from '../../../equipment/signalLayerStore';
 
@@ -12,6 +13,7 @@ export function useGooseMembers(store: SignalLayerStore, revision: number): Leaf
   useEffect(() => liveFeed.subscribe<GooseMembers>(GOOSE_MEMBERS, null, members => {
     store.setMembers(members);
     setIndex(store.get().members);
-  }, () => {}), [revision, store]);
+  }, () => {}), [store]);
+  useAskAgain(GOOSE_MEMBERS, revision);  // pushed (topic goose.members): nothing to ask (change 0224)
   return index;
 }

@@ -19,6 +19,10 @@ export type Outcome =
   | { kind: 'resync'; t: string }
   | { kind: 'bad' };
 
+/** A keyed topic's text in pieces (change 0224, trial U4): `head + rows.join(',') + tail` is the text.
+ * The live feed parses only rows it has not seen, so an unchanged row keeps its object. */
+export type TextParts = { head: string; rows: string[]; tail: string };
+
 type Rows = { head: number; keys: string[]; ends: number[] };
 type FullMeta = { t: string; rev: number; status?: number; rows?: Rows };
 type Delta = { t: string; rev: number; base: number; head?: string; tail?: string;
@@ -95,6 +99,12 @@ function applyDelta(state: State, delta: Delta): boolean {
   return true;
 }
 
+/** The pieces of a keyed topic's held text, in row order (undefined for a whole-body topic). */
+function partsOf(state: State): TextParts | undefined {
+  if (!state.keyed) return undefined;
+  return { head: state.head, rows: state.keys.map(key => state.rows.get(key) as string), tail: state.tail };
+}
+
 /** The held text of every tracked topic of one tab. */
 export function createTopicStates() {
   const states = new Map<string, State>();
@@ -164,7 +174,9 @@ export function createTopicStates() {
   return { track, untrack, resetAll, acked, apply,
     tracked: (t: string) => states.has(t),
     text: (t: string) => states.get(t)?.text ?? null,
-    rev: (t: string) => states.get(t)?.rev ?? 0 };
+    rev: (t: string) => states.get(t)?.rev ?? 0,
+    /** The held text of a keyed topic in pieces (change 0224), for the live feed's row parser. */
+    parts: (t: string) => { const state = states.get(t); return state && state.text !== null ? partsOf(state) : undefined; } };
 }
 
 export type TopicStates = ReturnType<typeof createTopicStates>;

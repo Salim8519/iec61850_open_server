@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LINK_MAP, liveFeed } from '../../api/polls';
+import { useAskAgain } from '../../api/useAskAgain';
 import type { GooseLinkMap, MmsClient } from '../../api/signalLayers';
 import { EMPTY_MAP } from '../../equipment/signalLayerStore';
 
@@ -9,7 +10,8 @@ const NO_CLIENTS: MmsClient[] = [];
 /** The project's GOOSE link map for the Devices place; refreshed every 5 s while running. */
 export function useGooseLinks(revision: number, running: boolean): GooseLinkMap {
   const [map, setMap] = useState<GooseLinkMap>(EMPTY_MAP);
-  useEffect(() => liveFeed.subscribe<GooseLinkMap>(LINK_MAP, running ? 5000 : null, setMap), [revision, running]);
+  useEffect(() => liveFeed.subscribe<GooseLinkMap>(LINK_MAP, running ? 5000 : null, setMap), [running]);
+  useAskAgain(LINK_MAP, revision);  // pushed: nothing to ask (change 0224)
   return map;
 }
 

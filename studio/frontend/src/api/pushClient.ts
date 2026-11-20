@@ -110,7 +110,7 @@ export function createPushClient(deps: PushDeps) {
         states.track(topic.t, changed ? sentCount + 1 : 0);
       } else {
         const held = states.text(topic.t); // same parameters, other spelling: the held text is its answer
-        if (held !== null) onText(held);
+        if (held !== null) onText(held, states.parts(topic.t));
       }
       dirty();
       return () => {
@@ -133,7 +133,7 @@ export function createPushClient(deps: PushDeps) {
       if (!online) { online = true; deps.feed.setPush(source); }
       dirty(); // always: after a long outage the server may have forgotten this tab
     } else if (outcome.kind === 'text') {
-      watchers.get(outcome.t)?.watch.text(outcome.text);
+      watchers.get(outcome.t)?.watch.text(outcome.text, states.parts(outcome.t));
     } else if (outcome.kind === 'status') {
       watchers.get(outcome.t)?.watch.ask?.(); // the route answered an error: show it as polling would
     } else if (outcome.kind === 'resync') {

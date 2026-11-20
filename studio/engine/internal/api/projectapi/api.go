@@ -39,6 +39,9 @@ type Deps struct {
 	Runtime     Runtime
 	Startup     Startup
 	Preferences *settings.Preferences
+	// Saved, when set, hears that the saved state moved without a project change: File ›
+	// Save project and the auto save switch (the push stream re-reads /project/autosave).
+	Saved func()
 }
 
 // Area is the projectapi route set.

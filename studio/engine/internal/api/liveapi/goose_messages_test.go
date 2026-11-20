@@ -82,6 +82,19 @@ func TestGooseMessagesRoute(t *testing.T) {
 	}
 }
 
+// Change 0224: the ?ied= form the push stream carries answers byte for byte like the path form,
+// unknown IEDs included.
+func TestGooseMessagesByQuery(t *testing.T) {
+	e := gooseEnv(t)
+	for _, id := range []string{"p", "s", "nope"} {
+		pathStatus, pathBody := get(t, e, "/api/v1/ieds/"+id+"/goose/messages")
+		queryStatus, queryBody := get(t, e, "/api/v1/goose/messages?ied="+id)
+		if pathStatus != queryStatus || pathBody != queryBody {
+			t.Fatalf("%s: path %d %s, query %d %s", id, pathStatus, pathBody, queryStatus, queryBody)
+		}
+	}
+}
+
 func TestGooseMembersRoute(t *testing.T) {
 	e := gooseEnv(t)
 	status, body := get(t, e, "/api/v1/goose/members")

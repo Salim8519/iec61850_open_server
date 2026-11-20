@@ -7,6 +7,7 @@ import { kindOfSignal } from '../../components/signalKind';
 import { useDataClasses } from '../../points/dataClasses';
 import { NOT_SAVED } from '../../state/autoSave';
 import { useAutoSave } from '../../state/useAutoSave';
+import { useCommand } from '../../state/runCommand';
 import { KindBadge } from '../../ui/KindBadge';
 import { ALL_KINDS } from '../../ui/kindFilter';
 import { SaveProblem, SaveStatus } from '../../ui/SaveStatus';
@@ -19,6 +20,7 @@ export function SequenceEditor({ ieds, scenarios, running, perform, refresh }: {
   ieds: Ied[]; scenarios: Scenario[]; running: boolean;
   perform: (task: () => Promise<unknown>) => Promise<void>; refresh: () => Promise<unknown>;
 }) {
+  const command = useCommand(perform);  // starting a sequence changes live values only (change 0224)
   const fresh = (): Scenario => ({ id: crypto.randomUUID(), name: 'New sequence', enabled: false, steps: [] });
   const [draft, setDraft] = useState<Scenario>(fresh);
   const latest = useRef(scenarios);
@@ -84,7 +86,7 @@ export function SequenceEditor({ ieds, scenarios, running, perform, refresh }: {
           return runWords(run?.state, run?.completed_steps, scenario.steps.length);
         })()}</span>
         <button disabled={running} onClick={() => { setDraft(structuredClone(scenario)); setError(''); }}>Edit</button>
-        <button disabled={!running} onClick={() => perform(() => api(`/scenarios/${scenario.id}/start`, 'POST'))}>Run sequence</button>
+        <button disabled={!running} onClick={() => command(() => api(`/scenarios/${scenario.id}/start`, 'POST'))}>Run sequence</button>
         <button disabled={running} onClick={() => {
           if (draft.id === scenario.id) setDraft(fresh()); // the sequence being edited must not come back with the next change
           perform(() => api('/scenarios', 'PUT', scenarios.filter(item => item.id !== scenario.id)));

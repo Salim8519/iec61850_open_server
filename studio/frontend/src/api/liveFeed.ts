@@ -1,3 +1,5 @@
+import type { TextParts } from './pushStream.ts';
+import { createRowParser, type RowParser } from './rowParse.ts';
 import { createPoller, type PollOptions } from './sharedPoll.ts';
 
 /** Speed lane F: every poll of the app goes through one live feed.
@@ -13,8 +15,8 @@ import { createPoller, type PollOptions } from './sharedPoll.ts';
 export type TextFetcher = (path: string) => Promise<string>;
 /** What a push source can tell the feed about one path (speed lane F4). */
 export type PushWatch = {
-  /** The full JSON text of GET /api/v1{path}. */
-  text: (text: string) => void;
+  /** The full JSON text of GET /api/v1{path}; a keyed topic also gives it in parts (rowParse). */
+  text: (text: string, parts?: TextParts) => void;
   /** The route answered an error: ask once over HTTP, so the view shows it as polling would. */
   ask?: () => void;
   /** The source no longer sends this path (another path of its topic won): poll it again. */
@@ -24,7 +26,7 @@ export type PushSource = {
   /** True when this source sends the answer of `path` (same JSON as GET /api/v1{path}). */
   covers: (path: string) => boolean;
   /** Start sending `path`; every frame is the full JSON text. Returns stop. */
-  watch: (path: string, onText: (text: string) => void, more?: Omit<PushWatch, 'text'>) => () => void;
+  watch: (path: string, onText: PushWatch['text'], more?: Omit<PushWatch, 'text'>) => () => void;
 };
 
 /** Flask ends an answer with a newline that the push stream's text leaves out; compare without it. */
@@ -37,6 +39,17 @@ export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}
     const known = cache.get(path);
     if (known && known.text === text) return known.value;
     const value: unknown = JSON.parse(text);
+    cache.set(path, { text, value });
+    return value;
+  };
+  // A keyed topic's parts: unchanged rows keep their objects (change 0224, trial U4).
+  const rowParsers = new Map<string, RowParser>();
+  const decodeParts = (path: string, text: string, parts?: TextParts) => {
+    const known = cache.get(path);
+    if (!parts || (known && known.text === text)) return decode(path, text);
+    if (!rowParsers.has(path)) rowParsers.set(path, createRowParser());
+    const value = (rowParsers.get(path) as RowParser)(parts);
+    if (value === undefined) return decode(path, text);
     cache.set(path, { text, value });
     return value;
   };
@@ -65,9 +78,9 @@ export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}
   const attach = (path: string) => {
     if (!push || pushed.has(path) || !push.covers(path)) return;
     poller.hold(path, true);
-    const onText = (text: string) => {
+    const onText = (text: string, parts?: TextParts) => {
       frames.set(path, (frames.get(path) ?? 0) + 1);
-      poller.offer(path, decode(path, text));
+      poller.offer(path, decodeParts(path, text, parts));
     };
     pushed.set(path, push.watch(path, onText, { ask: () => poller.refresh(path),
       release: () => { detach(path); poller.hold(path, false); } }));
@@ -85,7 +98,7 @@ export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}
     attach(path);
     return () => {
       stop();
-      if (!poller.active().includes(path)) { detach(path); cache.delete(path); }
+      if (!poller.active().includes(path)) { detach(path); cache.delete(path); rowParsers.delete(path); }
     };
   }
 
@@ -102,6 +115,13 @@ export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}
     };
   }
 
+  /** The project changed (change 0224): ask `path` once more, unless the push stream carries it.
+   * The engine re-reads every pushed topic after each project change and sends only an answer
+   * that changed, so a pushed path needs no request (a polled one is asked as before). */
+  function again(path: string) {
+    if (!pushed.has(path)) poller.refresh(path);
+  }
+
   /** Use `source` for the paths it covers (null: back to polling everything). */
   function setPush(source: PushSource | null) {
     [...pushed.keys()].forEach(path => { detach(path); poller.hold(path, false); });
@@ -109,7 +129,7 @@ export function createLiveFeed(fetchText: TextFetcher, options: PollOptions = {}
     poller.active().forEach(attach);
   }
 
-  return { subscribe, subscribeTask, setPush, refresh: poller.refresh, active: poller.active, interval: poller.interval,
+  return { subscribe, subscribeTask, setPush, again, refresh: poller.refresh, active: poller.active, interval: poller.interval,
     pushed: () => [...pushed.keys()] };
 }
 

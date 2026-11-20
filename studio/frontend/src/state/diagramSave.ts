@@ -40,20 +40,26 @@ export function createDiagramSave(deps: DiagramSaveDeps) {
   let queue: Promise<void> = Promise.resolve();
   let generation = 0;
   let unsaved = false;
+  let saved: Diagram | null = null;  // the drawing the engine last accepted from this tab
   const stop = () => { if (timer) clearTimeout(timer); timer = null; };
 
   async function save(): Promise<void> {
+    // Nothing waits to be sent: only let a save already on its way finish. Sending the same drawing
+    // again made the engine record an empty Undo step, so Undo right after a drag seemed to do
+    // nothing the first time (found in trial U2, change 0224).
+    if (!unsaved && !timer) { await queue.catch(() => {}); return; }
     stop();
     const start = deps.project();
     if (!start || start.runtime !== 'stopped') return;
     const diagram = start.diagram;
     const mine = generation;
     const run = queue = queue.catch(() => {}).then(async () => {
-      if (mine !== generation) return;
+      if (mine !== generation || diagram === saved) return;  // the save ahead already sent this drawing
       const active = deps.project();
       if (!active || active.runtime !== 'stopped') return;
       try {
         const result = await deps.put({ diagram, revision: active.revision, tab_id: deps.tabId });
+        saved = diagram;
         const now = deps.project();
         if (now?.session_id === active.session_id) {
           deps.show({ ...now, revision: result.revision });
