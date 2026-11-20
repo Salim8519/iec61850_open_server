@@ -45,6 +45,8 @@ and SNMP Stop loops (1653-4001 calls, each a Release) while the main loop works 
 | `--mode add`: choose the gateway's own address .50, .51, .52, .53 in turn | **80 of 200** addresses missing 0.27-0.87 s later, **80 removed by this engine** (it added the address, then saved the choice; a Release in between read the old choice) | 0 removed by this engine; a typed address no longer goes on the card at all (N9), so the 200 "not on the card" here are by design |
 | `--mode start`: Start the gateway on .50, check, Stop | 0 removed by this engine (the address stayed on the card all the time: N9's leftover); 6 Starts refused "Could not listen ... Another program may use this port" right after a Stop while the address was there (the old gateway's port), 1 address missing not by us | **0 of 200** |
 
+Follow-up [0227](../changes/2026/0227-gateway-restart-and-late-lab-adds.md): the six refused Starts were not reproduced on today's code (0 of 800); the gateway's message named every bind failure a busy port, also a Lab address taken off by another engine. It now names the cause.
+
 ## N4: launch clean-up before the automatic starts
 
 `n4_launch_order.py --launches 30`: gateway on its own address .50 and one SNMP device at .60,
