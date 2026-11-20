@@ -5,6 +5,7 @@ import os
 import socket
 import struct
 import subprocess
+import time
 from pathlib import Path
 
 import pytest
@@ -175,7 +176,31 @@ def test_dnp3_output_statuses_are_online_follow_status_and_report_events():
 def test_listen_failure_is_explained():
     first = Gateway("modbus", {"bind": "127.0.0.1", "port": 15021})
     try:
-        with pytest.raises(RuntimeError, match="Could not listen"):
+        with pytest.raises(RuntimeError, match="Could not listen on 127.0.0.1:15021. Another program uses this port"):
             Gateway("modbus", {"bind": "127.0.0.1", "port": 15021})
     finally:
         first.close()
+
+
+@pytest.mark.parametrize("protocol", ["iec104", "modbus"])
+def test_an_address_this_pc_does_not_have_is_named(protocol):
+    # Change 0227: before, every listen failure said "Another program may use this port", also when
+    # the address had left this PC (a Lab-card address another copy took off).
+    with pytest.raises(RuntimeError, match="192.0.2.1 is not an address of this PC now"):
+        Gateway(protocol, {"bind": "192.0.2.1", "port": 15023})
+
+
+def test_modbus_stop_with_a_silent_master_is_quick():
+    # Change 0227: a connected master that sent nothing held Stop until the app gave up after 10 s
+    # (Windows' shutdown() does not wake a waiting recv()).
+    gateway = Gateway("modbus", {"bind": "127.0.0.1", "port": 15022})
+    master = socket.create_connection(("127.0.0.1", 15022), timeout=5)
+    try:
+        time.sleep(0.2)  # the gateway's connection thread waits for the first request
+        started = time.monotonic()
+        gateway.process.request("halt", timeout=10)
+        assert time.monotonic() - started < 2
+        assert master.recv(16) == b""  # the gateway closed the connection
+    finally:
+        master.close()
+        gateway.close()

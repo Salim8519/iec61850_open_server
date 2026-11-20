@@ -1,4 +1,5 @@
 // Modbus TCP server: MBAP framing, unit-id check and one thread per master connection.
+#include "listen_error.hpp"
 #include "modbus_pdu.hpp"
 #include "protocol.hpp"
 #include "traffic.hpp"
@@ -84,10 +85,14 @@ public:
             throw std::runtime_error("Listen address " + bind_ip + " is not an IPv4 address");
         if (listener == INVALID_SOCKET || ::bind(listener, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0
             || listen(listener, 8) != 0) {
+#ifdef _WIN32
+            int code = WSAGetLastError();  // before closesocket, which may change it
+#else
+            int code = errno;
+#endif
             if (listener != INVALID_SOCKET) closesocket(listener);
             listener = INVALID_SOCKET;
-            throw std::runtime_error("Could not listen on " + bind_ip + ":" + std::to_string(port)
-                                     + ". Another program may use this port.");
+            throw std::runtime_error(listen_failure(bind_ip, port, code));
         }
         running = true;
         acceptor = std::thread([this] { accept_loop(); });
@@ -96,14 +101,22 @@ public:
 
     void changed(const std::vector<GatewayPoint>&) override {}  // Modbus masters poll.
 
+    // On Windows shutdown() does not wake a recv() another thread waits in, so a connected master
+    // that sent nothing held Stop until its next request or the 60 s idle timeout, and the app
+    // gave up after 10 s ("Native halt request timed out", change 0227). Closing the socket wakes
+    // it. The acceptor ends first, so no new socket can take a closed one's handle meanwhile.
     void stop() override {
         if (!running.exchange(false)) return;
         closesocket(listener);
+        if (acceptor.joinable()) acceptor.join();
         {
             std::lock_guard<std::mutex> guard(lock);
-            for (auto client : clients) shutdown(client, 2);  // serve() closes its own socket
+            for (auto client : clients) {
+                shutdown(client, 2);
+                closesocket(client);  // erased here, so serve() does not close it again
+            }
+            clients.clear();
         }
-        if (acceptor.joinable()) acceptor.join();
         for (auto& worker : workers) if (worker.joinable()) worker.join();
         workers.clear();
         finished.clear();

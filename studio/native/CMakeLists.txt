@@ -94,7 +94,7 @@ if(STUDIO_GATEWAY)
     add_executable(studio_gateway gateway/main.cpp gateway/point_table.cpp gateway/command_bridge.cpp
         gateway/traffic.cpp gateway/iec104_objects.cpp gateway/iec104_commands.cpp gateway/server_104.cpp
         gateway/iec104_command_decode.cpp gateway/modbus_pdu.cpp gateway/modbus_writes.cpp gateway/modbus_server.cpp
-        gateway/dnp3_outstation.cpp gateway/dnp3_commands.cpp worker/ipc/framing.cpp)
+        gateway/dnp3_outstation.cpp gateway/dnp3_commands.cpp gateway/listen_error.cpp worker/ipc/framing.cpp)
     target_include_directories(studio_gateway PRIVATE gateway worker ${LIB60870_HEADERS} "${JSON_SOURCE}/single_include")
     target_compile_definitions(studio_gateway PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
     target_link_libraries(studio_gateway PRIVATE lib60870 opendnp3 studio_license ws2_32)

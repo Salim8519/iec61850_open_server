@@ -89,3 +89,8 @@ leaving anything after the project or the app closes.
 - ADR-0136's clean-up moments change for IED addresses only: Stop no longer removes them; closing
   the project, exit and reopening still leave nothing.
 - The Python engine is frozen and has no lab card.
+- Change 0227 (no new decision, item 1 applied to lost answers): a lab add whose answer was lost
+  while the service stayed busy, and that the card does not show yet, is journaled `requested`
+  instead of `failed`, and a lost removal counts as done only by the service's own list; the next
+  Release then takes off an address the service put on late, or journals `skipped` for one that
+  never came.
