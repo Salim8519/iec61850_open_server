@@ -1,11 +1,14 @@
 package service
 
 import (
+	"errors"
+
 	"studio-engine/internal/gateway"
 	"studio-engine/internal/project/netset"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/control"
 	"studio-engine/internal/tools/pytext"
+	"studio-engine/internal/tools/worker"
 )
 
 // run executes one command and never fails: (ok, plain reason).
@@ -88,7 +91,7 @@ func (e *executor) execute(event *pyjson.Object) (bool, string, error) {
 	result, err := m.control.Operate(host, port, text(point, "ref"), value,
 		pyjson.NewObject().Set("originator", originator))
 	if err != nil {
-		return false, "", err
+		return e.controlFailed(seq, label, ied, err)
 	}
 	summary := control.Summary(result)
 	m.emit("gateway_command", pyjson.NewObject().Set("point", label).Set("ied", get(ied, "name")).
@@ -108,6 +111,22 @@ func (e *executor) execute(event *pyjson.Object) (bool, string, error) {
 	}
 	go e.observe(seq, text(ied, "id"), pytext.Str(status), expected)
 	return true, "", nil
+}
+
+// controlFailed writes the outcome of a command whose control program failed into its log line
+// and the answer: a timeout means the device may still have operated (fix plan A8), so it is
+// "result unknown", never a plain failure.
+func (e *executor) controlFailed(seq int64, label string, ied *pyjson.Object, err error) (bool, string, error) {
+	reason, applied, result := err.Error(), "failed: "+err.Error(), "failed"
+	var timeout *worker.Timeout
+	if errors.As(err, &timeout) {
+		reason = pytext.Str(get(ied, "name")) + " did not answer in time; result unknown — check the position before trying again"
+		applied, result = "result unknown: "+reason, "unknown"
+	}
+	e.manager.Commands.Update(seq, pyjson.NewObject().Set("applied", applied))
+	e.manager.emit("gateway_command", pyjson.NewObject().Set("point", label).Set("ied", get(ied, "name")).
+		Set("result", result).Set("reason", reason))
+	return false, reason, nil
 }
 
 type errorText string

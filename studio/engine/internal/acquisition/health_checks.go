@@ -17,6 +17,9 @@ func readItems(process Worker, items []any) (*pyjson.Object, *pyjson.Object, err
 	if err != nil {
 		return nil, nil, err
 	}
+	if silentAnswer(answer) {
+		return nil, nil, errSilent
+	}
 	values, errors := modes.ParseAnswer(pyv.Obj(answer))
 	return values, errors, nil
 }
