@@ -48,7 +48,8 @@ class Screencast:
     def assemble(self, target: Path, tail: float = 0.5, until: float | None = None) -> Path:
         """Write the frames with their real durations, then resample to 30 fps. until (seconds after
         the first frame) holds the last frame: the screencast only sends frames when the screen
-        changes, so a still final screen would otherwise cut the last narration line short."""
+        changes, so a still final screen would otherwise cut the last narration line short. -t caps the
+        length: the concat demuxer otherwise holds the repeated last frame a second time."""
         if len(self.frames) < 2:
             raise RuntimeError("the screencast captured no frames")
         lines = ["ffconcat version 1.0"]
@@ -59,7 +60,7 @@ class Screencast:
         listing = self.folder / "frames.ffconcat"
         listing.write_text("\n".join(lines) + "\n", encoding="utf-8")
         subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
-                        "-i", listing.name, "-vf", f"fps=30,scale={self.size[0]}:{self.size[1]}:flags=lanczos,"
+                        "-i", listing.name, "-t", f"{end - self.frames[0][1]:.3f}", "-vf", f"fps=30,scale={self.size[0]}:{self.size[1]}:flags=lanczos,"
                         "format=yuv420p", "-c:v", "libx264", "-preset", "medium", "-crf", "12",
                         "-movflags", "+faststart", str(target.resolve())],
                        check=True, cwd=self.folder)

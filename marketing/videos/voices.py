@@ -25,8 +25,9 @@ def lines() -> list[str]:
     found: list[str] = []
     for name in ("lessons_start.py", "lessons_basics.py", "lessons_more.py", "lessons_tools.py", "lessons_sld.py", "lessons_license.py", "lessons_lab.py", "lessons_test.py"):
         source = (HERE / name).read_text(encoding="utf-8")
-        for match in re.finditer(r'd\.say\("([^"]+)"', source):
-            found.append(match.group(1))
+        # d.say("...") and scene(d, "..."), including a line split into adjacent string literals
+        for match in re.finditer(r'(?:d\.say\(|scene\(d,)\s*((?:"[^"]+"\s*)+)', source):
+            found.append("".join(re.findall(r'"([^"]+)"', match.group(1))))
         loop = re.search(r'for text in \[(.*?)\]:', source, re.DOTALL)
         if loop:
             found.extend(re.findall(r'"([^"]+)"', loop.group(1)))

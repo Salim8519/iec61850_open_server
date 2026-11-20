@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import re
 
-from lessons_basics import button, import_station, run_all, tab
+from lessons_basics import button, import_station, nav, run_all, tab
 
 
 def open_tool(d, page, name: str) -> None:
-    d.click(button(page, "Tools"), after=0.4)
+    d.click(nav(page, "Tools"), after=0.4)
     back = button(page, "All tools")
     if back.count():
         d.click(back, after=0.4)

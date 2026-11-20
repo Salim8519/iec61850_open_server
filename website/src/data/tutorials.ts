@@ -7,27 +7,27 @@ export const posterOf = (tutorial: Tutorial) => `/videos/${tutorial.slug}.jpg`;
 export const lengthOf = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 
 export const TUTORIALS: Tutorial[] = [
-  { slug: 'getting-started', title: 'A whole substation on one PC', seconds: 78, steps: [
-    'Devices › Import CID / SCD: every IED in the SCD arrives with its full data model.',
-    'SLD › Build from SCD draws the single-line diagram from the same file. Press Run: every IED becomes a real IEC 61850 server.',
-    'Operate a breaker like your SCADA would, switch on GOOSE messages, and point your SCADA, gateway or test set at the addresses in Devices.',
+  { slug: 'getting-started', title: 'A whole substation on one PC', seconds: 112, steps: [
+    'Devices › Import CID / SCD: every IED arrives with its full data model. SLD › Build from SCD draws the diagram, with a box for every GOOSE IED.',
+    'Press Run: every IED becomes a real IEC 61850 server. Operate a breaker, then send GOOSE from FEED1 and watch it reach both busbar IEDs.',
+    'Tools: Find IEDs scans the network, IED Explorer reads any IED, and the SCADA gateway serves your IEDs over IEC 104, DNP3 or Modbus (or plays the SCADA master).',
   ] },
-  { slug: 'cid-scd', title: 'CID and SCD files', seconds: 82, steps: [
+  { slug: 'cid-scd', title: 'CID and SCD files', seconds: 73, steps: [
     'SCL files describe IEC 61850 projects. A CID describes one configured IED; an SCD describes the whole substation.',
     'Devices › Import CID / SCD, tick the IEDs you want. Each IED gets a role: Simulate, Monitor real device or Skip.',
     'The list shows who sends GOOSE to whom. File check details lists anything unusual; nothing is dropped.',
   ] },
-  { slug: 'sld', title: 'The single-line diagram (SLD)', seconds: 85, steps: [
+  { slug: 'sld', title: 'The single-line diagram (SLD)', seconds: 77, steps: [
     'An SLD draws a three-phase station with one line per circuit: busbars, bays, breakers (QA), disconnectors (QB), earthing switches (QC).',
     'SLD › Build from SCD › Preview, then Apply. Tidy up arranges it; one Undo restores your layout.',
     'Press Run, click a breaker: Operate sends a real IEC 61850 command (select before operate in one press); Test moves it by itself, with no command.',
   ] },
-  { slug: 'simulation', title: 'Simulate IEDs and change values', seconds: 54, steps: [
+  { slug: 'simulation', title: 'Simulate IEDs and change values', seconds: 49, steps: [
     'Simulation means ScadaBench plays the IED; your SCADA or gateway connects to it like to the real relay.',
     'Test › Test points: type chips show each kind of point; add the breaker position and measurements you change most.',
     'Press Run and change them live. Generators move values for you; Sequences play timed steps or a CSV trace.',
   ] },
-  { slug: 'goose', title: 'GOOSE and the lab network', seconds: 79, steps: [
+  { slug: 'goose', title: 'GOOSE and the lab network', seconds: 66, steps: [
     'GOOSE is the fast multicast message IEDs send each other for trips and interlocks: one publisher, many subscribers.',
     'Each IED lists its GOOSE partners; Signal flow draws who sends GOOSE and reports to whom.',
     'Settings › Put my IEDs on a network: pick the network card, review every Windows change, then apply. Tools shows the GOOSE really on the wire.',
@@ -43,7 +43,7 @@ export const TUTORIALS: Tutorial[] = [
     'Open a result in IED Explorer: it browses the data model and watches key values, without taking a report block.',
     'Commands are sent only after one confirmation, with the device’s own control model: Select, then Operate within the time limit. Export the watch list as CSV.',
   ] },
-  { slug: 'scada-gateway', title: 'Be the SCADA gateway', seconds: 91, steps: [
+  { slug: 'scada-gateway', title: 'Be the SCADA gateway', seconds: 86, steps: [
     'Tools › SCADA gateway & master: ScadaBench serves your IEDs to SCADA over IEC 104, Modbus TCP or DNP3.',
     'Add points from an IED, made-up points or rows pasted from Excel, or press Start gateway: the point list is proposed from your IEDs.',
     'SCADA commands, or the Send buttons, operate the IEDs over real IEC 61850. SCADA master checks your point list: received, missing or wrong type.',
@@ -53,7 +53,7 @@ export const TUTORIALS: Tutorial[] = [
     'Press Run and switch on the GOOSE messages layer. Click an IED box: its sheet lists each message, value by value, and who receives it.',
     'Change a value to send it: the line runs from sender to receivers, and “got it” shows the new message arrived. A breaker or point panel row can send GOOSE too.',
   ] },
-  { slug: 'point-panels', title: 'Point panels and the smart point picker', seconds: 102, steps: [
+  { slug: 'point-panels', title: 'Point panels and the smart point picker', seconds: 96, steps: [
     'SLD › Add › Point panel: one card for the points of one IED. Add points by type (status, double point, value, command) and by object, such as XCBR1.',
     'Press Run and open the panel: switch statuses, set values and send commands. All healthy puts every point back in one go.',
     'Every SLD symbol uses the same picker: it preselects the type the symbol needs, says why, and counts each type.',
@@ -73,12 +73,12 @@ export const TUTORIALS: Tutorial[] = [
     'Each license works on one computer only and cannot be moved. Reinstalling Windows on the same computer is fine; a new computer needs its own license.',
     'No internet on site? Copy the Machine ID, get a license file at license.scadabench.com/activate and load it.',
   ] },
-  { slug: 'lab-network', title: 'IEDs at their own addresses, without a VM', seconds: 86, steps: [
+  { slug: 'lab-network', title: 'IEDs at their own addresses, without a VM', seconds: 76, steps: [
     'Settings › Put my IEDs on a network › ScadaBench Lab. Windows asks once to add the card (no download, no restart); then Use the lab network needs no prompt.',
     'Each simulated IED answers at its own address from the SCD. Type another address and press Enter to move it, even while running; the SCD file is never changed.',
     'Ping, IEDScout, your SCADA and GOOSE reach the IEDs on this PC. Addresses used by this PC or by a real device on your Ethernet or Wi-Fi are caught before they clash.',
   ] },
-  { slug: 'test-station', title: 'Generators and timed test sequences', seconds: 59, steps: [
+  { slug: 'test-station', title: 'Generators and timed test sequences', seconds: 57, steps: [
     'Test › Generators › New generator: pick a measurement and how it changes (smooth wave, ramp, steps, random noise or a CSV recording).',
     'Test › Sequences: add timed Set value steps, and Check value steps to make it a test. A failed check stops the sequence and says why.',
     'Tick Start automatically with Run, press Run, and the same test plays the same way every time. It is saved with the project.',
