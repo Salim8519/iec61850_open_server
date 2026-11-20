@@ -16,6 +16,7 @@ harness 198.18.20.0/24 (other trials use other /24s of that range).
 import copy
 import io
 import json
+import os
 from pathlib import Path
 import zipfile
 
@@ -27,7 +28,7 @@ SOURCES = {
               (CIDS / "Al Kamil/AlKamil-400kV.scadabench", 6)],
 }
 IED_PORT = 20102
-RANGE = "198.18.20"  # this harness's /24 of the 198.18.0.0/15 test range
+RANGE = os.environ.get("SCADABENCH_TRIAL_RANGE", "198.18.20")  # a trial's /24 of 198.18.0.0/15
 
 
 def read(path):

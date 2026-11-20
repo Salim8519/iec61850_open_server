@@ -88,6 +88,7 @@ type Coordinator struct {
 	commands  *commandClient
 	// selections are the held select-before-operate selections (ADR-0108).
 	selections *selections
+	spares     *spareIeds // studio_ied processes waiting for the next Run (ADR-0142)
 	shutdown   chan struct{}
 	ticker     sync.WaitGroup
 }
@@ -118,6 +119,7 @@ func New(opt Options) *Coordinator {
 	c.access = newMmsAccess(c)
 	c.commands = newCommandClient(filepath.Join(opt.NativeDir, "studio_control.exe"), opt.CommandKeep)
 	c.selections = newSelections(time.Now)
+	c.spares = newSpareIeds(filepath.Join(opt.NativeDir, "studio_ied.exe"))
 	c.ticker.Add(1)
 	go c.tick()
 	return c
@@ -209,6 +211,7 @@ func (c *Coordinator) Close() {
 	}
 	close(c.shutdown)
 	c.ticker.Wait()
+	c.spares.close() // before Stop, which would ready new spares
 	_ = c.Stop(nil)
 	c.feedback.close()
 	c.pulses.close()

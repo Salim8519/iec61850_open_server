@@ -48,6 +48,8 @@ type Master struct {
 	lastAsked any // time.time() of the last interrogation, or None
 	failures  []any
 	stopping  chan struct{}
+	asking    int           // interrogations in flight (master_asking.go)
+	askIdle   chan struct{} // closed when the last one ends
 
 	tableMu sync.Mutex // the discovered table; values arrive while requests run
 	table   *pyjson.Object

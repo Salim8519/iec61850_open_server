@@ -27,6 +27,7 @@ type RealSession struct {
 	status   *pyjson.Object
 	controls *pyjson.Object // the device control check (ADR-0138), nil until read
 	process  Worker
+	reserved bool // a report block may be reserved on this client (closeProcess)
 	stopping chan struct{}
 	stopOnce sync.Once
 	lost     chan struct{}
@@ -219,15 +220,4 @@ func (s *RealSession) halt() {
 // stopped publishes the end of a halted session (state "stopped" and its live_status event).
 func (s *RealSession) stopped() {
 	s.set("stopped", "Disconnected; every report block ScadaBench used was given back")
-}
-
-func (s *RealSession) closeProcess() {
-	s.mu.Lock()
-	process := s.process
-	s.process = nil
-	s.mu.Unlock()
-	if process != nil {
-		_, _ = process.Request("disconnect", 15*time.Second, pyjson.NewObject())
-		process.Close()
-	}
 }

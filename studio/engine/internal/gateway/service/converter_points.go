@@ -22,6 +22,7 @@ func (c *Converter) Points(protocol string) ([]any, []string, error) {
 	if !c.Master.LinkOpen() {
 		return nil, nil, apperr.ValueError("Connect to the device first: the converter serves the points ScadaBench reads from it")
 	}
+	c.Master.waitAsked(askLimit) // the values asked for at Connect (ADR-0142)
 	points, notes, _, err := c.mapped(protocol)
 	if err != nil {
 		return nil, nil, err

@@ -35,6 +35,9 @@ func (e *Engine) startBackground(ctx context.Context) {
 	e.Updates.StartBackground(ctx)
 	go e.resumeGateway(ctx)
 	go e.releaseLeftLab()
+	if e.Runtime != nil {
+		e.startWarm.AfterWarm = e.Runtime.PrepareSpares
+	}
 	go e.startWarm.Run(ctx)
 }
 

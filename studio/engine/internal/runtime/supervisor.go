@@ -122,9 +122,14 @@ func (c *Coordinator) launch(item *running, executable, folder string, network *
 		return apperr.RuntimeError(err.Error())
 	}
 	absolute, _ := filepath.Abs(config)
-	worker, err := native.StartIed(executable, func(event *pyjson.Object) { c.onWorkerEvent(id, event) })
-	if err != nil {
-		return apperr.RuntimeError(err.Error())
+	deliver := func(event *pyjson.Object) { c.onWorkerEvent(id, event) }
+	worker := c.spares.take(deliver) // a spare started while nothing ran (ADR-0142)
+	if worker == nil {
+		started, err := native.StartIed(executable, deliver)
+		if err != nil {
+			return apperr.RuntimeError(err.Error())
+		}
+		worker = started
 	}
 	point := effectiveEndpoint(item.ied, network)
 	request := startRequest(item, absolute, point, gooseRequest(item.ied, bus))
@@ -193,6 +198,12 @@ func writeStartValues(item *running, worker *native.Ied) error {
 
 // stopWorkers is Supervisor.stop_some: close these workers in parallel, mark the IEDs stopped.
 func (c *Coordinator) stopWorkers(batch []*running) {
+	c.closeWorkers(batch)
+	c.markWorkersStopped(batch)
+}
+
+// closeWorkers closes the batch's workers in parallel; a never-started IED is marked stopped.
+func (c *Coordinator) closeWorkers(batch []*running) {
 	var group sync.WaitGroup
 	for _, item := range batch {
 		if item.worker == nil && item.simulated() {
@@ -210,6 +221,10 @@ func (c *Coordinator) stopWorkers(batch []*running) {
 		}(item)
 	}
 	group.Wait()
+}
+
+// markWorkersStopped marks the batch's simulated IEDs stopped, in batch order.
+func (c *Coordinator) markWorkersStopped(batch []*running) {
 	for _, item := range batch {
 		if item.simulated() {
 			c.markStopped(item.model.id)

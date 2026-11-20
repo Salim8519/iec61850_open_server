@@ -39,7 +39,12 @@ func (m *Master) Connect() (*pyjson.Object, error) {
 		}
 	}
 	m.emit("master_connected", pyjson.NewObject().Set("protocol", protocol).Set("host", host).Set("port", port))
-	m.askAll()
+	// Connect answers once the link is open; the values asked for arrive as events (ADR-0142).
+	m.beginAsk()
+	go func() {
+		defer m.endAsk()
+		m.askAll()
+	}()
 	return m.Status(), nil
 }
 
@@ -111,7 +116,9 @@ func info(line string) *pyjson.Object {
 // Autoconnect connects again after the app restarts if it was connected when it closed.
 func (m *Master) Autoconnect() {
 	if pytext.Truthy(get(m.Config(), "auto_connect")) && !m.Busy() {
-		if _, err := m.Connect(); err != nil {
+		_, err := m.Connect()
+		m.waitAsked(askLimit) // a protocol converter that starts next serves what was received
+		if err != nil {
 			m.mu.Lock()
 			m.state, m.message = "failed", "Automatic connect failed: "+err.Error()
 			m.mu.Unlock()
@@ -218,8 +225,7 @@ func (m *Master) Disconnect(remember bool) (*pyjson.Object, error) {
 	m.mu.Unlock()
 	closeChannel(stopping)
 	if process != nil {
-		process.Request("stop", 10*time.Second, nil)
-		process.Close()
+		m.end(process)
 		m.Traffic.Add(info("Disconnected"))
 		m.emit("master_disconnected", pyjson.NewObject())
 	}

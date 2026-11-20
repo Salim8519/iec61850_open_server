@@ -63,12 +63,13 @@ func (s *RealSession) lostChannel() chan struct{} {
 
 func (s *RealSession) session(host string, port any) error {
 	s.set("connecting", fmt.Sprintf("Connecting to %s:%s", host, pyv.PyStr(port)))
-	process, err := s.deps.Start(s.deps.LiveExecutable, s.onEvent)
+	started, err := s.deps.Start(s.deps.LiveExecutable, s.onEvent)
 	if err != nil {
 		return err
 	}
+	process := &busyWorker{Worker: started}
 	s.mu.Lock()
-	s.process = process
+	s.process, s.reserved = process, false
 	s.mu.Unlock()
 	if s.isStopping() {
 		return errors.New("stopping")
@@ -147,6 +148,9 @@ func (s *RealSession) chooseAccess(process Worker, blocks *pyjson.Object, access
 	notes := pyv.GetList(chosen, "notes")
 	used := []any{}
 	for _, rcb := range pyv.GetList(chosen, "reports") {
+		if !s.willReserve() {
+			return errStopping
+		}
 		result, err := process.Request("rcb_reserve", 30*time.Second, pyv.O("rcb", rcb))
 		if err != nil {
 			return err

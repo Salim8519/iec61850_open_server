@@ -17,9 +17,17 @@ func nowSeconds() float64 { return numlog.Now() }
 
 // askAll is _ask_all: GI, integrity poll or Modbus reads; errors become the message.
 func (m *Master) askAll() *pyjson.Object {
+	m.mu.Lock()
+	asked := m.process
+	m.mu.Unlock()
 	answer, err := m.Interrogate()
 	if err != nil {
-		m.setMessage(askWords[text(m.Config(), "protocol")] + " failed: " + err.Error())
+		m.mu.Lock()
+		current := m.process
+		m.mu.Unlock()
+		if current == asked { // not after Disconnect ended this worker
+			m.setMessage(askWords[text(m.Config(), "protocol")] + " failed: " + err.Error())
+		}
 		return nil
 	}
 	return answer
@@ -36,7 +44,9 @@ func (m *Master) Interrogate() (*pyjson.Object, error) {
 		return m.poll(process)
 	}
 	// GI confirmation (t1) + its end + the counter interrogation (t1) can take about 50 s.
+	m.beginAsk()
 	reply, err := process.Request("interrogate", 60*time.Second, nil)
+	m.endAsk()
 	if err != nil {
 		return nil, err
 	}

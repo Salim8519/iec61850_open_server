@@ -126,5 +126,24 @@ func (w *Worker) Close() {
 	}
 }
 
+// Kill ends the process at once, without the "stop" request, and waits for its pipes like
+// Close. For a worker busy with a request it cannot interrupt (a connect toward a device that
+// does not answer), where "stop" would wait behind that request (change 0223).
+func (w *Worker) Kill() {
+	w.mu.Lock()
+	w.closing = true
+	w.mu.Unlock()
+	_ = w.command.Process.Kill()
+	select {
+	case <-w.done:
+	case <-time.After(3 * time.Second):
+	}
+	_ = w.stdin.Close()
+	select {
+	case <-w.drained:
+	case <-time.After(time.Second):
+	}
+}
+
 // Done is closed when the process has exited and its pipes are drained.
 func (w *Worker) Done() <-chan struct{} { return w.done }

@@ -23,6 +23,9 @@ type StartWarmer struct {
 	delay   time.Duration
 	changed chan struct{}
 	warmed  map[warmKey]string // SCL text per IED read by the last warm-up
+	// AfterWarm runs after each warm-up (the coordinator readies its spare IED processes,
+	// ADR-0142); set it before Run.
+	AfterWarm func()
 }
 
 // warmKey is one IED as the start-data caches key it (with its SCL text).
@@ -54,6 +57,9 @@ func (w *StartWarmer) Run(ctx context.Context) {
 			return
 		}
 		w.warm(ctx, w.project())
+		if w.AfterWarm != nil && ctx.Err() == nil {
+			w.AfterWarm()
+		}
 	}
 }
 

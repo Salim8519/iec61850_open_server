@@ -32,7 +32,7 @@ from parity.jobobject import Job  # noqa: E402
 import winaddr  # noqa: E402  (this folder: the scripts here run with it as sys.path[0])
 
 SERVER = STUDIO / "build/engine/studio_server.exe"
-NATIVE = STUDIO / "native/build/Release"
+NATIVE = Path(os.environ.get("SCADABENCH_TRIAL_NATIVE", STUDIO / "native/build/Release"))
 ROOT = STUDIO.parent / ".local/trials/instances"  # inside the project: the antivirus allows it
 
 
@@ -53,7 +53,10 @@ def busy_reasons():
     return reasons
 
 
-def free_port(start=20000, stop=20999):
+PORTS = [int(p) for p in os.environ.get("SCADABENCH_TRIAL_PORTS", "20000-20999").split("-")]
+
+
+def free_port(start=PORTS[0], stop=PORTS[1]):
     """First port in [start, stop] that nothing listens on (both 127.0.0.1 binds succeed)."""
     for port in range(start, stop + 1):
         with socket.socket() as probe:

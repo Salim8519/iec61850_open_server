@@ -32,6 +32,11 @@ int main() {
                 if (op == "start") {
                     license::require_valid_license();
                     result = server.start(message);
+                } else if (op == "hello") {
+                    // A spare worker is greeted while no Run waits: the licence check is done
+                    // before the Run takes it (ADR-0142).
+                    license::require_valid_license();
+                    result = {{"ready", true}};
                 }
                 else if (op == "read") result = read_value(server, message.at("ref"));
                 else if (op == "read_versioned") result = read_versioned(server, message.at("ref"));

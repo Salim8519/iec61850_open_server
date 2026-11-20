@@ -8,6 +8,7 @@ Every change is one record (moment, what, key, change) on the winclock scale.
     watch.first("address", "added")    # {ip: moment}
     watch.stop()
 """
+import os
 import threading
 import time
 
@@ -20,7 +21,8 @@ WORKERS = ("studio_ied.exe", "studio_goose.exe")
 
 
 class Watcher:
-    def __init__(self, job, prefix="198.18.20.", interval=0.002):
+    def __init__(self, job, prefix=None, interval=0.002):
+        prefix = prefix or os.environ.get("SCADABENCH_TRIAL_RANGE", "198.18.20") + "."
         self.job, self.prefix, self.interval = job, prefix, interval
         self.card = winaddr.lab_card_index()
         self.tracker = Tracker()

@@ -39,11 +39,20 @@ func (c *Coordinator) Stop(ids []string) error {
 		items = append(items, c.runs[id])
 	}
 	c.mu.Unlock()
-	c.opt.Live.Stop()
+	// Real-IED sessions give back their report blocks while the workers close (change 0223); the
+	// IEDs are marked stopped after both, so the events keep their order.
+	sessions := make(chan struct{})
+	go func() {
+		defer close(sessions)
+		c.opt.Live.Stop()
+	}()
 	c.feedback.clear()
 	c.selections.clear()
 	c.scenarios.stop()
-	c.stopWorkers(simulatedOf(items))
+	simulated := simulatedOf(items)
+	c.closeWorkers(simulated)
+	<-sessions
+	c.markWorkersStopped(simulated)
 	c.markAllStopped(c.opt.Project.Current())
 	c.mu.Lock()
 	c.setStateLocked("stopped")
@@ -54,6 +63,7 @@ func (c *Coordinator) Stop(ids []string) error {
 	if log := c.setLog(nil); log != nil {
 		log.Close()
 	}
+	c.PrepareSpares()
 	return nil
 }
 

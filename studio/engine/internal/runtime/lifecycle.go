@@ -170,6 +170,7 @@ func (c *Coordinator) start(ids []string) error {
 		if log := c.setLog(nil); log != nil {
 			log.Close()
 		}
+		c.PrepareSpares()
 		return err
 	}
 	return nil
