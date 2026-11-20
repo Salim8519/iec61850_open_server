@@ -48,6 +48,8 @@ Rebuild the engine first when its source changed (from `studio/engine`):
 | `python studio/tools/trials/n9_gateway_address.py --cycles 10 --server base` | N9: is the gateway's own address on the card only while it runs; exit leaves nothing |
 | `python studio/tools/trials/n10_session_addresses.py --rounds 10 --server base` | N10: Run/Stop steps and DNS Client CPU, then what stays after Stop, File › Close, exit and a kill + launch |
 | `python studio/tools/trials/lab_cross_removal.py --rounds 10 --server base` | Finding: does one copy take another copy's addresses off at Stop, Use, exit, launch |
+| `python studio/tools/trials/t0227_gateway_restart.py --cycles 200 --client --disturb` | Change 0227: gateway Start right after Stop (IEC 104, Modbus; own Lab address and 127.0.0.1), what Windows lists after each Stop (`--native` for a trial build) |
+| `python studio/tools/trials/t0227_mms_master_restart.py --cycles 200` | Change 0227: IED start right after stop, Run/Stop, SCADA master Connect/Disconnect (ports 27000-27999, 198.18.27.0/24) |
 
 The last five (group C, change 0222) use `labgroup.py`: ports 24000-24999, addresses
 198.18.24.0/24, `--server base` = `.local/trials/c/base/studio_server.exe` (build today's master

@@ -16,8 +16,9 @@ import (
 )
 
 // journalEvents are the events journal.append accepts. "requested" is written only to the Go lab
-// journal (lab_journal.jsonl), before a real-card add whose answer may be lost (change 0221);
-// Outstanding ignores it, so journal.jsonl reads exactly as Python's.
+// journal (lab_journal.jsonl), before a real-card add whose answer may be lost (change 0221) and
+// after a lab-card add whose answer was lost before the card showed it (change 0227); Outstanding
+// ignores it, so journal.jsonl reads exactly as Python's.
 var journalEvents = map[string]bool{"applied": true, "removed": true, "failed": true, "skipped": true,
 	"requested": true}
 

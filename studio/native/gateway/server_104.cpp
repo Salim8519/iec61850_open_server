@@ -2,6 +2,7 @@
 // changes with time tags, clock sync, read and commands (single, double, step, set point).
 #include "iec104_commands.hpp"
 #include "iec104_objects.hpp"
+#include "listen_error.hpp"
 #include "protocol.hpp"
 #include "traffic.hpp"
 #include <stdexcept>
@@ -50,8 +51,7 @@ public:
         if (!CS104_Slave_isRunning(slave)) {
             CS104_Slave_destroy(slave);
             slave = nullptr;
-            throw std::runtime_error("Could not listen on " + bind + ":" + std::to_string(port)
-                                     + ". Another program may use this port.");
+            throw std::runtime_error(listen_failure(bind, port, listen_probe(bind, port)));
         }
         return {{"protocol", "iec104"}, {"bind", bind}, {"port", port}, {"common_address", common_address},
                 {"t1", apci->t1}, {"t2", apci->t2}, {"t3", apci->t3}, {"k", apci->k}, {"w", apci->w}};

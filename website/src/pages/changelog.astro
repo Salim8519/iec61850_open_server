@@ -7,8 +7,19 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · Safer saving, Stop and real devices</h2>
+    <h2>{SITE.version} · A more dependable network, faster screens, safer saving</h2>
     <ul>
+      <li>Fixed: when Windows refuses an IED's network address, Start now stops and names each IED, its address and Windows' reason, instead of carrying on. Stop names any address it could not take off.</li>
+      <li>Fixed: two copies of ScadaBench on one PC (for example the installed app and the portable one) no longer take each other's addresses off the ScadaBench Lab card. Each copy removes only the addresses it added.</li>
+      <li>Fixed: starting and stopping IEDs, SNMP devices and the gateway at the same time can no longer leave one of them without its address.</li>
+      <li>Changed: IED addresses on the ScadaBench Lab card now stay between Stop and the next Start, so Start and Stop are quicker and Windows is not busy re-checking addresses each time. They come off when you close the project or ScadaBench, and the lab page has a "Take them off now" button.</li>
+      <li>Changed: the gateway's and SCADA master's own address is added when they start or connect and taken off when they stop or disconnect.</li>
+      <li>New: a running gateway shows "Address gone" within a few seconds if its listen address disappears from the PC.</li>
+      <li>Fixed: on a network card with no cable plugged in, ScadaBench now says the card is disconnected instead of adding an address that cannot work (after Repair updates the network service).</li>
+      <li>Fixed: Stop of a Modbus gateway with a SCADA master connected but idle took up to 16 seconds and could fail; it now stops at once. When the gateway cannot listen, the message says why (port in use, address not on this PC, or blocked by Windows).</li>
+      <li>Fixed: a real IED that stops answering while its connection stays open is now marked stale and reconnected, instead of showing frozen values as live.</li>
+      <li>Faster: setting a value, Test buttons and GOOSE sends no longer reload the whole project; moving equipment on the diagram sends far fewer requests; large gateway point lists redraw only the rows that changed; idle pages stop asking the engine for updates.</li>
+      <li>Fixed: the first Undo after moving equipment on the diagram now works, and a second browser tab shows when auto save is switched off.</li>
       <li>Fixed: a change to the single-line diagram made while the project was being saved is no longer lost. If a save fails, your drawing stays on screen, the top bar shows "Not saved", and ScadaBench tries again on your next change or Save.</li>
       <li>Improved: a project opens normally after a power cut or a forced close. A damaged recovery file is moved aside, never deleted, and the last saved state opens. Save now tells you when the file could not be written.</li>
       <li>Fixed: Stop, closing ScadaBench and Clean up remove only the network addresses ScadaBench added itself. Addresses you set in Windows, and addresses on cards that get theirs automatically, are never removed.</li>
