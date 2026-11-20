@@ -80,8 +80,11 @@ Nothing was built, so Clean up, the reopen check and the uninstaller's firewall 
 ## Evidence
 
 - `go test ./internal/netcfg/ -run TestPrompts -v`: 4 of 4 pass (counts above).
-- `go test ./internal/netcfg/`, `go vet` and `GOOS=windows go vet` on `internal/netcfg`: see the
-  commit's report; `python studio/tools/verify.py` passes.
+- `go test ./internal/netcfg/` passes; `go vet` and `GOOS=windows go vet` on `internal/netcfg`
+  are clean.
+- `python studio/tools/verify.py`: all 8 checks PASS. The first run, while other agents' engines
+  and builds loaded the PC, ended with one Go engine package failing (the load-sensitive suite;
+  this change adds only a pure planner test); the next run passed every check unchanged.
 
 ## Limitations
 
