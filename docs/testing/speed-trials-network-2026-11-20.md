@@ -17,8 +17,7 @@ The changed code sends exactly the same service requests and journal writes on t
 (asserted by `TestRunAndStopSendOneRequestToANewService`); a fake-Windows benchmark of one Run
 plus Stop is about 2 ms on both sides. The differences are Windows and machine load, not the
 change. (One "after" round of 20 failed its own check once: another engine's Stop took the
-trial's addresses off. Its lab journal, `%TEMP%ixplan-lab-*\data
-etwork\lab_journal.jsonl`,
+trial's addresses off. Its lab journal, `%TEMP%\fixplan-lab-*\data\network\lab_journal.jsonl`,
 records "removed" for 198.18.21.100 and up at 09:51 local, during that round. It did not repeat
 in 2 more runs. Engines on one PC take each other's Lab addresses off at launch and Stop; a later
 group fixes that, so the trials do not.)
