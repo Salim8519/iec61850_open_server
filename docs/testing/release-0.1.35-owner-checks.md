@@ -15,8 +15,8 @@ the speed and network trials ([results](speed-trials-results-2026-11-20.md)): ch
 ## Candidate build (2026-11-20, from master after all merges)
 
 - `compile_go_release.py --version 0.1.35`: installer compiled (with the B-3 uninstall step),
-  antivirus gate 19 programs, 0 findings. `ScadaBench-Setup-0.1.35.exe` 20,248,032 bytes (SHA-256
-  `cee23fad…`), `ScadaBench-Portable-0.1.35.exe` 54,877,184 bytes (`2d27ad6d…`).
+  antivirus gate 19 programs, 0 findings. `ScadaBench-Setup-0.1.35.exe` 20,243,339 bytes (SHA-256
+  `3b08b789…`), `ScadaBench-Portable-0.1.35.exe` 54,874,624 bytes (`a2bd5857…`), rebuilt after the owner's N10 decision; packaged smoke repeated (3 rounds, reads `01`).
 - Before the build, on this PC with no other agent running: native workers rebuilt (VS 2019);
   Go engine `go vet` and `go test ./...`; frontend `tsc` and 511/511 tests (Node 24);
   `verify.py` all 8 checks PASS; protocol suite 95 passed, 9 skipped, 1 failed
