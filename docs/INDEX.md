@@ -23,6 +23,7 @@
 - [Speed and network trials plan (2026-11-20)](testing/speed-trials-plan-2026-11-20.md) and its
   [results](testing/speed-trials-results-2026-11-20.md) (harness: `studio/tools/trials/`; details:
   [network](testing/speed-trials-network-2026-11-20.md), [locks and ownership](testing/speed-trials-locks-2026-11-20.md), [screen](testing/speed-trials-screen-2026-11-20.md), [Run and Stop](testing/speed-trials-runstop-2026-11-20.md))
+- [Release 0.1.35: owner checks before publishing (2026-11-20)](testing/release-0.1.35-owner-checks.md)
 
 Development rules live in the repository-root AGENTS.md. Status statements refer
 to evidence in change records; planned features are not delivered features.
