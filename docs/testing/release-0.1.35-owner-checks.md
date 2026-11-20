@@ -33,6 +33,21 @@ the speed and network trials ([results](speed-trials-results-2026-11-20.md)): ch
 2. **Each copy removes only its own addresses (ADR-0141 item 1): kept.** Tonight's test copies broke
    each other's Runs 7 times before this; 40/40 → 0/40 after.
 
+## Done live with the owner's UAC clicks (2026-11-20, packaged 0.1.35 candidate, throwaway data)
+
+- **Repair (check 4): PASS.** `POST /network/lab/install`, one prompt: `C:\Program Files\ScadaBench\LabNetwork\scadabench_labsvc.exe`
+  replaced by the 0.1.35 service (4,271,616 bytes, 14:24); service running, card ready.
+- **Cable out (check 5, N6): PASS.** Feeder01 planned on Ethernet (cable out) at 172.26.1.21, approval and
+  firewall rule applied (one prompt). Run refused: "Feeder01 cannot start on 172.26.1.21: “Ethernet” is
+  disconnected (no cable, or its network is switched off), so ScadaBench did not add 172.26.1.21. Plug the
+  cable in, then press Start again." Ethernet kept exactly its own 5 addresses; Clean up removed the
+  approval and the rule.
+- **Service stopped (check 6, N1): PASS.** 8 IEDs on the Lab card running; service stopped (one prompt);
+  Stop answered and the lab page said "The lab network service is off, so ScadaBench cannot take
+  198.18.20.10 … 198.18.20.17 off the card. Run turns the service back on (Windows asks once), or press
+  Repair."; Run asked Windows (one prompt), the service ran again and all 8 IEDs started; the next Stop
+  left 0 addresses.
+
 ## Checks that need you
 
 Do them with the 0.1.35 candidate installed (or the dev app on master for 1-3).
