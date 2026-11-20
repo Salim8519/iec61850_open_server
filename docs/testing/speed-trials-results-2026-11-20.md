@@ -9,7 +9,7 @@ today's number, the trial's number, runs, verdict and reason. Harnesses: `studio
 | N2 | Lost answers on 2 adds: 0 journal records (addresses on the card); real card: address never removed (unit test) | Both journaled from the card (`applied`, then `removed`); real-card add journaled `requested`, removed at Stop | 3 live (lab card), unit tests (real card) | Consider (implemented, change 0221) | Real-card leftover from 1 to 0 in the unit test; the lab card had no leftover even before (its Stop removes by the service's list) |
 | N6 | Cable out: address added, reported OK, left tentative; still-checking after 6 s reported OK | Refused with "“Ethernet” is disconnected ... Plug the cable in, then press Start again"; still-checking taken off and reported | Unit tests only (service side; cable needs the owner) | Needs the owner's eye (implemented, change 0221) | Fault removed in the service's logic; live proof needs a reinstall (UAC) and the cable out |
 | N7 | Device answering ARP after 0.7 s is not seen (ADR-0132 accepted) | Not built | 0 | Drop | Would add Windows' 3.3–3.5 s duplicate check instead of 0.7 s to every real-card Start; LAN devices answer ARP in milliseconds |
-| N8 | Gateway status unchanged 10 s after its address left the card (never changes) | "Address gone" in 1.77–2.06 s; cleared in 1.84–2.01 s; one Windows read 0.16–0.92 ms every 2 s | 1 before, 21 after | Consider (implemented, change 0221) | Status changes within a few seconds; negligible CPU; Running gateway untouched |
+| N8 | Gateway status unchanged 10 s after its address left the card (never changes) | "Address gone" in 1.71–2.06 s; cleared in 1.79–2.01 s (24 runs; 7 lost the re-added address, see below); one Windows read 0.16–0.92 ms every 2 s | 1 before, 31 after | Consider (implemented, change 0221) | Status changes within a few seconds; negligible CPU; Running gateway untouched |
 
 ## No slowdown on the happy path (N1, N2)
 
@@ -24,8 +24,20 @@ interleaved in both orders (other agents' Runs shared the Lab card, so single ru
 The changed code sends exactly the same service requests and journal writes on this path
 (asserted by `TestRunAndStopSendOneRequestToANewService`); a fake-Windows benchmark of one Run
 plus Stop is about 2 ms on both sides. The differences are Windows and machine load, not the
-change. (One "after" round of 20 failed its own check once, most likely another session's Stop
-taking the trial's addresses off; it did not repeat in 2 more runs.)
+change. (One "after" round of 20 failed its own check once: another engine's Stop took the
+trial's addresses off. Its lab journal, `%TEMP%\fixplan-lab-*\data\network\lab_journal.jsonl`,
+records "removed" for 198.18.21.100 and up at 09:51 local, during that round. It did not repeat
+in 2 more runs. Engines on one PC take each other's Lab addresses off at launch and Stop; a later
+group fixes that, so the trials do not.)
+
+## N8 runs where the address did not come back
+
+In 7 of 31 runs the trial's re-added 198.18.21.50 was gone again within 10 s. Windows' table and
+the service's list both lacked it, so the status ("Address gone") was right. No engine journal on
+this PC (`%TEMP%`, every worktree's and the main `.local`) was written in those minutes, so no
+engine's Stop or launch removed it. A probe without the gateway status (10 cycles: add, remove,
+wait 2 s, add, watch 6 s every 50 ms) never lost the address. The cause is outside the watch and
+not proven; another agent's direct call to the shared service is the likely one.
 
 ## Owner checks (N1, N2, N6, N8)
 
