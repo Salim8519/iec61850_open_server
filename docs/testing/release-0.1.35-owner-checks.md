@@ -104,3 +104,14 @@ Do them with the 0.1.35 candidate installed (or the dev app on master for 1-3).
 - The installed 0.1.34 app still removes every Lab address it does not use until it is updated.
 - N7 (Windows' duplicate check instead of the 0.7 s ARP wait), N11 (one firewall rule), U3 (lazy
   pages), R1, R2 and R5 were measured and dropped; reasons in the results.
+
+## Published (2026-11-20)
+
+- Owner: "Build and publish 0135"; public notes leave out the licence-sharing and GOOSE robustness
+  lines. The candidate above (no code change since its build) was published with
+  `website/deploy.cmd` under Node 24: Pages 2d7f4a24, "Saved release 0.1.35 from 2026-11-20";
+  installed apps are told about 0.1.35 by the signed release record (title line only).
+- Live installer (20,243,339 bytes, `3b08b789…`) and portable (54,874,624 bytes, `a2bd5857…`) are
+  byte-identical to the build; copies of both downloads scan clean (2 programs, 0 findings). The
+  changelog page shows "0.1.35 · A more dependable network, faster screens, safer saving".
+- Checks 1-3 and 7-16 above remain for the owner on the released app.
