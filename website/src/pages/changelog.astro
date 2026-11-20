@@ -26,11 +26,9 @@ import { SITE } from '../data/site';
       <li>Improved: gateway Stop cancels SCADA commands that are still waiting. When a real device does not answer a command in time, ScadaBench says the result is unknown and asks you to check the position before trying again; a second command to the same point is refused while the first one runs.</li>
       <li>Fixed: Stop and closing ScadaBench no longer wait forever when one of its background programs stops responding.</li>
       <li>Improved: values read from a real IED are marked stale when reading fails, instead of showing the last value as current.</li>
-      <li>Fixed: one malformed GOOSE message on the network no longer stops GOOSE publishing and receiving.</li>
       <li>Improved: the Modbus gateway frees connections that have been idle for 60 seconds, so masters can always reconnect, and refuses to start when two points share a register, naming both points.</li>
       <li>Improved: if a screen fails to draw, ScadaBench shows "Something went wrong. Your IEDs are still running." with a Reload button.</li>
       <li>New: uninstalling ScadaBench offers to remove the firewall rules it added and switch Windows' own rules back on.</li>
-      <li>Changed: a licensed PC shares its licence only with virtual machines running on it, never with other computers on the network.</li>
     </ul>
     <h2>0.1.34 · Real devices stay read only until you allow commands</h2>
     <ul>
