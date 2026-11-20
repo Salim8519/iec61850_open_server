@@ -21,7 +21,8 @@
 - [Known issues](known-issues.md)
 - [Fix plan from the 2026-11-19 code review](testing/fix-plan-2026-11-19.md)
 - [Speed and network trials plan (2026-11-20)](testing/speed-trials-plan-2026-11-20.md) and its
-  [results](testing/speed-trials-results-2026-11-20.md) (harness: `studio/tools/trials/`)
+  [results](testing/speed-trials-results-2026-11-20.md) (harness: `studio/tools/trials/`; details:
+  [network](testing/speed-trials-network-2026-11-20.md), [locks and ownership](testing/speed-trials-locks-2026-11-20.md))
 
 Development rules live in the repository-root AGENTS.md. Status statements refer
 to evidence in change records; planned features are not delivered features.

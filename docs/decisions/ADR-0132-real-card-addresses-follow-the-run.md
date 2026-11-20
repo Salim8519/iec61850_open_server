@@ -59,3 +59,9 @@ decided: treating a late ARP answer as "not asked" (trial N7) would add Windows'
 every real-card Start for a device slower than 0.7 s, which real devices are not; it was dropped.
 Change [0221](../changes/2026/0221-network-failures-named.md). The installed service gets this
 only with the next installation (Repair), as for every service change.
+
+## Amended by ADR-0141 (2026-11-20)
+
+Item 2: an approved IED address the service put on at Start stays after Stop while the project
+stays open (the next Start adds nothing and skips the ARP question); it comes off when the project
+changes, at exit and after a kill at the next launch. [ADR-0141](ADR-0141-lab-addresses-owned-and-kept.md), change [0222](../changes/2026/0222-lab-addresses-owned-and-kept.md).

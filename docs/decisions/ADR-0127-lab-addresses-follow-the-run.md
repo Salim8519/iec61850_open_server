@@ -38,3 +38,11 @@ The gateway's and the master's own addresses keep the ADR-0125 rules (on the car
 No project data or API body changes; `POST /network/lab/use` and `PUT /network/lab/address` keep
 their shapes. Ping of a stopped IED's address no longer answers. The Python engine has no lab
 card. The journal stays append-only (`lab_journal.jsonl`, `removed` records).
+
+## Amended by ADR-0141 (2026-11-20)
+
+Item 3 changes: an IED address this session put on the card stays after Stop while the project
+stays open; it comes off when the project's addresses change, at Use, at exit, from "Take them off
+now" and after a kill at the next launch. Release removes only addresses this copy's journal says
+it added, so two ScadaBench copies no longer remove each other's. Item 4: the launch clean-up
+finishes before the gateway, master and SNMP devices start by themselves. [ADR-0141](ADR-0141-lab-addresses-owned-and-kept.md), change [0222](../changes/2026/0222-lab-addresses-owned-and-kept.md).

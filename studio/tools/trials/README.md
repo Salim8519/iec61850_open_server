@@ -12,7 +12,8 @@ with its own data folder under `.local/trials/instances/` (deleted afterwards), 
 installed app and its data folder are never touched.
 
 **One trial at a time.** There is one Lab card per PC, and every Stop (and Use) of an engine
-takes off the card every address that engine does not use itself (ADR-0127 Release). Two
+built before change 0222 takes off the card every address that engine does not use itself
+(ADR-0127 Release; since ADR-0141 an engine removes only the addresses its own journal added). Two
 engines on the card at once (the owner's app, or two agents' trials) remove each other's
 addresses: IEDs then fail with "MMS bind failed" or lose their address while running.
 `Instance()` therefore refuses to start while another `studio_server.exe` runs or the Lab
@@ -35,6 +36,16 @@ Rebuild the engine first when its source changed (from `studio/engine`):
 | `python studio/tools/trials/winaddr.py` | The Lab card's addresses as Windows lists them now |
 | `python studio/tools/trials/winlisten.py` | Every TCP listener and its process |
 | `python studio/tools/trials/projects.py` | IED and diagram counts of the two trial projects |
+| `python studio/tools/trials/n3_n5_lock_races.py --idea n3 --mode add --server base` | N3/N5: a Release taking off an address the same engine is just putting on (gateway own address, gateway Start, SNMP Start) while IED and SNMP Stop loop 200 times (`--server trial`, `--mode start`, `--idea n5`) |
+| `python studio/tools/trials/n4_launch_order.py --launches 30 --server base` | N4: launch clean-up against the gateway's and SNMP devices' automatic start (`--exit kill`) |
+| `python studio/tools/trials/n9_gateway_address.py --cycles 10 --server base` | N9: is the gateway's own address on the card only while it runs; exit leaves nothing |
+| `python studio/tools/trials/n10_session_addresses.py --rounds 10 --server base` | N10: Run/Stop steps and DNS Client CPU, then what stays after Stop, File › Close, exit and a kill + launch |
+| `python studio/tools/trials/lab_cross_removal.py --rounds 10 --server base` | Finding: does one copy take another copy's addresses off at Stop, Use, exit, launch |
+
+The last five (group C, change 0222) use `labgroup.py`: ports 24000-24999, addresses
+198.18.24.0/24, `--server base` = `.local/trials/c/base/studio_server.exe` (build today's master
+there first), `--server trial` = `studio/build/engine/studio_server.exe`. They run beside other
+engines (`shared`) and tell by their own lab journal whether *this* engine removed an address.
 
 ## Projects
 

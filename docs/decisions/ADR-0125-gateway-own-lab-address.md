@@ -45,3 +45,9 @@ put back on the card before Connect and before each reconnect, and taken off whe
 is chosen. The gateway and the master cannot take each other's address. A warning shows when the
 device is reached through a real card, because an own address reaches devices on this PC only.
 Typed addresses are listed as "ScadaBench Lab" in both lists.
+
+## Amended by ADR-0141 (2026-11-20)
+
+Item 3 changes: a typed own address is checked and stored only; it goes on the Lab card when the
+gateway starts (the master: connects) and comes off when it stops (disconnects) and at exit, not
+"on the card while chosen". The clash checks still protect the chosen address. [ADR-0141](ADR-0141-lab-addresses-owned-and-kept.md), change [0222](../changes/2026/0222-lab-addresses-owned-and-kept.md).
