@@ -30,7 +30,7 @@ export const NAV: { href: string; label: string; header?: boolean }[] = [
   { href: '/docs/', label: 'Docs' },
   { href: '/pricing/', label: 'Pricing' },
   { href: '/download/', label: 'Download' },
-  { href: '/docs/licence/offline-activation/', label: 'Offline activation', header: false },
+  { href: `${SITE.licenseServer}/activate`, label: 'Offline activation', header: false },
   { href: '/faq/', label: 'FAQ' },
   { href: '/contact/', label: 'Contact' },
 ];
