@@ -29,9 +29,9 @@ func (s *Service) RealCardsReady(guid string) bool {
 }
 
 // ensureReal puts the approved addresses of the IEDs about to start on the real card, in one
-// request; Windows checks the network for each before the workers start. A refused address
-// stops the Run with the service's reason (another device answers there), not the preflight's
-// "not set up" that would follow.
+// request; Windows checks the network for each before the workers start. Refused addresses stop
+// the Run with the service's reason for every one of them (another device answers there, the
+// cable is out; change 0221), not the preflight's "not set up" that would follow.
 func (s *Service) ensureReal(guid string, starting []string) error {
 	if s.Windows.Approved == nil {
 		return nil
@@ -53,23 +53,7 @@ func (s *Service) ensureReal(guid string, starting []string) error {
 	if len(addresses) == 0 {
 		return nil
 	}
-	refused := s.changeReal(labnet.OpAdd, guid, addresses, names)
-	for _, address := range addresses { // the first IED in project order
-		if reason, found := refused[address]; found {
-			return refusedAddress(names[address], address, reason)
-		}
-	}
-	return nil
-}
-
-// refusedAddress is the Run's message for an approved address the service could not put on.
-func refusedAddress(name, address, reason string) error {
-	text := name + " cannot start on " + address
-	if reason = strings.TrimRight(strings.TrimSpace(reason), "."); reason != "" {
-		text += ": " + reason
-	}
-	return plain(text + ". Stop the other device that uses this address, or give " + name +
-		" another address in Network > Set up lab network.")
+	return runRefused(s.changeReal(labnet.OpAdd, guid, addresses, names)) // in project order
 }
 
 // EnsureRealOwn puts one approved address of a device that is not an IED (an SNMP device) on the
@@ -92,10 +76,7 @@ func (s *Service) EnsureRealOwn(guid, address, owner string) error {
 		return plain("The ScadaBench network helper is not running, so " + address + " cannot be used. " +
 			"Open Network › This PC lab network and press Repair.")
 	}
-	if reason, refused := s.changeReal(labnet.OpAdd, guid, []string{address}, map[string]string{address: owner})[address]; refused {
-		return refusedAddress(owner, address, reason)
-	}
-	return nil
+	return runRefused(s.changeReal(labnet.OpAdd, guid, []string{address}, map[string]string{address: owner}))
 }
 
 // onCard says whether the real card has address now.
@@ -105,18 +86,18 @@ func (s *Service) onCard(guid, address string) bool {
 
 // releaseReal takes the approved addresses ScadaBench added (journaled, A6) off every real card
 // unless a running IED of the project's card uses them: after Stop, at launch (a crash left them)
-// and at exit.
-func (s *Service) releaseReal() {
+// and at exit. The addresses that stay come back with their reason (change 0221).
+func (s *Service) releaseReal() []failure {
 	if s.Windows.Approved == nil {
-		return
+		return nil
 	}
 	approved := s.Windows.Approved()
 	if len(approved) == 0 {
-		return
+		return nil
 	}
 	adapters, err := s.Windows.Adapters()
 	if err != nil {
-		return
+		return nil
 	}
 	keep := map[string]bool{}
 	if mode, guid := s.Projects.Network(); mode == "lab" {
@@ -131,7 +112,7 @@ func (s *Service) releaseReal() {
 			}
 		}
 	}
-	outstanding := s.outstandingReal()
+	outstanding, left := s.outstandingReal(), []failure{}
 	for _, adapter := range adapters {
 		guid := strings.ToUpper(adapter.GUID)
 		s.settleGone(adapter, outstanding)
@@ -143,20 +124,39 @@ func (s *Service) releaseReal() {
 				off = append(off, address.IP)
 			}
 		}
-		if len(off) > 0 && s.RealCardsReady(adapter.GUID) {
-			s.changeReal(labnet.OpRemove, adapter.GUID, off, nil)
+		if len(off) == 0 {
+			continue
+		}
+		failed := []failure{}
+		if s.RealCardsReady(adapter.GUID) {
+			failed = s.changeReal(labnet.OpRemove, adapter.GUID, off, nil)
+		} else {
+			for _, address := range off {
+				failed = append(failed, failure{address: address, reason: "the ScadaBench network service is off"})
+			}
+		}
+		for _, item := range failed {
+			item.card = adapter.Name
+			left = append(left, item)
 		}
 	}
+	return left
 }
 
 // changeReal sends one add or remove for a real card, journals each address and returns the
-// failed ones with their reason.
-func (s *Service) changeReal(op, guid string, addresses []string, names map[string]string) map[string]string {
-	failed := map[string]string{}
+// failed ones with their reason, in order. An add is journaled "requested" first, and a lost
+// answer is settled from Windows' own list of the card (change 0221, trial N2).
+func (s *Service) changeReal(op, guid string, addresses []string, names map[string]string) []failure {
+	if op == labnet.OpAdd {
+		for _, address := range addresses {
+			s.journal("requested", "real_address", address, names[address], guid, "")
+		}
+	}
 	reply, err := s.call(labnet.Request{Op: op, IPs: addresses, Card: guid})
 	if err != nil {
-		return failed
+		return s.lostReal(op, guid, addresses, names, err)
 	}
+	var failed []failure
 	done := map[string]string{labnet.OpAdd: "applied", labnet.OpRemove: "removed"}[op]
 	for _, address := range addresses {
 		event, reason := done, reply.Failed[address]
@@ -168,7 +168,7 @@ func (s *Service) changeReal(op, guid string, addresses []string, names map[stri
 		}
 		s.journal(event, "real_address", address, names[address], guid, reason)
 		if event == "failed" {
-			failed[address] = reason
+			failed = append(failed, failure{address: address, name: names[address], reason: reason})
 		}
 	}
 	return failed

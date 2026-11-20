@@ -18,6 +18,7 @@ type realFake struct {
 	answering string          // a device answers ARP at this address
 	unasked   map[string]bool // addresses Ask cannot ask (no own address on that network)
 	settled   []string
+	down      bool // Ethernet has no link (cable out)
 }
 
 func newRealFake() *realFake {
@@ -29,14 +30,14 @@ func newRealFake() *realFake {
 }
 
 func (f *realFake) Cards() (map[string]RealCard, map[string][]string, error) {
-	return map[string]RealCard{ethernet: {GUID: ethernet, Name: "Ethernet", Up: true},
+	return map[string]RealCard{ethernet: {GUID: ethernet, Name: "Ethernet", Up: !f.down},
 		wifi: {GUID: wifi, Name: "Wi-Fi", Up: true, DHCP: true}}, f.all, nil
 }
 func (f *realFake) Approved() map[string]map[string]int { return f.approved }
-func (f *realFake) Ask(_ RealCard, prefixes map[string]int) map[string]bool {
+func (f *realFake) Ask(card RealCard, prefixes map[string]int) map[string]bool {
 	answers := map[string]bool{}
 	for ip := range prefixes {
-		if !f.unasked[ip] {
+		if !f.unasked[ip] && card.Up { // as Windows: no ARP question without a link
 			answers[ip] = ip == f.answering
 		}
 	}

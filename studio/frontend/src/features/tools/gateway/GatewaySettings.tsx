@@ -31,8 +31,9 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
     : <label key={key}>{SETTING_LABELS[key]}
         <input inputMode="numeric" defaultValue={String(values[key])} key={`${protocol}-${key}-${values[key]}`} disabled={running}
           onBlur={event => { const next = Number(event.target.value); if (next !== values[key]) change(key, next); }} /></label>;
-  const pill = running
-    ? { label: 'Running', tone: 'good' as const, hint: status.message }
+  const gone = running && Boolean(status.address_gone); // the engine says the listen address left this PC
+  const pill = gone ? { label: copy.addressGone, tone: 'problem' as const, hint: status.message }
+    : running ? { label: 'Running', tone: 'good' as const, hint: status.message }
     : status.state === 'failed' ? { label: 'Stopped with a problem', tone: 'problem' as const, hint: status.message }
     : { label: 'Stopped', tone: 'off' as const, hint: copy.startHint };
   return <section className="side-section" aria-label={title ?? copy.settingsTitle}>
@@ -51,7 +52,8 @@ export function GatewaySettings({ config, status, busy, save, start, stop, words
     <Disclosure>{ADVANCED_SETTINGS[protocol].map(field)}<AllowedScada locked={running || busy} /></Disclosure>
     <div className="side-foot">
       {starting && !running ? <Spinner label={copy.starting} /> : <StatusPill status={pill} />}
-      {running && <p className="side-line" aria-live="polite">{status.message} · {status.clients.length
+      {gone && <p className="side-error" role="alert">{status.message}</p>}
+      {running && !gone && <p className="side-line" aria-live="polite">{status.message} · {status.clients.length
         ? `${copy.connected(status.clients.length)}: ${status.clients.join(', ')}` : copy.none}</p>}
       {!running && status.state === 'failed' && status.message && <p className="side-error" role="alert">{status.message}</p>}
       {config.auto_start && !running && <p className="side-line">{copy.autoStart}</p>}

@@ -9,6 +9,7 @@ import (
 	"studio-engine/internal/api/runtimeapi"
 	"studio-engine/internal/events"
 	"studio-engine/internal/netcfg"
+	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime"
 )
 
@@ -42,10 +43,14 @@ func (e *Engine) labAddresses(guid string, starting []string) ([]string, error) 
 	return labAddresses(guid)
 }
 
-// labRelease takes the addresses of IEDs that stopped off the lab card (ADR-0127).
+// labRelease takes the addresses of IEDs that stopped off the lab card (ADR-0127). Addresses that
+// stay are reported in Activity with each one's reason (change 0221, trial N1).
 func (e *Engine) labRelease() {
-	if e.Lab != nil {
-		e.Lab.Release()
+	if e.Lab == nil {
+		return
+	}
+	if err := e.Lab.Release(); err != nil && e.bus != nil {
+		publish(e.bus, e.options.Logf, "lab_address_left", pyjson.NewObject().Set("message", err.Error()))
 	}
 }
 

@@ -47,3 +47,15 @@ and API bodies are unchanged; plan items gain the `approval` kind, lab journal r
 `real_address` kind. The pipe stays limited to what an administrator approved: any local program
 can at most put the approved addresses on or off their card. The Python engine is frozen and has
 no lab service.
+
+## Amendment (2026-11-20, change 0221)
+
+Owner: "do all of them" (speed and network trials N6 and N7). Item 3 changes for a card without a
+link: the service no longer adds an address there (it used to add it, report it added and leave it
+tentative, so no IED could listen on it); the Run stops with "“Ethernet” is disconnected … Plug the
+cable in, then press Start again". An address Windows is still checking when the 6 s wait ends is
+taken off again and reported instead of reported as added. The 0.7 s ARP question stays as
+decided: treating a late ARP answer as "not asked" (trial N7) would add Windows' 3.3–3.5 s check to
+every real-card Start for a device slower than 0.7 s, which real devices are not; it was dropped.
+Change [0221](../changes/2026/0221-network-failures-named.md). The installed service gets this
+only with the next installation (Repair), as for every service change.

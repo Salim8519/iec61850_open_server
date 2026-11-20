@@ -209,17 +209,18 @@ Wi-Fi is the owner's DHCP card and Ethernet is unplugged, so no real-card number
 
 Filled in by each trial (same test on today's code and on the trial, at least 10 runs each,
 median and worst; verdict per the plan's table).
+Details per group: [network N1, N2, N6-N8](speed-trials-network-2026-11-20.md).
 
 | Idea | Today's number | Trial number | Runs | Verdict | Reason |
 |---|---|---|---|---|---|
-| N1 | | | | | |
-| N2 | | | | | |
+| N1 | 2 of 3 addresses refused by the service: Run error none (Run went on); Stop with the service off: silent | Run stops naming both IEDs, addresses and the service's reason; Stop names each address left with its reason (Activity `lab_address_left`, lab page) | 3 live (refused addresses), unit tests for service off and refused removal | Consider (implemented, change 0221) | Faults went from silent to named with the reason; nothing saved changes; Run and Stop timing within noise (below) |
+| N2 | Lost answers on 2 adds: 0 journal records (addresses on the card); real card: address never removed (unit test) | Both journaled from the card (`applied`, then `removed`); real-card add journaled `requested`, removed at Stop | 3 live (lab card), unit tests (real card) | Consider (implemented, change 0221) | Real-card leftover from 1 to 0 in the unit test; the lab card had no leftover even before (its Stop removes by the service's list) |
 | N3 | | | | | |
 | N4 | | | | | |
 | N5 | | | | | |
-| N6 | | | | | |
-| N7 | | | | | |
-| N8 | | | | | |
+| N6 | Cable out: address added, reported OK, left tentative; still-checking after 6 s reported OK | Refused with "“Ethernet” is disconnected ... Plug the cable in, then press Start again"; still-checking taken off and reported | Unit tests only (service side; cable needs the owner) | Needs the owner's eye (implemented, change 0221) | Fault removed in the service's logic; live proof needs a reinstall (UAC) and the cable out |
+| N7 | Device answering ARP after 0.7 s is not seen (ADR-0132 accepted) | Not built | 0 | Drop | Would add Windows' 3.3–3.5 s duplicate check instead of 0.7 s to every real-card Start; LAN devices answer ARP in milliseconds |
+| N8 | Gateway status unchanged 10 s after its address left the card (never changes) | "Address gone" in 1.77–2.06 s; cleared in 1.84–2.01 s; one Windows read 0.16–0.92 ms every 2 s | 1 before, 21 after | Consider (implemented, change 0221) | Status changes within a few seconds; negligible CPU; Running gateway untouched |
 | N9 | | | | | |
 | N10 | | | | | |
 | N11 | | | | | |

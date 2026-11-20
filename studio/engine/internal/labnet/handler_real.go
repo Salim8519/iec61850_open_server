@@ -31,7 +31,8 @@ type RealOps interface {
 	AddReal(card RealCard, ip string, prefix int, asked bool) error
 	RemoveReal(card RealCard, ip string) error
 	// Settle waits (a few seconds at most) until the addresses Windows still checks can be used,
-	// and returns the ones another device already uses, with the reason.
+	// and returns, with the reason, the ones another device already uses and the ones Windows is
+	// still checking at the end; it takes both off again (change 0221).
 	Settle(card RealCard, ips []string) map[string]string
 }
 
@@ -120,6 +121,9 @@ func changeReal(real RealOps, card RealCard, op, ip string, approved map[string]
 		answered, asked := answers[ip]
 		if answered {
 			return own, errors.New("A device on “" + card.Name + "” already answers at " + ip + "; nothing was changed")
+		}
+		if !card.Up { // no link: Windows cannot check the network and no device could reach the IED
+			return own, errors.New(disconnected(card, ip))
 		}
 		if err := real.AddReal(card, ip, prefix, asked); err != nil {
 			return own, errors.New("Windows did not add " + ip + ": " + err.Error())

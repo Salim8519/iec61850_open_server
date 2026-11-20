@@ -63,9 +63,10 @@ func (m *Manager) Stop(remember bool) (*pyjson.Object, error) {
 	m.lifecycle.Lock()
 	defer m.lifecycle.Unlock()
 	m.mu.Lock()
-	process, sync := m.process, m.sync
-	m.process, m.sync = nil, nil
+	process, sync, watch := m.process, m.sync, m.watch
+	m.process, m.sync, m.watch, m.gone = nil, nil, nil, false
 	m.mu.Unlock()
+	watch.close() // outside mu: a watch that is reporting waits for it
 	if sync != nil {
 		sync.close()
 	}

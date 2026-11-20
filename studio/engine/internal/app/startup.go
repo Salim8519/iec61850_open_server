@@ -43,7 +43,7 @@ func (e *Engine) startBackground(ctx context.Context) {
 // own addresses stay; a Run that starts first waits for the cycle lock.
 func (e *Engine) releaseLeftLab() {
 	if e.Lab != nil && e.Runtime != nil {
-		_ = e.Runtime.Stopped(func() error { e.Lab.Release(); return nil })
+		_ = e.Runtime.Stopped(func() error { e.labRelease(); return nil })
 	}
 }
 
