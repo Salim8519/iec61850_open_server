@@ -15,7 +15,7 @@ so large files never end in a connection reset (Go, change 0186).
 | `POST /session` | `{token}` | Establish same-origin session |
 | `GET /project` | - | Project snapshot, session, revision, runtime, `running_ieds`, recovery notice |
 | `PUT /project/diagram` | `{diagram,revision,tab_id}` | Stopped-only revision-checked save |
-| `POST /project/save` | - | Atomic autosave; with auto save off the only write of the changes (ADR-0139) |
+| `POST /project/save` | - | Atomic autosave; with auto save off the only write of the changes (ADR-0139). Go: a failed write answers 503 "ScadaBench could not write the project file (<Windows reason>) …" (change 0226) |
 | `GET /project/autosave` | - | Go only (ADR-0139): `{on, unsaved}` |
 | `PUT /project/autosave` | `{on: true\|false}` | Go only (ADR-0139): turn auto save on (saves the unsaved changes first) or off; remembered as preference `autosave_off` |
 | `GET /project/download` | - | Current `.scadabench` ZIP (`substation.scadabench`) |
@@ -140,7 +140,7 @@ was sent". New events: `equipment_selected`, `equipment_select_failed`, `equipme
 | `GET /live/{id}/comparison.csv` | - | Same comparison as CSV |
 | `GET /live/{id}/controls` | - | Go only (ADR-0138): the device's own ctlModel/sboTimeout and Loc read on connect; `{summary, rows[{ref, result: match\|differs\|unreadable, note, …}], local, checked_at}` or `{error}`; 400 before the first connect |
 | `POST /live/{id}/operate` | `{ref, value: true\|false, confirm: true}` | Go only (ADR-0138): one command to a real IED from Devices while its `live.allow_commands` is on and its session is live; device's own control model; `{ok, summary, result, observed, changed, correlation_id}`; refusals 400 in words; events `real_command_requested/applied/failed/observed` |
-| `POST /live/{id}/read` | `{refs}` (max 500) | On-demand read; device errors reported, not values |
+| `POST /live/{id}/read` | `{refs}` (max 500) | On-demand read; device errors reported, not values. Go: when no point got a reply the answer is 503 "The device did not answer a read (no reply in time)" and the session reconnects with its values stale (change 0226) |
 
 New SSE kinds: `goose_publishing`, `goose_control`, `goose_status`, `goose_unknown`,
 `goose_listener_failed`, `live_status`, `live_stale`, `live_read_error`. Signal events
@@ -193,7 +193,7 @@ the written values are `signal` events with source `goose_send`.
 | `GET/PUT /tools/gateway/points?protocol=`, `POST /tools/gateway/propose` | `points` | Point list with live values; smart proposal |
 | `GET/POST /tools/gateway/points.csv` | CSV text (POST) | CSV point list with line diagnostics |
 | `GET /tools/gateway/types`; `POST /tools/gateway/candidates`, `/points/from-ied`, `/points/rows`; `GET/POST /tools/gateway/points.xlsx` | see [ADR-0105](../decisions/ADR-0105-gateway-add-points.md) | Go only: type catalog, fitting IED signals, planned/checked rows `{rows, points, ok}` (nothing saved), Excel template and its upload; `points/new` adds `count`/`from`/`name` (a range), `propose` adds `mode`/`current`/`ieds` (smart preview with `summary`) |
-| `POST /tools/gateway/start`, `/stop`; `GET /tools/gateway`, `/traffic?after=`, `/commands` | - | Start (points; never Run), status, decoded traffic, command log |
+| `POST /tools/gateway/start`, `/stop`; `GET /tools/gateway`, `/traffic?after=`, `/commands` | - | Start (points; never Run), status, decoded traffic, command log. Go: a command whose control program did not answer in time is logged `applied` "result unknown: …", another control failure "failed: …" (change 0226) |
 | `POST /tools/gateway/role` | `role` (`gateway`, `master`, `converter`) | Act as station gateway, SCADA master or protocol converter (ADR-0061); refused while running |
 | `GET/PUT /tools/master/config`; `GET /tools/master` | `protocol`, `host`, `settings` | SCADA master settings (disconnected only) and status (link, points, probe, poll failures) |
 | `POST /tools/master/connect`, `/disconnect`, `/interrogate` | - | Connect (then discover all), disconnect (forgets auto-connect), ask for all values / read now |

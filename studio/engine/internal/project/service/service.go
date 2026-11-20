@@ -145,7 +145,7 @@ func (s *Service) Save() error {
 	s.snapshots.Request(saved, st.compact)
 	s.mutate.Unlock()
 	if err := s.snapshots.Flush(); err != nil {
-		return err
+		return saveFailed(err)
 	}
 	s.mutate.Lock()
 	if s.seq == saved {

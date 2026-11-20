@@ -160,6 +160,9 @@ func (s *RealSession) Read(items []any, source string) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
+	if silentAnswer(answer) { // a frozen device: the poll loop ends and its values go stale (A18)
+		return nil, errSilent
+	}
 	values := pyjson.NewObject()
 	for _, entry := range pyv.Objects(pyv.GetList(pyv.Obj(answer), "values")) {
 		switch {

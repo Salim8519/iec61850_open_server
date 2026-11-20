@@ -38,3 +38,9 @@ are bugs. These change a contract and are recorded here.
 - A VMware guest with `SMBIOS.reflectHost = TRUE` cannot use its host's licence.
 - New Go-only event `real_command_unknown`; no Python parity golden changed.
 - License server: new bbolt bucket `refunded_orders`; new CLI `restore --from FILE`.
+
+## Amendment (2026-11-20, change 0226)
+
+Found on Windows: decision 3 also applies to SCADA commands through the gateway (log line "result
+unknown: …"), and a real IED that answers no point of a read counts as a lost connection (values
+stale, reconnect). [Change 0226](../changes/2026/0226-fixplan-windows-proof.md).
