@@ -150,11 +150,9 @@ func TestGatewayServesValuesAndCommandsOverIEC104(t *testing.T) {
 func TestGatewayRefusals(t *testing.T) {
 	manager, _, projects := setup(t, 20405)
 	section := projects.Gateway()
+	// The SCADA master view does not stop the gateway from starting (ADR-0143): it serves the
+	// station's own point list beside the master.
 	projects.SaveGateway(copyObject(section).Set("role", "master"))
-	if _, err := manager.Start(); err == nil || err.Error() != "The tool is set to SCADA master; switch it to Station gateway first" {
-		t.Fatal(err)
-	}
-	projects.SaveGateway(section)
 	if _, err := manager.Start(); err != nil {
 		t.Fatal(err)
 	}

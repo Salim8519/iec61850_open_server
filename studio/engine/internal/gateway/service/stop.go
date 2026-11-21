@@ -124,5 +124,9 @@ func (m *Manager) MarkRemote() {
 	if sync != nil {
 		sync.markRemote()
 	}
-	m.changed(ChangeGatewayPoints)
+	// The station gateway may run beside the master (ADR-0143); its table does not show the
+	// master's values, so only the converter's table is told to refresh.
+	if get(m.Config(), "role") == "converter" {
+		m.changed(ChangeGatewayPoints)
+	}
 }

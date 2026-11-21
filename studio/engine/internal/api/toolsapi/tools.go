@@ -5,6 +5,7 @@ import (
 
 	"studio-engine/internal/api"
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/gateway"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/tools/pytext"
 )
@@ -64,11 +65,25 @@ func (a *Area) activity() *pyjson.Object {
 			Set("protocol", value(current, "protocol", nil)).Set("host", value(current, "host", nil)).
 			Set("points", value(current, "points", nil))
 	}
-	return pyjson.NewObject().
+	answer := pyjson.NewObject().
 		Set("gateway", pyjson.NewObject().Set("state", value(status, "state", nil)).
 			Set("protocol", value(status, "protocol", nil)).Set("port", port).Set("clients", int64(len(clients)))).
 		Set("explorer", d.Explorer.Activity()).
 		Set("scan", pyjson.NewObject().Set("state", state).Set("probed", probed).Set("total", total)).
 		Set("master", master).
 		Set("sequences", int64(d.Runtime.RunningSequences()))
+	// Go only (ADR-0143): which "Act as" roles are locked and why, only while one is, so the usual
+	// answer stays byte-identical to Python.
+	role, _ := value(status, "role", "gateway").(string)
+	masterBusy := d.Master != nil && d.Master.Busy()
+	if locks := gateway.RoleLocks(role, value(status, "state", nil) == "running", masterBusy); len(locks) > 0 {
+		reasons := pyjson.NewObject()
+		for _, name := range gateway.Roles {
+			if reason, found := locks[name]; found {
+				reasons.Set(name, reason)
+			}
+		}
+		answer.Set("role_locks", reasons)
+	}
+	return answer
 }

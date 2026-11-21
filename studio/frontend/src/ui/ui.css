@@ -56,6 +56,8 @@
 .segmented-control button { border: 0; background: transparent; min-height: 36px; border-radius: 8px; color: var(--text-2); }
 .segmented-control button.active { background: var(--surface); color: var(--accent); font-weight: 700;
   box-shadow: inset 0 0 0 var(--line) var(--accent-line), var(--shadow-small); }
+.segmented-control button:has(.segment-live) { display: inline-flex; align-items: center; gap: 7px; }
+.segmented-control .segment-live { margin-left: 0; }
 .segmented-control.full { display: flex; }
 .segmented-control.full button { flex: 1; }
 .disclosure { border-top: 1px solid var(--border); padding-top: 14px; }

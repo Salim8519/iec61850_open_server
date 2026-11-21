@@ -55,9 +55,6 @@ func (m *Master) open() (*pyjson.Object, string, string, any, error) {
 	if m.Busy() {
 		return nil, "", "", nil, apperr.ValueError("Already connected; press Disconnect first")
 	}
-	if role := get(m.gatewaySection(), "role"); role != "master" && role != "converter" {
-		return nil, "", "", nil, apperr.ValueError("Switch the tool to SCADA master first")
-	}
 	if _, err := os.Stat(m.Executable); err != nil {
 		return nil, "", "", nil, apperr.RuntimeError("The master program (studio_master.exe) is not built yet; rebuild the native programs")
 	}

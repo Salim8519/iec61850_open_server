@@ -94,11 +94,10 @@ func (m *Manager) launch() (*pyjson.Object, string, int, error) {
 	if !found {
 		role = "gateway"
 	}
-	if role == "master" {
-		return nil, "", 0, apperr.ValueError("The tool is set to SCADA master; switch it to Station gateway first")
-	}
+	// The gateway runs beside the SCADA master (ADR-0143): only the converter role serves the
+	// master's points; every other role serves the station's own point list.
 	config := m.Config()
-	if role == "gateway" {
+	if role != "converter" {
 		var err error
 		if config, err = m.prepare(); err != nil {
 			return nil, "", 0, err

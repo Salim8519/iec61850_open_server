@@ -12,12 +12,17 @@ export const ROLE_HINTS: Record<Role, string> = {
   converter: 'ScadaBench reads another gateway or RTU as a master and serves the same points to your SCADA.',
 };
 
-/** Why the role buttons are greyed out while something runs (said on every button, not only in the help). */
-export const ROLE_LOCKED = 'Stop or disconnect to switch roles.';
+/** Which roles may run together (ADR-0143), said in the role help. */
+export const ROLES_TOGETHER = 'Station gateway and SCADA master can run at the same time: switch views freely, nothing stops. '
+  + 'Protocol converter uses both, so it runs on its own.';
 
-/** Tooltip of one role button: what the role does, and why it cannot be picked right now. */
-export function roleTitle(role: Role, locked: boolean): string {
-  return locked ? `${ROLE_HINTS[role]} ${ROLE_LOCKED}` : ROLE_HINTS[role];
+/** Words for "this role is running now", next to the green dot, for screen readers and the tooltip. */
+export const ROLE_RUNNING = 'Running now.';
+
+/** Tooltip of one role button: what the role does, whether it runs, and why it cannot be picked
+ *  (the reason comes from the engine, said on the button itself, not only in the help). */
+export function roleTitle(role: Role, lockReason?: string, running?: boolean): string {
+  return [ROLE_HINTS[role], running ? ROLE_RUNNING : '', lockReason ? `${lockReason}.` : ''].filter(Boolean).join(' ');
 }
 
 /** What ScadaBench is and what the device is, in the words of each protocol. */

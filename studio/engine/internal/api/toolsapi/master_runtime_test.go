@@ -67,13 +67,14 @@ func TestMasterRoleDiscoversNamesAndCommandsADevice(t *testing.T) {
 	defer deps.Master.Disconnect(false)
 	srv := server(t, deps)
 	status, text := call(t, srv, "POST", "/tools/master/connect", "")
-	if status != 400 || !strings.Contains(text, "SCADA master first") {
+	if status != 400 || !strings.Contains(text, "Type the address") { // any role may connect (ADR-0143)
 		t.Fatalf("%d %s", status, text)
 	}
 	if _, text = call(t, srv, "POST", "/tools/gateway/role", `{"role":"master"}`); text != "{\"role\":\"master\"}\n" {
 		t.Fatal(text)
 	}
-	if status, text = call(t, srv, "POST", "/tools/gateway/start", ""); status != 400 || !strings.Contains(text, "Station gateway first") {
+	// The master view no longer blocks the gateway (ADR-0143); here it stops at the empty point list.
+	if status, text = call(t, srv, "POST", "/tools/gateway/start", ""); status != 400 || !strings.Contains(text, "point list is empty") {
 		t.Fatalf("%d %s", status, text)
 	}
 	if status, text = call(t, srv, "PUT", "/tools/master/config", `{"protocol":"iec104","host":"bad host!"}`); status != 400 ||
@@ -152,7 +153,7 @@ func TestMasterRoleDiscoversNamesAndCommandsADevice(t *testing.T) {
 		t.Fatal(text)
 	}
 	if _, text = call(t, srv, "GET", "/activity", ""); !strings.Contains(text, `"master":{"host":"127.0.0.1","points":`) ||
-		!strings.Contains(text, `"state":"connected"},"scan"`) {
+		!strings.Contains(text, `"protocol":"iec104","state":"connected"}`) { // role_locks follows (ADR-0143)
 		t.Fatal(text)
 	}
 	if _, text = call(t, srv, "POST", "/tools/master/disconnect", ""); !strings.Contains(text, `"auto_connect":false`) {

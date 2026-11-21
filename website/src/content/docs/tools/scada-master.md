@@ -62,6 +62,10 @@ The **Command** log shows each command with the device's answer, the last cause 
 
 Use the point table to see what SCADA received. ScadaBench shows whether each point was received, is missing, or has a different type than you expected.
 
-## Stop or disconnect first
+## Run the master and the gateway together
 
-You must **Disconnect** before you switch to another role. The role buttons are greyed out while a connection is open.
+**SCADA master** and **Station gateway** can run at the same time. Switch between them with **Act as** whenever you like: nothing stops or disconnects. A green dot on a role button means that role is running now.
+
+This also lets you test ScadaBench's own gateway: start the gateway, then connect the master to `127.0.0.1` and the gateway's port.
+
+**Protocol converter** uses the master and the gateway together, so it runs on its own. Its button is greyed out while the gateway runs or the master is connected; hover over it to see why.

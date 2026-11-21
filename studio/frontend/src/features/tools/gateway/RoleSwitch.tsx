@@ -1,21 +1,24 @@
 import { ArrowLeftRight } from 'lucide-react';
 import type { MasterProtocol, Role } from '../../../api/master';
-import { DIAGRAM, ROLE_HINTS, ROLE_LOCKED, ROLE_NAMES, SIDES, roleTitle } from '../../../copy/master';
+import { DIAGRAM, ROLE_HINTS, ROLE_NAMES, ROLES_TOGETHER, SIDES, roleTitle } from '../../../copy/master';
 import { HelpTip } from '../../../ui/HelpTip';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
 
 const ROLES: Role[] = ['gateway', 'master', 'converter'];
 
-/** "Act as" in the tool's header row: one role runs at a time, switching is locked while something
- *  runs, and "which side am I?" is a one-line caption instead of a diagram (change 0093). */
-export function RoleSwitch({ role, locked, change, protocol, upstream }: {
-  role: Role; locked: boolean; change: (role: Role) => void; protocol: MasterProtocol; upstream: MasterProtocol;
+/** "Act as" in the tool's header row. Station gateway and SCADA master may run at the same time, so
+ *  switching only changes the view; the engine says which buttons are locked and why (ADR-0143, the
+ *  protocol converter runs alone). A green dot marks each role that runs now. */
+export function RoleSwitch({ role, locks, live, change, protocol, upstream }: {
+  role: Role; locks: Partial<Record<Role, string>>; live: Partial<Record<Role, boolean>>; change: (role: Role) => void;
+  protocol: MasterProtocol; upstream: MasterProtocol;
 }) {
   return <div className="role-switch">
     <strong>Act as</strong>
-    <SegmentedControl label="Act as" value={role} disabled={locked} onChange={change}
-      options={ROLES.map(value => ({ value, label: ROLE_NAMES[value], title: roleTitle(value, locked) }))} />
-    <HelpTip text={`${ROLE_HINTS[role]}${locked ? ` ${ROLE_LOCKED}` : ''}`} label="What does each role do?" />
+    <SegmentedControl label="Act as" value={role} onChange={change}
+      options={ROLES.map(value => ({ value, label: ROLE_NAMES[value], disabled: Boolean(locks[value]),
+        live: live[value], title: roleTitle(value, locks[value], live[value]) }))} />
+    <HelpTip text={`${ROLE_HINTS[role]} ${ROLES_TOGETHER}`} label="What does each role do?" />
     <SideCaption role={role} protocol={protocol} upstream={upstream} />
   </div>;
 }

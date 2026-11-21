@@ -15,7 +15,10 @@ export function ScadaTool({ header, ieds, runState, runIeds, activity }: {
   const [role, setRole] = useState<Role | null>(null);
   const [error, setError] = useState('');
   useEffect(() => { masterApi.config().then(config => setRole(config.role)).catch(reason => setError(reason.message)); }, []);
-  const busy = activity?.gateway.state === 'running' || (activity?.master && activity.master.state !== 'disconnected');
+  // Locks come from the engine (ADR-0143); the dots only show what runs, like the Tools card label.
+  const gatewayRuns = activity?.gateway.state === 'running';
+  const masterRuns = activity?.master.state === 'connected' || activity?.master.state === 'lost';
+  const live = role === 'converter' ? { converter: gatewayRuns || masterRuns } : { gateway: gatewayRuns, master: masterRuns };
   const change = (next: Role) => {
     setError('');
     masterApi.setRole(next).then(answer => setRole(answer.role)).catch(reason => setError(reason.message));
@@ -23,7 +26,8 @@ export function ScadaTool({ header, ieds, runState, runIeds, activity }: {
   const protocol = (activity?.master.protocol || 'iec104') as MasterProtocol;
   const upstream = (activity?.gateway.protocol || 'iec104') as MasterProtocol;
   return <>
-    {header(role && <RoleSwitch role={role} locked={Boolean(busy)} change={change} protocol={protocol} upstream={upstream} />)}
+    {header(role && <RoleSwitch role={role} locks={activity?.role_locks ?? {}} live={live} change={change}
+      protocol={protocol} upstream={upstream} />)}
     {error && <p className="explorer-error" role="alert">{error}</p>}
     {role === 'master' ? <MasterTool /> : role === 'converter' ? <ConverterTool />
       : role === 'gateway' ? <GatewayTool ieds={ieds} runState={runState} runIeds={runIeds} /> : null}

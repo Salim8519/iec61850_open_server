@@ -75,8 +75,9 @@ func (a *Area) gatewayRoutes() []api.Route {
 			if err != nil {
 				return nil, err
 			}
-			if d.Master.Busy() || d.Gateway.State() == "running" {
-				return nil, apperr.ValueError("Stop the gateway and disconnect the master before changing this")
+			current, _ := value(d.Gateway.Config(), "role", "gateway").(string)
+			if reason := gateway.RoleChangeRefusal(current, role, d.Gateway.State() == "running", d.Master.Busy()); reason != "" {
+				return nil, apperr.ValueError(reason)
 			}
 			if err := d.Projects.SaveGateway(copyWith(d.Gateway.Config(), "role", role)); err != nil {
 				return nil, err
