@@ -35,9 +35,12 @@ function ValueBox({ point, raw, disabled, title, set, problem }: Pick<Props, 'po
     if (result.value === undefined) { problem(result.error || 'Type a number.'); return; }
     problem(''); setTyping(false); set(result.value, `set to ${text.trim()}${point.unit ? ` ${point.unit}` : ''}`);
   };
-  return <span className="pp-value-box" title={disabled ? title : POINT_COPY.valueHint}>
+  // Focus moving from the box to its own Set button keeps the typed text: resetting it there would
+  // send the old live value instead of the typed one.
+  return <span className="pp-value-box" title={disabled ? title : POINT_COPY.valueHint}
+    onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setTyping(false); }}>
     <input value={text} inputMode="decimal" disabled={disabled} aria-label={`${POINT_COPY.valueInput}: ${point.label}`}
-      onFocus={() => setTyping(true)} onBlur={() => setTyping(false)} onChange={event => setText(event.target.value)}
+      onFocus={() => setTyping(true)} onChange={event => setText(event.target.value)}
       onKeyDown={event => { if (event.key === 'Enter') apply(); if (event.key === 'Escape') { setTyping(false); (event.target as HTMLInputElement).blur(); } }} />
     {point.unit && <span className="pp-unit">{point.unit}</span>}
     <button type="button" disabled={disabled} onClick={apply} title={POINT_COPY.valueHint}>{POINT_COPY.valueApply}</button>
