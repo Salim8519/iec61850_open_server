@@ -8,7 +8,7 @@ import (
 )
 
 // endpoint is a (host, port) tuple key compared with Python ==.
-type endpoint struct{ host, port any }
+type endpoint struct{ role, host, port any }
 
 // EndpointConflicts is ied_settings.endpoint_conflicts: plain-language problems that would
 // make two IEDs share one address.
@@ -18,14 +18,16 @@ func EndpointConflicts(ieds []*pyjson.Object, network *pyjson.Object) ([]any, er
 	var names []any
 	for _, ied := range ieds {
 		var point *endpoint
+		// A simulated IED and a monitored relay may share an address: one is served by this PC,
+		// the other is read through a network card (change 0233). Only same-mode pairs clash.
 		switch role := pyval.Lookup(ied, "role", "simulated"); role {
 		case "simulated":
 			host, port := netset.EffectiveEndpoint(ied, network)
-			point = &endpoint{host, port}
+			point = &endpoint{role, host, port}
 		case "real":
 			host, port, _ := netset.RealEndpoint(ied)
 			if pyval.Truthy(host) {
-				point = &endpoint{host, port}
+				point = &endpoint{role, host, port}
 			}
 		}
 		if point == nil {
@@ -38,7 +40,7 @@ func EndpointConflicts(ieds []*pyjson.Object, network *pyjson.Object) ([]any, er
 		}
 		found := -1
 		for index, other := range used {
-			if pyval.Equal(other.host, point.host) && pyval.Equal(other.port, point.port) {
+			if other.role == point.role && pyval.Equal(other.host, point.host) && pyval.Equal(other.port, point.port) {
 				found = index
 			}
 		}

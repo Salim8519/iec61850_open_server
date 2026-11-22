@@ -38,6 +38,7 @@ func UpdateIED(project *pyjson.Object, iedID string, changes any) (*pyjson.Objec
 			merged.Set(key, value)
 		}
 	}
+	seedAddress(merged, pyval.Lookup(ied, "role", "simulated"))
 	name := pyval.Str(pyval.Lookup(ied, "name", nil))
 	settings, err := netset.ValidateIEDSettings(merged)
 	if err != nil {

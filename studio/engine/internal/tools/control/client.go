@@ -82,6 +82,11 @@ func (c *Client) Operate(host string, port any, reference string, value any, opt
 		item, _ := settings.Get(key)
 		fields.Set(key, item)
 	}
+	if given, ok := options.(*pyjson.Object); ok { // a monitored relay's network card (change 0233)
+		if local, _ := given.Get("local"); local != nil && local != "" {
+			fields.Set("local", local)
+		}
+	}
 	answer, err := c.request(process, "operate", fields)
 	if err != nil {
 		return nil, err

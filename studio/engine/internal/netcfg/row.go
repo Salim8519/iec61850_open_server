@@ -9,6 +9,7 @@ type PlanIED struct {
 	SCLIP     string // scl_address.ip ("" when the SCD has none)
 	SCLSubnet string // scl_address.subnet ("" means 255.255.255.0)
 	Port      int    // ied.get("port", 102)
+	LabIP     string // the address the user set (lab_ip); planned first when set (change 0233)
 }
 
 // Alternative is a free address on the adapter's own network offered for an unusable row.
@@ -55,6 +56,8 @@ func (r Row) Object() *pyjson.Object {
 	}
 	if r.Kind != "" {
 		object.Set("kind", r.Kind).Set("saved", r.Saved)
+	} else if r.Saved { // an IED row proposing the address the user set (change 0233)
+		object.Set("saved", true)
 	}
 	return object
 }

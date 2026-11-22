@@ -11,6 +11,7 @@ import { StatusPill } from '../../ui/StatusPill';
 import { withCommands } from './allowCommands';
 import { DeviceCommandCheck } from './DeviceCommandCheck';
 import { draftKey } from './liveDraft';
+import { MonitorCard } from './MonitorCard';
 
 /** How ScadaBench reaches a real IED: it reads values here; gateway commands need Allow commands (ADR-0138). */
 export function DeviceConnection({ ied, session, locked, perform }: {
@@ -37,6 +38,9 @@ export function DeviceConnection({ ied, session, locked, perform }: {
         <span className="small muted" style={{ fontWeight: 400 }}>{draft.ip ? 'Typed by you' : scd ? `From the SCD file: ${scd}` : 'Not in the SCD file'}</span></label>
       <label>Port<input type="number" min={1} max={65535} value={draft.port}
         disabled={locked} onChange={event => setDraft({ ...draft, port: Number(event.target.value) })} /></label>
+      <MonitorCard value={draft.local ?? ''} locked={locked} change={local => {
+        const { local: _old, ...rest } = draft; setDraft(local ? { ...rest, local } : rest);
+      }} />
     </div>
     <div className="stack" style={{ gap: 8 }}>
       <span className="section-label">How ScadaBench reads values</span>

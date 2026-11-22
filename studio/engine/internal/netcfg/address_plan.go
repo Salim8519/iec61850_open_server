@@ -58,6 +58,19 @@ func scdInterface(ied PlanIED) (ipv4Iface, bool) {
 	return parseInterface(ied.SCLIP + "/" + mask)
 }
 
+// savedInterface is the address the user set (lab_ip) with the SCD's subnet, when there is one.
+func savedInterface(ied PlanIED) (ipv4Iface, bool) {
+	if ied.LabIP == "" {
+		return ipv4Iface{}, false
+	}
+	mask := ied.SCLSubnet
+	if mask == "" {
+		mask = "255.255.255.0"
+	}
+	set, ok := parseInterface(ied.LabIP + "/" + mask)
+	return set, ok
+}
+
 type planState struct {
 	own       map[string]bool
 	elsewhere map[string]string
@@ -105,6 +118,10 @@ func PlanAddresses(ieds []PlanIED, adapter Adapter, all []Adapter, strategy stri
 		if hasSCD {
 			row.SCDIP = formatIPv4(scd.IP)
 		}
+		if set, ok := savedInterface(ied); ok { // the user's address comes first
+			scd, hasSCD = set, true
+			row.Saved = true
+		}
 		if strategy == StrategySCD {
 			if !hasSCD {
 				row.Status = "missing_scd_address"
@@ -115,6 +132,9 @@ func PlanAddresses(ieds []PlanIED, adapter Adapter, all []Adapter, strategy stri
 			}
 		} else {
 			state.adapterRow(&row, scd, hasSCD, networks)
+		}
+		if row.Saved && row.Proposed != ied.LabIP {
+			row.Saved = false // the card's network could not take it; a free address is proposed
 		}
 		state.check(&row)
 		state.claim(row)

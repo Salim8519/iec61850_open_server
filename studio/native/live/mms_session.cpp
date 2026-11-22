@@ -23,6 +23,9 @@ Json MmsSession::connect(const Json& request) {
     IedConnection_setConnectTimeout(connection, request.value("timeout_ms", 5000u));
     IedConnection_setRequestTimeout(connection, request.value("request_timeout_ms", 5000u));
     IedConnection_installStateChangedHandler(connection, state_changed, nullptr);
+    // The network card chosen for this relay (change 0233); absent: Windows picks by its routes.
+    auto local = request.value("local", std::string());
+    if (!local.empty()) IedConnection_setLocalAddress(connection, local.c_str(), 0);
     IedClientError error = IED_ERROR_OK;
     IedConnection_connect(connection, &error, ip.c_str(), port);
     if (error != IED_ERROR_OK) {

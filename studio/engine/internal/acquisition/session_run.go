@@ -81,7 +81,11 @@ func (s *RealSession) session(host string, port any) error {
 	if !hasAll(pyv.GetList(pyv.Obj(hello), "capabilities"), liveCapabilities) {
 		return errors.New("The live client is outdated; rebuild the native programs")
 	}
-	if _, err := process.Request("connect", 15*time.Second, pyv.O("ip", host, "port", port)); err != nil {
+	connect := pyv.O("ip", host, "port", port)
+	if local := pyv.GetStr(pyv.GetObj(s.ied, "live"), "local"); local != "" {
+		connect.Set("local", local) // the network card chosen for this relay (change 0233)
+	}
+	if _, err := process.Request("connect", 15*time.Second, connect); err != nil {
 		return err
 	}
 	s.set("discovering", "Reading the device data model")

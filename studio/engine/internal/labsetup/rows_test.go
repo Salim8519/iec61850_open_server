@@ -50,8 +50,9 @@ func TestTypedAndStoredAddressesWin(t *testing.T) {
 	if row := Rows(ieds, nil, true, pcAdapters(), card, fixedAnswers{})[0]; row.IP != "192.168.216.9" || !row.Yours {
 		t.Fatalf("stored lab_ip not used while active: %+v", row)
 	}
-	if row := Rows(ieds, nil, false, pcAdapters(), card, fixedAnswers{})[0]; row.IP != "192.168.216.1" {
-		t.Fatalf("lab_ip of another card was used: %+v", row)
+	// Change 0233: the address the user set is proposed on any card, not the SCD's.
+	if row := Rows(ieds, nil, false, pcAdapters(), card, fixedAnswers{})[0]; row.IP != "192.168.216.9" || !row.Yours {
+		t.Fatalf("stored lab_ip not proposed on a card change: %+v", row)
 	}
 	typed := map[string]string{"a": " 10.1.1.1 "}
 	if row := Rows(ieds, typed, true, pcAdapters(), card, fixedAnswers{})[0]; row.IP != "10.1.1.1" || row.Status != "ok" {

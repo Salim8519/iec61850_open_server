@@ -17,8 +17,8 @@ public:
     void close_all();
 private:
     std::map<std::string, IedConnection> connections;
-    IedConnection connection(const std::string& ip, int port);
-    void drop(const std::string& ip, int port);
+    IedConnection connection(const std::string& ip, int port, const std::string& local = "");
+    void drop(const std::string& ip, int port, const std::string& local = "");
 };
 
 const char* add_cause_text(int cause);

@@ -19,6 +19,8 @@ Json identify_server(const Json& request) {
                                                                                IedConnection_destroy);
     IedConnection_setConnectTimeout(connection.get(), request.value("timeout_ms", 3000u));
     IedConnection_setRequestTimeout(connection.get(), request.value("timeout_ms", 3000u));
+    auto local = request.value("local", std::string()); // chosen network card (change 0233)
+    if (!local.empty()) IedConnection_setLocalAddress(connection.get(), local.c_str(), 0);
     auto started = std::chrono::steady_clock::now();
     IedClientError error = IED_ERROR_OK;
     IedConnection_connect(connection.get(), &error, ip.c_str(), port);

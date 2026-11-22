@@ -48,6 +48,9 @@ func (p ProjectNetwork) SimulatedIEDs() ([]netcfg.PlanIED, error) {
 				plan.SCLSubnet = pyval.Str(subnet)
 			}
 		}
+		if labIP, ok := pyval.Lookup(ied, "lab_ip", "").(string); ok {
+			plan.LabIP = labIP // planned before the SCD address (change 0233)
+		}
 		ieds = append(ieds, plan)
 	}
 	return ieds, nil

@@ -62,7 +62,15 @@ func (s *Service) Operate(key, ref string, value any, confirmed bool) (*pyjson.O
 	correlation := newID()
 	s.Emit("real_command_requested", pyjson.NewObject().Set("ied_id", iedID).Set("ref", ref).Set("value", value).
 		Set("correlation_id", correlation).Set("origin", "devices"))
-	result, err := s.Control.Operate(hostText(host), port, ref, value, pyjson.NewObject().Set("originator", "station"))
+	options := pyjson.NewObject().Set("originator", "station")
+	if live, ok := ied.Get("live"); ok {
+		if settings, isDict := live.(*pyjson.Object); isDict {
+			if local, _ := settings.Get("local"); local != nil && local != "" {
+				options.Set("local", local) // through the card chosen for this relay (change 0233)
+			}
+		}
+	}
+	result, err := s.Control.Operate(hostText(host), port, ref, value, options)
 	var timeout *worker.Timeout
 	if errors.As(err, &timeout) { // the worker is gone, but the device may have operated
 		reason := text(ied, "name") + " did not answer in time; result unknown — check the position before trying again"

@@ -98,7 +98,7 @@ func Rows(ieds []IED, chosen map[string]string, active bool, adapters []netcfg.A
 	users := map[string][]int{}
 	for index, ied := range ieds {
 		row := Row{IEDID: ied.ID, Name: ied.Name, SCLIP: ied.SCLIP, IP: ied.SCLIP}
-		if active && ied.LabIP != "" {
+		if ied.LabIP != "" { // the address the user set wins over the SCD's, on any card (change 0233)
 			row.IP = ied.LabIP
 		}
 		if typed, found := chosen[ied.ID]; found {

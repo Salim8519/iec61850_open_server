@@ -37,28 +37,35 @@ MmsValue* control_value(ControlObjectClient control, const Json& value) {
 
 ControlSession::~ControlSession() { close_all(); }
 
-IedConnection ControlSession::connection(const std::string& ip, int port) {
-    auto key = ip + ":" + std::to_string(port);
+// One association per (local card, device): a relay reached through a chosen card (change 0233)
+// never reuses an association opened from another card.
+static std::string session_key(const std::string& ip, int port, const std::string& local) {
+    return (local.empty() ? "" : local + ">") + ip + ":" + std::to_string(port);
+}
+
+IedConnection ControlSession::connection(const std::string& ip, int port, const std::string& local) {
+    auto key = session_key(ip, port, local);
     auto found = connections.find(key);
     if (found != connections.end()) {
         if (IedConnection_getState(found->second) == IED_STATE_CONNECTED) return found->second;
-        drop(ip, port);
+        drop(ip, port, local);
     }
     auto created = IedConnection_create();
     IedConnection_setConnectTimeout(created, 5000);
     IedConnection_setRequestTimeout(created, 10000);
+    if (!local.empty()) IedConnection_setLocalAddress(created, local.c_str(), 0);
     IedClientError error = IED_ERROR_OK;
     IedConnection_connect(created, &error, ip.c_str(), port);
     if (error != IED_ERROR_OK) {
         IedConnection_destroy(created);
-        throw std::runtime_error("Could not connect to " + key + " (MMS error " + std::to_string(int(error)) + ")");
+        throw std::runtime_error("Could not connect to " + ip + ":" + std::to_string(port) + " (MMS error " + std::to_string(int(error)) + ")");
     }
     connections[key] = created;
     return created;
 }
 
-void ControlSession::drop(const std::string& ip, int port) {
-    auto key = ip + ":" + std::to_string(port);
+void ControlSession::drop(const std::string& ip, int port, const std::string& local) {
+    auto key = session_key(ip, port, local);
     auto found = connections.find(key);
     if (found == connections.end()) return;
     IedConnection_close(found->second);
@@ -78,14 +85,15 @@ Json ControlSession::operate(const Json& request) {
     auto ip = request.at("ip").get<std::string>();
     int port = request.value("port", 102);
     auto reference = request.at("ref").get<std::string>();
-    auto handle = connection(ip, port);
+    auto local = request.value("local", std::string());
+    auto handle = connection(ip, port, local);
     // Declared before the control object so it outlives it: ControlObjectClient_destroy unlinks
     // the object under the lock the receive thread holds while it calls the handler.
     Termination done;
     std::unique_ptr<sControlObjectClient, decltype(&ControlObjectClient_destroy)> control(
         ControlObjectClient_create(reference.c_str(), handle), ControlObjectClient_destroy);
     if (!control) {
-        if (IedConnection_getState(handle) != IED_STATE_CONNECTED) drop(ip, port);
+        if (IedConnection_getState(handle) != IED_STATE_CONNECTED) drop(ip, port, local);
         throw std::runtime_error(reference + " is not a controllable object on this device");
     }
     int model = ControlObjectClient_getControlModel(control.get());

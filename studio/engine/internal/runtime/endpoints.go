@@ -49,7 +49,7 @@ func realEndpoint(ied *pyjson.Object) endpoint {
 	return endpoint{host, pyval.Get(live, "port")}
 }
 
-// endpointConflicts is projects/ied_settings.endpoint_conflicts.
+// endpointConflicts is projects/ied_settings.endpoint_conflicts, per mode (change 0233).
 func endpointConflicts(ieds []*pyjson.Object, network *pyjson.Object) []string {
 	var problems []string
 	used := map[string]string{}
@@ -67,11 +67,13 @@ func endpointConflicts(ieds []*pyjson.Object, network *pyjson.Object) []string {
 			continue
 		}
 		key := point.host + ":" + pyval.Repr(point.port)
-		if other, ok := used[key]; ok && other != "" {
+		// Simulated and monitored IEDs may share an address; only same-mode pairs clash (change 0233).
+		slot := roleOf(ied) + " " + key
+		if other, ok := used[slot]; ok && other != "" {
 			problems = append(problems, fmt.Sprintf("%s and %s both use %s. Give each IED its own address.",
 				pyval.Str(ied, "name"), other, key))
 		}
-		used[key] = pyval.Str(ied, "name")
+		used[slot] = pyval.Str(ied, "name")
 	}
 	return problems
 }

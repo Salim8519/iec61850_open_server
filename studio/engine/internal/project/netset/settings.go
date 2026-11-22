@@ -37,6 +37,10 @@ func ValidateLive(raw any) (*pyjson.Object, error) {
 	if err != nil {
 		return nil, err
 	}
+	local, err := ipv4(pyval.Lookup(value, "local", ""), "Monitoring network card address", true, true)
+	if err != nil {
+		return nil, err
+	}
 	allow, ok := pyval.Lookup(value, "allow_commands", false).(bool)
 	if !ok {
 		return nil, apperr.ValueError("Allow commands must be on or off")
@@ -44,6 +48,9 @@ func ValidateLive(raw any) (*pyjson.Object, error) {
 	live := pyjson.NewObject().Set("ip", ip).Set("port", number).Set("access", access).Set("poll_ms", poll)
 	if allow { // stored only when on, so settings without it stay exactly as before (ADR-0138)
 		live.Set("allow_commands", true)
+	}
+	if local != "" { // the card monitoring connects from (change 0233); absent = Windows chooses
+		live.Set("local", local)
 	}
 	return live, nil
 }
