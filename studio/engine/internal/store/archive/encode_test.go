@@ -132,11 +132,12 @@ func TestEncodeRefusesLikePython(t *testing.T) {
 	if testing.Short() {
 		return
 	}
-	huge := pyjson.NewObject().Set("name", strings.Repeat("x", MaxUnpacked))
+	lowerLimits(t)
+	huge := pyjson.NewObject().Set("name", strings.Repeat("x", int(MaxUnpacked)))
 	_, err := Encode(huge)
 	var appErr *apperr.Error
 	if !asAppErr(err, &appErr) || appErr.Kind != apperr.Studio ||
-		appErr.Message != "Engineering project exceeds the 100 MB save limit; nothing was written" {
+		appErr.Message != "Engineering project exceeds the 1 GB save limit; nothing was written" {
 		t.Fatalf("size limit: %v", err)
 	}
 }

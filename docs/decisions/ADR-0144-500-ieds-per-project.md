@@ -26,7 +26,14 @@ open stations could not be told apart on the taskbar or in Alt+Tab.
 2. **Caches follow the limit.** The SCL source digest caches (Go `maxDigests = 2 * MaxIEDs`,
    `sourceCacheLimit = 1024`; Python `lru_cache(maxsize=1024)`) hold every source of a full
    project, so polls do not re-hash 500 sources.
-3. **Window title.** The frontend sets `document.title` to `<project name> - ScadaBench` while a
+3. **Project size 1 GB.** A 500-IED project does not fit in 100 MB: the Al Kamil C60 CIDs are
+   about 4 MB of XML each, so 28 bay controllers already make 110 MB of project.json. The project
+   limits become 1 GiB: compressed archive, unpacked compact project, save, startup recovery and
+   the request body (`archive.MaxUnpacked`, `MaxLegacyUnpacked`, `httpapi.MaxContentLength`;
+   Python `MAX_UNPACKED`, `MAX_LEGACY_UNPACKED`, `MAX_CONTENT_LENGTH`). Messages say "1 GB".
+   The SCL import limit per file (100 MB) is unchanged. Go tests lower the limits for size tests
+   the way the Python tests monkeypatch them, so no test builds a 1 GiB document.
+4. **Window title.** The frontend sets `document.title` to `<project name> - ScadaBench` while a
    project is open and `ScadaBench` otherwise. The browser shows it in the window's own title
    bar, taskbar and Alt+Tab; nothing inside the page changes.
 

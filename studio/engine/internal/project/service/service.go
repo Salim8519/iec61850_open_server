@@ -165,7 +165,7 @@ func (s *Service) commit(next *pyjson.Object, notice *pyjson.Object, bump bool, 
 		return err
 	}
 	if size > archive.MaxUnpacked {
-		return apperr.New("Engineering project exceeds the 100 MB save limit; nothing was written")
+		return apperr.New("Engineering project exceeds the 1 GB save limit; nothing was written")
 	}
 	revision := prev.revision
 	if bump {

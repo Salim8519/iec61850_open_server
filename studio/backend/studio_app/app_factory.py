@@ -41,7 +41,7 @@ def create_app(settings=None, token=None, secret_key=None, admin_origin=None, li
         license_service, "server_url", lambda: release_key.DEFAULT_SERVER_URL)())
     app = Flask(__name__, static_folder=None)
     app.config.update(SECRET_KEY=secret_key or secrets.token_hex(32), LAUNCH_TOKEN=token or secrets.token_urlsafe(32),
-                      MAX_CONTENT_LENGTH=100 * 1024 * 1024, SESSION_COOKIE_HTTPONLY=True,
+                      MAX_CONTENT_LENGTH=1024 * 1024 * 1024, SESSION_COOKIE_HTTPONLY=True,
                       SESSION_COOKIE_SAMESITE="Strict", SESSION_COOKIE_NAME="studio_session",
                       ADMIN_ORIGIN=admin_origin.rstrip("/") if admin_origin else None)
     bus = EventBus()

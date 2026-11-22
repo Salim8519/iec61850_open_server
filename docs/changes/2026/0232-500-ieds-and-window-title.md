@@ -15,6 +15,10 @@ Layers: Go engine (`internal/project`, `internal/project/service`, `internal/api
   and bulk delete (`bulk_removal.go`, `bulk_removal.py`, frontend `MAX_BULK`).
 - **Caches.** Go `maxDigests` 64 → `2 * MaxIEDs`, `sourceCacheLimit` 64 → 1024; Python source
   digest `lru_cache` 20 → 1024.
+- **Project size 1 GB** (follow-up the same day, found when opening the merged Al Kamil project:
+  "Compact project exceeds 100 MB"). `store/archive/encode.go` limits are 1 GiB variables (tests
+  lower them through `limits_test.go`), `decode.go`, `service/service.go`, `recovery/startup.go`
+  and `httpapi/body.go` follow; Python `archive.py`, `startup_recovery.py`, `app_factory.py` match.
 - **Window title.** New `app/useWindowTitle.ts`, called from `App.tsx`: `<project> - ScadaBench`.
 - **Golden vectors.** `cases_removal.py` / `cases_restore.py` send `MAX_IEDS + 1` items for the
   "too many" cases; `vectors_removal.json`, `vectors_restore.json` and `http_golden.json`
@@ -34,6 +38,12 @@ Layers: Go engine (`internal/project`, `internal/project/service`, `internal/api
 - Python `pytest studio/tests/unit`: 554 passed, 7 failed, all native license-enforcement tests
   ("The license belongs to another computer"), unrelated to this change.
 - Frontend `tsc --noEmit` clean.
+- After the size change: `go test ./internal/store/... ./internal/httpapi/... ./internal/project/...
+  ./internal/api/projectapi/...` all pass; Python unit unchanged (554 pass, same 7 license tests).
+- Real use: `AlKamil-400-132kV.scadabench` (28 BCUs, 110 MB project.json, 17 MB file) opened in
+  a fresh Go engine (`POST /project/open` 200 in 17 s): 28 IEDs, network and SCD addresses as
+  the Rev03 IP plan, per-IED warnings identical to the separate 132 kV project;
+  `/project/download` round trip keeps 28 IEDs and 32 SNMP devices.
 - Release (owner asked, same version): `compile_go_release.py --version 0.1.36` with `studio\.venv`:
   exit 0, `ScadaBench-Setup-0.1.36.exe` 20.2 MB and `ScadaBench-Portable-0.1.36.exe` in
   `studio/dist-go`; antivirus gate 19 programs, 0 findings.

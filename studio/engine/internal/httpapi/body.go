@@ -12,8 +12,9 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// MaxContentLength is Flask's MAX_CONTENT_LENGTH (100 MiB).
-const MaxContentLength = 100 * 1024 * 1024
+// MaxContentLength is Flask's MAX_CONTENT_LENGTH (1 GiB, change 0232: a project archive may
+// reach the 1 GiB project limit; SCL imports keep their own 100 MB limit).
+const MaxContentLength = 1024 * 1024 * 1024
 
 // ReadBody is request.get_data(): the whole body, or 413 above MaxContentLength.
 func ReadBody(r *http.Request) ([]byte, error) {

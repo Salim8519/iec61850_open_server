@@ -67,7 +67,7 @@ func reopen(source string, restore Restore) *string {
 		return text(pytext.OSError(err, false))
 	}
 	if info.Size() > archive.MaxUnpacked {
-		return text("Saved archive exceeds the 100 MB project limit")
+		return text("Saved archive exceeds the 1 GB project limit")
 	}
 	payload, err := os.ReadFile(source)
 	if err != nil {

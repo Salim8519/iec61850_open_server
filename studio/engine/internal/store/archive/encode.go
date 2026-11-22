@@ -21,11 +21,12 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// MaxUnpacked is MAX_UNPACKED: the save limit and the compressed archive limit (100 MiB).
-const MaxUnpacked = 100 * 1024 * 1024
+// MaxUnpacked is MAX_UNPACKED: the save limit and the compressed archive limit (1 GiB, change
+// 0232: a 500-IED project does not fit in 100 MiB). A variable only so tests can lower it.
+var MaxUnpacked int64 = 1024 * 1024 * 1024
 
-// MaxLegacyUnpacked is MAX_LEGACY_UNPACKED (256 MiB) for old inline-source archives.
-const MaxLegacyUnpacked = 256 * 1024 * 1024
+// MaxLegacyUnpacked is MAX_LEGACY_UNPACKED (1 GiB, was 256 MiB) for any unpacked project.json.
+var MaxLegacyUnpacked int64 = 1024 * 1024 * 1024
 
 const sclKey = "scl_sources"
 
@@ -62,7 +63,7 @@ func Encode(compactDoc *pyjson.Object) ([]byte, error) {
 
 // Encode returns the archive bytes of compactDoc. Errors: Python's ValueError "Out of range
 // float values are not JSON compliant: nan" (inf, -inf) for a non-finite float, and the
-// StudioError "Engineering project exceeds the 100 MB save limit; nothing was written".
+// StudioError "Engineering project exceeds the 1 GB save limit; nothing was written".
 func (e *Encoder) Encode(compactDoc *pyjson.Object) ([]byte, error) {
 	segments, crc, size, err := e.prepare(compactDoc)
 	if err != nil {
@@ -99,7 +100,7 @@ func (e *Encoder) prepare(doc *pyjson.Object) ([]*segment, uint32, int64, error)
 	}
 	crc, size := combine(segments)
 	if size > MaxUnpacked {
-		return nil, 0, 0, apperr.New("Engineering project exceeds the 100 MB save limit; nothing was written")
+		return nil, 0, 0, apperr.New("Engineering project exceeds the 1 GB save limit; nothing was written")
 	}
 	return segments, crc, size, nil
 }

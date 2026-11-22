@@ -13,7 +13,7 @@ def recover_startup(projects):
         raise RuntimeError("Autosave is not a regular local file; inspect it before starting ScadaBench")
     try:
         if source.stat().st_size > MAX_UNPACKED:
-            raise ValueError("Saved archive exceeds the 100 MB project limit")
+            raise ValueError("Saved archive exceeds the 1 GB project limit")
         projects.restore(source.read_bytes(), persist=False)
         return {"status": "restored", "message": "Recovered the last saved substation. All IEDs remain stopped."}
     except Exception as error:

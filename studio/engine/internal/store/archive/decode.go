@@ -15,19 +15,19 @@ import (
 // project.json object (format 1 with inline sources, or a compact format 2..15 document);
 // the caller (project layer) runs expand() on it. Errors, in Python's order:
 //
-//   - StudioError "Project archive exceeds 100 MB" (payload larger than 100 MiB)
+//   - StudioError "Project archive exceeds 1 GB" (payload larger than 1 GiB)
 //   - StudioError "Invalid project archive" (not a ZIP, unreadable member, bad CRC, invalid JSON)
 //   - StudioError "Expected a single project.json entry"
-//   - StudioError "Unpacked project exceeds the 256 MB legacy recovery limit"
+//   - StudioError "Unpacked project exceeds the 1 GB legacy recovery limit"
 //   - ValueError "'utf-8' codec can't decode ..." (json.loads UnicodeDecodeError, not caught by Python)
-//   - StudioError "Compact project exceeds 100 MB" (format 2..15 with more than 100 MiB of JSON)
+//   - StudioError "Compact project exceeds 1 GB" (format 2..15 with more than 1 GiB of JSON)
 //   - StudioError "Unsupported project format" (JSON that is not an object)
 //
 // Known differences: Python also reads bzip2/lzma members (refused here as invalid) and
 // raises zlib.error/EOFError (not "Invalid project archive") for corrupt deflate data.
 func Decode(payload []byte) (*pyjson.Object, error) {
-	if len(payload) > MaxUnpacked {
-		return nil, apperr.New("Project archive exceeds 100 MB")
+	if int64(len(payload)) > MaxUnpacked {
+		return nil, apperr.New("Project archive exceeds 1 GB")
 	}
 	invalid := apperr.New("Invalid project archive")
 	reader, err := zip.NewReader(bytes.NewReader(payload), int64(len(payload)))
@@ -38,8 +38,8 @@ func Decode(payload []byte) (*pyjson.Object, error) {
 		return nil, apperr.New("Expected a single project.json entry")
 	}
 	entry := reader.File[0]
-	if entry.UncompressedSize64 > MaxLegacyUnpacked {
-		return nil, apperr.New("Unpacked project exceeds the 256 MB legacy recovery limit")
+	if entry.UncompressedSize64 > uint64(MaxLegacyUnpacked) {
+		return nil, apperr.New("Unpacked project exceeds the 1 GB legacy recovery limit")
 	}
 	data, err := readMember(entry)
 	if err != nil {
@@ -54,9 +54,9 @@ func Decode(payload []byte) (*pyjson.Object, error) {
 		return nil, invalid
 	}
 	document, isObject := value.(*pyjson.Object)
-	if isObject && entry.UncompressedSize64 > MaxUnpacked {
+	if isObject && entry.UncompressedSize64 > uint64(MaxUnpacked) {
 		if format, _ := document.Get("format"); isCompactFormat(format) {
-			return nil, apperr.New("Compact project exceeds 100 MB")
+			return nil, apperr.New("Compact project exceeds 1 GB")
 		}
 	}
 	if !isObject {

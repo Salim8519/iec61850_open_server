@@ -102,21 +102,22 @@ func TestDecodeAcceptsPythonTextEncodings(t *testing.T) {
 }
 
 func TestDecodeSizeLimits(t *testing.T) {
+	lowerLimits(t)
 	if kind, message := decodeMessage(make([]byte, MaxUnpacked+1)); kind != apperr.Studio ||
-		message != "Project archive exceeds 100 MB" {
+		message != "Project archive exceeds 1 GB" {
 		t.Errorf("payload limit: %q", message)
 	}
 	payload := zipOf(t, map[string][]byte{EntryName: []byte("{}")}, EntryName)
 	central := bytes.LastIndex(payload, []byte{0x50, 0x4b, 0x01, 0x02})
-	binary.LittleEndian.PutUint32(payload[central+24:], MaxLegacyUnpacked+1)
-	if _, message := decodeMessage(payload); message != "Unpacked project exceeds the 256 MB legacy recovery limit" {
+	binary.LittleEndian.PutUint32(payload[central+24:], uint32(MaxLegacyUnpacked+1))
+	if _, message := decodeMessage(payload); message != "Unpacked project exceeds the 1 GB legacy recovery limit" {
 		t.Errorf("legacy limit: %q", message)
 	}
 	if testing.Short() {
 		return
 	}
-	for format, want := range map[string]string{"15": "Compact project exceeds 100 MB", "2.0": "Compact project exceeds 100 MB", "1": ""} {
-		text := `{"format": ` + format + `, "pad": "` + strings.Repeat("x", MaxUnpacked) + `"}`
+	for format, want := range map[string]string{"15": "Compact project exceeds 1 GB", "2.0": "Compact project exceeds 1 GB", "1": ""} {
+		text := `{"format": ` + format + `, "pad": "` + strings.Repeat("x", int(MaxUnpacked)) + `"}`
 		_, message := decodeMessage(zipOf(t, map[string][]byte{EntryName: []byte(text)}, EntryName))
 		if message != want {
 			t.Errorf("format %s: %q", format, message)

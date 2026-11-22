@@ -126,10 +126,10 @@ func TestRecoverStartupResults(t *testing.T) {
 func TestRecoverStartupSizeLimitAndNonFile(t *testing.T) {
 	dir := testutil.TempDir(t)
 	file, _ := os.Create(filepath.Join(dir, "autosave.scadabench"))
-	_ = file.Truncate(archive.MaxUnpacked + 1) // sparse: no real 100 MB written
+	_ = file.Truncate(archive.MaxUnpacked + 1) // sparse: no real 1 GB written
 	_ = file.Close()
 	result, err := RecoverStartup(dir, func([]byte) error { t.Error("restore called"); return nil })
-	if details, _ := result.Get("details"); err != nil || details != "Saved archive exceeds the 100 MB project limit" {
+	if details, _ := result.Get("details"); err != nil || details != "Saved archive exceeds the 1 GB project limit" {
 		t.Fatalf("size: %v %v", details, err)
 	}
 	other := testutil.TempDir(t)
