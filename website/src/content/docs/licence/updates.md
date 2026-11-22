@@ -11,7 +11,7 @@ ScadaBench can check whether a newer version is available.
 
 1. Open **Settings**.
 2. Go to the **About** tab.
-3. Find the **Updates** part. It shows your current version, for example **Version 0.1.35**.
+3. Find the **Updates** part. It shows your current version, for example **Version 0.1.36**.
 4. Press **Check now**. The page says **Checking…** while it works.
 
 If a newer version exists, press **Open the download page** and install it from there.
