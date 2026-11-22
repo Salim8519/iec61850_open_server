@@ -7,7 +7,20 @@ import { SITE } from '../data/site';
 <Base title="Changelog" description="What changed in each ScadaBench release.">
   <PageHeader eyebrow="Changelog" title="What's new." />
   <Prose>
-    <h2>{SITE.version} · A more dependable network, faster screens, safer saving</h2>
+    <h2>{SITE.version} · Big stations in one project, your addresses kept</h2>
+    <ul>
+      <li>New: a project holds up to 500 IEDs (was 20) and up to 1 GB (was 100 MB), so a whole 400/132 kV station fits in one project.</li>
+      <li>New: the window's title bar, the taskbar and Alt+Tab show the open project's name, so two stations are easy to tell apart.</li>
+      <li>Fixed: an address you typed is kept. Each IED has a simulation address and a monitoring address; switching between Simulate and Monitor real device never replaces them with the address in the CID file, and an empty one starts from the other.</li>
+      <li>Fixed: choosing a network card now proposes the address you saved for each IED, marked "saved address", instead of the one in the SCD.</li>
+      <li>Changed: a simulated IED and a monitored real device may use the same address. Two simulated IEDs, or two monitored devices, still cannot share one.</li>
+      <li>New: Monitor real device has a Network card choice per IED. ScadaBench reads the relay, and sends allowed commands, through the card you pick; "Windows chooses" stays the default.</li>
+      <li>New: each SNMP device has its own Run / Stop button; the other devices keep running.</li>
+      <li>New: the Station gateway and the SCADA master can run at the same time. Protocol converter still runs on its own.</li>
+      <li>Fixed: Fit view on the single-line diagram now zooms out far enough to show every symbol of a large station, instead of only centring it.</li>
+      <li>Fixed: in the diagram's point panel, Set sends the value you typed instead of 0.</li>
+    </ul>
+    <h2>0.1.35 · A more dependable network, faster screens, safer saving</h2>
     <ul>
       <li>Fixed: when Windows refuses an IED's network address, Start now stops and names each IED, its address and Windows' reason, instead of carrying on. Stop names any address it could not take off.</li>
       <li>Fixed: two copies of ScadaBench on one PC (for example the installed app and the portable one) no longer take each other's addresses off the ScadaBench Lab card. Each copy removes only the addresses it added.</li>

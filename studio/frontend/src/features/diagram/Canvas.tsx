@@ -1,6 +1,6 @@
 import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ReactFlow, Background, Controls, BackgroundVariant, ReactFlowProvider,
-  useReactFlow, applyNodeChanges, addEdge, ConnectionMode, SelectionMode,
+  useReactFlow, useStore, getViewportForBounds, applyNodeChanges, addEdge, ConnectionMode, SelectionMode,
   type NodeChange, type EdgeChange, type Connection, type NodeTypes } from '@xyflow/react';
 import type { Diagram, EquipmentKind, EquipmentNode as NodeType } from '../../api/types';
 import { EquipmentNode } from '../../equipment/EquipmentNode';
@@ -20,6 +20,7 @@ import { addBay, BAYS, type BayKind } from '../../equipment/bayTemplates';
 import { fitOptionsFor } from '../../equipment/strayNodes';
 import { StrayNotice } from './StrayNotice';
 import { clearOfToolbar, toolbarSpace } from './fitPadding';
+import { ZOOM_FLOOR, zoomFloor } from './zoomFloor';
 import { defaultLabel } from '../../equipment/kindInfo';
 import './energization.css';
 
@@ -120,6 +121,14 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
   }, []);
   const fit = useMemo(() => fitOptionsFor(diagram.nodes,
     { ...fitOptions, padding: clearOfToolbar(fitOptions.padding, barSpace) }), [diagram.nodes, barSpace]);
+  // Fit view may zoom out as far as the whole drawing needs (change 0236), not only to 0.2.
+  const width = useStore(state => state.width), height = useStore(state => state.height);
+  const floor = useMemo(() => {
+    const fitted = ('nodes' in fit ? fit.nodes : diagram.nodes) as readonly { id: string }[];
+    if (!width || !height || !fitted.length) return ZOOM_FLOOR;
+    const bounds = flow.getNodesBounds(fitted.map(node => node.id));
+    return zoomFloor(getViewportForBounds(bounds, width, height, 0, 1, fit.padding).zoom);
+  }, [fit, diagram.nodes, width, height, flow]);
   const dragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault(); event.dataTransfer.dropEffect = 'move';
   }, []);
@@ -170,7 +179,7 @@ function FlowCanvas({ diagram, locked, valueStore, iedNames, energization, modeB
         selectionOnDrag panOnDrag={panButtons} selectionMode={SelectionMode.Partial}
         multiSelectionKeyCode={multiKeys} nodeDragThreshold={3}
         nodesDraggable={!locked} nodesConnectable={!locked} deleteKeyCode={locked ? null : deleteKeys}
-        snapToGrid snapGrid={snapGrid} minZoom={0.2} maxZoom={2} fitView fitViewOptions={fit}
+        snapToGrid snapGrid={snapGrid} minZoom={floor} maxZoom={2} fitView fitViewOptions={fit}
         defaultEdgeOptions={defaultEdgeOptions}>
         <Background variant={BackgroundVariant.Dots} gap={20} size={1.6} color="#b4bcc8" />
         <Controls showInteractive={false} position="bottom-left" fitViewOptions={fit} />
