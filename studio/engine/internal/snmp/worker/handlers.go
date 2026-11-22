@@ -69,6 +69,21 @@ func (h *handlers) dispatch(r request) (any, error) {
 	case "agents_stop":
 		h.agents.Stop()
 		return map[string]any{}, nil
+	case "agent_start": // one device; the others keep running (change 0234)
+		params, err := decode[struct {
+			Device model.Device `json:"device"`
+		}](r)
+		if err != nil {
+			return nil, err
+		}
+		return map[string]any{"started": h.agents.StartOne(params.Device)}, nil
+	case "agent_stop":
+		params, err := decode[deviceParams](r)
+		if err != nil {
+			return nil, err
+		}
+		h.agents.StopOne(params.Device)
+		return map[string]any{}, nil
 	case "agent_points":
 		params, err := decode[deviceParams](r)
 		if err != nil {

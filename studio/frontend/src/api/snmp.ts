@@ -65,6 +65,9 @@ export const snmpApi = {
   setRole: (role: SnmpRole) => api<SnmpStatus>('/tools/snmp/role', 'POST', { role }),
   start: () => api<SnmpStatus>('/tools/snmp/start', 'POST', {}),
   stop: () => api<SnmpStatus>('/tools/snmp/stop', 'POST', {}),
+  /** One device; the others keep running (change 0234). */
+  startDevice: (id: string) => api<SnmpStatus>(`${device(id)}/start`, 'POST', {}),
+  stopDevice: (id: string) => api<SnmpStatus>(`${device(id)}/stop`, 'POST', {}),
   add: (profile: string) => api<{ device: SnmpDevice }>('/tools/snmp/devices', 'POST', { profile }),
   update: (value: SnmpDevice) => api<{ device: SnmpDevice }>(device(value.id), 'PUT', { device: value }),
   remove: (id: string) => api<object>(device(id), 'DELETE'),

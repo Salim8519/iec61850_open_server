@@ -1,4 +1,4 @@
-import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { CircleStop, MoreHorizontal, Play, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { snmpApi, type DeviceStatus, type SnmpDevice } from '../../../../api/snmp';
 import { SETTINGS_COPY, SNMP_COPY } from '../../../../copy/snmp';
@@ -26,6 +26,13 @@ export function DevicePanel({ device, state, refresh, fail }: {
   // The settings and the trap receivers share one draft that stays while you switch tabs, and every valid
   // change is saved as it is made (no Save button).
   const settings = useDeviceDraft(device, running, refresh);
+  const [busy, setBusy] = useState(false);
+  // Run or stop this device only (change 0234); the others are left as they are.
+  const toggle = () => {
+    setBusy(true);
+    (running ? snmpApi.stopDevice(device.id) : snmpApi.startDevice(device.id))
+      .then(refresh).catch(reason => fail(reason.message)).finally(() => setBusy(false));
+  };
   const remove = () => {
     if (!window.confirm(SNMP_COPY.removeConfirm(device.name))) return;
     snmpApi.remove(device.id).then(refresh).catch(reason => fail(reason.message));
@@ -40,6 +47,9 @@ export function DevicePanel({ device, state, refresh, fail }: {
       <TabBar label="Device views" value={tab} change={setTab}
         tabs={(Object.keys(SNMP_COPY.tabs) as Tab[]).map(key => [key, SNMP_COPY.tabLabel(key, SNMP_COPY.tabs[key], device.points.length)])} />
       <span className="gateway-spacer" />
+      <button className={running ? 'danger' : 'primary'} disabled={busy} onClick={toggle}
+        title={running ? SNMP_COPY.stopOneHint(device.name) : SNMP_COPY.startOneHint(device.name)}>
+        {running ? <CircleStop size={16} /> : <Play size={16} />}{running ? SNMP_COPY.stopOne : SNMP_COPY.startOne}</button>
       <FullViewButton full={full} change={setFull} />
       <Menu label={SNMP_COPY.deviceMenu} trigger={<MoreHorizontal size={18} aria-hidden />} triggerClass="icon"
         items={[{ label: SNMP_COPY.remove, icon: <Trash2 size={16} />, onSelect: remove }]} />

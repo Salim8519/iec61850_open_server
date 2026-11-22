@@ -31,6 +31,12 @@ func (a *Area) deviceRoutes() []api.Route {
 			device, err := s.UpdateDevice(body.Device, false)
 			return map[string]any{"device": device}, err
 		}),
+		route("POST", "/devices/{id}/start", false, func(r *http.Request) (any, error) {
+			return s.StartDevice(r.PathValue("id")) // one device; the others keep running (change 0234)
+		}),
+		route("POST", "/devices/{id}/stop", false, func(r *http.Request) (any, error) {
+			return s.StopDevice(r.PathValue("id"))
+		}),
 		route("DELETE", "/devices/{id}", false, func(r *http.Request) (any, error) {
 			return map[string]any{}, s.DeleteDevice(r.PathValue("id"))
 		}),
