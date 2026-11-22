@@ -1,7 +1,7 @@
 import { Trash2 } from 'lucide-react';
 
 /** The bulk delete endpoint reviews at most this many IEDs at once (projects/bulk_removal.py). */
-export const MAX_BULK = 20;
+export const MAX_BULK = 500;  // project.MaxIEDs (change 0232)
 
 /** Footer of the Devices list while choosing several IEDs: count, select all, cancel, delete. */
 export function DeviceSelectBar({ count, shown, selectShown, cancel, remove }: {

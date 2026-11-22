@@ -7,9 +7,9 @@ import (
 	"unsafe"
 )
 
-// sourceCacheLimit bounds a cache: a project holds at most 20 IEDs, so 64 entries keep every
+// sourceCacheLimit bounds a cache: a project holds at most 500 IEDs (project.MaxIEDs), so 1024 entries keep every
 // IED of the open project and a few earlier ones; above it the cache starts again.
-const sourceCacheLimit = 64
+const sourceCacheLimit = 1024
 
 // identity is one IED's source text by identity (address and length), the way
 // project.SourceID keys its digests: the entry holds the text, so the address is not reused.

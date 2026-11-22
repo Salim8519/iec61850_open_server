@@ -17,6 +17,7 @@ from .test_panel import validate_panel
 from .stored_import import import_stored
 from .goose_reach import LAB_NOTICE, LAB_TITLE, lab_notice
 from studio_app.contracts.errors import StudioError
+from studio_app.contracts.limits import MAX_IEDS
 from studio_app.domain.scenario import validate_scenarios
 from studio_app.domain.source import source_summary
 from studio_app.scl.importer import import_scl
@@ -50,8 +51,8 @@ class ProjectService:
             names = {ied["name"] for ied in self.project["ieds"]}
             if any(model["name"] in names for model in models):
                 raise StudioError("An IED with this name already exists; rename before importing")
-            if len(models) + len(names) > 20:
-                raise StudioError("This release supports up to 20 IEDs per project")
+            if len(models) + len(names) > MAX_IEDS:
+                raise StudioError(f"This release supports up to {MAX_IEDS} IEDs per project")
             for model in models:
                 model.update(validate_ied_settings({}))
             self.project["ieds"].extend(models)
@@ -178,8 +179,8 @@ class ProjectService:
     def restore(self, payload, persist=True):
         raw = decode(payload)
         version = int(raw.get("format", 1))
-        if not isinstance(raw.get("ieds"), list) or len(raw["ieds"]) > 20:
-            raise StudioError("Project must contain a list of at most 20 IEDs")
+        if not isinstance(raw.get("ieds"), list) or len(raw["ieds"]) > MAX_IEDS:
+            raise StudioError(f"Project must contain a list of at most {MAX_IEDS} IEDs")
         imported = []
         built = import_stored(raw["ieds"])
         for item in raw["ieds"]:

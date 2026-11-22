@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"studio-engine/internal/apperr"
+	"studio-engine/internal/project"
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/scl"
 )
@@ -13,7 +14,7 @@ import (
 // JSON: an unhandled exception answered as the generic 500.
 var errNotDict = errors.New("JSON payload is not an object")
 
-const maxImport = 20
+const maxImport = project.MaxIEDs
 
 // validateSCL is POST /scl/validate (no stop check, as in Python).
 func (a *Area) validateSCL(w http.ResponseWriter, r *http.Request) error {
@@ -92,7 +93,7 @@ func (a *Area) importSCL(w http.ResponseWriter, r *http.Request) error {
 	}
 	names, isList := selected.([]any)
 	if !isList || len(names) < 1 || len(names) > maxImport {
-		return apperr.New("Select between 1 and 20 IEDs")
+		return apperr.New(project.MsgImportSelection)
 	}
 	if filename == "" {
 		filename = "import.scd"

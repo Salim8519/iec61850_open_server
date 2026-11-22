@@ -34,8 +34,8 @@ func (s *Service) AddSCL(source []byte, filename string, selection scl.Selection
 			return nil, apperr.New("An IED with this name already exists; rename before importing")
 		}
 	}
-	if len(models)+len(names) > 20 {
-		return nil, apperr.New("This release supports up to 20 IEDs per project")
+	if len(models)+len(names) > project.MaxIEDs {
+		return nil, apperr.New(project.MsgProjectFull)
 	}
 	for _, model := range models {
 		defaults, err := netset.ValidateIEDSettings(pyjson.NewObject())

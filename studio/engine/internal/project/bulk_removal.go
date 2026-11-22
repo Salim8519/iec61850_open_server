@@ -10,11 +10,11 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// selectedKeys checks the bulk selection: 1 to 20 unique str ids, returned sorted.
+// selectedKeys checks the bulk selection: 1 to MaxIEDs unique str ids, returned sorted.
 func selectedKeys(keys any) ([]string, error) {
 	list, isList := keys.([]any)
-	fail := apperr.New("Select 1 to 20 unique IEDs")
-	if !isList || len(list) < 1 || len(list) > 20 {
+	fail := apperr.New(msgBulkSelection)
+	if !isList || len(list) < 1 || len(list) > MaxIEDs {
 		return nil, fail
 	}
 	sorted := make([]string, 0, len(list))

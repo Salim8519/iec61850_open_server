@@ -4,7 +4,7 @@ import hashlib
 from studio_app.contracts.errors import StudioError
 
 
-@functools.lru_cache(maxsize=20)  # a project holds at most 20 SCL files; polls hashed them every time
+@functools.lru_cache(maxsize=1024)  # a project holds at most 500 SCL files (MAX_IEDS); polls hashed them every time
 def source_id(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 

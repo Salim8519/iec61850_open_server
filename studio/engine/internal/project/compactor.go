@@ -38,7 +38,7 @@ type digestEntry struct {
 	digest string
 }
 
-const maxDigests = 64
+const maxDigests = 2 * MaxIEDs
 
 // NewCompactor returns an empty Compactor.
 func NewCompactor() *Compactor { return &Compactor{digests: map[stringKey]digestEntry{}} }

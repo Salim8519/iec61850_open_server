@@ -1,6 +1,7 @@
 """Compact engineering archives: original XML once, derived runtime models rebuilt."""
 import hashlib
 from studio_app.contracts.errors import StudioError
+from studio_app.contracts.limits import MAX_IEDS
 
 IED_FIELDS = ("id", "name", "filename", "ip", "port", "role", "live", "lab_ip", "goose_publish", "test_mode")
 CURRENT_FORMAT = 15  # 14: SCADA roles and master (ADR-0061); 15: standard commands only (ADR-0069)
@@ -26,7 +27,7 @@ def expand(document):
         raise StudioError("Unsupported project format")
     sources = document.get("scl_sources")
     ieds = document.get("ieds")
-    if not isinstance(sources, dict) or len(sources) > 20 or not isinstance(ieds, list) or len(ieds) > 20:
+    if not isinstance(sources, dict) or len(sources) > MAX_IEDS or not isinstance(ieds, list) or len(ieds) > MAX_IEDS:
         raise StudioError("Invalid compact project source table")
     for digest, source in sources.items():
         if not isinstance(source, str) or hashlib.sha256(source.encode("utf-8")).hexdigest() != digest:

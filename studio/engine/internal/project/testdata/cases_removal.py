@@ -2,6 +2,7 @@
 import copy
 import hashlib
 
+from studio_app.contracts.limits import MAX_IEDS
 from studio_app.projects import bulk_removal
 from vectors_common import Stub, roundtrip
 
@@ -62,7 +63,7 @@ def cases(fixtures):
     add("without no panel", "without_ieds", project=no_panel, ids=[C])
     for key in (A, B, C, "zz"):
         add(f"removal preview {key}", "removal_preview", project=project(), key=key)
-    for keys in ([A], [C, A], [A, B, C], [], [A, A], [A, 5], "x", None, [A] * 21, ["zz"], [B, "zz"],
+    for keys in ([A], [C, A], [A, B, C], [], [A, A], [A, 5], "x", None, [A] * (MAX_IEDS + 1), ["zz"], [B, "zz"],
                  [str(i) for i in range(20)]):
         add(f"bulk preview {keys}", "bulk_preview", project=project(), keys=keys)
     for keys, good in (([A], True), ([A], False), ([C, A], True), ([], True)):
@@ -79,8 +80,8 @@ def cases(fixtures):
                  {**compacted, "format": 16}, {**compacted, "format": "15"}, {**compacted, "format": [15]},
                  {**compacted, "format": None}, {k: v for k, v in compacted.items() if k != "format"},
                  {**compacted, "scl_sources": []}, {**compacted, "ieds": {}},
-                 {**compacted, "scl_sources": {str(i): "x" for i in range(21)}},
-                 {**compacted, "ieds": [{"source_id": sha("<SCL/>")}] * 21},
+                 {**compacted, "scl_sources": {str(i): "x" for i in range(MAX_IEDS + 1)}},
+                 {**compacted, "ieds": [{"source_id": sha("<SCL/>")}] * (MAX_IEDS + 1)},
                  {**compacted, "scl_sources": {sha("<SCL/>"): "<SCL />"}},
                  {**compacted, "scl_sources": {sha("<SCL/>"): 5}},
                  {**compacted, "ieds": [5]}, {**compacted, "ieds": [{"source_id": 5}]},

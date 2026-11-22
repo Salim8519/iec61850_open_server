@@ -1,6 +1,7 @@
 """ProjectService.restore vectors: "@source:NAME" placeholders stand for the fixture SCL."""
 import hashlib
 
+from studio_app.contracts.limits import MAX_IEDS
 from vectors_common import FIXTURE_IDS, fixture_sources
 
 GUID = "{0123ABCD-0123-4567-89AB-0123456789AB}"
@@ -72,7 +73,7 @@ def cases(fixtures):
     add("long name", compact_doc(15, two, name="é" * 120))
     add("name number", compact_doc(15, two, name=12.5))
     add("ieds not list", {"format": 1, "ieds": {}})
-    add("too many ieds", legacy_doc([item("BayController")] * 21))
+    add("too many ieds", legacy_doc([item("BayController")] * (MAX_IEDS + 1)))
     add("ied not dict", {"format": 1, "ieds": [5]})
     add("ied bad id", legacy_doc([item("BayController", id="xyz")]))
     add("ied int id", legacy_doc([item("BayController", id=5)]))

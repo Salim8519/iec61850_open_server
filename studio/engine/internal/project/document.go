@@ -102,7 +102,7 @@ func Expand(document *pyjson.Object) (*pyjson.Object, error) {
 	}
 	sources, isDict := pyval.Lookup(document, "scl_sources", nil).(*pyjson.Object)
 	ieds, isList := pyval.Lookup(document, "ieds", nil).([]any)
-	if !isDict || sources.Len() > 20 || !isList || len(ieds) > 20 {
+	if !isDict || sources.Len() > MaxIEDs || !isList || len(ieds) > MaxIEDs {
 		return nil, apperr.New("Invalid compact project source table")
 	}
 	for _, digest := range sources.Keys() {

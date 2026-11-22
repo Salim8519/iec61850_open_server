@@ -17,6 +17,7 @@ import { ConnectionNotice, useConnection } from './EngineStatus';
 import { TopBar, type FileActions } from './TopBar';
 import { useUndoKeys } from './useUndoKeys';
 import { useSaveKey } from './useSaveKey';
+import { useWindowTitle } from './useWindowTitle';
 import { useAutoSaveSwitch } from '../state/useAutoSaveSwitch';
 import { CommandContext } from '../state/runCommand';
 import { ProjectFileDialog, type ProjectFileMode } from '../features/project/ProjectFileDialog';
@@ -61,6 +62,7 @@ export function App() {
   useUndoKeys(studio.history, studio.busy);
   const autoSave = useAutoSaveSwitch(project, studio.perform);
   useSaveKey(studio.save, studio.busy || !project || locked);
+  useWindowTitle(project?.name);
   const file: FileActions = useMemo(() => ({ open: openFile, save: studio.save, saveAs: studio.saveAs,
     newProject: () => setFileDialog('new'), close: () => setFileDialog('close') }), [openFile, studio.save, studio.saveAs]);
   const openDevices = useCallback((iedId?: string) => { setFlowIed(iedId); setCurrent('devices'); }, []);

@@ -19,7 +19,7 @@ type StoredGroup struct {
 }
 
 // StoredIEDs returns the archive format version and raw["ieds"] after restore()'s first
-// check (a list of at most 20 IEDs).
+// check (a list of at most MaxIEDs IEDs).
 func StoredIEDs(raw *pyjson.Object) (int64, []any, error) {
 	format, err := pyval.Int(pyval.Lookup(raw, "format", int64(1)))
 	if err != nil {
@@ -27,8 +27,8 @@ func StoredIEDs(raw *pyjson.Object) (int64, []any, error) {
 	}
 	version, _ := pyval.BigInt(format)
 	list, isList := pyval.Lookup(raw, "ieds", nil).([]any)
-	if !isList || len(list) > 20 {
-		return 0, nil, apperr.New("Project must contain a list of at most 20 IEDs")
+	if !isList || len(list) > MaxIEDs {
+		return 0, nil, apperr.New(msgStoredList)
 	}
 	return version.Int64(), list, nil
 }

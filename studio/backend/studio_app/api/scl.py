@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request, send_file
 from .context import projects, require_stopped
 from studio_app.scl.document import preview_ieds
 from studio_app.contracts.errors import StudioError
+from studio_app.contracts.limits import MAX_IEDS
 from studio_app.scl.schema_validation import validate_schema
 from studio_app.scl.exporter import export_ied
 
@@ -25,7 +26,7 @@ def preview_file():
     for model in models:
         if model["name"] in existing:
             model["unavailable_reason"] = "Already in this project"
-    return jsonify(ieds=models, available_slots=max(0, 20 - len(existing)))
+    return jsonify(ieds=models, available_slots=max(0, MAX_IEDS - len(existing)))
 
 
 @blueprint.post("/scl/import")
@@ -35,8 +36,8 @@ def import_file():
     if "selected_names" not in request.form:
         raise StudioError("Preview the file and choose which IEDs to import first")
     selected = json.loads(request.form["selected_names"])
-    if not isinstance(selected, list) or not 1 <= len(selected) <= 20:
-        raise StudioError("Select between 1 and 20 IEDs")
+    if not isinstance(selected, list) or not 1 <= len(selected) <= MAX_IEDS:
+        raise StudioError(f"Select between 1 and {MAX_IEDS} IEDs")
     models = projects().add_scl(upload.read(), upload.filename or "import.scd", selected)
     return jsonify(ieds=[model["id"] for model in models])
 

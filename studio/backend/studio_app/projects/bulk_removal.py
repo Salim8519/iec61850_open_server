@@ -3,15 +3,16 @@ import hashlib
 import json
 from uuid import uuid4
 from studio_app.contracts.errors import StudioError
+from studio_app.contracts.limits import MAX_IEDS
 from .document import compact
 from .project_files import EXTENSION
 from .removal import impacts, without_ieds
 
 
 def preview(service, keys):
-    if (not isinstance(keys, list) or not 1 <= len(keys) <= 20
+    if (not isinstance(keys, list) or not 1 <= len(keys) <= MAX_IEDS
             or any(not isinstance(key, str) for key in keys) or len(set(keys)) != len(keys)):
-        raise StudioError("Select 1 to 20 unique IEDs")
+        raise StudioError(f"Select 1 to {MAX_IEDS} unique IEDs")
     with service.lock:
         selected = [{"id": key, "name": service.find_ied(key)["name"]} for key in sorted(keys)]
         document = json.dumps({"project": compact(service.project), "ids": sorted(keys)}, sort_keys=True)
