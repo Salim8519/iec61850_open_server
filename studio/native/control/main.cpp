@@ -16,7 +16,7 @@ int main() {
     TypedSession typed;  // Select / Operate / Cancel steps of the Go engine (ADR-0104)
     const std::map<std::string, std::function<Json(const Json&)>> operations = {
         {"hello", [](const Json&) {
-             return Json{{"capabilities", {"control_operate", "control_models_all", "control_mux_v1", "typed_commands"}}};
+             return Json{{"capabilities", {"control_operate", "control_models_all", "control_mux_v1", "typed_commands", "typed_local"}}};
          }},
         {"operate", [&](const Json& request) { license::require_valid_license(); return session.operate(request); }},
         {"typed_select", [&](const Json& request) { license::require_valid_license(); return typed.select(request); }},

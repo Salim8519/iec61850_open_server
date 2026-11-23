@@ -7,7 +7,9 @@ to real IEDs are allowed from Tools only (IED Explorer after a confirmation, and
 while "Allow SCADA commands to real IEDs" is on), through the separate `studio_control`.
 Owner decision 2026-11-11 (ADR-0138): a monitored real IED is read only until its own
 "Allow commands" switch in Devices is on; the gateway needs both switches. On connect the
-device's own control settings are compared with the CID.
+device's own control settings are compared with the CID. Owner decision 2026-11-23 (ADR-0147):
+Devices sends every command class of the CID, one click or Select/Operate/Cancel step by step,
+from the Commands pop-up or a Data points row, and explains refusals in words.
 
 ## Purpose
 
@@ -60,6 +62,7 @@ real IED's datasets or report blocks.
 | LIVE-13 | Every command read from SCL (public fixtures and the local vendor corpus) has a control model 1 to 4, a feedback point of the same object and a whole-ms select time; ctlModel on the instance wins, as a name or a number. | `studio/engine/internal/scl/controls_vendor_test.go::TestEveryVendorControlIsUsable`, `studio/engine/internal/scl/controls_vendor_test.go::TestControlModelOnTheInstanceWins` |
 | LIVE-14 | Devices sends a command to a real IED only while its Allow commands is on and its session is live, only after the confirmation, with the device's own control model; refusals are in words and request, applied and observed stay apart. | `studio/engine/internal/realcmd/service_test.go::TestRefusalsAreInWords`, `studio/engine/internal/realcmd/service_test.go::TestCommandIsSentAndObserved`, `studio/tests/frontend/iedRoles.test.ts::Send buttons appear only while Allow commands is on and the device is live` |
 | LIVE-15 | Stop or Disconnect while the live client still waits for a device that does not answer (connect, data model) ends the client at once, since no report block is reserved yet; once one may be reserved, "disconnect" gives every block back as before; Stop closes the sessions and the simulated IEDs together (change 0223). | `studio/engine/internal/acquisition/session_close_test.go::TestStopWhileConnectingKillsTheClient`, `studio/engine/internal/acquisition/session_close_test.go::TestStopAfterReservingStillDisconnects`, `studio/tools/trials/real_stop_ab.py` |
+| LIVE-16 | Devices sends every CID command class (SPC, DPC, INC, ENC, APC, BAC, BSC, ISC) in every control model as one click or Select, Operate and Cancel steps; step by step, Operate needs its Select; the chosen card is used; a device refusal says what it means (interlocking, Local, Test mode, Off) before the device's own answer. | `studio/engine/internal/realcmd/wire_test.go::TestDevicesCommandsEveryClassOneClick`, `studio/engine/internal/realcmd/wire_test.go::TestDevicesCommandsStepByStepThroughACard`, `studio/engine/internal/realcmd/wire_test.go::TestDevicesInterlockRefusalInWords`, `studio/engine/internal/realcmd/steps_test.go::TestRefusalsAreExplained`, `studio/engine/internal/realcmd/steps_test.go::TestStepRefusals`, `studio/tests/frontend/commandSearch.test.ts::only the ctlVal row of Oper belongs to a command` |
 
 Protocol evidence uses a separate `studio_ied.exe` as a stand-in device on this PC.
 Interoperability with third-party IEDs remains an open release gate.

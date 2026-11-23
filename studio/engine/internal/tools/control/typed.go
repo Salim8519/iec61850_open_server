@@ -12,7 +12,8 @@ type TypedOperator interface {
 
 // Typed sends one typed step (typed_select, typed_operate or typed_cancel) through the warm
 // studio_control worker, one command at a time like Operate. A worker without the
-// typed_commands capability is outdated.
+// typed_commands capability is outdated, and so is one without typed_local for a request
+// that names a local card.
 func (c *Client) Typed(op string, fields *pyjson.Object) (*pyjson.Object, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -25,6 +26,11 @@ func (c *Client) Typed(op string, fields *pyjson.Object) (*pyjson.Object, error)
 		return nil, err
 	}
 	if !hasCapability(hello, "typed_commands") {
+		return nil, apperr.RuntimeError("The control program is outdated; rebuild the native programs")
+	}
+	// A relay reached through a chosen card (change 0233) needs a worker that binds it; an older
+	// one would silently send from another card.
+	if local, _ := fields.Get("local"); local != nil && local != "" && !hasCapability(hello, "typed_local") {
 		return nil, apperr.RuntimeError("The control program is outdated; rebuild the native programs")
 	}
 	answer, err := c.request(process, op, fields)

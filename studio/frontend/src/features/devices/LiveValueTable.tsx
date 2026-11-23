@@ -1,5 +1,5 @@
 import { RefreshCw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { api } from '../../api/client';
 import type { Control, Signal } from '../../api/types';
 import { kindOfSignal } from '../../components/signalKind';
@@ -21,7 +21,9 @@ import { useSignalValue } from '../../state/useLive';
 type Read = { values: Record<string, { value: unknown; live_state?: string }>; errors: Record<string, string> };
 
 /** One reference; it reads its own live value, so only changed rows repaint (speed lane F). */
-function LiveRow({ signal, kind, iedId, read }: { signal: Signal; kind: Kind; iedId: string; read: Read | null }) {
+function LiveRow({ signal, kind, iedId, read, command }: {
+  signal: Signal; kind: Kind; iedId: string; read: Read | null; command: ReactNode;
+}) {
   const reported = useSignalValue(`${iedId}:${signal.ref}`);
   const quality = useSignalValue(signal.quality_ref ? `${iedId}:${signal.quality_ref}` : null);
   const value = read?.values[signal.ref]?.value ?? reported;
@@ -30,12 +32,16 @@ function LiveRow({ signal, kind, iedId, read }: { signal: Signal; kind: Kind; ie
     <td className="reference-cell point-cell" title={signal.ref}><code>{signal.ref}</code></td>
     <td>{read?.errors[signal.ref] ? <span style={{ color: 'var(--error)' }}>{read.errors[signal.ref]}</span>
       : value === undefined ? <span className="muted">Not read yet</span> : <code>{String(value)}</code>}
-      {stale && <StatusPill status={UI_STATUS.stale} />}</td>
+      {stale && <StatusPill status={UI_STATUS.stale} />}
+      {command && <div className="live-command-cell">{command}</div>}</td>
     <td className="muted">{quality === undefined ? '—' : Number(quality) === 0 ? 'Good' : `Flags ${quality}`}</td></tr>;
 }
 
-/** The Data points tab of a real IED: the first 50 matching references, read on request. */
-export function LiveValueTable({ iedId, live, controls }: { iedId: string; live: boolean; controls?: Control[] }) {
+/** The Data points tab of a real IED: the first 50 matching references, read on request. A command's
+ *  `.Oper.ctlVal` row can send it in place (`commandFor`, ADR-0147). */
+export function LiveValueTable({ iedId, live, controls, commandFor }: {
+  iedId: string; live: boolean; controls?: Control[]; commandFor?: (signalRef: string) => ReactNode;
+}) {
   const filter = useListFilter('live-points', LIVE_FILTER);
   const [signals, setSignals] = useState<Signal[]>([]);
   const [total, setTotal] = useState(0);
@@ -74,7 +80,7 @@ export function LiveValueTable({ iedId, live, controls }: { iedId: string; live:
     {error && <p role="alert" className="panel-note side-error">{error}</p>}
     <div className="table-scroll"><table className="compact-rows"><thead><tr><th title="Hover a badge for its full name and the exact data type">Type</th><th>Reference</th><th>Value</th><th><InfoTip term="quality" label="Quality" /></th></tr></thead>
       <tbody>{signals.map(signal => <LiveRow key={signal.ref} signal={signal} kind={kindOfSignal(signal, classOf, controls)}
-        iedId={iedId} read={read} />)}</tbody></table>{!signals.length && (loading ? <div className="empty"><Spinner label="Loading data points…" /></div>
+        iedId={iedId} read={read} command={commandFor?.(signal.ref)} />)}</tbody></table>{!signals.length && (loading ? <div className="empty"><Spinner label="Loading data points…" /></div>
         : <div className="empty">No data points match your search.</div>)}</div>
   </>;
 }

@@ -13,6 +13,7 @@ import (
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/realcmd"
 	"studio-engine/internal/runtime/ports"
+	"studio-engine/internal/runtime/pyval"
 	"studio-engine/internal/scl"
 	"studio-engine/internal/tools/control"
 )
@@ -40,6 +41,13 @@ func (e *Engine) wireLive(live *liveAdapter) []api.Route {
 		e.Control = control.NewClient(o.native("studio_control.exe"), nil)
 	}
 	commands := &realcmd.Service{FindIED: e.Projects.FindIED, Control: e.Control, Emit: e.Runtime.Emit,
+		Extended: func(ied *pyjson.Object) []any {
+			list, err := scl.CachedExtendedControls(pyval.Str(ied, "id"), pyval.Str(ied, "name"), pyval.Str(ied, "source"))
+			if err != nil {
+				return nil
+			}
+			return list
+		},
 		Sessions: func(id string) (realcmd.Session, error) {
 			session, err := e.Live.Session(id)
 			if err != nil || session == nil {

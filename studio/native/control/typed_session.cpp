@@ -42,8 +42,12 @@ void configure(ControlObjectClient control, const Json& request) {
     ControlObjectClient_setTestMode(control, request.value("test", false));
 }
 
+// One association per (local card, device), like ControlSession (change 0233): a relay reached
+// through a chosen card never reuses an association opened from another card.
 std::string endpoint_of(const Json& request) {
-    return request.at("ip").get<std::string>() + ":" + std::to_string(request.value("port", 102));
+    auto local = request.value("local", std::string());
+    return (local.empty() ? "" : local + ">") + request.at("ip").get<std::string>() + ":" +
+           std::to_string(request.value("port", 102));
 }
 
 using Value = std::unique_ptr<MmsValue, decltype(&MmsValue_delete)>;
@@ -51,8 +55,8 @@ using Value = std::unique_ptr<MmsValue, decltype(&MmsValue_delete)>;
 
 TypedSession::~TypedSession() { close_all(); }
 
-IedConnection TypedSession::connection(const std::string& ip, int port) {
-    auto key = ip + ":" + std::to_string(port);
+IedConnection TypedSession::connection(const std::string& ip, int port, const std::string& local) {
+    auto key = (local.empty() ? "" : local + ">") + ip + ":" + std::to_string(port);
     auto found = connections.find(key);
     if (found != connections.end()) {
         if (IedConnection_getState(found->second) == IED_STATE_CONNECTED) return found->second;
@@ -61,11 +65,12 @@ IedConnection TypedSession::connection(const std::string& ip, int port) {
     auto created = IedConnection_create();
     IedConnection_setConnectTimeout(created, 5000);
     IedConnection_setRequestTimeout(created, 10000);
+    if (!local.empty()) IedConnection_setLocalAddress(created, local.c_str(), 0);
     IedClientError error = IED_ERROR_OK;
     IedConnection_connect(created, &error, ip.c_str(), port);
     if (error != IED_ERROR_OK) {
         IedConnection_destroy(created);
-        throw std::runtime_error("Could not connect to " + key + " (MMS error " + std::to_string(int(error)) + ")");
+        throw std::runtime_error("Could not connect to " + ip + ":" + std::to_string(port) + " (MMS error " + std::to_string(int(error)) + ")");
     }
     connections[key] = created;
     return created;
@@ -123,7 +128,7 @@ Json TypedSession::select(const Json& request) {
     auto endpoint = endpoint_of(request);
     auto key = endpoint + "|" + request.at("ref").get<std::string>();
     forget(key);  // a new Select replaces the previous one of this object
-    auto handle = connection(request.at("ip").get<std::string>(), request.value("port", 102));
+    auto handle = connection(request.at("ip").get<std::string>(), request.value("port", 102), request.value("local", std::string()));
     auto control = open(request, handle, endpoint);
     std::unique_ptr<sControlObjectClient, decltype(&ControlObjectClient_destroy)> owner(control->handle, ControlObjectClient_destroy);
     auto result = answer(request.at("ref").get<std::string>(), control->model);
@@ -159,7 +164,7 @@ Json TypedSession::operate(const Json& request) {
     auto endpoint = endpoint_of(request);
     auto reference = request.at("ref").get<std::string>();
     auto key = endpoint + "|" + reference;
-    auto handle = connection(request.at("ip").get<std::string>(), request.value("port", 102));
+    auto handle = connection(request.at("ip").get<std::string>(), request.value("port", 102), request.value("local", std::string()));
     std::unique_ptr<Control> control;
     auto found = selections.find(key);
     bool expired = false;

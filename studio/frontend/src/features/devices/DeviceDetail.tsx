@@ -16,7 +16,7 @@ import { DeviceFiles } from './DeviceFiles';
 import { DeviceOverview } from './DeviceOverview';
 import { DeviceSignals } from './DeviceSignals';
 import { LiveValueTable } from './LiveValueTable';
-import { RealCommands } from './RealCommands';
+import { RealCommands, useRowCommands } from './RealCommands';
 import { SignalFlowView } from './SignalFlowView';
 import type { ModeSummary } from './useModes';
 import { RoleLine } from './RoleLine';
@@ -67,8 +67,7 @@ export function DeviceDetail({ ied, project, locked, busy = false, perform, prep
         <DeviceOverview ied={ied} project={project} locked={locked} session={session} perform={perform} mode={mode}
           selectDevice={selectDevice} /></div>}
       {tab === 'signals' && (ied.role === 'real'
-        ? <><RealCommands ied={ied} connected={session?.state === 'live'} />
-          <LiveValueTable iedId={ied.id} live={session?.state === 'live'} controls={ied.controls} /></>
+        ? <RealDataPoints ied={ied} connected={session?.state === 'live'} testMode={!!mode?.worst?.startsWith('test')} />
         : <DeviceSignals ied={ied} project={project} perform={perform} prepare={prepare} />)}
       {tab === 'compare' && <ComparisonView iedId={ied.id} ready={session?.state === 'live'} />}
       {tab === 'flow' && <div className="fill-scroll"><SignalFlowView iedName={ied.name} running={running} /></div>}
@@ -76,4 +75,11 @@ export function DeviceDetail({ ied, project, locked, busy = false, perform, prep
     </div>
   </div>
   </FullView>;
+}
+
+/** Data points of a real IED: the Commands line, then the values, whose command rows can send (ADR-0147). */
+function RealDataPoints({ ied, connected, testMode }: { ied: Ied; connected: boolean; testMode: boolean }) {
+  const commandFor = useRowCommands(ied, connected, testMode);
+  return <><RealCommands ied={ied} connected={connected} testMode={testMode} />
+    <LiveValueTable iedId={ied.id} live={connected} controls={ied.controls} commandFor={commandFor} /></>;
 }

@@ -166,3 +166,16 @@ func ModelName(model int64) string {
 	}
 	return "status-only"
 }
+
+// OperateWindow is how long the browser offers Operate after a Select: the selection's own time
+// minus a safety margin for the round trip (3 s of a long timeout, a tenth of a short one), so
+// the IED never sees an Operate after its own timer ran out. 30 s gives 27 s.
+func OperateWindow(expiresMs int) int {
+	if expiresMs <= 0 {
+		return 0
+	}
+	if expiresMs > 6000 {
+		return expiresMs - 3000
+	}
+	return expiresMs * 9 / 10
+}

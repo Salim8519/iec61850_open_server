@@ -65,7 +65,7 @@ test('B2: a saved tap control is always an option, never "Not mapped"', () => {
 });
 
 test('B4 and B3: Enter in a number box keeps the question open; the list starts on no value', () => {
-  const source = read('features/diagram/points/PointCommand.tsx');
+  const source = read('features/diagram/points/CommandInputs.tsx');
   assert.match(source, /event\.key === 'Enter'\) \{ event\.preventDefault\(\); apply\(\); \}/);
   assert.match(source, /useState\(''\);\r?\n  if \(!labels\.length\)/,'the first label ("off") is not preselected');
   assert.match(source, /<option value="" disabled>\{LIST_PLACEHOLDER\}<\/option>/);

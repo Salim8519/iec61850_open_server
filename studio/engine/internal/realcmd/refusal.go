@@ -40,6 +40,38 @@ func Refusal(request Request) string {
 	return ""
 }
 
+// StepRequest is one step Devices asks for (ADR-0147); Known says the CID has the command.
+type StepRequest struct {
+	IED   *pyjson.Object
+	Step  Step
+	Known bool
+	State string // the live session state, "" without a session
+}
+
+// StepRefusal is why this step is not sent, in words, or "" when it may be sent. Pure. Cancel
+// needs no confirmation: it only gives a selection back.
+func StepRefusal(request StepRequest) string {
+	name := text(request.IED, "name")
+	step := request.Step
+	switch {
+	case stepOps[step.Action] == "":
+		return "A command step is select, operate or cancel"
+	case !step.Confirmed && step.Action != "cancel":
+		return "Confirm the command first"
+	case text(request.IED, "role") != "real":
+		return name + " is not set to Monitor real device, so nothing was sent from here"
+	case !netset.AllowsCommands(request.IED):
+		return name + " has Allow commands off; turn it on in Devices first"
+	case !request.Known:
+		return name + " has no command " + step.Ref + " in its CID"
+	case step.Action == "operate" && step.Value == nil:
+		return "Choose the value to send first"
+	case request.State != "live":
+		return name + " is not connected; press Run and wait until it shows Live"
+	}
+	return ""
+}
+
 // controlOf is the SPC/DPC control with this reference, or nil.
 func controlOf(ied *pyjson.Object, ref string) *pyjson.Object {
 	list, _ := get(ied, "controls").([]any)

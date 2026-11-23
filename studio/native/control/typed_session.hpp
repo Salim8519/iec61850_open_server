@@ -40,8 +40,8 @@ public:
     };
 private:
     std::map<std::string, IedConnection> connections;
-    std::map<std::string, std::unique_ptr<Control>> selections;  // "ip:port|ref"
-    IedConnection connection(const std::string& ip, int port);
+    std::map<std::string, std::unique_ptr<Control>> selections;  // "[local>]ip:port|ref"
+    IedConnection connection(const std::string& ip, int port, const std::string& local);
     void drop(const std::string& endpoint);
     std::unique_ptr<Control> open(const Json& request, IedConnection handle, const std::string& endpoint);
     void forget(const std::string& key);

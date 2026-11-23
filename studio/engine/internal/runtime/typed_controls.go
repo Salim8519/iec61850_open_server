@@ -6,6 +6,7 @@ import (
 	"studio-engine/internal/pyjson"
 	"studio-engine/internal/runtime/pyval"
 	"studio-engine/internal/scl"
+	"studio-engine/internal/typedcmd"
 )
 
 // Control entries of an IED (ADR-0108). `controls` of the IED payload holds the SPC and DPC
@@ -66,15 +67,5 @@ func controlModelName(control *pyjson.Object) string {
 // isSboModel says whether a command to this model needs Select before Operate.
 func isSboModel(model string) bool { return strings.HasPrefix(model, "sbo-") }
 
-// operateWindow is how long the browser offers Operate after a Select: the selection's own time
-// minus a safety margin for the round trip (3 s of a long timeout, a tenth of a short one), so
-// the IED never sees an Operate after its own timer ran out. 30 s gives 27 s.
-func operateWindow(expiresMs int) int {
-	if expiresMs <= 0 {
-		return 0
-	}
-	if expiresMs > 6000 {
-		return expiresMs - 3000
-	}
-	return expiresMs * 9 / 10
-}
+// operateWindow is typedcmd.OperateWindow: how long the browser offers Operate after a Select.
+func operateWindow(expiresMs int) int { return typedcmd.OperateWindow(expiresMs) }

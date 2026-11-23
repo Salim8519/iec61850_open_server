@@ -1,0 +1,131 @@
+---
+// Releases 0.1.0 to 0.1.20 of the changelog page, kept apart so the page stays under the file limit.
+---
+<h2>0.1.20 · Activate once, works forever; virtual machines on your PC</h2>
+<ul>
+  <li>Activate your license once and it works for life on that computer, with or without internet. Reinstalling Windows on the same computer is fine.</li>
+  <li>Virtual machines on your licensed PC can use its license, even offline: turn on "Let my virtual machines use this license" in Settings &gt; License.</li>
+  <li>Stronger protection: each license works on one computer only, a cancelled license stays cancelled, and the app only trusts answers signed by the ScadaBench license server.</li>
+  <li>Project files are now .scadabench files.</li>
+</ul>
+<h2>0.1.19 · Point types everywhere, full view, clearer controls</h2>
+<ul>
+  <li>Every point now shows its type the same way on every page and tool: a small badge (SP single point, DP double point, MV measured value, CT counter, commands, settings and more) and a coloured edge on its row. The colours mean the same thing in Devices, Test, the SCADA gateway, master and converter, SNMP devices and IED Explorer.</li>
+  <li>Every point list can be filtered by type, with the number of points of each type. Device data points can also hide the quality and time helpers.</li>
+  <li>Values you can change show a small pencil and a dashed line. Click, type, press Enter.</li>
+  <li>One line per point, so you see about twice as many points at once. New Full view button on the big lists: only the list fills the window, Esc goes back.</li>
+  <li>Buttons, boxes, lists and frames have clearer outlines, so it is easy to tell what you can click, type in or only read.</li>
+  <li>Your own names for SNMP values and gateway points; change the IED or path of a gateway point in place. IED Explorer shows the node and the watch list as tabs.</li>
+  <li>Network setup is much faster and shows each step while it works; the address from the SCL file is always shown.</li>
+</ul>
+<h2>0.1.18 · SNMP devices on your network, delete many points at once</h2>
+<ul>
+  <li>SNMP devices now go on the network together with your IEDs. In Settings › Network, pick the network card once: each simulated switch or GPS clock gets its own address on that card, so a SCADA or network monitor on another PC can read it.</li>
+  <li>ScadaBench checks that nobody else uses an address before giving it to a device, keeps the address the device had last time when it is still free, and lets you type your own. Windows asks once; Clean up removes everything again.</li>
+  <li>Select several points and delete them together, in the SNMP values and in the gateway point list. Use the search and filters, press "All shown", then Delete. In the gateway, Discard changes still brings them back.</li>
+  <li>Menus such as Add device are never cut off any more, even in narrow panels or with a zoomed window.</li>
+</ul>
+<h2>0.1.17 · SNMP devices: simulate switches and GPS clocks, read any SNMP device</h2>
+<ul>
+  <li>New tool in Tools: SNMP devices. Simulate devices plays a managed network switch (8 ports) or a GPS time server, so your SCADA or network monitor can read them and receive their traps. You can also start from an empty device or from a file (snmpwalk output or CSV).</li>
+  <li>SNMP v1, v2c and v3 are all supported, including v3 users with a password and encryption (MD5, SHA-1, SHA-2; DES and AES-128/192/256).</li>
+  <li>Each simulated device has its own address and port. Change any value by hand, even while it runs, and press an event such as "Port 3 link down" or "GPS sync lost" to send the trap your monitor expects.</li>
+  <li>Read devices connects to any real or simulated SNMP device, reads all its values, shows them with their names and meanings (for example IF-MIB::ifOperStatus.3 = 2 · down) and re-reads them every second. You can write a value, save what you read as a new simulated device, and receive traps.</li>
+  <li>30 standard MIBs are built in. Add your own vendor MIB files to see their names, and remove any you do not need.</li>
+</ul>
+<h2>0.1.16 · Your own gateway points, measurement lists, clearer IED roles</h2>
+<ul>
+  <li>Gateway: besides "Propose from IEDs", press Add point to make up your own points. Set their value yourself (ON/OFF, breaker position or a number), even while the gateway runs; SCADA sees the change at once. A command point can drive one of your own breakers, so SCADA sees the result.</li>
+  <li>SLD: a new Measurement list (Add › Measuring) shows many measurements in one box. Each row has its own scale, offset, unit and decimals, for example raw 11000 × 0.001 = 11.00 kV. Tick several rows to change their scaling together.</li>
+  <li>Clearer IED roles: Simulate (ScadaBench plays this IED), Monitor real device (ScadaBench reads the real IED and shows its live values) and Skip (kept in the project, not started at Run), with one sentence under each. A monitored device now shows its real address.</li>
+  <li>Network setup: choose "This PC only (loopback)" to keep the IEDs talking to each other on this PC, with no change in Windows.</li>
+</ul>
+<h2>0.1.15 · New faster engine: starts quicker, runs lighter, smaller download</h2>
+<ul>
+  <li>ScadaBench runs on a new engine that is ready in about half a second. Starting 20 IEDs takes 0.6 s instead of 1.7 s, and a breaker command reaches the IED about three times faster.</li>
+  <li>Much lighter on your PC: with 20 IEDs running, ScadaBench itself uses about 20 times less processor time than before.</li>
+  <li>Live values reach the screen the moment they change, instead of being asked for again and again.</li>
+  <li>Stop and closing the window take a fraction of a second, and every IED stops with them.</li>
+  <li>The installer is about half the size, and nothing else needs to be installed: double-click and ScadaBench runs (GOOSE and Sampled Values still need the free Npcap driver, as before).</li>
+  <li>Same projects, same license, same results: install over your current version, nothing to convert.</li>
+</ul>
+<h2>0.1.14 · Clear run state, easier IED delete, pickers that keep your place, update check</h2>
+<ul>
+  <li>You can now see at a glance whether nothing, some or all IEDs run: ○ stopped, ◐ some IEDs (amber), ● all IEDs (green). Running one IED no longer makes the whole diagram look live.</li>
+  <li>Devices says which IEDs are live and lists them first, with one button to run the others. On the SLD, equipment of a stopped IED is grey and says "IED stopped"; Run all starts the rest.</li>
+  <li>Delete an IED from its page header, or press Select to delete several IEDs at once. One review shows what changes, and a backup of the project is saved first.</li>
+  <li>Choosing an IED point on the SLD no longer starts over: the picker keeps your IED, search and page, marks the chosen point, and lets you pick another or undo with one click.</li>
+  <li>GOOSE on the SLD is now a small "G" inside the equipment's corner, so it never covers the next bay.</li>
+  <li>Waiting shows a spinner with words everywhere it takes a moment (start, Run, opening files, network cards, data points, comparisons), and lists no longer say "no match" before they have loaded.</li>
+  <li>ScadaBench checks once a day whether a newer version exists and shows one quiet line above Settings; nothing about your PC is sent, and you can switch it off in Settings › About.</li>
+</ul>
+<h2>0.1.13 · Operate from the SLD, one-page network setup, standard commands, clearer GOOSE</h2>
+<ul>
+  <li>Click a breaker or switch on the SLD while the IEDs run: Operate sends a real IEC 61850 command, exactly like SCADA. Test buttons move a simulated breaker by itself (open, closed, moving, bad state) without sending any command.</li>
+  <li>Run or connect a single IED straight from Devices, without starting the whole station.</li>
+  <li>Clearer roles for every IED: Be this IED, Read real IED or Leave out. The top bar shows who can reach your IEDs.</li>
+  <li>Putting your IEDs on a network is now one page: pick the network card, see each address checked, and review every Windows change before it happens.</li>
+  <li>Commands use the standard IEC 61850 sequence for every client (select before operate when the device asks for it). The vendor-specific command profile was removed; projects that used it are updated automatically, with a notice. Operate and gateway commands now also reach IEDs on the lab network.</li>
+  <li>GOOSE: repeated messages now stay within the allowed time. A message from a sender outside your project shows as a short line into its receiver with the sender and the change, and those partners now read "Receiving".</li>
+  <li>IED Explorer no longer stays stuck on "Already connected" after a failed or repeated connect.</li>
+  <li>Long equipment names wrap instead of being cut off, and nine new tutorial videos show the current app.</li>
+</ul>
+<h2>0.1.10 · GOOSE and IEC 61850 clients on the SLD, pages without scrolling, filters</h2>
+<ul>
+  <li>Two new switches on the SLD: "GOOSE messages" and "Who is reading". Both are off by default and remembered. When on, small IED tags appear beside the equipment each IED controls.</li>
+  <li>GOOSE on the SLD: one quiet dot travels from the sender to each receiver only when a value really changes (not on repeats). Problems such as a lost GOOSE stay written on the receiver's tag until fixed. Senders that are not in your project appear at the edge of the drawing.</li>
+  <li>Simulated IEDs now use the GOOSE they receive: a received value updates the receiving IED's own input, tested between two simulated IEDs over the network. GOOSE with a wrong configuration revision is refused and reported.</li>
+  <li>"Who is reading" shows which IEC 61850 clients are connected to each IED, by IP address: what they read, which reports they turned on, and commands they sent.</li>
+  <li>Devices shows which IEDs send or receive GOOSE, and a GOOSE partners table with the live state of each link. Disabled GOOSE blocks in vendor files are shown as "not sent", and shared or zero APPID/MAC addresses are reported as hints.</li>
+  <li>Tools and Devices now fit the window: settings sit in a side column and the list fills the rest, so you no longer scroll to reach it. Find IEDs shows results right under the search.</li>
+  <li>Every list has a filter bar (search plus quick choices such as "Bad quality" or "Errors only"), and ScadaBench remembers your filters.</li>
+</ul>
+<h2>0.1.9 · GOOSE tested between two PCs, one-file portable</h2>
+<ul>
+  <li>GOOSE tested between IEDs on two PCs: a position change on one PC reaches the subscribing IED on the other, with the GOOSE state and sequence numbers, a timeout when a publisher stops and recovery when it starts again.</li>
+  <li>The GOOSE page now shows the live sequence number of every repeated message (it stayed at 0 between changes).</li>
+  <li>Lab network setup no longer proposes an address that another device on the network already uses; it picks the next free one.</li>
+  <li>Clearer text about real IEDs: they are read on Devices and operated only from IED Explorer or the gateway, after a confirmation.</li>
+  <li>The installer now opens with a ScadaBench welcome page. The portable version is now one file that starts ScadaBench directly, with no setup wizard; projects stay in a folder next to it.</li>
+</ul>
+<h2>0.1.8 · SCADA master and protocol converter, tested between two PCs</h2>
+<ul>
+  <li>New SCADA master: ScadaBench connects to your gateway, RTU or protection device as IEC 104 controlling station, DNP3 master or Modbus TCP client, finds every point by itself (general and counter interrogation, integrity poll, or "Find registers" for Modbus) and sends commands after a warning. It reconnects by itself when the link drops, and values are marked "not current" while it is down.</li>
+  <li>New protocol converter: for example an IEC 104 SCADA on one side and a DNP3 or Modbus device on the other, with commands passed through.</li>
+  <li>Each protocol now uses its own words: controlling and controlled station for IEC 104, master and outstation for DNP3, client and server for Modbus.</li>
+  <li>Gateway on "All network adapters": ScadaBench now checks Windows Firewall, shows exactly what it will change and opens the gateway after one Windows approval. Settings › Network › Clean up undoes it.</li>
+  <li>Tested between two PCs with FreyrSCADA IEC 104 and DNP3 simulators, IEC-Test, proconX diagslave and modpoll, IED Explorer and the Siemens IEC 61850 Browser, and ScadaBench against ScadaBench in every role.</li>
+  <li>Fixes from that testing: DNP3 open breakers were shown as "reference error", DNP3 frozen counters were missing, IEC 104 counters were never read, clearer messages when a device refuses a command, and simulated IEDs now identify themselves as ScadaBench.</li>
+</ul>
+<h2>0.1.6 · separate Run and gateway, running dots, commands from the point list, portable version</h2>
+<ul>
+  <li>Run and the gateway simulator are now separate: Run starts the IEDs, Start gateway starts the gateway, and neither starts the other. When the gateway runs without the IEDs, it says so and offers a "Run the IEDs" button.</li>
+  <li>A green dot on each tab shows what is running there: IEDs on Devices and SLD, sequences on Test, and the gateway, IED Explorer or a network scan on Tools. Hover a tab to read what it is.</li>
+  <li>The gateway point list now fills the window and shows about twice as many points at once.</li>
+  <li>Send commands from the gateway point list: Close/Open or On/Off, always after a short warning. Real devices get a stronger warning, and every command is logged next to the SCADA commands.</li>
+  <li>New portable version: unpack ScadaBench into any folder or onto a USB stick and run it from there. Nothing is installed in Windows, and your projects stay in that folder.</li>
+</ul>
+<h2>0.1.5 · SCADA gateway simulator, IED commands, smarter tools</h2>
+<ul>
+  <li>New gateway simulator in Tools: your SCADA connects over IEC 60870-5-104, Modbus TCP or DNP3 and sees the IEDs of your project as one station. Press Start and ScadaBench picks the useful points (positions, alarms and trips, measurements, health, commands), starts the IEDs and sends live values. Edit any address, or import and export the point list as CSV.</li>
+  <li>SCADA commands from the gateway operate the IEDs over real IEC 61850 MMS, with each device's own control model. A decoded traffic log and a command log show what was asked, what the IED did and what changed.</li>
+  <li>IED Explorer can now operate breakers, switches and other controls, always after a short confirmation. It also watches the key points of a device by itself as soon as you connect.</li>
+  <li>Tools remember your last address, watch list, network and gateway settings, and a gateway that was running starts again when you reopen ScadaBench.</li>
+  <li>Tested against independent IEC 104 and DNP3 master implementations and a Modbus TCP client. Tell us which SCADA you use so we can add it to our tests.</li>
+</ul>
+<h2>0.1.4 · license server fix, much faster start, Tools tab</h2>
+<ul>
+  <li>Fixed "Cannot reach the license server" when starting the free trial or activating. After a certificate change on 16 October 2026, earlier versions could not check the server's certificate on many Windows PCs; ScadaBench now checks it the same way your browser does. Please install this version.</li>
+  <li>Opens in about a second: the window appears right away and your saved project loads in the background (a large 8-IED station is ready in about 7 seconds instead of about 30).</li>
+  <li>New Tools tab: browse a real IED's data model and find IEDs on your network, read-only. GOOSE and SV traffic moved here from Settings.</li>
+</ul>
+<h2>0.1.0 · first public release</h2>
+<ul>
+  <li>IEC 61850 IED simulation from CID, ICD, IID and SCD with one MMS server per IED.</li>
+  <li>Single-line diagram built from the SCD Substation section, Tidy up, bay templates and live colouring.</li>
+  <li>GOOSE publishing and supervision against the SCD; Sampled Values listening with RMS and phasors.</li>
+  <li>Read-only real IED connection, station health, signal flow and test mode badges.</li>
+  <li>Test points, generators, timed sequences and CSV playback.</li>
+  <li>Guided lab network setup with full preview and exact clean up.</li>
+  <li>Free 7-day trial, lifetime license and offline activation.</li>
+</ul>

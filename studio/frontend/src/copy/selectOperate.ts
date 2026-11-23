@@ -9,7 +9,7 @@ export const SBO_COPY = {
   cancelling: 'Cancelling…',
   cancelled: 'Selection cancelled. Nothing was sent.',
   expired: 'The selection ran out, so nothing was sent. Select again to try once more.',
-  failed: (reason: string) => `Not selected: ${reason}`,
+  failed: (reason: string) => `Not done: ${reason}`,
   cancelRefused: (reason: string) => `Still selected: ${reason}`,
   sboHint: 'This device asks for Select before Operate: the first press selects, then press Operate before the time runs out.',
   sboOneClick: 'This device asks for Select before Operate. ScadaBench selects and operates in one go, like a station HMI.',

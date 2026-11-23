@@ -44,3 +44,19 @@
 .device-detail table.compact-rows .point-cell { white-space: normal; overflow-wrap: anywhere; width: 55%; }
 .point-desc { margin-right: 8px; font-weight: 600; }
 .point-deadband { display: block; } /* the SCD db under a measurement (ADR-0118) */
+/* Commands of a real IED (ADR-0147): the search and options stay on top while the list scrolls; each
+   command asks and answers in its own row, so sending never moves the list. Shared tokens only. */
+.real-commands-tools { position: sticky; top: -14px; z-index: 1; display: grid; gap: 8px; margin: -14px -16px 0;
+  padding: 14px 16px 10px; background: var(--surface); border-bottom: var(--line) solid var(--border); }
+.real-commands-search { max-width: 520px; }
+.real-commands-search input { min-width: 0; flex: 1; }
+.real-command-row code { flex: 1 1 240px; }
+.real-command-row .badge { flex: none; }
+.real-command-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.real-command-inputs button { min-height: 30px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.real-command-line { flex: 1 1 100%; min-width: 0; }
+.real-command-line:empty { display: none; }
+.real-confirm { display: grid; gap: 6px; border-width: 2px; border-color: var(--error); }
+.real-confirm-title { display: flex; align-items: flex-start; gap: 8px; }
+.real-confirm-title svg { flex: none; margin-top: 2px; color: var(--error); }
+.live-command-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
