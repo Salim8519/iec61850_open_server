@@ -60,3 +60,7 @@
 .real-confirm-title { display: flex; align-items: flex-start; gap: 8px; }
 .real-confirm-title svg { flex: none; margin-top: 2px; color: var(--error); }
 .live-command-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
+/* Re-import CID (ADR-0148): the links that cannot stay scroll inside the dialog; references wrap. */
+.reimport-pick { display: inline-flex; align-items: center; gap: 6px; margin: 8px 0; cursor: pointer; }
+.reimport-lost { max-height: calc(30vh / var(--fit, 1)); overflow-y: auto; margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.reimport-lost code, .reimport-lost span { overflow-wrap: anywhere; }

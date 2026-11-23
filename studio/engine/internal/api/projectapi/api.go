@@ -102,6 +102,7 @@ func (a *Area) Routes() []api.Route {
 		route("POST", "/ieds/removal-preview", a.bulkPreview),
 		route("POST", "/ieds/remove", a.bulkRemove),
 		route("PUT", "/ieds/{key}/settings", a.iedSettings),
+		route("POST", "/ieds/{key}/reimport", a.reimport), // Go-only (ADR-0148)
 		route("PUT", "/scenarios", a.putScenarios),
 		route("GET", "/project/substation-sources", a.substationSources),
 		route("POST", "/project/diagram/from-scl/preview", a.diagramPreview),

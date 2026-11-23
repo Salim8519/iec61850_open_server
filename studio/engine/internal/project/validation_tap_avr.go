@@ -85,6 +85,12 @@ func dropTapChangerOf(data *pyjson.Object, ids map[string]bool) {
 			tap.Set(key, nil)
 		}
 	}
+	settleTapCommand(tap)
+}
+
+// settleTapCommand turns a command left without its controls into "none" and switches off a
+// regulator without a tap position or command, so the transformer stays valid.
+func settleTapCommand(tap *pyjson.Object) {
 	mode := text(tap, "command_mode")
 	missing := (mode == "step" && object(pyval.Lookup(tap, "step_control", nil)) == nil) ||
 		(mode == "spc_pair" && (object(pyval.Lookup(tap, "raise_control", nil)) == nil ||

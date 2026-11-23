@@ -54,6 +54,7 @@ changed, dropped or invented by accident.
 | [Licensing](licensing.md) | Trial and 1-PC lifetime license, offline activation, protected release |
 | [License helper](license-helper.md) | Retired (ADR-0097): the owner's offline license EXE no longer exists |
 | [Saving the project](project-save.md) | Auto save on by default; off keeps changes until Save project or Ctrl+S, remembered |
+| [Re-import CID](reimport-cid.md) | A newer file of an IED replaces its model; id, settings and the links it still has stay |
 | [Owner page](owner-page.md) | Private phone-friendly owner page: sales, keys, issues, disk, news; two-step sign-in behind a Cloudflare gateway |
 
 ## Proposed specifications

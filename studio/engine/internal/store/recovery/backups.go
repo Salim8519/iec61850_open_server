@@ -66,11 +66,21 @@ func testZip(reader *zip.Reader) bool {
 // exclusive create, then verified by SHA-256. Errors (StudioError): "Recovery directory
 // must not be a symbolic link", "Recovery backup verification failed; nothing deleted".
 func WriteDeleteBackup(dataDir string, payload []byte) (string, error) {
+	return writeBackup(dataDir, payload, "before-ied-delete-", "Recovery backup verification failed; nothing deleted")
+}
+
+// WriteReimportBackup is the same verified backup before an IED's CID is re-imported
+// (ADR-0148): recovery/before-ied-reimport-<uuid>.scadabench.
+func WriteReimportBackup(dataDir string, payload []byte) (string, error) {
+	return writeBackup(dataDir, payload, "before-ied-reimport-", "Recovery backup verification failed; nothing was changed")
+}
+
+func writeBackup(dataDir string, payload []byte, prefix, unverified string) (string, error) {
 	folder, err := prepare(dataDir, "Recovery directory must not be a symbolic link", studioError)
 	if err != nil {
 		return "", err
 	}
-	backup := pytext.Path(folder, uniqueName("before-ied-delete-"))
+	backup := pytext.Path(folder, uniqueName(prefix))
 	file, err := os.OpenFile(backup, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o666)
 	if err != nil {
 		return "", err
@@ -87,7 +97,7 @@ func WriteDeleteBackup(dataDir string, payload []byte) (string, error) {
 		return "", err
 	}
 	if sha256.Sum256(stored) != sha256.Sum256(payload) {
-		return "", apperr.New("Recovery backup verification failed; nothing deleted")
+		return "", apperr.New(unverified)
 	}
 	return backup, nil
 }

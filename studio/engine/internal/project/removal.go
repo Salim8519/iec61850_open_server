@@ -104,29 +104,7 @@ func WithoutIEDs(project *pyjson.Object, ids map[string]bool) *pyjson.Object {
 	}
 	result.Set("ieds", ieds).Set("sources", keep("sources")).Set("test_panel", keep("test_panel"))
 	for _, node := range diagramNodes(result) {
-		data := object(pyval.Lookup(object(node), "data", nil))
-		for _, key := range bindingKeys(pyval.Lookup(data, "state_mapping", nil)) {
-			if ids[key[0]] {
-				data.Set("state_mapping", nil)
-				break
-			}
-		}
-		if statuses := pyval.Lookup(data, "relay_statuses", nil); pyval.Truthy(statuses) {
-			kept := []any{}
-			for _, entry := range items(statuses) {
-				if !ids[text(object(pyval.Lookup(object(entry), "source", nil)), "ied_id")] {
-					kept = append(kept, entry)
-				}
-			}
-			data.Set("relay_statuses", kept)
-		}
-		dropMeasurementsOf(data, ids)
-		dropPointPanelOf(data, ids)
-		dropTapChangerOf(data, ids)
-		dropGooseLinkOf(data, ids)
-		if control := pyval.Lookup(data, "control_binding", nil); pyval.Truthy(control) && ids[text(object(control), "ied_id")] {
-			data.Set("control_binding", nil)
-		}
+		dropNodeLinks(object(pyval.Lookup(object(node), "data", nil)), ids)
 	}
 	if diagram := object(pyval.Lookup(result, "diagram", nil)); diagram != nil {
 		withoutIEDComponents(diagram, ids) // ADR-0112: an IED's component goes with it
@@ -174,4 +152,30 @@ func appendAll(result, extra *pyjson.Object) *pyjson.Object {
 		result.Set(key, value)
 	}
 	return result
+}
+
+// dropNodeLinks clears every binding of one equipment to the IEDs; the equipment stays.
+func dropNodeLinks(data *pyjson.Object, ids map[string]bool) {
+	for _, key := range bindingKeys(pyval.Lookup(data, "state_mapping", nil)) {
+		if ids[key[0]] {
+			data.Set("state_mapping", nil)
+			break
+		}
+	}
+	if statuses := pyval.Lookup(data, "relay_statuses", nil); pyval.Truthy(statuses) {
+		kept := []any{}
+		for _, entry := range items(statuses) {
+			if !ids[text(object(pyval.Lookup(object(entry), "source", nil)), "ied_id")] {
+				kept = append(kept, entry)
+			}
+		}
+		data.Set("relay_statuses", kept)
+	}
+	dropMeasurementsOf(data, ids)
+	dropPointPanelOf(data, ids)
+	dropTapChangerOf(data, ids)
+	dropGooseLinkOf(data, ids)
+	if control := pyval.Lookup(data, "control_binding", nil); pyval.Truthy(control) && ids[text(object(control), "ied_id")] {
+		data.Set("control_binding", nil)
+	}
 }
