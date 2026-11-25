@@ -46,7 +46,7 @@ function CommandsPopup({ ied, ready, close }: { ied: Ied; ready: boolean; close:
       <p className="small">{GATEWAY_COPY.realWarning}</p>
       <div className="row" style={{ gap: 8 }}>
         <button onClick={() => setPending(null)} disabled={busy} autoFocus>{GATEWAY_COPY.cancel}</button>
-        <button className="danger" disabled={busy} onClick={send}><Send size={14} />{GATEWAY_COPY.send(pending.label)}</button>
+        <button className="danger wire" disabled={busy} onClick={send}><Send size={14} />{GATEWAY_COPY.send(pending.label)}</button>
       </div></div>
       : <>
         <p className="small muted" style={{ margin: 0 }}>{hint(`live.send.${ready ? 'ready' : 'not_live'}`)}</p>
@@ -55,7 +55,7 @@ function CommandsPopup({ ied, ready, close }: { ied: Ied; ready: boolean; close:
           {result.answer?.observed ? ` Position: ${result.answer.observed}.` : ''}</p>}
         <div className="popup-list">{ied.controls.map(control =>
           <span key={control.ref} className="popup-list-row"><code>{control.ref}</code>
-            {commandWords(control.cdc).map((word, index) => <button key={word} disabled={busy || !ready}
+            {commandWords(control.cdc).map((word, index) => <button key={word} className="wire" disabled={busy || !ready}
               onClick={() => { setResult(null); setPending({ ref: control.ref, label: word, value: index === 0 }); }}>
               <Send size={14} />{word}…</button>)}
           </span>)}</div>

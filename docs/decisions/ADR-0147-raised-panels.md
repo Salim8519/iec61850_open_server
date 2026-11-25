@@ -17,7 +17,7 @@ Five tone levels and four elevations, with no gradients:
 
 | Level | Tokens | Use |
 | --- | --- | --- |
-| Frame | `--rail` #1C2430 | Sidebar: places and app-wide state |
+| Frame | `--surface` + edge shadow | Sidebar: white, with a soft shadow on its right edge (owner, change 0238) |
 | Workspace 0 | `--bg` #D5DBE3 | Steel grey behind panels; never holds content |
 | Panel 1 | `--surface` + `--shadow-panel` | Cards, top bar, sheets |
 | Well | `--well` #F4F6F9, `--well-edge`, `--shadow-well` | Tables, facts lines, number tiles, read-only fields |
@@ -40,9 +40,17 @@ The rules (also in `docs/design/interactions.md`):
 - R12 Only the four elevation tokens make shadows. `--shadow-small`, `--shadow` and `--shadow-large`
   stay as aliases so every existing component follows.
 
+## Amendments
+
+- Change 0238 (owner, 2026-11-25: "the side bar should be kept white to avoid huge changes"): the
+  sidebar is white again; it gets a soft edge shadow and the open place a raised frame. The rail
+  tokens are removed. R8 is applied with `button.wire` (double border) on Operate, Open/Close,
+  raise/lower, point commands, Explorer, SCADA master and real-device sends. R9: table rows no longer
+  change on hover, because no row is clickable as a whole. Dialogs carry `--shadow-pop`.
+
 ## Compatibility
 
 CSS only: tokens, base controls and the shell. No component logic, API, project data or engine
-change. Status, point-type and equipment colours are unchanged, so the AA contrast test still holds;
-words on the dark rail use `--rail-text` (#C3CCD8, 9.6:1). Card frames keep #6B7280 (ADR-0094). The
+change. Status, point-type and equipment colours are unchanged, so the AA contrast test still holds.
+Card frames keep #6B7280 (ADR-0094). The
 packaged app and development read the same stylesheets.

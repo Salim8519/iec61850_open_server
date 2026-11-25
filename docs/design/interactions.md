@@ -7,8 +7,8 @@ What can be clicked is visible before anyone tries (Raised panels, ADR-0147):
 - Round means status: only status pills are fully round; every action has 8 px corners.
 - Blue means you can act: primary button, selection, active tab, links, focus, the pen mark. Information
   is never blue. One filled primary per area; danger actions are outlined red.
-- Anything that sends to an IED or the network keeps the double border of command badges.
-- Hover and the hand cursor appear only on clickable things. Disabled controls are flat, dashed and
+- Anything that sends to an IED or the network keeps the double border of command badges (`button.wire`).
+- Hover and the hand cursor appear only on clickable things; table rows do not light up on hover. Disabled controls are flat, dashed and
   grey with readable words, and the reason is written next to them.
 - Editable fields are white with a dark border; read-only values are wells you can select and copy.
 

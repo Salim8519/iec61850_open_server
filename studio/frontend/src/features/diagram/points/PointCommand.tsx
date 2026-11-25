@@ -42,7 +42,7 @@ function NumberBox({ point, control, disabled, title, verb, pick, problem }: Pic
       // preventDefault: the same Enter must not also press the question's focused Cancel (change 0176).
       onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); apply(); } }} />
     {control?.cdc === 'APC' && point.unit && <span className="pp-unit">{point.unit}</span>}
-    <button type="button" disabled={disabled} onClick={apply}><Send size={13} aria-hidden="true" />{verb}</button>
+    <button type="button" className="wire" disabled={disabled} onClick={apply}><Send size={13} aria-hidden="true" />{verb}</button>
   </span>;
 }
 
@@ -60,7 +60,7 @@ function ListBox({ point, control, disabled, title, verb, pick }: Pick<Props, 'p
       <option value="" disabled>{LIST_PLACEHOLDER}</option>
       {labels.map(label => <option key={label} value={label}>{label}</option>)}
     </select>
-    <button type="button" disabled={disabled || !chosen} onClick={() => pick(chosen)}><Send size={13} aria-hidden="true" />{verb}</button>
+    <button type="button" className="wire" disabled={disabled || !chosen} onClick={() => pick(chosen)}><Send size={13} aria-hidden="true" />{verb}</button>
   </span>;
 }
 
@@ -92,7 +92,7 @@ export function PointCommand({ nodeId, point, control, disabled, why, ask, send,
   else if (input === 'steps') body = <StepButtons disabled={off} title={title} label={`${verb} ${point.label}`} press={pick} />;
   else {
     body = <span className="pp-actions" role="group" aria-label={`Send ${point.label}`}>
-      {commandChoices(control).map(choice => <button key={choice.label} type="button" className="pp-choice" disabled={off}
+      {commandChoices(control).map(choice => <button key={choice.label} type="button" className="pp-choice wire" disabled={off}
         title={title || `${choice.label} to this command`} onClick={() => pick(choice.value)}>
         {sbo ? choice.label.replace(/^Send /, 'Select ') : choice.label}</button>)}
     </span>;

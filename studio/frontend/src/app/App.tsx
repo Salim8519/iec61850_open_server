@@ -31,6 +31,8 @@ import { useActivity } from './useActivity';
 import { useUpdateStatus } from '../api/updates';
 import { GooseConflicts } from '../features/network/GooseConflicts';
 import { LeftoverNotice } from '../features/network/LeftoverNotice';
+import { useWhatsNew } from '../features/whats-new/useWhatsNew';
+import { WhatsNewDialog } from '../features/whats-new/WhatsNewDialog';
 
 export function App() {
   const studio = useStudio();
@@ -70,12 +72,13 @@ export function App() {
   const running = useActivity(!!project);
   const connection = useConnection(!!project);  // follows the real polls, not "loaded once" (change 0177)
   const update = useUpdateStatus();
+  const whatsNew = useWhatsNew(update.status?.current);
   return <CommandContext.Provider value={studio.command}><div className="app">
     <WorkPanel work={studio.importPreview ? null : studio.work} />
     {studio.importPreview && <ImportSelection preview={studio.importPreview} busy={studio.busy}
       error={studio.error} confirm={studio.confirmImport} cancel={studio.cancelImport} work={studio.work} />}
     <Sidebar current={current} go={next => { setFlowIed(undefined); setCurrent(next); }} connection={connection}
-      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} live={placeActivity(project, running)}
+      openActivity={() => setActivity(true)} openTour={() => setTour(tourVersion)} openWhatsNew={whatsNew.open} live={placeActivity(project, running)}
       update={update.status} dismissUpdate={version => { update.change({ dismissed: version }).catch(() => {}); }} />
     <div className="main">
       <TopBar title={info.heading} subtitle={info.subtitle} project={project} busy={studio.busy} working={studio.working}
@@ -108,6 +111,8 @@ export function App() {
       </main>
     </div>
     {project && <GooseConflicts project={project} />}
+    {whatsNew.shown && tour === null && update.status?.current &&
+      <WhatsNewDialog current={update.status.current} close={whatsNew.close} />}
     {project && fileDialog && <ProjectFileDialog mode={fileDialog} project={project} close={() => setFileDialog(null)} prepare={studio.prepare}
       confirm={name => studio.replaceProject(fileDialog, name).then(done => { if (done) setCurrent('devices'); return done; })} />}
     {tour !== null && <TourOverlay go={tourGo} close={closeTour} />}

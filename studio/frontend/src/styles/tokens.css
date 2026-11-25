@@ -9,16 +9,8 @@
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 
-  /* Raised panels (ADR-0147): steel workspace, dark rail, white raised panels, sunken wells. */
+  /* Raised panels (ADR-0147): steel workspace, white raised sidebar and panels, sunken wells. */
   --bg: #d5dbe3;
-  --rail: #1c2430;
-  --rail-edge: #0f151d;
-  --rail-text: #c3ccd8;
-  --rail-text-strong: #f1f4f8;
-  --rail-hover: #263040;
-  --rail-active: #2c3746;
-  --rail-line: #334155;
-  --rail-accent: #93c5fd;
   --well: #f4f6f9;
   --well-edge: #b9c2ce;
   --surface: #ffffff;

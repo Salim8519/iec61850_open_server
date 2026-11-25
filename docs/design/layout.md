@@ -2,7 +2,7 @@
 
 | Token | Value |
 | --- | --- |
-| Background | Steel #D5DBE3 workspace; dark rail #1C2430 sidebar (words #C3CCD8, open place #2C3746); canvas #E9EDF2 |
+| Background | Steel #D5DBE3 workspace; white sidebar with a soft edge shadow (change 0238); canvas #E9EDF2 |
 | Surface | #FFFFFF raised panels (top bar, cards, sheets); wells #F4F6F9 with #B9C2CE edge for tables, facts and read-only fields |
 | Depth | Four shadows only (ADR-0147 R12): raise/hover/press for controls, panel, pop for menus and dialogs, inset for wells; no gradients |
 | Text / secondary / tertiary | #0F172A / #1F2937 / #374151 (ADR-0094) |
@@ -13,7 +13,7 @@
 | Controls | 40 px high, primary actions 44 px, 8–10 px radius, 20 px icons |
 | Contrast | WCAG AA for text, accent and status colours (enforced by a test) |
 
-Shell: 232 px dark rail sidebar with four places (Devices, SLD, Test, Settings at the
+Shell: 232 px white sidebar (edge shadow, open place raised) with four places (Devices, SLD, Test, Settings at the
 bottom with Activity) that collapses to 72 px icons below 1100 px; a 64 px top bar
 with page title, one-line subtitle, File menu, run state words and one Run/Stop button (8 px corners; only status is round, ADR-0147). The run state
 shows ○ stopped, ◐ some IEDs (amber dashed, white *Stop all*) or ● all IEDs (green *Stop*); green

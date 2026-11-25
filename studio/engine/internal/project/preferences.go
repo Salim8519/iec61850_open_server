@@ -16,8 +16,9 @@ var preferenceKeys = []string{"tour_seen_version", "sld_goose_layer", "sld_reade
 // default document stays byte-identical): sld_sbo_steps 1 shows select before operate as two
 // steps on the SLD and point panels instead of one click (change 0173); display_size 0 fits
 // the app to the window (default) and 1 always shows it at 100%; autosave_off 1 keeps
-// changes unsaved until File › Save project (ADR-0139).
-var goOnlyPreferenceKeys = []string{"sld_sbo_steps", "display_size", "autosave_off"}
+// changes unsaved until File › Save project (ADR-0139); whats_new_seen is the last version whose
+// What's new window was closed, as major*1000000+minor*1000+patch (ADR-0148).
+var goOnlyPreferenceKeys = []string{"sld_sbo_steps", "display_size", "autosave_off", "whats_new_seen"}
 
 // AutoSaveOff says the stored preferences (decoded preferences.json, nil when missing) turn
 // auto save off.
@@ -25,6 +26,9 @@ func AutoSaveOff(stored any) bool {
 	value, _ := Preferences(stored).Get("autosave_off")
 	return value == int64(1)
 }
+
+// WhatsNewSeenMax is the largest version code whats_new_seen holds (999.999.999).
+const WhatsNewSeenMax = 999999999.0
 
 // TourVersion is the guided tour version the frontend compares with tour_seen_version.
 const TourVersion = 1
@@ -83,6 +87,8 @@ func UpdatePreferences(stored, changes any) (*pyjson.Object, error) {
 		high := 1000.0
 		if strings.HasPrefix(key, "sld_") || key == "display_size" || key == "autosave_off" {
 			high = 1
+		} else if key == "whats_new_seen" {
+			high = WhatsNewSeenMax
 		}
 		if !pyval.Between(value, 0, high) {
 			return nil, apperr.ValueError("Preference " + key + " is out of range")

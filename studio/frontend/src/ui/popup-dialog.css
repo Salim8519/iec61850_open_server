@@ -1,6 +1,6 @@
 /* Command pop-ups (ui/PopupDialog.tsx): the app's modal dialog look, from shared tokens. */
 .popup-dialog { width: min(640px, calc(100vw / var(--fit, 1) - 48px)); max-height: calc(100vh / var(--fit, 1) - 48px); padding: 0;
-  border: var(--line) solid var(--frame); border-radius: var(--radius); color: var(--text); background: var(--surface); }
+  border: var(--line) solid var(--frame); border-radius: var(--radius); color: var(--text); background: var(--surface); box-shadow: var(--shadow-pop); }
 .popup-dialog.wide { width: min(860px, calc(100vw / var(--fit, 1) - 48px)); }
 .popup-dialog[open] { display: flex; flex-direction: column; }
 .popup-dialog::backdrop { background: rgb(23 43 77 / 35%); }

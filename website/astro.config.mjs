@@ -10,4 +10,6 @@ export default defineConfig({
   // moving between pages feels instant without spending mobile data on links nobody opens.
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   image: { responsiveStyles: false },
+  // The changelog reads the release notes the app ships (change 0238), outside this folder.
+  vite: { server: { fs: { allow: ['..'] } } },
 });

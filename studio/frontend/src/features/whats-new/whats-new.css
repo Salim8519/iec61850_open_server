@@ -1,0 +1,8 @@
+/* What's new (change 0238): read-only notes, so the kind is a flat label, not a pill or a button. */
+.whats-new-title { margin: 0; font-weight: 650; color: var(--text); }
+.whats-new-notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.whats-new-notes li { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 10px; align-items: baseline; line-height: 1.5; }
+.whats-new-kind { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); }
+.whats-new-earlier { display: grid; gap: 8px; }
+.whats-new-earlier h3 { margin: 8px 0 0; font-size: 15px; }
+.whats-new-link { margin-right: auto; align-self: center; color: var(--accent-hover); font-weight: 600; }

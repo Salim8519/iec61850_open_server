@@ -42,8 +42,8 @@ export function SwitchOperate({ node, project, busy, operate }: {
   const hint = !sbo ? SBO_COPY.directHint : steps ? SBO_COPY.sboHint : SBO_COPY.sboOneClick;
   return <>
     <div className="sheet-actions">
-      <button disabled={busy || held} title={hint} onClick={() => press('open')}>Open</button>
-      <button className="primary" disabled={busy || held} title={hint} onClick={() => press('close')}>Close</button>
+      <button className="wire" disabled={busy || held} title={hint} onClick={() => press('open')}>Open</button>
+      <button className="primary wire" disabled={busy || held} title={hint} onClick={() => press('close')}>Close</button>
     </div>
     {sbo && <p className="small muted sbo-model"><Timer size={13} aria-hidden="true" />{hint}</p>}
     <SboCountdown flow={flow} what={words} />

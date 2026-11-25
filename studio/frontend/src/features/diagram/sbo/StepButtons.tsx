@@ -9,9 +9,9 @@ export function StepButtons({ disabled, title, label, press }: {
   disabled: boolean; title?: string; label: string; press: (direction: StepDirection) => void;
 }) {
   return <span className="sbo-steps" role="group" aria-label={label}>
-    <button type="button" disabled={disabled} title={title || SBO_COPY.lowerHint} onClick={() => press('lower')}>
+    <button type="button" className="wire" disabled={disabled} title={title || SBO_COPY.lowerHint} onClick={() => press('lower')}>
       <span aria-hidden="true">▼</span>{SBO_COPY.lower}</button>
-    <button type="button" disabled={disabled} title={title || SBO_COPY.raiseHint} onClick={() => press('higher')}>
+    <button type="button" className="wire" disabled={disabled} title={title || SBO_COPY.raiseHint} onClick={() => press('higher')}>
       <span aria-hidden="true">▲</span>{SBO_COPY.raise}</button>
   </span>;
 }
