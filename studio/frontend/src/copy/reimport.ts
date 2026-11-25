@@ -1,4 +1,4 @@
-// Words of Re-import CID (ADR-0148). Plain English for people new to IEC 61850.
+// Words of Re-import CID (ADR-0150). Plain English for people new to IEC 61850.
 type Counts = { before: number; after: number; added: number; removed: number };
 
 const many = (count: number, word: string) => `${count.toLocaleString()} ${word}${count === 1 ? '' : 's'}`;

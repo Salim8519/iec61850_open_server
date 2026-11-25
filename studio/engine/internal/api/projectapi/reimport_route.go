@@ -8,7 +8,7 @@ import (
 
 // reimport is POST /ieds/{key}/reimport (multipart: file, apply "1" to change the project): a newer
 // CID of the IED replaces its model while its id, settings and the links it still has stay
-// (Go-only, ADR-0148). Without apply it only answers what would change.
+// (Go-only, ADR-0150). Without apply it only answers what would change.
 func (a *Area) reimport(w http.ResponseWriter, r *http.Request) error {
 	if err := a.requireStopped(); err != nil {
 		return err

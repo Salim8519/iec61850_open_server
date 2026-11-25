@@ -7,7 +7,7 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// Re-import (ADR-0148): a newer CID of an IED already in the project replaces its model. The
+// Re-import (ADR-0150): a newer CID of an IED already in the project replaces its model. The
 // IED keeps its id, its settings (role, addresses, Allow commands, card, GOOSE, test mode, SCD
 // deadbands) and every link whose reference is still in the new file with the same type; the
 // others are listed in words before anything changes. Pure: no I/O.

@@ -1,8 +1,8 @@
-# 0238 Re-import an IED's CID, keeping its id, settings and links
+# 0240 Re-import an IED's CID, keeping its id, settings and links
 
 Date: 2026-11-23. Owner: "can u add re import cid option? so same cid gets updated without deleting
 equipment? or warns user what will be lost?". Decision
-[ADR-0148](../../decisions/ADR-0148-reimport-cid.md). Layers: Go engine (`project`, `project/service`,
+[ADR-0150](../../decisions/ADR-0150-reimport-cid.md). Layers: Go engine (`project`, `project/service`,
 `store/recovery`, `api/projectapi`), frontend (`features/devices`, `copy`), docs.
 
 ## Change

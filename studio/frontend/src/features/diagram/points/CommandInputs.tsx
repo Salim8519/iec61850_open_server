@@ -5,7 +5,7 @@ import type { CommandControl } from '../../../equipment/pointRequests';
 import { enumChoices, parseCommandNumber, rangeHint } from '../../../equipment/typedCommand';
 import { SBO_COPY } from '../../../copy/selectOperate';
 
-/** The value inputs of a typed command (ADR-0108), shared by the point panel and Devices (ADR-0147):
+/** The value inputs of a typed command (ADR-0108), shared by the point panel and Devices (ADR-0149):
  *  a number box (INC, APC) and a list of labels (ENC). `point` names the command (and the unit of a set point). */
 type Inputs = { point: Pick<PanelPoint, 'label' | 'unit'>; control?: CommandControl };
 
@@ -31,7 +31,7 @@ export function NumberBox({ point, control, disabled, title, verb, pick, problem
       // preventDefault: the same Enter must not also press the question's focused Cancel (change 0176).
       onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); apply(); } }} />
     {control?.cdc === 'APC' && point.unit && <span className="pp-unit">{point.unit}</span>}
-    <button type="button" disabled={disabled} onClick={apply}><Send size={13} aria-hidden="true" />{verb}</button>
+    <button type="button" className="wire" disabled={disabled} onClick={apply}><Send size={13} aria-hidden="true" />{verb}</button>
   </span>;
 }
 
@@ -49,7 +49,7 @@ export function ListBox({ point, control, disabled, title, verb, pick }: Inputs 
       <option value="" disabled>{LIST_PLACEHOLDER}</option>
       {labels.map(label => <option key={label} value={label}>{label}</option>)}
     </select>
-    <button type="button" disabled={disabled || !chosen} onClick={() => pick(chosen)}><Send size={13} aria-hidden="true" />{verb}</button>
+    <button type="button" className="wire" disabled={disabled || !chosen} onClick={() => pick(chosen)}><Send size={13} aria-hidden="true" />{verb}</button>
   </span>;
 }
 

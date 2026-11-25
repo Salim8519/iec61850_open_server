@@ -1,10 +1,10 @@
-# ADR-0147: Devices commands to a real IED: every class, one click or step by step, sent in place
+# ADR-0149: Devices commands to a real IED: every class, one click or step by step, sent in place
 
 Accepted: 2026-11-23. Owner, 2026-11-23, for 0.1.37, after testing 0.1.36 on two live GE BCUs:
 "add select before operate, or operate directly thing", "when user sends command in the pop up
 command dont change his scrolled position", "add search command", "allow sending command direct
 without need to open command", "make sure the scadabench can handle many kinds of commands in ied
-mode". Change [0237](../changes/2026/0237-devices-command-steps.md). Amends ADR-0138.
+mode". Change [0239](../changes/2026/0239-devices-command-steps.md). Amends ADR-0138.
 
 ## Problem
 

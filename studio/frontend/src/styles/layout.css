@@ -1,27 +1,32 @@
-/* App shell: left sidebar with the places, a top bar, and one page (tool pages fill it, ADR-0064). */
+/* App shell: left sidebar with the places, a top bar, and one page (tool pages fill it, ADR-0064).
+   Raised panels (ADR-0147): a white sidebar with a soft edge shadow; the top bar and cards sit raised on steel. */
 .app { height: calc(100vh / var(--fit, 1)); display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); overflow: hidden; }
-.sidebar { background: #f7f8fa; border-right: 2px solid var(--frame); display: flex; flex-direction: column;
+.sidebar { background: var(--surface); border-right: 1px solid var(--frame); box-shadow: 3px 0 10px -4px rgb(15 23 42 / 22%);
+  position: relative; z-index: 4; display: flex; flex-direction: column;
   padding: 18px 12px; gap: 6px; min-width: 0; }
 .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 18px; font-weight: 700; font-size: 16px; }
 .brand-mark { width: 34px; height: 34px; border-radius: 9px; display: block; flex-shrink: 0; }
 .brand small { display: block; font-size: 12px; font-weight: 500; color: var(--text-3); }
 .nav-item { width: 100%; justify-content: flex-start; gap: 12px; min-height: 46px; padding: 0 12px; border: 0;
   border-radius: var(--radius); background: transparent; color: var(--text); font-size: 15px; font-weight: 550; }
-.nav-item:hover:not(:disabled) { background: var(--hover); color: var(--text); }
-.nav-item.active { background: var(--surface); color: var(--accent); font-weight: 700;
-  box-shadow: inset 4px 0 0 var(--accent), inset 0 0 0 var(--line) var(--frame); }
+.nav-item:hover:not(:disabled) { background: var(--hover); color: var(--text); border-color: transparent; }
+/* The open place is raised: framed, blue edge and words, and a small shadow (ADR-0147). */
+.nav-item.active, .nav-item.active:hover:not(:disabled) { background: var(--surface); color: var(--accent); font-weight: 700;
+  box-shadow: inset 4px 0 0 var(--accent), inset 0 0 0 var(--line) var(--frame), var(--shadow-raise); }
 .nav-item svg { flex-shrink: 0; }
 .sidebar-spacer { flex: 1; }
 .sidebar-foot { border-top: var(--line) solid var(--border); padding-top: 10px; display: grid; gap: 4px; }
 .sidebar-foot .nav-item { min-height: 40px; font-size: 14px; }
 .main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 .topbar { height: var(--topbar-height); flex-shrink: 0; display: flex; align-items: center; gap: 16px;
-  padding: 0 28px; background: var(--surface); border-bottom: 2px solid var(--frame); }
+  padding: 0 28px; background: var(--surface); border-bottom: 1px solid var(--frame); box-shadow: 0 1px 3px rgb(15 23 42 / 12%);
+  position: relative; z-index: 3; }
 .topbar-title { flex: 1; min-width: 0; }
 .topbar-title h1 { font-size: 20px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topbar-title p { margin: 0; font-size: var(--font-size-small); color: var(--text-2);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.run-pill { min-height: var(--control-height-large); border-radius: 999px; padding: 0 22px; font-size: 15px; font-weight: 650; }
+/* R4 round means status: Run/Stop is an action, so it has corners; the run state beside it stays round. */
+.run-pill { min-height: var(--control-height-large); border-radius: var(--radius-small); padding: 0 22px; font-size: 15px; font-weight: 650; }
 .run-pill.running { background: var(--success-soft); color: var(--success); border-color: #6fc28d; }
 .run-state { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-2); white-space: nowrap; }
 .run-state .dot.on { color: var(--success); }
@@ -36,7 +41,7 @@
 .content { max-width: 1440px; margin: 0 auto; padding: 28px 32px 48px; display: flex; flex-direction: column; gap: 20px; }
 .content > * { flex-shrink: 0; }
 .card { background: var(--surface); border: var(--line) solid var(--frame); border-radius: var(--radius);
-  overflow: hidden; }
+  overflow: hidden; box-shadow: var(--shadow-panel); }
 .card-heading { padding: 16px 20px; border-bottom: var(--line) solid var(--frame); background: var(--surface-2); display: flex; align-items: center;
   justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .card-heading h2 { margin: 0; }

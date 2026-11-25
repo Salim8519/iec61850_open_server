@@ -48,21 +48,21 @@ export function CommandPanel({ reference, name, host, attributes, values, fail, 
   return <div className="command-panel">
     <div className="row command-row">
       <span className="small muted">{EXPLORER_COPY.command}</span>
-      {idle && spec.kind === 'bool' && spec.choices.map(choice => <button key={choice.label} disabled={busy}
+      {idle && spec.kind === 'bool' && spec.choices.map(choice => <button key={choice.label} className="wire" disabled={busy}
         onClick={() => ask(choice.label, choice.value)}><Send size={14} />{word(choice.label)}</button>)}
       {idle && spec.kind === 'enum' && <>
         <select className="command-pick" value={listed} aria-label={COMMAND_COPY.pickLabel}
           onChange={event => setListed(Number(event.target.value))}>
           {spec.labels.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
-        <button disabled={busy} onClick={() => ask(enumLabel, listed)}><Send size={14} />{word(enumLabel)}</button></>}
+        <button className="wire" disabled={busy} onClick={() => ask(enumLabel, listed)}><Send size={14} />{word(enumLabel)}</button></>}
       {idle && (spec.kind === 'int' || spec.kind === 'float') && <>
         <input className="command-step" type="number" step={spec.kind === 'int' ? 1 : 'any'} value={text}
           aria-label={COMMAND_COPY.valueLabel} onChange={event => setText(event.target.value)} />
-        <button disabled={busy || number === null} onClick={() => ask(String(number), number)}>
+        <button className="wire" disabled={busy || number === null} onClick={() => ask(String(number), number)}>
           <Send size={14} />{word(String(number ?? text))}</button></>}
       {idle && spec.kind === 'step' && <>
-        <button disabled={busy} onClick={() => ask(COMMAND_COPY.higher, 'higher')}><ArrowUp size={14} />{word(COMMAND_COPY.higher)}</button>
-        <button disabled={busy} onClick={() => ask(COMMAND_COPY.lower, 'lower')}><ArrowDown size={14} />{word(COMMAND_COPY.lower)}</button></>}
+        <button className="wire" disabled={busy} onClick={() => ask(COMMAND_COPY.higher, 'higher')}><ArrowUp size={14} />{word(COMMAND_COPY.higher)}</button>
+        <button className="wire" disabled={busy} onClick={() => ask(COMMAND_COPY.lower, 'lower')}><ArrowDown size={14} />{word(COMMAND_COPY.lower)}</button></>}
       {busy && <Loader2 size={16} className="spin" />}
     </div>
     <p className="small muted command-model">{COMMAND_COPY.model(modelText(spec.model))}
@@ -70,7 +70,7 @@ export function CommandPanel({ reference, name, host, attributes, values, fail, 
     {select.selection && <div className="command-selected" role="status">
       <strong>{COMMAND_COPY.selected(select.selection.label, select.left)}</strong>
       <div className="row">
-        <button className="danger" disabled={busy} onClick={() => run('operate', select.selection!.label, select.selection!.value)}>
+        <button className="danger wire" disabled={busy} onClick={() => run('operate', select.selection!.label, select.selection!.value)}>
           <Send size={14} />{COMMAND_COPY.operate}</button>
         <button disabled={busy} onClick={() => run('cancel', select.selection!.label, null)}><X size={14} />{COMMAND_COPY.cancelSelect}</button>
       </div></div>}

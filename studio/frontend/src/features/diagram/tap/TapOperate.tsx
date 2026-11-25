@@ -22,9 +22,9 @@ export function TapOperate({ nodeId, data, message }: { nodeId: string; data: Eq
   return <section className="sheet-section"><h3>{TAP_COPY.operateTitle}<span className="sheet-tag"> · {TEST_COPY.operateTag}</span></h3>
     <p className="energy-sentence" role="status">{facts.join(' · ')}</p>
     <div className="tap-actions">
-      <button disabled={!!raise || busy} title={raise ?? TAP_COPY.raiseHint} onClick={() => send(nodeId, 'raise')}>
+      <button className="wire" disabled={!!raise || busy} title={raise ?? TAP_COPY.raiseHint} onClick={() => send(nodeId, 'raise')}>
         <ChevronUp size={16} aria-hidden="true" />{TAP_COPY.raise}</button>
-      <button disabled={!!lower || busy} title={lower ?? TAP_COPY.lowerHint} onClick={() => send(nodeId, 'lower')}>
+      <button className="wire" disabled={!!lower || busy} title={lower ?? TAP_COPY.lowerHint} onClick={() => send(nodeId, 'lower')}>
         <ChevronDown size={16} aria-hidden="true" />{TAP_COPY.lower}</button>
       <button className={auto ? 'primary' : ''} aria-pressed={!!auto} disabled={!canAuto || busy || !!auto}
         title={canAuto ? 'The voltage regulator moves the tap' : TAP_COPY.noAuto} onClick={() => send(nodeId, 'auto')}>

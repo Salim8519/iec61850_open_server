@@ -1,10 +1,10 @@
-# 0237 Devices commands to a real IED: every class, one click or step by step, search, sent in place
+# 0239 Devices commands to a real IED: every class, one click or step by step, search, sent in place
 
 Date: 2026-11-23. Owner, after monitoring two live GE bay controllers (E08_BCU 172.26.0.38, E10_BCU
 172.26.0.40) with 0.1.36: "add select before operate, or operate directly thing", "when user sends
 command in the pop up command dont change his scrolled position", "add search command", "allow
 sending command direct without need to open command", "make sure the scadabench can handle many kinds
-of commands in ied mode". Decision [ADR-0147](../../decisions/ADR-0147-devices-command-steps-every-class.md).
+of commands in ied mode". Decision [ADR-0149](../../decisions/ADR-0149-devices-command-steps-every-class.md).
 Layers: native `studio_control` (typed session), Go engine (`realcmd`, `liveapi`, `typedcmd`,
 `tools/control`, `app`), frontend (`features/devices`, shared point inputs), docs.
 

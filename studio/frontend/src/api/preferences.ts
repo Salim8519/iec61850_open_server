@@ -6,6 +6,8 @@ export type Preferences = {
   sld_goose_layer?: number; sld_readers_layer?: number; sld_sbo_steps?: number;
   /** Settings › Display: 0 = fit to window (default), 1 = always 100%. Go engine only. */
   display_size?: number;
+  /** The last version whose What's new was closed, as major*1000000+minor*1000+patch (ADR-0148). Go only. */
+  whats_new_seen?: number;
 };
 
 export const getPreferences = () => api<Preferences>('/preferences');

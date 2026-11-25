@@ -1,5 +1,17 @@
 # Interaction contract
 
+What can be clicked is visible before anyone tries (Raised panels, ADR-0147):
+
+- Raised means press: a control has a border and a shadow under it, lifts on hover and sinks when
+  pressed. Sunken means read: tables, facts and read-only fields sit in tinted wells. Flat means label.
+- Round means status: only status pills are fully round; every action has 8 px corners.
+- Blue means you can act: primary button, selection, active tab, links, focus, the pen mark. Information
+  is never blue. One filled primary per area; danger actions are outlined red.
+- Anything that sends to an IED or the network keeps the double border of command badges (`button.wire`).
+- Hover and the hand cursor appear only on clickable things; table rows do not light up on hover. Disabled controls are flat, dashed and
+  grey with readable words, and the reason is written next to them.
+- Editable fields are white with a dark border; read-only values are wells you can select and copy.
+
 - Add equipment from SLD › Add (click or drag a tile); connect terminals; select to edit in the sheet.
 - Junctions are drawing-only connection points with four terminals and no
   mappings, start position or rotation; wiring is free-form and may dangle.

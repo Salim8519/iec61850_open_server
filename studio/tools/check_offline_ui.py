@@ -18,6 +18,7 @@ VITE = FRONTEND / "vite.config.ts"
 # Pages the user may open by clicking (they open outside the app, nothing is loaded).
 CLICK_LINKS = {
     "https://scadabench.com/tutorials/",  # Help: tutorials (copy/tour.ts)
+    "https://scadabench.com/changelog/",  # What's new: all updates (copy/whatsNew.ts)
     "https://npcap.com/#download",  # GOOSE: the Npcap download (network/GooseReach.tsx)
 }
 ADDRESS = re.compile(r"https?://[^\s'\"`)<>]+")

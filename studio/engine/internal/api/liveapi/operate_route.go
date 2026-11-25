@@ -32,7 +32,7 @@ func (s *Service) operate(w http.ResponseWriter, r *http.Request) {
 }
 
 // command is POST /live/{key}/command {action, ref, value, options, confirm, selected}: one step
-// (select, operate or cancel) of any command of a real IED from Devices (Go-only, ADR-0147).
+// (select, operate or cancel) of any command of a real IED from Devices (Go-only, ADR-0149).
 func (s *Service) command(w http.ResponseWriter, r *http.Request) {
 	if s.Commands == nil {
 		writeError(w, apperr.RuntimeError("Commands are not available in this copy of ScadaBench"))

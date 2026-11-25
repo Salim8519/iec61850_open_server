@@ -1,4 +1,4 @@
-// ADR-0147: the Commands pop-up's search and the Data points rows that can send a command.
+// ADR-0149: the Commands pop-up's search and the Data points rows that can send a command.
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { commandRefOf, matchesSearch } from '../../frontend/src/features/devices/commandSearch.ts';

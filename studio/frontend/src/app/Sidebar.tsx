@@ -1,4 +1,5 @@
-import { Activity, CircleHelp, Compass, Cpu, FlaskConical, PlayCircle, Settings, Workflow, Wrench } from 'lucide-react';
+import { Activity, CircleHelp, Compass, Cpu, FlaskConical, PlayCircle, Settings, Sparkles, Workflow, Wrench } from 'lucide-react';
+import { WHATS_NEW_COPY } from '../copy/whatsNew';
 import { Menu } from '../ui/Menu';
 import { TOUR_COPY, TUTORIALS_URL } from '../copy/tour';
 import { PLACES, type PlaceId } from './places';
@@ -17,9 +18,9 @@ function ActivityCount() {
 const ICONS: Record<PlaceId, typeof Workflow> = { diagram: Workflow, devices: Cpu, test: FlaskConical, tools: Wrench,
   settings: Settings };
 
-export function Sidebar({ current, go, connection, openActivity, openTour, live, update, dismissUpdate }: {
+export function Sidebar({ current, go, connection, openActivity, openTour, openWhatsNew, live, update, dismissUpdate }: {
   current: PlaceId; go: (id: PlaceId) => void; connection: ConnectionState; openActivity: () => void;
-  openTour: () => void; live: Partial<Record<PlaceId, Running>>;
+  openTour: () => void; openWhatsNew?: () => void; live: Partial<Record<PlaceId, Running>>;
   update?: UpdateStatus | null; dismissUpdate?: (version: string) => void;
 }) {
   const item = (id: PlaceId) => {
@@ -44,6 +45,7 @@ export function Sidebar({ current, go, connection, openActivity, openTour, live,
       <Menu label={TOUR_COPY.helpTitle} align="left" up triggerClass="nav-item" triggerTour="help"
         trigger={<><CircleHelp size={19} /><span>{TOUR_COPY.helpTitle}</span></>} items={[
           { label: TOUR_COPY.takeTour, icon: <Compass size={16} />, onSelect: openTour },
+          ...(openWhatsNew ? [{ label: WHATS_NEW_COPY.menu, icon: <Sparkles size={16} />, onSelect: openWhatsNew }] : []),
           { label: TOUR_COPY.tutorials, icon: <PlayCircle size={16} />,
             onSelect: () => { window.open(TUTORIALS_URL, '_blank', 'noopener'); } },
         ]} />

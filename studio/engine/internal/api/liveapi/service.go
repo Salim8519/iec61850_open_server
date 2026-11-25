@@ -42,7 +42,7 @@ func (s *Service) Routes() []api.Route {
 		route("GET", "/live/{key}/comparison.csv", false, s.comparisonCSV),
 		route("GET", "/live/{key}/controls", false, s.controls), // Go-only (ADR-0138)
 		route("POST", "/live/{key}/operate", false, s.operate),  // Go-only (ADR-0138)
-		route("POST", "/live/{key}/command", false, s.command),  // Go-only (ADR-0147)
+		route("POST", "/live/{key}/command", false, s.command),  // Go-only (ADR-0149)
 		route("POST", "/live/{key}/read", false, s.read),
 		route("GET", "/goose", true, s.goose),
 		route("GET", "/goose/links", true, s.gooseLinks),

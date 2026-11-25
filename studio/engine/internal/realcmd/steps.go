@@ -11,7 +11,7 @@ import (
 	"studio-engine/internal/typedcmd"
 )
 
-// Step is one command step from Devices (ADR-0147): Select, Operate or Cancel of any command the
+// Step is one command step from Devices (ADR-0149): Select, Operate or Cancel of any command the
 // CID gives (SPC, DPC, INC, ENC, APC, BAC, BSC, ISC), with the IEC 61850 command options.
 type Step struct {
 	Action    string // select, operate or cancel

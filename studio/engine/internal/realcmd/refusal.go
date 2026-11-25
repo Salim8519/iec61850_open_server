@@ -40,7 +40,7 @@ func Refusal(request Request) string {
 	return ""
 }
 
-// StepRequest is one step Devices asks for (ADR-0147); Known says the CID has the command.
+// StepRequest is one step Devices asks for (ADR-0149); Known says the CID has the command.
 type StepRequest struct {
 	IED   *pyjson.Object
 	Step  Step

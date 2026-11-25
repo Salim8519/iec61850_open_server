@@ -15,7 +15,7 @@ import (
 	"studio-engine/internal/typedcmd"
 )
 
-// Loopback address of the Devices command wire test (ADR-0147); ports >= 20000.
+// Loopback address of the Devices command wire test (ADR-0149); ports >= 20000.
 const wireIP, wirePort = "127.67.0.47", int64(20247)
 
 type anySchema struct{}

@@ -77,7 +77,7 @@ export function DeviceDetail({ ied, project, locked, busy = false, perform, prep
   </FullView>;
 }
 
-/** Data points of a real IED: the Commands line, then the values, whose command rows can send (ADR-0147). */
+/** Data points of a real IED: the Commands line, then the values, whose command rows can send (ADR-0149). */
 function RealDataPoints({ ied, connected, testMode }: { ied: Ied; connected: boolean; testMode: boolean }) {
   const commandFor = useRowCommands(ied, connected, testMode);
   return <><RealCommands ied={ied} connected={connected} testMode={testMode} />

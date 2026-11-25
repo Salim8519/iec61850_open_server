@@ -16,7 +16,7 @@ import { answerText, sendStep, type StepAction } from './realCommandSteps';
 
 type Pending = { action: 'select' | 'operate'; label: string; value: CommandValue };
 
-/** The buttons or value box of one command of a real IED (ADR-0147), used in the Commands pop-up and in
+/** The buttons or value box of one command of a real IED (ADR-0149), used in the Commands pop-up and in
  *  the Data points rows. Every send asks once, in place, so the list never jumps. One click (default)
  *  selects and operates in one go; with "step by step" on, an SBO command selects first and shows the
  *  countdown with Operate and Cancel. */
@@ -65,7 +65,7 @@ export function RealCommandControl({ iedId, iedName, control, options, ready, wh
   else if (input === 'list') body = <ListBox point={point} control={control} disabled={off} title={title} verb={verb} pick={pick} />;
   else if (input === 'steps') body = <StepButtons disabled={off} title={title} label={`${verb} ${control.ref}`} press={pick} />;
   else body = <span className="pp-actions" role="group" aria-label={`Send ${control.ref}`}>
-    {commandChoices(control).map(choice => <button key={choice.label} type="button" disabled={off} title={title}
+    {commandChoices(control).map(choice => <button key={choice.label} type="button" className="wire" disabled={off} title={title}
       onClick={() => pick(choice.value)}><Send size={13} aria-hidden="true" />
       {sbo ? `Select ${choice.label.replace(/^Send /, '')}` : choice.label.replace(/^Send /, '')}</button>)}</span>;
   // Inputs sit beside the reference; the question, countdown and answer take their own full line.
@@ -80,7 +80,7 @@ export function RealCommandControl({ iedId, iedName, control, options, ready, wh
         {options.test ? ` ${SBO_COPY.test}: on.` : ''}</span>
       <span className="row" style={{ gap: 8 }}>
         <button ref={cancelButton} type="button" onClick={() => setPending(null)}>{GATEWAY_COPY.cancel}</button>
-        <button type="button" className="danger" onClick={() => { void confirm(); }}><Send size={14} aria-hidden="true" />
+        <button type="button" className="danger wire" onClick={() => { void confirm(); }}><Send size={14} aria-hidden="true" />
           {pending.action === 'select' ? COMMAND_COPY.yesSelect(pending.label) : GATEWAY_COPY.send(pending.label)}</button>
       </span></span>}
     <span className="real-command-line"><SboCountdown flow={flow} what={words} compact /></span>

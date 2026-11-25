@@ -15,7 +15,7 @@ test('hints never disable switching and always name their source', () => {
     .match(/<button(?:=>|[^>])*>(Open|Close)<\/button>/g) ?? [];
   assert.equal(buttons.length, 2, 'Open and Close are both in the Operate area');
   for (const button of buttons) {
-    assert.match(button, /^<button (className="primary" )?disabled=\{busy \|\| held\} /,
+    assert.match(button, /^<button (className="(primary )?wire" )?disabled=\{busy \|\| held\} /,
       `${button} is only disabled while busy or while a selection is held, never by a hint`);
   }
   assert.match(box, /<Hint id="switch\.hints"/);

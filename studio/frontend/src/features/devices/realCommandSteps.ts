@@ -3,7 +3,7 @@ import { api } from '../../api/client';
 import type { CommandOptions } from '../../api/types';
 import type { CommandValue } from '../../equipment/pointRequests';
 
-/** One step of a real IED's command from Devices (ADR-0147). The Go engine checks it again, sends it
+/** One step of a real IED's command from Devices (ADR-0149). The Go engine checks it again, sends it
  *  with the device's own control model and answers in plain words; the browser only shows that. */
 export type StepAction = 'select' | 'operate' | 'cancel';
 export type StepAnswer = { ok: boolean; action: StepAction; summary: string; model: string | null; expires_ms: number;
@@ -15,7 +15,7 @@ export const sendStep = (iedId: string, body: StepBody) =>
   api<StepAnswer>(`/live/${encodeURIComponent(iedId)}/command`, 'POST', body);
 
 /** What Devices sends unless the person changes it: interlock check on and station control, exactly
- *  what 0.1.36 sent; Test follows the relay's Test mode until the person sets it (ADR-0147). */
+ *  what 0.1.36 sent; Test follows the relay's Test mode until the person sets it (ADR-0149). */
 export const DEVICE_OPTIONS: CommandOptions = { test: false, interlock_check: true, synchro_check: false, orcat: 2, orident: '' };
 
 const chosen = new Map<string, CommandOptions>();

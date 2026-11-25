@@ -6,10 +6,21 @@ button, .button {
   min-height: var(--control-height); border: var(--line) solid var(--control-border); border-radius: var(--radius-small);
   background: var(--surface); color: var(--text); padding: 0 16px; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  text-decoration: none; font-weight: 600; white-space: nowrap; transition: background .12s, border-color .12s;
+  text-decoration: none; font-weight: 600; white-space: nowrap; box-shadow: var(--shadow-raise);
+  transition: background .12s, border-color .12s, box-shadow .12s;
 }
-button:hover:not(:disabled), .button:hover { background: var(--hover); border-color: var(--control-border-hover); }
-button:disabled { cursor: not-allowed; opacity: .45; }
+/* R1 raised means press: hover lifts, pressing sinks (ADR-0147). */
+button:hover:not(:disabled), .button:hover { background: var(--hover); border-color: var(--control-border-hover); box-shadow: var(--shadow-hover); }
+button:active:not(:disabled), .button:active { box-shadow: var(--shadow-press); transform: translateY(1px); }
+/* R10 disabled stays readable: flat, dashed, grey; the reason is written next to it. */
+button:disabled, button.primary:disabled, button.danger:disabled, button.danger-outline:disabled {
+  cursor: not-allowed; box-shadow: none; border-style: dashed; border-color: #8a94a3; background: var(--well); color: var(--text-3); }
+/* Flat buttons stay flat: tabs, menu rows, sidebar places, segments, tree rows, text links (R3/R9). */
+:is(.nav-item, .tabbar button, .menu-item, .segmented-control button, .segmented button, .tree-row, .info-tip-button,
+  .link-button, .editable-text, .chip),
+:is(.nav-item, .tabbar button, .menu-item, .segmented-control button, .segmented button, .tree-row, .info-tip-button,
+  .link-button, .editable-text, .chip):not(.active):is(:hover, :active) { box-shadow: none; transform: none; }
+@media (prefers-reduced-motion: reduce) { button, .button { transition: none; } button:active, .button:active { transform: none; } }
 /* An icon keeps its size when a label wraps or a button is narrow. */
 button svg { flex-shrink: 0; }
 button.primary { color: white; border-color: #1e3a8a; background: var(--accent-hover); }
@@ -18,8 +29,11 @@ button.danger { background: var(--error); color: white; border-color: var(--erro
 button.danger:hover:not(:disabled) { background: #991b1b; }
 button.danger-outline { color: var(--error); border-color: var(--error); background: var(--surface); }
 button.danger-outline:hover:not(:disabled) { background: var(--error-soft); }
-button.ghost { border-color: transparent; background: transparent; }
-button.ghost:hover:not(:disabled) { background: var(--hover); }
+/* R8: a button that sends to an IED or the network has the double border of command badges. */
+button.wire:not(:disabled) { border-style: double; border-width: 4px; }
+button.ghost { border-color: transparent; background: transparent; box-shadow: none; }
+button.ghost:hover:not(:disabled) { background: var(--hover); box-shadow: none; }
+button.ghost:disabled { border-color: transparent; background: transparent; }
 button.ghost:not(.icon) { text-decoration: underline; text-underline-offset: 3px; }
 button.ghost.danger-text { color: var(--error); }
 button.ghost.danger-text:hover:not(:disabled) { background: var(--error-soft); }
@@ -27,13 +41,13 @@ button.icon { padding: 0; width: var(--control-height); }
 button.large, .button.large { min-height: var(--control-height-large); padding: 0 20px; font-size: 1rem; }
 input, select, textarea {
   min-height: var(--control-height); border: var(--line) solid var(--control-border); border-radius: var(--radius-small);
-  padding: 0 12px; color: var(--text); background: var(--surface); width: 100%;
+  padding: 0 12px; color: var(--text); background: var(--surface); width: 100%; box-shadow: inset 0 1px 2px rgb(15 23 42 / 8%);
 }
 textarea { padding: 10px 12px; }
-input[type=checkbox], input[type=radio] { width: 18px; min-height: 18px; height: 18px; accent-color: var(--accent); }
+input[type=checkbox], input[type=radio] { width: 18px; min-height: 18px; height: 18px; accent-color: var(--accent); box-shadow: none; }
 input:hover:not(:disabled), select:hover:not(:disabled), textarea:hover:not(:disabled) { border-color: var(--control-border-hover); }
 /* A locked field reads as locked, not faded: dotted outline on grey (ADR-0094). */
-input:disabled, select:disabled, textarea:disabled { border-style: dotted; background: var(--surface-2); color: var(--text-3); cursor: not-allowed; }
+input:disabled, select:disabled, textarea:disabled { border-style: dotted; background: var(--well); box-shadow: var(--shadow-well); color: var(--text-3); cursor: not-allowed; }
 input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible,
 [role=button]:focus-visible { outline: 3px solid var(--accent-hover); outline-offset: 2px; border-color: var(--accent); }
 label { display: grid; gap: 6px; font-size: var(--font-size-small); font-weight: 600; color: var(--text-2); }
@@ -54,6 +68,8 @@ code, .mono { font-family: 'Cascadia Code', Consolas, monospace; font-size: 13px
 .badge.warning { background: var(--warning-soft); color: var(--warning); }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .section-label { font-size: 12px; font-weight: 650; letter-spacing: .6px; color: var(--text-3); text-transform: uppercase; }
+/* R2 sunken means read: values, facts and logs sit in a well (ADR-0147). */
+.well { background: var(--well); border: 1px solid var(--well-edge); border-radius: var(--radius-small); box-shadow: var(--shadow-well); }
 .empty { padding: 48px 24px; text-align: center; color: var(--text-2); line-height: 1.6; }
 .error-banner { padding: 12px 20px; border: 1px solid #fecaca; background: var(--error-soft);
   color: var(--error); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -65,7 +81,7 @@ th { color: var(--text); font-size: var(--font-size-small); font-weight: 700; ba
 th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
 td { font-size: 14px; vertical-align: middle; }
 thead { position: sticky; top: 0; z-index: 1; box-shadow: inset 0 -2px 0 var(--control-border); }
-tbody tr:hover { background: var(--surface-2); }
+/* R9: no row hover; no table row is clickable as a whole, only the buttons inside it (ADR-0147). */
 hr { border: 0; border-top: 1px solid var(--border); margin: 20px 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 details > summary { cursor: pointer; }

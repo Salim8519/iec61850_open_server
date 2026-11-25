@@ -2,7 +2,7 @@
 .diagram { position: absolute; inset: 0; display: flex; }
 .canvas { flex: 1; min-width: 0; position: relative; background: var(--canvas-bg); }
 .canvas-toolbar { position: absolute; z-index: 6; left: 20px; top: 16px; display: flex; gap: 8px; align-items: center;
-  padding: 6px; background: var(--surface); border: var(--line) solid var(--border-strong); border-radius: 12px; box-shadow: var(--shadow);
+  padding: 6px; background: var(--surface); border: var(--line) solid var(--border-strong); border-radius: 12px; box-shadow: var(--shadow-pop);
   flex-wrap: wrap; max-width: calc(100% - 40px); }
 .canvas-toolbar button.ghost { text-decoration: none; }  /* the toolbar frame already says "buttons" */
 .canvas:has(.canvas-lock) .canvas-toolbar { max-width: calc(100% - 280px); }
@@ -15,7 +15,7 @@
   background: var(--surface); border: var(--line) solid var(--border-strong); box-shadow: var(--shadow-small); font-size: 14px;
   color: var(--text); font-weight: 600; }
 .sheet { width: 380px; flex-shrink: 0; background: var(--surface); border-left: var(--line) solid var(--border-strong);
-  display: flex; flex-direction: column; min-height: 0; }
+  display: flex; flex-direction: column; min-height: 0; box-shadow: -4px 0 12px -6px rgb(15 23 42 / 18%); position: relative; z-index: 5; }
 .sheet-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--border);
   background: var(--surface-2); }
 .sheet-head-symbol { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center;
@@ -53,7 +53,7 @@
 .form-grid label { align-content: start; }
 .form-grid { align-items: start; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 .generator-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
-.table-scroll { max-height: calc(100vh / var(--fit, 1) - 330px); overflow: auto; }  /* inside a fill pane it takes the pane's height instead */
+.table-scroll { max-height: calc(100vh / var(--fit, 1) - 330px); overflow: auto; background: var(--well); box-shadow: var(--shadow-well); }  /* inside a fill pane it takes the pane's height instead */
 .reference-cell { max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .reference-cell .small { white-space: normal; }
 .reference-block { display: block; padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--border);

@@ -1,6 +1,6 @@
 # Spec: Re-import an IED's CID
 
-Decision: [ADR-0148](../decisions/ADR-0148-reimport-cid.md). Owner request (2026-11-23): "add re import
+Decision: [ADR-0150](../decisions/ADR-0150-reimport-cid.md). Owner request (2026-11-23): "add re import
 cid option, so same cid gets updated without deleting equipment, or warns user what will be lost …
 want as everything as possible to stay the same".
 

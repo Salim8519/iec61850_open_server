@@ -8,7 +8,7 @@ import { FIND_COPY } from '../../../copy/tools';
 import { HelpTip } from '../../../ui/HelpTip';
 import { InfoTip } from '../../../ui/InfoTip';
 import { FindResults } from './FindResults';
-import { rangeChoices, type RangeChoice } from './ranges';
+import { rangeChoices, rememberedChoice, type RangeChoice } from './ranges';
 import '../explorer/explorer.css';
 import './find.css';
 
@@ -26,7 +26,7 @@ export function FindTool({ openExplorer, known }: { openExplorer: (host: string,
     Promise.all([api<{ adapters: Adapter[] }>('/network/adapters'), memoryApi.get().catch(() => null)]).then(([value, memory]) => {
       const list = rangeChoices(value.adapters, FIND_COPY.thisPc);
       setChoices(list);
-      const remembered = list.find(item => item.key === memory?.find.choice);  // the user's last choice
+      const remembered = rememberedChoice(list, memory?.find.choice);  // the user's last interface
       setChoice((remembered ?? list[0]).key);
       setRange(remembered && memory?.find.range ? memory.find.range : (remembered ?? list[0]).range);
       if (remembered && memory?.find.port) setPort(String(memory.find.port));
@@ -52,6 +52,7 @@ export function FindTool({ openExplorer, known }: { openExplorer: (host: string,
     const found = choices.find(item => item.key === key);
     if (found) setRange(found.range);
   };
+  const networks = choices.find(item => item.key === choice)?.networks ?? [];
   const percent = scan && scan.total ? Math.round((scan.probed / scan.total) * 100) : 0;
   const help = `${FIND_COPY.intro} ${FIND_COPY.rangeHint}${choice === 'this-pc' ? ` ${FIND_COPY.loopbackHint}` : ''}`;
   return <>
@@ -72,6 +73,11 @@ export function FindTool({ openExplorer, known }: { openExplorer: (host: string,
           {FIND_COPY.addresses(preview.count)}</span>}
         <HelpTip text={help} label="How does Find IEDs work?" />
       </div>
+      {networks.length > 1 && <div className="find-networks" role="group" aria-label={FIND_COPY.networks(networks.length)}>
+        <span>{FIND_COPY.networks(networks.length)}</span>
+        {networks.map(item => <button key={item.range} type="button" className={`chip${range === item.range ? ' active' : ''}`}
+          aria-pressed={range === item.range} disabled={scanning} onClick={() => setRange(item.range)}>
+          {item.range}<small>{FIND_COPY.ownAddress(item.own)}</small></button>)}</div>}
       {error && <p className="explorer-error find-error" role="alert">{error}</p>}
       <div className={`find-progress${scanning ? '' : ' idle'}`} role="progressbar" aria-label="Scan progress"
         aria-valuenow={scanning ? percent : 0} aria-valuemin={0} aria-valuemax={100}>

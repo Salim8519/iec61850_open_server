@@ -38,7 +38,7 @@ function LiveRow({ signal, kind, iedId, read, command }: {
 }
 
 /** The Data points tab of a real IED: the first 50 matching references, read on request. A command's
- *  `.Oper.ctlVal` row can send it in place (`commandFor`, ADR-0147). */
+ *  `.Oper.ctlVal` row can send it in place (`commandFor`, ADR-0149). */
 export function LiveValueTable({ iedId, live, controls, commandFor }: {
   iedId: string; live: boolean; controls?: Control[]; commandFor?: (signalRef: string) => ReactNode;
 }) {

@@ -26,7 +26,7 @@ type Service struct {
 	Sessions func(iedID string) (Session, error)
 	Control  control.Operator
 	// Extended is the IED's typed control list (INC, ENC, APC, BAC, BSC, ISC) from its stored SCL,
-	// nil when unreadable (scl.CachedExtendedControls; ADR-0147).
+	// nil when unreadable (scl.CachedExtendedControls; ADR-0149).
 	Extended func(ied *pyjson.Object) []any
 	Emit     func(kind string, payload *pyjson.Object)
 	Observe  time.Duration // how long the feedback may take; 3 s when zero

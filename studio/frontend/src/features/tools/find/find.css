@@ -11,3 +11,8 @@
 .find-progress { height: 4px; background: var(--hover); margin: 0 -16px; overflow: hidden; }
 .find-progress.idle { background: transparent; }
 .find-progress span { display: block; height: 100%; background: var(--accent); transition: width 0.2s; }
+/* One interface can carry several networks (change 0237): each one is a chip that fills the range. */
+.find-networks { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; color: var(--text-2); }
+.find-networks small { color: var(--text-3); font-weight: 400; }
+.find-networks .chip { border-color: var(--control-border); background: var(--surface); box-shadow: var(--shadow-raise); }
+.find-networks .chip.active { border-color: var(--accent); background: var(--accent-soft); }

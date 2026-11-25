@@ -15,7 +15,7 @@
 .link-button { background: none; border: 0; padding: 0; min-height: 0; color: var(--primary); text-decoration: underline; cursor: pointer; }
 .detail-facts { white-space: nowrap; }
 .stats-line { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 8px 12px; font-size: 14px;
-  border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface-2); }
+  border: 1px solid var(--well-edge); border-radius: var(--radius-small); background: var(--well); box-shadow: var(--shadow-well); }
 .panel-note { margin: 0; padding: 6px 16px; border-bottom: 1px solid var(--border); }
 .list-row.compact .list-pills .status-pill { padding: 2px 8px; }
 .devices-list .filter-bar { gap: 6px; }
@@ -44,7 +44,7 @@
 .device-detail table.compact-rows .point-cell { white-space: normal; overflow-wrap: anywhere; width: 55%; }
 .point-desc { margin-right: 8px; font-weight: 600; }
 .point-deadband { display: block; } /* the SCD db under a measurement (ADR-0118) */
-/* Commands of a real IED (ADR-0147): the search and options stay on top while the list scrolls; each
+/* Commands of a real IED (ADR-0149): the search and options stay on top while the list scrolls; each
    command asks and answers in its own row, so sending never moves the list. Shared tokens only. */
 .real-commands-tools { position: sticky; top: -14px; z-index: 1; display: grid; gap: 8px; margin: -14px -16px 0;
   padding: 14px 16px 10px; background: var(--surface); border-bottom: var(--line) solid var(--border); }
@@ -60,7 +60,7 @@
 .real-confirm-title { display: flex; align-items: flex-start; gap: 8px; }
 .real-confirm-title svg { flex: none; margin-top: 2px; color: var(--error); }
 .live-command-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
-/* Re-import CID (ADR-0148): the links that cannot stay scroll inside the dialog; references wrap. */
+/* Re-import CID (ADR-0150): the links that cannot stay scroll inside the dialog; references wrap. */
 .reimport-pick { display: inline-flex; align-items: center; gap: 6px; margin: 8px 0; cursor: pointer; }
 .reimport-lost { max-height: calc(30vh / var(--fit, 1)); overflow-y: auto; margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 .reimport-lost code, .reimport-lost span { overflow-wrap: anywhere; }

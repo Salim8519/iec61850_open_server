@@ -8,7 +8,7 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// Re-import (ADR-0148): the IED keeps its id, settings and every link its new file still has.
+// Re-import (ADR-0150): the IED keeps its id, settings and every link its new file still has.
 
 func reimportProject() *pyjson.Object {
 	ieds := testIEDs()

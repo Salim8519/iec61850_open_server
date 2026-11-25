@@ -1,8 +1,8 @@
-# ADR-0148: Re-import an IED's CID, keeping its id, settings and links
+# ADR-0150: Re-import an IED's CID, keeping its id, settings and links
 
 Accepted: 2026-11-23. Owner, 2026-11-23, for 0.1.37: "can u add re import cid option? so same cid gets
 updated without deleting equipment? or warns user what will be lost?, sometime we do this, but want
-as everything as possible to stay the same". Change [0238](../changes/2026/0238-reimport-cid.md).
+as everything as possible to stay the same". Change [0240](../changes/2026/0240-reimport-cid.md).
 Spec [Re-import CID](../specs/reimport-cid.md).
 
 ## Problem

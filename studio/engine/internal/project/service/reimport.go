@@ -12,7 +12,7 @@ import (
 	"studio-engine/internal/store/recovery"
 )
 
-// Reimport reads a newer CID of one IED (ADR-0148). With apply false it only answers what would
+// Reimport reads a newer CID of one IED (ADR-0150). With apply false it only answers what would
 // change; with apply true it first writes a verified recovery backup of the project, then swaps
 // the IED's model and keeps its id, settings and every link the new file still has (Undo
 // restores it). The answer: {id, name, filename, same_file, signals, controls, reports, kept,

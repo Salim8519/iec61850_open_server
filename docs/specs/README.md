@@ -43,6 +43,7 @@ changed, dropped or invented by accident.
 | [App window](app-window.md) | Windowed EXE, one instance, show again, confirm and stop on close |
 | [Bay templates](bay-templates.md) | One-click line feeder, transformer bay and bus coupler |
 | [Guided tour](tour.md) | First-start walkthrough of the five places, reopened from Help |
+| [What's new](whats-new.md) | Once after an update: this version's notes, earlier ones folded, reopened from Help |
 | [Tools](tools-page.md) | Tools place: cards for built tools only, GOOSE & SV traffic |
 | [Tool layout](tool-layout.md) | Tool pages and Devices fill the window; one remembered filter bar on every list |
 | [Fit to window](display-fit.md) | Small windows show the big-window layout evenly smaller; Settings › Display |

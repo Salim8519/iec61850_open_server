@@ -7,7 +7,7 @@ import (
 	"studio-engine/internal/tools/control"
 )
 
-// Plain-English reasons for a refused command (ADR-0147). The device's own answer (AddCause and
+// Plain-English reasons for a refused command (ADR-0149). The device's own answer (AddCause and
 // MMS error) stays in the result and at the end of the sentence; the words before it say what it
 // means and what to try, for people new to IEC 61850.
 

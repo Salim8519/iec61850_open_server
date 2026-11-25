@@ -5,7 +5,7 @@ import (
 	"studio-engine/internal/pyjson"
 )
 
-// pruner keeps the links of one re-imported IED that its new model still has (ADR-0148). A link
+// pruner keeps the links of one re-imported IED that its new model still has (ADR-0150). A link
 // stays when its reference is in the new file with the same type; a report no longer holding the
 // signal is cleared (the link stays). Anything else is removed and recorded in words.
 type pruner struct {

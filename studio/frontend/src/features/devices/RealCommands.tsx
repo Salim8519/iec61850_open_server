@@ -15,7 +15,7 @@ import { useDeviceOptions } from './realCommandSteps';
 /** How many command rows the pop-up draws at once; the search narrows the rest. */
 const SHOWN = 300;
 
-/** The commands of a real IED in Devices, only while its own Allow commands is on (ADR-0138, ADR-0147):
+/** The commands of a real IED in Devices, only while its own Allow commands is on (ADR-0138, ADR-0149):
  *  every class the CID gives (on/off, open/close, numbers, lists, raise/lower) in a pop-up with a search.
  *  Buttons only ask; the engine checks again and sends. */
 export function RealCommands({ ied, connected, testMode }: { ied: Ied; connected: boolean; testMode: boolean }) {
@@ -57,7 +57,7 @@ function CommandsPopup({ ied, ready, testMode, close }: { ied: Ied; ready: boole
   </PopupDialog>;
 }
 
-/** Send from the Data points rows (ADR-0147): the `.Oper.ctlVal` row of a command gets the same buttons
+/** Send from the Data points rows (ADR-0149): the `.Oper.ctlVal` row of a command gets the same buttons
  *  as the pop-up while the IED is live and its Allow commands is on; other rows get nothing. */
 export function useRowCommands(ied: Ied, connected: boolean, testMode: boolean): (signalRef: string) => ReactNode {
   const extended = useTypedControls(ied);

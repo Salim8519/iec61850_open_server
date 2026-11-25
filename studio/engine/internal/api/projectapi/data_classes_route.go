@@ -8,7 +8,7 @@ import (
 )
 
 // GoOnlyRoutes are the routes this area adds beyond Flask's (ADR-0095, ADR-0112, ADR-0118,
-// ADR-0135 Undo/Redo and New/Close project, ADR-0139 auto save switch, ADR-0148 re-import).
+// ADR-0135 Undo/Redo and New/Close project, ADR-0139 auto save switch, ADR-0150 re-import).
 var GoOnlyRoutes = map[string]bool{"GET /api/v1/ieds/{ied_id}/data-classes": true,
 	"GET /api/v1/diagram/goose-ieds":      true,
 	"GET /api/v1/ieds/{ied_id}/deadbands": true, "PUT /api/v1/ieds/{ied_id}/deadbands": true,

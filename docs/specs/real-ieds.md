@@ -7,7 +7,7 @@ to real IEDs are allowed from Tools only (IED Explorer after a confirmation, and
 while "Allow SCADA commands to real IEDs" is on), through the separate `studio_control`.
 Owner decision 2026-11-11 (ADR-0138): a monitored real IED is read only until its own
 "Allow commands" switch in Devices is on; the gateway needs both switches. On connect the
-device's own control settings are compared with the CID. Owner decision 2026-11-23 (ADR-0147):
+device's own control settings are compared with the CID. Owner decision 2026-11-23 (ADR-0149):
 Devices sends every command class of the CID, one click or Select/Operate/Cancel step by step,
 from the Commands pop-up or a Data points row, and explains refusals in words.
 

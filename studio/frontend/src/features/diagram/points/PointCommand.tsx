@@ -48,7 +48,7 @@ export function PointCommand({ nodeId, point, control, disabled, why, ask, send,
   else if (input === 'steps') body = <StepButtons disabled={off} title={title} label={`${verb} ${point.label}`} press={pick} />;
   else {
     body = <span className="pp-actions" role="group" aria-label={`Send ${point.label}`}>
-      {commandChoices(control).map(choice => <button key={choice.label} type="button" className="pp-choice" disabled={off}
+      {commandChoices(control).map(choice => <button key={choice.label} type="button" className="pp-choice wire" disabled={off}
         title={title || `${choice.label} to this command`} onClick={() => pick(choice.value)}>
         {sbo ? choice.label.replace(/^Send /, 'Select ') : choice.label}</button>)}
     </span>;

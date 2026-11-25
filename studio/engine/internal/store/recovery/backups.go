@@ -70,7 +70,7 @@ func WriteDeleteBackup(dataDir string, payload []byte) (string, error) {
 }
 
 // WriteReimportBackup is the same verified backup before an IED's CID is re-imported
-// (ADR-0148): recovery/before-ied-reimport-<uuid>.scadabench.
+// (ADR-0150): recovery/before-ied-reimport-<uuid>.scadabench.
 func WriteReimportBackup(dataDir string, payload []byte) (string, error) {
 	return writeBackup(dataDir, payload, "before-ied-reimport-", "Recovery backup verification failed; nothing was changed")
 }

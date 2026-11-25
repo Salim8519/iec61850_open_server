@@ -87,7 +87,7 @@ export function MasterCommandForm({ draft, host, protocol, close, fail, review =
         clock ? undefined : command.address, host, TARGET_WORD[protocol])}</strong></p>
       <p className="small">{MASTER_COPY.realWarning}</p>
       <div className="row"><button onClick={() => setConfirming(false)} autoFocus>{MASTER_COPY.cancel}</button>
-        <button className="danger" disabled={sending} onClick={send}><Send size={14} />{MASTER_COPY.send}</button></div>
+        <button className="danger wire" disabled={sending} onClick={send}><Send size={14} />{MASTER_COPY.send}</button></div>
     </div>}
     {answer && <p className={`small gateway-sent${answer.ok ? ' ok' : ''}`} role="status">
       {answer.ok ? 'Done: ' : 'Not carried out: '}{answer.text}</p>}

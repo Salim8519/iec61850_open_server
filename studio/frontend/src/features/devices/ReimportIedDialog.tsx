@@ -15,7 +15,7 @@ const send = (iedId: string, file: File, apply: boolean) => {
   return api<Answer>(`/ieds/${encodeURIComponent(iedId)}/reimport`, 'POST', form);
 };
 
-/** Re-import a newer CID of one IED (ADR-0148): pick the file, read what changes (the engine
+/** Re-import a newer CID of one IED (ADR-0150): pick the file, read what changes (the engine
  *  works it out), then apply. The IED keeps its id, settings and every link the file still has. */
 export function ReimportIedDialog({ iedId, iedName, close, perform, prepare }: {
   iedId: string; iedName: string; close: () => void;

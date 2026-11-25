@@ -1,6 +1,6 @@
 import type { CommandControl } from '../../equipment/pointRequests.ts';
 
-// Finding a real IED's commands in Devices (ADR-0147): display only, the engine checks every send.
+// Finding a real IED's commands in Devices (ADR-0149): display only, the engine checks every send.
 
 /** Whether a command matches the search: every typed word is in its reference or class. */
 export function matchesSearch(control: Pick<CommandControl, 'ref' | 'cdc'>, query: string): boolean {
