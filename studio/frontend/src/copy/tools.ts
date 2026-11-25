@@ -74,6 +74,8 @@ export const FIND_COPY = {
   open: 'Open in Explorer', none: 'No device answered. Check the cable, the adapter and that the devices are switched on.',
   addHint: 'To test with one of these devices in a project, import its CID/SCD in Devices and choose "Connect to real device".',
   thisPc: 'This PC: simulated IEDs (127.50.0.x)',
+  networks: (count: number) => `This interface is on ${count} networks. Check:`,
+  ownAddress: (ip: string) => ` · this PC ${ip}`,
   loopbackHint: 'Simulated IEDs answer on 127.50.0.x addresses while Run is on, so you can practise here without any cable.',
   noneThisPc: 'No simulated IED answered. Press Run so the simulated IEDs answer on 127.50.0.x, then scan again.',
 };

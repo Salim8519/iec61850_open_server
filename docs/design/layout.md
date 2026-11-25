@@ -1,9 +1,10 @@
-# Fixed visual design (v2, ADR-0032)
+# Fixed visual design (v2, ADR-0032; Raised panels, ADR-0147)
 
 | Token | Value |
 | --- | --- |
-| Background | #ECEEF2 (sidebar #F7F8FA, canvas #E9EDF2) |
-| Surface | #FFFFFF (sidebar, top bar, cards, sheets) |
+| Background | Steel #D5DBE3 workspace; dark rail #1C2430 sidebar (words #C3CCD8, open place #2C3746); canvas #E9EDF2 |
+| Surface | #FFFFFF raised panels (top bar, cards, sheets); wells #F4F6F9 with #B9C2CE edge for tables, facts and read-only fields |
+| Depth | Four shadows only (ADR-0147 R12): raise/hover/press for controls, panel, pop for menus and dialogs, inset for wells; no gradients |
 | Text / secondary / tertiary | #0F172A / #1F2937 / #374151 (ADR-0094) |
 | Border | #B6BDC7 inner lines; frames #6B7280 (cards, list rows, shell, 2 px dividers); controls #374151, hover #111827; #A9B1BD kept for the diagram; 1.5 px (`--line`), ADR-0034/0094 |
 | Accent | #2563EB on #EFF6FF (one accent only) |
@@ -12,9 +13,9 @@
 | Controls | 40 px high, primary actions 44 px, 8–10 px radius, 20 px icons |
 | Contrast | WCAG AA for text, accent and status colours (enforced by a test) |
 
-Shell: 232 px white sidebar with four places (Devices, SLD, Test, Settings at the
+Shell: 232 px dark rail sidebar with four places (Devices, SLD, Test, Settings at the
 bottom with Activity) that collapses to 72 px icons below 1100 px; a 64 px top bar
-with page title, one-line subtitle, File menu, run state words and one Run/Stop pill. The run state
+with page title, one-line subtitle, File menu, run state words and one Run/Stop button (8 px corners; only status is round, ADR-0147). The run state
 shows ○ stopped, ◐ some IEDs (amber dashed, white *Stop all*) or ● all IEDs (green *Stop*); green
 means everything runs (change 0106).
 Pages scroll inside a centred 1440 px column with 20 px gaps between cards, except open tools

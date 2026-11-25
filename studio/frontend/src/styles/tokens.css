@@ -1,17 +1,28 @@
-/* Design system v2 (ADR-0032): calm, readable, one accent. Sizes are in rem so
-   browser zoom scales everything; 1rem = 15px. */
+/* Design system v2 (ADR-0032) in Raised panels (ADR-0147): calm, readable, one accent, with depth
+   from tone steps and four elevations. Sizes are in rem so browser zoom scales everything; 1rem = 15px. */
 :root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   color: #0f172a;
-  background: #eceef2;
+  background: #d5dbe3;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 
-  --bg: #eceef2;
+  /* Raised panels (ADR-0147): steel workspace, dark rail, white raised panels, sunken wells. */
+  --bg: #d5dbe3;
+  --rail: #1c2430;
+  --rail-edge: #0f151d;
+  --rail-text: #c3ccd8;
+  --rail-text-strong: #f1f4f8;
+  --rail-hover: #263040;
+  --rail-active: #2c3746;
+  --rail-line: #334155;
+  --rail-accent: #93c5fd;
+  --well: #f4f6f9;
+  --well-edge: #b9c2ce;
   --surface: #ffffff;
-  --surface-2: #f4f5f8;
+  --surface-2: #f2f4f7;
   --text: #0f172a;
   --text-2: #1f2937;
   --text-3: #374151;
@@ -22,7 +33,7 @@
   --control-border: #374151;
   --control-border-hover: #111827;
   --frame: #6b7280;
-  --table-head: #e5e7eb;
+  --table-head: #e9edf2;
   /* Point kinds (ADR-0095): one colour per kind for every list; never green, amber or red,
      which stay for good / warning / problem. Letters on the badge carry the meaning. */
   --kind-sp: #0f766e; --kind-sp-soft: #ccfbf1;
@@ -57,9 +68,16 @@
   --control-height-large: 44px;
   --radius: 10px;
   --radius-small: 8px;
-  --shadow-small: 0 1px 2px rgb(16 24 40 / 8%), 0 1px 3px rgb(16 24 40 / 6%);
-  --shadow: 0 4px 16px rgb(16 24 40 / 12%);
-  --shadow-large: 0 12px 32px rgb(16 24 40 / 14%);
+  /* The four elevations (ADR-0147 R12); components use these and never invent shadows. */
+  --shadow-raise: 0 1px 0 rgb(15 23 42 / 14%), 0 1px 2px rgb(15 23 42 / 10%);
+  --shadow-hover: 0 2px 0 rgb(15 23 42 / 16%), 0 3px 8px rgb(15 23 42 / 14%);
+  --shadow-press: inset 0 2px 3px rgb(15 23 42 / 22%);
+  --shadow-panel: 0 1px 2px rgb(15 23 42 / 14%), 0 6px 14px -6px rgb(15 23 42 / 22%);
+  --shadow-pop: 0 12px 28px -8px rgb(15 23 42 / 35%), 0 2px 6px rgb(15 23 42 / 14%);
+  --shadow-well: inset 0 1px 3px rgb(15 23 42 / 12%);
+  --shadow-small: var(--shadow-raise);
+  --shadow: var(--shadow-hover);
+  --shadow-large: var(--shadow-pop);
   --sidebar-width: 232px;
   --topbar-height: 64px;
 

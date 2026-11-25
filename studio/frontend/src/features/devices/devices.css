@@ -15,7 +15,7 @@
 .link-button { background: none; border: 0; padding: 0; min-height: 0; color: var(--primary); text-decoration: underline; cursor: pointer; }
 .detail-facts { white-space: nowrap; }
 .stats-line { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 8px 12px; font-size: 14px;
-  border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--surface-2); }
+  border: 1px solid var(--well-edge); border-radius: var(--radius-small); background: var(--well); box-shadow: var(--shadow-well); }
 .panel-note { margin: 0; padding: 6px 16px; border-bottom: 1px solid var(--border); }
 .list-row.compact .list-pills .status-pill { padding: 2px 8px; }
 .devices-list .filter-bar { gap: 6px; }

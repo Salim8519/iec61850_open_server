@@ -52,6 +52,22 @@ test('token colours meet AA contrast', () => {
   assert.ok(contrast('#ffffff', token('accent')) >= 4.5, 'white on accent');
 });
 
+test('raised panels keep AA contrast on the rail, the steel workspace and wells (ADR-0147)', () => {
+  for (const name of ['rail-text', 'rail-text-strong', 'rail-accent']) {
+    for (const ground of ['rail', 'rail-hover', 'rail-active']) {
+      assert.ok(contrast(token(name), token(ground)) >= 4.5, `--${name} on --${ground}`);
+    }
+  }
+  for (const name of ['text', 'text-2', 'text-3']) {
+    assert.ok(contrast(token(name), token('well')) >= 4.5, `--${name} on well`);
+    assert.ok(contrast(token(name), token('bg')) >= 4.5, `--${name} on the workspace`);
+  }
+  const base = read('styles/base.css');
+  assert.match(base, /button:disabled[^{]*\{[^}]*border-style: dashed/, 'disabled is dashed, not faded (R10)');
+  assert.doesNotMatch(base, /button:disabled[^{]*\{[^}]*opacity/, 'disabled words stay readable (R10)');
+  assert.doesNotMatch(read('styles/layout.css'), /\.run-pill \{[^}]*999px/, 'Run/Stop is a button, not a round status (R4)');
+});
+
 test('rare equipment options live under Advanced', () => {
   for (const kind of ['CB', 'DS', 'ES', 'CT', 'VT', 'SOURCE', 'RELAY', 'TRIP_RELAY', 'PUSH_BUTTON', 'JUNCTION'] as const) {
     assert.ok(basicFields(kind).length <= 2, `${kind} shows too many basic fields`);

@@ -50,6 +50,20 @@ test('find IEDs proposes each adapter network, at most a /24, plus this PC', asy
   assert.deepEqual(choices.map(item => item.range), ['10.1.2.0/24', '127.50.0.0/24']);
 });
 
+test('find IEDs lists each interface once, with its networks beside it', async () => {
+  const { rangeChoices, rememberedChoice } = await import('../../frontend/src/features/tools/find/ranges.ts');
+  const address = (ip: string, prefix = 24) => ({ ip, prefix, skip_as_source: false, origin: '' });
+  const ethernet = { guid: 'eth', name: 'Ethernet', description: '', status: 'Up', index: 1, speed: '', kind: 'ethernet',
+    default_route: false, addresses: [address('10.0.0.5'), address('10.0.0.21'), address('192.168.1.7'), address('169.254.3.3')] };
+  const choices = rangeChoices([ethernet], 'This PC');
+  assert.deepEqual(choices.map(item => item.key), ['eth', 'this-pc']);
+  assert.equal(choices[0].label, 'Ethernet (2 networks)');
+  assert.deepEqual(choices[0].networks.map(item => item.range), ['10.0.0.0/24', '192.168.1.0/24']);
+  assert.equal(choices[0].range, '10.0.0.0/24');
+  assert.equal(rememberedChoice(choices, 'eth|192.168.1.7')?.key, 'eth', 'a choice saved per address still finds its interface');
+  assert.equal(rememberedChoice(choices, 'gone'), undefined);
+});
+
 test('explorer sends a command only through the confirmation step and never writes', () => {
   const sources = files('features/tools/explorer').map(read).join('\n') + read('api/tools.ts');
   for (const word of ['writeObject', '/write', 'setValue(']) {
